@@ -1,0 +1,24 @@
+﻿//-----------------------------------------------------------------------
+// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Contacts: <sergio.teplyashin@gmail.com>
+// License: https://opensource.org/licenses/GPL-3.0
+// Date: 09.06.2018
+// Time: 19:09
+//-----------------------------------------------------------------------
+
+namespace DocumentFlow.Controls
+{
+    using System;
+
+    public class CrumbClickEventArgs : EventArgs
+    {
+        private ToolButtonKind kind;
+
+        public CrumbClickEventArgs(ToolButtonKind buttonKind)
+        {
+            kind = buttonKind;
+        }
+
+        public ToolButtonKind Kind { get => kind; set => kind = value; }
+    }
+}

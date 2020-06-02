@@ -1,0 +1,127 @@
+﻿{
+  "name": "calc_item_deduction",
+  "viewer": {
+    "dataset": {
+      "select": "select cid.id, cid.status_id, s.note as status_name, d.name, cid.cost, cid.price, cid.percentage from calc_item_deduction cid left join deduction d on (d.id = cid.item_id) join status s on (s.id = cid.status_id) where cid.owner_id = :owner_id",
+      "select-id": "select cid.id, cid.status_id, s.note as status_name, d.name, cid.cost, cid.price, cid.percentage from calc_item_deduction cid left join deduction d on (d.id = cid.item_id) join status s on (s.id = cid.status_id) where cid.id = :id"
+    },
+    "data-type": "Directory",
+    "toolbar": {
+      "button-style": "Image",
+      "icon-size": "Small"
+    },
+    "commandbar-visible": false,
+    "columns": [
+      {
+        "datafield": "id",
+        "text": "Id",
+        "type": "Text",
+        "width": 180,
+        "visible": false
+      },
+      {
+        "datafield": "status_id",
+        "text": "Код состояния",
+        "type": "Integer",
+        "width": 80,
+        "visible": false
+      },
+      {
+        "datafield": "status_name",
+        "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false
+      },
+      {
+        "datafield": "name",
+        "text": "Отчисление",
+        "type": "Text",
+        "hideable": false,
+        "auto-size": true,
+        "aggregate": "Count",
+        "aggregate-title": "Всего наименований: "
+      },
+      {
+        "datafield": "percentage",
+        "text": "Процент",
+        "type": "Numeric",
+        "width": 150,
+        "format-mode": "Percent",
+        "digits": 2,
+        "horizontal-align": "Right"
+      },
+      {
+        "datafield": "price",
+        "text": "Цена",
+        "type": "Numeric",
+        "width": 150,
+        "format-mode": "Currency",
+        "horizontal-align": "Right"
+      },
+      {
+        "datafield": "cost",
+        "text": "Стоимость",
+        "type": "Numeric",
+        "width": 150,
+        "format-mode": "Currency",
+        "horizontal-align": "Right",
+        "aggregate": "Sum"
+      }
+    ]
+  },
+  "editor": {
+    "dataset": {
+      "select": "select cid.id, c.name as calculation_name, cid.item_id, cid.cost, cid.price, cid.percentage from calc_item_deduction cid left join calculation c on (c.id = cid.owner_id) where cid.id = :id",
+      "update": "update calc_item_deduction set item_id = :item_id, percentage = :percentage, price = :price, cost = :cost where id = :id"
+    },
+    "controls": [
+      {
+        "type": "TextBox",
+        "text": "Калькуляция",
+        "datafield": "calculation_name",
+        "label-width": 200,
+        "edit-width": 300,
+        "enabled": false
+      },
+      {
+        "type": "SelectBox",
+        "text": "Отчисление",
+        "datafield": "item_id",
+        "dataset": "select id, status_id, name, parent_id from deduction where status_id in (500, 1002) order by name",
+        "label-width": 200,
+        "edit-width": 450
+      },
+      {
+        "type": "Percent",
+        "text": "Процент",
+        "datafield": "percentage",
+        "decimal-digits": 2,
+        "label-width": 200,
+        "edit-width": 150
+      },
+      {
+        "type": "Currency",
+        "text": "Цена",
+        "datafield": "price",
+        "label-width": 200,
+        "edit-width": 200
+      },
+      {
+        "type": "Currency",
+        "text": "Стоимость",
+        "datafield": "cost",
+        "label-width": 200,
+        "edit-width": 200
+      }
+    ],
+    "conditions": [
+      {
+        "controls": [ "item_id", "percentage", "price", "cost" ],
+        "enable": {
+          "states": [ "compiled" ]
+        }
+      }
+    ]
+  }
+}

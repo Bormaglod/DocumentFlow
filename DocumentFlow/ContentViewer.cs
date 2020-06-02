@@ -1,0 +1,991 @@
+﻿//-----------------------------------------------------------------------
+// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Contacts: <sergio.teplyashin@gmail.com>
+// License: https://opensource.org/licenses/GPL-3.0
+// Date: 21.03.2020
+// Time: 15:27
+//-----------------------------------------------------------------------
+
+namespace DocumentFlow
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Concurrent;
+    using System.ComponentModel;
+    using System.Drawing;
+    using System.Data;
+#if USE_SETTINGS
+    using System.IO;
+#endif
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using Newtonsoft.Json;
+    using NHibernate;
+    using NHibernate.Transform;
+    using Npgsql;
+    using NpgsqlTypes;
+    using Syncfusion.Windows.Forms.Tools;
+    using Syncfusion.WinForms.DataGrid;
+    using Syncfusion.WinForms.DataGrid.Events;
+    using DocumentFlow.Core;
+    using DocumentFlow.DataSchema;
+    using DocumentFlow.DataSchema.Types.Converters;
+    using DocumentFlow.Data.Core;
+    using DocumentFlow.Data.Entities;
+    using DocumentFlow.Controls;
+    using DocumentFlow.Controls.Extensions;
+    using DocumentFlow.Controls.Renderers;
+    using DocumentFlow.DataSchema.Types.Core;
+
+    public partial class ContentViewer : UserControl, IPage, ISettings
+    {
+        private class ToolbarGroup
+        {
+            private ToolStripSeparator separator;
+            private List<ToolStripItem> items;
+
+            public ToolbarGroup(string groupName) : this(groupName, true) { }
+
+            public ToolbarGroup(string groupName, bool createSeparator)
+            {
+                Name = groupName;
+                items = new List<ToolStripItem>();
+                if (createSeparator)
+                    separator = new ToolStripSeparator();
+            }
+
+            public string Name { get; }
+
+            public void Add(ToolStripItem item)
+            {
+                if (item is ToolStripSeparator s)
+                    separator = s;
+                else
+                    items.Add(item);
+            }
+
+            public void AddItemsToTollbar(ToolStrip bar)
+            {
+                bar.Items.Add(separator);
+                foreach (ToolStripItem item in items)
+                {
+                    bar.Items.Add(item);
+                }
+            }
+
+            public void Refresh()
+            { 
+                if (separator != null)
+                    separator.Visible = items.Any(x => x.Visible); 
+            }
+
+            public override string ToString() => Name;
+        }
+
+        private class ToolbarGroups
+        {
+            private List<ToolbarGroup> toolbar { get; } = new List<ToolbarGroup>();
+            private List<ToolbarGroup> menu { get; } = new List<ToolbarGroup>();
+
+            private void Add(List<ToolbarGroup> list, ToolStrip toolStrip, ToolbarGroup toolbarGroup)
+            {
+                toolbarGroup.AddItemsToTollbar(toolStrip);
+                list.Add(toolbarGroup);
+            }
+
+            private void Add(List<ToolbarGroup> list, ToolStripItem item, string toolbarGroupName, bool createSeparator)
+            {
+                ToolbarGroup g = list.FirstOrDefault(x => x.Name == toolbarGroupName);
+                if (g == null)
+                {
+                    g = new ToolbarGroup(toolbarGroupName, createSeparator);
+                    list.Add(g);
+                }
+
+                g.Add(item);
+            }
+
+            public void AddToolbar(ToolStrip toolStrip, ToolbarGroup toolbarGroup) => Add(toolbar, toolStrip, toolbarGroup);
+
+            public void AddMenu(ToolStrip toolStrip, ToolbarGroup toolbarGroup) => Add(menu, toolStrip, toolbarGroup);
+
+            public void AddToolbarItem(ToolStripItem item, string toolbarGroupName) => Add(toolbar, item, toolbarGroupName, false);
+
+            public void AddMenuItem(ToolStripItem item, string toolbarGroupName) => Add(menu, item, toolbarGroupName, false);
+
+            public void Refresh()
+            {
+                RefreshGroup(toolbar);
+                RefreshGroup(menu);
+            }
+
+            private void RefreshGroup(IEnumerable<ToolbarGroup> groups)
+            {
+                foreach (ToolbarGroup bar in groups)
+                {
+                    bar.Refresh();
+                }
+            }
+        }
+
+        private class UserToolButton
+        {
+            public UserCommand UserCommand { get; set; }
+            public Command Command { get; set; }
+            public Picture Picture { get; set; }
+            public string Code => Command == null ? UserCommand.Name : Command.Code;
+        }
+
+#if USE_SETTINGS
+        private const string settingsFile = "viewer.json";
+        private string settingsPath;
+#endif
+        private ICommandFactory commands;
+        private Dictionary<GridColumn, DatasetColumn> dataColumns = new Dictionary<GridColumn, DatasetColumn>();
+        private DatasetSchema schema;
+        private Guid? ParentEntity;
+        private EntityKind kind;
+        private Dictionary<string, List<ToolStripItem>> commandItems = new Dictionary<string, List<ToolStripItem>>();
+        private ToolbarGroups groupItems = new ToolbarGroups();
+        private Guid? owner;
+        private CancellationTokenSource listenerToken;
+        private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
+
+        public ContentViewer(ICommandFactory commandFactory, Guid kindId, Guid? ownerId)
+        {
+            InitializeComponent();
+            NewSession();
+
+            commands = commandFactory;
+            kind = Session.Get<EntityKind>(kindId);
+            owner = ownerId;
+
+            CreateViewer();
+
+            timerDatabaseListen.Start();
+
+            listenerToken = new CancellationTokenSource();
+            CreateListener(listenerToken.Token);
+        }
+
+        Guid IPage.Id => kind.Id;
+
+        Guid IPage.ContentId => GetCurrentId();
+
+        void IPage.OnClosed() { }
+
+        protected ISession Session { get; private set; }
+
+        private void NewSession() => Session = Db.OpenSession();
+
+        private void Listener(CancellationToken token)
+        {
+            var conn = new NpgsqlConnection(Db.ConnectionString);
+            conn.Open();
+            conn.Notification += (o, e) =>
+            {
+                NotifyMessage message = JsonConvert.DeserializeObject<NotifyMessage>(e.Payload);
+                if (message.EntityId == kind.Id)
+                {
+                    if (message.Destination == MessageDestination.List && owner != null && message.ObjectId != owner)
+                        return;
+
+                    notifies.Enqueue(message);
+                }
+            };
+
+            using (var cmd = new NpgsqlCommand("LISTEN db_notification", conn))
+            {
+                cmd.ExecuteNonQuery();
+            }
+
+            while (!token.IsCancellationRequested)
+            {
+                conn.Wait();
+            }
+        }
+
+        async private void CreateListener(CancellationToken token)
+        {
+            if (token.IsCancellationRequested)
+                return;
+
+            await Task.Run(() => Listener(token));
+        }
+
+        private void CreateViewer()
+        {
+            try
+            {
+                schema = JsonConvert.DeserializeObject<DatasetSchema>(kind.DataSchema, new ControlConverter());
+            }
+            catch (UnknownTypeException e)
+            {
+                MessageBox.Show(e.Message, "Ошибка JSON-данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            ((ISettings)this).LoadSettings();
+
+            Text = kind.Name;
+
+            if (schema?.Viewer != null)
+            {
+                gridContent.AllowGrouping = schema.Viewer.AllowGrouping;
+                gridContent.ShowGroupDropArea = schema.Viewer.AllowGrouping;
+
+                switch (schema.Viewer.DataType)
+                {
+                    case DataType.Directory:
+                        panelDocument.Visible = false;
+                        breadcrumb1.Visible = kind.HasGroup;
+                        break;
+                    case DataType.Document:
+                        panelDirectory.Visible = false;
+                        dateTimePickerFrom.Checked = schema.Viewer.FromDate != DateRanges.None;
+                        dateTimePickerTo.Checked = schema.Viewer.ToDate != DateRanges.None;
+                        dateTimePickerFrom.Value = DateTime.Today.FromDateRanges(schema.Viewer.FromDate);
+                        dateTimePickerTo.Value = DateTime.Today.FromDateRanges(schema.Viewer.ToDate);
+
+                        IList<ComboBoxDataItem> orgs = Session.CreateSQLQuery("select id, name from organization")
+                            .SetResultTransformer(Transformers.AliasToBean<ComboBoxDataItem>())
+                            .List<ComboBoxDataItem>();
+
+                        Guid def_org = Session.CreateSQLQuery("select id from organization where default_org")
+                            .UniqueResult<Guid>();
+
+                        comboOrg.DataSource = orgs;
+                        comboOrg.SelectedItem = orgs.FirstOrDefault(x => x.Id == def_org);
+
+                        break;
+                    default:
+                        break;
+                }
+
+                panelCommandBar.Height = 30;
+                panelCommandBar.Visible = schema.Viewer.CommandBarVisible;
+
+                buttonAddFolder.Visible = kind.HasGroup;
+                menuAddFolder.Visible = kind.HasGroup;
+
+                if (schema.Viewer?.Columns != null)
+                {
+                    if (schema.Viewer.Columns.Any(x => x.DataField == "status_id"))
+                        gridContent.CellRenderers["RowHeader"] = new CustomRowHeaderCellRenderer(() => Session, gridContent, "status_id");
+                }
+            }
+
+            gridContent.CellRenderers.Remove("Image");
+            gridContent.CellRenderers.Add("Image", new CustomGridImageCellRenderer(gridContent));
+
+            CreateColumns();
+            RefreshCurrenView();
+
+            if (gridContent.AllowGrouping && schema?.Viewer?.Groups != null)
+            {
+                foreach (string columnName in schema.Viewer.Groups)
+                {
+                    GroupColumnDescription groupColumn = new GroupColumnDescription()
+                    {
+                        ColumnName = columnName,
+                        SortGroupRecords = false
+                    };
+
+                    gridContent.GroupColumnDescriptions.Add(groupColumn);
+                }
+            }
+
+            gridContent.ColumnResizing += Grid_ColumnResizing;
+
+            CreateCommands();
+            if (schema?.Viewer?.Toolbar != null)
+            {
+                SetButtonStyle(schema.Viewer.Toolbar.ButtonStyle);
+                SetIconSize(schema.Viewer.Toolbar.IconSize);
+            }
+        }
+
+        void ISettings.LoadSettings()
+        {
+#if USE_SETTINGS
+            string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            AssemblyName name = Assembly.GetExecutingAssembly().GetName();
+            settingsPath = Path.Combine(appFolder, name.Name, name.Version.ToString(), schema.Name);
+
+            string fileName = Path.Combine(settingsPath, settingsFile);
+            if (File.Exists(fileName))
+            {
+                string json = File.ReadAllText(fileName);
+                schema.Viewer = JsonConvert.DeserializeObject<DatasetViewer>(json);
+            }
+#endif
+        }
+
+        void ISettings.SaveSettings()
+        {
+#if USE_SETTINGS
+            if (schema.Viewer != null)
+            {
+                string json = JsonConvert.SerializeObject(schema.Viewer);
+                if (!System.IO.Directory.Exists(settingsPath))
+                {
+                    System.IO.Directory.CreateDirectory(settingsPath);
+                }
+
+                string fileName = Path.Combine(settingsPath, settingsFile);
+                File.WriteAllText(fileName, json);
+            }
+#endif
+        }
+
+        private void SetButtonStyle(ToolStripItemDisplayStyle style)
+        {
+            foreach (ToolStripItem item in toolStrip1.Items)
+            {
+                item.DisplayStyle = style;
+            }
+        }
+
+        private void SetIconSize(ButtonIconSize iconSize)
+        {
+            foreach (ToolStripButton item in toolStrip1.Items.OfType<ToolStripButton>())
+            {
+                UserToolButton button = item.Tag as UserToolButton;
+                switch (iconSize)
+                {
+                    case ButtonIconSize.Small:
+                        item.Image = button.Picture.GetImageSmall();
+                        break;
+                    case ButtonIconSize.Large:
+                        item.Image = button.Picture.GetImageLarge();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void GroupAction(CommandAction action)
+        {
+            string table = string.IsNullOrEmpty(schema?.Viewer?.Dataset.Name) ? schema.Name : schema.Viewer.Dataset.Name;
+            GroupEditor editor = new GroupEditor(table);
+
+            bool result = false;
+            switch (action)
+            {
+                case CommandAction.Create:
+                    result = editor.Create(kind.Id, ParentEntity);
+                    break;
+                case CommandAction.Edit:
+                    result = editor.Edit(GetCurrentId());
+                    break;
+            }
+
+            if (result)
+                RefreshCurrenView();
+        }
+
+        private Guid GetCurrentId() => GetCurrentFieldValue("id", Guid.Empty);
+
+        private int GetCurrentStatus() => GetCurrentFieldValue("status_id", 0);
+
+        private T GetCurrentFieldValue<T>(string fieldName, T defaultValue)
+        {
+            DataRowView row = gridContent.SelectedItem as DataRowView;
+            if (row != null)
+            {
+                DataTable dt = gridContent.DataSource as DataTable;
+                if (dt.Columns.Contains(fieldName))
+                {
+                    return (T)row[fieldName];
+                }
+
+                throw new FieldNotFoundException(schema.Viewer.Dataset.Select, fieldName);
+            }
+
+            return defaultValue;
+        }
+
+        private void Grid_ColumnResizing(object sender, ColumnResizingEventArgs e)
+        {
+            IList<DatasetColumn> list = schema?.Viewer?.Columns;
+            if (list == null)
+                return;
+
+            GridColumn column = gridContent.Columns[e.ColumnIndex];
+            DatasetColumn c = list.Where(x => x.DataField == column.MappingName).SingleOrDefault();
+            if (c != null)
+            {
+                c.Width = Convert.ToInt32(e.Width);
+            }
+        }
+
+        private NpgsqlParameter CreateParameter(NpgsqlCommand command, string name, Guid? value)
+        {
+            NpgsqlParameter parameter = command.Parameters.Add(name, NpgsqlDbType.Uuid);
+            if (value == null)
+                parameter.NpgsqlValue = DBNull.Value;
+            else
+                parameter.NpgsqlValue = value;
+
+            return parameter;
+        }
+
+        private void RefreshCurrenView()
+        {
+            if (string.IsNullOrEmpty(schema?.Viewer?.Dataset.Select))
+                return;
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(Db.ConnectionString))
+            {
+                connection.Open();
+
+                NpgsqlCommand command = new NpgsqlCommand(schema.Viewer.Dataset.Select, connection);
+                if (kind.HasGroup)
+                    CreateParameter(command, "parent_id", ParentEntity);
+
+                if (owner != null)
+                    CreateParameter(command, "owner_id", owner);
+
+                NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(command);
+                DataSet ds = new DataSet();
+                adapter.Fill(ds);
+
+                DataTable dt = ds.Tables[0];
+                dt.PrimaryKey = new DataColumn[] { dt.Columns["id"] };
+
+                gridContent.DataSource = dt;
+            }
+
+            gridContent.AutoExpandGroups = true;
+        }
+
+        private void DeleteRow(Guid id)
+        {
+            DataTable dt = gridContent.DataSource as DataTable;
+            var cur_row = dt.Rows.Find(id);
+            if (cur_row != null)
+            {
+                dt.Rows.Remove(cur_row);
+            }
+        }
+
+        private void RefreshRow(Guid id)
+        {
+            if (string.IsNullOrEmpty(schema?.Viewer?.Dataset.SelectByID))
+                return;
+
+            DataTable dt = gridContent.DataSource as DataTable;
+            var cur_row = dt.Rows.Find(id);
+            if (cur_row != null)
+            {
+                var new_row = Db.ExecuteSelect(Session, schema.Viewer.Dataset.SelectByID, null, ("id", id)).SingleOrDefault();
+                if (new_row != null)
+                {
+                    foreach (string item in new_row.Keys)
+                    {
+                        cur_row[item] = new_row[item];
+                    }
+                }
+            }
+        }
+
+        private void ChangeColumnVisible(object sender, EventArgs e)
+        {
+            if (sender is ToolStripMenuItem item && item.Tag is DatasetColumn column)
+            {
+                GridColumn gridColumn = gridContent.Columns.Where(x => x.MappingName == column.DataField).SingleOrDefault();
+                if (gridColumn != null)
+                {
+                    gridColumn.Visible = item.Checked;
+                    column.Visible = item.Checked;
+                }
+            }
+        }
+
+        private void CreateSortedColumns()
+        {
+            /*IEnumerable<DatasetColumn> list = schema?.Viewer?.Columns.Where(x => !string.IsNullOrEmpty(x.Sorting));
+            if (list == null)
+                return;
+
+            foreach (DatasetColumn column in list)
+            {
+                string sortDeirectionValue = column.Sorting.ToLower().Substring(0, 3);
+                if (!(new string[] { "asc", "des" }.Contains(sortDeirectionValue)))
+                    continue;
+
+                SortColumnDescription sort = new SortColumnDescription()
+                {
+                    ColumnName = column.DataField,
+                    SortDirection = sortDeirectionValue == "asc" ? ListSortDirection.Ascending : ListSortDirection.Descending
+                };
+
+                gridContent.SortColumnDescriptions.Add(sort);
+            }*/
+            if (schema?.Viewer?.Sorts != null)
+            {
+                foreach (ColumnSort item in schema.Viewer.Sorts)
+                {
+                    SortColumnDescription sort = new SortColumnDescription()
+                    {
+                        ColumnName = item.ColumnName,
+                        SortDirection = item.SortDirection
+                    };
+
+                    gridContent.SortColumnDescriptions.Add(sort);
+                }
+            }
+        }
+
+        private void CreateColumns()
+        {
+            if (schema?.Viewer?.Columns == null)
+                return;
+
+            foreach (DatasetColumn c in schema.Viewer.Columns)
+            {
+                GridColumn column = gridContent.CreateColumn(c);
+                dataColumns.Add(column, c);
+
+                ToolStripMenuItem item = new ToolStripMenuItem()
+                {
+                    Text = c.Text,
+                    CheckOnClick = true,
+                    Checked = c.Visible,
+                    Enabled = c.Hideable,
+                    Tag = c
+                };
+
+                item.Click += ChangeColumnVisible;
+                menuVisibleColumns.DropDownItems.Add(item);
+            }
+
+            gridContent.CreateStackedColumns(schema?.Viewer?.StackedColumns);
+            gridContent.CreateSummaryRow(schema?.Viewer?.Columns);
+            CreateSortedColumns();
+        }
+
+        private Guid? GetCurrentGroupEntity()
+        {
+            Guid guid = breadcrumb1.Peek();
+            return guid == Guid.Empty ? (Guid?)null : guid;
+        }
+
+        private void AddCommandItem(string code, ToolStripItem item)
+        {
+            if (commandItems.ContainsKey(code))
+            {
+                commandItems[code].Add(item);
+            }
+            else
+            {
+                commandItems.Add(code, new List<ToolStripItem>() { item });
+            }
+        }
+
+        private void CreateEmbededCommands(ToolStrip toolStrip, IList<Command> commands)
+        {
+            foreach (var item in toolStrip.Items.OfType<ToolStripItem>().Where(x => x.Tag != null))
+            {
+                string[] tag = item.Tag.ToString().Split('|');
+
+                if (!string.IsNullOrEmpty(tag[0]))
+                {
+                    Command cmd = commands.FirstOrDefault(x => x.Code == tag[0]);
+                    if (cmd == null)
+                        continue;
+
+                    item.Tag = new UserToolButton()
+                    {
+                        UserCommand = null,
+                        Command = cmd,
+                        Picture = cmd.Picture
+                    };
+
+                    AddCommandItem(cmd.Code, item);
+                }
+
+                if (toolStrip is ContextMenuStrip)
+                    groupItems.AddMenuItem(item, tag[1]);
+                else
+                    groupItems.AddToolbarItem(item, tag[1]);
+            }
+        }
+
+        private T CreateUserToolItem<T>(UserCommand userCommand) where T : ToolStripItem, new()
+        {
+            Picture image = null;
+            T item = null;
+
+            switch (userCommand.Method)
+            {
+                case CommandMethod.Sql:
+                    image = Session.QueryOver<Picture>()
+                        .Where(x => x.Code == userCommand.Icon.ToLower())
+                        .SingleOrDefault();
+
+                    item = new T()
+                    {
+                        Text = string.IsNullOrEmpty(userCommand.Title) ? userCommand.Name : userCommand.Title,
+                        Tag = new UserToolButton()
+                        {
+                            UserCommand = userCommand,
+                            Command = null,
+                            Picture = image
+                        },
+                        DisplayStyle = userCommand.ShowTitle ? ToolStripItemDisplayStyle.ImageAndText : ToolStripItemDisplayStyle.Image
+                    };
+
+                    item.Click += SqlCommand_Click;
+
+                    break;
+                case CommandMethod.Embedded:
+                    Command cmd = Session.QueryOver<Command>()
+                        .Where(x => x.Code == userCommand.Command.ToLower())
+                        .SingleOrDefault();
+
+                    image = image ?? cmd.Picture;
+
+                    item = new T()
+                    {
+                        Text = string.IsNullOrEmpty(cmd.Name) ? cmd.Code : cmd.Name,
+                        TextImageRelation = TextImageRelation.ImageAboveText,
+                        ImageScaling = ToolStripItemImageScaling.None,
+                        Tag = new UserToolButton
+                        {
+                            UserCommand = userCommand,
+                            Command = cmd,
+                            Picture = image
+                        },
+                        DisplayStyle = userCommand.ShowTitle ? ToolStripItemDisplayStyle.ImageAndText : ToolStripItemDisplayStyle.Image
+                    };
+
+                    item.Click += EmbededCommand_Click;
+
+                    break;
+            }
+
+            if (image == null)
+            {
+                image = Session.Get<Picture>(new Guid("00e5691b-1e20-4f15-991a-aaf896bcded8")); // unknown (Не известно)
+            }
+
+            if (item != null)
+            {
+                if (item is ToolStripButton button)
+                {
+                    ToolStripItemDisplayStyle style = ToolStripItemDisplayStyle.ImageAndText;
+                    ButtonIconSize size = ButtonIconSize.Large;
+                    if (schema?.Viewer?.Toolbar != null)
+                    {
+                        style = schema.Viewer.Toolbar.ButtonStyle;
+                        size = schema.Viewer.Toolbar.IconSize;
+                    }
+
+                    button.DisplayStyle = style;
+
+                    switch (size)
+                    {
+                        case ButtonIconSize.Small:
+                            item.Image = image.GetImageSmall();
+                            break;
+                        case ButtonIconSize.Large:
+                            button.Image = image.GetImageLarge();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                    item.Image = image.GetImageSmall();
+            }
+
+            AddCommandItem(((UserToolButton)(item.Tag)).Code, item);
+
+            return item;
+        }
+
+        private void EmbededCommand_Click(object sender, EventArgs e)
+        {
+            if (sender is ToolStripItem item && item.Tag is UserToolButton command)
+            {
+                commands.Execute(command.Command.Code, GetCurrentId());
+            }
+        }
+
+        private void SqlCommand_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void CreateCommandButtons()
+        {
+            foreach (CommandGroup g in schema.Viewer.CommandGroups)
+            {
+                if (g.Commands.Where(x => x.InsertInToolbar).Any())
+                {
+                    ToolbarGroup toolbar = new ToolbarGroup(g.Name);
+                    foreach (UserCommand item in g.Commands.Where(x => x.InsertInToolbar))
+                    {
+                        ToolStripButton button = CreateUserToolItem<ToolStripButton>(item);
+                        toolbar.Add(button);
+                    }
+
+                    groupItems.AddToolbar(toolStrip1, toolbar);
+                }
+            }
+        }
+
+        private void CreateCommandMenuItems()
+        {
+            foreach (CommandGroup g in schema.Viewer.CommandGroups)
+            {
+                if (g.Commands.Where(x => x.InsertInContextMenu).Any())
+                {
+                    ToolbarGroup toolbar = new ToolbarGroup(g.Name);
+                    foreach (UserCommand item in g.Commands.Where(x => x.InsertInContextMenu))
+                    {
+                        ToolStripMenuItem menu = CreateUserToolItem<ToolStripMenuItem>(item);
+                        toolbar.Add(menu);
+                    }
+
+                    groupItems.AddMenu(contextGridMenu, toolbar);
+                }
+            }
+        }
+
+        private void UpdateAvailabilityCommands()
+        {
+            if (schema?.Viewer?.CommandVisible != null)
+            {
+                foreach (string cmd in commandItems.Keys)
+                {
+                    if (schema.Viewer.CommandVisible.Contains(cmd))
+                        continue;
+
+                    foreach (ToolStripItem item in commandItems[cmd])
+                    {
+                        item.Visible = false;
+                    }
+                }
+
+                groupItems.Refresh();
+            }
+        }
+
+        private void CreateCommands()
+        {
+            IList<Command> commands = Session.QueryOver<Command>().List();
+
+            CreateEmbededCommands(toolStrip1, commands);
+            CreateEmbededCommands(contextGridMenu, commands);
+
+            if (schema?.Viewer?.CommandGroups != null)
+            {
+                CreateCommandButtons();
+                CreateCommandMenuItems();
+            }
+
+            UpdateAvailabilityCommands();
+        }
+
+        private void RefreshEntities(object sender, EventArgs e) => RefreshCurrenView();
+
+        private void Edit() => commands.Execute("edit-record", new EditorParams() { Id = GetCurrentId(), Parent = ParentEntity, Owner = owner, Kind = kind, Editor = schema?.Editor });
+
+        private void breadcrumb1_CrumbClick(object sender, CrumbClickEventArgs e)
+        {
+            switch (e.Kind)
+            {
+                case ToolButtonKind.Up:
+                    breadcrumb1.Pop();
+                    ParentEntity = GetCurrentGroupEntity();
+                    RefreshCurrenView();
+                    break;
+                case ToolButtonKind.Refresh:
+                    ParentEntity = GetCurrentGroupEntity();
+                    RefreshCurrenView();
+                    break;
+                case ToolButtonKind.Home:
+                    breadcrumb1.Clear();
+                    ParentEntity = null;
+                    RefreshCurrenView();
+                    break;
+            }
+        }
+
+        private void SearchData(object sender, EventArgs e)
+        {
+            if (sender is TextBoxExt text)
+            {
+                gridContent.SearchController.Search(text.Text);
+            }
+        }
+
+        private void gridContent_QueryCellStyle(object sender, QueryCellStyleEventArgs e)
+        {
+            DatasetColumn c = dataColumns[e.Column];
+            if (!string.IsNullOrEmpty(c.NegativeValueColor))
+            {
+                bool negative = false;
+                switch (c.Type)
+                {
+                    case DatasetColumnType.Integer:
+                        negative = Convert.ToInt32(e.DisplayText) < 0;
+                        break;
+                    case DatasetColumnType.Numeric:
+                        negative = Convert.ToDecimal(e.DisplayText) < 0;
+                        break;
+                }
+
+                if (negative)
+                    e.Style.TextColor = ColorTranslator.FromHtml(c.NegativeValueColor);
+            }
+        }
+
+        private void gridContent_CellDoubleClick(object sender, CellClickEventArgs e)
+        {
+            DataRowView row = gridContent.SelectedItem as DataRowView;
+            if (row != null)
+            {
+                DataTable dt = gridContent.DataSource as DataTable;
+                if (dt.Columns.Contains("status_id"))
+                {
+                    int status = Convert.ToInt32(row["status_id"]);
+                    if (status == 500)
+                    {
+                        ParentEntity = (Guid)row["id"];
+                        breadcrumb1.Push(ParentEntity.Value, row["name"].ToString());
+                        RefreshCurrenView();
+                        return;
+                    }
+                }
+
+                string code = string.IsNullOrEmpty(schema?.Viewer.DoubleClickCommand) ? "edit-record" : schema.Viewer.DoubleClickCommand;
+                if (code == "edit-record")
+                    Edit();
+                else
+                    commands.Execute(code, GetCurrentId());
+            }
+        }
+
+        private void buttonCreate_Click(object sender, EventArgs e) => commands.Execute("add-record", new EditorParams() { Id = Guid.Empty, Parent = ParentEntity, Owner = owner, Kind = kind, Editor = schema?.Editor });
+
+        private void buttonEdit_Click(object sender, EventArgs e)
+        {
+            if (GetCurrentStatus() == 500)
+                GroupAction(CommandAction.Edit);
+            else
+                Edit();
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            string deleteSql = schema?.Editor.Dataset.DeleteDefault(kind.Code);
+            if (deleteSql == null)
+            {
+                MessageBox.Show("Не указана команда для удаления (editor/dataset/delete)");
+                return;
+            }
+
+            bool delete;
+            if (GetCurrentStatus() == 500)
+            {
+                delete = MessageBox.Show("Удаление группы приведет к удалению всего содержимого группы. Продолжить?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+            }
+            else
+            {
+                delete = MessageBox.Show("Вы действительно хотите удалить запись?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+            }
+
+            if (!delete)
+                return;
+
+            using (var transaction = Session.BeginTransaction())
+            {
+                try
+                {
+                    Session.CreateSQLQuery(deleteSql)
+                        .SetGuid("id", GetCurrentId())
+                        .ExecuteUpdate();
+                    transaction.Commit();
+                    RefreshCurrenView();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    ExceptionHelper.MesssageBox(ex);
+                }
+            }
+        }
+
+        private void buttonCopy_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonAddFolder_Click(object sender, EventArgs e) => GroupAction(CommandAction.Create);
+
+        private void buttonHistory_Click(object sender, EventArgs e)
+        {
+            DataRowView row = gridContent.SelectedItem as DataRowView;
+            if (row == null)
+                return;
+
+            HistoryWindow win = new HistoryWindow(Session, (Guid)row["id"]);
+            win.ShowDialog();
+        }
+
+        private void menuCopyClipboard_Click(object sender, EventArgs e)
+        {
+            if (gridContent.CurrentCell == null || gridContent.CurrentItem == null)
+                return;
+
+            string propName = gridContent.CurrentCell.Column.MappingName;
+            DataRowView row = gridContent.SelectedItem as DataRowView;
+            object value = row[propName];
+            if (value != null)
+                Clipboard.SetText(value.ToString());
+        }
+
+        private void timerDatabaseListen_Tick(object sender, EventArgs e)
+        {
+            if (notifies.TryDequeue(out NotifyMessage message))
+            {
+                switch (message.Action)
+                {
+                    case "refresh":
+                        switch (message.Destination)
+                        {
+                            case MessageDestination.Object:
+                                RefreshRow(message.ObjectId);
+                                break;
+                            case MessageDestination.List:
+                                RefreshCurrenView();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case "delete":
+                        DeleteRow(message.ObjectId);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void buttonSelectRange_Click(object sender, EventArgs e)
+        {
+            SelectDateRangeWindow win = new SelectDateRangeWindow();
+            if (win.ShowDialog() == DialogResult.OK)
+            {
+                dateTimePickerFrom.Value = win.DateFrom;
+                dateTimePickerTo.Value = win.DateTo;
+            }
+        }
+    }
+}

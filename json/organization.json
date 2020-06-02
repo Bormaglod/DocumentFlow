@@ -1,0 +1,234 @@
+﻿{
+  "name": "organization",
+  "viewer": {
+    "dataset": {
+      "select": "select org.id, org.status_id, s.note as status_name, org.name, org.short_name, org.full_name, org.inn, org.kpp, org.ogrn, org.okpo, o.name as okopf_name, org.address, org.phone, org.email, org.default_org from organization org join status s on (s.id = org.status_id) left join okopf o on (o.id = org.okopf_id)",
+      "select-id": "select org.id, org.status_id, s.note as status_name, org.name, org.short_name, org.full_name, org.inn, org.kpp, org.ogrn, org.okpo, o.name as okopf_name, org.address, org.phone, org.email, org.default_org from organization org join status s on (s.id = org.status_id) left join okopf o on (o.id = org.okopf_id) where org.id = :id"
+    },
+    "data-type": "Directory",
+    "allow-grouping": true,
+    "columns": [
+      {
+        "datafield": "id",
+        "text": "Id",
+        "type": "Text",
+        "width": 180,
+        "visible": false
+      },
+      {
+        "datafield": "status_id",
+        "text": "Код состояния",
+        "type": "Integer",
+        "width": 80,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "status_name",
+        "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "name",
+        "text": "Наименование",
+        "type": "Text",
+        "hideable": false,
+        "auto-size": true
+      },
+      {
+        "datafield": "short_name",
+        "text": "Краткое наименование",
+        "type": "Text",
+        "visible": false
+      },
+      {
+        "datafield": "full_name",
+        "text": "Полное наименование",
+        "type": "Text",
+        "width": 150,
+        "visible": false
+      },
+      {
+        "datafield": "inn",
+        "text": "ИНН",
+        "type": "Integer"
+      },
+      {
+        "datafield": "kpp",
+        "text": "КПП",
+        "type": "Integer"
+      },
+      {
+        "datafield": "okpo",
+        "text": "ОКПО",
+        "type": "Integer",
+        "visible": false
+      },
+      {
+        "datafield": "ogrn",
+        "text": "ОГРН",
+        "type": "Integer",
+        "width": 120
+      },
+      {
+        "datafield": "okopf_name",
+        "text": "ОКОПФ",
+        "type": "Text",
+        "width": 300
+      },
+      {
+        "datafield": "address",
+        "text": "Адрес",
+        "type": "Text",
+        "width": 250
+      },
+      {
+        "datafield": "phone",
+        "text": "Телефон",
+        "type": "Text",
+        "width": 150
+      },
+      {
+        "datafield": "email",
+        "text": "Эл. почта",
+        "type": "Text",
+        "width": 200
+      },
+      {
+        "datafield": "default_org",
+        "text": "Основная",
+        "type": "Boolean",
+        "width": 70
+      }
+    ]
+  },
+  "editor": {
+    "dataset": {
+      "select": "select id, name, short_name, full_name, inn, kpp, ogrn, okpo, okopf_id, account_id, address, phone, email, default_org from organization where id = :id",
+      "update": "update organization set name = :name, short_name = :short_name, full_name = :full_name, inn = :inn, kpp = :kpp, ogrn = :ogrn, okpo = :okpo, okopf_id = :okopf_id, account_id = :account_id, address = :address, phone = :phone, email = :email, default_org = :default_org where id = :id"
+    },
+    "controls": [
+      {
+        "type": "TextBox",
+        "text": "Наименование",
+        "datafield": "name",
+        "label-width": 190,
+        "edit-width": 360
+      },
+      {
+        "type": "TextBox",
+        "text": "Короткое наименование",
+        "datafield": "short_name",
+        "label-width": 190,
+        "edit-width": 450
+      },
+      {
+        "type": "TextBox",
+        "text": "Полное наименование",
+        "datafield": "full_name",
+        "label-width": 190,
+        "edit-width": 450,
+        "height": 75,
+        "multiline": true,
+        "padding": [ 0, 0, 0, 7 ]
+      },
+      {
+        "type": "Numeric",
+        "text": "ИНН",
+        "datafield": "inn",
+        "label-width": 190,
+        "edit-width": 150,
+        "decimal-digits": 0
+      },
+      {
+        "type": "Numeric",
+        "text": "КПП",
+        "datafield": "kpp",
+        "label-width": 190,
+        "edit-width": 150,
+        "decimal-digits": 0
+      },
+      {
+        "type": "Numeric",
+        "text": "ОГРН",
+        "datafield": "ogrn",
+        "label-width": 190,
+        "edit-width": 150,
+        "decimal-digits": 0
+      },
+      {
+        "type": "Numeric",
+        "text": "ОКПО",
+        "datafield": "okpo",
+        "label-width": 190,
+        "edit-width": 150,
+        "decimal-digits": 0
+      },
+      {
+        "type": "ComboBoxData",
+        "text": "ОКОПФ",
+        "datafield": "okopf_id",
+        "label-width": 190,
+        "edit-width": 330,
+        "dataset": "select id, name from okopf where status_id = 1001"
+      },
+      {
+        "type": "ComboBoxData",
+        "text": "Расчётный счёт",
+        "datafield": "account_id",
+        "label-width": 190,
+        "edit-width": 330,
+        "dataset": "select id, name from account where owner_id = :id and status_id = 1002"
+      },
+      {
+        "type": "TextBox",
+        "text": "Адрес",
+        "datafield": "address",
+        "label-width": 190,
+        "edit-width": 450,
+        "height": 75,
+        "multiline": true,
+        "padding": [ 0, 0, 0, 7 ]
+      },
+      {
+        "type": "TextBox",
+        "text": "Телефон",
+        "datafield": "phone",
+        "label-width": 190,
+        "edit-width": 190
+      },
+      {
+        "type": "TextBox",
+        "text": "Эл. почта",
+        "datafield": "email",
+        "label-width": 190,
+        "edit-width": 300
+      },
+      {
+        "type": "CheckBox",
+        "text": "Основная организация",
+        "datafield": "default_org",
+        "label-width": 190
+      }
+    ],
+    "conditions": [
+      {
+        "controls": [ "name", "short_name", "full_name", "inn", "kpp", "ogrn", "okpo", "okopf_id", "account_id", "phone", "email", "address", "default_org" ],
+        "enable": {
+          "states": [ "compiled", "is changing" ]
+        }
+      }
+    ],
+    "childs": [
+      {
+        "name": "account"
+      },
+      {
+        "name": "employee"
+      }
+    ]
+  }
+}

@@ -1,0 +1,99 @@
+﻿{
+  "name": "picture",
+  "viewer": {
+    "dataset": {
+      "select": "select p.id, p.status_id, s.note as status_name, p.code, p.name, p.parent_id, p.size_small, p.size_large, p.img_name, p.note from picture p join status s on (s.id = p.status_id) where (p.parent_id is not distinct from :parent_id)"
+    },
+    "data-type": "Directory",
+    "columns": [
+      {
+        "datafield": "id",
+        "text": "Id",
+        "type": "text",
+        "width": 180,
+        "visible": false
+      },
+      {
+        "datafield": "status_id",
+        "text": "Код состояния",
+        "type": "Integer",
+        "width": 80,
+        "visible": false
+      },
+      {
+        "datafield": "status_name",
+        "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false
+      },
+      {
+        "datafield": "code",
+        "text": "Код",
+        "type": "Text",
+        "width": 120
+      },
+      {
+        "datafield": "name",
+        "text": "Наименование",
+        "type": "Text",
+        "hideable": false,
+        "auto-size": true
+      },
+      {
+        "text": "Изображение",
+        "type": "Image",
+        "datafield": "size_small"
+      }
+    ]
+  },
+  "editor": {
+    "dataset": {
+      "select": "select id, code, name, parent_id, size_small, size_large, img_name, note from picture where id = :id",
+      "update": "update picture set code = :code, name = :name, parent_id = :parent_id, size_small = :size_small, size_large = :size_large, img_name = :img_name, note = :note where id = :id"
+    },
+    "controls": [
+      {
+        "type": "TextBox",
+        "text": "Код",
+        "datafield": "code",
+        "label-width": 220,
+        "edit-width": 150
+      },
+      {
+        "type": "TextBox",
+        "text": "Наименование",
+        "datafield": "name",
+        "label-width": 220,
+        "edit-width": 380
+      },
+      {
+        "type": "TextBox",
+        "text": "Наименование (файл)",
+        "datafield": "img_name",
+        "label-width": 220,
+        "edit-width": 250
+      },
+      {
+        "type": "TextBox",
+        "text": "Примечание",
+        "datafield": "note",
+        "label-width": 220,
+        "edit-width": 450
+      },
+      {
+        "type": "Image",
+        "text": "Изображение 16х16",
+        "datafield": "size_small",
+        "label-width": 220,
+        "padding": [ 0, 0, 0, 7 ]
+      },
+      {
+        "type": "Image",
+        "text": "Изображение 30х30",
+        "datafield": "size_large",
+        "label-width": 220
+      }
+    ]
+  }
+}

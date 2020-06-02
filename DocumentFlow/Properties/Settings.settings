@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DocumentFlow.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="WindowState" Type="System.Windows.Forms.FormWindowState" Scope="User">
+      <Value Profile="(Default)">Maximized</Value>
+    </Setting>
+    <Setting Name="DocumentsFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Databases\DocumentFlow</Value>
+    </Setting>
+    <Setting Name="FtpPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/apps/DocumentFlow Files</Value>
+    </Setting>
+    <Setting Name="FtpHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">109.68.215.41</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

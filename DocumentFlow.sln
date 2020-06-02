@@ -1,0 +1,101 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow", "DocumentFlow\DocumentFlow.csproj", "{5D1EC498-1525-4E40-947C-1A1DC86C12B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.Authorization", "DocumentFlow.Authorization\DocumentFlow.Authorization.csproj", "{315DE671-40C1-404C-B81C-A9764C599A38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.Data", "DocumentFlow.Data\DocumentFlow.Data.csproj", "{089024A5-3602-4DE6-93BF-EFDED0D1A0EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.Core", "DocumentFlow.Core\DocumentFlow.Core.csproj", "{B35FF552-1EB5-4E81-96C8-58FE28CC874C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.Controls", "DocumentFlow.Controls\DocumentFlow.Controls.csproj", "{6F1DE0B7-9993-4964-9403-E098600773F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "json", "json", "{C36558B3-41BF-47E5-B746-B37ABBBD5706}"
+	ProjectSection(SolutionItems) = preProject
+		json\account.json = json\account.json
+		json\archive_price.json = json\archive_price.json
+		json\balance_contractor.json = json\balance_contractor.json
+		json\balance_goods.json = json\balance_goods.json
+		json\bank.json = json\bank.json
+		json\calc_item_deduction.json = json\calc_item_deduction.json
+		json\calc_item_goods.json = json\calc_item_goods.json
+		json\calc_item_operation.json = json\calc_item_operation.json
+		json\calculation.json = json\calculation.json
+		json\contractor.json = json\contractor.json
+		json\deduction.json = json\deduction.json
+		json\diagram.json = json\diagram.json
+		json\employee.json = json\employee.json
+		json\goods.json = json\goods.json
+		json\invoice_receipt.json = json\invoice_receipt.json
+		json\measurement.json = json\measurement.json
+		json\okopf.json = json\okopf.json
+		json\okpdtr.json = json\okpdtr.json
+		json\operation.json = json\operation.json
+		json\operation_type.json = json\operation_type.json
+		json\organization.json = json\organization.json
+		json\payment_order.json = json\payment_order.json
+		json\person.json = json\person.json
+		json\picture.json = json\picture.json
+		json\production_operation.json = json\production_operation.json
+		json\production_order.json = json\production_order.json
+		json\purchase_request.json = json\purchase_request.json
+	EndProjectSection
+	ProjectSection(FolderGlobals) = preProject
+		C_5_4Projects_4DocumentFlow_4json_4schema_1json__JsonSchema = http://json-schema.org/draft-04/schema
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.DataSchema", "DocumentFlow.DataSchema\DocumentFlow.DataSchema.csproj", "{BA7A2027-58C6-4F68-8BD1-515C94034B24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.DataSchema.Types", "DocumentFlow.DataSchema.Types\DocumentFlow.DataSchema.Types.csproj", "{7CEB15E0-DBC6-4A71-9369-829988AF058E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pg_money_convert", "pg_money_convert\pg_money_convert.csproj", "{B42A1FBC-DE5C-4556-9437-30A349431EF8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D1EC498-1525-4E40-947C-1A1DC86C12B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D1EC498-1525-4E40-947C-1A1DC86C12B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D1EC498-1525-4E40-947C-1A1DC86C12B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D1EC498-1525-4E40-947C-1A1DC86C12B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{315DE671-40C1-404C-B81C-A9764C599A38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{315DE671-40C1-404C-B81C-A9764C599A38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{315DE671-40C1-404C-B81C-A9764C599A38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{315DE671-40C1-404C-B81C-A9764C599A38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{089024A5-3602-4DE6-93BF-EFDED0D1A0EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{089024A5-3602-4DE6-93BF-EFDED0D1A0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{089024A5-3602-4DE6-93BF-EFDED0D1A0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{089024A5-3602-4DE6-93BF-EFDED0D1A0EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B35FF552-1EB5-4E81-96C8-58FE28CC874C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B35FF552-1EB5-4E81-96C8-58FE28CC874C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B35FF552-1EB5-4E81-96C8-58FE28CC874C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B35FF552-1EB5-4E81-96C8-58FE28CC874C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F1DE0B7-9993-4964-9403-E098600773F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F1DE0B7-9993-4964-9403-E098600773F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F1DE0B7-9993-4964-9403-E098600773F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F1DE0B7-9993-4964-9403-E098600773F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA7A2027-58C6-4F68-8BD1-515C94034B24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA7A2027-58C6-4F68-8BD1-515C94034B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA7A2027-58C6-4F68-8BD1-515C94034B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA7A2027-58C6-4F68-8BD1-515C94034B24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CEB15E0-DBC6-4A71-9369-829988AF058E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CEB15E0-DBC6-4A71-9369-829988AF058E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CEB15E0-DBC6-4A71-9369-829988AF058E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CEB15E0-DBC6-4A71-9369-829988AF058E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B42A1FBC-DE5C-4556-9437-30A349431EF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B42A1FBC-DE5C-4556-9437-30A349431EF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B42A1FBC-DE5C-4556-9437-30A349431EF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B42A1FBC-DE5C-4556-9437-30A349431EF8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FD0B46D9-4788-4710-ADA3-092FBAA35105}
+	EndGlobalSection
+EndGlobal

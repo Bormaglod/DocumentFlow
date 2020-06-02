@@ -1,0 +1,194 @@
+﻿{
+  "name": "calc_item_operation",
+  "viewer": {
+    "dataset": {
+      "select": "select cio.id, cio.status_id, s.note as status_name, o.name, cio.cost, cio.price, cio.amount from calc_item_operation cio left join operation o on (o.id = cio.item_id) join status s on (s.id = cio.status_id) where cio.owner_id = :owner_id",
+      "select-id": "select cio.id, cio.status_id, s.note as status_name, o.name, cio.cost, cio.price, cio.amount from calc_item_operation cio left join operation o on (o.id = cio.item_id) join status s on (s.id = cio.status_id) where cio.id = :id"
+    },
+    "data-type": "Directory",
+    "toolbar": {
+      "button-style": "Image",
+      "icon-size": "Small"
+    },
+    "commandbar-visible": false,
+    "columns": [
+      {
+        "datafield": "id",
+        "text": "Id",
+        "type": "Text",
+        "width": 180,
+        "visible": false
+      },
+      {
+        "datafield": "status_id",
+        "text": "Код состояния",
+        "type": "Integer",
+        "width": 80,
+        "visible": false
+      },
+      {
+        "datafield": "status_name",
+        "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false
+      },
+      {
+        "datafield": "name",
+        "text": "Производственная операция",
+        "type": "Text",
+        "auto-size": true,
+        "aggregate": "Count",
+        "aggregate-title": "Всего наименований: "
+      },
+      {
+        "datafield": "amount",
+        "text": "Количество",
+        "type": "Integer",
+        "width": 150,
+        "horizontal-align": "Right",
+        "aggregate": "Sum"
+      },
+      {
+        "datafield": "price",
+        "text": "Цена",
+        "type": "Numeric",
+        "width": 150,
+        "format-mode": "Currency",
+        "horizontal-align": "Right"
+      },
+      {
+        "datafield": "cost",
+        "text": "Стоимость",
+        "type": "numeric",
+        "width": 150,
+        "format-mode": "Currency",
+        "horizontal-align": "Right",
+        "aggregate": "Sum"
+      }
+    ]
+  },
+  "editor": {
+    "dataset": {
+      "select": "select cio.id, c.name as calculation_name, cio.item_id, cio.cost, cio.price, cio.amount from calc_item_operation cio left join calculation c on (c.id = cio.owner_id) where cio.id = :id",
+      "update": "update calc_item_operation set item_id = :item_id, amount = :amount, price = :price, cost = :cost where id = :id"
+    },
+    "controls": [
+      {
+        "type": "TextBox",
+        "text": "Калькуляция",
+        "datafield": "calculation_name",
+        "label-width": 120,
+        "edit-width": 300,
+        "enabled": false
+      },
+      {
+        "type": "SelectBox",
+        "text": "Операция",
+        "datafield": "item_id",
+        "dataset": "with recursive r as (select id, status_id, parent_id, name, code from operation where parent_id is null and status_id in (500, 1002) union select o.id, o.status_id, o.parent_id, o.name, o.code from operation o join r on r.id = o.parent_id and o.status_id in (500, 1002)) select id, status_id, parent_id, name from r order by code",
+        "label-width": 120,
+        "edit-width": 450
+      },
+      {
+        "type": "Numeric",
+        "text": "Количество",
+        "datafield": "amount",
+        "decimal-digits": 3,
+        "label-width": 120,
+        "edit-width": 150
+      },
+      {
+        "type": "Currency",
+        "text": "Цена",
+        "datafield": "price",
+        "label-width": 120,
+        "edit-width": 200
+      },
+      {
+        "type": "Currency",
+        "text": "Стоимость",
+        "datafield": "cost",
+        "label-width": 120,
+        "edit-width": 200
+      },
+      {
+        "type": "DataGrid",
+        "name": "datagrid",
+        "dataset": "select um.id, g.name as goods_name, um.count_by_goods, um.count_by_operation from used_material um join goods g on (g.id = um.goods_id) where um.calc_item_operation_id = :id",
+        "height": 300,
+        "form-title": "Номенклатура",
+        "columns": [
+          {
+            "datafield": "goods_name",
+            "text": "Номенклатура",
+            "type": "Text",
+            "auto-size": true,
+            "hideable": false
+          },
+          {
+            "datafield": "count_by_goods",
+            "text": "Количество на изд.",
+            "type": "Numeric",
+            "digits": 3,
+            "hideable": false,
+            "horizontal-align": "Right",
+            "width": 150
+          },
+          {
+            "datafield": "count_by_operation",
+            "text": "Количество на опер.",
+            "type": "Numeric",
+            "digits": 3,
+            "hideable": false,
+            "horizontal-align": "Right",
+            "width": 150
+          }
+        ],
+        "editor": {
+          "dataset": {
+            "name": "used_material",
+            "select": "select id, goods_id, count_by_goods, count_by_operation from used_material where id = :id",
+            "insert": "insert into used_material (calc_item_operation_id, goods_id, count_by_goods, count_by_operation) values (:owner_id, :goods_id, :count_by_goods, :count_by_operation) returning id",
+            "update": "update used_material set goods_id = :goods_id, count_by_goods = :count_by_goods, count_by_operation = :count_by_operation where id = :id",
+            "delete": "delete from used_material where id = :id"
+          },
+          "controls": [
+            {
+              "text": "Номенклатура",
+              "type": "SelectBox",
+              "dataset": "with recursive r as (select id, status_id, parent_id, name from goods where parent_id is null and not code in ('Прд', 'Усл') and status_id in (500, 1002) union select g.id, g.status_id, g.parent_id, g.name from goods g join r on r.id = g.parent_id and g.status_id in (500, 1002)) select * from r order by name",
+              "datafield": "goods_id",
+              "edit-full-size": true,
+              "label-width": 160
+            },
+            {
+              "text": "Количество на изд.",
+              "type": "Numeric",
+              "decimal-digits": 3,
+              "datafield": "count_by_goods",
+              "edit-full-size": true,
+              "label-width": 160
+            },
+            {
+              "text": "Количество на опер.",
+              "type": "Numeric",
+              "decimal-digits": 3,
+              "datafield": "count_by_operation",
+              "edit-full-size": true,
+              "label-width": 160
+            }
+          ]
+        }
+      }
+    ],
+    "conditions": [
+      {
+        "controls": [ "item_id", "amount", "price", "cost", "datagrid" ],
+        "enable": {
+          "states": [ "compiled" ]
+        }
+      }
+    ]
+  }
+}

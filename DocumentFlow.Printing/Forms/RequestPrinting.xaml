@@ -1,0 +1,176 @@
+<FlowDocument
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:printing="clr-namespace:DocumentFlow.Printing;assembly=DocumentFlow" 
+    xmlns:core="clr-namespace:DocumentFlow.Printing.Core;assembly=DocumentFlow"
+    xmlns:cnv="clr-namespace:DocumentFlow.Printing.Converters;assembly=DocumentFlow"
+    ColumnWidth="400" FontSize="14" FontFamily="Tahoma">
+    <FlowDocument.Resources>
+        <cnv:DateTimeToDateConverter x:Key="dateConverter"/>
+    </FlowDocument.Resources>
+    <Table>
+        <TableRowGroup>
+            <TableRow>
+                <TableCell TextAlignment="Center">
+                    <Paragraph><Run Text="{Binding Path=org_name, Mode=OneTime}"></Run></Paragraph>
+                    <Paragraph xml:space="preserve"><Run>ИНН: </Run><Run Text="{Binding Path=org_inn, Mode=OneTime}"></Run><Run>, КПП: </Run><Run Text="{Binding Path=org_kpp, Mode=OneTime}"></Run></Paragraph>
+                    <Paragraph xml:space="preserve"><Run>ОГРН: </Run><Run Text="{Binding Path=org_ogrn, Mode=OneTime}"></Run></Paragraph>
+                    <Paragraph><Run Text="{Binding Path=org_address, Mode=OneTime}"></Run></Paragraph>
+                    <Paragraph xml:space="preserve"><Run>Тел: </Run><Run Text="{Binding Path=org_phone, Mode=OneTime}"></Run></Paragraph>
+                    <Paragraph xml:space="preserve"><Run>Эл. почта: </Run><Run Foreground="Blue" Text="{Binding Path=org_email, Mode=OneTime}"></Run></Paragraph>
+                </TableCell>
+                <TableCell TextAlignment="Center">
+                    <Paragraph><Run Text="{Binding Path=contractor_name, Mode=OneTime}"></Run></Paragraph>
+                </TableCell>
+            </TableRow>
+        </TableRowGroup>
+    </Table>
+    <Table>
+        <Table.Columns>
+            <TableColumn Width="140"></TableColumn>
+            <TableColumn Width="20"></TableColumn>
+            <TableColumn Width="100"></TableColumn>
+        </Table.Columns>
+        <TableRowGroup>
+            <TableRow>
+                <TableCell TextAlignment="Center" BorderThickness="0,0,0,1" BorderBrush="Black">
+                    <Paragraph><Run Text="{Binding Path=doc_date, Mode=OneTime, Converter={StaticResource dateConverter}}"></Run></Paragraph>
+                </TableCell>
+                <TableCell TextAlignment="Center" >
+                    <Paragraph>№</Paragraph>
+                </TableCell>
+                <TableCell TextAlignment="Center"  BorderThickness="0,0,0,1" BorderBrush="Black">
+                    <Paragraph><Run Text="{Binding Path=view_number, Mode=OneTime}"></Run></Paragraph>
+                </TableCell>
+            </TableRow>
+        </TableRowGroup>
+    </Table>
+    <Table>
+        <Table.Columns>
+            <TableColumn Width="40"></TableColumn>
+            <TableColumn Width="80"></TableColumn>
+            <TableColumn Width="20"></TableColumn>
+            <TableColumn Width="120"></TableColumn>
+        </Table.Columns>
+        <TableRowGroup>
+            <TableRow>
+                <TableCell>
+                    <Paragraph>На №</Paragraph>
+                </TableCell>
+                <TableCell TextAlignment="Center" BorderThickness="0,0,0,1" BorderBrush="Black"/>
+                <TableCell TextAlignment="Center" >
+                    <Paragraph>от</Paragraph>
+                </TableCell>
+                <TableCell TextAlignment="Center"  BorderThickness="0,0,0,1" BorderBrush="Black"/>
+            </TableRow>
+        </TableRowGroup>
+    </Table>
+    <Paragraph></Paragraph>
+    <Paragraph></Paragraph>
+    <Paragraph></Paragraph>
+    <Paragraph>Прошу Вас отпустить следующую продукцию:</Paragraph>
+
+    <core:DataTable CellSpacing="0" BorderBrush="Black" BorderThickness="0.02cm" Name="GoodsItems" DatasetName="request_list">
+        <Table.Resources>
+            <!-- Style for header/footer rows. -->
+            <Style x:Key="headerRowStyle" TargetType="{x:Type TableRowGroup}">
+                <Setter Property="FontWeight" Value="DemiBold"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Background" Value="LightGray"/>
+            </Style>
+
+            <!-- Style for data rows. -->
+            <Style x:Key="dataRowStyle" TargetType="{x:Type TableRowGroup}">
+                <Setter Property="FontSize" Value="12"/>
+            </Style>
+
+            <!-- Style for data cells. -->
+            <Style TargetType="{x:Type TableCell}">
+                <Setter Property="Padding" Value="0.1cm"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="0.01cm"/>
+            </Style>
+        </Table.Resources>
+        <Table.Columns>
+            <TableColumn Width="*"></TableColumn>
+            <TableColumn Width="7*"></TableColumn>
+            <TableColumn Width="2*"></TableColumn>
+            <TableColumn Width="2*"></TableColumn>
+        </Table.Columns>
+        <TableRowGroup Name="rowHeader" Style="{StaticResource headerRowStyle}">
+            <TableRow>
+                <TableCell TextAlignment="Center">
+                    <Paragraph>
+                        <Run Text="Номер"></Run>
+                    </Paragraph>
+                </TableCell>
+                <TableCell>
+                    <Paragraph>
+                        <Run Text="Наименование"></Run>
+                    </Paragraph>
+                </TableCell>
+                <TableCell TextAlignment="Center">
+                    <Paragraph>
+                        <Run Text="Ед. измерения"></Run>
+                    </Paragraph>
+                </TableCell>
+                <TableCell TextAlignment="Center">
+                    <Paragraph>
+                        <Run Text="Количество"></Run>
+                    </Paragraph>
+                </TableCell>
+            </TableRow>
+        </TableRowGroup>
+        <core:TableRowGroupDetail Name="rowDetail" Style="{StaticResource dataRowStyle}">
+            <TableRow>
+                <TableCell TextAlignment="Center">
+                    <Paragraph>
+                        <core:InlinePropertyValue PropertyName="row_number"/>
+                    </Paragraph>
+                </TableCell>
+                <TableCell>
+                    <Paragraph>
+                        <core:InlinePropertyValue PropertyName="name"/>
+                    </Paragraph>
+                </TableCell>
+                <TableCell TextAlignment="Center">
+                    <Paragraph>
+                        <core:InlinePropertyValue PropertyName="measurement"/>
+                    </Paragraph>
+                </TableCell>
+                <TableCell TextAlignment="Right">
+                    <Paragraph>
+                        <core:InlinePropertyValue PropertyName="amount"/>
+                    </Paragraph>
+                </TableCell>
+            </TableRow>
+        </core:TableRowGroupDetail>
+    </core:DataTable>
+    <Paragraph></Paragraph>
+    <Paragraph>Счет для оплаты, прошу выставить по эл. почте: <Run Foreground="Blue" Text="{Binding Path=org_email, Mode=OneTime}"></Run>.</Paragraph>
+    <Paragraph></Paragraph>
+    <Paragraph></Paragraph>
+    <Table>
+        <TableRowGroup>
+            <TableRow>
+                <TableCell>
+                    <Paragraph>
+                        <Run Text="{Binding Path=post_name, Mode=OneTime}"></Run>
+                    </Paragraph>
+                </TableCell>
+                <TableCell TextAlignment="Right">
+                    <Paragraph>
+                        <Run Text="{Binding Path=director, Mode=OneTime}"></Run>
+                    </Paragraph>
+                </TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell>
+                    <Paragraph>
+                        <Run FontSize="10" Text="{Binding Path=phone, Mode=OneTime}"></Run>
+                    </Paragraph>
+                </TableCell>
+            </TableRow>
+        </TableRowGroup>
+    </Table>
+</FlowDocument>

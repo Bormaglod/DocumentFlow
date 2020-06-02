@@ -1,0 +1,514 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5D1EC498-1525-4E40-947C-1A1DC86C12B0}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>DocumentFlow</RootNamespace>
+    <AssemblyName>DocumentFlow</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <PublishUrl>ftp://109.68.215.41/apps/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://109.68.215.41/apps/</InstallUrl>
+    <TargetCulture>ru-RU</TargetCulture>
+    <ProductName>DocumentFlow</ProductName>
+    <PublisherName>Автоком</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>index.html</WebPage>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.1.1.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>document-flow.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>BEFCCB2887F1DCB79B5D0543562BF26616AE5AE7</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>DocumentFlow_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.6.7\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="Crc32C.NET, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Crc32C.NET.1.0.5.0\lib\net20\Crc32C.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="DotLiquid, Version=2.0.333.0, Culture=neutral, PublicKeyToken=82e46016ecf9f07c, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotLiquid.2.0.333\lib\net45\DotLiquid.dll</HintPath>
+    </Reference>
+    <Reference Include="Flee.Net45, Version=1.0.0.0, Culture=neutral, PublicKeyToken=951a102ce2413032, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flee.1.2.2\lib\net45\Flee.Net45.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentFTP, Version=32.4.3.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentFTP.32.4.3\lib\net45\FluentFTP.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="MailKit, Version=2.5.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
+      <HintPath>..\packages\MailKit.2.6.0\lib\net47\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.1\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit, Version=2.8.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
+      <HintPath>..\packages\MimeKit.2.8.0\lib\net47\MimeKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=5.2.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.5.2.7\lib\net461\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.7.2\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql, Version=4.1.3.1, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.4.1.3.1\lib\net461\Npgsql.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="ReachFramework" />
+    <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Linq.EagerFetching, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Remotion.Linq.EagerFetching.2.2.0\lib\net45\Remotion.Linq.EagerFetching.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.License, Version=1.3.8.46, Culture=neutral, PublicKeyToken=b1144360237c8b3f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreeSpire.PDF.6.2.0\lib\net46\Spire.License.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.Pdf, Version=6.2.4.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreeSpire.PDF.6.2.0\lib\net46\Spire.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Core.WinForms, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Core.WinForms.18.1.0.54\lib\net46\Syncfusion.Core.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Data.WinForms, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Data.WinForms.18.1.0.54\lib\net46\Syncfusion.Data.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DataSource.WinForms, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.DataSource.WinForms.18.1.0.54\lib\net46\Syncfusion.DataSource.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Diagram.Base, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Diagram.Base.18.1.0.54\lib\net46\Syncfusion.Diagram.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Diagram.Windows, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Diagram.Windows.18.1.0.54\lib\net46\Syncfusion.Diagram.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Edit.Windows, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Edit.Windows.18.1.0.54\lib\net46\Syncfusion.Edit.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Grid.Base, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Grid.Base.18.1.0.54\lib\net46\Syncfusion.Grid.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Grid.Windows, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Grid.Windows.18.1.0.54\lib\net46\Syncfusion.Grid.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.GridCommon.WinForms, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.GridCommon.WinForms.18.1.0.54\lib\net46\Syncfusion.GridCommon.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Licensing, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Licensing.18.1.0.54\lib\net46\Syncfusion.Licensing.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfDataGrid.WinForms, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.SfDataGrid.WinForms.18.1.0.54\lib\net46\Syncfusion.SfDataGrid.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfInput.WinForms, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.SfInput.WinForms.18.1.0.54\lib\net46\Syncfusion.SfInput.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfListView.WinForms, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.SfListView.WinForms.18.1.0.54\lib\net46\Syncfusion.SfListView.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Shared.Base, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Shared.Base.18.1.0.54\lib\net46\Syncfusion.Shared.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Shared.Windows, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Shared.Windows.18.1.0.54\lib\net46\Syncfusion.Shared.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SpellChecker.Base, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.SpellChecker.Base.18.1.0.54\lib\net46\Syncfusion.SpellChecker.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Tools.Base, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Tools.Base.18.1.0.54\lib\net46\Syncfusion.Tools.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Tools.Windows, Version=18.1460.0.54, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Tools.Windows.18.1.0.54\lib\net46\Syncfusion.Tools.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Reflection, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.4.3.0\lib\net462\System.Reflection.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Text.Encodings.Web, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.4.7.1\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.4.7.2\lib\net461\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CommandFactory.cs" />
+    <Compile Include="ContentEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ContentEditor.Designer.cs">
+      <DependentUpon>ContentEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ContentViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ContentViewer.Designer.cs">
+      <DependentUpon>ContentViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DiagramViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DiagramViewer.designer.cs">
+      <DependentUpon>DiagramViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentFlowForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DocumentFlowForm.Designer.cs">
+      <DependentUpon>DocumentFlowForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentRefEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DocumentRefEditor.designer.cs">
+      <DependentUpon>DocumentRefEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GroupEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GroupEditor.designer.cs">
+      <DependentUpon>GroupEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HistoryWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HistoryWindow.designer.cs">
+      <DependentUpon>HistoryWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ICommandFactory.cs" />
+    <Compile Include="IContainerPage.cs" />
+    <Compile Include="IPage.cs" />
+    <Compile Include="ISettings.cs" />
+    <Compile Include="Printing\Printer.cs" />
+    <Compile Include="Printing\Xaml\Preview.xaml.cs">
+      <DependentUpon>Preview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Printing\Xaml\PrintCommands.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectDateRangeWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectDateRangeWindow.designer.cs">
+      <DependentUpon>SelectDateRangeWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SelectDayValueWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectDayValueWindow.designer.cs">
+      <DependentUpon>SelectDayValueWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SelectEmailWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectEmailWindow.designer.cs">
+      <DependentUpon>SelectEmailWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Content Include="readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Printing\Xaml\icons8-actial-size-16.png" />
+    <Resource Include="Printing\Xaml\icons8-copy-16.png" />
+    <Resource Include="Printing\Xaml\icons8-fit-to-page-16.png" />
+    <Resource Include="Printing\Xaml\icons8-print-16.png" />
+    <Resource Include="Printing\Xaml\icons8-send-16.png" />
+    <Resource Include="Printing\Xaml\icons8-zoom-in-16.png" />
+    <Resource Include="Printing\Xaml\icons8-zoom-out-16.png" />
+    <Resource Include="Printing\Xaml\icons8-две-страницы-16.png" />
+    <Resource Include="Printing\Xaml\icons8-одна-страница-16.png" />
+    <EmbeddedResource Include="HistoryWindow.resx">
+      <DependentUpon>HistoryWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectDateRangeWindow.resx">
+      <DependentUpon>SelectDateRangeWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectDayValueWindow.resx">
+      <DependentUpon>SelectDayValueWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectEmailWindow.resx">
+      <DependentUpon>SelectEmailWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include=".editorconfig" />
+    <None Include="DocumentFlow_TemporaryKey.pfx" />
+    <None Include="Printing\Forms\RequestPrinting.json" />
+    <None Include="Printing\Forms\SpecificationPrinting.json" />
+    <None Include="Resources\icons8-preview-30.png" />
+    <None Include="Resources\icons8-preview-16.png" />
+    <None Include="Resources\icons8-undo-30.png" />
+    <None Include="Resources\icons8-undo-16.png" />
+    <None Include="Resources\icons8-renew-30.png" />
+    <None Include="Resources\icons8-renew-16.png" />
+    <None Include="Resources\icons8-redo-30.png" />
+    <None Include="Resources\icons8-redo-16.png" />
+    <None Include="Resources\icons8-paste-30.png" />
+    <None Include="Resources\icons8-paste-16.png" />
+    <None Include="Resources\icons8-cut-30.png" />
+    <None Include="Resources\icons8-cut-16.png" />
+    <None Include="Resources\icons8-create-30.png" />
+    <None Include="Resources\icons8-create-16.png" />
+    <None Include="Resources\icons8-mind-map-12x11.png" />
+    <None Include="Resources\icons8-source-14x10.png" />
+    <None Include="Resources\icons8-cancel-30.png" />
+    <None Include="Resources\icons8-cancel-16.png" />
+    <EmbeddedResource Include="ContentEditor.resx">
+      <DependentUpon>ContentEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ContentViewer.resx">
+      <DependentUpon>ContentViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiagramViewer.resx">
+      <DependentUpon>DiagramViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentFlowForm.resx">
+      <DependentUpon>DocumentFlowForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentRefEditor.resx">
+      <DependentUpon>DocumentRefEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GroupEditor.resx">
+      <DependentUpon>GroupEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Diagram Palette\Basic Shapes.edp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Diagram Palette\Flowchart Symbols.edp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Diagram Palette\SwimLane Symbols.edp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DocumentFlow.Authorization\DocumentFlow.Authorization.csproj">
+      <Project>{315de671-40c1-404c-b81c-a9764c599a38}</Project>
+      <Name>DocumentFlow.Authorization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Controls\DocumentFlow.Controls.csproj">
+      <Project>{6F1DE0B7-9993-4964-9403-E098600773F3}</Project>
+      <Name>DocumentFlow.Controls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
+      <Project>{b35ff552-1eb5-4e81-96c8-58fe28cc874c}</Project>
+      <Name>DocumentFlow.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.DataSchema.Types\DocumentFlow.DataSchema.Types.csproj">
+      <Project>{7ceb15e0-dbc6-4a71-9369-829988af058e}</Project>
+      <Name>DocumentFlow.DataSchema.Types</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.DataSchema\DocumentFlow.DataSchema.csproj">
+      <Project>{ba7a2027-58c6-4f68-8bd1-515c94034b24}</Project>
+      <Name>DocumentFlow.DataSchema</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
+      <Project>{089024a5-3602-4de6-93bf-efded0d1a0ec}</Project>
+      <Name>DocumentFlow.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="document-flow.ico" />
+    <Content Include="license.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="password.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\icons8-rescan-portrait-30.png" />
+    <None Include="Resources\icons8-rescan-portrait-16.png" />
+    <None Include="Resources\icons8-rescan-landscape-30.png" />
+    <None Include="Resources\icons8-rescan-landscape-16.png" />
+    <None Include="Resources\icons8-open-folder-30.png" />
+    <None Include="Resources\icons8-open-folder-16.png" />
+    <None Include="Resources\icons8-open-document-30.png" />
+    <None Include="Resources\icons8-open-document-16.png" />
+    <None Include="Resources\icons8-info-11.png" />
+    <None Include="Resources\icons8-edit-prop-11.png" />
+    <None Include="Resources\icons8-documents-11.png" />
+    <None Include="Resources\icons8-close-window-30.png" />
+    <None Include="Resources\icons8-close-window-16.png" />
+    <None Include="Resources\icons8-print-30.png" />
+    <None Include="Resources\icons8-print-16.png" />
+    <None Include="Resources\icons8-save-close-30.png" />
+    <None Include="Resources\icons8-save-close-16.png" />
+    <None Include="Resources\icons8-save-30.png" />
+    <None Include="Resources\icons8-save-16.png" />
+    <None Include="Resources\icons8-columns-30.png" />
+    <None Include="Resources\icons8-columns-16.png" />
+    <None Include="Resources\icons8-find-filled-16.png" />
+    <None Include="Resources\icons8-copy-30.png" />
+    <None Include="Resources\icons8-copy-16.png" />
+    <None Include="Resources\icons8-restart-30.png" />
+    <None Include="Resources\icons8-restart-16.png" />
+    <None Include="Resources\icons8-folder-add-30.png" />
+    <None Include="Resources\icons8-folder-add-16.png" />
+    <None Include="Resources\icons8-file-edit-30.png" />
+    <None Include="Resources\icons8-file-edit-16.png" />
+    <None Include="Resources\icons8-file-delete-30.png" />
+    <None Include="Resources\icons8-file-delete-16.png" />
+    <None Include="Resources\icons8-file-add-30.png" />
+    <None Include="Resources\icons8-file-add-16.png" />
+    <None Include="Resources\icons8-elapsed-time-30.png" />
+    <None Include="Resources\icons8-elapsed-time-16.png" />
+    <None Include="Resources\icons8-copy-edit-30.png" />
+    <None Include="Resources\icons8-copy-edit-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Printing\Forms\SpecificationPrinting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </None>
+    <None Include="Printing\Forms\RequestPrinting.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </None>
+    <Page Include="Printing\Xaml\Preview.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 и x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

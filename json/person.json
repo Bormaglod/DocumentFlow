@@ -1,0 +1,129 @@
+﻿{
+  "name": "person",
+  "viewer": {
+    "dataset": {
+      "select": "select p.id, p.status_id, s.note as status_name, p.code, p.name, p.surname, p.first_name, p.middle_name, p.phone, p.email from person p join status s on s.id = p.status_id",
+      "select-id": "select p.id, p.status_id, s.note as status_name, p.code, p.name, p.surname, p.first_name, p.middle_name, p.phone, p.email from person p join status s on s.id = p.status_id where p.id = :id"
+    },
+    "data-type": "Directory",
+    "columns": [
+      {
+        "datafield": "id",
+        "text": "Id",
+        "type": "Text",
+        "width": 180,
+        "visible": false
+      },
+      {
+        "datafield": "status_id",
+        "text": "Код состояния",
+        "type": "Integer",
+        "width": 80,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "status_name",
+        "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "name",
+        "text": "Фамилия И.О.",
+        "type": "Text",
+        "hideable": false,
+        "auto-size": true
+      },
+      {
+        "datafield": "surname",
+        "text": "Фамилия",
+        "type": "Text",
+        "width": 150
+      },
+      {
+        "datafield": "first_name",
+        "text": "Имя",
+        "type": "Text"
+      },
+      {
+        "datafield": "middle_name",
+        "text": "Отчество",
+        "type": "Text",
+        "width": 150
+      },
+      {
+        "datafield": "phone",
+        "text": "Телефон",
+        "type": "Text",
+        "width": 150
+      },
+      {
+        "datafield": "email",
+        "text": "Эл. почта",
+        "type": "Text",
+        "width": 200
+      }
+    ]
+  },
+  "editor": {
+    "dataset": {
+      "select": "select id, name, surname, first_name, middle_name, phone, email from person where id = :id",
+      "update": "update person set name = :name, surname = :surname, first_name = :first_name, middle_name = :middle_name, phone = :phone, email = :email where id = :id"
+    },
+    "controls": [
+      {
+        "type": "TextBox",
+        "text": "Фамилия И.О.",
+        "datafield": "name",
+        "label-width": 190,
+        "edit-width": 250
+      },
+      {
+        "type": "TextBox",
+        "text": "Фамилия",
+        "datafield": "surname",
+        "label-width": 190,
+        "edit-width": 200
+      },
+      {
+        "type": "TextBox",
+        "text": "Имя",
+        "datafield": "first_name",
+        "label-width": 190,
+        "edit-width": 150
+      },
+      {
+        "type": "TextBox",
+        "text": "Отчество",
+        "datafield": "middle_name",
+        "label-width": 190,
+        "edit-width": 200
+      },
+      {
+        "type": "TextBox",
+        "text": "Телефон",
+        "datafield": "phone",
+        "label-width": 190,
+        "edit-width": 140
+      },
+      {
+        "type": "TextBox",
+        "text": "Эл. почта",
+        "datafield": "email",
+        "label-width": 190,
+        "edit-width": 300
+      }
+    ],
+    "conditions": [
+      {
+        "controls": [ "name", "surname", "first_name", "middle_name", "phone", "email" ],
+        "enable": {
+          "states": [ "compiled", "is changing" ]
+        }
+      }
+    ]
+  }
+}

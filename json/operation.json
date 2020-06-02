@@ -1,0 +1,229 @@
+﻿{
+  "name": "operation",
+  "viewer": {
+    "dataset": {
+      "select": "select o.id, o.status_id, s.note as status_name, o.code, o.name, o.parent_id, o.produced, o.prod_time, o.production_rate, ot.name as operation_type_name, o.salary, o.program, m.abbreviation from operation o join status s on (s.id = o.status_id) left join operation_type ot on (ot.id = o.type_id) left join measurement m on (m.id = o.measurement_id) where (o.parent_id is not distinct from :parent_id)",
+      "select-id": "select o.id, o.status_id, s.note as status_name, o.code, o.name, o.parent_id, o.produced, o.prod_time, o.production_rate, ot.name as operation_type_name, o.salary, o.program, m.abbreviation from operation o join status s on (s.id = o.status_id) left join operation_type ot on (ot.id = o.type_id) left join measurement m on (m.id = o.measurement_id) where o.id = :id"
+    },
+    "data-type": "Directory",
+    "allow-grouping": true,
+    "columns": [
+      {
+        "datafield": "id",
+        "text": "Id",
+        "type": "Text",
+        "width": 180,
+        "visible": false
+      },
+      {
+        "datafield": "status_id",
+        "text": "Код состояния",
+        "type": "Integer",
+        "width": 80,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "status_name",
+        "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "code",
+        "text": "Код",
+        "type": "Text",
+        "width": 150
+      },
+      {
+        "datafield": "name",
+        "text": "Наименование",
+        "type": "Text",
+        "hideable": false,
+        "auto-size": true
+      },
+      {
+        "datafield": "abbreviation",
+        "text": "Ед. изм.",
+        "type": "Text"
+      },
+      {
+        "datafield": "produced",
+        "text": "Выработка",
+        "type": "Integer",
+        "visible": false
+      },
+      {
+        "datafield": "prod_time",
+        "text": "Время выработки, мин.",
+        "type": "Integer",
+        "visible": false
+      },
+      {
+        "datafield": "production_rate",
+        "text": "Норма выработки, ед./час",
+        "type": "Integer",
+        "visible": false
+      },
+      {
+        "datafield": "operation_type_name",
+        "text": "Тип операции",
+        "type": "Text",
+        "width": 250,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "salary",
+        "text": "Зар. плата, руб.",
+        "type": "Numeric",
+        "width": 150,
+        "format-mode": "Currency",
+        "horizontal-align": "Right"
+      },
+      {
+        "datafield": "program",
+        "text": "Программа",
+        "type": "Text",
+        "visible": false
+      }
+    ],
+    "sorts": [
+      {
+        "name": "operation_type_name"
+      },
+      {
+        "name": "code"
+      }
+    ]
+  },
+  "editor": {
+    "dataset": {
+      "select": "select id, code, name, parent_id, produced, prod_time, production_rate, type_id, salary, length, left_cleaning, left_sweep, right_cleaning, right_sweep, program, measurement_id from operation where id = :id",
+      "update": "update operation set code = :code, name = :name, parent_id = :parent_id, produced = :produced, prod_time = :prod_time, production_rate = :production_rate, type_id = :type_id, salary = :salary, length = :length, left_cleaning = :left_cleaning, left_sweep = :left_sweep, right_cleaning = :right_cleaning, right_sweep = :right_sweep, program = :program, measurement_id = :measurement_id where id = :id"
+    },
+    "controls": [
+      {
+        "type": "TextBox",
+        "text": "Код",
+        "datafield": "code",
+        "label-width": 200
+      },
+      {
+        "type": "TextBox",
+        "text": "Наименование",
+        "datafield": "name",
+        "label-width": 200,
+        "edit-width": 380
+      },
+      {
+        "type": "ComboBoxData",
+        "text": "Тип операции",
+        "datafield": "type_id",
+        "label-width": 200,
+        "edit-width": 330,
+        "dataset": "select id, name from operation_type where status_id = 1002 order by name"
+      },
+      {
+        "type": "SelectBox",
+        "text": "Группа",
+        "datafield": "parent_id",
+        "dataset": "select id, parent_id, name, status_id from operation where status_id = 500 order by name",
+        "select-view": "Folder",
+        "label-width": 200,
+        "edit-width": 360
+      },
+      {
+        "type": "ComboBoxData",
+        "text": "Еденица измерения",
+        "datafield": "measurement_id",
+        "label-width": 200,
+        "edit-width": 250,
+        "dataset": "select id, name from measurement where status_id = 1001 order by name"
+      },
+      {
+        "type": "Integer",
+        "text": "Выработка",
+        "datafield": "produced",
+        "label-width": 200
+      },
+      {
+        "type": "Integer",
+        "text": "Время выработки, сек.",
+        "datafield": "prod_time",
+        "label-width": 200
+      },
+      {
+        "type": "Integer",
+        "text": "Норма выработка, ед./час",
+        "datafield": "production_rate",
+        "label-width": 200
+      },
+      {
+        "type": "Currency",
+        "text": "Зарплата, руб.",
+        "datafield": "salary",
+        "label-width": 200
+      },
+      {
+        "type": "ComboBox",
+        "text": "Программа",
+        "datafield": "program",
+        "label-width": 200,
+        "dataset": "with all_programs as ( select generate_series(1, 99) as num ) select num as key, '' || num as value from all_programs left join operation on (program = num and status_id = 1002) where program is null or program = :program"
+      },
+      {
+        "type": "Integer",
+        "text": "Длина провода",
+        "datafield": "length",
+        "label-width": 200
+      },
+      {
+        "type": "Numeric",
+        "text": "Длина зачистки с начала провода",
+        "datafield": "left_cleaning",
+        "decimal-digits": 1,
+        "label-width": 200
+      },
+      {
+        "type": "Integer",
+        "text": "Ширина окна на которое снимается изоляция в начале провода",
+        "datafield": "left_sweep",
+        "label-width": 200
+      },
+      {
+        "type": "Numeric",
+        "text": "Длина зачистки с конца провода",
+        "datafield": "right_cleaning",
+        "decimal-digits": 1,
+        "label-width": 200
+      },
+      {
+        "type": "Integer",
+        "text": "Ширина окна на которое снимается изоляция в конце провода",
+        "datafield": "right_sweep",
+        "label-width": 200
+      }
+    ],
+    "conditions": [
+      {
+        "controls": [ "code", "name", "parent_id", "type_id", "produced", "prod_time", "production_rate", "salary", "program", "length", "left_cleaning", "left_sweep", "right_cleaning", "right_sweep", "measurement_id" ],
+        "enable": {
+          "states": [ "compiled", "is changing" ]
+        }
+      },
+      {
+        "controls": [ "program", "length", "left_cleaning", "left_sweep", "right_cleaning", "right_sweep" ],
+        "visible": {
+          "if-equal": "GetRootCode(\"operation\") = \"Резка\""
+        }
+      }
+    ],
+    "childs": [
+      {
+        "name": "archive_price"
+      }
+    ]
+  }
+}

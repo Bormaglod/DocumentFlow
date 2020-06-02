@@ -1,0 +1,206 @@
+﻿{
+  "name": "goods",
+  "viewer": {
+    "dataset": {
+      "select": "select g.id, g.parent_id, g.status_id, s.note as status_name, g.code, g.ext_article, g.name, m.abbreviation, g.price, g.tax, g.min_order, g.is_service from goods g join status s on s.id = g.status_id left join measurement m on (g.measurement_id = m.id) where (g.parent_id is not distinct from :parent_id)",
+      "select-id": "select g.id, g.parent_id, g.status_id, s.note as status_name, g.code, g.ext_article, g.name, m.abbreviation, g.price, g.tax, g.min_order, g.is_service from goods g join status s on s.id = g.status_id left join measurement m on (g.measurement_id = m.id) where g.id = :id"
+    },
+    "data-type": "Directory",
+    "allow-grouping": true,
+    "columns": [
+      {
+        "datafield": "id",
+        "text": "Id",
+        "type": "Text",
+        "width": 180,
+        "visible": false
+      },
+      {
+        "datafield": "status_id",
+        "text": "Код состояния",
+        "type": "Integer",
+        "width": 80,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "status_name",
+        "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "code",
+        "text": "Артикул",
+        "type": "Text",
+        "width": 140
+      },
+      {
+        "datafield": "name",
+        "text": "Наименование",
+        "type": "Text",
+        "hideable": false,
+        "auto-size": true
+      },
+      {
+        "datafield": "ext_article",
+        "text": "Доп. артикул",
+        "type": "Text",
+        "width": 120,
+        "visible": false
+      },
+      {
+        "datafield": "abbreviation",
+        "text": "Ед. изм.",
+        "type": "Text",
+        "allow-grouping": true,
+        "horizontal-align": "Center"
+      },
+      {
+        "datafield": "price",
+        "text": "Цена",
+        "type": "Numeric",
+        "width": 120,
+        "allow-grouping": true,
+        "format-mode": "Currency",
+        "horizontal-align": "Right"
+      },
+      {
+        "datafield": "tax",
+        "text": "НДС",
+        "type": "Integer",
+        "width": 80,
+        "allow-grouping": true,
+        "format-mode": "Percent",
+        "horizontal-align": "Center"
+      },
+      {
+        "datafield": "min_order",
+        "text": "Мин. партия",
+        "type": "Text",
+        "width": 100,
+        "visible": false,
+        "allow-grouping": true
+
+      },
+      {
+        "datafield": "is_service",
+        "text": "Услуга",
+        "type": "Boolean",
+        "hidden": true,
+        "allow-grouping": true,
+        "horizontal-align": "Center"
+      }
+    ]
+  },
+  "editor": {
+    "dataset": {
+      "select": "select id, parent_id, code, name, ext_article, measurement_id, price, tax, min_order, is_service from goods where id = :id",
+      "update": "update goods set code = :code, name = :name, parent_id = :parent_id, ext_article = :ext_article, measurement_id = :measurement_id, price = :price, tax = :tax, min_order = :min_order, is_service = :is_service where id = :id"
+    },
+    "controls": [
+      {
+        "type": "TextBox",
+        "text": "Артикул",
+        "datafield": "code",
+        "label-width": 190,
+        "edit-width": 160
+      },
+      {
+        "type": "TextBox",
+        "text": "Наименование",
+        "datafield": "name",
+        "label-width": 190,
+        "edit-width": 360
+      },
+      {
+        "type": "SelectBox",
+        "text": "Группа",
+        "datafield": "parent_id",
+        "dataset": "select id, parent_id, name, status_id from goods where status_id = 500 order by name",
+        "select-view": "Folder",
+        "label-width": 190,
+        "edit-width": 360
+      },
+      {
+        "type": "TextBox",
+        "text": "Доп. артикул",
+        "datafield": "ext_article",
+        "label-width": 190,
+        "edit-width": 450
+      },
+      {
+        "type": "ComboBoxData",
+        "text": "Еденица измерения",
+        "datafield": "measurement_id",
+        "label-width": 190,
+        "edit-width": 450,
+        "dataset": "select id, name from measurement where status_id = 1001 order by name"
+      },
+      {
+        "type": "Currency",
+        "text": "Цена без НДС",
+        "datafield": "price",
+        "label-width": 190,
+        "edit-width": 150
+      },
+      {
+        "type": "ComboBox",
+        "text": "НДС",
+        "datafield": "tax",
+        "label-width": 190,
+        "edit-width": 150,
+        "items": [
+          {
+            "key": 0,
+            "value": "Без НДС"
+          },
+          {
+            "key": 10,
+            "value": "10%"
+          },
+          {
+            "key": 20,
+            "value": "20%"
+          }
+        ]
+      },
+      {
+        "type": "Numeric",
+        "text": "Мин. заказ",
+        "datafield": "min_order",
+        "label-width": 190,
+        "edit-width": 150,
+        "decimal-digits": 3
+      },
+      {
+        "type": "CheckBox",
+        "text": "Услуга",
+        "datafield": "is_service",
+        "label-width": 190
+      }
+    ],
+    "conditions": [
+      {
+        "controls": [ "code", "name", "parent_id", "ext_article", "measurement_id", "price", "tax", "min_order", "is_service" ],
+        "enable": {
+          "states": [ "compiled", "is changing" ]
+        }
+      }
+    ],
+    "childs": [
+      {
+        "name": "calculation",
+        "visible": "GetRootCode(\"goods\") = \"Прд\""
+      },
+      {
+        "name": "balance_goods"
+      },
+      {
+        "name": "archive_price"
+      }
+    ]
+  }
+}
