@@ -461,16 +461,6 @@ namespace DocumentFlow
             gridContent.AutoExpandGroups = true;
         }
 
-        private void DeleteRow(Guid id)
-        {
-            DataTable dt = gridContent.DataSource as DataTable;
-            var cur_row = dt.Rows.Find(id);
-            if (cur_row != null)
-            {
-                dt.Rows.Remove(cur_row);
-            }
-        }
-
         private void RefreshRow(Guid id)
         {
             if (string.IsNullOrEmpty(schema?.Viewer?.Dataset.SelectByID))
@@ -480,14 +470,32 @@ namespace DocumentFlow
             var cur_row = dt.Rows.Find(id);
             if (cur_row != null)
             {
-                var new_row = Db.ExecuteSelect(Session, schema.Viewer.Dataset.SelectByID, null, ("id", id)).SingleOrDefault();
-                if (new_row != null)
+                using (NpgsqlConnection connection = new NpgsqlConnection(Db.ConnectionString))
                 {
-                    foreach (string item in new_row.Keys)
+                    connection.Open();
+                    NpgsqlCommand command = new NpgsqlCommand(schema.Viewer.Dataset.SelectByID, connection);
+                    CreateParameter(command, "id", id);
+
+                    NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(command);
+                    DataSet ds = new DataSet();
+                    adapter.Fill(ds);
+
+                    var new_row = ds.Tables[0].Rows[0];
+                    foreach (DataColumn item in ds.Tables[0].Columns)
                     {
-                        cur_row[item] = new_row[item];
+                        cur_row[item.ColumnName] = new_row[item.ColumnName];
                     }
                 }
+            }
+        }
+
+        private void DeleteRow(Guid id)
+        {
+            DataTable dt = gridContent.DataSource as DataTable;
+            var cur_row = dt.Rows.Find(id);
+            if (cur_row != null)
+            {
+                dt.Rows.Remove(cur_row);
             }
         }
 
@@ -506,24 +514,6 @@ namespace DocumentFlow
 
         private void CreateSortedColumns()
         {
-            /*IEnumerable<DatasetColumn> list = schema?.Viewer?.Columns.Where(x => !string.IsNullOrEmpty(x.Sorting));
-            if (list == null)
-                return;
-
-            foreach (DatasetColumn column in list)
-            {
-                string sortDeirectionValue = column.Sorting.ToLower().Substring(0, 3);
-                if (!(new string[] { "asc", "des" }.Contains(sortDeirectionValue)))
-                    continue;
-
-                SortColumnDescription sort = new SortColumnDescription()
-                {
-                    ColumnName = column.DataField,
-                    SortDirection = sortDeirectionValue == "asc" ? ListSortDirection.Ascending : ListSortDirection.Descending
-                };
-
-                gridContent.SortColumnDescriptions.Add(sort);
-            }*/
             if (schema?.Viewer?.Sorts != null)
             {
                 foreach (ColumnSort item in schema.Viewer.Sorts)

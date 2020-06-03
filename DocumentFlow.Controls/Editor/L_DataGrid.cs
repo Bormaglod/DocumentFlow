@@ -73,6 +73,9 @@ namespace DocumentFlow.Controls
 
         private void Edit()
         {
+            if (gridMain.CurrentItem == null)
+                return;
+
             DataRowView rowView = (DataRowView)gridMain.CurrentItem;
             long id = Convert.ToInt64(rowView.Row["id"]);
             if (editor.Edit(id, status))

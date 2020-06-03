@@ -153,7 +153,7 @@
         "text": "Контрагент",
         "datafield": "contractor_id",
         "edit-width": 714,
-        "dataset": "select id, status_id, name, parent_id from contractor where (status_id = 1002 and supplier) or (status_id = 500) order by name"
+        "dataset": "select id, status_id, name, parent_id from contractor where (status_id = 1002 and supplier) or (status_id = 500) or id = :contractor_id order by name"
       },
       {
         "type": "DataGrid",
