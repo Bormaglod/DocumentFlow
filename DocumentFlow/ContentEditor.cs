@@ -528,7 +528,7 @@ namespace DocumentFlow
                         }
                     }
 
-                    if (result != null)
+                    if (result != null && result.Value != null)
                         context.Variables[result.DataField] = result.Value;
                 }
             }

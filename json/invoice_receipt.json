@@ -187,7 +187,7 @@
         "datafield": "contractor_id",
         "label-width": 120,
         "edit-width": 714,
-        "dataset": "select id, status_id, name, parent_id from contractor where (status_id = 1002 and supplier) or (status_id = 500) order by name",
+        "dataset": "select id, status_id, name, parent_id from contractor where (status_id = 1002 and supplier) or (status_id = 500) or (id = :contractor_id) order by name",
         "expressions": [
           {
             "expression": "Populate(\"owner_id\")"
@@ -202,8 +202,8 @@
         "text": "Заявка на расход",
         "datafield": "owner_id",
         "label-width": 120,
-        "edit-width": 400,
-        "dataset": "select pr.id, ek.name || ' №' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) where (pr.status_id in (1001, 3001, 3002, 3003) or (pr.id = :owner_id)) and (pr.contractor_id = :contractor_id or :contractor_id is null) group by pr.id, ek.name, view_number, doc_date",
+        "edit-width": 450,
+        "dataset": "select pr.id, ek.name || ' №' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) || ' (' || c.name || ')' as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) join contractor c on (c.id = pr.contractor_id) where (pr.status_id in (1001, 3001, 3002, 3003) or (pr.id = :owner_id)) and (pr.contractor_id = :contractor_id or :contractor_id is null) group by pr.id, ek.name, view_number, doc_date, c.name",
         "expressions": [
           {
             "destination": "contractor_id",

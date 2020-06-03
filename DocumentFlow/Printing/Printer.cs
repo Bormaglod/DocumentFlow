@@ -71,9 +71,7 @@ namespace DocumentFlow.Printing
                 }
             }
 
-            string pdfFileName = (Path.GetTempPath() + win.Title + ".pdf")
-                .Replace('/', '-')
-                .Replace('\\', '-');
+            string pdfFileName = (Path.GetTempPath() + win.Title.Replace('/', '-').Replace('\\', '-') + ".pdf");
 
             Template template = Template.Parse(form.FormText);
             string xml = template.Render(Hash.FromDictionary(objects));

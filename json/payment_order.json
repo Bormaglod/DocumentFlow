@@ -100,7 +100,7 @@
         "datafield": "contractor_id",
         "label-width": 120,
         "edit-width": 300,
-        "dataset": "select id, status_id, name, parent_id from contractor where status_id in (500, 1002) order by name",
+        "dataset": "select id, status_id, name, parent_id from contractor where (status_id in (500, 1002)) or (id = :contractor_id) order by name",
         "expression": [
           {
             "expression": "Populate(\"purchase_id\")"

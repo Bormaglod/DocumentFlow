@@ -57,23 +57,9 @@ namespace DocumentFlow
                     .SetResultTransformer(Transformers.AliasToBean<EmailAddress>())
                     .List<EmailAddress>();
 
-                /*Organization orgAlias = null;
-                EmailAddress result = null;
-                IList<EmailAddress> orgs = session.QueryOver(() => orgAlias)
-                    .SelectList(list => list
-                        .Select(() => orgAlias.Name).WithAlias(() => result.Name)
-                        .Select(() => orgAlias.Email).WithAlias(() => result.Email)
-                    )
-                    .TransformUsing(Transformers.AliasToBean<EmailAddress>())
-                    .List<EmailAddress>();*/
-
                 IEnumerable<EmailAddress> emps = session.CreateSQLQuery("select p.name, e.email from employee e join organization o on (o.id = e.owner_id) join person p on (p.id = e.person_id) where e.email is not null")
                     .SetResultTransformer(Transformers.AliasToBean<EmailAddress>())
                     .List<EmailAddress>();
-
-                /*IEnumerable<EmailAddress> emps = Db
-                    .ExecuteSelect<EmailAddress>(session, "select pd.name, e.email from employee e join directory ed on (ed.id = e.id) join organization o on (ed.owner_id = o.id) join directory pd on (e.person_id = pd.id)", null)
-                    .Where(x => !string.IsNullOrEmpty(x.Email));*/
 
                 comboFrom.DataSource = orgs.Concat(emps);
 
@@ -81,15 +67,11 @@ namespace DocumentFlow
                     .SetResultTransformer(Transformers.AliasToBean<EmailAddress>())
                     .List<EmailAddress>();
 
-                /*IEnumerable<EmailAddress> contractors = Db
-                    .ExecuteSelect<EmailAddress>(session, "select pd.name || ' (' || o.short_name || ')' as name, e.email from employee e join directory ed on(ed.id = e.id) join contractor o on(ed.owner_id = o.id) join directory pd on(e.person_id = pd.id)", null)
-                    .Where(x => !string.IsNullOrEmpty(x.Email));*/
-
                 comboTo.DataSource = contractors;
             }
 
             textSubject.Text = title;
-            string attachment = title + ".pdf";
+            string attachment = title.Replace('/', '-').Replace('\\', '-') + ".pdf";
             if (File.Exists(Path.GetTempPath() + attachment))
                 attachments = new string[] { attachment };
 
