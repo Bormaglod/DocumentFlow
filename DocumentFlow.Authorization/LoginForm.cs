@@ -9,11 +9,12 @@
 namespace DocumentFlow.Authorization
 {
     using System;
+    using System.Collections.Generic;
     using System.Configuration;
 #if DEBUG
     using System.IO;
-    using System.Linq;
 #endif
+    using System.Linq;
     using System.Windows.Forms;
     using NHibernate;
     using Npgsql;
@@ -34,11 +35,6 @@ namespace DocumentFlow.Authorization
             GetConnectionStrings();
 
             windowType = type;
-#if DEBUG
-            comboDatabase.SelectedIndex = 1;
-            comboUsers.Text = "postgres";
-            textPassword.Text = File.ReadLines("password.txt").First();
-#endif
         }
 
         private void GetConnectionStrings()
@@ -72,6 +68,9 @@ namespace DocumentFlow.Authorization
 
             UserAlias c = comboUsers.SelectedItem as UserAlias;
             string userName = c != null ? c.PgName : comboUsers.Text;
+
+            Settings.Default.PreviousUser = userName;
+            Settings.Default.LastConnectedDatabase = comboDatabase.SelectedItem.ToString();
 
             if (!string.IsNullOrEmpty(userName))
             {
@@ -125,11 +124,19 @@ namespace DocumentFlow.Authorization
             {
                 using (var transaction = session.BeginTransaction())
                 {
-                    foreach (UserAlias user in session.QueryOver<UserAlias>()/*.Where(u => !(u.Administrator || u.IsGroup))*/.List())
-                    {
-                        comboUsers.Items.Add(user);
-                    }
+#if DEBUG
+                    comboUsers.DataSource = session.QueryOver<UserAlias>().Where(u => !u.IsSystem || u.PgName == "postgres").OrderBy(u => u.Name).Asc.List();
+#else
+                    comboUsers.DataSource = session.QueryOver<UserAlias>().Where(u => !u.IsSystem).OrderBy(u => u.Name).Asc.List();
+#endif
                 }
+
+#if DEBUG
+                comboUsers.SelectedItem = (comboUsers.DataSource as List<UserAlias>).FirstOrDefault(u => u.PgName == "postgres");
+                textPassword.Text = File.ReadLines("password.txt").First();
+#else
+                comboUsers.SelectedItem = (comboUsers.DataSource as List<UserAlias>).FirstOrDefault(u => u.Name == Settings.Default.PreviousUser);
+#endif
             }
         }
     }

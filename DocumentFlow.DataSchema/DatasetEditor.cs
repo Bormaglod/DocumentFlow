@@ -21,6 +21,7 @@ namespace DocumentFlow.DataSchema
         [JsonProperty("controls")]
         public IList<IEditorControl> Controls { get; set; }
 
+        [JsonProperty("conditions")]
         public IList<ControlCondition> Conditions { get; set; }
         
         [JsonProperty("childs")]

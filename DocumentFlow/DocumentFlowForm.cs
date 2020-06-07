@@ -25,11 +25,21 @@ namespace DocumentFlow
     {
         private LoginForm loginForm;
         private ICommandFactory commands;
+        private Stack<TabPageAdv> historyPages = new Stack<TabPageAdv>();
+        readonly private Dictionary<string, int> buttonPos = new Dictionary<string, int>() { { "close", 28 }, { "max", 54 }, { "min", 80 }, { "system", 106 } };
 
         public DocumentFlowForm()
         {
             InitializeComponent();
             commands = new CommandFactory(this);
+
+            foreach (CaptionImage image in CaptionImages)
+            {
+                image.Location = new Point(Width - buttonPos[image.Name], 4);
+                image.ImageMouseEnter += new CaptionImage.MouseEnter(image_ImageMouseEnter);
+                image.ImageMouseLeave += new CaptionImage.MouseLeave(image_ImageMouseLeave);
+                image.ImageMouseUp += new CaptionImage.MouseUp(image_ImageMouseUp);
+            }
         }
 
         IPage IContainerPage.Selected
@@ -48,6 +58,7 @@ namespace DocumentFlow
             control.Dock = WinForms.DockStyle.Fill;
             
             TabPageAdv page = new TabPageAdv(control.Text);
+            page.Closed += Page_Closed;
             page.Controls.Add(control);
             
             tabControls.TabPages.Add(page);
@@ -170,19 +181,152 @@ namespace DocumentFlow
             }
         }
 
-        private void tabControls_ControlRemoved(object sender, WinForms.ControlEventArgs e)
+        private void Page_Closed(object sender, EventArgs e)
         {
-            ISettings viewer = e.Control.Controls.OfType<ISettings>().SingleOrDefault();
-            if (viewer != null)
+            if (sender is TabPageAdv page)
             {
-                viewer.SaveSettings();
+                ISettings viewer = page.Controls.OfType<ISettings>().SingleOrDefault();
+                if (viewer != null)
+                {
+                    viewer.SaveSettings();
+                }
+
+                IPage p = page.Controls.OfType<IPage>().SingleOrDefault();
+                if (p != null)
+                {
+                    p.OnClosed();
+                }
             }
 
-            IPage page = e.Control.Controls.OfType<IPage>().SingleOrDefault();
-            if (page != null)
+            if (historyPages.Count > 0)
             {
-                page.OnClosed();
+                tabControls.SelectedTab = historyPages.Pop();
             }
+        }
+
+        private void tabControls_MouseClick(object sender, WinForms.MouseEventArgs e)
+        {
+            if (e.Button == WinForms.MouseButtons.Right)
+            {
+                if (tabControls.HitTestTabs(e.Location) != -1)
+                {
+                    contextTabsMenu.Show(tabControls, e.Location);
+                }
+            }
+        }
+
+        private void menuItemCloseCurrent_Click(object sender, EventArgs e)
+        {
+            tabControls.SelectedTab.Close();
+        }
+
+        private void menuItemCloseAll_Click(object sender, EventArgs e)
+        {
+            while (tabControls.TabPages.Count > 0)
+            {
+                tabControls.TabPages[0].Close();
+            }
+        }
+
+        private void menuItemCloseAllExcept_Click(object sender, EventArgs e)
+        {
+            TabPageAdv[] pages = tabControls.TabPages.OfType<TabPageAdv>().Where(x => x != tabControls.SelectedTab).ToArray();
+            for (int i = 0; i < pages.Length; i++)
+            {
+                pages[i].Close();
+            }
+        }
+
+        private void tabControls_SelectedIndexChanging(object sender, SelectedIndexChangingEventArgs args)
+        {
+            historyPages.Push(tabControls.SelectedTab);
+        }
+
+        void image_ImageMouseEnter(object sender, ImageMouseEnterEventArgs e)
+        {
+            if (sender is CaptionImage image)
+            {
+                switch (image.Name)
+                {
+                    case "close":
+                        image.BackColor = Color.Red;
+                        break;
+                    case "max":
+                        image.BackColor = Color.LightBlue;
+                        break;
+                    case "min":
+                        image.BackColor = Color.LightBlue;
+                        break;
+                    case "system":
+                        image.BackColor = Color.LightBlue;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        void image_ImageMouseLeave(object sender, ImageMouseLeaveEventArgs e)
+        {
+            if (sender is CaptionImage image)
+            {
+                image.BackColor = Color.Transparent;
+            }
+        }
+
+        void image_ImageMouseUp(object sender, ImageMouseUpEventArgs e)
+        {
+            if (sender is CaptionImage image)
+            {
+                switch (image.Name)
+                {
+                    case "close":
+                        Close();
+                        break;
+                    case "max":
+                        if (WindowState == WinForms.FormWindowState.Normal)
+                        {
+                            WindowState = WinForms.FormWindowState.Maximized;
+                            image.Image = Resources.system_restore;
+                        }
+                        else
+                        {
+                            WindowState = WinForms.FormWindowState.Normal;
+                            image.Image = Resources.system_max;
+                        }
+
+                        break;
+                    case "min":
+                        WindowState = WinForms.FormWindowState.Minimized;
+                        break;
+                    case "system":
+                        Point p = PointToScreen(e.Location);
+                        p.Offset(-6, -4);
+                        contextSystemMenu.Show(p);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void DocumentFlowForm_SizeChanged(object sender, EventArgs e)
+        {
+            foreach (CaptionImage image in CaptionImages)
+            {
+                if (image.Name == "max")
+                {
+                    image.Image = WindowState == WinForms.FormWindowState.Maximized ? Resources.system_restore : Resources.system_max;
+                }
+
+                image.Location = new Point(Width - buttonPos[image.Name], 4);
+            }
+        }
+
+        private void menuItemAbout_Click(object sender, EventArgs e)
+        {
+            AboutForm form = new AboutForm();
+            form.ShowDialog();
         }
     }
 }

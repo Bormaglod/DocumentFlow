@@ -391,6 +391,9 @@ namespace DocumentFlow
                 populated.Populate(Session, data, editor.GetTypes(), status.Id);
             }
 
+            if (editor?.Conditions == null)
+                return;
+
             foreach (ControlCondition condition in editor.Conditions)
             {
                 if (condition.Controls.Contains(control.Name))

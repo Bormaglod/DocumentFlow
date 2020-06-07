@@ -99,14 +99,14 @@
             this.comboDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboDatabase.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.comboDatabase.BeforeTouchSize = new System.Drawing.Size(327, 25);
+            this.comboDatabase.BeforeTouchSize = new System.Drawing.Size(327, 23);
             this.comboDatabase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboDatabase.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.comboDatabase.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
             this.comboDatabase.Location = new System.Drawing.Point(161, 42);
             this.comboDatabase.Name = "comboDatabase";
             this.comboDatabase.NearImage = global::DocumentFlow.Authorization.Properties.Resources.database_16;
-            this.comboDatabase.Size = new System.Drawing.Size(327, 25);
+            this.comboDatabase.Size = new System.Drawing.Size(327, 23);
             this.comboDatabase.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
             this.comboDatabase.TabIndex = 0;
             this.comboDatabase.ThemeName = "Office2016Colorful";
@@ -117,18 +117,18 @@
             this.comboUsers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboUsers.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.comboUsers.BeforeTouchSize = new System.Drawing.Size(327, 25);
+            this.comboUsers.BeforeTouchSize = new System.Drawing.Size(327, 23);
             this.comboUsers.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.comboUsers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
             this.comboUsers.Location = new System.Drawing.Point(161, 73);
             this.comboUsers.Name = "comboUsers";
             this.comboUsers.NearImage = global::DocumentFlow.Authorization.Properties.Resources.user_16;
-            this.comboUsers.Size = new System.Drawing.Size(327, 25);
+            this.comboUsers.Size = new System.Drawing.Size(327, 23);
             this.comboUsers.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
             this.comboUsers.TabIndex = 1;
             this.comboUsers.ThemeName = "Office2016Colorful";
             // 
-            // LoginWindow
+            // LoginForm
             // 
             this.AcceptButton = this.buttonLogin;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -144,7 +144,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "LoginWindow";
+            this.Name = "LoginForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.VisibleChanged += new System.EventHandler(this.LoginWindow_VisibleChanged);

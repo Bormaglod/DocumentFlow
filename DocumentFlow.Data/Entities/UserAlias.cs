@@ -18,6 +18,7 @@ namespace DocumentFlow.Data.Entities
         public virtual string Surname { get; set; }
         public virtual string FirstName { get; set; }
         public virtual string MiddleName { get; set; }
+        public virtual bool IsSystem { get; set; }
 
         public override string ToString()
         {

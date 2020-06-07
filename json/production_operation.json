@@ -84,7 +84,8 @@
     "groups": [ "goods_name" ],
     "sorts": [
       {
-        "name": "date_updated"
+        "name": "date_updated",
+        "direction": "Descending"
       }
     ]
   }

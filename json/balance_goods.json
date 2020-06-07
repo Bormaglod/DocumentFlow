@@ -44,7 +44,7 @@
         "text": "Дата",
         "type": "Date",
         "hideable": false,
-        "date-format": "dd.MM.yyyy"
+        "width": 150
       },
       {
         "datafield": "document_number",

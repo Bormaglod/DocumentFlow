@@ -69,6 +69,11 @@ namespace DocumentFlow.Controls.Editor.Core
 
         public bool Populate(string fieldName)
         {
+            return Populate(fieldName, false);
+        }
+
+        public bool Populate(string fieldName, bool setDefaultValue)
+        {
             if (ActionPopupate == null)
                 return false;
 
@@ -85,7 +90,13 @@ namespace DocumentFlow.Controls.Editor.Core
                     }
                 }
 
+                if (setDefaultValue && control is IBindingEditorControl editorControl)
+                {
+                    editorControl.Value = editorControl.DefaultValue;
+                }
+
                 ActionPopupate(control, row);
+                
 
                 return true;
             }
