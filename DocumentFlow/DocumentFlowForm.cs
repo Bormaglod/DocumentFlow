@@ -156,6 +156,8 @@ namespace DocumentFlow
         private void DocumentFlowForm_FormClosing(object sender, WinForms.FormClosingEventArgs e)
         {
             Settings.Default.WindowState = WindowState;
+            Settings.Default.Location = Location;
+            Settings.Default.Size = Size;
             Settings.Default.Save();
         }
 
@@ -327,6 +329,32 @@ namespace DocumentFlow
         {
             AboutForm form = new AboutForm();
             form.ShowDialog();
+        }
+
+        private void DocumentFlowForm_Load(object sender, EventArgs e)
+        {
+            if (Settings.Default.Size.Width == 0 || Settings.Default.Size.Height == 0)
+                Settings.Default.Upgrade();
+            
+            if (Settings.Default.Size.Width == 0 || Settings.Default.Size.Height == 0)
+            {
+                StartPosition = WinForms.FormStartPosition.WindowsDefaultLocation;
+                WindowState = WinForms.FormWindowState.Normal;
+            }
+            else
+            {
+                WindowState = Settings.Default.WindowState;
+                if (Settings.Default.WindowState == WinForms.FormWindowState.Minimized)
+                {
+                    WindowState = WinForms.FormWindowState.Normal;
+                }
+
+                if (Settings.Default.WindowState == WinForms.FormWindowState.Normal)
+                {
+                    Location = Settings.Default.Location;
+                    Size = Settings.Default.Size;
+                }
+            }
         }
     }
 }

@@ -24,16 +24,10 @@ namespace DocumentFlow.Data.Core
 
     public static class Db
     {
-        static ISessionFactory sessionFactory;
-        static string default_connection = "default";
-        static string default_user = "guest";
-        static string default_password = "guest";
-        static string connectionString = string.Empty;
-
-        /// <summary>
-        /// Слово состоящее из букв латинского алфавита и симола рлдчеркивания перед которым стоит один (только один) символ двоеточия
-        /// </summary>
-        static string parameterPattern = "(?<!:):([a-zA-Z_]+)";
+        private static ISessionFactory sessionFactory;
+        private static readonly string default_connection = "default";
+        private static readonly string default_user = "guest";
+        private static readonly string default_password = "guest";
 
         public static ISessionFactory SessionFactory
         {
@@ -41,14 +35,21 @@ namespace DocumentFlow.Data.Core
             {
                 if (sessionFactory == null)
                 {
-                    sessionFactory = CreateSessionFactory(default_connection, default_user, default_password);
+                    ConnectionName = default_connection;
+                    sessionFactory = CreateSessionFactory(default_user, default_password);
                 }
 
                 return sessionFactory;
             }
         }
 
-        public static string ConnectionString => connectionString;
+        public static string ConnectionString { get; private set; } = string.Empty;
+        public static string ConnectionName { get; private set; }
+
+        /// <summary>
+        /// Слово состоящее из букв латинского алфавита и символа подчёркивания перед которым стоит один (только один) символ двоеточия
+        /// </summary>
+        public static string ParameterPattern { get; } = "(?<!:):([a-zA-Z_]+)";
 
         public static ISession OpenSession()
         {
@@ -57,7 +58,8 @@ namespace DocumentFlow.Data.Core
 
         public static ISession OpenSession(string connection, string userName, string password)
         {
-            sessionFactory = CreateSessionFactory(connection, userName, password);
+            ConnectionName = connection;
+            sessionFactory = CreateSessionFactory(userName, password);
             return SessionFactory.OpenSession();
         }
 
@@ -184,7 +186,7 @@ namespace DocumentFlow.Data.Core
         {
             if (dataValues != null)
             {
-                foreach (Match match in Regex.Matches(query.QueryString, parameterPattern))
+                foreach (Match match in Regex.Matches(query.QueryString, ParameterPattern))
                 {
                     string prop = match.Groups[1].Value;
                     Type type;
@@ -197,14 +199,14 @@ namespace DocumentFlow.Data.Core
             }
         }
 
-        private static ISessionFactory CreateSessionFactory(string connection, string user, string password)
+        private static ISessionFactory CreateSessionFactory(string user, string password)
         {
-            string newConnectionString = ConfigurationManager.ConnectionStrings[connection].ConnectionString;
+            string newConnectionString = ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString;
             NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(newConnectionString);
             builder.Username = user;
             builder.Password = password;
 
-            connectionString = builder.ConnectionString;
+            ConnectionString = builder.ConnectionString;
 
             ISessionFactory sessionFactory = Fluently.Configure()
                 .Database(PostgreSQLConfiguration.PostgreSQL82.Driver<NpgsqlDriverExtended>()

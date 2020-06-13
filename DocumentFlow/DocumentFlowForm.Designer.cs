@@ -31,10 +31,10 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DocumentFlowForm));
             Syncfusion.Windows.Forms.Tools.TreeNodeAdvStyleInfo treeNodeAdvStyleInfo1 = new Syncfusion.Windows.Forms.Tools.TreeNodeAdvStyleInfo();
-            Syncfusion.Windows.Forms.CaptionImage captionImage9 = new Syncfusion.Windows.Forms.CaptionImage();
-            Syncfusion.Windows.Forms.CaptionImage captionImage10 = new Syncfusion.Windows.Forms.CaptionImage();
-            Syncfusion.Windows.Forms.CaptionImage captionImage11 = new Syncfusion.Windows.Forms.CaptionImage();
-            Syncfusion.Windows.Forms.CaptionImage captionImage12 = new Syncfusion.Windows.Forms.CaptionImage();
+            Syncfusion.Windows.Forms.CaptionImage captionImage1 = new Syncfusion.Windows.Forms.CaptionImage();
+            Syncfusion.Windows.Forms.CaptionImage captionImage2 = new Syncfusion.Windows.Forms.CaptionImage();
+            Syncfusion.Windows.Forms.CaptionImage captionImage3 = new Syncfusion.Windows.Forms.CaptionImage();
+            Syncfusion.Windows.Forms.CaptionImage captionImage4 = new Syncfusion.Windows.Forms.CaptionImage();
             this.imageMenu = new System.Windows.Forms.ImageList(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeSidebar = new Syncfusion.Windows.Forms.Tools.TreeViewAdv();
@@ -74,7 +74,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControls);
-            this.splitContainer1.Size = new System.Drawing.Size(1101, 512);
+            this.splitContainer1.Size = new System.Drawing.Size(1102, 502);
             this.splitContainer1.SplitterDistance = 259;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -91,7 +91,7 @@
             treeNodeAdvStyleInfo1.TextColor = System.Drawing.Color.Black;
             this.treeSidebar.BaseStylePairs.AddRange(new Syncfusion.Windows.Forms.Tools.StyleNamePair[] {
             new Syncfusion.Windows.Forms.Tools.StyleNamePair("Standard", treeNodeAdvStyleInfo1)});
-            this.treeSidebar.BeforeTouchSize = new System.Drawing.Size(259, 512);
+            this.treeSidebar.BeforeTouchSize = new System.Drawing.Size(259, 502);
             this.treeSidebar.Border3DStyle = System.Windows.Forms.Border3DStyle.Flat;
             this.treeSidebar.BorderColor = System.Drawing.Color.White;
             this.treeSidebar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -119,7 +119,7 @@
             this.treeSidebar.SelectedNodeForeColor = System.Drawing.SystemColors.HighlightText;
             this.treeSidebar.ShowFocusRect = false;
             this.treeSidebar.ShowLines = false;
-            this.treeSidebar.Size = new System.Drawing.Size(259, 512);
+            this.treeSidebar.Size = new System.Drawing.Size(259, 502);
             this.treeSidebar.Style = Syncfusion.Windows.Forms.Tools.TreeStyle.Metro;
             this.treeSidebar.TabIndex = 0;
             this.treeSidebar.ThemeName = "Metro";
@@ -142,7 +142,7 @@
             // tabControls
             // 
             this.tabControls.ActiveTabFont = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tabControls.BeforeTouchSize = new System.Drawing.Size(838, 512);
+            this.tabControls.BeforeTouchSize = new System.Drawing.Size(839, 502);
             this.tabControls.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControls.FocusOnTabClick = false;
             this.tabControls.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -153,7 +153,7 @@
             this.tabControls.Name = "tabControls";
             this.tabControls.ShowCloseButtonForActiveTabOnly = true;
             this.tabControls.ShowTabCloseButton = true;
-            this.tabControls.Size = new System.Drawing.Size(838, 512);
+            this.tabControls.Size = new System.Drawing.Size(839, 502);
             this.tabControls.TabIndex = 1;
             this.tabControls.TabPanelBackColor = System.Drawing.SystemColors.ControlLight;
             this.tabControls.TabPrimitivesHost.TabPrimitives.Add(new Syncfusion.Windows.Forms.Tools.TabPrimitive(Syncfusion.Windows.Forms.Tools.TabPrimitiveType.PreviousTab, null, System.Drawing.Color.Empty, true, 1, "TabPrimitive0", ""));
@@ -210,14 +210,14 @@
             this.menuItemAbout});
             this.contextSystemMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
             this.contextSystemMenu.Name = "contextSystemMenu";
-            this.contextSystemMenu.Size = new System.Drawing.Size(181, 48);
+            this.contextSystemMenu.Size = new System.Drawing.Size(150, 26);
             this.contextSystemMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
             this.contextSystemMenu.ThemeName = "Metro";
             // 
             // menuItemAbout
             // 
             this.menuItemAbout.Name = "menuItemAbout";
-            this.menuItemAbout.Size = new System.Drawing.Size(180, 22);
+            this.menuItemAbout.Size = new System.Drawing.Size(149, 22);
             this.menuItemAbout.Text = "О программе";
             this.menuItemAbout.Click += new System.EventHandler(this.menuItemAbout_Click);
             // 
@@ -230,36 +230,36 @@
             this.CaptionButtonColor = System.Drawing.Color.White;
             this.CaptionFont = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.CaptionForeColor = System.Drawing.Color.White;
-            captionImage9.BackColor = System.Drawing.Color.Transparent;
-            captionImage9.Image = global::DocumentFlow.Properties.Resources.system_close;
-            captionImage9.Location = new System.Drawing.Point(1085, 4);
-            captionImage9.Name = "close";
-            captionImage10.BackColor = System.Drawing.Color.Transparent;
-            captionImage10.Image = global::DocumentFlow.Properties.Resources.system_max;
-            captionImage10.Location = new System.Drawing.Point(1059, 4);
-            captionImage10.Name = "max";
-            captionImage11.BackColor = System.Drawing.Color.Transparent;
-            captionImage11.Image = global::DocumentFlow.Properties.Resources.system_min;
-            captionImage11.Location = new System.Drawing.Point(1033, 4);
-            captionImage11.Name = "min";
-            captionImage12.BackColor = System.Drawing.Color.Transparent;
-            captionImage12.Image = global::DocumentFlow.Properties.Resources.system_menu;
-            captionImage12.Location = new System.Drawing.Point(1007, 4);
-            captionImage12.Name = "system";
-            this.CaptionImages.Add(captionImage9);
-            this.CaptionImages.Add(captionImage10);
-            this.CaptionImages.Add(captionImage11);
-            this.CaptionImages.Add(captionImage12);
-            this.ClientSize = new System.Drawing.Size(1101, 512);
+            captionImage1.BackColor = System.Drawing.Color.Transparent;
+            captionImage1.Image = global::DocumentFlow.Properties.Resources.system_close;
+            captionImage1.Location = new System.Drawing.Point(1085, 4);
+            captionImage1.Name = "close";
+            captionImage2.BackColor = System.Drawing.Color.Transparent;
+            captionImage2.Image = global::DocumentFlow.Properties.Resources.system_max;
+            captionImage2.Location = new System.Drawing.Point(1059, 4);
+            captionImage2.Name = "max";
+            captionImage3.BackColor = System.Drawing.Color.Transparent;
+            captionImage3.Image = global::DocumentFlow.Properties.Resources.system_min;
+            captionImage3.Location = new System.Drawing.Point(1033, 4);
+            captionImage3.Name = "min";
+            captionImage4.BackColor = System.Drawing.Color.Transparent;
+            captionImage4.Image = global::DocumentFlow.Properties.Resources.system_menu;
+            captionImage4.Location = new System.Drawing.Point(1007, 4);
+            captionImage4.Name = "system";
+            this.CaptionImages.Add(captionImage1);
+            this.CaptionImages.Add(captionImage2);
+            this.CaptionImages.Add(captionImage3);
+            this.CaptionImages.Add(captionImage4);
+            this.ClientSize = new System.Drawing.Size(1102, 502);
             this.ControlBox = false;
             this.Controls.Add(this.splitContainer1);
-            this.DataBindings.Add(new System.Windows.Forms.Binding("WindowState", global::DocumentFlow.Properties.Settings.Default, "WindowState", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DocumentFlowForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "DocumentFlow (ООО \"Автоком\")";
-            this.WindowState = global::DocumentFlow.Properties.Settings.Default.WindowState;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DocumentFlowForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DocumentFlowForm_FormClosed);
+            this.Load += new System.EventHandler(this.DocumentFlowForm_Load);
             this.SizeChanged += new System.EventHandler(this.DocumentFlowForm_SizeChanged);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);

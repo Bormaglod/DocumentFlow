@@ -1,0 +1,158 @@
+﻿{
+  "name": "ready_goods",
+  "viewer": {
+    "dataset": {
+      "select": "select rg.id, rg.status_id, s.note as status_name, rg.doc_date, rg.view_number, o.name as organization_name, g.name as goods_name, rg.amount, rg.price, rg.cost from ready_goods rg join status s on (s.id = rg.status_id) join organization o on (o.id = rg.organization_id) left join goods g on (g.id = rg.goods_id) where rg.owner_id = :owner_id",
+      "select-id": "select rg.id, rg.status_id, s.note as status_name, rg.doc_date, rg.view_number, o.name as organization_name, g.name as goods_name, rg.amount, rg.price, rg.cost from ready_goods rg join status s on (s.id = rg.status_id) join organization o on (o.id = rg.organization_id) left join goods g on (g.id = rg.goods_id) where rg.id = :id"
+    },
+    "data-type": "Document",
+    "toolbar": {
+      "button-style": "Image",
+      "icon-size": "Small"
+    },
+    "commandbar-visible": false,
+    "columns": [
+      {
+        "datafield": "id",
+        "text": "Id",
+        "type": "Text",
+        "width": 180,
+        "visible": false
+      },
+      {
+        "datafield": "status_id",
+        "text": "Код состояния",
+        "type": "Integer",
+        "width": 80,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "status_name",
+        "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "doc_date",
+        "text": "Дата",
+        "type": "date",
+        "width": 150,
+        "hideable": false
+      },
+      {
+        "datafield": "view_number",
+        "text": "Номер",
+        "type": "Text",
+        "width": 100
+      },
+      {
+        "datafield": "organization_name",
+        "text": "Организация",
+        "type": "Text",
+        "width": 150,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "goods_name",
+        "text": "Изделие",
+        "type": "Text",
+        "auto-size": true,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "amount",
+        "text": "Количество",
+        "type": "Numeric",
+        "width": 120,
+        "digits": 3,
+        "horizontal-align": "Right",
+        "aggregate": "Sum"
+      },
+      {
+        "datafield": "price",
+        "text": "Цена",
+        "type": "Numeric",
+        "width": 100,
+        "format-mode": "Currency",
+        "horizontal-align": "Right"
+      },
+      {
+        "datafield": "cost",
+        "text": "Стоимость",
+        "type": "Numeric",
+        "width": 100,
+        "format-mode": "Currency",
+        "horizontal-align": "Right",
+        "aggregate": "Sum"
+      }
+    ],
+    "sorts": [
+      {
+        "name": "doc_date",
+        "direction": "Descending"
+      }
+    ]
+  },
+  "editor": {
+    "dataset": {
+      "select": "select rg.id, rg.owner_id, '№' || po.view_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') as order_name, rg.doc_date, rg.doc_number, rg.goods_id, rg.amount, rg.price, rg.cost from ready_goods rg join production_order po on (po.id = rg.owner_id) where rg.id = :id",
+      "update": "update ready_goods set doc_date = :doc_date, goods_id = :goods_id, amount = :amount, price = :price, cost = :cost where id = :id"
+    },
+    "controls": [
+      {
+        "type": "TextBox",
+        "text": "Заказ на изготовление",
+        "datafield": "order_name",
+        "label-width": 190,
+        "edit-width": 300,
+        "enabled": false
+      },
+      {
+        "type": "DateTime",
+        "text": "Дата изготовления",
+        "datafield": "doc_date",
+        "label-width": 190,
+        "edit-width": 170
+      },
+      {
+        "type": "SelectBox",
+        "text": "Изделие",
+        "datafield": "goods_id",
+        "label-width": 190,
+        "edit-width": 300,
+        "dataset": "with recursive r as (select id, status_id, name, parent_id from goods where id = '4da429d1-cd8f-4757-bea8-49c99adc48d8' union all select g.id, g.status_id, g.name, g.parent_id from goods g join r on (r.id = g.parent_id and g.status_id = 500)) select id, status_id, name, parent_id from r union all select g.id, g.status_id, g.name, g.parent_id from goods g join production_order_detail pod on (pod.owner_id = :owner_id and pod.goods_id = g.id) order by name"
+      },
+      {
+        "type": "Numeric",
+        "text": "Количество",
+        "decimal-digits": 3,
+        "datafield": "amount",
+        "label-width": 190
+      },
+      {
+        "type": "Currency",
+        "text": "Цена",
+        "datafield": "price",
+        "label-width": 190
+      },
+      {
+        "type": "Currency",
+        "text": "Сумма",
+        "datafield": "cost",
+        "label-width": 190
+      }
+    ],
+    "conditions": [
+      {
+        "controls": [ "doc_date", "date_debited", "goods_id", "amount", "price", "cost" ],
+        "enable": {
+          "states": [ "compiled", "is changing" ]
+        }
+      }
+    ]
+  }
+}

@@ -39,6 +39,11 @@ namespace DocumentFlow.Authorization
 
         private void GetConnectionStrings()
         {
+            if (string.IsNullOrEmpty(Settings.Default.LastConnectedDatabase))
+            {
+                Settings.Default.Upgrade();
+            }
+
             ConnectionStringSettingsCollection settings = ConfigurationManager.ConnectionStrings;
 
             if (settings != null)

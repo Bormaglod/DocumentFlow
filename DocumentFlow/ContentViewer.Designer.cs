@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.contextGridMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
+            this.contextRecordMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             this.menuCopyClipboard = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.menuCreate = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,8 +38,6 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.menuCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.menuAddFolder = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuVisibleColumns = new System.Windows.Forms.ToolStripMenuItem();
             this.panelDirectory = new System.Windows.Forms.Panel();
             this.breadcrumb1 = new DocumentFlow.Controls.Breadcrumb();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -58,6 +56,10 @@
             this.comboOrg = new Syncfusion.WinForms.ListView.SfComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.gridContent = new Syncfusion.WinForms.DataGrid.SfDataGrid();
+            this.contextGridMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
+            this.menuAddRecord = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuAddGroup = new System.Windows.Forms.ToolStripMenuItem();
             this.panelCommandBar = new System.Windows.Forms.Panel();
             this.buttonHistory = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -70,7 +72,27 @@
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.timerDatabaseListen = new System.Windows.Forms.Timer(this.components);
-            this.contextGridMenu.SuspendLayout();
+            this.contextHeaderMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
+            this.menuSortAsc = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSortDesc = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuClearSort = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuVisibleColumns = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextRowMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
+            this.menuDeleteRow = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextGroupMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
+            this.menuHideGroupArea = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuExpandAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuCollapseAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuClearGroups = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextGroupItemMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
+            this.menuExpandItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuCollapseItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuClearGroupItems = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextGroupCaptionMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
+            this.menuGroupCaptionExpand = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuGroupCaptionCollapse = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextRecordMenu.SuspendLayout();
             this.panelDirectory.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxSearchDirectory)).BeginInit();
             this.panelDocument.SuspendLayout();
@@ -81,14 +103,20 @@
             ((System.ComponentModel.ISupportInitialize)(this.dateTimePickerFrom.Calendar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.comboOrg)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridContent)).BeginInit();
+            this.contextGridMenu.SuspendLayout();
             this.panelCommandBar.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.contextHeaderMenu.SuspendLayout();
+            this.contextRowMenu.SuspendLayout();
+            this.contextGroupMenu.SuspendLayout();
+            this.contextGroupItemMenu.SuspendLayout();
+            this.contextGroupCaptionMenu.SuspendLayout();
             this.SuspendLayout();
             // 
-            // contextGridMenu
+            // contextRecordMenu
             // 
-            this.contextGridMenu.DropShadowEnabled = false;
-            this.contextGridMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.contextRecordMenu.DropShadowEnabled = false;
+            this.contextRecordMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuCopyClipboard,
             this.toolStripSeparator6,
             this.menuCreate,
@@ -96,14 +124,12 @@
             this.menuDelete,
             this.toolStripSeparator4,
             this.menuCopy,
-            this.menuAddFolder,
-            this.toolStripSeparator1,
-            this.menuVisibleColumns});
-            this.contextGridMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
-            this.contextGridMenu.Name = "contextGridMenu";
-            this.contextGridMenu.Size = new System.Drawing.Size(182, 176);
-            this.contextGridMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
-            this.contextGridMenu.ThemeName = "Metro";
+            this.menuAddFolder});
+            this.contextRecordMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
+            this.contextRecordMenu.Name = "contextGridMenu";
+            this.contextRecordMenu.Size = new System.Drawing.Size(182, 148);
+            this.contextRecordMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
+            this.contextRecordMenu.ThemeName = "Metro";
             // 
             // menuCopyClipboard
             // 
@@ -171,18 +197,6 @@
             this.menuAddFolder.Tag = "create-group|additional";
             this.menuAddFolder.Text = "Группа";
             this.menuAddFolder.Click += new System.EventHandler(this.buttonAddFolder_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
-            // 
-            // menuVisibleColumns
-            // 
-            this.menuVisibleColumns.Image = global::DocumentFlow.Properties.Resources.icons8_columns_16;
-            this.menuVisibleColumns.Name = "menuVisibleColumns";
-            this.menuVisibleColumns.Size = new System.Drawing.Size(181, 22);
-            this.menuVisibleColumns.Text = "Видимые столбцы";
             // 
             // panelDirectory
             // 
@@ -500,6 +514,7 @@
             this.gridContent.AllowFiltering = true;
             this.gridContent.AllowResizingColumns = true;
             this.gridContent.AllowTriStateSorting = true;
+            this.gridContent.AutoExpandGroups = true;
             this.gridContent.AutoGenerateColumns = false;
             this.gridContent.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.LastColumnFill;
             this.gridContent.BackColor = System.Drawing.SystemColors.Window;
@@ -508,15 +523,51 @@
             this.gridContent.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.gridContent.Location = new System.Drawing.Point(0, 112);
             this.gridContent.Name = "gridContent";
+            this.gridContent.ShowBusyIndicator = true;
             this.gridContent.ShowRowHeader = true;
+            this.gridContent.ShowSortNumbers = true;
             this.gridContent.Size = new System.Drawing.Size(1103, 438);
             this.gridContent.Style.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this.gridContent.Style.GroupDropAreaStyle.BackColor = System.Drawing.SystemColors.Window;
             this.gridContent.Style.TableSummaryRowStyle.Font.Facename = "Segoe UI";
             this.gridContent.Style.TableSummaryRowStyle.Font.Size = 9F;
             this.gridContent.TabIndex = 12;
+            this.gridContent.ContextMenuOpening += new Syncfusion.WinForms.DataGrid.Events.ContextMenuOpeningEventHandler(this.gridContent_ContextMenuOpening);
             this.gridContent.QueryCellStyle += new Syncfusion.WinForms.DataGrid.Events.QueryCellStyleEventHandler(this.gridContent_QueryCellStyle);
             this.gridContent.CellDoubleClick += new Syncfusion.WinForms.DataGrid.Events.CellClickEventHandler(this.gridContent_CellDoubleClick);
+            // 
+            // contextGridMenu
+            // 
+            this.contextGridMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuAddRecord,
+            this.toolStripSeparator1,
+            this.menuAddGroup});
+            this.contextGridMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
+            this.contextGridMenu.Name = "contextGridMenu";
+            this.contextGridMenu.Size = new System.Drawing.Size(118, 54);
+            this.contextGridMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Default;
+            this.contextGridMenu.ThemeName = "Default";
+            // 
+            // menuAddRecord
+            // 
+            this.menuAddRecord.Image = global::DocumentFlow.Properties.Resources.icons8_file_add_16;
+            this.menuAddRecord.Name = "menuAddRecord";
+            this.menuAddRecord.Size = new System.Drawing.Size(117, 22);
+            this.menuAddRecord.Text = "Создать";
+            this.menuAddRecord.Click += new System.EventHandler(this.buttonCreate_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(114, 6);
+            // 
+            // menuAddGroup
+            // 
+            this.menuAddGroup.Image = global::DocumentFlow.Properties.Resources.icons8_folder_add_16;
+            this.menuAddGroup.Name = "menuAddGroup";
+            this.menuAddGroup.Size = new System.Drawing.Size(117, 22);
+            this.menuAddGroup.Text = "Группа";
+            this.menuAddGroup.Click += new System.EventHandler(this.buttonAddFolder_Click);
             // 
             // panelCommandBar
             // 
@@ -648,6 +699,180 @@
             // 
             this.timerDatabaseListen.Tick += new System.EventHandler(this.timerDatabaseListen_Tick);
             // 
+            // contextHeaderMenu
+            // 
+            this.contextHeaderMenu.DropShadowEnabled = false;
+            this.contextHeaderMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuSortAsc,
+            this.menuSortDesc,
+            this.menuClearSort,
+            this.toolStripSeparator5,
+            this.menuVisibleColumns});
+            this.contextHeaderMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
+            this.contextHeaderMenu.Name = "contextHeaderMenu";
+            this.contextHeaderMenu.Size = new System.Drawing.Size(233, 98);
+            this.contextHeaderMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
+            this.contextHeaderMenu.ThemeName = "Metro";
+            this.contextHeaderMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextHeaderMenu_Opening);
+            // 
+            // menuSortAsc
+            // 
+            this.menuSortAsc.Image = global::DocumentFlow.Properties.Resources.icons8_sort_by_asc_16;
+            this.menuSortAsc.Name = "menuSortAsc";
+            this.menuSortAsc.Size = new System.Drawing.Size(232, 22);
+            this.menuSortAsc.Text = "Сортировка по возрастанию";
+            this.menuSortAsc.Click += new System.EventHandler(this.menuSortAsc_Click);
+            // 
+            // menuSortDesc
+            // 
+            this.menuSortDesc.Image = global::DocumentFlow.Properties.Resources.icons8_sort_by_desc_16;
+            this.menuSortDesc.Name = "menuSortDesc";
+            this.menuSortDesc.Size = new System.Drawing.Size(232, 22);
+            this.menuSortDesc.Text = "Сортировка по убыванию";
+            this.menuSortDesc.Click += new System.EventHandler(this.menuSortDesc_Click);
+            // 
+            // menuClearSort
+            // 
+            this.menuClearSort.Name = "menuClearSort";
+            this.menuClearSort.Size = new System.Drawing.Size(232, 22);
+            this.menuClearSort.Text = "Убрать сортировку";
+            this.menuClearSort.Click += new System.EventHandler(this.menuClearSort_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(229, 6);
+            // 
+            // menuVisibleColumns
+            // 
+            this.menuVisibleColumns.Image = global::DocumentFlow.Properties.Resources.icons8_columns_16;
+            this.menuVisibleColumns.Name = "menuVisibleColumns";
+            this.menuVisibleColumns.Size = new System.Drawing.Size(232, 22);
+            this.menuVisibleColumns.Text = "Видимые столбцы";
+            // 
+            // contextRowMenu
+            // 
+            this.contextRowMenu.DropShadowEnabled = false;
+            this.contextRowMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuDeleteRow});
+            this.contextRowMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
+            this.contextRowMenu.Name = "contextRowMenu";
+            this.contextRowMenu.Size = new System.Drawing.Size(119, 26);
+            this.contextRowMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
+            this.contextRowMenu.ThemeName = "Metro";
+            this.contextRowMenu.Click += new System.EventHandler(this.buttonDelete_Click);
+            // 
+            // menuDeleteRow
+            // 
+            this.menuDeleteRow.Image = global::DocumentFlow.Properties.Resources.icons8_file_delete_16;
+            this.menuDeleteRow.Name = "menuDeleteRow";
+            this.menuDeleteRow.Size = new System.Drawing.Size(118, 22);
+            this.menuDeleteRow.Text = "Удалить";
+            // 
+            // contextGroupMenu
+            // 
+            this.contextGroupMenu.DropShadowEnabled = false;
+            this.contextGroupMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuHideGroupArea,
+            this.menuExpandAll,
+            this.menuCollapseAll,
+            this.menuClearGroups});
+            this.contextGroupMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
+            this.contextGroupMenu.Name = "contextGroupMenu";
+            this.contextGroupMenu.Size = new System.Drawing.Size(238, 92);
+            this.contextGroupMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
+            this.contextGroupMenu.ThemeName = "Metro";
+            this.contextGroupMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextGroupMenu_Opening);
+            // 
+            // menuHideGroupArea
+            // 
+            this.menuHideGroupArea.Name = "menuHideGroupArea";
+            this.menuHideGroupArea.Size = new System.Drawing.Size(237, 22);
+            this.menuHideGroupArea.Text = "Скрыть область группировки";
+            this.menuHideGroupArea.Click += new System.EventHandler(this.menuHideGroupArea_Click);
+            // 
+            // menuExpandAll
+            // 
+            this.menuExpandAll.Name = "menuExpandAll";
+            this.menuExpandAll.Size = new System.Drawing.Size(237, 22);
+            this.menuExpandAll.Text = "Развернуть все";
+            this.menuExpandAll.Click += new System.EventHandler(this.menuExpandAll_Click);
+            // 
+            // menuCollapseAll
+            // 
+            this.menuCollapseAll.Name = "menuCollapseAll";
+            this.menuCollapseAll.Size = new System.Drawing.Size(237, 22);
+            this.menuCollapseAll.Text = "Свернуть все";
+            this.menuCollapseAll.Click += new System.EventHandler(this.menuCollapseAll_Click);
+            // 
+            // menuClearGroups
+            // 
+            this.menuClearGroups.Name = "menuClearGroups";
+            this.menuClearGroups.Size = new System.Drawing.Size(237, 22);
+            this.menuClearGroups.Text = "Очистить";
+            this.menuClearGroups.Click += new System.EventHandler(this.menuClearGroups_Click);
+            // 
+            // contextGroupItemMenu
+            // 
+            this.contextGroupItemMenu.DropShadowEnabled = false;
+            this.contextGroupItemMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuExpandItem,
+            this.menuCollapseItem,
+            this.menuClearGroupItems});
+            this.contextGroupItemMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
+            this.contextGroupItemMenu.Name = "contextGroupItemMenu";
+            this.contextGroupItemMenu.Size = new System.Drawing.Size(157, 70);
+            this.contextGroupItemMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
+            this.contextGroupItemMenu.ThemeName = "Metro";
+            // 
+            // menuExpandItem
+            // 
+            this.menuExpandItem.Name = "menuExpandItem";
+            this.menuExpandItem.Size = new System.Drawing.Size(156, 22);
+            this.menuExpandItem.Text = "Развернуть все";
+            this.menuExpandItem.Click += new System.EventHandler(this.menuExpandItem_Click);
+            // 
+            // menuCollapseItem
+            // 
+            this.menuCollapseItem.Name = "menuCollapseItem";
+            this.menuCollapseItem.Size = new System.Drawing.Size(156, 22);
+            this.menuCollapseItem.Text = "Свернуть все";
+            this.menuCollapseItem.Click += new System.EventHandler(this.menuCollapseItem_Click);
+            // 
+            // menuClearGroupItems
+            // 
+            this.menuClearGroupItems.Name = "menuClearGroupItems";
+            this.menuClearGroupItems.Size = new System.Drawing.Size(156, 22);
+            this.menuClearGroupItems.Text = "Очистить";
+            this.menuClearGroupItems.Click += new System.EventHandler(this.menuClearGroupItems_Click);
+            // 
+            // contextGroupCaptionMenu
+            // 
+            this.contextGroupCaptionMenu.DropShadowEnabled = false;
+            this.contextGroupCaptionMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuGroupCaptionExpand,
+            this.menuGroupCaptionCollapse});
+            this.contextGroupCaptionMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
+            this.contextGroupCaptionMenu.Name = "contextGroupCaptionMenu";
+            this.contextGroupCaptionMenu.Size = new System.Drawing.Size(136, 48);
+            this.contextGroupCaptionMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
+            this.contextGroupCaptionMenu.ThemeName = "Metro";
+            this.contextGroupCaptionMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextGroupCaptionMenu_Opening);
+            // 
+            // menuGroupCaptionExpand
+            // 
+            this.menuGroupCaptionExpand.Name = "menuGroupCaptionExpand";
+            this.menuGroupCaptionExpand.Size = new System.Drawing.Size(135, 22);
+            this.menuGroupCaptionExpand.Text = "Развернуть";
+            this.menuGroupCaptionExpand.Click += new System.EventHandler(this.menuGroupCaptionExpand_Click);
+            // 
+            // menuGroupCaptionCollapse
+            // 
+            this.menuGroupCaptionCollapse.Name = "menuGroupCaptionCollapse";
+            this.menuGroupCaptionCollapse.Size = new System.Drawing.Size(135, 22);
+            this.menuGroupCaptionCollapse.Text = "Свернуть";
+            this.menuGroupCaptionCollapse.Click += new System.EventHandler(this.menuGroupCaptionCollapse_Click);
+            // 
             // ContentViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -657,7 +882,7 @@
             this.Controls.Add(this.toolStrip1);
             this.Name = "ContentViewer";
             this.Size = new System.Drawing.Size(1103, 550);
-            this.contextGridMenu.ResumeLayout(false);
+            this.contextRecordMenu.ResumeLayout(false);
             this.panelDirectory.ResumeLayout(false);
             this.panelDirectory.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxSearchDirectory)).EndInit();
@@ -670,16 +895,22 @@
             ((System.ComponentModel.ISupportInitialize)(this.dateTimePickerFrom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.comboOrg)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridContent)).EndInit();
+            this.contextGridMenu.ResumeLayout(false);
             this.panelCommandBar.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.contextHeaderMenu.ResumeLayout(false);
+            this.contextRowMenu.ResumeLayout(false);
+            this.contextGroupMenu.ResumeLayout(false);
+            this.contextGroupItemMenu.ResumeLayout(false);
+            this.contextGroupCaptionMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextGridMenu;
+        private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextRecordMenu;
         private System.Windows.Forms.ToolStripMenuItem menuCopyClipboard;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem menuCreate;
@@ -693,8 +924,6 @@
         private System.Windows.Forms.Panel panel3;
         private Syncfusion.Windows.Forms.Tools.TextBoxExt textBoxSearchDirectory;
         private System.Windows.Forms.Panel panelDocument;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem menuVisibleColumns;
         private Syncfusion.WinForms.DataGrid.SfDataGrid gridContent;
         private System.Windows.Forms.Panel panelCommandBar;
         private System.Windows.Forms.ToolStripButton buttonHistory;
@@ -720,5 +949,29 @@
         private System.Windows.Forms.Panel panel1;
         private Syncfusion.WinForms.ListView.SfComboBox comboOrg;
         private Syncfusion.Windows.Forms.Tools.TextBoxExt textBoxSearchDocument;
+        private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextHeaderMenu;
+        private System.Windows.Forms.ToolStripMenuItem menuSortAsc;
+        private System.Windows.Forms.ToolStripMenuItem menuSortDesc;
+        private System.Windows.Forms.ToolStripMenuItem menuClearSort;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem menuVisibleColumns;
+        private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextRowMenu;
+        private System.Windows.Forms.ToolStripMenuItem menuDeleteRow;
+        private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextGridMenu;
+        private System.Windows.Forms.ToolStripMenuItem menuAddRecord;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem menuAddGroup;
+        private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextGroupMenu;
+        private System.Windows.Forms.ToolStripMenuItem menuHideGroupArea;
+        private System.Windows.Forms.ToolStripMenuItem menuExpandAll;
+        private System.Windows.Forms.ToolStripMenuItem menuCollapseAll;
+        private System.Windows.Forms.ToolStripMenuItem menuClearGroups;
+        private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextGroupItemMenu;
+        private System.Windows.Forms.ToolStripMenuItem menuExpandItem;
+        private System.Windows.Forms.ToolStripMenuItem menuCollapseItem;
+        private System.Windows.Forms.ToolStripMenuItem menuClearGroupItems;
+        private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextGroupCaptionMenu;
+        private System.Windows.Forms.ToolStripMenuItem menuGroupCaptionExpand;
+        private System.Windows.Forms.ToolStripMenuItem menuGroupCaptionCollapse;
     }
 }

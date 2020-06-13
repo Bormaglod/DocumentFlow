@@ -17,6 +17,7 @@ namespace DocumentFlow.DataSchema.Types
     using Npgsql;
     using NpgsqlTypes;
     using DocumentFlow.Controls;
+    using DocumentFlow.Data.Core;
     using DocumentFlow.DataSchema.Types.Core;
 
     [Tag("DataGrid")]
@@ -40,10 +41,10 @@ namespace DocumentFlow.DataSchema.Types
                 return;
 
             NpgsqlCommand command = new NpgsqlCommand(Dataset);
-            foreach (Match match in Regex.Matches(Dataset, "(?<!:):([a-zA-Z_]+)"))
+            foreach (Match match in Regex.Matches(Dataset, Db.ParameterPattern))
             {
                 string prop = match.Groups[1].Value;
-                CreateParameter(command, prop, row[prop], types.ContainsKey(prop) ? types[prop] : null);
+                command.CreateParameter(prop, row[prop], types.ContainsKey(prop) ? types[prop] : null);
             }
 
             NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(command);
@@ -52,107 +53,5 @@ namespace DocumentFlow.DataSchema.Types
             Control.CreateModalWindow(session, FormTitle, Editor);
             Control.RefreshData();
         }
-
-        private void CreateParameter(NpgsqlCommand command, string name, object value, Type type)
-        {
-            if (value == null && type == null)
-                return;
-
-            if (type == null)
-                type = value.GetType();
-
-            NpgsqlDbType dbType;
-
-            if (type == typeof(Guid?) || type == typeof(Guid))
-                dbType = NpgsqlDbType.Uuid;
-            else if (type == typeof(int?) || type == typeof(int))
-                dbType = NpgsqlDbType.Integer;
-            else if (type == typeof(string))
-                dbType = NpgsqlDbType.Varchar;
-            else
-                throw new Exception("Тип не обработан.");
-
-            NpgsqlParameter parameter = command.Parameters.Add(name, dbType);
-            if (value == null)
-                parameter.NpgsqlValue = DBNull.Value;
-            else
-                parameter.NpgsqlValue = value;
-        }
-
-        /*public override void CreateControl(ISession session, SchemaCommand schema, Entity entity)
-        {
-            base.CreateControl(session, schema, entity);
-            if (entity is DocumentInfo)
-                Control.SetOwner(entity as DocumentInfo);
-            Control.CreateAdditionalControls(session, this);
-            Control.CreateModalWindow(session, schema, Editor, FormTitle);
-        }
-
-        public override void Initialize()
-        {
-            if (Control != null)
-                Control.Initialize();
-        }
-
-        public override void UpdateControlStates(long status)
-        {
-            base.UpdateControlStates(status);
-            foreach (GridColumn column in Control.Columns)
-            {
-                DatasetColumn c = Columns.FirstOrDefault(x => string.Compare(x.DataField, column.MappingName) == 0);
-                if (c == null)
-                    continue;
-
-                column.Visible = !c.Hidden;
-                if (c.States != null)
-                {
-                    if (c.States.Visible.Count > 0)
-                        column.Visible = column.Visible && c.States.Visible.Contains(status);
-
-                    if (c.States.Invisible.Count > 0)
-                        column.Visible = column.Visible && !c.States.Invisible.Contains(status);
-                }
-            }
-
-            foreach (CommandProperty cmd in Commands)
-            {
-                if (cmd.States != null)
-                {
-                    bool visible = true;
-                    if (cmd.States.Visible.Count > 0)
-                        visible = visible && cmd.States.Visible.Contains(status);
-
-                    if (cmd.States.Invisible.Count > 0)
-                        visible = visible && !cmd.States.Invisible.Contains(status);
-
-                    Control.SetCommandVisible(cmd, visible);
-
-                    bool enabled = true;
-                    if (cmd.States.Enabled.Count > 0)
-                        enabled = enabled && cmd.States.Enabled.Contains(status);
-
-                    if (cmd.States.Disabled.Count > 0)
-                        enabled = enabled && !cmd.States.Disabled.Contains(status);
-
-                    Control.SetCommandEnabled(cmd, enabled);
-                }
-            }
-        }
-
-        protected override object GetValue() => items;
-
-        protected override void SetValue(object value)
-        {
-            Type type = value.GetType();
-            if (value == null || type.GetInterface("IList`1") == null)
-                Control.DataSource = null;
-            else
-            {
-                items = value;
-                Type entityType = type.GetGenericArguments()[0];
-                Type genericType = typeof(BindingList<>).MakeGenericType(entityType);
-                Control.DataSource = Activator.CreateInstance(genericType, value);
-            }
-        }*/
     }
 }

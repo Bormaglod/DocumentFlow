@@ -2,8 +2,8 @@
   "name": "account",
   "viewer": {
     "dataset": {
-      "select": "select a.id, a.status_id, s.note as status_name, a.name, a.account_value, b.name as bank_name from account a join status s on (s.id = a.status_id) join bank b on (b.id = a.bank_id) where a.owner_id = :owner_id",
-      "select-id": "select a.id, a.status_id, s.note as status_name, a.name, a.account_value, b.name as bank_name from account a join status s on (s.id = a.status_id) join bank b on (b.id = a.bank_id) where a.id = :id"
+      "select": "select a.id, a.status_id, s.note as status_name, a.name, a.account_value, b.name as bank_name from account a join status s on (s.id = a.status_id) left join bank b on (b.id = a.bank_id) where a.owner_id = :owner_id",
+      "select-id": "select a.id, a.status_id, s.note as status_name, a.name, a.account_value, b.name as bank_name from account a join status s on (s.id = a.status_id) left join bank b on (b.id = a.bank_id) where a.id = :id"
     },
     "data-type": "Directory",
     "toolbar": {

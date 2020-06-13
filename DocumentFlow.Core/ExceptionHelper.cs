@@ -10,6 +10,8 @@ namespace DocumentFlow.Core
 {
     using System;
     using System.Windows.Forms;
+
+    using Npgsql;
     
     public static class ExceptionHelper
     {
@@ -20,7 +22,19 @@ namespace DocumentFlow.Core
 
         public static string Message(Exception exception)
         {
-            return exception.InnerException == null ? exception.Message : exception.InnerException.Message;
+            if (exception.InnerException is PostgresException pgException)
+            {
+                if (pgException.SqlState == "P0001")
+                {
+                    return pgException.MessageText;
+                }
+                else
+                {
+                    return string.Format("{0}\nSQL: {1}", pgException.MessageText, pgException.Statement.SQL);
+                }
+            }
+            else
+                return exception.Message;
         }
     }
 }

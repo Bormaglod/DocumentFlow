@@ -18,6 +18,7 @@ namespace DocumentFlow
     using System.IO;
 #endif
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -25,10 +26,12 @@ namespace DocumentFlow
     using NHibernate;
     using NHibernate.Transform;
     using Npgsql;
-    using NpgsqlTypes;
+    using Syncfusion.Data;
     using Syncfusion.Windows.Forms.Tools;
     using Syncfusion.WinForms.DataGrid;
+    using Syncfusion.WinForms.DataGrid.Enums;
     using Syncfusion.WinForms.DataGrid.Events;
+    using Syncfusion.WinForms.DataGrid.Interactivity;
     using DocumentFlow.Core;
     using DocumentFlow.DataSchema;
     using DocumentFlow.DataSchema.Types.Converters;
@@ -152,6 +155,12 @@ namespace DocumentFlow
         private Guid? owner;
         private CancellationTokenSource listenerToken;
         private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
+        private GridColumn column = null;
+        private SfDataGrid grid = null;
+        private Syncfusion.Data.Group group = null;
+        private int rowIndex = -1;
+        private int columnIndex = -1;
+        private object record = null;
 
         public ContentViewer(ICommandFactory commandFactory, Guid kindId, Guid? ownerId)
         {
@@ -229,6 +238,16 @@ namespace DocumentFlow
             ((ISettings)this).LoadSettings();
 
             Text = kind.Name;
+
+            gridContent.ColumnHeaderContextMenu = contextHeaderMenu;
+            gridContent.RowHeaderContextMenu = contextRowMenu;
+            gridContent.RecordContextMenu = contextRecordMenu;
+            gridContent.GroupDropAreaContextMenu = contextGroupMenu;
+            gridContent.GroupDropAreaItemContextMenu = contextGroupItemMenu;
+            gridContent.GroupCaptionContextMenu = contextGroupCaptionMenu;
+
+            gridContent.SortClickAction = Properties.Settings.Default.SortClickAction;
+            gridContent.ShowSortNumbers = Properties.Settings.Default.ShowSortNumbers;
 
             if (schema?.Viewer != null)
             {
@@ -421,15 +440,26 @@ namespace DocumentFlow
             }
         }
 
-        private NpgsqlParameter CreateParameter(NpgsqlCommand command, string name, Guid? value)
+        private void CreateQueryParameters(NpgsqlCommand command, params (string paramName, object paramValue, Type type)[] variables)
         {
-            NpgsqlParameter parameter = command.Parameters.Add(name, NpgsqlDbType.Uuid);
-            if (value == null)
-                parameter.NpgsqlValue = DBNull.Value;
-            else
-                parameter.NpgsqlValue = value;
+            Dictionary<string, (object value, Type type)> vars = new Dictionary<string, (object, Type)>() { 
+                { "parent_id", (ParentEntity, typeof(Guid?)) }, 
+                { "owner_id", (owner, typeof(Guid?)) }, 
+                { "from_date", (dateTimePickerFrom.Value, typeof(DateTime)) }, 
+                { "to_date", (dateTimePickerTo.Value, typeof(DateTime)) },
+                { "organization_id", ((comboOrg.SelectedItem as ComboBoxDataItem)?.Id, typeof(Guid?)) }
+            };
 
-            return parameter;
+            foreach (var item in variables)
+            {
+                vars.Add(item.paramName, (item.paramValue, item.type));
+            }
+
+            foreach (Match match in Regex.Matches(command.CommandText, Db.ParameterPattern))
+            {
+                string prop = match.Groups[1].Value;
+                command.CreateParameter(prop, vars[prop].value, vars[prop].type);
+            }
         }
 
         private void RefreshCurrenView()
@@ -442,11 +472,7 @@ namespace DocumentFlow
                 connection.Open();
 
                 NpgsqlCommand command = new NpgsqlCommand(schema.Viewer.Dataset.Select, connection);
-                if (kind.HasGroup)
-                    CreateParameter(command, "parent_id", ParentEntity);
-
-                if (owner != null)
-                    CreateParameter(command, "owner_id", owner);
+                CreateQueryParameters(command);
 
                 NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(command);
                 DataSet ds = new DataSet();
@@ -457,8 +483,6 @@ namespace DocumentFlow
 
                 gridContent.DataSource = dt;
             }
-
-            gridContent.AutoExpandGroups = true;
         }
 
         private void RefreshRow(Guid id)
@@ -474,7 +498,7 @@ namespace DocumentFlow
                 {
                     connection.Open();
                     NpgsqlCommand command = new NpgsqlCommand(schema.Viewer.Dataset.SelectByID, connection);
-                    CreateParameter(command, "id", id);
+                    CreateQueryParameters(command, ("id", id, typeof(Guid)));
 
                     NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(command);
                     DataSet ds = new DataSet();
@@ -741,7 +765,7 @@ namespace DocumentFlow
                         toolbar.Add(menu);
                     }
 
-                    groupItems.AddMenu(contextGridMenu, toolbar);
+                    groupItems.AddMenu(contextRecordMenu, toolbar);
                 }
             }
         }
@@ -770,7 +794,7 @@ namespace DocumentFlow
             IList<Command> commands = Session.QueryOver<Command>().List();
 
             CreateEmbededCommands(toolStrip1, commands);
-            CreateEmbededCommands(contextGridMenu, commands);
+            CreateEmbededCommands(contextRecordMenu, commands);
 
             if (schema?.Viewer?.CommandGroups != null)
             {
@@ -975,6 +999,193 @@ namespace DocumentFlow
             {
                 dateTimePickerFrom.Value = win.DateFrom;
                 dateTimePickerTo.Value = win.DateTo;
+            }
+        }
+
+        private void menuSortAsc_Click(object sender, EventArgs e)
+        {
+            if (grid != null && column != null)
+            {
+                grid.SortColumnDescriptions.Clear();
+                grid.SortColumnDescriptions.Add(new SortColumnDescription() { ColumnName = column.MappingName, SortDirection = ListSortDirection.Ascending });
+            }
+        }
+
+        private void menuSortDesc_Click(object sender, EventArgs e)
+        {
+            if (grid != null && column != null)
+            {
+                grid.SortColumnDescriptions.Clear();
+                grid.SortColumnDescriptions.Add(new SortColumnDescription() { ColumnName = column.MappingName, SortDirection = ListSortDirection.Descending });
+            }
+        }
+
+        private void menuClearSort_Click(object sender, EventArgs e)
+        {
+            if (grid != null)
+            {
+                grid.ClearSorting();
+            }
+        }
+
+        private void gridContent_ContextMenuOpening(object sender, Syncfusion.WinForms.DataGrid.Events.ContextMenuOpeningEventArgs e)
+        {
+            if (e.ContextMenutype == ContextMenuType.GroupCaption)
+            {
+                grid = (e.ContextMenuInfo as RowContextMenuInfo).DataGrid;
+                group = (e.ContextMenuInfo as RowContextMenuInfo).Row as Syncfusion.Data.Group;
+            }
+
+            if (e.ContextMenutype == ContextMenuType.GroupDropAreaItem || e.ContextMenutype == ContextMenuType.ColumnHeader)
+            {
+                grid = (e.ContextMenuInfo as ColumnContextMenuInfo).DataGrid;
+                column = (e.ContextMenuInfo as ColumnContextMenuInfo).Column;
+            }
+
+            if (e.ContextMenutype == ContextMenuType.GroupDropArea)
+            {
+                grid = (e.ContextMenuInfo as GroupDropAreaContextMenuInfo).DataGrid;
+            }
+
+            if (e.ContextMenutype == ContextMenuType.Record || e.ContextMenutype == ContextMenuType.RowHeader)
+            {
+                grid = (e.ContextMenuInfo as RowContextMenuInfo).DataGrid;
+                rowIndex = e.RowIndex;
+                columnIndex = e.ColumnIndex;
+                record = (e.ContextMenuInfo as RowContextMenuInfo).Row;
+            }
+        }
+
+        private void contextHeaderMenu_Opening(object sender, CancelEventArgs e)
+        {
+            if (gridContent.SortColumnDescriptions.Count == 0)
+            {
+                menuClearSort.Enabled = false;
+            }
+
+            menuSortAsc.Enabled = true;
+            menuSortDesc.Enabled = true;
+            foreach (SortColumnDescription x in gridContent.SortColumnDescriptions)
+            {
+                if (x.ColumnName == column.MappingName)
+                {
+                    if (x.SortDirection == ListSortDirection.Ascending)
+                    {
+                        menuSortAsc.Enabled = false;
+                        menuSortDesc.Enabled = true;
+                    }
+                    else
+                    {
+                        menuSortAsc.Enabled = true;
+                        menuSortDesc.Enabled = false;
+                    }
+                }
+            }
+        }
+
+        private void contextGroupMenu_Opening(object sender, CancelEventArgs e)
+        {
+            if (gridContent.GroupColumnDescriptions.Count == 0)
+            {
+                menuExpandAll.Enabled = false;
+                menuCollapseAll.Enabled = false;
+                menuClearGroups.Enabled = false;
+            }
+        }
+
+        private void menuHideGroupArea_Click(object sender, EventArgs e)
+        {
+            if (grid != null)
+            {
+                grid.ShowGroupDropArea = false;
+            }
+        }
+
+        private void menuExpandAll_Click(object sender, EventArgs e)
+        {
+            if (grid != null)
+            {
+                grid.ExpandAllGroup();
+                menuExpandAll.Enabled = false;
+                menuCollapseAll.Enabled = true;
+            }
+        }
+
+        private void menuCollapseAll_Click(object sender, EventArgs e)
+        {
+            if (grid != null)
+            {
+                grid.CollapseAllGroup();
+                menuCollapseAll.Enabled = false;
+                menuExpandAll.Enabled = true;
+            }
+        }
+
+        private void menuClearGroups_Click(object sender, EventArgs e)
+        {
+            if (grid != null)
+            {
+                grid.ClearGrouping();
+                menuClearGroups.Enabled = false;
+            }
+        }
+
+        private void menuExpandItem_Click(object sender, EventArgs e)
+        {
+            if (grid != null)
+            {
+                grid.ExpandAllGroup();
+                menuExpandItem.Enabled = false;
+                menuCollapseItem.Enabled = true;
+            }
+        }
+
+        private void menuCollapseItem_Click(object sender, EventArgs e)
+        {
+            if (grid != null)
+            {
+                grid.CollapseAllGroup();
+                menuCollapseItem.Enabled = false;
+                menuExpandItem.Enabled = true;
+            }
+        }
+
+        private void menuClearGroupItems_Click(object sender, EventArgs e)
+        {
+            if (grid != null && column != null)
+            {
+                grid.GroupColumnDescriptions.Remove(grid.GroupColumnDescriptions.FirstOrDefault(x => x.ColumnName == column.MappingName));
+            }
+        }
+
+        private void contextGroupCaptionMenu_Opening(object sender, CancelEventArgs e)
+        {
+            menuGroupCaptionExpand.Enabled = true;
+            menuGroupCaptionCollapse.Enabled = true;
+
+            if (group.IsExpanded)
+            {
+                menuGroupCaptionExpand.Enabled = false;
+            }
+            else
+            {
+                menuGroupCaptionCollapse.Enabled = false;
+            }
+        }
+
+        private void menuGroupCaptionExpand_Click(object sender, EventArgs e)
+        {
+            if (grid != null && group != null)
+            {
+                grid.ExpandGroup(group);
+            }
+        }
+
+        private void menuGroupCaptionCollapse_Click(object sender, EventArgs e)
+        {
+            if (grid != null && group != null)
+            {
+                grid.CollapseGroup(group);
             }
         }
     }

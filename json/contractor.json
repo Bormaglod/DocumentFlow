@@ -189,7 +189,7 @@
         "datafield": "account_id",
         "label-width": 190,
         "edit-width": 330,
-        "dataset": "select id, name from account where owner_id = :id and status_id = 1002"
+        "dataset": "select id, name from account where (owner_id = :id and status_id = 1002) or (id = :account_id)"
       },
       {
         "type": "CheckBox",

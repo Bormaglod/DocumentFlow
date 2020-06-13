@@ -35,39 +35,30 @@ namespace DocumentFlow.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("C:\\Databases\\DocumentFlow")]
         public string DocumentsFolder {
             get {
                 return ((string)(this["DocumentsFolder"]));
             }
-            set {
-                this["DocumentsFolder"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("/apps/DocumentFlow Files")]
         public string FtpPath {
             get {
                 return ((string)(this["FtpPath"]));
             }
-            set {
-                this["FtpPath"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("109.68.215.41")]
         public string FtpHost {
             get {
                 return ((string)(this["FtpHost"]));
-            }
-            set {
-                this["FtpHost"] = value;
             }
         }
         
@@ -85,13 +76,37 @@ namespace DocumentFlow.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1101, 514")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
         public global::System.Drawing.Size Size {
             get {
                 return ((global::System.Drawing.Size)(this["Size"]));
             }
             set {
                 this["Size"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("SingleClick")]
+        public global::Syncfusion.WinForms.DataGrid.Enums.SortClickAction SortClickAction {
+            get {
+                return ((global::Syncfusion.WinForms.DataGrid.Enums.SortClickAction)(this["SortClickAction"]));
+            }
+            set {
+                this["SortClickAction"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowSortNumbers {
+            get {
+                return ((bool)(this["ShowSortNumbers"]));
+            }
+            set {
+                this["ShowSortNumbers"] = value;
             }
         }
     }

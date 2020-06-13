@@ -30,6 +30,7 @@
         {
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.labelDatabase = new System.Windows.Forms.Label();
             this.textDescr = new Syncfusion.Windows.Forms.Tools.TextBoxExt();
             this.label5 = new System.Windows.Forms.Label();
             this.listLibs = new Syncfusion.WinForms.ListView.SfListView();
@@ -37,6 +38,7 @@
             this.labelVersion = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.buttonOk = new Syncfusion.WinForms.Controls.SfButton();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textDescr)).BeginInit();
@@ -59,6 +61,7 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.Controls.Add(this.labelDatabase);
             this.panel1.Controls.Add(this.textDescr);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.listLibs);
@@ -71,6 +74,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(800, 400);
             this.panel1.TabIndex = 1;
+            // 
+            // labelDatabase
+            // 
+            this.labelDatabase.AutoSize = true;
+            this.labelDatabase.Location = new System.Drawing.Point(12, 62);
+            this.labelDatabase.Name = "labelDatabase";
+            this.labelDatabase.Size = new System.Drawing.Size(90, 13);
+            this.labelDatabase.TabIndex = 7;
+            this.labelDatabase.Text = "База данных: {0}";
             // 
             // textDescr
             // 
@@ -104,9 +116,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listLibs.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.listLibs.Location = new System.Drawing.Point(10, 80);
+            this.listLibs.Location = new System.Drawing.Point(10, 102);
             this.listLibs.Name = "listLibs";
-            this.listLibs.Size = new System.Drawing.Size(775, 192);
+            this.listLibs.Size = new System.Drawing.Size(775, 170);
             this.listLibs.TabIndex = 4;
             this.listLibs.Text = "sfListView1";
             this.listLibs.SelectionChanging += new System.EventHandler<Syncfusion.WinForms.ListView.Events.ItemSelectionChangingEventArgs>(this.listLibs_SelectionChanging);
@@ -114,7 +126,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 64);
+            this.label4.Location = new System.Drawing.Point(10, 86);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(160, 13);
             this.label4.TabIndex = 3;
@@ -125,27 +137,38 @@
             this.labelVersion.AutoSize = true;
             this.labelVersion.Location = new System.Drawing.Point(10, 38);
             this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(56, 13);
+            this.labelVersion.Size = new System.Drawing.Size(59, 13);
             this.labelVersion.TabIndex = 2;
-            this.labelVersion.Text = "Версия %";
+            this.labelVersion.Text = "Версия {0}";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(10, 12);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(91, 13);
+            this.label2.Size = new System.Drawing.Size(159, 13);
             this.label2.TabIndex = 1;
-            this.label2.Text = "ООО \"Автоком\"";
+            this.label2.Text = "© 2010-2020 ООО \"Автоком\"";
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.linkLabel1);
             this.panel2.Controls.Add(this.buttonOk);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 355);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(800, 45);
             this.panel2.TabIndex = 0;
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(10, 5);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(92, 13);
+            this.linkLabel1.TabIndex = 1;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "https://icons8.ru";
             // 
             // buttonOk
             // 
@@ -183,6 +206,7 @@
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textDescr)).EndInit();
             this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -200,5 +224,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Label labelDatabase;
     }
 }

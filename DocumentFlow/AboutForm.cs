@@ -10,16 +10,12 @@ namespace DocumentFlow
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Data;
-    using System.Drawing;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
     using Syncfusion.Windows.Forms;
     using Syncfusion.WinForms.ListView.Events;
+    using DocumentFlow.Data.Core;
 
     public partial class AboutForm : MetroForm
     {
@@ -47,7 +43,7 @@ namespace DocumentFlow
         public AboutForm()
         {
             InitializeComponent();
-            labelVersion.Text = $"Версия {Assembly.GetExecutingAssembly().GetName().Version}";
+            labelVersion.Text = string.Format(labelVersion.Text, Assembly.GetExecutingAssembly().GetName().Version);
 
             foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -62,6 +58,7 @@ namespace DocumentFlow
             }
 
             listLibs.DataSource = libs.OrderBy(x => x.Name);
+            labelDatabase.Text = string.Format(labelDatabase.Text, Db.ConnectionName);
         }
 
         private void listLibs_SelectionChanging(object sender, ItemSelectionChangingEventArgs e)

@@ -1,4 +1,18 @@
-﻿Версия 1.1.3.0
+﻿Версия 1.1.4.0
+    - Syncfusion обновлён до 18.1.0.56
+    - Microsoft.Bcl.AsyncInterfaces обновлён до 1.1.1
+    - System.Buffers обновлён до 4.5.1
+    - System.Memory обновлён до 4.5.4
+    - System.Runtime.CompilerServices.Unsafe обновлён до 4.7.1
+    - System.Text.Encodings.Web обновлён до 4.7.1
+    - System.Text.Json обновлён до 4.7.2
+    - System.Threading.Tasks.Extensions обновлён до 4.5.4
+    - Вместо однгого контекстного меню таблиц, теперь 7 - для строки, для заголовка, для записи, для групп и общее.
+    - Из DocumentFlow.Core удалены ObjectExtension, XamlExtension - не исполльзовались
+    - Размеры и положение окна теперь корректно восстанавливаются
+    - В DocumentFlow.Data.Core.Db добавлено свойство ConnectionName
+    - Заработал фильтр по диапазону дат и нашим фирмам (для этого надо при описании формы списка в запросе указать параметры :from_date, :from_to, :organization_id)
+Версия 1.1.3.0
     - DotLiquid обновлён до 2.0.351
     - MailKit обновлён до 2.7.0
     - Syncfusion обновлён до 18.1.0.55

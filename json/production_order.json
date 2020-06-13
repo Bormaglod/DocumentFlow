@@ -379,6 +379,9 @@
     "childs": [
       {
         "name": "production_operation"
+      },
+      {
+        "name": "ready_goods"
       }
     ]
   }
