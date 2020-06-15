@@ -183,7 +183,11 @@ namespace DocumentFlow
 
         Guid IPage.ContentId => GetCurrentId();
 
-        void IPage.OnClosed() { }
+        void IPage.OnClosed() 
+        {
+            listenerToken.Cancel();
+            timerDatabaseListen.Stop();
+        }
 
         protected ISession Session { get; private set; }
 
@@ -191,28 +195,37 @@ namespace DocumentFlow
 
         private void Listener(CancellationToken token)
         {
-            var conn = new NpgsqlConnection(Db.ConnectionString);
-            conn.Open();
-            conn.Notification += (o, e) =>
+            using (var conn = new NpgsqlConnection(Db.ConnectionString))
             {
-                NotifyMessage message = JsonConvert.DeserializeObject<NotifyMessage>(e.Payload);
-                if (message.EntityId == kind.Id)
+                conn.Open();
+                conn.Notification += (o, e) =>
                 {
-                    if (message.Destination == MessageDestination.List && owner != null && message.ObjectId != owner)
-                        return;
+                    NotifyMessage message = JsonConvert.DeserializeObject<NotifyMessage>(e.Payload);
+                    if (message.EntityId == kind.Id)
+                    {
+                        if (message.Destination == MessageDestination.List && owner != null && message.ObjectId != owner)
+                            return;
 
-                    notifies.Enqueue(message);
+                        notifies.Enqueue(message);
+                    }
+                };
+
+                using (var cmd = new NpgsqlCommand("LISTEN db_notification", conn))
+                {
+                    cmd.ExecuteNonQuery();
                 }
-            };
 
-            using (var cmd = new NpgsqlCommand("LISTEN db_notification", conn))
-            {
-                cmd.ExecuteNonQuery();
-            }
+                while (!token.IsCancellationRequested)
+                {
+                    conn.WaitAsync(token);
+                }
 
-            while (!token.IsCancellationRequested)
-            {
-                conn.Wait();
+                while (conn.FullState.HasFlag(ConnectionState.Fetching)) ;
+
+                using (var cmd = new NpgsqlCommand("UNLISTEN db_notification", conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
@@ -221,7 +234,7 @@ namespace DocumentFlow
             if (token.IsCancellationRequested)
                 return;
 
-            await Task.Run(() => Listener(token));
+            await Task.Run(() => Listener(token), token);
         }
 
         private void CreateViewer()

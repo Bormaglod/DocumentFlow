@@ -59,6 +59,7 @@ namespace DocumentFlow
         private readonly string destFtpPath;
         private readonly ICommandFactory commands;
         private ExpressionContext context;
+        private List<IPage> childs = new List<IPage>();
         private List<string> locked = new List<string>();
         private CancellationTokenSource listenerToken;
         private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
@@ -146,6 +147,11 @@ namespace DocumentFlow
             listenerToken.Cancel();
             timerDatabaseListen.Stop();
 
+            foreach (IPage p in childs)
+            {
+                p.OnClosed();
+            }
+
             using (var transaction = Session.BeginTransaction())
             {
                 try
@@ -173,25 +179,34 @@ namespace DocumentFlow
 
         private void Listener(CancellationToken token)
         {
-            var conn = new NpgsqlConnection(Db.ConnectionString);
-            conn.Open();
-            conn.Notification += (o, e) =>
+            using (var conn = new NpgsqlConnection(Db.ConnectionString))
             {
-                NotifyMessage message = JsonConvert.DeserializeObject<NotifyMessage>(e.Payload);
-                if (message.Destination == MessageDestination.Object && message.ObjectId == current)
+                conn.Open();
+                conn.Notification += (o, e) =>
                 {
-                    notifies.Enqueue(message);
+                    NotifyMessage message = JsonConvert.DeserializeObject<NotifyMessage>(e.Payload);
+                    if (message.Destination == MessageDestination.Object && message.ObjectId == current)
+                    {
+                        notifies.Enqueue(message);
+                    }
+                };
+
+                using (var cmd = new NpgsqlCommand("LISTEN db_notification", conn))
+                {
+                    cmd.ExecuteNonQuery();
                 }
-            };
 
-            using (var cmd = new NpgsqlCommand("LISTEN db_notification", conn))
-            {
-                cmd.ExecuteNonQuery();
-            }
+                while (!token.IsCancellationRequested)
+                {
+                    conn.WaitAsync(token);
+                }
 
-            while (!token.IsCancellationRequested)
-            {
-                conn.Wait();
+                while (conn.FullState.HasFlag(System.Data.ConnectionState.Fetching)) ;
+
+                using (var cmd = new NpgsqlCommand("UNLISTEN db_notification", conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
@@ -200,7 +215,7 @@ namespace DocumentFlow
             if (token.IsCancellationRequested)
                 return;
 
-            await Task.Run(() => Listener(token));
+            await Task.Run(() => Listener(token), token);
         }
 
         private void PrepareEditor()
@@ -698,6 +713,7 @@ namespace DocumentFlow
                     Text = e.Name
                 };
 
+                childs.Add(viewer);
                 page.Controls.Add(viewer);
 
                 tabSplitterContainer1.SecondaryPages.Insert(tabSplitterContainer1.SecondaryPages.Count - 2, page);

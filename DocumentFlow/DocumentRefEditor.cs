@@ -152,6 +152,8 @@ namespace DocumentFlow
                         {
                             throw new FtpDownloadException($"Возникла проблема при загрузке файла {refs.FileName}");
                         }
+
+                        refs.Crc = crc;
                     }
                 }
 
@@ -256,6 +258,8 @@ namespace DocumentFlow
                         {
                             throw new FtpDownloadException($"Возникла проблема при загрузке файла {refs.FileName}");
                         }
+
+                        refs.Crc = crc;
                     }
                 }
 
