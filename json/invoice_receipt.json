@@ -406,7 +406,7 @@
         "name": "invoice_panel",
         "controls": [
           {
-            "type": "Integer",
+            "type": "TextBox",
             "dock": "Left",
             "text": "Счёт фактура №",
             "datafield": "invoice_number",

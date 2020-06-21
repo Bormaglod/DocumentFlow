@@ -224,10 +224,10 @@
     ],
     "childs": [
       {
-        "name": "account"
+        "name": "view-account"
       },
       {
-        "name": "employee"
+        "name": "view-employee"
       }
     ]
   }

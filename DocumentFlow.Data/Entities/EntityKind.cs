@@ -19,7 +19,6 @@ namespace DocumentFlow.Data.Entities
         public virtual Transition Transition { get; set; }
         public virtual string Prefix { get; set; }
         public virtual int NumberDigits { get; set; }
-        public virtual string DataSchema { get; set; }
 
         public override string ToString()
         {

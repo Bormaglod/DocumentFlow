@@ -192,14 +192,14 @@
     ],
     "childs": [
       {
-        "name": "calculation",
+        "name": "view-calculation",
         "visible": "GetRootCode(\"goods\") = \"Прд\""
       },
       {
-        "name": "balance_goods"
+        "name": "view-balance-goods"
       },
       {
-        "name": "archive_price"
+        "name": "view-archive-price"
       }
     ]
   }

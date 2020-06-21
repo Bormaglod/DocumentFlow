@@ -1,9 +1,9 @@
 ﻿{
-  "name": "production_order",
+  "name": "invoice_sales",
   "viewer": {
     "dataset": {
-      "select": "select po.id, po.status_id, s.note as status_name, c.name as contractor_name, po.doc_date, po.doc_number, o.name as organization_name, case when c.tax_payer then 20 else 0 end as tax, coalesce(sum(cost), 0::money) as cost, coalesce(sum(tax_value), 0::money) as tax_value, coalesce(sum(cost_with_tax), 0::money) as cost_with_tax from production_order po join status s on (s.id  = po.status_id) join organization o on (o.id = po.organization_id) left join production_order_detail pod on (pod.owner_id = po.id) left join contractor c on (c.id = po.contractor_id) group by po.id, po.status_id, c.name, po.doc_date, po.doc_number, s.note, o.name, c.tax_payer",
-      "select-id": "select po.id, po.status_id, s.note as status_name, c.name as contractor_name, po.doc_date, po.doc_number, o.name as organization_name, case when c.tax_payer then 20 else 0 end as tax, coalesce(sum(cost), 0::money) as cost, coalesce(sum(tax_value), 0::money) as tax_value, coalesce(sum(cost_with_tax), 0::money) as cost_with_tax from production_order po join status s on (s.id  = po.status_id) join organization o on (o.id = po.organization_id) left join production_order_detail pod on (pod.owner_id = po.id) left join contractor c on (c.id = po.contractor_id) where po.id = :id group by po.id, po.status_id, c.name, po.doc_date, po.doc_number, s.note, o.name, c.tax_payer"
+      "select": "select i_s.id, i_s.status_id, s.note as status_name, c.name as contractor_name, i_s.doc_date, i_s.doc_number, o.name as organization_name, i_s.invoice_date, i_s.invoice_number, po.view_number as order_number, po.doc_date as order_date, case when c.tax_payer then 20 else 0 end as tax, coalesce(sum(isd.cost), 0::money) as cost, coalesce(sum(isd.tax_value), 0::money) as tax_value, coalesce(sum(isd.cost_with_tax), 0::money) as cost_with_tax from invoice_sales i_s join status s on (s.id  = i_s.status_id) join organization o on (o.id = i_s.organization_id) left join invoice_sales_detail isd on (isd.owner_id = i_s.id) left join contractor c on (c.id = i_s.contractor_id) left join production_order po on (po.id = i_s.owner_id) group by i_s.id, i_s.status_id, c.name, i_s.doc_date, i_s.doc_number, s.note, o.name, c.tax_payer, i_s.invoice_date, i_s.invoice_number, po.view_number, po.doc_date",
+      "select-id": "select i_s.id, i_s.status_id, s.note as status_name, c.name as contractor_name, i_s.doc_date, i_s.doc_number, o.name as organization_name, i_s.invoice_date, i_s.invoice_number, po.view_number as order_number, po.doc_date as order_date, case when c.tax_payer then 20 else 0 end as tax, coalesce(sum(isd.cost), 0::money) as cost, coalesce(sum(isd.tax_value), 0::money) as tax_value, coalesce(sum(isd.cost_with_tax), 0::money) as cost_with_tax from invoice_sales i_s join status s on (s.id  = i_s.status_id) join organization o on (o.id = i_s.organization_id) left join invoice_sales_detail isd on (isd.owner_id = i_s.id) left join contractor c on (c.id = i_s.contractor_id) left join production_order po on (po.id = i_s.owner_id) where i_s.id = :id group by i_s.id, i_s.status_id, c.name, i_s.doc_date, i_s.doc_number, s.note, o.name, c.tax_payer, i_s.invoice_date, i_s.invoice_number, po.view_number, po.doc_date"
     },
     "data-type": "Document",
     "allow-grouping": true,
@@ -54,11 +54,34 @@
         "allow-grouping": true
       },
       {
+        "datafield": "invoice_date",
+        "text": "Дата",
+        "type": "Date",
+        "date-format": "dd.MM.yyyy",
+        "width": 150
+      },
+      {
+        "datafield": "invoice_number",
+        "text": "Номер",
+        "type": "Text"
+      },
+      {
         "datafield": "contractor_name",
         "text": "Контрагент",
         "type": "Text",
         "auto-size": true,
         "allow-grouping": true
+      },
+      {
+        "datafield": "order_date",
+        "text": "Дата",
+        "type": "Date",
+        "width": 150
+      },
+      {
+        "datafield": "order_number",
+        "text": "Номер",
+        "type": "Text"
       },
       {
         "datafield": "cost",
@@ -94,6 +117,16 @@
         "horizontal-align": "Right"
       }
     ],
+    "stacked-columns": [
+      {
+        "header": "Счёт-фактура",
+        "childs": [ "invoice_date", "invoice_number" ]
+      },
+      {
+        "header": "Заказ",
+        "childs": [ "order_date", "order_number" ]
+      }
+    ],
     "sorts": [
       {
         "name": "doc_date"
@@ -105,8 +138,8 @@
   },
   "editor": {
     "dataset": {
-      "select": "select id, '№' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as name, contractor_id, doc_date, doc_number, organization_id from production_order where id = :id",
-      "update": "update production_order set contractor_id = :contractor_id, doc_date = :doc_date, doc_number = :doc_number where id = :id"
+      "select": "select id, '№' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as name, owner_id, contractor_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_sales where id = :id",
+      "update": "update invoice_sales set contractor_id = :contractor_id, doc_date = :doc_date, doc_number = :doc_number, invoice_date = :invoice_date, invoice_number = :invoice_number, owner_id = :owner_id where id = :id"
     },
     "controls": [
       {
@@ -152,28 +185,44 @@
         "type": "SelectBox",
         "text": "Контрагент",
         "datafield": "contractor_id",
+        "label-width": 160,
         "edit-width": 714,
-        "dataset": "select id, status_id, name, parent_id from contractor where (status_id = 1002 and buyer) or (status_id = 500) or (id = :contractor_id) order by name"
+        "dataset": "select id, status_id, name, parent_id from contractor where (status_id = 1002 and buyer) or (status_id = 500) or (id = :contractor_id) order by name",
+        "expressions": [
+          {
+            "expression": "Populate(\"owner_id\")"
+          },
+          {
+            "expression": "Populate(\"invoice_panel\")"
+          }
+        ]
+      },
+      {
+        "type": "SelectBox",
+        "text": "Заказ на изготовление",
+        "datafield": "owner_id",
+        "label-width": 160,
+        "edit-width": 450,
+        "dataset": "select po.id, ek.name || ' №' || po.view_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join entity_kind ek on (ek.id = po.entity_kind_id) join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where (po.status_id = 3100 or (po.id = :owner_id)) and (po.contractor_id = :contractor_id or :contractor_id is null) group by po.id, ek.name, po.view_number, po.doc_date, c.name",
+        "expressions": [
+          {
+            "destination": "contractor_id",
+            "sql-expression": "select contractor_id from production_order where id = :owner_id"
+          }
+        ]
       },
       {
         "type": "DataGrid",
         "name": "datagrid",
         "height": 350,
         "form-title": "Номенклатура",
-        "dataset": "select pod.id, pod.owner_id, g.name as goods_name, pod.amount, pod.price, pod.cost, pod.tax, pod.tax_value, pod.cost_with_tax, pod.complete_status, c.code as calculation_code from production_order_detail pod join goods g on (g.id = pod.goods_id) join calculation c on (c.id = pod.calculation_id) where pod.owner_id = :id",
+        "dataset": "select isd.id, isd.owner_id, g.name as goods_name, isd.amount, isd.price, isd.cost, isd.tax, isd.tax_value, isd.cost_with_tax from invoice_sales_detail isd left join goods g on (g.id = isd.goods_id) where isd.owner_id = :id",
         "columns": [
           {
             "datafield": "goods_name",
             "text": "Номенклатура",
             "type": "Text",
             "auto-size": true,
-            "hideable": false
-          },
-          {
-            "datafield": "calculation_code",
-            "text": "Калькуляция",
-            "type": "Text",
-            "width": 150,
             "hideable": false
           },
           {
@@ -224,53 +273,36 @@
           {
             "datafield": "cost_with_tax",
             "text": "Всего",
-            "type": "Numeric",
+            "type": "numeric",
             "width": 140,
             "hideable": false,
             "format-mode": "Currency",
             "horizontal-align": "Right",
             "aggregate": "Sum"
-          },
-          {
-            "datafield": "complete_status",
-            "text": "Выполнено",
-            "type": "Progress",
-            "hideable": false
           }
         ],
         "editor": {
           "dataset": {
-            "name": "production_order_detail",
-            "select": "select id, owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax, calculation_id from production_order_detail where id = :id",
-            "insert": "insert into production_order_detail (owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax, calculation_id) values (:owner_id, :goods_id, :amount, :price, :cost, :tax, :tax_value, :cost_with_tax, :calculation_id) returning id",
-            "update": "update production_order_detail set goods_id = :goods_id, amount = :amount, price = :price, cost = :cost, tax = :tax, tax_value = :tax_value, cost_with_tax = :cost_with_tax, calculation_id = :calculation_id where id = :id",
-            "delete": "delete from production_order_detail where id = :id"
+            "name": "invoice_sales_detail",
+            "select": "select id, owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax from invoice_sales_detail where id = :id",
+            "insert": "insert into invoice_sales_detail (owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax) values (:owner_id, :goods_id, :amount, :price, :cost, :tax, :tax_value, :cost_with_tax) returning id",
+            "update": "update invoice_sales_detail set goods_id = :goods_id, amount = :amount, price = :price, cost = :cost, tax = :tax, tax_value = :tax_value, cost_with_tax = :cost_with_tax where id = :id",
+            "delete": "delete from invoice_sales_detail where id = :id"
           },
           "controls": [
             {
               "type": "SelectBox",
               "text": "Номенклатура",
-              "dataset": "with recursive gp as (select id, status_id, name, parent_id from goods where status_id in (500, 1002) and id = '4da429d1-cd8f-4757-bea8-49c99adc48d8' union all select gc.id, gc.status_id, gc.name, gc.parent_id from goods gc join gp on (gc.parent_id = gp.id) where gc.status_id in (500, 1002)) select * from gp order by name",
+              "dataset": "select id, status_id, name, parent_id from goods where status_id in (500, 1002) order by name",
               "datafield": "goods_id",
               "edit-full-size": true,
-              "label-width": 120,
+              "label-width": 100,
               "expressions": [
                 {
                   "destination": "price",
                   "sql-expression": "select price from goods where id = :goods_id"
-                },
-                {
-                  "expression": "Populate(\"calculation_id\")"
                 }
               ]
-            },
-            {
-              "type": "SelectBox",
-              "text": "Калькуляция",
-              "dataset": "select id, status_id, name from calculation where owner_id = :goods_id",
-              "datafield": "calculation_id",
-              "edit-full-size": true,
-              "label-width": 120
             },
             {
               "type": "Numeric",
@@ -278,7 +310,7 @@
               "decimal-digits": 3,
               "datafield": "amount",
               "edit-full-size": true,
-              "label-width": 120,
+              "label-width": 100,
               "expressions": [
                 {
                   "destination": "cost",
@@ -291,7 +323,7 @@
               "text": "Цена",
               "datafield": "price",
               "edit-full-size": true,
-              "label-width": 120,
+              "label-width": 100,
               "expressions": [
                 {
                   "destination": "cost",
@@ -304,7 +336,7 @@
               "text": "Сумма",
               "datafield": "cost",
               "edit-full-size": true,
-              "label-width": 120,
+              "label-width": 100,
               "expressions": [
                 {
                   "destination": "tax_value",
@@ -336,7 +368,7 @@
                 }
               ],
               "edit-full-size": true,
-              "label-width": 120,
+              "label-width": 100,
               "expressions": [
                 {
                   "destination": "tax_value",
@@ -349,7 +381,7 @@
               "text": "НДС",
               "datafield": "tax_value",
               "edit-full-size": true,
-              "label-width": 120,
+              "label-width": 100,
               "expressions": [
                 {
                   "destination": "cost_with_tax",
@@ -362,26 +394,52 @@
               "text": "Всего с НДС",
               "datafield": "cost_with_tax",
               "edit-full-size": true,
-              "label-width": 120
+              "label-width": 100
             }
           ]
         }
+      },
+      {
+        "type": "Container",
+        "height": 42,
+        "padding": [ 0, 10, 0, 0 ],
+        "name": "invoice_panel",
+        "controls": [
+          {
+            "type": "TextBox",
+            "dock": "Left",
+            "text": "Счёт фактура №",
+            "datafield": "invoice_number",
+            "edit-width": 110,
+            "auto-size-label": true,
+            "width": 225
+          },
+          {
+            "type": "DateTime",
+            "dock": "Left",
+            "text": "от",
+            "datafield": "invoice_date",
+            "text-align-label": "TopCenter",
+            "customformat": "dd.MM.yyyy",
+            "label-width": 40,
+            "edit-width": 170,
+            "width": 210
+          }
+        ]
       }
     ],
     "conditions": [
       {
-        "controls": [ "doc_number", "doc_date", "organization_id", "contractor_id", "datagrid" ],
+        "controls": [ "doc_number", "doc_date", "organization_id", "contractor_id", "datagrid", "invoice_number", "invoice_date", "owner_id" ],
         "enable": {
           "states": [ "compiled", "is changing" ]
         }
-      }
-    ],
-    "childs": [
-      {
-        "name": "view-prod-oper"
       },
       {
-        "name": "vw-ready-goods-chlds"
+        "controls": [ "invoice_panel" ],
+        "visible": {
+          "if-equal-sql": "select tax_payer from contractor where id = :contractor_id"
+        }
       }
     ]
   }

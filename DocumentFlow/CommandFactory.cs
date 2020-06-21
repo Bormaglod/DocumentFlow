@@ -9,8 +9,8 @@
 namespace DocumentFlow
 {
     using System;
-    using System.ServiceModel.Channels;
     using System.Windows.Forms;
+    using NHibernate.Transform;
     using DocumentFlow.Core;
     using DocumentFlow.Data.Core;
     using DocumentFlow.Data.Entities;
@@ -54,18 +54,25 @@ namespace DocumentFlow
                     CreateDiagramViewer((Guid)parameters[0]);
                     break;
                 default:
-                    if (command.ParentId.HasValue)
-                    {
-                        string parentCode;
-                        using (var session = Db.OpenSession())
-                        {
-                            parentCode = session.Get<Command>(command.ParentId.Value).Code;
-                        }
+                    string sql = @"with recursive r as 
+                        (
+	                        select id, parent_id from command where code in ('view-directory', 'view-document')
+	                        union all
+	                        select c.id, c.parent_id from command c join r on (r.id = c.parent_id)
+                        ) select id from r where id = :id";
 
-                        if (parentCode == "view-directory" || parentCode == "view-document")
-                        {
-                            CreateControlViewer(command);
-                        }
+                    bool createViewer = false;
+                    using (var session = Db.OpenSession())
+                    {
+                        createViewer = session.CreateSQLQuery(sql)
+                            .SetResultTransformer(Transformers.AliasToEntityMap)
+                            .SetGuid("id", command.Id)
+                            .UniqueResult() != null;
+                    }
+
+                    if (createViewer)
+                    {
+                        CreateControlViewer(command);
                     }
 
                     break;
@@ -113,7 +120,7 @@ namespace DocumentFlow
             }
             else
             {
-                ContentViewer viewer = new ContentViewer(this, command.EntityKind.Id, null);
+                ContentViewer viewer = new ContentViewer(this, command, null);
                 container.Add(viewer);
             }
         }

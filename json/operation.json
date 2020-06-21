@@ -222,7 +222,7 @@
     ],
     "childs": [
       {
-        "name": "archive_price"
+        "name": "view-archive-price"
       }
     ]
   }

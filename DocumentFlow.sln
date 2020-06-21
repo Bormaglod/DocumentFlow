@@ -30,6 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "json", "json", "{C36558B3-4
 		json\employee.json = json\employee.json
 		json\goods.json = json\goods.json
 		json\invoice_receipt.json = json\invoice_receipt.json
+		json\invoice_sales.json = json\invoice_sales.json
 		json\measurement.json = json\measurement.json
 		json\okopf.json = json\okopf.json
 		json\okpdtr.json = json\okpdtr.json
@@ -43,7 +44,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "json", "json", "{C36558B3-4
 		json\production_operation.json = json\production_operation.json
 		json\production_order.json = json\production_order.json
 		json\purchase_request.json = json\purchase_request.json
-		json\ready_goods.json = json\ready_goods.json
+		json\ready_goods_child.json = json\ready_goods_child.json
+		json\ready_goods_main.json = json\ready_goods_main.json
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
 		C_5_4Projects_4DocumentFlow_4json_4schema_1json__JsonSchema = http://json-schema.org/draft-04/schema

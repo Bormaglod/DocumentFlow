@@ -26,7 +26,6 @@ namespace DocumentFlow
     using NHibernate;
     using NHibernate.Transform;
     using Npgsql;
-    using Syncfusion.Data;
     using Syncfusion.Windows.Forms.Tools;
     using Syncfusion.WinForms.DataGrid;
     using Syncfusion.WinForms.DataGrid.Enums;
@@ -149,7 +148,7 @@ namespace DocumentFlow
         private Dictionary<GridColumn, DatasetColumn> dataColumns = new Dictionary<GridColumn, DatasetColumn>();
         private DatasetSchema schema;
         private Guid? ParentEntity;
-        private EntityKind kind;
+        private Command command;
         private Dictionary<string, List<ToolStripItem>> commandItems = new Dictionary<string, List<ToolStripItem>>();
         private ToolbarGroups groupItems = new ToolbarGroups();
         private Guid? owner;
@@ -162,13 +161,13 @@ namespace DocumentFlow
         private int columnIndex = -1;
         private object record = null;
 
-        public ContentViewer(ICommandFactory commandFactory, Guid kindId, Guid? ownerId)
+        public ContentViewer(ICommandFactory commandFactory, Command cmd, Guid? ownerId)
         {
             InitializeComponent();
             NewSession();
 
             commands = commandFactory;
-            kind = Session.Get<EntityKind>(kindId);
+            command = Session.Get<Command>(cmd.Id);
             owner = ownerId;
 
             CreateViewer();
@@ -179,7 +178,7 @@ namespace DocumentFlow
             CreateListener(listenerToken.Token);
         }
 
-        Guid IPage.Id => kind.Id;
+        Guid IPage.Id => command.Id;
 
         Guid IPage.ContentId => GetCurrentId();
 
@@ -201,7 +200,7 @@ namespace DocumentFlow
                 conn.Notification += (o, e) =>
                 {
                     NotifyMessage message = JsonConvert.DeserializeObject<NotifyMessage>(e.Payload);
-                    if (message.EntityId == kind.Id)
+                    if (message.EntityId == command.EntityKind.Id)
                     {
                         if (message.Destination == MessageDestination.List && owner != null && message.ObjectId != owner)
                             return;
@@ -241,7 +240,7 @@ namespace DocumentFlow
         {
             try
             {
-                schema = JsonConvert.DeserializeObject<DatasetSchema>(kind.DataSchema, new ControlConverter());
+                schema = JsonConvert.DeserializeObject<DatasetSchema>(command.DataSchema, new ControlConverter());
             }
             catch (UnknownTypeException e)
             {
@@ -250,7 +249,7 @@ namespace DocumentFlow
 
             ((ISettings)this).LoadSettings();
 
-            Text = kind.Name;
+            Text = command.Name;
 
             gridContent.ColumnHeaderContextMenu = contextHeaderMenu;
             gridContent.RowHeaderContextMenu = contextRowMenu;
@@ -271,7 +270,7 @@ namespace DocumentFlow
                 {
                     case DataType.Directory:
                         panelDocument.Visible = false;
-                        breadcrumb1.Visible = kind.HasGroup;
+                        breadcrumb1.Visible = command.EntityKind.HasGroup;
                         break;
                     case DataType.Document:
                         panelDirectory.Visible = false;
@@ -298,8 +297,8 @@ namespace DocumentFlow
                 panelCommandBar.Height = 30;
                 panelCommandBar.Visible = schema.Viewer.CommandBarVisible;
 
-                buttonAddFolder.Visible = kind.HasGroup;
-                menuAddFolder.Visible = kind.HasGroup;
+                buttonAddFolder.Visible = command.EntityKind.HasGroup;
+                menuAddFolder.Visible = command.EntityKind.HasGroup;
 
                 if (schema.Viewer?.Columns != null)
                 {
@@ -407,7 +406,7 @@ namespace DocumentFlow
             switch (action)
             {
                 case CommandAction.Create:
-                    result = editor.Create(kind.Id, ParentEntity);
+                    result = editor.Create(command.EntityKind.Id, ParentEntity);
                     break;
                 case CommandAction.Edit:
                     result = editor.Edit(GetCurrentId());
@@ -820,7 +819,7 @@ namespace DocumentFlow
 
         private void RefreshEntities(object sender, EventArgs e) => RefreshCurrenView();
 
-        private void Edit() => commands.Execute("edit-record", new EditorParams() { Id = GetCurrentId(), Parent = ParentEntity, Owner = owner, Kind = kind, Editor = schema?.Editor });
+        private void Edit() => commands.Execute("edit-record", new EditorParams() { Id = GetCurrentId(), Parent = ParentEntity, Owner = owner, Kind = command.EntityKind, Editor = schema?.Editor });
 
         private void breadcrumb1_CrumbClick(object sender, CrumbClickEventArgs e)
         {
@@ -898,7 +897,7 @@ namespace DocumentFlow
             }
         }
 
-        private void buttonCreate_Click(object sender, EventArgs e) => commands.Execute("add-record", new EditorParams() { Id = Guid.Empty, Parent = ParentEntity, Owner = owner, Kind = kind, Editor = schema?.Editor });
+        private void buttonCreate_Click(object sender, EventArgs e) => commands.Execute("add-record", new EditorParams() { Id = Guid.Empty, Parent = ParentEntity, Owner = owner, Kind = command.EntityKind, Editor = schema?.Editor });
 
         private void buttonEdit_Click(object sender, EventArgs e)
         {
@@ -910,7 +909,7 @@ namespace DocumentFlow
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            string deleteSql = schema?.Editor.Dataset.DeleteDefault(kind.Code);
+            string deleteSql = schema?.Editor.Dataset.DeleteDefault(command.EntityKind.Code);
             if (deleteSql == null)
             {
                 MessageBox.Show("Не указана команда для удаления (editor/dataset/delete)");

@@ -221,13 +221,13 @@
     ],
     "childs": [
       {
-        "name": "account"
+        "name": "view-account"
       },
       {
-        "name": "employee"
+        "name": "view-employee"
       },
       {
-        "name": "balance_contractor"
+        "name": "view-balance-contr"
       }
     ]
   }

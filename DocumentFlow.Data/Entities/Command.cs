@@ -19,5 +19,6 @@ namespace DocumentFlow.Data.Entities
         public virtual Picture Picture { get; set; }
         public virtual string Note { get; set; }
         public virtual EntityKind EntityKind { get; set; }
+        public virtual string DataSchema { get; set; }
     }
 }

@@ -155,13 +155,13 @@
     ],
     "childs": [
       {
-        "name": "calc_item_goods"
+        "name": "view-item-goods"
       },
       {
-        "name": "calc_item_operation"
+        "name": "view-item-oper"
       },
       {
-        "name": "calc_item_deduction"
+        "name": "view-item-deduction"
       }
     ]
   }

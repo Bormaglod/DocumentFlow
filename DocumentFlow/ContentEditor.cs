@@ -692,8 +692,8 @@ namespace DocumentFlow
 
             foreach (ChildViewerData child in editor.Childs)
             {
-                EntityKind e = Session.QueryOver<EntityKind>().Where(x => x.Code == child.Name).SingleOrDefault();
-                if (e == null)
+                Command command = Session.QueryOver<Command>().Where(x => x.Code == child.Name).SingleOrDefault();
+                if (command == null)
                     continue;
 
                 if (!string.IsNullOrEmpty(child.Visible))
@@ -703,14 +703,14 @@ namespace DocumentFlow
                         continue;
                 }
 
-                ContentViewer viewer = new ContentViewer(commands, e.Id, current)
+                ContentViewer viewer = new ContentViewer(commands, command, current)
                 {
                     Dock = DockStyle.Fill
                 };
 
                 TabSplitterPage page = new TabSplitterPage
                 {
-                    Text = e.Name
+                    Text = command.Name
                 };
 
                 childs.Add(viewer);
