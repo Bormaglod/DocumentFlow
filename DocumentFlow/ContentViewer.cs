@@ -264,6 +264,7 @@ namespace DocumentFlow
             if (schema?.Viewer != null)
             {
                 gridContent.AllowGrouping = schema.Viewer.AllowGrouping;
+                gridContent.AllowSorting = schema.Viewer.AllowSorting;
                 gridContent.ShowGroupDropArea = schema.Viewer.AllowGrouping;
 
                 switch (schema.Viewer.DataType)

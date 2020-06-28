@@ -2,8 +2,8 @@
   "name": "perform_operation",
   "viewer": {
     "dataset": {
-      "select": "select po.id, po.status_id, s.note as status_name, po.doc_date, '№' || p_ord.doc_number || ' от ' || to_char(p_ord.doc_date, 'DD.MM.YYYY') as order_name, g.name as goods_name, o.name as operation_name, p.name as employee_name, ug.name as using_goods_name, case when ur.name is null then ug.name else ur.name end as replacing_goods_name, po.amount, po.salary from perform_operation po join status s on (s.id = po.status_id) left join production_order p_ord on (p_ord.id = po.order_id) left join goods g on (g.id = po.goods_id) left join operation o on (o.id = po.operation_id) left join employee e on (e.id = po.employee_id) left join person p on (p.id = e.person_id) left join goods ug on (ug.id = po.using_goods_id) left join goods ur on (ur.id = po.replacing_goods_id) where po.doc_date between :from_date and :to_date and po.organization_id = :organization_id",
-      "select-id": "select po.id, po.status_id, s.note as status_name, po.doc_date, '№' || p_ord.doc_number || ' от ' || to_char(p_ord.doc_date, 'DD.MM.YYYY') as order_name, g.name as goods_name, o.name as operation_name, p.name as employee_name, ug.name as using_goods_name, case when ur.name is null then ug.name else ur.name end as replacing_goods_name, po.amount, po.salary from perform_operation po join status s on (s.id = po.status_id) left join production_order p_ord on (p_ord.id = po.order_id) left join goods g on (g.id = po.goods_id) left join operation o on (o.id = po.operation_id) left join employee e on (e.id = po.employee_id) left join person p on (p.id = e.person_id) left join goods ug on (ug.id = po.using_goods_id) left join goods ur on (ur.id = po.replacing_goods_id) where po.id = :id"
+      "select": "select po.id, po.status_id, s.note as status_name, ua.name as user_created, po.doc_date, '№' || p_ord.doc_number || ' от ' || to_char(p_ord.doc_date, 'DD.MM.YYYY') as order_name, g.name as goods_name, o.name as operation_name, p.name as employee_name, ug.name as using_goods_name, case when ur.name is null then ug.name else ur.name end as replacing_goods_name, po.amount, po.salary from perform_operation po join status s on (s.id = po.status_id) join user_alias ua on (ua.id = po.user_created_id) left join production_order p_ord on (p_ord.id = po.order_id) left join goods g on (g.id = po.goods_id) left join operation o on (o.id = po.operation_id) left join employee e on (e.id = po.employee_id) left join person p on (p.id = e.person_id) left join goods ug on (ug.id = po.using_goods_id) left join goods ur on (ur.id = po.replacing_goods_id) where po.doc_date between :from_date and :to_date and po.organization_id = :organization_id",
+      "select-id": "select po.id, po.status_id, s.note as status_name, ua.name as user_created, po.doc_date, '№' || p_ord.doc_number || ' от ' || to_char(p_ord.doc_date, 'DD.MM.YYYY') as order_name, g.name as goods_name, o.name as operation_name, p.name as employee_name, ug.name as using_goods_name, case when ur.name is null then ug.name else ur.name end as replacing_goods_name, po.amount, po.salary from perform_operation po join status s on (s.id = po.status_id) join user_alias ua on (ua.id = po.user_created_id) left join production_order p_ord on (p_ord.id = po.order_id) left join goods g on (g.id = po.goods_id) left join operation o on (o.id = po.operation_id) left join employee e on (e.id = po.employee_id) left join person p on (p.id = e.person_id) left join goods ug on (ug.id = po.using_goods_id) left join goods ur on (ur.id = po.replacing_goods_id) where po.id = :id"
     },
     "data-type": "Document",
     "allow-grouping": true,
@@ -29,6 +29,14 @@
       {
         "datafield": "status_name",
         "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "user_created",
+        "text": "Автор",
         "type": "Text",
         "width": 110,
         "visible": false,
@@ -185,7 +193,7 @@
         "datafield": "employee_id",
         "label-width": 210,
         "edit-width": 350,
-        "dataset": "select e.id, e.status_id, p.name from perform_operation po join organization org on (org.id = po.organization_id) join employee e on (e.owner_id = org.id) join person p on (p.id = e.person_id) where (po.id = :id and e.status_id = 1001) or (e.id = :employee_id)"
+        "dataset": "select e.id, e.status_id, p.name from perform_operation po join organization org on (org.id = po.organization_id) join employee e on (e.owner_id = org.id) join person p on (p.id = e.person_id) where po.id = :id and (e.status_id = 1002 or e.id = :employee_id)"
       },
       {
         "type": "Currency",

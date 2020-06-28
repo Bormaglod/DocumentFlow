@@ -2,8 +2,8 @@
   "name": "purchase_request",
   "viewer": {
     "dataset": {
-      "select": "select pr.id, pr.status_id, s.note as status_name, c.name as contractor_name, pr.doc_date, pr.doc_number, o.name as organization_name, case when c.tax_payer then 20 else 0 end as tax, coalesce(sum(cost), 0::money) as cost, coalesce(sum(tax_value), 0::money) as tax_value, coalesce(sum(cost_with_tax), 0::money) as cost_with_tax from purchase_request pr join status s on (s.id  = pr.status_id) join organization o on (o.id = pr.organization_id) left join purchase_request_detail prd on (prd.owner_id = pr.id) left join contractor c on (c.id = pr.contractor_id) group by pr.id, pr.status_id, c.name, pr.doc_date, pr.doc_number, s.note, o.name, c.tax_payer",
-      "select-id": "select pr.id, pr.status_id, s.note as status_name, c.name as contractor_name, pr.doc_date, pr.doc_number, o.name as organization_name, case when c.tax_payer then 20 else 0 end as tax, coalesce(sum(cost), 0::money) as cost, coalesce(sum(tax_value), 0::money) as tax_value, coalesce(sum(cost_with_tax), 0::money) as cost_with_tax from purchase_request pr join status s on (s.id  = pr.status_id) join organization o on (o.id = pr.organization_id) left join purchase_request_detail prd on (prd.owner_id = pr.id) left join contractor c on (c.id = pr.contractor_id) where pr.id = :id group by pr.id, pr.status_id, c.name, pr.doc_date, pr.doc_number, s.note, o.name, c.tax_payer"
+      "select": "select pr.id, pr.status_id, s.note as status_name, ua.name as user_created, c.name as contractor_name, pr.doc_date, pr.doc_number, o.name as organization_name, case when c.tax_payer then 20 else 0 end as tax, coalesce(sum(cost), 0::money) as cost, coalesce(sum(tax_value), 0::money) as tax_value, coalesce(sum(cost_with_tax), 0::money) as cost_with_tax from purchase_request pr join status s on (s.id  = pr.status_id) join user_alias ua on (ua.id = pr.user_created_id) join organization o on (o.id = pr.organization_id) left join purchase_request_detail prd on (prd.owner_id = pr.id) left join contractor c on (c.id = pr.contractor_id) where pr.doc_date between :from_date and :to_date and pr.organization_id = :organization_id group by pr.id, pr.status_id, ua.name, c.name, pr.doc_date, pr.doc_number, s.note, o.name, c.tax_payer",
+      "select-id": "select pr.id, pr.status_id, s.note as status_name, ua.name as user_created, c.name as contractor_name, pr.doc_date, pr.doc_number, o.name as organization_name, case when c.tax_payer then 20 else 0 end as tax, coalesce(sum(cost), 0::money) as cost, coalesce(sum(tax_value), 0::money) as tax_value, coalesce(sum(cost_with_tax), 0::money) as cost_with_tax from purchase_request pr join status s on (s.id  = pr.status_id) join user_alias ua on (ua.id = pr.user_created_id) join organization o on (o.id = pr.organization_id) left join purchase_request_detail prd on (prd.owner_id = pr.id) left join contractor c on (c.id = pr.contractor_id) where pr.id = :id group by pr.id, pr.status_id, ua.name, c.name, pr.doc_date, pr.doc_number, s.note, o.name, c.tax_payer"
     },
     "data-type": "Document",
     "allow-grouping": true,
@@ -28,6 +28,14 @@
       {
         "datafield": "status_name",
         "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "user_created",
+        "text": "Автор",
         "type": "Text",
         "width": 110,
         "visible": false,

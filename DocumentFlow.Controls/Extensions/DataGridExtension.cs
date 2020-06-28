@@ -9,6 +9,7 @@
 namespace DocumentFlow.Controls.Extensions
 {
     using System.Collections.Generic;
+    using System.Drawing;
     using System.Globalization;
     using System.Linq;
     using System.Windows.Forms;
@@ -102,10 +103,21 @@ namespace DocumentFlow.Controls.Extensions
             column.Width = c.AutoSize ? double.NaN : c.Width;
             column.AutoSizeColumnsMode = c.AutoSize ? AutoSizeColumnsMode.LastColumnFill : AutoSizeColumnsMode.AllCells;
             column.Visible = c.Visible;
-            column.AllowSorting = c.Sortable;
             column.AllowResizing = c.Resizable;
             column.AllowGrouping = c.AllowGrouping;
             column.CellStyle.HorizontalAlignment = c.HorizontalAlignment;
+            
+            if (!string.IsNullOrEmpty(c.BackColor))
+            {
+                column.CellStyle.BackColor = ColorTranslator.FromHtml(c.BackColor);
+                column.HeaderStyle.BackColor = ColorTranslator.FromHtml(c.BackColor);
+            }
+
+            if (!string.IsNullOrEmpty(c.TextColor))
+            {
+                column.CellStyle.TextColor = ColorTranslator.FromHtml(c.TextColor);
+                column.HeaderStyle.TextColor = ColorTranslator.FromHtml(c.TextColor);
+            }
 
             if (c.Type == DatasetColumnType.Image)
             {

@@ -33,6 +33,10 @@ namespace DocumentFlow.DataSchema
         [JsonProperty("allow-grouping", DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool AllowGrouping { get; set; }
 
+        [DefaultValue(true)]
+        [JsonProperty("allow-sorting", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public bool AllowSorting { get; set; }
+
         [JsonProperty("columns")]
         public IList<DatasetColumn> Columns { get; set; }
 

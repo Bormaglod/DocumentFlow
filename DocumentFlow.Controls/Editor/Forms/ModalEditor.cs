@@ -72,7 +72,7 @@ namespace DocumentFlow.Controls.Forms
                 {
                     try
                     {
-                        Db.ExecuteUpdate(session, editor.Dataset.Insert, editor.GetTypes(), (x) => x == "owner_id" ? owner : context.Variables[x]);
+                        Db.ExecuteUpdate(session, editor.Dataset.Insert, editor.GetTypes(), (x) => x == "owner_id" ? owner : (context.Variables.ContainsKey(x) ? context.Variables[x] : null));
                         transaction.Commit();
                         return true;
                     }
@@ -97,7 +97,7 @@ namespace DocumentFlow.Controls.Forms
                 {
                     try
                     {
-                        Db.ExecuteUpdate(session, editor.Dataset.Update, types, (x) => context.Variables[x]);
+                        Db.ExecuteUpdate(session, editor.Dataset.Update, types, (x) => context.Variables.ContainsKey(x) ? context.Variables[x] : null);
                         transaction.Commit();
                         return true;
                     }
@@ -122,7 +122,7 @@ namespace DocumentFlow.Controls.Forms
             {
                 try
                 {
-                    Db.ExecuteUpdate(session, editor.Dataset.Delete, types, (x) => context.Variables[x]);
+                    Db.ExecuteUpdate(session, editor.Dataset.Delete, types, (x) => context.Variables.ContainsKey(x) ? context.Variables[x] : null);
                     transaction.Commit();
                     return true;
                 }

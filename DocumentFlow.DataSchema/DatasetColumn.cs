@@ -46,10 +46,6 @@ namespace DocumentFlow.DataSchema
         public bool Visible { get; set; }
 
         [DefaultValue(true)]
-        [JsonProperty("sortable", DefaultValueHandling = DefaultValueHandling.Populate)]
-        public bool Sortable { get; set; }
-
-        [DefaultValue(true)]
         [JsonProperty("resizable", DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool Resizable { get; set; }
 
@@ -64,14 +60,6 @@ namespace DocumentFlow.DataSchema
         [DefaultValue(false)]
         [JsonProperty("allow-grouping", DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool AllowGrouping { get; set; }
-
-        /*/// <summary>
-        /// Указывает направление сортировки: ascending или descending (регистр не учитывается).
-        /// Отсутствие значения или значение отличное от указанных равносильно сортировке ascending.
-        /// Допускается сокращение значения до 3-х символов, т.е. asc или des.
-        /// </summary>
-        [JsonProperty("sorting")]
-        public string Sorting { get; set; }*/
 
         [DefaultValue(HorizontalAlignment.Left)]
         [JsonProperty("horizontal-align", DefaultValueHandling = DefaultValueHandling.Populate)]
@@ -101,6 +89,12 @@ namespace DocumentFlow.DataSchema
 
         [JsonProperty("negative-value-color")]
         public string NegativeValueColor { get; set; }
+
+        [JsonProperty("text-color")]
+        public string TextColor { get; set; }
+
+        [JsonProperty("background-color")]
+        public string BackColor { get; set; }
 
         [JsonIgnore]
         public string SummaryFormat

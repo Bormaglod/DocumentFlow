@@ -29,6 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "json", "json", "{C36558B3-4
 		json\diagram.json = json\diagram.json
 		json\employee.json = json\employee.json
 		json\goods.json = json\goods.json
+		json\inventory.json = json\inventory.json
 		json\invoice_receipt.json = json\invoice_receipt.json
 		json\invoice_sales.json = json\invoice_sales.json
 		json\measurement.json = json\measurement.json

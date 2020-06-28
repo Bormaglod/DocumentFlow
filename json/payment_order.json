@@ -2,11 +2,13 @@
   "name": "payment_order",
   "viewer": {
     "dataset": {
-      "select": "select id, status_id, status_name, doc_date, view_number, contractor_name, date_debited, expense, income from payment_order_view",
-      "select-id": "select id, status_id, status_name, doc_date, view_number, contractor_name, date_debited, expense, income from payment_order_view where id = :id"
+      "select": "select id, status_id, status_name, user_created, doc_date, view_number, contractor_name, date_debited, expense, income, organization_name from payment_order_view where doc_date between :from_date and :to_date and organization_id = :organization_id",
+      "select-id": "select id, status_id, status_name, user_created, doc_date, view_number, contractor_name, date_debited, expense, income, organization_name from payment_order_view where id = :id"
     },
     "data-type": "Document",
     "allow-grouping": true,
+    "from-date": "FirstYearDay",
+    "to-date": "LastYearDay",
     "columns": [
       {
         "datafield": "id",
@@ -32,6 +34,14 @@
         "allow-grouping": true
       },
       {
+        "datafield": "user_created",
+        "text": "Автор",
+        "type": "Text",
+        "width": 110,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
         "datafield": "doc_date",
         "text": "Дата",
         "type": "date",
@@ -44,6 +54,14 @@
         "text": "Номер",
         "type": "Text",
         "width": 100
+      },
+      {
+        "datafield": "organization_name",
+        "text": "Организация",
+        "type": "Text",
+        "width": 150,
+        "visible": false,
+        "allow-grouping": true
       },
       {
         "datafield": "contractor_name",
