@@ -21,6 +21,7 @@ namespace DocumentFlow.Data.Core
     using NHibernate.Transform;
     using Npgsql;
     using DocumentFlow.Data.Mappings;
+    using DocumentFlow.Core;
 
     public static class Db
     {
@@ -190,11 +191,19 @@ namespace DocumentFlow.Data.Core
                 {
                     string prop = match.Groups[1].Value;
                     Type type;
-                    if (types != null)
-                        type = types.ContainsKey(prop) ? types[prop] : dataValues(prop).GetType();
-                    else
-                        type = dataValues(prop).GetType();
-                    SetQueryParameter(query, prop, dataValues(prop), type);
+                    try
+                    {
+                        if (types != null)
+                            type = types.ContainsKey(prop) ? types[prop] : dataValues(prop).GetType();
+                        else
+                            type = dataValues(prop).GetType();
+
+                        SetQueryParameter(query, prop, dataValues(prop), type);
+                    }
+                    catch (NullReferenceException)
+                    {
+                        throw new ParameterNotFoundException(prop);
+                    }
                 }
             }
         }

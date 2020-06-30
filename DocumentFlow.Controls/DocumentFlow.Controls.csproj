@@ -151,10 +151,14 @@
     <Compile Include="Breadcrumb.designer.cs">
       <DependentUpon>Breadcrumb.cs</DependentUpon>
     </Compile>
-    <Compile Include="ComboBoxAdvImage.cs" />
+    <Compile Include="ComboBoxAdvImage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CrumbClickEventArgs.cs" />
     <Compile Include="Editor\Core\EditorContext.cs" />
-    <Compile Include="Editor\Forms\SelectListWindow.cs" />
+    <Compile Include="Editor\Forms\SelectListWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Editor\Forms\SelectListWindow.Designer.cs">
       <DependentUpon>SelectListWindow.cs</DependentUpon>
     </Compile>
@@ -171,9 +175,13 @@
       <DependentUpon>L_ImageViewerBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Extensions\DataGridExtension.cs" />
-    <Compile Include="DecimalTextBox.cs" />
+    <Compile Include="DecimalTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DecimalTextBoxAccessibility.cs" />
-    <Compile Include="Editor\Forms\ModalEditor.cs" />
+    <Compile Include="Editor\Forms\ModalEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Editor\Forms\ModalEditor.designer.cs">
       <DependentUpon>ModalEditor.cs</DependentUpon>
     </Compile>
@@ -238,7 +246,9 @@
       <DependentUpon>L_TextBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\Forms\SelectBoxValueChanged.cs" />
-    <Compile Include="Editor\Forms\SelectBoxWindow.cs" />
+    <Compile Include="Editor\Forms\SelectBoxWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Editor\Forms\SelectBoxWindow.designer.cs">
       <DependentUpon>SelectBoxWindow.cs</DependentUpon>
     </Compile>

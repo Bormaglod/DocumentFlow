@@ -92,6 +92,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\ParameterNotFoundException.cs" />
     <Compile Include="Exceptions\DatasetCommandException.cs" />
     <Compile Include="DateExtension.cs" />
     <Compile Include="DrawingExtension.cs" />

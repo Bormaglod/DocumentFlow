@@ -13,8 +13,10 @@ namespace DocumentFlow.DataSchema.Types
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
+    using System.Windows.Forms;
     using Newtonsoft.Json;
     using NHibernate;
+    using DocumentFlow.Core;
     using DocumentFlow.Controls;
     using DocumentFlow.Controls.Forms;
     using DocumentFlow.Data.Core;
@@ -61,7 +63,14 @@ namespace DocumentFlow.DataSchema.Types
             Control.Clear();
             if (!string.IsNullOrEmpty(Dataset))
             {
-                AddItems(Db.ExecuteSelect<SelectBoxItem>(session, Dataset, types, (x) => row == null ? null : row[x]), null);
+                try
+                {
+                    AddItems(Db.ExecuteSelect<SelectBoxItem>(session, Dataset, types, (x) => row == null ? null : row[x]), null);
+                }
+                catch (ParameterNotFoundException pe)
+                {
+                    throw new Exception($"{DataField}: при выполнении запроса '{Dataset}' произошла ошибка - {pe.Message}", pe);
+                }
             }
         }
 

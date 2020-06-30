@@ -2,8 +2,8 @@
   "name": "calc_item_operation",
   "viewer": {
     "dataset": {
-      "select": "select cio.id, cio.status_id, s.note as status_name, o.name, cio.cost, cio.price, cio.amount from calc_item_operation cio left join operation o on (o.id = cio.item_id) join status s on (s.id = cio.status_id) where cio.owner_id = :owner_id",
-      "select-id": "select cio.id, cio.status_id, s.note as status_name, o.name, cio.cost, cio.price, cio.amount from calc_item_operation cio left join operation o on (o.id = cio.item_id) join status s on (s.id = cio.status_id) where cio.id = :id"
+      "select": "select cio.id, cio.status_id, s.note as status_name, o.name, cio.cost, cio.price, cio.amount, round(3600.0 * cio.amount / o.production_rate, 1) as produced_time from calc_item_operation cio left join operation o on (o.id = cio.item_id) join status s on (s.id = cio.status_id) where cio.owner_id = :owner_id",
+      "select-id": "select cio.id, cio.status_id, s.note as status_name, o.name, cio.cost, cio.price, cio.amount, round(3600.0 * cio.amount / o.production_rate, 1) as produced_time from calc_item_operation cio left join operation o on (o.id = cio.item_id) join status s on (s.id = cio.status_id) where cio.id = :id"
     },
     "data-type": "Directory",
     "toolbar": {
@@ -46,6 +46,15 @@
         "text": "Количество",
         "type": "Integer",
         "width": 150,
+        "horizontal-align": "Right",
+        "aggregate": "Sum"
+      },
+      {
+        "datafield": "produced_time",
+        "text": "Время, с",
+        "type": "Numeric",
+        "width": 150,
+        "digits": 1,
         "horizontal-align": "Right",
         "aggregate": "Sum"
       },

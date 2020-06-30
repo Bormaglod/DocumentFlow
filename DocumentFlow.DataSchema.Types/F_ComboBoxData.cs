@@ -11,9 +11,11 @@ namespace DocumentFlow.DataSchema.Types
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Windows.Forms;
     using System.Linq;
     using NHibernate;
     using Syncfusion.Windows.Forms.Tools;
+    using DocumentFlow.Core;
     using DocumentFlow.Controls;
     using DocumentFlow.Data.Core;
     using DocumentFlow.DataSchema.Types.Core;
@@ -34,9 +36,16 @@ namespace DocumentFlow.DataSchema.Types
             base.PreparePopulate(session, row, types, status);
 
             Control.ClearItems();
-            foreach (var item in Db.ExecuteSelect<ComboBoxDataItem>(session, Dataset, types, (x) => row == null ? null : row[x]))
+            try
             {
-                Control.AddItem(item);
+                foreach (var item in Db.ExecuteSelect<ComboBoxDataItem>(session, Dataset, types, (x) => row == null ? null : row[x]))
+                {
+                    Control.AddItem(item);
+                }
+            }
+            catch (ParameterNotFoundException pe)
+            {
+                throw new Exception($"{DataField}: при выполнении запроса '{Dataset}' произошла ошибка - {pe.Message}", pe);
             }
         }
 

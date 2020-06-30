@@ -2,8 +2,8 @@
   "name": "ready_goods",
   "viewer": {
     "dataset": {
-      "select": "select rg.id, rg.status_id, s.note as status_name, ua.name as user_created, po.doc_date as order_date, po.view_number as order_number, rg.doc_date, rg.view_number, o.name as organization_name, g.name as goods_name, rg.amount, rg.price, rg.cost from ready_goods rg join status s on (s.id = rg.status_id) join user_alias ua on (ua.id = rg.user_created_id) join organization o on (o.id = rg.organization_id) left join goods g on (g.id = rg.goods_id) left join production_order po on (po.id = rg.owner_id) where rg.doc_date between :from_date and :to_date and rg.organization_id = :organization_id",
-      "select-id": "select rg.id, rg.status_id, s.note as status_name, ua.name as user_created, po.doc_date as order_date, po.view_number as order_number, rg.doc_date, rg.view_number, o.name as organization_name, g.name as goods_name, rg.amount, rg.price, rg.cost from ready_goods rg join status s on (s.id = rg.status_id) join user_alias ua on (ua.id = rg.user_created_id) join organization o on (o.id = rg.organization_id) left join goods g on (g.id = rg.goods_id) left join production_order po on (po.id = rg.owner_id) where rg.id = :id"
+      "select": "select rg.id, rg.status_id, s.note as status_name, ua.name as user_created, po.doc_date as order_date, po.view_number as order_number, rg.doc_date, rg.view_number, o.name as organization_name, g.name as goods_name, rg.amount, rg.price, rg.cost, c.name as contractor_name from ready_goods rg join status s on (s.id = rg.status_id) join user_alias ua on (ua.id = rg.user_created_id) join organization o on (o.id = rg.organization_id) left join goods g on (g.id = rg.goods_id) left join production_order po on (po.id = rg.owner_id) left join contractor c on (c.id = po.contractor_id) where rg.doc_date between :from_date and :to_date and rg.organization_id = :organization_id",
+      "select-id": "select rg.id, rg.status_id, s.note as status_name, ua.name as user_created, po.doc_date as order_date, po.view_number as order_number, rg.doc_date, rg.view_number, o.name as organization_name, g.name as goods_name, rg.amount, rg.price, rg.cost, c.name as contractor_name from ready_goods rg join status s on (s.id = rg.status_id) join user_alias ua on (ua.id = rg.user_created_id) join organization o on (o.id = rg.organization_id) left join goods g on (g.id = rg.goods_id) left join production_order po on (po.id = rg.owner_id) left join contractor c on (c.id = po.contractor_id) where rg.id = :id"
     },
     "data-type": "Document",
     "allow-grouping": true,
@@ -75,6 +75,13 @@
         "width": 100
       },
       {
+        "datafield": "contractor_name",
+        "text": "Контрагент",
+        "type": "Text",
+        "width": 150,
+        "allow-grouping": true
+      },
+      {
         "datafield": "goods_name",
         "text": "Изделие",
         "type": "Text",
@@ -109,7 +116,7 @@
     "stacked-columns": [
       {
         "header": "Заказ",
-        "childs": [ "order_date", "order_number" ]
+        "childs": [ "order_date", "order_number", "contractor_name" ]
       }
     ],
     "sorts": [
@@ -131,7 +138,7 @@
         "datafield": "owner_id",
         "label-width": 190,
         "edit-width": 350,
-        "dataset": "select po.id, po.status_id, '№' || po.view_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') as name from production_order po where po.status_id = 3100 or po.id = :order_id",
+        "dataset": "select po.id, po.status_id, '№' || po.view_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') as name from production_order po where po.status_id = 3100 or po.id = :owner_id",
         "expressions": [
           {
             "expression": "Populate(\"goods_id\"; true)"

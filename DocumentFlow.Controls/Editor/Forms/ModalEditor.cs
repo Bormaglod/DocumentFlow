@@ -73,13 +73,20 @@ namespace DocumentFlow.Controls.Forms
                     try
                     {
                         Db.ExecuteUpdate(session, editor.Dataset.Insert, editor.GetTypes(), (x) => x == "owner_id" ? owner : (context.Variables.ContainsKey(x) ? context.Variables[x] : null));
-                        transaction.Commit();
-                        return true;
+                        try
+                        {
+                            transaction.Commit();
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            ExceptionHelper.MesssageBox(ex);
+                        }
                     }
-                    catch (Exception ex)
+                    catch (ParameterNotFoundException pe)
                     {
-                        transaction.Rollback();
-                        ExceptionHelper.MesssageBox(ex);
+                        MessageBox.Show($"Невозможно вставить новую запись, т.к. при выполнении запроса '{editor.Dataset.Insert}' произошла ошибка - {pe.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -90,23 +97,39 @@ namespace DocumentFlow.Controls.Forms
         public bool Edit(long id, int status)
         {
             IDictionary<string, Type> types = editor.GetTypes();
-            IDictionary row = Db.ExecuteSelect(session, editor.Dataset.Select, types, ("id", id)).Single();
-            if (ShowModal(row, status))
+            try
             {
-                using (var transaction = session.BeginTransaction())
+                IDictionary row = Db.ExecuteSelect(session, editor.Dataset.Select, types, ("id", id)).Single();
+
+                if (ShowModal(row, status))
                 {
-                    try
+                    using (var transaction = session.BeginTransaction())
                     {
-                        Db.ExecuteUpdate(session, editor.Dataset.Update, types, (x) => context.Variables.ContainsKey(x) ? context.Variables[x] : null);
-                        transaction.Commit();
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        ExceptionHelper.MesssageBox(ex);
+                        try
+                        {
+                            Db.ExecuteUpdate(session, editor.Dataset.Update, types, (x) => context.Variables.ContainsKey(x) ? context.Variables[x] : null);
+                            try
+                            {
+
+                                transaction.Commit();
+                                return true;
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction.Rollback();
+                                ExceptionHelper.MesssageBox(ex);
+                            }
+                        }
+                        catch (ParameterNotFoundException pe)
+                        {
+                            MessageBox.Show($"Невозможно обновить запись, т.к. при выполнении запроса '{editor.Dataset.Update}' произошла ошибка - {pe.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
+            }
+            catch (ParameterNotFoundException pe)
+            {
+                MessageBox.Show($"Невозможно начать редактировать запись, т.к. при выполнении запроса '{editor.Dataset.Select}' произошла ошибка - {pe.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return false;
@@ -115,22 +138,37 @@ namespace DocumentFlow.Controls.Forms
         public bool Delete(long id, int status)
         {
             IDictionary<string, Type> types = editor.GetTypes();
-            IDictionary row = Db.ExecuteSelect(session, editor.Dataset.Select, types, ("id", id)).Single();
-            CreateContextVariables(row, status);
-
-            using (var transaction = session.BeginTransaction())
+            try
             {
-                try
+                IDictionary row = Db.ExecuteSelect(session, editor.Dataset.Select, types, ("id", id)).Single();
+                CreateContextVariables(row, status);
+
+                using (var transaction = session.BeginTransaction())
                 {
-                    Db.ExecuteUpdate(session, editor.Dataset.Delete, types, (x) => context.Variables.ContainsKey(x) ? context.Variables[x] : null);
-                    transaction.Commit();
-                    return true;
+                    try
+                    {
+                        Db.ExecuteUpdate(session, editor.Dataset.Delete, types, (x) => context.Variables.ContainsKey(x) ? context.Variables[x] : null);
+                        try
+                        {
+
+                            transaction.Commit();
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            ExceptionHelper.MesssageBox(ex);
+                        }
+                    }
+                    catch (ParameterNotFoundException pe)
+                    {
+                        MessageBox.Show($"Невозможно удалить запись, т.к. при выполнении запроса '{editor.Dataset.Delete}' произошла ошибка - {pe.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    ExceptionHelper.MesssageBox(ex);
-                }
+            }
+            catch (ParameterNotFoundException pe)
+            {
+                MessageBox.Show($"Невозможно начать удаление записи, т.к. при выполнении запроса '{editor.Dataset.Select}' произошла ошибка - {pe.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return false;
@@ -287,11 +325,18 @@ namespace DocumentFlow.Controls.Forms
                     }
                     else
                     {
-                        IDictionary row = Db.ExecuteSelect(session, data.Query, editor.GetTypes(), (x) => context.Variables.ContainsKey(x) ? context.Variables[x] : null).SingleOrDefault();
-                        if (result != null)
+                        try
                         {
-                            string key = row.Keys.ToList<string>().Single();
-                            result.Value = row[key];
+                            IDictionary row = Db.ExecuteSelect(session, data.Query, editor.GetTypes(), (x) => context.Variables.ContainsKey(x) ? context.Variables[x] : null).SingleOrDefault();
+                            if (result != null)
+                            {
+                                string key = row.Keys.ToList<string>().Single();
+                                result.Value = row[key];
+                            }
+                        }
+                        catch (ParameterNotFoundException pe)
+                        {
+                            MessageBox.Show($"Невозможно обновить поле {result.DataField}, т.к. возникла ошибка при выполнении запроса '{data.Query}' - {pe.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
 

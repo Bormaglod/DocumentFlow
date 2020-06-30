@@ -387,13 +387,20 @@ namespace DocumentFlow
             }
             else if (!string.IsNullOrEmpty(condition.ExpressionIfEqualQuery))
             {
-                object value = GetValueFromQuery(condition.ExpressionIfEqualQuery);
-                if (value != null && value is bool exprValue)
+                try
                 {
-                    res = res || exprValue;
+                    object value = GetValueFromQuery(condition.ExpressionIfEqualQuery);
+                    if (value != null && value is bool exprValue)
+                    {
+                        res = res || exprValue;
+                    }
+                    else
+                        res = false;
                 }
-                else
-                    res = false;
+                catch (ParameterNotFoundException pe)
+                {
+                    MessageBox.Show($"Condition: при выполнении запроса '{condition.ExpressionIfEqualQuery}' произошла ошибка - {pe.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
 
             return res;
@@ -539,10 +546,17 @@ namespace DocumentFlow
                     }
                     else
                     {
-                        object value = GetValueFromQuery(data.Query);
-                        if (value != null)
+                        try
                         {
-                            result.Value = value;
+                            object value = GetValueFromQuery(data.Query);
+                            if (value != null)
+                            {
+                                result.Value = value;
+                            }
+                        }
+                        catch (ParameterNotFoundException pe)
+                        {
+                            MessageBox.Show($"Невозможно обновить поле {result.DataField}, т.к. возникла ошибка при выполнении запроса '{data.Query}' - {pe.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
 

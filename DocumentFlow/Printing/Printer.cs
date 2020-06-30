@@ -48,27 +48,35 @@ namespace DocumentFlow.Printing
 
             PrintDatasets pd = JsonConvert.DeserializeObject<PrintDatasets>(form.Properties);
 
-            dynamic titleRow = new ExpandoObject().With(Db.ExecuteSelect(session, pd.QueryTitle, null, (x) => row[x]).Single());
-            win.Title = titleRow.title;
-
             Dictionary<string, object> objects = new Dictionary<string, object>();
-            foreach (var d in pd.Datasets)
+            try
             {
-                if (d.UniqueResult)
+                dynamic titleRow = new ExpandoObject().With(Db.ExecuteSelect(session, pd.QueryTitle, null, (x) => row[x]).Single());
+                win.Title = titleRow.title;
+                
+                foreach (var d in pd.Datasets)
                 {
-                    objects.Add(d.Name, Db.ExecuteSelect(session, d.Query, null, (x) => row[x]).Single());
-                }
-                else
-                {
-                    List<object> res = new List<object>();
-                    foreach (IDictionary item in Db.ExecuteSelect(session, d.Query, null, (x) => ownerRow[x]))
+                    if (d.UniqueResult)
                     {
-                        res.Add(item);
+                        objects.Add(d.Name, Db.ExecuteSelect(session, d.Query, null, (x) => row[x]).Single());
                     }
+                    else
+                    {
+                        List<object> res = new List<object>();
+                        foreach (IDictionary item in Db.ExecuteSelect(session, d.Query, null, (x) => ownerRow[x]))
+                        {
+                            res.Add(item);
+                        }
 
-                    if (res.Count > 0)
-                        objects.Add(d.Name, res);
+                        if (res.Count > 0)
+                            objects.Add(d.Name, res);
+                    }
                 }
+            }
+            catch (ParameterNotFoundException pe)
+            {
+                System.Windows.Forms.MessageBox.Show($"Печать невозможна из-за ошибки - {pe.Message}", "Ошибка", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                return;
             }
 
             string pdfFileName = (Path.GetTempPath() + win.Title.Replace('/', '-').Replace('\\', '-') + ".pdf");
