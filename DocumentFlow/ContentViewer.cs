@@ -459,7 +459,7 @@ namespace DocumentFlow
                 { "parent_id", (ParentEntity, typeof(Guid?)) }, 
                 { "owner_id", (owner, typeof(Guid?)) }, 
                 { "from_date", (dateTimePickerFrom.Value, typeof(DateTime)) }, 
-                { "to_date", (dateTimePickerTo.Value, typeof(DateTime)) },
+                { "to_date", (dateTimePickerTo.Value.EndOfDay(), typeof(DateTime)) },
                 { "organization_id", ((comboOrg.SelectedItem as ComboBoxDataItem)?.Id, typeof(Guid?)) }
             };
 

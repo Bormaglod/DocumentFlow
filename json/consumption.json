@@ -1,0 +1,211 @@
+﻿{
+  "name": "consumption",
+  "viewer": {
+    "dataset": {
+      "select": "select id, status_id, status_name, user_created, employee_name, doc_date, doc_number, organization_name from consumption_view where doc_date between :from_date and :to_date and organization_id = :organization_id",
+      "select-id": "select id, status_id, status_name, user_created, employee_name, doc_date, doc_number, organization_name from consumption_view where i.id = :id"
+    },
+    "data-type": "Document",
+    "allow-grouping": true,
+    "from-date": "FirstYearDay",
+    "to-date": "LastYearDay",
+    "columns": [
+      {
+        "datafield": "id",
+        "text": "Id",
+        "type": "Text",
+        "width": 180,
+        "visible": false
+      },
+      {
+        "datafield": "status_id",
+        "text": "Код состояния",
+        "type": "Integer",
+        "width": 80,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "status_name",
+        "text": "Состояние",
+        "type": "Text",
+        "width": 110,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "user_created",
+        "text": "Автор",
+        "type": "Text",
+        "width": 110,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "doc_date",
+        "text": "Дата",
+        "type": "Date",
+        "width": 150,
+        "hideable": false
+      },
+      {
+        "datafield": "doc_number",
+        "text": "Номер",
+        "type": "Integer",
+        "width": 150,
+        "hideable": false
+      },
+      {
+        "datafield": "organization_name",
+        "text": "Организация",
+        "type": "Text",
+        "width": 150,
+        "visible": false,
+        "allow-grouping": true
+      },
+      {
+        "datafield": "employee_name",
+        "text": "Сотрудник",
+        "type": "text",
+        "auto-size": true
+      }
+    ],
+    "sorts": [
+      {
+        "name": "doc_date"
+      },
+      {
+        "name": "doc_number"
+      }
+    ]
+  },
+  "editor": {
+    "dataset": {
+      "select": "select id, '№' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as name, doc_date, doc_number, organization_id, employee_id from consumption where id = :id",
+      "update": "update consumption set doc_date = :doc_date, doc_number = :doc_number, employee_id = :employee_id, organization_id = :organization_id where id = :id"
+    },
+    "controls": [
+      {
+        "type": "Container",
+        "height": 32,
+        "controls": [
+          {
+            "type": "Integer",
+            "dock": "Left",
+            "text": "Номер",
+            "datafield": "doc_number",
+            "edit-width": 110,
+            "auto-size-label": true,
+            "width": 165
+          },
+          {
+            "type": "DateTime",
+            "dock": "Left",
+            "text": "от",
+            "datafield": "doc_date",
+            "text-align-label": "TopCenter",
+            "label-width": 40,
+            "edit-width": 170,
+            "width": 210
+          },
+          {
+            "type": "Container",
+            "dock": "Left",
+            "width": 46
+          },
+          {
+            "type": "ComboBoxData",
+            "dock": "Fill",
+            "text": "Организация",
+            "datafield": "organization_id",
+            "edit-width": 300,
+            "auto-size-label": true,
+            "dataset": "select id, name from organization where status_id = 1002"
+          }
+        ]
+      },
+      {
+        "type": "SelectBox",
+        "text": "Исполнитель",
+        "datafield": "employee_id",
+        "label-width": 210,
+        "edit-width": 350,
+        "dataset": "select e.id, e.status_id, p.name from consumption i join organization org on (org.id = i.organization_id) join employee e on (e.owner_id = org.id) join person p on (p.id = e.person_id) where i.id = :id and (e.status_id = 1002 or e.id = :employee_id)"
+      },
+      {
+        "type": "DataGrid",
+        "name": "datagrid",
+        "height": 350,
+        "form-title": "Номенклатура",
+        "dataset": "select c.id, c.owner_id, g.name as goods_name, c.amount, p.name as product_name from consumption_detail c left join goods g on (g.id = c.goods_id) left join goods p on (p.id = c.product_id) where c.owner_id = :id",
+        "columns": [
+          {
+            "datafield": "goods_name",
+            "text": "Материал",
+            "type": "Text",
+            "auto-size": true,
+            "hideable": false
+          },
+          {
+            "datafield": "amount",
+            "text": "Количество",
+            "type": "Numeric",
+            "digits": 3,
+            "hideable": false,
+            "horizontal-align": "Right"
+          },
+          {
+            "datafield": "product_name",
+            "text": "Материал",
+            "type": "Text",
+            "width": 200,
+            "hideable": false
+          }
+        ],
+        "editor": {
+          "dataset": {
+            "name": "consumption_detail",
+            "select": "select id, owner_id, goods_id, amount, product_id from consumption_detail where id = :id",
+            "insert": "insert into consumption_detail (owner_id, goods_id, amount, product_id) values (:owner_id, :goods_id, :amount, :product_id) returning id",
+            "update": "update consumption_detail set goods_id = :goods_id, amount = :amount, product-id = :product-id where id = :id",
+            "delete": "delete from consumption_detail where id = :id"
+          },
+          "controls": [
+            {
+              "type": "SelectBox",
+              "text": "Материал",
+              "dataset": "with recursive r as (select id, status_id, name, parent_id from goods where code = 'Мат' union all select g.id, g.status_id, g.name, g.parent_id from goods g join r on (g.parent_id = r.id)) select id, status_id, name, parent_id from r where status_id in (500, 1002) or id = :goods_id order by name",
+              "datafield": "goods_id",
+              "edit-full-size": true,
+              "label-width": 100
+            },
+            {
+              "type": "Numeric",
+              "text": "Количество",
+              "decimal-digits": 3,
+              "datafield": "amount",
+              "edit-full-size": true,
+              "label-width": 100
+            },
+            {
+              "type": "SelectBox",
+              "text": "Изделие",
+              "dataset": "with recursive r as (select id, status_id, name, parent_id from goods where code = 'Прд' union all select g.id, g.status_id, g.name, g.parent_id from goods g join r on (g.parent_id = r.id)) select id, status_id, name, parent_id from r where status_id in (500, 1002) or id = :goods_id order by name",
+              "datafield": "product_id",
+              "edit-full-size": true,
+              "label-width": 100
+            }
+          ]
+        }
+      }
+    ],
+    "conditions": [
+      {
+        "controls": [ "doc_number", "doc_date", "organization_id", "employee_id", "datagrid" ],
+        "enable": {
+          "states": [ "compiled", "is changing" ]
+        }
+      }
+    ]
+  }
+}
