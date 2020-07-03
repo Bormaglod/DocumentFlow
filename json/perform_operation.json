@@ -123,7 +123,7 @@
         "datafield": "order_id",
         "label-width": 210,
         "edit-width": 350,
-        "dataset": "select po.id, po.status_id, '№' || po.view_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') as name from production_order po where po.status_id = 3100 or po.id = :order_id",
+        "dataset": "select po.id, po.status_id, '№' || po.view_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where po.status_id = status_code('in production') or po.id = :order_id group by po.id, c.name order by po.doc_date, po.doc_number",
         "expressions": [
           {
             "expression": "Populate(\"goods_id\"; true)"

@@ -113,7 +113,7 @@ namespace DocumentFlow
                 return;
             }
 
-            IPage page = container.Get(command.EntityKind.Id);
+            IPage page = container.Get(command.Id);
             if (page != null)
             {
                 container.Selected = page;
