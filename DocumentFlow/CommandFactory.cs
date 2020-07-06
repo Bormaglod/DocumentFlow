@@ -15,6 +15,11 @@ namespace DocumentFlow
     using DocumentFlow.Data.Core;
     using DocumentFlow.Data.Entities;
     using DocumentFlow.DataSchema;
+    using System.Collections.Generic;
+    using Newtonsoft.Json;
+    using NHibernate;
+    using DocumentFlow.DataSchema.Types.Converters;
+    using DocumentFlow.DataSchema.Types.Core;
 
     public struct EditorParams
     {
@@ -27,6 +32,13 @@ namespace DocumentFlow
 
     public class CommandFactory : ICommandFactory
     {
+        private class DocumentParameters
+        {
+            public Guid? owner_id { get; set; }
+            public Guid entity_kind_id { get; set; }
+            public string data_schema { get; set; }
+        }
+
         private IContainerPage container;
 
         public CommandFactory(IContainerPage container)
@@ -52,6 +64,9 @@ namespace DocumentFlow
                     break;
                 case "open-diagram":
                     CreateDiagramViewer((Guid)parameters[0]);
+                    break;
+                case "open-document":
+                    CreateControlEditor((List<(string, object)>)parameters[1]);
                     break;
                 default:
                     string sql = @"with recursive r as 
@@ -123,6 +138,47 @@ namespace DocumentFlow
                 ContentViewer viewer = new ContentViewer(this, command, null);
                 container.Add(viewer);
             }
+        }
+
+        private void CreateControlEditor(List<(string, object)> parameters)
+        {
+            if (parameters.Count == 0)
+            {
+                LogHelper.Logger.Error("Команда open-document: редактор не открыт. Не указан идентификатор документа.");
+                return;
+            }
+
+            if (parameters[0].Item2 is Guid id)
+            {
+                using (ISession session = Db.OpenSession())
+                {
+                    DocumentParameters doc = session.CreateSQLQuery("select d.owner_id, d.entity_kind_id, c.data_schema from document d join command c on (c.entity_kind_id = d.entity_kind_id and c.def_command) where d.id = :id")
+                        .SetGuid("id", id)
+                        .SetResultTransformer(Transformers.AliasToBean<DocumentParameters>())
+                        .UniqueResult<DocumentParameters>();
+
+                    try
+                    {
+                        DatasetSchema schema = JsonConvert.DeserializeObject<DatasetSchema>(doc.data_schema, new ControlConverter());
+                        EditorParams p = new EditorParams()
+                        {
+                            Id = id,
+                            Parent = null,
+                            Owner = doc.owner_id,
+                            Kind = session.Get<EntityKind>(doc.entity_kind_id),
+                            Editor = schema?.Editor
+                        };
+
+                        CreateControlEditor(p);
+                    }
+                    catch (UnknownTypeException e)
+                    {
+                        MessageBox.Show(e.Message, "Ошибка JSON-данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+                LogHelper.Logger.Error("Команда open-document: редактор не открыт. Неверный идентификатор документа.");
         }
 
         private void CreateControlEditor(EditorParams parameters)

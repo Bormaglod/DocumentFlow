@@ -8,6 +8,7 @@
 
 namespace DocumentFlow.DataSchema
 {
+    using System.Collections.Generic;
     using System.ComponentModel;
     using Newtonsoft.Json;
 
@@ -31,12 +32,8 @@ namespace DocumentFlow.DataSchema
         [JsonProperty("command", Required = Required.Always)]
         public string Command { get; set; }
 
-        /*[JsonProperty("parameters")]
+        [JsonProperty("parameters")]
         public IList<string> Parameters = new List<string>();
-
-        [DefaultValue(false)]
-        [JsonProperty("refresh", DefaultValueHandling = DefaultValueHandling.Populate)]
-        public bool Refresh { get; set; }*/
 
         [DefaultValue(false)]
         [JsonProperty("show-title", DefaultValueHandling = DefaultValueHandling.Populate)]

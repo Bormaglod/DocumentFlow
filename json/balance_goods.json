@@ -2,8 +2,8 @@
   "name": "balance_goods",
   "viewer": {
     "dataset": {
-      "select": "select bg.id, bg.status_id, s.note as status_name, case when bg.owner_id is null then 'Начальный остаток' else bg.document_name end, bg.document_date, bg.document_number, case when bg.operation_summa > 0::money then bg.operation_summa else null end as income, case when bg.operation_summa < 0::money then (@bg.operation_summa::numeric)::money else null end as expense, bg.amount, g.name as goods_name, sum(bg.amount * sign(bg.operation_summa::numeric)) over (order by document_date, document_number) as remainder from balance_goods bg join status s on (s.id = bg.status_id) left join goods g on (g.id = bg.reference_id) where bg.reference_id = :owner_id order by bg.document_date desc, bg.order_index desc",
-      "select-id": "select bg.id, bg.status_id, s.note as status_name, case when bg.owner_id is null then 'Начальный остаток' else bg.document_name end, bg.document_date, bg.document_number, case when bg.operation_summa > 0::money then bg.operation_summa else null end as income, case when bg.operation_summa < 0::money then (@bg.operation_summa::numeric)::money else null end as expense, bg.amount, g.name as goods_name, sum(bg.amount * sign(bg.operation_summa::numeric)) over (order by document_date, document_number) as remainder from balance_goods bg join status s on (s.id = bg.status_id) left join goods g on (g.id = bg.reference_id) where bg.id = :id"
+      "select": "select bg.id, bg.status_id, s.note as status_name, bg.owner_id as document_id, case when bg.owner_id is null then 'Начальный остаток' else bg.document_name end, bg.document_date, bg.document_number, case when bg.operation_summa > 0::money then bg.operation_summa else null end as income, case when bg.operation_summa < 0::money then (@bg.operation_summa::numeric)::money else null end as expense, bg.amount, g.name as goods_name, sum(bg.amount * sign(bg.operation_summa::numeric)) over (order by document_date, document_number) as remainder from balance_goods bg join status s on (s.id = bg.status_id) left join goods g on (g.id = bg.reference_id) where bg.reference_id = :owner_id order by bg.document_date desc, bg.order_index desc",
+      "select-id": "select bg.id, bg.status_id, s.note as status_name, bg.owner_id as document_id, case when bg.owner_id is null then 'Начальный остаток' else bg.document_name end, bg.document_date, bg.document_number, case when bg.operation_summa > 0::money then bg.operation_summa else null end as income, case when bg.operation_summa < 0::money then (@bg.operation_summa::numeric)::money else null end as expense, bg.amount, g.name as goods_name, sum(bg.amount * sign(bg.operation_summa::numeric)) over (order by document_date, document_number) as remainder from balance_goods bg join status s on (s.id = bg.status_id) left join goods g on (g.id = bg.reference_id) where bg.id = :id"
     },
     "data-type": "Directory",
     "toolbar": {
@@ -83,6 +83,19 @@
         "horizontal-align": "Right",
         "width": 130,
         "background-color": "#DAE5F5"
+      }
+    ],
+    "command-groups": [
+      {
+        "name": "Пользовательский",
+        "commands": [
+          {
+            "name": "open-document",
+            "method": "Embedded",
+            "command": "open-document",
+            "parameters": [ "document_id" ]
+          }
+        ]
       }
     ]
   },

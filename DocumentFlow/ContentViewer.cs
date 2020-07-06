@@ -424,10 +424,8 @@ namespace DocumentFlow
 
         private T GetCurrentFieldValue<T>(string fieldName, T defaultValue)
         {
-            DataRowView row = gridContent.SelectedItem as DataRowView;
-            if (row != null)
+            if (gridContent.SelectedItem is DataRowView row && gridContent.DataSource is DataTable dt)
             {
-                DataTable dt = gridContent.DataSource as DataTable;
                 if (dt.Columns.Contains(fieldName))
                 {
                     return (T)row[fieldName];
@@ -645,13 +643,14 @@ namespace DocumentFlow
         {
             Picture image = null;
             T item = null;
+            Picture unknown = Session.Get<Picture>(new Guid("00e5691b-1e20-4f15-991a-aaf896bcded8")); // unknown (Не известно)
 
             switch (userCommand.Method)
             {
                 case CommandMethod.Sql:
                     image = Session.QueryOver<Picture>()
                         .Where(x => x.Code == userCommand.Icon.ToLower())
-                        .SingleOrDefault();
+                        .SingleOrDefault() ?? unknown;
 
                     item = new T()
                     {
@@ -673,7 +672,7 @@ namespace DocumentFlow
                         .Where(x => x.Code == userCommand.Command.ToLower())
                         .SingleOrDefault();
 
-                    image = image ?? cmd.Picture;
+                    image = image ?? cmd.Picture ?? unknown;
 
                     item = new T()
                     {
@@ -692,11 +691,6 @@ namespace DocumentFlow
                     item.Click += EmbededCommand_Click;
 
                     break;
-            }
-
-            if (image == null)
-            {
-                image = Session.Get<Picture>(new Guid("00e5691b-1e20-4f15-991a-aaf896bcded8")); // unknown (Не известно)
             }
 
             if (item != null)
@@ -738,7 +732,16 @@ namespace DocumentFlow
         {
             if (sender is ToolStripItem item && item.Tag is UserToolButton command)
             {
-                commands.Execute(command.Command.Code, GetCurrentId());
+                List<(string, object)> values = new List<(string, object)>();
+                if (command.UserCommand.Parameters != null)
+                {
+                    foreach (string param in command.UserCommand.Parameters)
+                    {
+                        values.Add((param, GetCurrentFieldValue<object>(param, null)));
+                    }
+                }
+
+                commands.Execute(command.Command.Code, GetCurrentId(), values);
             }
         }
 
