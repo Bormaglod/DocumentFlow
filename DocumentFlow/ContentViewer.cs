@@ -261,6 +261,12 @@ namespace DocumentFlow
             gridContent.SortClickAction = Properties.Settings.Default.SortClickAction;
             gridContent.ShowSortNumbers = Properties.Settings.Default.ShowSortNumbers;
 
+            gridContent.Style.ProgressBarStyle.ForegroundStyle = GridProgressBarStyle.Tube;
+            gridContent.Style.ProgressBarStyle.TubeForegroundEndColor = Color.White;
+            gridContent.Style.ProgressBarStyle.TubeForegroundStartColor = Color.SkyBlue;
+            gridContent.Style.ProgressBarStyle.AllowForegroundSegments = true;
+            gridContent.Style.ProgressBarStyle.ProgressTextColor = Color.FromArgb(68, 68, 68);
+
             if (schema?.Viewer != null)
             {
                 gridContent.AllowGrouping = schema.Viewer.AllowGrouping;
@@ -336,6 +342,18 @@ namespace DocumentFlow
                 SetButtonStyle(schema.Viewer.Toolbar.ButtonStyle);
                 SetIconSize(schema.Viewer.Toolbar.IconSize);
             }
+
+            bool can_copy = false;
+            if (command.EntityKind != null)
+            {
+                Guid? id = Session.CreateSQLQuery("select copy_entity(:kind_id, null)")
+                    .SetGuid("kind_id", command.EntityKind.Id)
+                    .UniqueResult<Guid?>();
+                can_copy = id.HasValue;
+            }
+
+            buttonCopy.Enabled = can_copy;
+            menuCopy.Enabled = can_copy;
         }
 
         void ISettings.LoadSettings()
@@ -499,7 +517,10 @@ namespace DocumentFlow
         private void RefreshRow(Guid id)
         {
             if (string.IsNullOrEmpty(schema?.Viewer?.Dataset.SelectByID))
+            {
+                MessageBox.Show("Отсутствует команда запроса по указанному ID записи.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
+            }
 
             DataTable dt = gridContent.DataSource as DataTable;
             var cur_row = dt.Rows.Find(id);
@@ -521,6 +542,38 @@ namespace DocumentFlow
                         cur_row[item.ColumnName] = new_row[item.ColumnName];
                     }
                 }
+            }
+        }
+
+        private void AddRow(Guid id)
+        {
+            if (string.IsNullOrEmpty(schema?.Viewer?.Dataset.SelectByID))
+            {
+                MessageBox.Show("Отсутствует команда запроса по указанному ID записи.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(Db.ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand(schema.Viewer.Dataset.SelectByID, connection);
+                CreateQueryParameters(command, ("id", id, typeof(Guid)));
+
+                NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(command);
+                DataSet ds = new DataSet();
+                adapter.Fill(ds);
+
+                System.Data.DataRow added_row = ds.Tables[0].Rows[0];
+                
+                DataTable dt = gridContent.DataSource as DataTable;
+                System.Data.DataRow new_row = dt.NewRow();
+
+                foreach (DataColumn item in ds.Tables[0].Columns)
+                {
+                    new_row[item.ColumnName] = added_row[item.ColumnName];
+                }
+
+                dt.Rows.Add(new_row);
             }
         }
 
@@ -825,6 +878,8 @@ namespace DocumentFlow
 
         private void Edit() => commands.Execute("edit-record", new EditorParams() { Id = GetCurrentId(), Parent = ParentEntity, Owner = owner, Kind = command.EntityKind, Editor = schema?.Editor });
 
+        private void Edit(Guid id) => commands.Execute("edit-record", new EditorParams() { Id = id, Parent = ParentEntity, Owner = owner, Kind = command.EntityKind, Editor = schema?.Editor });
+
         private void breadcrumb1_CrumbClick(object sender, CrumbClickEventArgs e)
         {
             switch (e.Kind)
@@ -953,7 +1008,26 @@ namespace DocumentFlow
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
-
+            using (var transaction = Session.BeginTransaction())
+            {
+                try
+                {
+                    Guid? id = Session.CreateSQLQuery("select copy_entity(:kind_id, :copy_id)")
+                            .SetGuid("kind_id", command.EntityKind.Id)
+                            .SetGuid("copy_id", GetCurrentId())
+                            .UniqueResult<Guid?>();
+                    transaction.Commit();
+                    if (MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        Edit(id.Value);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    ExceptionHelper.MesssageBox(ex);
+                }
+            }
         }
 
         private void buttonAddFolder_Click(object sender, EventArgs e) => GroupAction(CommandAction.Create);
@@ -998,6 +1072,9 @@ namespace DocumentFlow
                             default:
                                 break;
                         }
+                        break;
+                    case "add":
+                        AddRow(message.ObjectId);
                         break;
                     case "delete":
                         DeleteRow(message.ObjectId);

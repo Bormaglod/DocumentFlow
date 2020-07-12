@@ -12,16 +12,18 @@ namespace DocumentFlow.Controls
     using System.Collections;
     using System.Collections.Generic;
     using System.Data;
+    using System.Drawing;
     using System.Windows.Forms;
     using NHibernate;
     using Npgsql;
+    using Syncfusion.WinForms.DataGrid.Enums;
     using Syncfusion.WinForms.DataGrid.Events;
     using DocumentFlow.Controls.Extensions;
     using DocumentFlow.Controls.Forms;
     using DocumentFlow.Data.Core;
     using DocumentFlow.DataSchema;
     
-    public partial class L_DataGrid : UserControl
+    public partial class L_DataGrid : UserControl, IEnabled
     {
         private ModalEditor editor;
         private IDictionary row;
@@ -30,9 +32,25 @@ namespace DocumentFlow.Controls
         public L_DataGrid()
         {
             InitializeComponent();
+
+            gridMain.Style.ProgressBarStyle.ForegroundStyle = GridProgressBarStyle.Tube;
+            gridMain.Style.ProgressBarStyle.TubeForegroundEndColor = Color.White;
+            gridMain.Style.ProgressBarStyle.TubeForegroundStartColor = Color.SkyBlue;
+            gridMain.Style.ProgressBarStyle.AllowForegroundSegments = true;
+            gridMain.Style.ProgressBarStyle.ProgressTextColor = Color.FromArgb(68, 68, 68);
         }
 
         public NpgsqlDataAdapter DataAdapter { get; set; }
+
+        bool IEnabled.Enabled
+        {
+            get => toolStrip1.Enabled;
+            set
+            {
+                toolStrip1.Enabled = value;
+                contextMenuStripEx1.Enabled = value;
+            }
+        }
 
         public void InitializeProperties(IDictionary ownerRow, int ownerStatus, IList<DatasetColumn> columns)
         {
@@ -100,10 +118,13 @@ namespace DocumentFlow.Controls
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            DataRowView rowView = (DataRowView)gridMain.CurrentItem;
-            long id = Convert.ToInt64(rowView.Row["id"]);
-            if (editor.Delete(id, status))
-                RefreshData();
+            if (((IEnabled)this).Enabled)
+            {
+                DataRowView rowView = (DataRowView)gridMain.CurrentItem;
+                long id = Convert.ToInt64(rowView.Row["id"]);
+                if (editor.Delete(id, status))
+                    RefreshData();
+            }
         }
     }
 }

@@ -111,7 +111,7 @@
             // 
             // model1
             // 
-            this.model1.AlignmentType = AlignmentType.SelectedNode;
+            this.model1.AlignmentType = Syncfusion.Windows.Forms.Diagram.AlignmentType.SelectedNode;
             this.model1.BackgroundStyle.PathBrushStyle = Syncfusion.Windows.Forms.Diagram.PathGradientBrushStyle.RectangleCenter;
             this.model1.DocumentScale.DisplayName = "NoScale";
             this.model1.DocumentScale.Height = 1F;

@@ -75,8 +75,21 @@ namespace DocumentFlow.DataSchema
 
         bool IEditorControl.Enabled
         {
-            get => Control.Enabled;
-            set => Control.Enabled = value;
+            get
+            {
+                if (Control is IEnabled e)
+                    return e.Enabled;
+
+                return Control.Enabled;
+            }
+
+            set
+            {
+                if (Control is IEnabled e)
+                    e.Enabled = value;
+                else
+                    Control.Enabled = value;
+            }
         }
 
         bool IEditorControl.Visible
