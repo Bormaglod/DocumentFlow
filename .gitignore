@@ -266,3 +266,5 @@ packages
 /DocumentFlow.RestAPI/vendor
 /DocumentFlow.RestAPI/*.lock
 /pg_money_convert
+/Resources
+/Test

@@ -102,6 +102,11 @@
         "visible": false,
         "allow-grouping": true
       }
+    ],
+    "sorts": [
+      {
+        "name": "name"
+      }
     ]
   },
   "editor": {

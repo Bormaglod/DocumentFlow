@@ -93,6 +93,11 @@
         "allow-grouping": true,
         "horizontal-align": "Center"
       }
+    ],
+    "sorts": [
+      {
+        "name": "code"
+      }
     ]
   },
   "editor": {

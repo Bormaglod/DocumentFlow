@@ -61,8 +61,10 @@ namespace DocumentFlow
         private ExpressionContext context;
         private List<IPage> childs = new List<IPage>();
         private List<string> locked = new List<string>();
+#if USE_LISTENER
         private CancellationTokenSource listenerToken;
         private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
+#endif
         private List<FieldExpressionData> expressions = new List<FieldExpressionData>();
         private DocumentRefEditor refEditor;
         bool binding = false;
@@ -132,10 +134,12 @@ namespace DocumentFlow
 
             CreateChildDataGrids();
 
+#if USE_LISTENER
             timerDatabaseListen.Start();
 
             listenerToken = new CancellationTokenSource();
-            CreateListener(listenerToken.Token);
+            _ = CreateListener(listenerToken.Token);
+#endif
         }
 
         Guid IPage.Id => current;
@@ -144,8 +148,10 @@ namespace DocumentFlow
 
         void IPage.OnClosed()
         {
+#if USE_LISTENER
             listenerToken.Cancel();
             timerDatabaseListen.Stop();
+#endif
 
             foreach (IPage p in childs)
             {
@@ -177,6 +183,7 @@ namespace DocumentFlow
 
         private void NewSession() => Session = Db.OpenSession();
 
+#if USE_LISTENER
         private void Listener(CancellationToken token)
         {
             using (var conn = new NpgsqlConnection(Db.ConnectionString))
@@ -210,13 +217,20 @@ namespace DocumentFlow
             }
         }
 
-        async private void CreateListener(CancellationToken token)
+        async private Task CreateListener(CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return;
 
-            await Task.Run(() => Listener(token), token);
+            try
+            {
+                await Task.Run(() => Listener(token), token);
+            }
+            catch (TaskCanceledException)
+            {
+            }
         }
+#endif
 
         private void PrepareEditor()
         {
@@ -521,7 +535,15 @@ namespace DocumentFlow
             locked.Add(editor_control.DataField);
             try
             {
-                context.Variables[editor_control.DataField] = editor_control.Value;
+                if (editor_control.Value == null)
+                {
+                    context.Variables.Remove(editor_control.DataField);
+                }
+                else
+                {
+                    context.Variables[editor_control.DataField] = editor_control.Value;
+                }
+
                 foreach (FieldExpressionData data in expressions.Where(x => x.Editor == editor_control))
                 {
                     IBindingEditorControl result = null;
@@ -560,8 +582,17 @@ namespace DocumentFlow
                         }
                     }
 
-                    if (result != null && result.Value != null)
-                        context.Variables[result.DataField] = result.Value;
+                    if (result != null)
+                    {
+                        if (result.Value == null)
+                        {
+                            context.Variables.Remove(result.DataField);
+                        }
+                        else 
+                        {
+                            context.Variables[result.DataField] = result.Value;
+                        }
+                    }
                 }
             }
             finally
@@ -873,6 +904,7 @@ namespace DocumentFlow
 
         private void timerDatabaseListen_Tick(object sender, EventArgs e)
         {
+#if USE_LISTENER
             if (notifies.TryDequeue(out NotifyMessage message))
             {
                 switch (message.Action)
@@ -887,6 +919,7 @@ namespace DocumentFlow
                         break;
                 }
             }
+#endif
         }
 
         private void buttonStatus_Click(object sender, EventArgs e)

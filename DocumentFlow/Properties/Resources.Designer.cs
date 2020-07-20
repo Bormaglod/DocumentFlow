@@ -343,6 +343,16 @@ namespace DocumentFlow.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_manufacture_16 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_manufacture_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_mind_map_12x11 {
             get {
                 object obj = ResourceManager.GetObject("icons8_mind_map_12x11", resourceCulture);

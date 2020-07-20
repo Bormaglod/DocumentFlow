@@ -149,7 +149,7 @@
         "datafield": "operation_id",
         "label-width": 210,
         "edit-width": 350,
-        "dataset": "select o.id, o.status_id, o.name, o.parent_id from operation o left join calc_item_operation cio on (cio.item_id = o.id) left join calculation c on (cio.owner_id = c.id) left join production_order_detail pod on (c.id = pod.calculation_id) where (pod.owner_id = :order_id and c.owner_id = :goods_id) or o.status_id = 500 or o.id = :operation_id order by o.status_id, o.name",
+        "dataset": "select o.id, o.status_id, o.name, o.parent_id from operation o left join calc_item_operation cio on (cio.item_id = o.id) left join calculation c on (cio.owner_id = c.id) left join production_order_detail pod on (c.id = pod.calculation_id) where (pod.owner_id = :order_id and c.owner_id = :goods_id and (o.status_id = 1002 or o.id = :operation_id)) or o.status_id = 500 order by o.status_id, o.name",
         "expressions": [
           {
             "expression": "Populate(\"using_goods_id\"; true)"

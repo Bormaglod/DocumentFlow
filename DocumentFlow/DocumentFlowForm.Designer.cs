@@ -35,6 +35,7 @@
             Syncfusion.Windows.Forms.CaptionImage captionImage2 = new Syncfusion.Windows.Forms.CaptionImage();
             Syncfusion.Windows.Forms.CaptionImage captionImage3 = new Syncfusion.Windows.Forms.CaptionImage();
             Syncfusion.Windows.Forms.CaptionImage captionImage4 = new Syncfusion.Windows.Forms.CaptionImage();
+            Syncfusion.Windows.Forms.CaptionImage captionImage5 = new Syncfusion.Windows.Forms.CaptionImage();
             this.imageMenu = new System.Windows.Forms.ImageList(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeSidebar = new Syncfusion.Windows.Forms.Tools.TreeViewAdv();
@@ -246,10 +247,15 @@
             captionImage4.Image = global::DocumentFlow.Properties.Resources.system_menu;
             captionImage4.Location = new System.Drawing.Point(1007, 4);
             captionImage4.Name = "system";
+            captionImage5.BackColor = System.Drawing.Color.Transparent;
+            captionImage5.Image = global::DocumentFlow.Properties.Resources.icons8_manufacture_16;
+            captionImage5.Location = new System.Drawing.Point(4, 4);
+            captionImage5.Name = "icon";
             this.CaptionImages.Add(captionImage1);
             this.CaptionImages.Add(captionImage2);
             this.CaptionImages.Add(captionImage3);
             this.CaptionImages.Add(captionImage4);
+            this.CaptionImages.Add(captionImage5);
             this.ClientSize = new System.Drawing.Size(1102, 502);
             this.ControlBox = false;
             this.Controls.Add(this.splitContainer1);

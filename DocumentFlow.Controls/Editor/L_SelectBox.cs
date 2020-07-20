@@ -137,7 +137,6 @@ namespace DocumentFlow.Controls
             if (window.ShowDialog() == DialogResult.OK)
             {
                 SelectedItem = window.SelectedItem;
-                OnValueChanged(SelectedItem);
             }
         }
 

@@ -78,9 +78,9 @@ namespace DocumentFlow
             }
 
             public void Refresh()
-            { 
+            {
                 if (separator != null)
-                    separator.Visible = items.Any(x => x.Visible); 
+                    separator.Visible = items.Any(x => x.Visible);
             }
 
             public override string ToString() => Name;
@@ -152,8 +152,10 @@ namespace DocumentFlow
         private Dictionary<string, List<ToolStripItem>> commandItems = new Dictionary<string, List<ToolStripItem>>();
         private ToolbarGroups groupItems = new ToolbarGroups();
         private Guid? owner;
+#if USE_LISTENER
         private CancellationTokenSource listenerToken;
         private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
+#endif
         private GridColumn column = null;
         private SfDataGrid grid = null;
         private Syncfusion.Data.Group group = null;
@@ -172,26 +174,31 @@ namespace DocumentFlow
 
             CreateViewer();
 
+#if USE_LISTENER
             timerDatabaseListen.Start();
 
             listenerToken = new CancellationTokenSource();
-            CreateListener(listenerToken.Token);
+            _ = CreateListener(listenerToken.Token);
+#endif
         }
 
         Guid IPage.Id => command.Id;
 
         Guid IPage.ContentId => GetCurrentId();
 
-        void IPage.OnClosed() 
+        void IPage.OnClosed()
         {
+#if USE_LISTENER
             listenerToken.Cancel();
             timerDatabaseListen.Stop();
+#endif
         }
 
         protected ISession Session { get; private set; }
 
         private void NewSession() => Session = Db.OpenSession();
 
+#if USE_LISTENER
         private void Listener(CancellationToken token)
         {
             using (var conn = new NpgsqlConnection(Db.ConnectionString))
@@ -228,13 +235,20 @@ namespace DocumentFlow
             }
         }
 
-        async private void CreateListener(CancellationToken token)
+        private async Task CreateListener(CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return;
 
-            await Task.Run(() => Listener(token), token);
+            try
+            {
+                await Task.Run(() => Listener(token), token).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException)
+            {
+            }
         }
+#endif
 
         private void CreateViewer()
         {
@@ -471,10 +485,10 @@ namespace DocumentFlow
 
         private void CreateQueryParameters(NpgsqlCommand command, params (string paramName, object paramValue, Type type)[] variables)
         {
-            Dictionary<string, (object value, Type type)> vars = new Dictionary<string, (object, Type)>() { 
-                { "parent_id", (ParentEntity, typeof(Guid?)) }, 
-                { "owner_id", (owner, typeof(Guid?)) }, 
-                { "from_date", (dateTimePickerFrom.Value, typeof(DateTime)) }, 
+            Dictionary<string, (object value, Type type)> vars = new Dictionary<string, (object, Type)>() {
+                { "parent_id", (ParentEntity, typeof(Guid?)) },
+                { "owner_id", (owner, typeof(Guid?)) },
+                { "from_date", (dateTimePickerFrom.Value, typeof(DateTime)) },
                 { "to_date", (dateTimePickerTo.Value.EndOfDay(), typeof(DateTime)) },
                 { "organization_id", ((comboOrg.SelectedItem as ComboBoxDataItem)?.Id, typeof(Guid?)) }
             };
@@ -564,7 +578,7 @@ namespace DocumentFlow
                 adapter.Fill(ds);
 
                 System.Data.DataRow added_row = ds.Tables[0].Rows[0];
-                
+
                 DataTable dt = gridContent.DataSource as DataTable;
                 System.Data.DataRow new_row = dt.NewRow();
 
@@ -876,7 +890,14 @@ namespace DocumentFlow
 
         private void RefreshEntities(object sender, EventArgs e) => RefreshCurrenView();
 
-        private void Edit() => commands.Execute("edit-record", new EditorParams() { Id = GetCurrentId(), Parent = ParentEntity, Owner = owner, Kind = command.EntityKind, Editor = schema?.Editor });
+        private void Edit()
+        {
+            Guid id = GetCurrentId();
+            if (id != Guid.Empty)
+            {
+                Edit(id);
+            }
+        }
 
         private void Edit(Guid id) => commands.Execute("edit-record", new EditorParams() { Id = id, Parent = ParentEntity, Owner = owner, Kind = command.EntityKind, Editor = schema?.Editor });
 
@@ -1017,7 +1038,7 @@ namespace DocumentFlow
                             .SetGuid("copy_id", GetCurrentId())
                             .UniqueResult<Guid?>();
                     transaction.Commit();
-                    if (MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (id.HasValue && MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
                         Edit(id.Value);
                     }
@@ -1056,6 +1077,7 @@ namespace DocumentFlow
 
         private void timerDatabaseListen_Tick(object sender, EventArgs e)
         {
+#if USE_LISTENER
             if (notifies.TryDequeue(out NotifyMessage message))
             {
                 switch (message.Action)
@@ -1083,6 +1105,7 @@ namespace DocumentFlow
                         break;
                 }
             }
+#endif
         }
 
         private void buttonSelectRange_Click(object sender, EventArgs e)

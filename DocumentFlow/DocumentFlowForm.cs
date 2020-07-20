@@ -17,6 +17,7 @@ namespace DocumentFlow
     using Syncfusion.Windows.Forms;
     using Syncfusion.Windows.Forms.Tools;
     using DocumentFlow.Authorization;
+    using DocumentFlow.Core;
     using DocumentFlow.Properties;
     using DocumentFlow.Data.Core;
     using DocumentFlow.Data.Entities;
@@ -35,10 +36,17 @@ namespace DocumentFlow
 
             foreach (CaptionImage image in CaptionImages)
             {
-                image.Location = new Point(Width - buttonPos[image.Name], 4);
-                image.ImageMouseEnter += new CaptionImage.MouseEnter(image_ImageMouseEnter);
-                image.ImageMouseLeave += new CaptionImage.MouseLeave(image_ImageMouseLeave);
-                image.ImageMouseUp += new CaptionImage.MouseUp(image_ImageMouseUp);
+                if (image.Name == "icon")
+                {
+                    image.ImageMouseDown += new CaptionImage.MouseDown(icon_ImageMouseDown);
+                }
+                else
+                {
+                    image.Location = new Point(Width - buttonPos[image.Name], 4);
+                    image.ImageMouseEnter += new CaptionImage.MouseEnter(image_ImageMouseEnter);
+                    image.ImageMouseLeave += new CaptionImage.MouseLeave(image_ImageMouseLeave);
+                    image.ImageMouseUp += new CaptionImage.MouseUp(image_ImageMouseUp);
+                }
             }
         }
 
@@ -106,6 +114,19 @@ namespace DocumentFlow
                     treeSidebar.ExpandAll();
                 }
             }
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            uint dwWindowProperty;
+
+            User32.SetParent(Handle, IntPtr.Zero);
+
+            dwWindowProperty = User32.GetWindowLong(Handle, User32.GWL.STYLE);
+            dwWindowProperty = (dwWindowProperty | (uint)User32.WS.CAPTION | (uint)User32.WS.SYSMENU);
+            User32.SetWindowLong(Handle, User32.GWL.STYLE, dwWindowProperty);
+
+            base.OnHandleCreated(e);
         }
 
         private IPage GetPage(TabPageAdv page)
@@ -312,10 +333,35 @@ namespace DocumentFlow
             }
         }
 
+        void icon_ImageMouseDown(object sender, ImageMouseDownEventArgs e)
+        {
+            IntPtr wMenu = User32.GetSystemMenu(Handle, false);
+            if (WindowState == WinForms.FormWindowState.Maximized)
+            {
+                User32.EnableMenuItem(wMenu, (uint)User32.SC.MAXIMIZE, (uint)User32.MF.GRAYED);
+            }
+            else
+            {
+                User32.EnableMenuItem(wMenu, (uint)User32.SC.MAXIMIZE, (uint)User32.MF.ENABLED);
+            }
+
+            Point m = ((WinForms.MouseEventArgs)e).Location;
+            m.Offset(Location);
+
+            int command = User32.TrackPopupMenuEx(wMenu, (uint)(User32.TPM.LEFTALIGN | User32.TPM.RETURNCMD), m.X, m.Y, Handle, IntPtr.Zero);
+            if (command == 0)
+                return;
+
+            User32.PostMessage(Handle, (uint)User32.WM.SYSCOMMAND, new IntPtr(command), IntPtr.Zero);
+        }
+
         private void DocumentFlowForm_SizeChanged(object sender, EventArgs e)
         {
             foreach (CaptionImage image in CaptionImages)
             {
+                if (!buttonPos.ContainsKey(image.Name))
+                    continue;
+
                 if (image.Name == "max")
                 {
                     image.Image = WindowState == WinForms.FormWindowState.Maximized ? Resources.system_restore : Resources.system_max;

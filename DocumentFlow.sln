@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.DataSchema.Typ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pg_money_convert", "pg_money_convert\pg_money_convert.csproj", "{B42A1FBC-DE5C-4556-9437-30A349431EF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{C94597C1-AC21-4CA6-8B91-CAC44C7584EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,10 @@ Global
 		{B42A1FBC-DE5C-4556-9437-30A349431EF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B42A1FBC-DE5C-4556-9437-30A349431EF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B42A1FBC-DE5C-4556-9437-30A349431EF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C94597C1-AC21-4CA6-8B91-CAC44C7584EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C94597C1-AC21-4CA6-8B91-CAC44C7584EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C94597C1-AC21-4CA6-8B91-CAC44C7584EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C94597C1-AC21-4CA6-8B91-CAC44C7584EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

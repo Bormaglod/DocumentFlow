@@ -34,7 +34,7 @@
         "datafield": "code",
         "text": "Код",
         "type": "Text",
-        "width": 90
+        "width": 110
       },
       {
         "datafield": "name",

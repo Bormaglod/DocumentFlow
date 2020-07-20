@@ -66,6 +66,11 @@
         "type": "Text",
         "width": 200
       }
+    ],
+    "sorts": [
+      {
+        "name": "name"
+      }
     ]
   },
   "editor": {
@@ -79,7 +84,8 @@
         "text": "Фамилия И.О.",
         "datafield": "name",
         "label-width": 190,
-        "edit-width": 250
+        "edit-width": 250,
+        "enabled": false
       },
       {
         "type": "TextBox",
@@ -119,7 +125,7 @@
     ],
     "conditions": [
       {
-        "controls": [ "name", "surname", "first_name", "middle_name", "phone", "email" ],
+        "controls": [ "surname", "first_name", "middle_name", "phone", "email" ],
         "enable": {
           "states": [ "compiled", "is changing" ]
         }
