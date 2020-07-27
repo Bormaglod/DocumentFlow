@@ -38,7 +38,7 @@ namespace DocumentFlow
             }
         }
 
-        private List<Lib> libs = new List<Lib>();
+        private readonly List<Lib> libs = new List<Lib>();
 
         public AboutForm()
         {

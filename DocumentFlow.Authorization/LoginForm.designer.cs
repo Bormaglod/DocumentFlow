@@ -61,7 +61,7 @@
             this.buttonLogin.Size = new System.Drawing.Size(96, 28);
             this.buttonLogin.TabIndex = 3;
             this.buttonLogin.Text = "Вход";
-            this.buttonLogin.Click += new System.EventHandler(this.buttonLogin_Click);
+            this.buttonLogin.Click += new System.EventHandler(this.ButtonLogin_Click);
             // 
             // pictureBox1
             // 
@@ -110,7 +110,7 @@
             this.comboDatabase.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
             this.comboDatabase.TabIndex = 0;
             this.comboDatabase.ThemeName = "Office2016Colorful";
-            this.comboDatabase.SelectedValueChanged += new System.EventHandler(this.comboDatabase_SelectedValueChanged);
+            this.comboDatabase.SelectedValueChanged += new System.EventHandler(this.ComboDatabase_SelectedValueChanged);
             // 
             // comboUsers
             // 

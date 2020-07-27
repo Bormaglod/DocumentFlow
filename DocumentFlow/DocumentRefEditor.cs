@@ -25,8 +25,8 @@ namespace DocumentFlow
         private const string FtpPassword = "271117";
 
         private string selectedFileName;
-        private string localPath;
-        private string ftpPath;
+        private readonly string localPath;
+        private readonly string ftpPath;
 
         public enum EditingResult { Ok, Cancel, RemovalRequired }
 
@@ -56,8 +56,11 @@ namespace DocumentFlow
 
             string name = IO.Path.GetFileName(selectedFileName);
 
-            FtpClient ftp = new FtpClient(Settings.Default.FtpHost);
-            ftp.Credentials = new NetworkCredential(FtpUser, FtpPassword);
+            FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
+            {
+                Credentials = new NetworkCredential(FtpUser, FtpPassword)
+            };
+
             ftp.Connect();
 
             try
@@ -92,8 +95,11 @@ namespace DocumentFlow
 
         public EditingResult Edit(DocumentRefs refs)
         {
-            FtpClient ftp = new FtpClient(Settings.Default.FtpHost);
-            ftp.Credentials = new NetworkCredential(FtpUser, FtpPassword);
+            FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
+            {
+                Credentials = new NetworkCredential(FtpUser, FtpPassword)
+            };
+
             ftp.Connect();
 
             try
@@ -189,8 +195,11 @@ namespace DocumentFlow
 
         public void Delete(DocumentRefs refs)
         {
-            FtpClient ftp = new FtpClient(Settings.Default.FtpHost);
-            ftp.Credentials = new NetworkCredential(FtpUser, FtpPassword);
+            FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
+            {
+                Credentials = new NetworkCredential(FtpUser, FtpPassword)
+            };
+
             ftp.Connect();
 
             Delete(ftp, refs);
@@ -198,8 +207,11 @@ namespace DocumentFlow
 
         public EditingResult GetLocalFileName(DocumentRefs refs, out string localName)
         {
-            FtpClient ftp = new FtpClient(Settings.Default.FtpHost);
-            ftp.Credentials = new NetworkCredential(FtpUser, FtpPassword);
+            FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
+            {
+                Credentials = new NetworkCredential(FtpUser, FtpPassword)
+            };
+
             ftp.Connect();
 
             try

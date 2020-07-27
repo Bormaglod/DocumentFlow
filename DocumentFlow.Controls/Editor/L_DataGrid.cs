@@ -105,18 +105,18 @@ namespace DocumentFlow.Controls
             Edit();
         }
 
-        private void bttonCreate_Click(object sender, EventArgs e)
+        private void BttonCreate_Click(object sender, EventArgs e)
         {
             if (editor.Create((Guid)row["id"], status))
                 RefreshData();
         }
 
-        private void buttonEdit_Click(object sender, EventArgs e)
+        private void ButtonEdit_Click(object sender, EventArgs e)
         {
             Edit();
         }
 
-        private void buttonDelete_Click(object sender, EventArgs e)
+        private void ButtonDelete_Click(object sender, EventArgs e)
         {
             if (((IEnabled)this).Enabled)
             {

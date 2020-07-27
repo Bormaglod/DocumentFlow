@@ -19,7 +19,7 @@ namespace DocumentFlow.Data.Core
         protected override void InitializeParameter(DbParameter dbParam, string name, SqlType sqlType)
         {
             if (sqlType is NpgsqlExtendedSqlType && dbParam is NpgsqlParameter)
-                this.InitializeParameter(dbParam as NpgsqlParameter, name, sqlType as NpgsqlExtendedSqlType);
+                InitializeParameter(dbParam as NpgsqlParameter, name, sqlType as NpgsqlExtendedSqlType);
             else
                 base.InitializeParameter(dbParam, name, sqlType);
         }

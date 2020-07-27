@@ -399,10 +399,11 @@ namespace DocumentFlow
             if (diagram1 != null)
             {
                 PrintDocument printDoc = diagram1.CreatePrintDocument();
-                System.Windows.Forms.PrintDialog printDlg = new System.Windows.Forms.PrintDialog();
-                printDlg.Document = printDoc;
-
-                printDlg.AllowSomePages = true;
+                System.Windows.Forms.PrintDialog printDlg = new System.Windows.Forms.PrintDialog
+                {
+                    Document = printDoc,
+                    AllowSomePages = true
+                };
 
                 if (printDlg.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
                 {

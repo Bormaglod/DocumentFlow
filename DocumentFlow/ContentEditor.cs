@@ -59,14 +59,14 @@ namespace DocumentFlow
         private readonly string destFtpPath;
         private readonly ICommandFactory commands;
         private ExpressionContext context;
-        private List<IPage> childs = new List<IPage>();
-        private List<string> locked = new List<string>();
+        private readonly List<IPage> childs = new List<IPage>();
+        private readonly List<string> locked = new List<string>();
 #if USE_LISTENER
         private CancellationTokenSource listenerToken;
         private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
 #endif
-        private List<FieldExpressionData> expressions = new List<FieldExpressionData>();
-        private DocumentRefEditor refEditor;
+        private readonly List<FieldExpressionData> expressions = new List<FieldExpressionData>();
+        private readonly DocumentRefEditor refEditor;
         bool binding = false;
 
         public ContentEditor(ICommandFactory commandFactory, EditorParams parameters)
@@ -393,7 +393,7 @@ namespace DocumentFlow
             if (condition == null)
                 return true;
 
-            bool res = condition.States == null ? false : condition.States.Contains(status_name);
+            bool res = condition.States != null && condition.States.Contains(status_name);
             if (!string.IsNullOrEmpty(condition.ExpressionIfEqual))
             {
                 IGenericExpression<bool> expression = context.CompileGeneric<bool>(condition.ExpressionIfEqual);
@@ -680,39 +680,38 @@ namespace DocumentFlow
 
         private void EditDocumentRefs()
         {
-            DocumentRefs refs = gridDocuments.CurrentItem as DocumentRefs;
-            if (refs == null)
-                return;
-
-            var result = refEditor.Edit(refs);
-            using (var transaction = Session.BeginTransaction())
+            if (gridDocuments.CurrentItem is DocumentRefs refs)
             {
-                try
+                var result = refEditor.Edit(refs);
+                using (var transaction = Session.BeginTransaction())
                 {
-
-                    switch (result)
+                    try
                     {
-                        case DocumentRefEditor.EditingResult.Ok:
-                            Session.SaveOrUpdate(refs);
-                            transaction.Commit();
-                            break;
-                        case DocumentRefEditor.EditingResult.RemovalRequired:
-                            Session.Delete(refs);
-                            transaction.Commit();
-                            documents.Remove(refs);
-                            break;
-                        default:
-                            break;
+
+                        switch (result)
+                        {
+                            case DocumentRefEditor.EditingResult.Ok:
+                                Session.SaveOrUpdate(refs);
+                                transaction.Commit();
+                                break;
+                            case DocumentRefEditor.EditingResult.RemovalRequired:
+                                Session.Delete(refs);
+                                transaction.Commit();
+                                documents.Remove(refs);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        ExceptionHelper.MesssageBox(e);
                     }
                 }
-                catch (Exception e)
-                {
-                    transaction.Rollback();
-                    ExceptionHelper.MesssageBox(e);
-                }
-            }
 
-            gridDocuments.Refresh();
+                gridDocuments.Refresh();
+            }
         }
 
         private void SaveDocument(PdfDocument pdf)

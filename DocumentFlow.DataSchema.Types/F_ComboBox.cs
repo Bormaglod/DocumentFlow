@@ -45,7 +45,7 @@ namespace DocumentFlow.DataSchema.Types
 
             try
             {
-                IList<ComboBoxItem> items = string.IsNullOrEmpty(Dataset) ? Items : Db.ExecuteSelect<ComboBoxItem>(session, Dataset, types, (x) => row == null ? null : row[x]);
+                IList<ComboBoxItem> items = string.IsNullOrEmpty(Dataset) ? Items : Db.ExecuteSelect<ComboBoxItem>(session, Dataset, types, (x) => row?[x]);
                 foreach (var item in items)
                 {
                     Control.Items.Add(item);

@@ -39,8 +39,10 @@
         "type": "Text",
         "hideable": false,
         "auto-size": true,
-        "aggregate": "Count",
-        "aggregate-title": "Всего наименований: "
+        "summaries": {
+          "aggregate": "Count",
+          "aggregate-title": "Всего наименований: "
+        }
       },
       {
         "datafield": "percentage",
@@ -66,7 +68,9 @@
         "width": 150,
         "format-mode": "Currency",
         "horizontal-align": "Right",
-        "aggregate": "Sum"
+        "summaries": {
+          "aggregate": "Sum"
+        }
       }
     ]
   },

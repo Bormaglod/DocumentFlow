@@ -24,10 +24,10 @@ namespace DocumentFlow
 
     public partial class DocumentFlowForm : MetroForm, IContainerPage
     {
-        private LoginForm loginForm;
-        private ICommandFactory commands;
-        private Stack<TabPageAdv> historyPages = new Stack<TabPageAdv>();
-        readonly private Dictionary<string, int> buttonPos = new Dictionary<string, int>() { { "close", 28 }, { "max", 54 }, { "min", 80 }, { "system", 106 } };
+        private readonly LoginForm loginForm;
+        private readonly ICommandFactory commands;
+        private readonly Stack<TabPageAdv> historyPages = new Stack<TabPageAdv>();
+        private readonly Dictionary<string, int> buttonPos = new Dictionary<string, int>() { { "close", 28 }, { "max", 54 }, { "min", 80 }, { "system", 106 } };
 
         public DocumentFlowForm()
         {
@@ -123,7 +123,7 @@ namespace DocumentFlow
             User32.SetParent(Handle, IntPtr.Zero);
 
             dwWindowProperty = User32.GetWindowLong(Handle, User32.GWL.STYLE);
-            dwWindowProperty = (dwWindowProperty | (uint)User32.WS.CAPTION | (uint)User32.WS.SYSMENU);
+            dwWindowProperty = dwWindowProperty | (uint)(User32.WS.CAPTION | User32.WS.SYSMENU);
             User32.SetWindowLong(Handle, User32.GWL.STYLE, dwWindowProperty);
 
             base.OnHandleCreated(e);
@@ -141,8 +141,10 @@ namespace DocumentFlow
         {
             foreach (Menu item in menu.Where(x => x.ParentId == parent).OrderBy(x => x.OrderIndex).ThenBy(x => x.Name))
             {
-                var node = new TreeNodeAdv(item.Name);
-                node.Tag = item;
+                var node = new TreeNodeAdv(item.Name)
+                {
+                    Tag = item
+                };
 
                 if (item.Command?.Picture != null)
                 {
@@ -338,21 +340,21 @@ namespace DocumentFlow
             IntPtr wMenu = User32.GetSystemMenu(Handle, false);
             if (WindowState == WinForms.FormWindowState.Maximized)
             {
-                User32.EnableMenuItem(wMenu, (uint)User32.SC.MAXIMIZE, (uint)User32.MF.GRAYED);
+                User32.EnableMenuItem(wMenu, User32.SC.MAXIMIZE, User32.MF.GRAYED);
             }
             else
             {
-                User32.EnableMenuItem(wMenu, (uint)User32.SC.MAXIMIZE, (uint)User32.MF.ENABLED);
+                User32.EnableMenuItem(wMenu, User32.SC.MAXIMIZE, User32.MF.ENABLED);
             }
 
             Point m = ((WinForms.MouseEventArgs)e).Location;
             m.Offset(Location);
 
-            int command = User32.TrackPopupMenuEx(wMenu, (uint)(User32.TPM.LEFTALIGN | User32.TPM.RETURNCMD), m.X, m.Y, Handle, IntPtr.Zero);
+            int command = User32.TrackPopupMenuEx(wMenu, User32.TPM.LEFTALIGN | User32.TPM.RETURNCMD, m.X, m.Y, Handle, IntPtr.Zero);
             if (command == 0)
                 return;
 
-            User32.PostMessage(Handle, (uint)User32.WM.SYSCOMMAND, new IntPtr(command), IntPtr.Zero);
+            User32.PostMessage(Handle, User32.WM.SYSCOMMAND, new IntPtr(command), IntPtr.Zero);
         }
 
         private void DocumentFlowForm_SizeChanged(object sender, EventArgs e)

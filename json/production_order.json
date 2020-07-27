@@ -213,7 +213,9 @@
             "hideable": false,
             "format-mode": "Currency",
             "horizontal-align": "Right",
-            "aggregate": "Sum"
+            "summaries": {
+              "aggregate": "Sum"
+            }
           },
           {
             "datafield": "tax",
@@ -232,7 +234,9 @@
             "hideable": false,
             "format-mode": "Currency",
             "horizontal-align": "Right",
-            "aggregate": "Sum"
+            "summaries": {
+              "aggregate": "Sum"
+            }
           },
           {
             "datafield": "cost_with_tax",
@@ -242,7 +246,9 @@
             "hideable": false,
             "format-mode": "Currency",
             "horizontal-align": "Right",
-            "aggregate": "Sum"
+            "summaries": {
+              "aggregate": "Sum"
+            }
           },
           {
             "datafield": "complete_status",

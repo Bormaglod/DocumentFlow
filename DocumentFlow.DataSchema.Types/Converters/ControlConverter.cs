@@ -16,18 +16,17 @@ namespace DocumentFlow.DataSchema.Types.Converters
 
     public class ControlConverter : JsonCreationConverter<IEditorControl>
     {
-        private Dictionary<string, Type> fields = new Dictionary<string, Type>();
+        private readonly Dictionary<string, Type> fields = new Dictionary<string, Type>();
 
         public ControlConverter() : base()
         {
             IEnumerable<TypeInfo> info = Assembly.GetAssembly(GetType()).DefinedTypes;
             foreach (TypeInfo i in info)
             {
-                TagAttribute a = i.GetCustomAttribute(typeof(TagAttribute)) as TagAttribute;
-                if (a == null)
-                    continue;
-
-                fields.Add(a.Name, i.AsType());
+                if (i.GetCustomAttribute(typeof(TagAttribute)) is TagAttribute a)
+                {
+                    fields.Add(a.Name, i.AsType());
+                }
             }
         }
 

@@ -20,7 +20,7 @@ namespace DocumentFlow
 
     public partial class GroupEditor : MetroForm
     {
-        private string table;
+        private readonly string table;
         private Guid? id;
         private Guid entityKindId;
         private CommandAction action;

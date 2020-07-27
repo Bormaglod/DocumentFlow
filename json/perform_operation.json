@@ -101,7 +101,11 @@
         "width": 120,
         "allow-grouping": false,
         "format-mode": "Currency",
-        "horizontal-align": "Right"
+        "horizontal-align": "Right",
+        "summaries": {
+          "aggregate": "Sum",
+          "summary-view": "Both"
+        }
       }
     ],
     "sorts": [

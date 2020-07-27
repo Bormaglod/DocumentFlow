@@ -54,7 +54,7 @@ namespace DocumentFlow.Controls
             }
         }
 
-        private void buttonSelectImage_Click_1(object sender, EventArgs e)
+        private void ButtonSelectImage_Click_1(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {

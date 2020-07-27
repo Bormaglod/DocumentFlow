@@ -82,8 +82,7 @@ namespace DocumentFlow
 
         private void ControlSizeChanged(object sender, EventArgs e)
         {
-            Control c = sender as Control;
-            if (c != null)
+            if (sender is Control c)
             {
                 int d = c.Height - 28;
                 c.Parent.Height = 34 + d;

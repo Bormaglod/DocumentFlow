@@ -137,32 +137,69 @@ namespace DocumentFlow.Controls.Extensions
             if (columns == null)
                 return;
 
-            GridTableSummaryRow row = null;
-            foreach (DatasetColumn c in columns.Where(x => x.Aggregate != Aggregate.None))
+            GridTableSummaryRow tableSummaryRow = new GridTableSummaryRow()
             {
-                if (row == null)
-                {
-                    row = new GridTableSummaryRow();
-                    row.Name = "TableRowSummary";
-                    row.ShowSummaryInRow = false;
-                    row.Position = VerticalPosition.Bottom;
-                }
+                Name = "TableRowSummary",
+                ShowSummaryInRow = false,
+                Position = VerticalPosition.Bottom
+            };
 
-                GridSummaryColumn column = new GridSummaryColumn();
-                column.SummaryType = SummaryType.DoubleAggregate;
-                column.Format = c.AggregateTitle + "{" + c.SummaryFormat + "}";
-                column.MappingName = c.DataField;
-                column.Name = c.DataField;
-                row.SummaryColumns.Add(column);
+            GridSummaryRow groupSummaryRow = new GridSummaryRow()
+            {
+                Name = "GroupSummaryRow",
+                ShowSummaryInRow = false
+            };
+
+            foreach (DatasetColumn c in columns.Where(x => x.Summaries != null && x.Summaries.Aggregate != Aggregate.None))
+            {
+                /*if (tableSummaryRow == null)
+                {
+                    tableSummaryRow = new GridTableSummaryRow();
+                    tableSummaryRow.Name = "TableRowSummary";
+                    tableSummaryRow.ShowSummaryInRow = false;
+                    tableSummaryRow.Position = VerticalPosition.Bottom;
+                }*/
+
+                
+                if (c.Summaries.SummaryView == SummaryView.Table || c.Summaries.SummaryView == SummaryView.Both)
+                {
+                    tableSummaryRow.SummaryColumns.Add(CreateSummaryColumn(c));
+                }
+                
+                if (c.Summaries.SummaryView == SummaryView.Group || c.Summaries.SummaryView == SummaryView.Both)
+                {
+                    groupSummaryRow.SummaryColumns.Add(CreateSummaryColumn(c));
+                }
             }
 
-            if (row != null)
+            if (tableSummaryRow.SummaryColumns.Count > 0)
             {
-                grid.TableSummaryRows.Add(row);
+                grid.TableSummaryRows.Add(tableSummaryRow);
 
                 grid.CellRenderers.Remove("TableSummary");
                 grid.CellRenderers.Add("TableSummary", new CustomGridTableSummaryRenderer(columns));
             }
+
+            if (groupSummaryRow.SummaryColumns.Count > 0)
+            {
+                grid.GroupSummaryRows.Add(groupSummaryRow);
+
+                grid.CellRenderers.Remove("GroupSummary");
+                grid.CellRenderers.Add("GroupSummary", new CustomGridTableSummaryRenderer(columns));
+            }
+        }
+
+        private static GridSummaryColumn CreateSummaryColumn(DatasetColumn column)
+        {
+            GridSummaryColumn summaryColumn = new GridSummaryColumn
+            {
+                SummaryType = SummaryType.DoubleAggregate,
+                Format = column.Summaries.AggregateTitle + "{" + column.SummaryFormat + "}",
+                MappingName = column.DataField,
+                Name = column.DataField
+            };
+
+            return summaryColumn;
         }
 
         public static void CreateStackedColumns(this SfDataGrid grid, IList<StackedColumnData> stackedColumns)

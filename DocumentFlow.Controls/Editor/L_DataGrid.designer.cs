@@ -80,7 +80,7 @@
             this.menuItemCreate.Name = "menuItemCreate";
             this.menuItemCreate.Size = new System.Drawing.Size(128, 22);
             this.menuItemCreate.Text = "Создать";
-            this.menuItemCreate.Click += new System.EventHandler(this.bttonCreate_Click);
+            this.menuItemCreate.Click += new System.EventHandler(this.BttonCreate_Click);
             // 
             // menuItemEdit
             // 
@@ -88,7 +88,7 @@
             this.menuItemEdit.Name = "menuItemEdit";
             this.menuItemEdit.Size = new System.Drawing.Size(128, 22);
             this.menuItemEdit.Text = "Изменить";
-            this.menuItemEdit.Click += new System.EventHandler(this.buttonEdit_Click);
+            this.menuItemEdit.Click += new System.EventHandler(this.ButtonEdit_Click);
             // 
             // menuItemDelete
             // 
@@ -96,7 +96,7 @@
             this.menuItemDelete.Name = "menuItemDelete";
             this.menuItemDelete.Size = new System.Drawing.Size(128, 22);
             this.menuItemDelete.Text = "Удалить";
-            this.menuItemDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+            this.menuItemDelete.Click += new System.EventHandler(this.ButtonDelete_Click);
             // 
             // toolStrip1
             // 
@@ -117,7 +117,7 @@
             this.bttonCreate.Name = "bttonCreate";
             this.bttonCreate.Size = new System.Drawing.Size(70, 22);
             this.bttonCreate.Text = "Создать";
-            this.bttonCreate.Click += new System.EventHandler(this.bttonCreate_Click);
+            this.bttonCreate.Click += new System.EventHandler(this.BttonCreate_Click);
             // 
             // buttonEdit
             // 
@@ -126,7 +126,7 @@
             this.buttonEdit.Name = "buttonEdit";
             this.buttonEdit.Size = new System.Drawing.Size(81, 22);
             this.buttonEdit.Text = "Изменить";
-            this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
+            this.buttonEdit.Click += new System.EventHandler(this.ButtonEdit_Click);
             // 
             // buttonDelete
             // 
@@ -135,7 +135,7 @@
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(71, 22);
             this.buttonDelete.Text = "Удалить";
-            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+            this.buttonDelete.Click += new System.EventHandler(this.ButtonDelete_Click);
             // 
             // L_DataGrid
             // 

@@ -16,8 +16,6 @@ namespace DocumentFlow.DataSchema
 
     public enum DatasetColumnType { Integer, Numeric, Text, Image, Memo, Boolean, Date, Enums, Combobox, Progress }
 
-    public enum Aggregate { None, Count, Max, Min, Average, Sum }
-
     public class DatasetColumn
     {
         [JsonProperty("datafield", Required = Required.Always)]
@@ -80,12 +78,8 @@ namespace DocumentFlow.DataSchema
         [JsonProperty("values")]
         public List<EnumValues> ColumnEnums { get; set; }
 
-        [DefaultValue(Aggregate.None)]
-        [JsonProperty("aggregate", DefaultValueHandling = DefaultValueHandling.Populate)]
-        public Aggregate Aggregate { get; set; }
-
-        [JsonProperty("aggregate-title")]
-        public string AggregateTitle { get; set; }
+        [JsonProperty("summaries")]
+        public Summaries Summaries { get; set; }
 
         [JsonProperty("negative-value-color")]
         public string NegativeValueColor { get; set; }
@@ -101,23 +95,24 @@ namespace DocumentFlow.DataSchema
         {
             get
             {
-                string format = Aggregate.ToString();
+                string format = Summaries.Aggregate.ToString();
                 if (Type == DatasetColumnType.Integer || Type == DatasetColumnType.Numeric)
                 {
                     if (FormatMode == FormatMode.Currency)
                     {
-                        format = format + ":c";
+                        format += ":c";
                     }
                     else
                         if (Type == DatasetColumnType.Numeric)
                     {
-                        format = format + $":f{DecimalDigits}";
+                        format += $":f{DecimalDigits}";
                     }
                 }
 
                 return format;
             }
         }
+
         public override string ToString()
         {
             return $"{DataField} ({Text}): {Type}";

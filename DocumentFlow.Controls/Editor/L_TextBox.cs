@@ -48,7 +48,7 @@ namespace DocumentFlow.Controls
 
         public override string Text { get => textBoxExt.Text; set => textBoxExt.Text = value; }
 
-        private void textBoxExt_TextChanged(object sender, EventArgs e)
+        private void TextBoxExt_TextChanged(object sender, EventArgs e)
         {
             if (TextChanged != null)
                 TextChanged.Invoke(this, e);

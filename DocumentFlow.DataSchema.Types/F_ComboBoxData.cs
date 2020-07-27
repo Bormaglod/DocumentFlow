@@ -38,7 +38,7 @@ namespace DocumentFlow.DataSchema.Types
             Control.ClearItems();
             try
             {
-                foreach (var item in Db.ExecuteSelect<ComboBoxDataItem>(session, Dataset, types, (x) => row == null ? null : row[x]))
+                foreach (var item in Db.ExecuteSelect<ComboBoxDataItem>(session, Dataset, types, (x) => row?[x]))
                 {
                     Control.AddItem(item);
                 }

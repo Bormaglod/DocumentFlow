@@ -62,7 +62,7 @@ namespace DocumentFlow.Controls
 
         public void ClearItems() => comboBoxAdv1.Items.Clear();
 
-        private void toolButton1_Click(object sender, EventArgs e)
+        private void ToolButton1_Click(object sender, EventArgs e)
         {
             comboBoxAdv1.SelectedItem = null;
         }

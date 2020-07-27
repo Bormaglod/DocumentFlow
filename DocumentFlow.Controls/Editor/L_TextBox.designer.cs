@@ -55,7 +55,7 @@
             this.textBoxExt.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Metro;
             this.textBoxExt.TabIndex = 1;
             this.textBoxExt.ThemeName = "Metro";
-            this.textBoxExt.TextChanged += new System.EventHandler(this.textBoxExt_TextChanged);
+            this.textBoxExt.TextChanged += new System.EventHandler(this.TextBoxExt_TextChanged);
             // 
             // L_TextBox
             // 

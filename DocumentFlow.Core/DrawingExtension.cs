@@ -12,8 +12,8 @@ namespace DocumentFlow.Core
 
     public static class DrawingExtension
     {
-        static Pen pen = new Pen(Color.Bisque);
-        static SolidBrush brush = new SolidBrush(Color.Bisque);
+        static readonly Pen pen = new Pen(Color.Bisque);
+        static readonly SolidBrush brush = new SolidBrush(Color.Bisque);
 
         public static Font Font = new Font(FontFamily.GenericSansSerif, 10);
 

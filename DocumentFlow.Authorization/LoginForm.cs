@@ -26,7 +26,7 @@ namespace DocumentFlow.Authorization
     public partial class LoginForm : MetroForm
     {
         private Form mainWindow;
-        private Type windowType;
+        private readonly Type windowType;
 
         public LoginForm(Type type)
         {
@@ -57,7 +57,7 @@ namespace DocumentFlow.Authorization
             }
         }
 
-        private void buttonLogin_Click(object sender, EventArgs e)
+        private void ButtonLogin_Click(object sender, EventArgs e)
         {
             if (comboDatabase.SelectedItem == null)
             {
@@ -71,8 +71,7 @@ namespace DocumentFlow.Authorization
                 return;
             }
 
-            UserAlias c = comboUsers.SelectedItem as UserAlias;
-            string userName = c != null ? c.PgName : comboUsers.Text;
+            string userName = comboUsers.SelectedItem is UserAlias c ? c.PgName : comboUsers.Text;
 
             Settings.Default.PreviousUser = userName;
             Settings.Default.LastConnectedDatabase = comboDatabase.SelectedItem.ToString();
@@ -120,7 +119,7 @@ namespace DocumentFlow.Authorization
             /**/
         }
 
-        private void comboDatabase_SelectedValueChanged(object sender, EventArgs e)
+        private void ComboDatabase_SelectedValueChanged(object sender, EventArgs e)
         {
             if (comboDatabase.SelectedItem == null)
                 return;

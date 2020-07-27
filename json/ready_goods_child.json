@@ -70,7 +70,9 @@
         "width": 120,
         "digits": 3,
         "horizontal-align": "Right",
-        "aggregate": "Sum"
+        "summaries": {
+          "aggregate": "Sum"
+        }
       },
       {
         "datafield": "price",
@@ -87,7 +89,9 @@
         "width": 100,
         "format-mode": "Currency",
         "horizontal-align": "Right",
-        "aggregate": "Sum"
+        "summaries": {
+          "aggregate": "Sum"
+        }
       }
     ],
     "sorts": [

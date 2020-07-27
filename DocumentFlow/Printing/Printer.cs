@@ -86,8 +86,7 @@ namespace DocumentFlow.Printing
 
             using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
             {
-                FlowDocument doc = XamlReader.Load(stream) as FlowDocument;
-                if (doc != null)
+                if (XamlReader.Load(stream) is FlowDocument doc)
                 {
                     doc.PagePadding = new Thickness(
                         UnitConverter.ConvertCentimeter(2, GraphicsUnit.Display),
@@ -114,9 +113,11 @@ namespace DocumentFlow.Printing
                         docPackage = Package.Open(xpsStream, FileMode.Create, FileAccess.ReadWrite);
                         PackageStore.AddPackage(uri, docPackage);
 
-                        XpsDocument xpsDoc = new XpsDocument(docPackage, CompressionOption.Maximum);
+                        XpsDocument xpsDoc = new XpsDocument(docPackage, CompressionOption.Maximum)
+                        {
+                            Uri = uri
+                        };
 
-                        xpsDoc.Uri = uri;
                         XpsDocument.CreateXpsDocumentWriter(xpsDoc).Write(paginator);
 
                         docPackage.Flush();

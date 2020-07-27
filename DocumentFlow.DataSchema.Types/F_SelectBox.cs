@@ -65,7 +65,7 @@ namespace DocumentFlow.DataSchema.Types
             {
                 try
                 {
-                    AddItems(Db.ExecuteSelect<SelectBoxItem>(session, Dataset, types, (x) => row == null ? null : row[x]), null);
+                    AddItems(Db.ExecuteSelect<SelectBoxItem>(session, Dataset, types, (x) => row?[x]), null);
                 }
                 catch (ParameterNotFoundException pe)
                 {

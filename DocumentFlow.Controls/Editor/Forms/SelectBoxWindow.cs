@@ -14,7 +14,7 @@ namespace DocumentFlow.Controls.Forms
 
     public partial class SelectBoxWindow : MetroForm
     {
-        private bool folderSelect;
+        private readonly bool folderSelect;
 
         public SelectBoxWindow(bool folderSelect)
         {
@@ -36,10 +36,12 @@ namespace DocumentFlow.Controls.Forms
 
         public TreeNodeAdv AddItem(TreeNodeAdv node, bool IsFolder, object data)
         {
-            TreeNodeAdv n = new TreeNodeAdv();
-            n.Text = data.ToString();
-            n.Tag = data;
-            n.LeftImageIndices = new int[] { IsFolder ? 0 : 1 };
+            TreeNodeAdv n = new TreeNodeAdv
+            {
+                Text = data.ToString(),
+                Tag = data,
+                LeftImageIndices = new int[] { IsFolder ? 0 : 1 }
+            };
 
             if (node == null)
                 treeMaterials.Nodes.Add(n);

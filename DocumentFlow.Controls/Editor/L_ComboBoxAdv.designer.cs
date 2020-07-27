@@ -88,7 +88,7 @@
             this.toolButton1.Name = "toolButton1";
             this.toolButton1.Size = new System.Drawing.Size(25, 25);
             this.toolButton1.TabIndex = 1;
-            this.toolButton1.Click += new System.EventHandler(this.toolButton1_Click);
+            this.toolButton1.Click += new System.EventHandler(this.ToolButton1_Click);
             // 
             // panel3
             // 

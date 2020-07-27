@@ -23,7 +23,7 @@ namespace DocumentFlow.Controls.Renderers
 
     public class CustomGridTableSummaryRenderer : GridTableSummaryCellRenderer
     {
-        private IList<DatasetColumn> columns;
+        private readonly IList<DatasetColumn> columns;
 
         public CustomGridTableSummaryRenderer(IList<DatasetColumn> dataColumns)
         {
@@ -39,8 +39,10 @@ namespace DocumentFlow.Controls.Renderers
             if (c == null)
                 return;
 
-            NumberFormatInfo format = new NumberFormatInfo();
-            format.NumberDecimalDigits = c.DecimalDigits;
+            NumberFormatInfo format = new NumberFormatInfo
+            {
+                NumberDecimalDigits = c.DecimalDigits
+            };
 
 
             if (c.Type == DatasetColumnType.Integer || c.Type == DatasetColumnType.Numeric)
@@ -51,8 +53,11 @@ namespace DocumentFlow.Controls.Renderers
                 }
             }
 
-            StringFormat stringFormat = new StringFormat();
-            stringFormat.LineAlignment = StringAlignment.Center;
+            StringFormat stringFormat = new StringFormat
+            {
+                LineAlignment = StringAlignment.Center
+            };
+
             if (c.HorizontalAlignment == HorizontalAlignment.Left)
                 stringFormat.Alignment = StringAlignment.Near;
             else if (c.HorizontalAlignment == HorizontalAlignment.Center)

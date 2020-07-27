@@ -115,7 +115,7 @@
             this.buttonSelectImage.Size = new System.Drawing.Size(25, 25);
             this.buttonSelectImage.TabIndex = 5;
             this.buttonSelectImage.Text = "toolButton1";
-            this.buttonSelectImage.Click += new System.EventHandler(this.buttonSelectImage_Click_1);
+            this.buttonSelectImage.Click += new System.EventHandler(this.ButtonSelectImage_Click_1);
             // 
             // panelButtons
             // 

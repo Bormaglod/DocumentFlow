@@ -58,9 +58,12 @@ namespace DocumentFlow.DataSchema
 
         public DatasetEditor Clone()
         {
-            DatasetEditor editor = new DatasetEditor();
-            editor.Dataset = Dataset;
-            editor.Controls = new List<IEditorControl>();
+            DatasetEditor editor = new DatasetEditor
+            {
+                Dataset = Dataset,
+                Controls = new List<IEditorControl>()
+            };
+
             foreach (ICloneable control in Controls.OfType<ICloneable>())
             {
                 editor.Controls.Add((IEditorControl)control.Clone());

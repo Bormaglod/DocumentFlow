@@ -24,7 +24,7 @@ namespace DocumentFlow.Controls
     public partial class L_SelectBox : UserControl, ILabeled, ISized
     {
         private object selectedItem;
-        private List<(object item, object parent, bool folder)> items;
+        private readonly List<(object item, object parent, bool folder)> items;
 
         public L_SelectBox()
         {

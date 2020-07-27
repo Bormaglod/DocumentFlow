@@ -39,7 +39,7 @@ namespace DocumentFlow
             public string data_schema { get; set; }
         }
 
-        private IContainerPage container;
+        private readonly IContainerPage container;
 
         public CommandFactory(IContainerPage container)
         {

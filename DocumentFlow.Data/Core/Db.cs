@@ -67,9 +67,9 @@ namespace DocumentFlow.Data.Core
         public static IList<IDictionary> ExecuteSelect(ISession session, string sql, IDictionary<string, Type> types, params (string, object)[] values)
         {
             Dictionary<string, object> row = new Dictionary<string, object>();
-            foreach ((string Field, object Value) item in values)
+            foreach ((string Field, object Value) in values)
             {
-                row.Add(item.Field, item.Value);
+                row.Add(Field, Value);
             }
 
             return ExecuteSelect(session, sql, types, (x) => row.ContainsKey(x) ? row[x] : null);
@@ -101,9 +101,9 @@ namespace DocumentFlow.Data.Core
         public static void CreateQueryParameters(IQuery query, IDictionary<string, Type> types, params (string, object)[] values)
         {
             Dictionary<string, object> row = new Dictionary<string, object>();
-            foreach ((string Field, object Value) item in values)
+            foreach ((string Field, object Value) in values)
             {
-                row.Add(item.Field, item.Value);
+                row.Add(Field, Value);
             }
 
             CreateQueryParameters(query, types, (x) => row.ContainsKey(x) ? row[x] : null);
@@ -211,9 +211,11 @@ namespace DocumentFlow.Data.Core
         private static ISessionFactory CreateSessionFactory(string user, string password)
         {
             string newConnectionString = ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString;
-            NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(newConnectionString);
-            builder.Username = user;
-            builder.Password = password;
+            NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(newConnectionString)
+            {
+                Username = user,
+                Password = password
+            };
 
             ConnectionString = builder.ConnectionString;
 

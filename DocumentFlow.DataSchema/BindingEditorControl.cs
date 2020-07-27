@@ -131,8 +131,7 @@ namespace DocumentFlow.DataSchema
         protected override void DefaultCreateControl(ISession session)
         {
             base.DefaultCreateControl(session);
-            ILabeled labeled = Control as ILabeled;
-            if (labeled != null)
+            if (Control is ILabeled labeled)
             {
                 labeled.Text = Text;
                 labeled.AutoSize = AutoSizeLabel;
@@ -144,8 +143,7 @@ namespace DocumentFlow.DataSchema
 
             if (EditFullSize)
             {
-                ISized sized = Control as ISized;
-                if (sized != null)
+                if (Control is ISized sized)
                 {
                     sized.SetFullSize();
                 }

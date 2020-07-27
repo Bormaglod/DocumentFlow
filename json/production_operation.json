@@ -57,8 +57,10 @@
         "type": "Text",
         "hideable": false,
         "auto-size": true,
-        "aggregate": "Count",
-        "aggregate-title": "Всего наименований: "
+        "summaries": {
+          "aggregate": "Count",
+          "aggregate-title": "Всего наименований: "
+        }
       },
       {
         "datafield": "amount",

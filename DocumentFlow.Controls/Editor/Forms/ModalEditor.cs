@@ -32,11 +32,11 @@ namespace DocumentFlow.Controls.Forms
             public string Query { get; set; }
         }
 
-        private ISession session;
-        private DatasetEditor editor;
+        private readonly ISession session;
+        private readonly DatasetEditor editor;
         private ExpressionContext context;
-        private List<FieldExpressionData> expressions;
-        private List<string> locked;
+        private readonly List<FieldExpressionData> expressions;
+        private readonly List<string> locked;
         bool binding = false;
 
         public ModalEditor(ISession session, string formTitle, DatasetEditor editor)

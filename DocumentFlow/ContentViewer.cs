@@ -46,7 +46,7 @@ namespace DocumentFlow
         private class ToolbarGroup
         {
             private ToolStripSeparator separator;
-            private List<ToolStripItem> items;
+            private readonly List<ToolStripItem> items;
 
             public ToolbarGroup(string groupName) : this(groupName, true) { }
 
@@ -144,13 +144,13 @@ namespace DocumentFlow
         private const string settingsFile = "viewer.json";
         private string settingsPath;
 #endif
-        private ICommandFactory commands;
-        private Dictionary<GridColumn, DatasetColumn> dataColumns = new Dictionary<GridColumn, DatasetColumn>();
+        private readonly ICommandFactory commands;
+        private readonly Dictionary<GridColumn, DatasetColumn> dataColumns = new Dictionary<GridColumn, DatasetColumn>();
         private DatasetSchema schema;
         private Guid? ParentEntity;
-        private Command command;
-        private Dictionary<string, List<ToolStripItem>> commandItems = new Dictionary<string, List<ToolStripItem>>();
-        private ToolbarGroups groupItems = new ToolbarGroups();
+        private readonly Command command;
+        private readonly Dictionary<string, List<ToolStripItem>> commandItems = new Dictionary<string, List<ToolStripItem>>();
+        private readonly ToolbarGroups groupItems = new ToolbarGroups();
         private Guid? owner;
 #if USE_LISTENER
         private CancellationTokenSource listenerToken;
@@ -493,9 +493,9 @@ namespace DocumentFlow
                 { "organization_id", ((comboOrg.SelectedItem as ComboBoxDataItem)?.Id, typeof(Guid?)) }
             };
 
-            foreach (var item in variables)
+            foreach (var (paramName, paramValue, type) in variables)
             {
-                vars.Add(item.paramName, (item.paramValue, item.type));
+                vars.Add(paramName, (paramValue, type));
             }
 
             foreach (Match match in Regex.Matches(command.CommandText, Db.ParameterPattern))
@@ -953,8 +953,7 @@ namespace DocumentFlow
 
         private void gridContent_CellDoubleClick(object sender, CellClickEventArgs e)
         {
-            DataRowView row = gridContent.SelectedItem as DataRowView;
-            if (row != null)
+            if (gridContent.SelectedItem is DataRowView row)
             {
                 DataTable dt = gridContent.DataSource as DataTable;
                 if (dt.Columns.Contains("status_id"))
@@ -1055,12 +1054,11 @@ namespace DocumentFlow
 
         private void buttonHistory_Click(object sender, EventArgs e)
         {
-            DataRowView row = gridContent.SelectedItem as DataRowView;
-            if (row == null)
-                return;
-
-            HistoryWindow win = new HistoryWindow(Session, (Guid)row["id"]);
-            win.ShowDialog();
+            if (gridContent.SelectedItem is DataRowView row)
+            {
+                HistoryWindow win = new HistoryWindow(Session, (Guid)row["id"]);
+                win.ShowDialog();
+            }
         }
 
         private void menuCopyClipboard_Click(object sender, EventArgs e)

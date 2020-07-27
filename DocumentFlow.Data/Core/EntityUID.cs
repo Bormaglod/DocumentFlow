@@ -16,8 +16,7 @@ namespace DocumentFlow.Data.Core
 
         public virtual Guid GetReferenceId(Type type)
         {
-            EntityUID e = GetReference(type) as EntityUID;
-            return e == null ? Guid.Empty : e.Id;
+            return GetReference(type) is EntityUID e ? e.Id : Guid.Empty;
         }
 
         public virtual Guid GetReferenceId<T>() where T : EntityUID => GetReferenceId(typeof(T));

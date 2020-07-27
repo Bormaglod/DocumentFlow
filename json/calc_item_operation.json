@@ -38,8 +38,10 @@
         "text": "Производственная операция",
         "type": "Text",
         "auto-size": true,
-        "aggregate": "Count",
-        "aggregate-title": "Всего наименований: "
+        "summaries": {
+          "aggregate": "Count",
+          "aggregate-title": "Всего наименований: "
+        }
       },
       {
         "datafield": "amount",
@@ -47,7 +49,9 @@
         "type": "Integer",
         "width": 150,
         "horizontal-align": "Right",
-        "aggregate": "Sum"
+        "summaries": {
+          "aggregate": "Sum"
+        }
       },
       {
         "datafield": "produced_time",
@@ -56,7 +60,9 @@
         "width": 150,
         "digits": 1,
         "horizontal-align": "Right",
-        "aggregate": "Sum"
+        "summaries": {
+          "aggregate": "Sum"
+        }
       },
       {
         "datafield": "price",
@@ -73,7 +79,9 @@
         "width": 150,
         "format-mode": "Currency",
         "horizontal-align": "Right",
-        "aggregate": "Sum"
+        "summaries": {
+          "aggregate": "Sum"
+        }
       }
     ]
   },
