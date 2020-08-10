@@ -988,7 +988,7 @@ namespace DocumentFlow
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            string deleteSql = schema?.Editor.Dataset.DeleteDefault(command.EntityKind.Code);
+            string deleteSql = schema?.Editor?.Dataset.DeleteDefault(command.EntityKind.Code);
             if (deleteSql == null)
             {
                 MessageBox.Show("Не указана команда для удаления (editor/dataset/delete)");

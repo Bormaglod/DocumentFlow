@@ -30,8 +30,7 @@
         "datafield": "status_name",
         "text": "Состояние",
         "type": "Text",
-        "width": 110,
-        "visible": false
+        "width": 110
       },
       {
         "datafield": "code",
