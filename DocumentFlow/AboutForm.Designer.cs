@@ -78,7 +78,7 @@
             // labelDatabase
             // 
             this.labelDatabase.AutoSize = true;
-            this.labelDatabase.Location = new System.Drawing.Point(12, 62);
+            this.labelDatabase.Location = new System.Drawing.Point(10, 62);
             this.labelDatabase.Name = "labelDatabase";
             this.labelDatabase.Size = new System.Drawing.Size(90, 13);
             this.labelDatabase.TabIndex = 7;

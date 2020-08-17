@@ -10,7 +10,9 @@ namespace DocumentFlow
 {
     using System;
     using System.Collections.Generic;
+#if USE_LISTENER
     using System.Collections.Concurrent;
+#endif
     using System.ComponentModel;
     using System.Drawing;
     using System.Data;
@@ -19,9 +21,12 @@ namespace DocumentFlow
 #endif
     using System.Linq;
     using System.Text.RegularExpressions;
+#if USE_LISTENER
     using System.Threading;
     using System.Threading.Tasks;
+#endif
     using System.Windows.Forms;
+    using Flee.PublicTypes;
     using Newtonsoft.Json;
     using NHibernate;
     using NHibernate.Transform;
@@ -162,6 +167,7 @@ namespace DocumentFlow
         private int rowIndex = -1;
         private int columnIndex = -1;
         private object record = null;
+        private ExpressionContext context;
 
         public ContentViewer(ICommandFactory commandFactory, Command cmd, Guid? ownerId)
         {
@@ -250,6 +256,25 @@ namespace DocumentFlow
         }
 #endif
 
+        private void InitializeDocumentViewer()
+        {
+            panelDirectory.Visible = false;
+            dateTimePickerFrom.Checked = schema.Viewer.FromDate != DateRanges.None;
+            dateTimePickerTo.Checked = schema.Viewer.ToDate != DateRanges.None;
+            dateTimePickerFrom.Value = DateTime.Today.FromDateRanges(schema.Viewer.FromDate);
+            dateTimePickerTo.Value = DateTime.Today.FromDateRanges(schema.Viewer.ToDate);
+
+            IList<ComboBoxDataItem> orgs = Session.CreateSQLQuery("select id, name from organization")
+                .SetResultTransformer(Transformers.AliasToBean<ComboBoxDataItem>())
+                .List<ComboBoxDataItem>();
+
+            Guid def_org = Session.CreateSQLQuery("select id from organization where default_org")
+                .UniqueResult<Guid>();
+
+            comboOrg.DataSource = orgs;
+            comboOrg.SelectedItem = orgs.FirstOrDefault(x => x.Id == def_org);
+        }
+
         private void CreateViewer()
         {
             try
@@ -294,21 +319,21 @@ namespace DocumentFlow
                         breadcrumb1.Visible = command.EntityKind.HasGroup;
                         break;
                     case DataType.Document:
-                        panelDirectory.Visible = false;
-                        dateTimePickerFrom.Checked = schema.Viewer.FromDate != DateRanges.None;
-                        dateTimePickerTo.Checked = schema.Viewer.ToDate != DateRanges.None;
-                        dateTimePickerFrom.Value = DateTime.Today.FromDateRanges(schema.Viewer.FromDate);
-                        dateTimePickerTo.Value = DateTime.Today.FromDateRanges(schema.Viewer.ToDate);
+                        InitializeDocumentViewer();
+                        break;
+                    case DataType.Report:
+                        InitializeDocumentViewer();
+                        foreach (ToolStripItem item in toolStrip1.Items)
+                        {
+                            if (item != buttonRefresh)
+                                item.Visible = false;
+                        }
 
-                        IList<ComboBoxDataItem> orgs = Session.CreateSQLQuery("select id, name from organization")
-                            .SetResultTransformer(Transformers.AliasToBean<ComboBoxDataItem>())
-                            .List<ComboBoxDataItem>();
-
-                        Guid def_org = Session.CreateSQLQuery("select id from organization where default_org")
-                            .UniqueResult<Guid>();
-
-                        comboOrg.DataSource = orgs;
-                        comboOrg.SelectedItem = orgs.FirstOrDefault(x => x.Id == def_org);
+                        foreach (ToolStripItem item in contextRecordMenu.Items)
+                        {
+                            if (item != menuCopyClipboard)
+                                item.Visible = false;
+                        }
 
                         break;
                     default:
@@ -318,8 +343,11 @@ namespace DocumentFlow
                 panelCommandBar.Height = 30;
                 panelCommandBar.Visible = schema.Viewer.CommandBarVisible;
 
-                buttonAddFolder.Visible = command.EntityKind.HasGroup;
-                menuAddFolder.Visible = command.EntityKind.HasGroup;
+                if (command.EntityKind != null)
+                {
+                    buttonAddFolder.Visible = command.EntityKind.HasGroup;
+                    menuAddFolder.Visible = command.EntityKind.HasGroup;
+                }
 
                 if (schema.Viewer?.Columns != null)
                 {
@@ -331,6 +359,7 @@ namespace DocumentFlow
             gridContent.CellRenderers.Remove("Image");
             gridContent.CellRenderers.Add("Image", new CustomGridImageCellRenderer(gridContent));
 
+            context = new ExpressionContext();
             CreateColumns();
             RefreshCurrenView();
 
@@ -488,8 +517,8 @@ namespace DocumentFlow
             Dictionary<string, (object value, Type type)> vars = new Dictionary<string, (object, Type)>() {
                 { "parent_id", (ParentEntity, typeof(Guid?)) },
                 { "owner_id", (owner, typeof(Guid?)) },
-                { "from_date", (dateTimePickerFrom.Value, typeof(DateTime)) },
-                { "to_date", (dateTimePickerTo.Value.EndOfDay(), typeof(DateTime)) },
+                { "from_date", (dateTimePickerFrom.Checked ? dateTimePickerFrom.Value.StartOfDay() : dateTimePickerFrom.Value.BeginningOfTime(), typeof(DateTime)) },
+                { "to_date", (dateTimePickerTo.Checked ? dateTimePickerTo.Value.EndOfDay() : dateTimePickerTo.Value.EndOfTime(), typeof(DateTime)) },
                 { "organization_id", ((comboOrg.SelectedItem as ComboBoxDataItem)?.Id, typeof(Guid?)) }
             };
 
@@ -505,10 +534,79 @@ namespace DocumentFlow
             }
         }
 
+        private void UpdateContext()
+        {
+            UpdateGuidVariable("parent_id", ParentEntity);
+            UpdateGuidVariable("owner_id", owner);
+            UpdateDateVariable("from_date", dateTimePickerFrom);
+            UpdateDateVariable("to_date", dateTimePickerTo);
+
+            if (comboOrg.SelectedItem != null && comboOrg.SelectedItem is ComboBoxDataItem item)
+            {
+                if (context.Variables.ContainsKey("organization_id"))
+                    context.Variables["organization_id"] = item;
+                else
+                    context.Variables.Add("organization_id", item);
+            }
+            else
+            {
+                if (context.Variables.ContainsKey("organization_id"))
+                    context.Variables.Remove("organization_id");
+            }
+
+            if (schema.Viewer.DataType == DataType.Directory)
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(Db.ConnectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand command = new NpgsqlCommand("select * from get_root_code(:id)", connection);
+                    CreateQueryParameters(command, ("id", breadcrumb1.Peek(), typeof(Guid)));
+                    string root_code = command.ExecuteScalar().ToString();
+
+                    if (context.Variables.ContainsKey("root_code"))
+                        context.Variables["root_code"] = root_code;
+                    else
+                        context.Variables.Add("root_code", root_code);
+                }
+            }
+            else
+            {
+                if (context.Variables.ContainsKey("root_code"))
+                    context.Variables.Remove("root_code");
+            }
+
+            void UpdateGuidVariable(string name, Guid? id)
+            {
+                Guid guid = id.HasValue ? id.Value : Guid.Empty;
+                if (context.Variables.ContainsKey(name))
+                    context.Variables[name] = guid;
+                else
+                    context.Variables.Add(name, guid);
+            }
+
+            void UpdateDateVariable(string name, DateTimePickerAdv date)
+            {
+                if ((schema.Viewer.DataType == DataType.Document || schema.Viewer.DataType == DataType.Report) && date.Checked)
+                {
+                    if (context.Variables.ContainsKey(name))
+                        context.Variables[name] = date.Value;
+                    else
+                        context.Variables.Add(name, date.Value);
+                }
+                else
+                {
+                    if (context.Variables.ContainsKey(name))
+                        context.Variables.Remove(name);
+                }
+            }
+        }
+
         private void RefreshCurrenView()
         {
             if (string.IsNullOrEmpty(schema?.Viewer?.Dataset.Select))
                 return;
+
+            UpdateContext();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(Db.ConnectionString))
             {
@@ -525,6 +623,34 @@ namespace DocumentFlow
                 dt.PrimaryKey = new DataColumn[] { dt.Columns["id"] };
 
                 gridContent.DataSource = dt;
+
+                if (schema?.Viewer?.Columns != null)
+                {
+                    foreach (DatasetColumn column in schema.Viewer.Columns)
+                    {
+                        bool visibility = true;
+                        if (!string.IsNullOrEmpty(column.Visibility?.ExpressionIfEqual))
+                        {
+                            IGenericExpression<bool> expression = context.CompileGeneric<bool>(column.Visibility.ExpressionIfEqual);
+                            visibility = expression.Evaluate();
+                            gridContent.Columns[column.DataField].Visible = visibility && column.Visible;
+                        }
+                        else if (!string.IsNullOrEmpty(column.Visibility?.ExpressionIfEqualQuery))
+                        {
+                            command = new NpgsqlCommand(column.Visibility.ExpressionIfEqualQuery, connection);
+                            CreateQueryParameters(command);
+
+                            if (command.ExecuteScalar() is bool visible)
+                            {
+                                visibility = visible;
+                                gridContent.Columns[column.DataField].Visible = visible && column.Visible;
+                            }
+                        }
+
+                        ToolStripMenuItem menu = menuVisibleColumns.DropDownItems.OfType<ToolStripMenuItem>().FirstOrDefault(x => x.Tag == column);
+                        menu.Visible = visibility;
+                    }
+                }
             }
         }
 

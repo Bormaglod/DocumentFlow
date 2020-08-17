@@ -10,7 +10,6 @@ namespace DocumentFlow
 {
     using System;
     using System.Collections;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
@@ -18,14 +17,17 @@ namespace DocumentFlow
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+#if USE_LISTENER
+    using System.Collections.Concurrent;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
-    using Flee.PublicTypes;
     using Newtonsoft.Json;
+    using Npgsql;
+#endif
+    using Flee.PublicTypes;
     using NHibernate;
     using NHibernate.Transform;
-    using Npgsql;
     using Spire.Pdf;
     using Syncfusion.Windows.Forms.Tools;
     using Syncfusion.WinForms.DataGrid.Events;

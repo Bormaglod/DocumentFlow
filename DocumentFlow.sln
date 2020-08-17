@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "json", "json", "{C36558B3-4
 		json\archive_price.json = json\archive_price.json
 		json\balance_contractor.json = json\balance_contractor.json
 		json\balance_goods.json = json\balance_goods.json
+		json\balance_sheet_goods.json = json\balance_sheet_goods.json
 		json\bank.json = json\bank.json
 		json\calc_item_deduction.json = json\calc_item_deduction.json
 		json\calc_item_goods.json = json\calc_item_goods.json

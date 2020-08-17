@@ -12,7 +12,7 @@ namespace DocumentFlow.DataSchema
     using System.ComponentModel;
     using Newtonsoft.Json;
 
-    public enum DataType { Directory, Document }
+    public enum DataType { Directory, Document, Report }
 
     public enum DateRanges { None, FirstMonthDay, LastMonthDay, FirstQuarterDay, LastQuarterDay, FirstYearDay, LastYearDay, CurrentDay }
 

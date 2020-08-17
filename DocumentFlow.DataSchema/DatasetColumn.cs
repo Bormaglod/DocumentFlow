@@ -43,6 +43,9 @@ namespace DocumentFlow.DataSchema
         [JsonProperty("visible", DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool Visible { get; set; }
 
+        [JsonProperty("visibility")]
+        public Condition Visibility { get; set; }
+
         [DefaultValue(true)]
         [JsonProperty("resizable", DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool Resizable { get; set; }

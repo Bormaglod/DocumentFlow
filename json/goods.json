@@ -2,8 +2,8 @@
   "name": "goods",
   "viewer": {
     "dataset": {
-      "select": "select g.id, g.parent_id, g.status_id, s.note as status_name, g.code, g.ext_article, g.name, m.abbreviation, g.price, g.tax, g.min_order, g.is_service from goods g join status s on s.id = g.status_id left join measurement m on (g.measurement_id = m.id) where (g.parent_id is not distinct from :parent_id)",
-      "select-id": "select g.id, g.parent_id, g.status_id, s.note as status_name, g.code, g.ext_article, g.name, m.abbreviation, g.price, g.tax, g.min_order, g.is_service from goods g join status s on s.id = g.status_id left join measurement m on (g.measurement_id = m.id) where g.id = :id"
+      "select": "select id, parent_id, status_id, status_name, code, ext_article, name, abbreviation, price, tax, min_order, is_service, cost, profit_percent, profit_value, calc_price, approved from goods_view where parent_id is not distinct from :parent_id",
+      "select-id": "select id, parent_id, status_id, status_name, code, ext_article, name, abbreviation, price, tax, min_order, is_service, cost, profit_percent, profit_value, calc_price, approved from goods_view where g.id = :id"
     },
     "data-type": "Directory",
     "allow-grouping": true,
@@ -55,6 +55,7 @@
         "datafield": "abbreviation",
         "text": "Ед. изм.",
         "type": "Text",
+        "width": 90,
         "allow-grouping": true,
         "horizontal-align": "Center"
       },
@@ -62,7 +63,6 @@
         "datafield": "price",
         "text": "Цена",
         "type": "Numeric",
-        "width": 120,
         "allow-grouping": true,
         "format-mode": "Currency",
         "horizontal-align": "Right"
@@ -89,9 +89,64 @@
         "datafield": "is_service",
         "text": "Услуга",
         "type": "Boolean",
-        "hidden": true,
         "allow-grouping": true,
-        "horizontal-align": "Center"
+        "horizontal-align": "Center",
+        "visibility": {
+          "if-equal": "root_code = \"Прд\""
+        }
+      },
+      {
+        "datafield": "cost",
+        "text": "Себестоимость",
+        "type": "Numeric",
+        "width": 120,
+        "format-mode": "Currency",
+        "horizontal-align": "Right",
+        "visibility": {
+          "if-equal": "root_code = \"Прд\""
+        }
+      },
+      {
+        "datafield": "profit_percent",
+        "text": "Прибыль, %",
+        "type": "Numeric",
+        "width": 110,
+        "format-mode": "Percent",
+        "horizontal-align": "Center",
+        "visibility": {
+          "if-equal": "root_code = \"Прд\""
+        }
+      },
+      {
+        "datafield": "profit_value",
+        "text": "Прибыль",
+        "type": "Numeric",
+        "format-mode": "Currency",
+        "horizontal-align": "Right",
+        "visibility": {
+          "if-equal": "root_code = \"Прд\""
+        }
+      },
+      {
+        "datafield": "calc_price",
+        "text": "Цена расчётная",
+        "type": "Numeric",
+        "width": 75,
+        "visible": false,
+        "format-mode": "Currency",
+        "horizontal-align": "Right",
+        "visibility": {
+          "if-equal": "root_code = \"Прд\""
+        }
+      },
+      {
+        "datafield": "approved",
+        "text": "Дата утв.",
+        "type": "Date",
+        "width": 120,
+        "visibility": {
+          "if-equal": "root_code = \"Прд\""
+        }
       }
     ],
     "sorts": [

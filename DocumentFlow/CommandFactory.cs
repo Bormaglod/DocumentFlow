@@ -71,7 +71,7 @@ namespace DocumentFlow
                 default:
                     string sql = @"with recursive r as 
                         (
-	                        select id, parent_id from command where code in ('view-directory', 'view-document')
+	                        select id, parent_id from command where code in ('view-directory', 'view-document', 'report-commands')
 	                        union all
 	                        select c.id, c.parent_id from command c join r on (r.id = c.parent_id)
                         ) select id from r where id = :id";
@@ -122,12 +122,6 @@ namespace DocumentFlow
 
         private void CreateControlViewer(Command command)
         {
-            if (command.EntityKind == null)
-            {
-                MessageBox.Show($"Для команды {command.Code} не указан параметр entity_kind. Обратитесь к администратору!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
             IPage page = container.Get(command.Id);
             if (page != null)
             {
