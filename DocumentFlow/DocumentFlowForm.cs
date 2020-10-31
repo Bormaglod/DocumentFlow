@@ -112,6 +112,7 @@ namespace DocumentFlow
                             Tag = "logout"
                         });
                     treeSidebar.ExpandAll();
+                    treeSidebar.SelectedNode = treeSidebar.Nodes[0];
                 }
             }
         }

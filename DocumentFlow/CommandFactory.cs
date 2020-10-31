@@ -146,7 +146,7 @@ namespace DocumentFlow
             {
                 using (ISession session = Db.OpenSession())
                 {
-                    DocumentParameters doc = session.CreateSQLQuery("select d.owner_id, d.entity_kind_id, c.data_schema from document d join command c on (c.entity_kind_id = d.entity_kind_id and c.def_command) where d.id = :id")
+                    DocumentParameters doc = session.CreateSQLQuery("select d.owner_id, d.entity_kind_id, c.data_schema from document d join command c on (c.entity_kind_id = d.entity_kind_id) where d.id = :id")
                         .SetGuid("id", id)
                         .SetResultTransformer(Transformers.AliasToBean<DocumentParameters>())
                         .UniqueResult<DocumentParameters>();
