@@ -1,4 +1,4 @@
-﻿namespace DocumentFlow.Controls
+﻿namespace DocumentFlow.Controls.Editor
 {
     partial class L_SelectBox
     {
@@ -31,10 +31,9 @@
             this.textValue = new Syncfusion.Windows.Forms.Tools.TextBoxExt();
             this.panelSeparator1 = new System.Windows.Forms.Panel();
             this.panelSeparator2 = new System.Windows.Forms.Panel();
+            this.panelEdit = new System.Windows.Forms.Panel();
             this.buttonDelete = new DocumentFlow.Controls.ToolButton();
             this.buttonSelect = new DocumentFlow.Controls.ToolButton();
-            this.panelEdit = new System.Windows.Forms.Panel();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel4 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.textValue)).BeginInit();
@@ -44,7 +43,7 @@
             // 
             // textValue
             // 
-            this.textValue.BeforeTouchSize = new System.Drawing.Size(184, 25);
+            this.textValue.BeforeTouchSize = new System.Drawing.Size(180, 25);
             this.textValue.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(211)))), ((int)(((byte)(212)))));
             this.textValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textValue.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -52,7 +51,7 @@
             this.textValue.Location = new System.Drawing.Point(0, 0);
             this.textValue.Name = "textValue";
             this.textValue.ReadOnly = true;
-            this.textValue.Size = new System.Drawing.Size(184, 25);
+            this.textValue.Size = new System.Drawing.Size(180, 25);
             this.textValue.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Metro;
             this.textValue.TabIndex = 0;
             this.textValue.ThemeName = "Metro";
@@ -60,7 +59,7 @@
             // panelSeparator1
             // 
             this.panelSeparator1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelSeparator1.Location = new System.Drawing.Point(184, 0);
+            this.panelSeparator1.Location = new System.Drawing.Point(180, 0);
             this.panelSeparator1.Name = "panelSeparator1";
             this.panelSeparator1.Size = new System.Drawing.Size(5, 25);
             this.panelSeparator1.TabIndex = 3;
@@ -68,10 +67,23 @@
             // panelSeparator2
             // 
             this.panelSeparator2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelSeparator2.Location = new System.Drawing.Point(214, 0);
+            this.panelSeparator2.Location = new System.Drawing.Point(210, 0);
             this.panelSeparator2.Name = "panelSeparator2";
             this.panelSeparator2.Size = new System.Drawing.Size(5, 25);
             this.panelSeparator2.TabIndex = 4;
+            // 
+            // panelEdit
+            // 
+            this.panelEdit.Controls.Add(this.textValue);
+            this.panelEdit.Controls.Add(this.panelSeparator1);
+            this.panelEdit.Controls.Add(this.buttonDelete);
+            this.panelEdit.Controls.Add(this.panelSeparator2);
+            this.panelEdit.Controls.Add(this.buttonSelect);
+            this.panelEdit.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelEdit.Location = new System.Drawing.Point(117, 0);
+            this.panelEdit.Name = "panelEdit";
+            this.panelEdit.Size = new System.Drawing.Size(240, 25);
+            this.panelEdit.TabIndex = 5;
             // 
             // buttonDelete
             // 
@@ -83,7 +95,7 @@
             this.buttonDelete.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonDelete.Dock = System.Windows.Forms.DockStyle.Right;
             this.buttonDelete.Kind = DocumentFlow.Controls.ToolButtonKind.Delete;
-            this.buttonDelete.Location = new System.Drawing.Point(189, 0);
+            this.buttonDelete.Location = new System.Drawing.Point(185, 0);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(25, 25);
             this.buttonDelete.TabIndex = 2;
@@ -100,30 +112,12 @@
             this.buttonSelect.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonSelect.Dock = System.Windows.Forms.DockStyle.Right;
             this.buttonSelect.Kind = DocumentFlow.Controls.ToolButtonKind.Select;
-            this.buttonSelect.Location = new System.Drawing.Point(219, 0);
+            this.buttonSelect.Location = new System.Drawing.Point(215, 0);
             this.buttonSelect.Name = "buttonSelect";
             this.buttonSelect.Size = new System.Drawing.Size(25, 25);
             this.buttonSelect.TabIndex = 1;
             this.buttonSelect.Text = "toolButton1";
             this.buttonSelect.Click += new System.EventHandler(this.ButtonSelect_Click);
-            // 
-            // panelEdit
-            // 
-            this.panelEdit.Controls.Add(this.textValue);
-            this.panelEdit.Controls.Add(this.panelSeparator1);
-            this.panelEdit.Controls.Add(this.buttonDelete);
-            this.panelEdit.Controls.Add(this.panelSeparator2);
-            this.panelEdit.Controls.Add(this.buttonSelect);
-            this.panelEdit.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panelEdit.Location = new System.Drawing.Point(117, 0);
-            this.panelEdit.Name = "panelEdit";
-            this.panelEdit.Size = new System.Drawing.Size(244, 25);
-            this.panelEdit.TabIndex = 5;
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "Все файлы|*.*";
-            this.openFileDialog1.Title = "Выберите файл";
             // 
             // panel4
             // 
@@ -167,7 +161,6 @@
         private System.Windows.Forms.Panel panelSeparator1;
         private System.Windows.Forms.Panel panelSeparator2;
         private System.Windows.Forms.Panel panelEdit;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Label label1;
     }

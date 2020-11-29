@@ -6,31 +6,45 @@
 // Time: 18:54
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Controls
-{
-    using System.Drawing;
-    using System.Windows.Forms;
-    using DocumentFlow.DataSchema;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using DocumentFlow.Code;
 
-    public partial class L_CheckBox : UserControl, ILabeled
+namespace DocumentFlow.Controls.Editor
+{
+    public partial class L_CheckBox : UserControl, ILabelControl, IEditControl
     {
         public L_CheckBox()
         {
             InitializeComponent();
         }
 
-        string ILabeled.Text { get => label1.Text; set => label1.Text = value; }
+        public event EventHandler ValueChanged;
 
-        int ILabeled.Width { get => label1.Width; set => label1.Width = value; }
+        string ILabelControl.Text { get => label1.Text; set => label1.Text = value; }
 
-        int ILabeled.EditWidth { get => checkBoxAdv1.Width; set => checkBoxAdv1.Width = value; }
+        int ILabelControl.Width { get => label1.Width; set => label1.Width = value; }
 
-        bool ILabeled.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
+        bool ILabelControl.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
 
-        ContentAlignment ILabeled.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
+        ContentAlignment ILabelControl.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
         
-        bool ILabeled.Visible { get => label1.Visible; set => label1.Visible = value; }
+        bool ILabelControl.Visible { get => label1.Visible; set => label1.Visible = value; }
 
-        public bool BoolValue { get => checkBoxAdv1.BoolValue; set => checkBoxAdv1.BoolValue = value; }
+        int IEditControl.Width { get => checkBoxAdv1.Width; set => checkBoxAdv1.Width = value; }
+
+        object IEditControl.Value
+        {
+            get => checkBoxAdv1.BoolValue;
+            set => checkBoxAdv1.BoolValue = value == null ? default : Convert.ToBoolean(value);
+        }
+
+        bool IEditControl.FitToSize { get; set; }
+
+        private void checkBoxAdv1_CheckedChanged(object sender, EventArgs e)
+        {
+            ValueChanged?.Invoke(this, e);
+        }
     }
 }

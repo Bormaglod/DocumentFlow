@@ -6,15 +6,15 @@
 // Time: 18:19
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Controls
-{
-    using System;
-    using System.Drawing;
-    using System.Windows.Forms;
-    using DocumentFlow.Core;
-    using DocumentFlow.DataSchema;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using DocumentFlow.Code;
+using DocumentFlow.Core;
 
-    public partial class L_ImageViewerBox : UserControl, ILabeled
+namespace DocumentFlow.Controls.Editor
+{
+    public partial class L_ImageViewerBox : UserControl, ILabelControl, IEditControl
     {
         private string base64Image;
 
@@ -22,6 +22,8 @@ namespace DocumentFlow.Controls
         {
             InitializeComponent();
         }
+
+        public event EventHandler ValueChanged;
 
         public string Base64Image
         {
@@ -34,17 +36,15 @@ namespace DocumentFlow.Controls
             }
         }
 
-        string ILabeled.Text { get => label1.Text; set => label1.Text = value; }
+        string ILabelControl.Text { get => label1.Text; set => label1.Text = value; }
 
-        int ILabeled.Width { get => label1.Width; set => label1.Width = value; }
+        int ILabelControl.Width { get => label1.Width; set => label1.Width = value; }
 
-        int ILabeled.EditWidth { get => panel3.Width; set => panel3.Width = value; }
+        bool ILabelControl.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
 
-        bool ILabeled.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
+        ContentAlignment ILabelControl.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
 
-        ContentAlignment ILabeled.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-        bool ILabeled.Visible
+        bool ILabelControl.Visible
         {
             get => label1.Visible;
             set
@@ -54,11 +54,22 @@ namespace DocumentFlow.Controls
             }
         }
 
+        int IEditControl.Width { get => panel3.Width; set => panel3.Width = value; }
+
+        object IEditControl.Value
+        {
+            get => Base64Image;
+            set => Base64Image = value == null ? string.Empty : value.ToString();
+        }
+
+        bool IEditControl.FitToSize { get; set; }
+
         private void ButtonSelectImage_Click_1(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 Base64Image = ImageHelper.ImageToBase64(openFileDialog1.FileName);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
             }
         }
     }

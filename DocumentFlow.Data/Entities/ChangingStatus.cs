@@ -6,18 +6,23 @@
 // Time: 19:24
 //-----------------------------------------------------------------------
 
+using System;
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using DocumentFlow.Data.Core;
-
     public class ChangingStatus : EntityUID
     {
-        public virtual string Name { get; set; }
-        public virtual Transition Transition { get; set; }
-        public virtual Status FromStatus { get; set; }
-        public virtual Status ToStatus { get; set; }
-        public virtual Picture Picture { get; set; }
-        public virtual int OrderIndex { get; set; }
-        public virtual bool IsSystem { get; set; }
+        public string name { get; set; }
+        public Guid transition_id { get; set; }
+        public int from_status_id { get; set; }
+        public int to_status_id { get; set; }
+        public Guid? picture_id { get; set; }
+        public int order_index { get; set; }
+        public bool is_system { get; set; }
+        public Status FromStatus { get; set; }
+        public Status ToStatus { get; set; }
+        public Picture Picture { get; set; }
+        public override string ToString() => name;
     }
 }

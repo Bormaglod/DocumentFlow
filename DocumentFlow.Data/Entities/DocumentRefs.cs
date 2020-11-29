@@ -6,16 +6,19 @@
 // Time: 13:31
 //-----------------------------------------------------------------------
 
+using System;
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using System;
-    using DocumentFlow.Data.Core;
-
     public class DocumentRefs : EntityID
     {
-        public virtual Guid OwnerId { get; set; }
-        public virtual string FileName { get; set; }
-        public virtual string Note { get; set; }
-        public virtual long Crc { get; set; }
+        public Guid owner_id { get; set; }
+
+        public string file_name { get; set; }
+
+        public string note { get; set; }
+
+        public long crc { get; set; }
     }
 }

@@ -6,19 +6,15 @@
 // Time: 17:13
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace DocumentFlow.Data.Entities
 {
-    using System;
-
     public abstract class Directory : DocumentInfo
     {
-        public virtual string Code { get; set; }
-        public virtual string Name { get; set; }
-        public virtual Guid? ParentId { get; set; }
-
-        public override string ToString()
-        {
-            return Name;
-        }
+        public string code { get; set; }
+        public string name { get; set; }
+        public Guid? parent_id { get; set; }
+        public override string ToString() => name;
     }
 }

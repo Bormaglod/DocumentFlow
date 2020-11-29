@@ -6,10 +6,10 @@
 // Time: 11:14
 //-----------------------------------------------------------------------
 
+using System.Windows.Forms;
+
 namespace DocumentFlow.Controls
 {
-    using System.Windows.Forms;
-
     public class ToolSplitItem : ToolStripItem
     {
     }

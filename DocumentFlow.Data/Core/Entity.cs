@@ -6,26 +6,26 @@
 // Time: 18:26
 //-----------------------------------------------------------------------
 
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+
 namespace DocumentFlow.Data.Core
 {
-    using System;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Reflection;
-
     public abstract class Entity : INotifyPropertyChanged
     {
-        public virtual event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public virtual Entity GetReference(Type type)
+        public Entity GetReference(Type type)
         {
             PropertyInfo pi = GetType().GetProperties().FirstOrDefault(p => p.PropertyType == type);
             return pi?.GetValue(this, null) as Entity;
         }
 
-        public virtual Entity GetReference<T>() where T : Entity => GetReference(typeof(T));
+        public Entity GetReference<T>() where T : Entity => GetReference(typeof(T));
 
-        public virtual void SetReference(Type type, Entity entity)
+        public void SetReference(Type type, Entity entity)
         {
             PropertyInfo pi = GetType().GetProperties().FirstOrDefault(p => p.PropertyType == type);
             if (pi != null)
@@ -34,7 +34,7 @@ namespace DocumentFlow.Data.Core
             }
         }
 
-        public virtual void SetReference<T>(T entity) where T : Entity => SetReference(typeof(T), entity);
+        public void SetReference<T>(T entity) where T : Entity => SetReference(typeof(T), entity);
 
         protected void NotifyPropertyChanged(string propertyName)
         {

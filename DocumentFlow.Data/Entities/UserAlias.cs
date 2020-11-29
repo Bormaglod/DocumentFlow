@@ -6,23 +6,18 @@
 // Time: 10:38
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using System;
-    using DocumentFlow.Data.Core;
-
     public class UserAlias : EntityUID
     {
-        public virtual string Name { get; set; }
-        public virtual string PgName { get; set; }
-        public virtual string Surname { get; set; }
-        public virtual string FirstName { get; set; }
-        public virtual string MiddleName { get; set; }
-        public virtual bool IsSystem { get; set; }
-
-        public override string ToString()
-        {
-            return Name;
-        }
+        public string name { get; set; }
+        public string pg_name { get; set; }
+        public string surname { get; set; }
+        public string first_name { get; set; }
+        public string middle_name { get; set; }
+        public bool is_system { get; set; }
+        public override string ToString() => name;
     }
 }

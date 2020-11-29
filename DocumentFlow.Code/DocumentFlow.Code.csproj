@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1E6AD92B-9BCB-4CDF-A646-AF0CE209F0F4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DocumentFlow.Code</RootNamespace>
+    <AssemblyName>DocumentFlow.Code</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.0.78\lib\net461\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Inflector, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Inflector.1.0.0.0\lib\net45\Inflector.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Core.WinForms, Version=18.3460.0.51, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Core.WinForms.18.3.0.51\lib\net46\Syncfusion.Core.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Data.WinForms, Version=18.3460.0.51, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Data.WinForms.18.3.0.51\lib\net46\Syncfusion.Data.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DataSource.WinForms, Version=18.3460.0.51, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.DataSource.WinForms.18.3.0.51\lib\net46\Syncfusion.DataSource.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.GridCommon.WinForms, Version=18.3460.0.51, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.GridCommon.WinForms.18.3.0.51\lib\net46\Syncfusion.GridCommon.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Licensing, Version=18.3460.0.51, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Licensing.18.3.0.51\lib\net46\Syncfusion.Licensing.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfDataGrid.WinForms, Version=18.3460.0.51, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.SfDataGrid.WinForms.18.3.0.51\lib\net46\Syncfusion.SfDataGrid.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfInput.WinForms, Version=18.3460.0.51, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.SfInput.WinForms.18.3.0.51\lib\net46\Syncfusion.SfInput.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfListView.WinForms, Version=18.3460.0.51, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.SfListView.WinForms.18.3.0.51\lib\net46\Syncfusion.SfListView.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Shared.Base, Version=18.3460.0.51, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Shared.Base.18.3.0.51\lib\net46\Syncfusion.Shared.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\CustomGridTableSummaryRenderer.cs" />
+    <Compile Include="Controls\GridDecimalColumn.cs" />
+    <Compile Include="Core\BrowserCodeBase.cs" />
+    <Compile Include="Core\PopulateControlException.cs" />
+    <Compile Include="IDataGrid.cs" />
+    <Compile Include="IDetail.cs" />
+    <Compile Include="IEditControl.cs" />
+    <Compile Include="IGroupColumnCollection.cs" />
+    <Compile Include="ILabelControl.cs" />
+    <Compile Include="Implementation\BindingControlData.cs" />
+    <Compile Include="Implementation\BrowserParameters.cs" />
+    <Compile Include="Implementation\GridControlData.cs" />
+    <Compile Include="Implementation\GridColumnCollection.cs" />
+    <Compile Include="Implementation\ContainerData.cs" />
+    <Compile Include="Implementation\ControlData.cs" />
+    <Compile Include="Implementation\GridColumnData.cs" />
+    <Compile Include="Implementation\GridNumericColumnData.cs" />
+    <Compile Include="Implementation\GroupColumnCollection.cs" />
+    <Compile Include="Implementation\ListControlData.cs" />
+    <Compile Include="Implementation\SortedColumnsData.cs" />
+    <Compile Include="Implementation\StackedColumnData.cs" />
+    <Compile Include="Implementation\SummaryRowData.cs" />
+    <Compile Include="IPopulate.cs" />
+    <Compile Include="IGridDataControl.cs" />
+    <Compile Include="IStackedColumn.cs" />
+    <Compile Include="System\ValueChangedEventArgs.cs" />
+    <Compile Include="System\ChangeParentEventArgs.cs" />
+    <Compile Include="Core\ChoiceDataItem.cs" />
+    <Compile Include="System\ColumnDescriptionAttribute.cs" />
+    <Compile Include="Core\ComboBoxDataItem.cs" />
+    <Compile Include="Core\EditorCodeBase.cs" />
+    <Compile Include="System\Enums.cs" />
+    <Compile Include="System\ExecuteEventArgs.cs" />
+    <Compile Include="System\GettingParametersEventArgs.cs" />
+    <Compile Include="Core\GroupDataItem.cs" />
+    <Compile Include="IBindingControl.cs" />
+    <Compile Include="IBrowser.cs" />
+    <Compile Include="IBrowserParameters.cs" />
+    <Compile Include="IBrowserCode.cs" />
+    <Compile Include="IColumn.cs" />
+    <Compile Include="IColumnCollection.cs" />
+    <Compile Include="ICommand.cs" />
+    <Compile Include="ICommandAdded.cs" />
+    <Compile Include="ICommandCollection.cs" />
+    <Compile Include="IContainer.cs" />
+    <Compile Include="IControl.cs" />
+    <Compile Include="IDependentViewer.cs" />
+    <Compile Include="IDirectory.cs" />
+    <Compile Include="IDocument.cs" />
+    <Compile Include="IDocumentInfo.cs" />
+    <Compile Include="IEditor.cs" />
+    <Compile Include="IEditorCode.cs" />
+    <Compile Include="IIdentifier.cs" />
+    <Compile Include="INumericColumn.cs" />
+    <Compile Include="IParent.cs" />
+    <Compile Include="ISorted.cs" />
+    <Compile Include="ISummary.cs" />
+    <Compile Include="IToolBar.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
+      <Project>{acca0ba9-e646-44f2-bcec-fe269a109983}</Project>
+      <Name>DocumentFlow.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

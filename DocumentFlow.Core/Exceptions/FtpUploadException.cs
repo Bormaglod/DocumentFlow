@@ -6,10 +6,10 @@
 // Time: 23:08
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Core
-{
-    using System;
+using System;
 
+namespace DocumentFlow.Core.Exceptions
+{
     public class FtpUploadException : Exception
     {
         public FtpUploadException(string message) : base(message) { }

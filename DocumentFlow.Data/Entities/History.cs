@@ -6,18 +6,19 @@
 // Time: 21:25
 //-----------------------------------------------------------------------
 
+using System;
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using System;
-
-    using DocumentFlow.Data.Core;
-
     public class History : EntityID
     {
-        public virtual Guid ReferenceId { get; set; }
-        public virtual Status FromStatus { get; set; }
-        public virtual Status ToStatus { get; set; }
-        public virtual DateTime Changed { get; set; }
-        public virtual UserAlias User { get; set; }
+        public Guid reference_id { get; set; }
+        public int from_status_id { get; set; }
+        public int to_status_id { get; set; }
+        public DateTime changed { get; set; }
+        public string user_name { get; set; }
+        public Status FromStatus { get; set; }
+        public Status ToStatus { get; set; }
     }
 }

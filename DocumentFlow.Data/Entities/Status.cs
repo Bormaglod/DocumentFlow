@@ -6,20 +6,18 @@
 // Time: 19:44
 //-----------------------------------------------------------------------
 
+using System;
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using DocumentFlow.Data.Core;
-
     public class Status : Entity
     {
-        public virtual int Id { get; set; }
-        public virtual string Code { get; set; }
-        public virtual string Note { get; set; }
-        public virtual Picture Picture { get; set; }
-
-        public override string ToString()
-        {
-            return Note;
-        }
+        public int id { get; set; }
+        public string code { get; set; }
+        public string note { get; set; }
+        public Guid? picture_id { get; set; }
+        public Picture Picture { get; set; }
+        public override string ToString() => note;
     }
 }

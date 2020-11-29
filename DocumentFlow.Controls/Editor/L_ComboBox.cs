@@ -6,56 +6,88 @@
 // Time: 19:40
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Controls
-{
-    using System;
-    using System.Collections;
-    using System.Drawing;
-    using System.Windows.Forms;
-    using Syncfusion.Windows.Forms.Tools;
-    using DocumentFlow.DataSchema;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using Syncfusion.Windows.Forms.Tools;
+using DocumentFlow.Code;
 
-    public partial class L_ComboBox : UserControl, ILabeled, ISized
+namespace DocumentFlow.Controls.Editor
+{
+    public partial class L_ComboBox : UserControl, ILabelControl, IEditControl
     {
         public L_ComboBox()
         {
             InitializeComponent();
         }
 
-        public event EventHandler<SelectedIndexChangingArgs> SelectedIndexChanging;
+        public event EventHandler ValueChanged;
 
-        string ILabeled.Text { get => label1.Text; set => label1.Text = value; }
+        string ILabelControl.Text { get => label1.Text; set => label1.Text = value; }
 
-        int ILabeled.Width { get => label1.Width; set => label1.Width = value; }
+        int ILabelControl.Width { get => label1.Width; set => label1.Width = value; }
+        
+        bool ILabelControl.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
 
-        int ILabeled.EditWidth { get => comboBoxAdv1.Width; set => comboBoxAdv1.Width = value; }
+        ContentAlignment ILabelControl.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
 
-        bool ILabeled.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-        ContentAlignment ILabeled.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-        bool ILabeled.Visible
-        { 
-            get => label1.Visible; 
-            set 
-            { 
+        bool ILabelControl.Visible
+        {
+            get => label1.Visible;
+            set
+            {
                 label1.Visible = value;
                 comboBoxAdv1.Dock = value ? DockStyle.Left : DockStyle.Top;
-            } 
+            }
         }
 
-        void ISized.SetFullSize() => comboBoxAdv1.Dock = DockStyle.Fill;
+        int IEditControl.Width { get => comboBoxAdv1.Width; set => comboBoxAdv1.Width = value; }
 
-        public object SelectedItem { get => comboBoxAdv1.SelectedItem; set => comboBoxAdv1.SelectedItem = value; }
+        object IEditControl.Value 
+        { 
+            get => (comboBoxAdv1.SelectedItem as IIdentifier)?.id;
+            set
+            {
+                if (value is Guid id)
+                {
+                    IIdentifier identifier = comboBoxAdv1.Items.OfType<IIdentifier>().FirstOrDefault(x => x.id == id);
+                    comboBoxAdv1.SelectedItem = identifier;
+                    OnValueChanged();
+                    return;
+                }
 
-        public IList Items { get => comboBoxAdv1.Items; }
+                ClearCurrent();
+            }
+        }
 
-        public void ClearItems() => comboBoxAdv1.Items.Clear();
+        bool IEditControl.FitToSize
+        {
+            get => comboBoxAdv1.Dock == DockStyle.Fill;
+            set => comboBoxAdv1.Dock = DockStyle.Fill;
+        }
+
+        public void ClearCurrent()
+        {
+            comboBoxAdv1.SelectedItem = null;
+            OnValueChanged();
+        }
+
+        public void AddItems(IEnumerable<IIdentifier> addingItems)
+        {
+            comboBoxAdv1.Items.Clear();
+            comboBoxAdv1.Items.AddRange(addingItems.ToArray());
+        }
+
+        private void OnValueChanged()
+        {
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         private void ComboBoxAdv1_SelectedIndexChanging(object sender, SelectedIndexChangingArgs e)
         {
-            if (SelectedIndexChanging != null)
-                SelectedIndexChanging.Invoke(this, e);
+            OnValueChanged();
         }
     }
 }

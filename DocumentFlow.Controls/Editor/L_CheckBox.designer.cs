@@ -1,4 +1,4 @@
-﻿namespace DocumentFlow.Controls
+﻿namespace DocumentFlow.Controls.Editor
 {
     partial class L_CheckBox
     {
@@ -38,7 +38,7 @@
             this.label1.Dock = System.Windows.Forms.DockStyle.Left;
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(117, 32);
+            this.label1.Size = new System.Drawing.Size(100, 32);
             this.label1.TabIndex = 1;
             this.label1.Text = "Text";
             // 
@@ -47,12 +47,13 @@
             this.checkBoxAdv1.BeforeTouchSize = new System.Drawing.Size(17, 32);
             this.checkBoxAdv1.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.checkBoxAdv1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.checkBoxAdv1.Location = new System.Drawing.Point(117, 0);
+            this.checkBoxAdv1.Location = new System.Drawing.Point(100, 0);
             this.checkBoxAdv1.Name = "checkBoxAdv1";
             this.checkBoxAdv1.Size = new System.Drawing.Size(17, 32);
             this.checkBoxAdv1.Style = Syncfusion.Windows.Forms.Tools.CheckBoxAdvStyle.Metro;
             this.checkBoxAdv1.TabIndex = 2;
             this.checkBoxAdv1.ThemeName = "Metro";
+            this.checkBoxAdv1.CheckedChanged += new System.EventHandler(this.checkBoxAdv1_CheckedChanged);
             // 
             // L_CheckBox
             // 

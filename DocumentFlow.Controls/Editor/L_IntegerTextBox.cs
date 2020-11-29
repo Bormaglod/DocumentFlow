@@ -6,30 +6,32 @@
 // Time: 19:07
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Controls
-{
-    using System.Drawing;
-    using System.Windows.Forms;
-    using DocumentFlow.DataSchema;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
-    public partial class L_IntegerTextBox : UserControl, ILabeled, ISized
+using DocumentFlow.Code;
+
+namespace DocumentFlow.Controls.Editor
+{
+    public partial class L_IntegerTextBox : UserControl, ILabelControl, IEditControl
     {
         public L_IntegerTextBox()
         {
             InitializeComponent();
         }
 
-        string ILabeled.Text { get => label1.Text; set => label1.Text = value; }
+        public event EventHandler ValueChanged;
 
-        int ILabeled.Width { get => label1.Width; set => label1.Width = value; }
+        string ILabelControl.Text { get => label1.Text; set => label1.Text = value; }
 
-        int ILabeled.EditWidth { get => integerTextBox1.Width; set => integerTextBox1.Width = value; }
+        int ILabelControl.Width { get => label1.Width; set => label1.Width = value; }
 
-        bool ILabeled.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
+        bool ILabelControl.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
 
-        ContentAlignment ILabeled.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
+        ContentAlignment ILabelControl.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
 
-        bool ILabeled.Visible
+        bool ILabelControl.Visible
         {
             get => label1.Visible;
             set
@@ -39,7 +41,19 @@ namespace DocumentFlow.Controls
             }
         }
 
-        void ISized.SetFullSize() => integerTextBox1.Dock = DockStyle.Fill;
+        int IEditControl.Width { get => integerTextBox1.Width; set => integerTextBox1.Width = value; }
+
+        object IEditControl.Value
+        {
+            get => integerTextBox1.IntegerValue;
+            set => integerTextBox1.IntegerValue = value == null ? default : Convert.ToInt32(value);
+        }
+
+        bool IEditControl.FitToSize
+        {
+            get => integerTextBox1.Dock == DockStyle.Fill;
+            set => integerTextBox1.Dock = DockStyle.Fill;
+        }
 
         public long MinValue { get => integerTextBox1.MinValue; set => integerTextBox1.MinValue = value; }
 
@@ -52,5 +66,10 @@ namespace DocumentFlow.Controls
         public int[] NumberGroupSizes { get => integerTextBox1.NumberGroupSizes; set => integerTextBox1.NumberGroupSizes = value; }
 
         public long IntegerValue { get => integerTextBox1.IntegerValue; set => integerTextBox1.IntegerValue = value; }
+
+        private void integerTextBox1_IntegerValueChanged(object sender, EventArgs e)
+        {
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

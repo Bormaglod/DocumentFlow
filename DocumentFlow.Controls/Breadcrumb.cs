@@ -23,15 +23,15 @@
 // <summary>Defines the Breadcrumb class.</summary>
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+
 namespace DocumentFlow.Controls
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Linq;
-    using System.Windows.Forms;
-
     public enum HistoryOperation { Add, Remove }
 
     public partial class Breadcrumb : UserControl

@@ -6,19 +6,19 @@
 // Time: 21:33
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace DocumentFlow.Data.Core
 {
-    using System;
-
     public abstract class EntityUID : Entity
     {
-        public virtual Guid Id { get; protected set; }
+        public Guid Id { get; protected set; }
 
-        public virtual Guid GetReferenceId(Type type)
+        public Guid GetReferenceId(Type type)
         {
             return GetReference(type) is EntityUID e ? e.Id : Guid.Empty;
         }
 
-        public virtual Guid GetReferenceId<T>() where T : EntityUID => GetReferenceId(typeof(T));
+        public Guid GetReferenceId<T>() where T : EntityUID => GetReferenceId(typeof(T));
     }
 }

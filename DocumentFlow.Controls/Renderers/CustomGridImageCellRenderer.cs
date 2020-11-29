@@ -6,17 +6,17 @@
 // Time: 23:38
 //-----------------------------------------------------------------------
 
+using System.Drawing;
+using Syncfusion.ComponentModel;
+using Syncfusion.WinForms.Core;
+using Syncfusion.WinForms.DataGrid;
+using Syncfusion.WinForms.DataGrid.Styles;
+using Syncfusion.WinForms.DataGrid.Renderers;
+using Syncfusion.WinForms.GridCommon.ScrollAxis;
+using DocumentFlow.Core;
+
 namespace DocumentFlow.Controls.Renderers
 {
-    using System.Drawing;
-    using Syncfusion.ComponentModel;
-    using Syncfusion.WinForms.Core;
-    using Syncfusion.WinForms.DataGrid;
-    using Syncfusion.WinForms.DataGrid.Styles;
-    using Syncfusion.WinForms.DataGrid.Renderers;
-    using Syncfusion.WinForms.GridCommon.ScrollAxis;
-    using DocumentFlow.Core;
-
     public class CustomGridImageCellRenderer : GridImageCellRenderer
     {
         public CustomGridImageCellRenderer(SfDataGrid grid)

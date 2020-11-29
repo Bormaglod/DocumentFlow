@@ -6,10 +6,11 @@
 // Time: 10:52
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace DocumentFlow.Core
 {
-    using System;
-    using DocumentFlow.DataSchema;
+    public enum DateRanges { None, FirstMonthDay, LastMonthDay, FirstQuarterDay, LastQuarterDay, FirstYearDay, LastYearDay, CurrentDay }
 
     public static class DateExtension
     {
@@ -40,16 +41,16 @@ namespace DocumentFlow.Core
                 case DateRanges.FirstMonthDay:
                     return new DateTime(date.Year, date.Month, 1);
                 case DateRanges.LastMonthDay:
-                    return new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
+                    return new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month), 23, 59, 59);
                 case DateRanges.FirstYearDay:
                     return new DateTime(date.Year, 1, 1);
                 case DateRanges.LastYearDay:
-                    return new DateTime(date.Year, 12, 31);
+                    return new DateTime(date.Year, 12, 31, 23, 59, 59);
                 case DateRanges.FirstQuarterDay:
                     return new DateTime(date.Year, (GetQuarter(date) - 1) * 3 + 1, 1);
                 case DateRanges.LastQuarterDay:
                     int month = GetQuarter(date) * 3;
-                    return new DateTime(date.Year, month, DateTime.DaysInMonth(date.Year, month));
+                    return new DateTime(date.Year, month, DateTime.DaysInMonth(date.Year, month), 23, 59, 59);
             }
 
             return date;

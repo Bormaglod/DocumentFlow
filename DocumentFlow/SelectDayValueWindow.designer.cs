@@ -37,6 +37,7 @@
             this.sfCalendar1.FirstDayOfWeek = System.DayOfWeek.Monday;
             this.sfCalendar1.HighlightTodayCell = true;
             this.sfCalendar1.Location = new System.Drawing.Point(10, 10);
+            this.sfCalendar1.MinimumSize = new System.Drawing.Size(196, 196);
             this.sfCalendar1.Name = "sfCalendar1";
             this.sfCalendar1.Size = new System.Drawing.Size(322, 228);
             this.sfCalendar1.TabIndex = 0;
@@ -47,10 +48,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(345, 248);
             this.Controls.Add(this.sfCalendar1);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SelectDayValueWindow";
@@ -59,6 +63,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Выюор дня";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SelectDayValueWindow_KeyDown);
             this.ResumeLayout(false);
 
         }

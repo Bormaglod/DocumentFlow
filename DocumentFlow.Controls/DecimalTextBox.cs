@@ -6,15 +6,15 @@
 // Time: 18:38
 //-----------------------------------------------------------------------
 
+using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.Windows.Forms;
+using Syncfusion;
+using Syncfusion.Windows.Forms.Tools;
+
 namespace DocumentFlow.Controls
 {
-    using System;
-    using System.ComponentModel;
-    using System.Globalization;
-    using System.Windows.Forms;
-    using Syncfusion;
-    using Syncfusion.Windows.Forms.Tools;
-
     public class DecimalTextBox : NumericTextBox
     {
         /// <summary>
@@ -83,14 +83,8 @@ namespace DocumentFlow.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public override string Text
         {
-            get
-            {
-                return base.Text;
-            }
-            set
-            {
-                SetTextProperty(value);
-            }
+            get => base.Text;
+            set => SetTextProperty(value);
         }
 
         /// <summary>
@@ -104,14 +98,8 @@ namespace DocumentFlow.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public new bool UseNullString
         {
-            get
-            {
-                return base.UseNullString;
-            }
-            set
-            {
-                base.UseNullString = value;
-            }
+            get => base.UseNullString;
+            set => base.UseNullString = value;
         }
 
         /// <summary>
@@ -131,11 +119,12 @@ namespace DocumentFlow.Controls
                 {
                     return preservedDecimalValue;
                 }
+
                 return Convert.ToDecimal(GetNumberValue(base.Text, 0));
             }
             set
             {
-                if (!base.Initializing)
+                if (!Initializing)
                 {
                     SetDecimalValue(value);
                 }
@@ -153,10 +142,7 @@ namespace DocumentFlow.Controls
         [Description("Gets or sets the maximum value that can be set through the DecimalTextBox.")]
         public decimal MaxValue
         {
-            get
-            {
-                return maxValue;
-            }
+            get => maxValue;
             set
             {
                 if (value < MinValue)
@@ -176,10 +162,7 @@ namespace DocumentFlow.Controls
         [Description("Gets or sets the minimum value that can be set through the DecimalTextBox.")]
         public decimal MinValue
         {
-            get
-            {
-                return minValue;
-            }
+            get => minValue;
             set
             {
                 if (value > MaxValue)
@@ -228,7 +211,7 @@ namespace DocumentFlow.Controls
         private void InitializeComponent()
         {
             Multiline = false;
-            base.NullString = string.Empty;
+            NullString = string.Empty;
         }
 
         /// <summary>
@@ -238,7 +221,7 @@ namespace DocumentFlow.Controls
         {
             ignoreTextChange = true;
             bool flag = false;
-            if (initDecimalValue == 0.0m && AllowNull && Text == base.NullString)
+            if (initDecimalValue == 0.0m && AllowNull && Text == NullString)
             {
                 flag = true;
             }
@@ -248,7 +231,7 @@ namespace DocumentFlow.Controls
             if (flag)
             {
                 SetNullNumberValue();
-                SetTextBoxText(base.NullString);
+                SetTextBoxText(NullString);
             }
             else 
             {
@@ -260,10 +243,11 @@ namespace DocumentFlow.Controls
 
         protected override bool CheckIsZero()
         {
-            if (!base.IsNull)
+            if (!IsNull)
             {
                 return DecimalValue.Equals(0.0);
             }
+
             return false;
         }
 
@@ -272,7 +256,7 @@ namespace DocumentFlow.Controls
             bool result = true;
             try
             {
-                decimal.Parse(decimalString, base.NumberFormatInfoObject);
+                decimal.Parse(decimalString, NumberFormatInfoObject);
                 return result;
             }
             catch
@@ -297,18 +281,20 @@ namespace DocumentFlow.Controls
                 {
                     empty2 = "0";
                 }
-                string text = string.Format(base.NumberFormatInfoObject, "{0:n}", decimal.MaxValue);
-                string text2 = string.Format(base.NumberFormatInfoObject, "{0:n}", decimal.MinValue);
+
+                string text = string.Format(NumberFormatInfoObject, "{0:n}", decimal.MaxValue);
+                string text2 = string.Format(NumberFormatInfoObject, "{0:n}", decimal.MinValue);
                 if (!text.Equals(formattedText) && !text2.Equals(formattedText))
                 {
-                    num = decimal.Parse(empty2, NumberStyles.Any, base.NumberFormatInfoObject);
+                    num = decimal.Parse(empty2, NumberStyles.Any, NumberFormatInfoObject);
                 }
             }
             catch
             {
                 rollBackOperation = true;
             }
-            if (base.IsNegative && num > 0.0m)
+
+            if (IsNegative && num > 0.0m)
             {
                 num *= -1.0m;
             }
@@ -339,7 +325,7 @@ namespace DocumentFlow.Controls
         protected override void FormatChanged(string currentText, NumberFormatInfo previousFormat)
         {
             decimal num = 0.0m;
-            if (!base.Initializing)
+            if (!Initializing)
             {
                 try
                 {
@@ -393,10 +379,10 @@ namespace DocumentFlow.Controls
             }
             else if (AllowNull)
             {
-                return string.Format(base.NullFormat, "{0}", base.NullString);
+                return string.Format(NullFormat, "{0}", NullString);
             }
 
-            return string.Format(base.NumberFormatInfoObject, "{0:n}", num);
+            return string.Format(NumberFormatInfoObject, "{0:n}", num);
         }
 
         /// <summary>
@@ -406,9 +392,9 @@ namespace DocumentFlow.Controls
         /// <returns></returns>
         protected bool ShouldSerializeText()
         {
-            if (!(base.NullString != string.Empty))
+            if (!(NullString != string.Empty))
             {
-                return Text != base.NullString;
+                return Text != NullString;
             }
 
             return true;
@@ -417,21 +403,19 @@ namespace DocumentFlow.Controls
         /// <summary>
         /// Restores the CurrencyNumberDigits to the MaximumLength.
         /// </summary>
-        protected new void ResetText()
-        {
-            Text = base.DefaultValue.ToString();
-        }
+        protected new void ResetText() => Text = DefaultValue.ToString();
 
         protected override void SetTextProperty(string newText)
         {
             bool flag = true;
             bool flag2 = newText == null || newText == string.Empty;
-            if (AllowNull && newText == base.NullString)
+            if (AllowNull && newText == NullString)
             {
                 SetNullNumberValue();
-                SetTextBoxText(base.NullString);
+                SetTextBoxText(NullString);
                 return;
             }
+
             if (AllowNull && flag2)
             {
                 flag = false;
@@ -440,7 +424,7 @@ namespace DocumentFlow.Controls
             {
                 try
                 {
-                    decimal decimalValue = flag2 ? decimal.Parse("0", NumberStyles.Number, base.NumberFormatInfoObject) : decimal.Parse(newText, NumberStyles.Number, base.NumberFormatInfoObject);
+                    decimal decimalValue = flag2 ? decimal.Parse("0", NumberStyles.Number, NumberFormatInfoObject) : decimal.Parse(newText, NumberStyles.Number, base.NumberFormatInfoObject);
                     SetDecimalValue(decimalValue);
                 }
                 catch
@@ -448,6 +432,7 @@ namespace DocumentFlow.Controls
                     flag = false;
                 }
             }
+
             if (!flag)
             {
                 base.SetTextProperty(newText);
@@ -456,11 +441,11 @@ namespace DocumentFlow.Controls
 
         protected void SetDecimalValue(decimal newValue)
         {
-            base.SelectionStart = 0;
+            SelectionStart = 0;
             SelectionLength = base.TextLength;
 
-            base.IsNegative = (newValue < 0.0m);
-            newValue = Math.Round(newValue, base.NumberDecimalDigits);
+            IsNegative = (newValue < 0.0m);
+            newValue = Math.Round(newValue, NumberDecimalDigits);
             preservedDecimalValue = newValue;
             SetPreserveData(preserveData: true);
             ApplyFormattingAndSetText(newValue.ToString());
@@ -483,10 +468,7 @@ namespace DocumentFlow.Controls
         /// <summary>
         /// Resets the Max value to the default.
         /// </summary>
-        private void ResetMaxValue()
-        {
-            MaxValue = decimal.MaxValue;
-        }
+        private void ResetMaxValue() => MaxValue = decimal.MaxValue;
 
         /// <summary>
         /// Indicates whether the MinValue property should be serialized.
@@ -505,26 +487,16 @@ namespace DocumentFlow.Controls
         /// <summary>
         /// Resets the value to the default.
         /// </summary>
-        private void ResetMinValue()
-        {
-            MinValue = decimal.MinValue;
-        }
+        private void ResetMinValue() => MinValue = decimal.MinValue;
 
         protected override bool CheckForMinMax(string currentTextValue, bool ignoreLength)
         {
-            if (base.MinMaxValidation == MinMaxValidation.OnLostFocus)
+            if (MinMaxValidation == MinMaxValidation.OnLostFocus)
             {
                 return true;
             }
-            if (currentTextValue.IndexOf('-') == -1)
-            {
-                int length = currentTextValue.Length;
-            }
-            else
-            {
-                int length2 = currentTextValue.Length;
-            }
-            if (!decimal.TryParse(currentTextValue, NumberStyles.Any, base.NumberFormatInfoObject, out decimal result) && AllowNull)
+
+            if (!decimal.TryParse(currentTextValue, NumberStyles.Any, NumberFormatInfoObject, out decimal result) && AllowNull)
             {
                 return true;
             }
@@ -539,7 +511,7 @@ namespace DocumentFlow.Controls
 
         protected override bool CheckNullStringIsInRange(string nullString)
         {
-            if (decimal.TryParse(nullString, NumberStyles.Any, base.NumberFormatInfoObject, out decimal result))
+            if (decimal.TryParse(nullString, NumberStyles.Any, NumberFormatInfoObject, out decimal result))
             {
                 return CheckForMinMax(result.ToString(), ignoreLength: true);
             }
@@ -553,9 +525,9 @@ namespace DocumentFlow.Controls
         /// <param name="e">A <see cref="T:System.EventArgs" /> that contains the event data.</param>
         protected virtual void OnDecimalValueChanged(EventArgs e)
         {
-            if (!ignoreTextChange && this.DecimalValueChanged != null)
+            if (!ignoreTextChange && DecimalValueChanged != null)
             {
-                this.DecimalValueChanged(this, e);
+                DecimalValueChanged(this, e);
             }
         }
 
@@ -577,10 +549,7 @@ namespace DocumentFlow.Controls
         /// Raises the <see cref="E:System.Windows.Forms.Control.KeyDown" /> event.
         /// </summary>
         /// <param name="e">A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data.</param>
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            base.OnKeyDown(e);
-        }
+        protected override void OnKeyDown(KeyEventArgs e) => base.OnKeyDown(e);
 
         /// <summary>
         /// Overrides the <see cref="M:System.Windows.Forms.Control.OnEnter(System.EventArgs)" /> method.
@@ -600,27 +569,26 @@ namespace DocumentFlow.Controls
         protected override void OnValidating(CancelEventArgs e)
         {
             newDecimalValue = Text;
-            decimal decimalValue = DecimalValue;
-            if ((!AllowNull || !(Text == base.NullString)) && (DecimalValue < MinValue || DecimalValue > MaxValue))
+            if ((!AllowNull || !(Text == NullString)) && (DecimalValue < MinValue || DecimalValue > MaxValue))
             {
                 string formattedText = FormattedText;
-                switch (base.OnValidationFailed)
+                switch (OnValidationFailed)
                 {
                     case OnValidationFailed.SetNullString:
                         if (AllowNull)
                         {
                             SetNullNumberValue();
-                            SetTextBoxText(base.NullString);
+                            SetTextBoxText(NullString);
                         }
                         else
                         {
                             Focus();
-                            base.SelectionStart = Text.Length;
+                            SelectionStart = Text.Length;
                         }
                         break;
                     case OnValidationFailed.SetMinOrMax:
-                        decimalValue = ((decimalValue < MinValue) ? MinValue : decimalValue);
-                        decimalValue = (DecimalValue = ((decimalValue > MaxValue) ? MaxValue : decimalValue));
+                        decimal tempDecimalValue = (DecimalValue < MinValue) ? MinValue : DecimalValue;
+                        DecimalValue = (tempDecimalValue > MaxValue) ? MaxValue : tempDecimalValue;
                         break;
                     case OnValidationFailed.KeepFocus:
                         Focus();
@@ -629,6 +597,7 @@ namespace DocumentFlow.Controls
                 }
                 RaiseValidationError(formattedText, 0, "Current value does not meet MinValue and MaxValue requirements.");
             }
+
             oldDecimalValue = Text;
             base.OnValidating(e);
         }
@@ -651,27 +620,23 @@ namespace DocumentFlow.Controls
             {
                 return false;
             }
+
             return typeof(decimal).IsAssignableFrom(val.GetType());
         }
 
-        protected override void SetValue(object val)
-        {
-            DecimalValue = (decimal)val;
-        }
+        protected override void SetValue(object val) => DecimalValue = (decimal)val;
 
-        protected override object GetValue()
-        {
-            return DecimalValue;
-        }
+        protected override object GetValue() => DecimalValue;
 
         protected override bool HandleBackspaceKey()
         {
             if (CheckIsZero() && AllowNull)
             {
                 SetNullNumberValue();
-                SetTextBoxText(base.NullString);
+                SetTextBoxText(NullString);
                 return true;
             }
+
             return base.HandleBackspaceKey();
         }
 
@@ -680,15 +645,15 @@ namespace DocumentFlow.Controls
             if (CheckIsZero() && AllowNull)
             {
                 SetNullNumberValue();
-                SetTextBoxText(base.NullString);
+                SetTextBoxText(NullString);
                 return true;
             }
+
             return base.HandleDeleteKey();
         }
 
         protected override bool HandleDecimalKey()
         {
-            int selectionStart = base.SelectionStart;
             string text = base.Text;
             int decimalSeparatorPosition = GetDecimalSeparatorPosition(text);
             if (decimalSeparatorPosition != -1)
@@ -698,29 +663,28 @@ namespace DocumentFlow.Controls
             }
             else
             {
-                if (!base.IsNull || base.NumberFormatInfoObject.CurrencyDecimalDigits <= 0)
+                if (!IsNull || NumberFormatInfoObject.CurrencyDecimalDigits <= 0)
                 {
                     return false;
                 }
                 m_bDecimalMode = true;
             }
+
             return true;
         }
 
         protected override NumberModifyState HandleSubtractKey()
         {
             NumberModifyState result = base.HandleSubtractKey();
-            if (base.DeleteSelectionOnNegative)
+            if (DeleteSelectionOnNegative)
             {
                 SetEmptySelection(GetDecimalSeparatorPosition(GetTextBoxText()));
             }
+
             return result;
         }
 
-        protected override AccessibleObject CreateAccessibilityInstance()
-        {
-            return new DecimalTextBoxAccessibility(this);
-        }
+        protected override AccessibleObject CreateAccessibilityInstance() => new DecimalTextBoxAccessibility(this);
 
         protected override NumberModifyState PrepareInsertString(string currentText, int startPosition, int selectionLength, string textToBeInserted, bool pasteOperation)
         {
@@ -728,17 +692,18 @@ namespace DocumentFlow.Controls
             {
                 currentText = currentText.Substring(0, startPosition + selectionLength);
             }
+
             return base.PrepareInsertString(currentText, startPosition, selectionLength, textToBeInserted, pasteOperation);
         }
 
         private void OnAllowNullChanged()
         {
-            if (base.IsNull)
+            if (IsNull)
             {
                 if (AllowNull)
                 {
                     SetNullNumberValue();
-                    SetTextBoxText(base.NullString);
+                    SetTextBoxText(NullString);
                 }
                 else
                 {

@@ -6,10 +6,10 @@
 // Time: 13:04
 //-----------------------------------------------------------------------
 
+using System.Drawing;
+
 namespace DocumentFlow.Core
 {
-    using System.Drawing;
-
     public static class DrawingExtension
     {
         static readonly Pen pen = new Pen(Color.Bisque);

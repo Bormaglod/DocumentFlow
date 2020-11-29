@@ -1,4 +1,4 @@
-﻿namespace DocumentFlow.Controls
+﻿namespace DocumentFlow.Controls.Editor
 {
     partial class L_PercentTextBox
     {
@@ -55,6 +55,7 @@
             this.percentTextBox1.TabIndex = 2;
             this.percentTextBox1.Text = "0,00%";
             this.percentTextBox1.ThemeName = "Metro";
+            this.percentTextBox1.DoubleValueChanged += new System.EventHandler(this.percentTextBox1_DoubleValueChanged);
             // 
             // L_PercentTextBox
             // 

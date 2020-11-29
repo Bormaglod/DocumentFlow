@@ -6,23 +6,20 @@
 // Time: 18:26
 //-----------------------------------------------------------------------
 
+using System;
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using DocumentFlow.Data.Core;
-
     public class EntityKind : EntityUID
     {
-        public virtual string Code { get; set; }
-        public virtual string Name { get; set; }
-        public virtual string Title { get; set; }
-        public virtual bool HasGroup { get; set; }
-        public virtual Transition Transition { get; set; }
-        public virtual string Prefix { get; set; }
-        public virtual int NumberDigits { get; set; }
-
-        public override string ToString()
-        {
-            return Code;
-        }
+        public string code { get; set; }
+        public string name { get; set; }
+        public string title { get; set; }
+        public bool has_group { get; set; }
+        public Guid transition_id { get; set; }
+        public string prefix { get; set; }
+        public int number_digits { get; set; }
+        public override string ToString() => code;
     }
 }

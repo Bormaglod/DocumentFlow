@@ -6,10 +6,10 @@
 // Time: 19:09
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace DocumentFlow.Controls
 {
-    using System;
-
     public class CrumbClickEventArgs : EventArgs
     {
         private ToolButtonKind kind;

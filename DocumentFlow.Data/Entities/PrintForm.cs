@@ -6,15 +6,17 @@
 // Time: 17:17
 //-----------------------------------------------------------------------
 
+using System;
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using DocumentFlow.Data.Core;
-
     public class PrintForm : EntityUID
     {
-        public virtual string Name { get; set; }
-        public virtual Picture Picture { get; set; }
-        public virtual string FormText { get; set; }
-        public virtual string Properties { get; set; }
+        public string name { get; set; }
+        public Guid? picture_id { get; set; }
+        public string form_text { get; set; }
+        public string properties { get; set; }
+        public Picture Picture { get; set; }
     }
 }

@@ -6,17 +6,17 @@
 // Time: 13:31
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using DocumentFlow.Data.Core;
-
     public class Email : EntityID
     {
-        public virtual string Address { get; set; }
-        public virtual string Host { get; set; }
-        public virtual short Port { get; set; }
-        public virtual string Password { get; set; }
-        public virtual string SignaturePlain { get; set; }
-        public virtual string SignatureHtml { get; set; }
+        public string address { get; set; }
+        public string host { get; set; }
+        public short port { get; set; }
+        public string password { get; set; }
+        public string signature_plain { get; set; }
+        public string signature_html { get; set; }
     }
 }

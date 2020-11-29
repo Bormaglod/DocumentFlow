@@ -1,4 +1,4 @@
-﻿namespace DocumentFlow.Controls
+﻿namespace DocumentFlow.Controls.Editor
 {
     partial class L_ImageViewerBox
     {

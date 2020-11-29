@@ -6,18 +6,14 @@
 // Time: 18:44
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Drawing;
-    using System.IO;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-    using System.Windows.Forms;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 #if USE_LISTENER
     using System.Collections.Concurrent;
     using System.Threading;
@@ -25,115 +21,66 @@ namespace DocumentFlow
     using Newtonsoft.Json;
     using Npgsql;
 #endif
-    using Flee.PublicTypes;
-    using NHibernate;
-    using NHibernate.Transform;
-    using Spire.Pdf;
-    using Syncfusion.Windows.Forms.Tools;
-    using Syncfusion.WinForms.DataGrid.Events;
-    using DocumentFlow.Controls.Editor.Core;
-    using DocumentFlow.Core;
-    using DocumentFlow.Data.Core;
-    using DocumentFlow.Data.Entities;
-    using DocumentFlow.DataSchema;
-    using DocumentFlow.Printing;
-    using DocumentFlow.Properties;
+using Dapper;
+using Spire.Pdf;
+using Syncfusion.Windows.Forms.Tools;
+using Syncfusion.WinForms.DataGrid.Events;
+using DocumentFlow.Core;
+using DocumentFlow.Core.Exceptions;
+using DocumentFlow.Code;
+using DocumentFlow.Code.System;
+using DocumentFlow.Code.Implementation;
+using DocumentFlow.Controls.Code;
+using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Entities;
+using DocumentFlow.Printing;
+using DocumentFlow.Properties;
 
-    public partial class ContentEditor : UserControl, IPage
+namespace DocumentFlow
+{
+    public partial class ContentEditor : ToolWindow, IPage, IDependentViewer
     {
-        class FieldExpressionData
-        {
-            public IEditorExpression Editor { get; set; }
-            public string Destination { get; set; }
-            public IDynamicExpression Expression { get; set; }
-            public string Query { get; set; }
-        }
-
+        private readonly ICommandFactory commandFactory;
+        private readonly IContainerPage containerPage;
+        private IBrowserParameters parameters;
+        private Command command;
         private Guid current;
-        private Guid? parent;
-        private Guid? owner;
-        private readonly EntityKind kind;
-        private readonly DatasetEditor editor;
-        private IDictionary row;
+        private object entity;
         private Status status;
-        private readonly BindingList<DocumentRefs> documents;
-        private readonly string destLocalPath;
-        private readonly string destFtpPath;
-        private readonly ICommandFactory commands;
-        private ExpressionContext context;
-        private readonly List<IPage> childs = new List<IPage>();
-        private readonly List<string> locked = new List<string>();
+        private IContainer controlContainer;
+        private System.ComponentModel.BindingList<DocumentRefs> documents;
+        private readonly List<ViewerControl> childs = new List<ViewerControl>();
+        private bool creatingPage;
+        private readonly string ftpPath;
+        private readonly DocumentRefEditor refEditor;
+        private EditorData editorData;
+        private IBrowser ownerBrowser;
 #if USE_LISTENER
         private CancellationTokenSource listenerToken;
         private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
 #endif
-        private readonly List<FieldExpressionData> expressions = new List<FieldExpressionData>();
-        private readonly DocumentRefEditor refEditor;
-        bool binding = false;
 
-        public ContentEditor(ICommandFactory commandFactory, EditorParams parameters)
+        public ContentEditor(IContainerPage container, IBrowser browser, ICommandFactory commandFactory, Guid id, Command commandEditor, IBrowserParameters browserParameters)
         {
             InitializeComponent();
-            NewSession();
 
-            kind = parameters.Kind;
-            editor = parameters.Editor.Clone();
-            current = parameters.Id;
-            parent = parameters.Parent;
-            owner = parameters.Owner;
-
-            commands = commandFactory;
-
-            if (string.IsNullOrEmpty(editor.Dataset.InsertDefault(kind.Code)))
-                throw new DatasetCommandException("Не указана команда Insert.");
-
-            if (string.IsNullOrEmpty(editor.Dataset.Update))
-                throw new DatasetCommandException("Не указана команда Update.");
-
-            PrepareEditor();
-            RefreshPage(true);
-
-            documents = new BindingList<DocumentRefs>(
-                Session.QueryOver<DocumentRefs>()
-                    .Where(x => x.OwnerId == current)
-                    .List());
-            gridDocuments.DataSource = documents;
-
-            destLocalPath = Path.Combine(Settings.Default.DocumentsFolder, kind.Code, current.ToString());
-            destFtpPath = Path.Combine(Settings.Default.FtpPath, kind.Code, current.ToString());
-            refEditor = new DocumentRefEditor(destLocalPath, destFtpPath);
-
-            IList<PrintForm> forms = Session.QueryOver<PrintKindForm>()
-                    .Where(x => x.EntityKind == kind)
-                    .Select(x => x.PrintForm)
-                    .List<PrintForm>();
-
-            if (forms.Any())
+            ownerBrowser = browser;
+            if (commandEditor.Editor == null)
             {
-                foreach (PrintForm f in forms)
-                {
-                    Image image = null;
-                    if (f.Picture == null)
-                        image = Resources.icons8_preview_16;
-                    else
-                        image = f.Picture.GetImageSmall();
-
-                    ToolStripMenuItem item = new ToolStripMenuItem(f.Name, image, buttonPrint_ButtonClick)
-                    {
-                        Tag = f
-                    };
-
-                    buttonPrint.DropDownItems.Add(item);
-                }
-
-                buttonPrint.Tag = Session.QueryOver<PrintKindForm>()
-                    .Where(x => x.EntityKind == kind && x.DefaultForm)
-                    .Select(x => x.PrintForm)
-                    .SingleOrDefault<PrintForm>();
+                throw new Exception($"В команде [{commandEditor.name}] не определен редактор.");
             }
-            else
-                buttonPrint.Enabled = false;
 
+            this.commandFactory = commandFactory;
+
+            containerPage = container;
+            parameters = browserParameters;
+            command = commandEditor;
+            current = id;
+
+            controlContainer = new ContainerData(tabSplitterMaster);
+
+            CreateEditor();
+            CreatePageControls();
             CreateChildDataGrids();
 
 #if USE_LISTENER
@@ -142,48 +89,107 @@ namespace DocumentFlow
             listenerToken = new CancellationTokenSource();
             _ = CreateListener(listenerToken.Token);
 #endif
+
+            ftpPath = Path.Combine(Settings.Default.FtpPath, command.EntityKind.code, current.ToString());
+            refEditor = new DocumentRefEditor(ftpPath);
+
+            using (var conn = Db.OpenConnection())
+            {
+                string sql = "select * from print_kind_form pkf join print_form pf on (pf.id = pkf.print_form_id) where entity_kind_id = :id";
+                var forms = conn.Query<PrintKindForm, PrintForm, PrintKindForm>(sql, (kind, form) =>
+                {
+                    kind.PrintForm = form;
+                    return kind;
+                }, new { id = command.entity_kind_id });
+
+                if (forms.Any())
+                {
+                    foreach (var f in forms)
+                    {
+                        Image image = null;
+                        if (f.PrintForm.picture_id.HasValue)
+                        {
+                            Picture p = conn.QuerySingle<Picture>("select * from picture where id = :id", new { id = f.PrintForm.picture_id });
+                            image = p.GetImageSmall();
+                        }
+                        else
+                            image = Resources.icons8_preview_16;
+
+                        var item = new ToolStripMenuItem(f.PrintForm.name, image, buttonPrint_ButtonClick)
+                        {
+                            Tag = f.PrintForm
+                        };
+
+                        buttonPrint.DropDownItems.Add(item);
+                    }
+
+                    buttonPrint.Tag = forms.FirstOrDefault(x => x.default_form)?.PrintForm;
+                }
+                else
+                    buttonPrint.Enabled = false;
+            }
         }
 
-        Guid IPage.Id => current;
+        #region IPage implementation
+
+        Guid IPage.Id => command.Id;
 
         Guid IPage.ContentId => current;
 
-        void IPage.OnClosed()
+        IContainerPage IPage.Container => containerPage;
+
+        void IPage.Rebuild() { }
+
+        #endregion
+
+        void IDependentViewer.AddDependentViewer(string commandCode)
         {
-#if USE_LISTENER
-            listenerToken.Cancel();
-            timerDatabaseListen.Stop();
-#endif
-
-            foreach (IPage p in childs)
+            using (var conn = Db.OpenConnection())
             {
-                p.OnClosed();
-            }
+                Command command = commandFactory.Commands.SingleOrDefault(x => x.code == commandCode);
+                if (command == null)
+                {
+                    return;
+                }
 
-            using (var transaction = Session.BeginTransaction())
-            {
+                ViewerControl viewer = new ViewerControl(BrowserMode.Dependent)
+                {
+                    CommandFactory = commandFactory,
+                    ExecutedCommand = command,
+                    OwnerId = current,
+                    Dock = DockStyle.Fill
+                };
+
                 try
                 {
-                    IQuery query = Session.CreateSQLQuery("select unlock_document(:document_id)")
-                        .SetGuid("document_id", current);
-                    query.ExecuteUpdate();
+                    viewer.InitializeViewer();
 
-                    transaction.Commit();
+                    TabSplitterPage page = new TabSplitterPage
+                    {
+                        Text = command.name
+                    };
+
+                    childs.Add(viewer);
+                    page.Controls.Add(viewer);
+
+                    tabSplitterContainer1.SecondaryPages.Insert(tabSplitterContainer1.SecondaryPages.Count - 2, page);
+                    tabSplitterContainer1.SecondaryPages.SelectedIndex = 0;
                 }
                 catch (Exception e)
                 {
-                    transaction.Rollback();
-                    if (MessageBox.Show($"При попытке сохранить запись получено сообщение об ошибке: [{ExceptionHelper.Message(e)}]. Вы по прежнему хотите закрыть окно", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
-                    {
-                        throw;
-                    }
+                    ExceptionHelper.MesssageBox(e);
                 }
             }
         }
 
-        protected ISession Session { get; private set; }
-
-        private void NewSession() => Session = Db.OpenSession();
+        void IDependentViewer.AddDependentViewers(string[] commandCodes)
+        {
+            IDependentViewer editor = this;
+            for (int i = 0; i < commandCodes.Length; i++)
+            {
+                editor.AddDependentViewer(commandCodes[i]);
+            }
+        }
 
 #if USE_LISTENER
         private void Listener(CancellationToken token)
@@ -234,76 +240,63 @@ namespace DocumentFlow
         }
 #endif
 
-        private void PrepareEditor()
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            using (var transaction = Session.BeginTransaction())
+            base.OnClosing(e);
+#if USE_LISTENER
+            listenerToken.Cancel();
+            timerDatabaseListen.Stop();
+#endif
+
+            foreach (ViewerControl viewer in childs)
             {
-                try
+                viewer.OnClosing();
+            }
+
+            using (var conn = Db.OpenConnection())
+            {
+                using (var transaction = conn.BeginTransaction())
                 {
-                    IQuery query;
-                    if (current == Guid.Empty)
+                    try
                     {
-                        string insert = editor.Dataset.InsertDefault(kind.Code);
-
-                        query = Session.CreateSQLQuery(insert);
-                        if (owner != null)
-                            Db.CreateQueryParameters(query, editor.GetTypes(), ("owner_id", owner));
-                        current = query.UniqueResult<Guid>();
-
-                        if (current == Guid.Empty)
+                        conn.Execute("unlock_document", new { document_id = current }, transaction, commandType: CommandType.StoredProcedure);
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        if (MessageBox.Show($"При попытке сохранить запись получено сообщение об ошибке: [{ExceptionHelper.Message(ex)}]. Вы по прежнему хотите закрыть окно", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.No)
                         {
-                            throw new DatasetCommandException($"Запрос '{insert}' должен содержать выражение returning для получения значения первичного ключа.");
-                        }
-
-                        if (editor.Dataset.GenerateDefaultValue)
-                        {
-                            List<string> updates = new List<string>();
-                            if (owner != null)
-                                updates.Add("owner_id = :owner_id");
-
-                            if (parent != null && kind.HasGroup)
-                                updates.Add("parent_id = :parent_id");
-
-                            if (updates.Any())
-                            {
-                                string update = $"update {editor.Dataset.Name ?? kind.Code} set {string.Join(",", updates)} where id = :id";
-                                query = Session.CreateSQLQuery(update)
-                                    .SetGuid("id", current);
-                                if (owner != null)
-                                    query.SetParameter("owner_id", owner);
-
-                                if (parent != null && kind.HasGroup)
-                                    query.SetParameter("parent_id", parent);
-
-                                query.ExecuteUpdate();
-                            }
+                            e.Cancel = true;
                         }
                     }
-
-                    query = Session.CreateSQLQuery("select lock_document(:document_id)")
-                            .SetGuid("document_id", current);
-                    query.ExecuteUpdate();
-
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    ExceptionHelper.MesssageBox(ex);
                 }
             }
         }
 
-        private object GetValueFromQuery(string queryText)
+        private void CreateEditor()
         {
-            IDictionary row = Db.ExecuteSelect(Session, queryText, editor.GetTypes(), (x) => context.Variables.ContainsKey(x) ? context.Variables[x] : null).SingleOrDefault();
-            if (row != null)
+            using (var conn = Db.OpenConnection())
             {
-                string key = row.Keys.OfType<string>().Single();
-                return row[key];
-            }
+                using (var transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        if (current == Guid.Empty)
+                        {
+                            current = command.Editor.Insert<Guid>(conn, transaction, parameters, editorData);
+                        }
 
-            return null;
+                        conn.Execute("lock_document", new { document_id = current }, transaction, commandType: CommandType.StoredProcedure);
+                        transaction.Commit();
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        ExceptionHelper.MesssageBox(e);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -314,366 +307,159 @@ namespace DocumentFlow
         /// </summary>
         private void ReadDataEntity()
         {
-            row = Session.CreateSQLQuery(editor.Dataset.Select)
-                .SetResultTransformer(Transformers.AliasToEntityMap)
-                .SetGuid("id", current)
-                .UniqueResult<IDictionary>();
-            if (row == null)
-                throw new Exception($"Запрос {editor.Dataset.Select} с id = {current} вернул NULL.");
-
-            EditorContext ec = new EditorContext(Session, current, editor)
+            using (var conn = Db.OpenConnection())
             {
-                ActionPopupate = PopulateControl
-            };
-
-            context = new ExpressionContext(ec);
-            ec.Variables = context.Variables;
-
-            foreach (string field in row.Keys)
-            {
-                if (row[field] != null)
-                    context.Variables.Add(field, row[field]);
-            }
-
-            expressions.Clear();
-            foreach (IEditorExpression c in editor.GetControls().OfType<IEditorExpression>())
-            {
-                CreateExpressionList(c);
-            }
-        }
-
-        private void CreateExpressionList(IEditorExpression editor)
-        {
-            if (editor.Expressions.Count == 0)
-                return;
-
-            for (int i = 0; i < editor.Expressions.Count; i++)
-            {
-                if (string.IsNullOrEmpty(editor.Expressions[i].Expression) && string.IsNullOrEmpty(editor.Expressions[i].SQLExpression))
-                    continue;
-
-                FieldExpressionData data = new FieldExpressionData()
+                entity = command.Editor.SelectById(conn, current, parameters);
+                if (editorData != null)
                 {
-                    Editor = editor,
-                    Destination = editor.Expressions[i].Destination,
-                    Expression = string.IsNullOrEmpty(editor.Expressions[i].Expression) ? null : context.CompileDynamic(editor.Expressions[i].Expression),
-                    Query = string.IsNullOrEmpty(editor.Expressions[i].SQLExpression) ? null : editor.Expressions[i].SQLExpression
-                };
-
-                expressions.Add(data);
-            }
-        }
-
-        private void UnbindEvents()
-        {
-            if (binding)
-            {
-                foreach (IBindingEditorControl c in editor.GetControls().OfType<IBindingEditorControl>())
-                {
-                    c.ValueChanged -= BindingEditor_ValueChanged;
-                }
-
-                binding = false;
-            }
-        }
-
-        private void BindEvents()
-        {
-            if (binding)
-                return;
-
-            foreach (IBindingEditorControl c in editor.GetControls().OfType<IBindingEditorControl>())
-            {
-                c.ValueChanged += BindingEditor_ValueChanged;
-            }
-
-            binding = true;
-        }
-
-        private bool GetConditionResult(string status_name, Condition condition, ExpressionContext context)
-        {
-            if (condition == null)
-                return true;
-
-            bool res = condition.States != null && condition.States.Contains(status_name);
-            if (!string.IsNullOrEmpty(condition.ExpressionIfEqual))
-            {
-                IGenericExpression<bool> expression = context.CompileGeneric<bool>(condition.ExpressionIfEqual);
-                res = res || expression.Evaluate();
-            }
-            else if (!string.IsNullOrEmpty(condition.ExpressionIfEqualQuery))
-            {
-                try
-                {
-                    object value = GetValueFromQuery(condition.ExpressionIfEqualQuery);
-                    if (value != null && value is bool exprValue)
-                    {
-                        res = res || exprValue;
-                    }
-                    else
-                        res = false;
-                }
-                catch (ParameterNotFoundException pe)
-                {
-                    MessageBox.Show($"Condition: при выполнении запроса '{condition.ExpressionIfEqualQuery}' произошла ошибка - {pe.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-
-            return res;
-        }
-
-        private void PopulateControl(IEditorControl control, IDictionary data)
-        {
-            if (control is IPopulated populated)
-            {
-                populated.Populate(Session, data, editor.GetTypes(), status.Id);
-            }
-
-            if (editor?.Conditions == null)
-                return;
-
-            foreach (ControlCondition condition in editor.Conditions)
-            {
-                if (condition.Controls.Contains(control.Name))
-                {
-                    if (condition.Enable != null)
-                    {
-                        control.Enabled = GetConditionResult(status.Code, condition.Enable, context);
-                    }
-
-                    if (condition.Visible != null)
-                    {
-                        control.Visible = GetConditionResult(status.Code, condition.Visible, context);
-                    }
+                    editorData.Entity = entity;
                 }
             }
         }
 
         private void PopulateControls()
         {
-            var controls = editor.GetControls();
-            if (controls != null)
+            using (var conn = Db.OpenConnection())
             {
-                foreach (IEditorControl control in controls)
+                DataFieldParameter getVisible = null;
+                if (!creatingPage)
                 {
-                    PopulateControl(control, row);
+                    getVisible = (f) => { return command.Editor.GetVisibleValue(f, status.code); };
                 }
+
+                DataFieldParameter getEnable = (f) => { return command.Editor.GetEnabledValue(f, status.code); };
+
+                controlContainer.Populate(conn, entity, getEnable, getVisible);
             }
         }
 
         private void UpdateCurrentStatusInfo()
         {
-            string name = string.Empty;
-            if (row.Contains("name"))
-                name = row["name"]?.ToString() ?? string.Empty;
+            if (entity is IDirectory directory)
+            {
+                Text = $"{command.EntityKind.name} - {directory.name}";
+            }
+            else if (entity is IDocument document)
+            {
+                Text = $"{command.EntityKind.name} {document.document_name}";
+            }
+            else
+            {
+                return;
+            }
 
-            Text = $"{kind.Name} - {name}";
+            using (var conn = Db.OpenConnection())
+            {
+                var info = conn.Query($"select di.status_id, di.date_created, di.date_updated, uc.name as user_created, uu.name as user_updated from {command.EntityKind.code} di join user_alias uc on uc.id  = di.user_created_id join user_alias uu on uu.id  = di.user_updated_id where di.id = :id", new { id = current }).SingleOrDefault();
+                if (info == null)
+                    throw new RecordNotFoundException(current);
 
-            IDictionary info = Session.CreateSQLQuery($"select di.status_id, di.date_created, di.date_updated, uc.name as user_created, uu.name as user_updated from {editor.Dataset.Name ?? kind.Code} di join user_alias uc on uc.id  = di.user_created_id join user_alias uu on uu.id  = di.user_updated_id where di.id = :id")
-                .SetGuid("id", current)
-                .SetResultTransformer(Transformers.AliasToEntityMap)
-                .UniqueResult<IDictionary>();
+                status = conn.Query<Status, Picture, Status>("select * from status s left join picture p on (p.id = s.picture_id) where s.id = :id", (status, picture) =>
+                {
+                    status.Picture = picture;
+                    return status;
+                }, new { id = info.status_id }).SingleOrDefault();
 
-            if (info == null)
-                throw new RecordNotFoundException(current);
+                buttonStatus.Image = status.Picture.GetImageLarge();
+                buttonStatus.Text = status.note;
 
-            status = Session.Get<Status>(info["status_id"]);
+                dateTimeCreate.Value = info.date_created;
+                dateTimeUpdate.Value = info.date_updated;
 
-            buttonStatus.Image = status.Picture.GetImageLarge();
-            buttonStatus.Text = status.Note;
+                textBoxCreator.Text = info.user_created;
+                textBoxUpdater.Text = info.user_updated;
 
-            dateTimeCreate.Value = (DateTime)info["date_created"];
-            dateTimeUpdate.Value = (DateTime)info["date_updated"];
-
-            textBoxCreator.Text = info["user_created"].ToString();
-            textBoxUpdater.Text = info["user_updated"].ToString();
-
-            textBoxID.Text = current.ToString();
+                textBoxID.Text = current.ToString();
+            }
         }
 
         private void CreateActionButtons()
         {
             panelItemActions.Items.Clear();
-
-            IList<ChangingStatus> list = Session.QueryOver<ChangingStatus>()
-                .Where(x => x.Transition == kind.Transition && x.FromStatus == status && !x.IsSystem)
-                .OrderBy(x => x.OrderIndex).Asc
-                .List();
-            foreach (ChangingStatus cs in list)
+            using (var conn = Db.OpenConnection())
             {
-                bool access = Session.CreateSQLQuery("select access_changing_status(:id, :changing_status_id)")
-                     .SetGuid("id", current)
-                     .SetGuid("changing_status_id", cs.Id)
-                     .UniqueResult<bool>();
-
-                if (!access)
-                    continue;
-
-                ToolStripButton button = new ToolStripButton()
+                IList<ChangingStatus> list = conn.Query<ChangingStatus, Picture, ChangingStatus>("select * from changing_status cs left join picture p on (cs.picture_id = p.id) where cs.transition_id = :transition_id and cs.from_status_id = :status_id and not cs.is_system order by cs.order_index", (cs, picture) =>
                 {
-                    Image = cs.Picture?.GetImageLarge(),
-                    Text = cs.Name,
-                    DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
-                    ImageScaling = ToolStripItemImageScaling.None,
-                    TextImageRelation = TextImageRelation.ImageAboveText,
-                    Tag = cs
-                };
+                    cs.Picture = picture;
+                    return cs;
+                }, new { transition_id = command.EntityKind.transition_id, status_id = status.id }).ToList();
 
-                button.Click += ActionButton_Click;
+                foreach (ChangingStatus cs in list)
+                {
+                    bool access = conn.Query<bool>("select access_changing_status(:id, :changing_status_id)", new { id = current, changing_status_id = cs.Id }).Single();
+                    if (!access)
+                    {
+                        continue;
+                    }
 
-                panelItemActions.Items.Add(button);
+                    ToolStripButton button = new ToolStripButton()
+                    {
+                        Image = cs.Picture?.GetImageLarge(),
+                        Text = cs.name,
+                        DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
+                        ImageScaling = ToolStripItemImageScaling.None,
+                        TextImageRelation = TextImageRelation.ImageAboveText,
+                        Tag = cs
+                    };
+
+                    button.Click += ActionButton_Click;
+
+                    panelItemActions.Items.Add(button);
+                }
             }
 
             panelItemActions.Visible = panelItemActions.Items.Count > 0;
             toolStripSeparator5.Visible = panelItemActions.Items.Count > 0;
         }
 
-        private void BindingEditor_ValueChanged(object sender, EventArgs e)
+        private void ActionButton_Click(object sender, EventArgs e)
         {
-            IBindingEditorControl editor_control = (IBindingEditorControl)sender;
-            if (locked.Contains(editor_control.DataField))
-                return;
-
-            locked.Add(editor_control.DataField);
-            try
+            if (sender is ToolStripButton button && button.Tag is ChangingStatus cs && UpdateEntity())
             {
-                if (editor_control.Value == null)
+                using (var conn = Db.OpenConnection())
                 {
-                    context.Variables.Remove(editor_control.DataField);
-                }
-                else
-                {
-                    context.Variables[editor_control.DataField] = editor_control.Value;
-                }
-
-                foreach (FieldExpressionData data in expressions.Where(x => x.Editor == editor_control))
-                {
-                    IBindingEditorControl result = null;
-                    if (!string.IsNullOrEmpty(data.Destination))
-                    {
-                        result = editor
-                            .GetControls()
-                            .OfType<IBindingEditorControl>()
-                            .FirstOrDefault(x => string.Compare(x.DataField, data.Destination, true) == 0);
-                        if (result == null)
-                        {
-                            throw new Exception($"В схеме указано поле {data.Destination}, но оно отсутсвует в реализации класса {data.Expression.Owner.GetType().Name}");
-                        }
-                    }
-
-                    if (data.Expression != null)
-                    {
-                        if (result != null)
-                            result.Value = data.Expression.Evaluate();
-                        else
-                            data.Expression.Evaluate();
-                    }
-                    else
+                    using (var transaction = conn.BeginTransaction())
                     {
                         try
                         {
-                            object value = GetValueFromQuery(data.Query);
-                            if (value != null)
-                            {
-                                result.Value = value;
-                            }
+                            conn.Execute($"update {command.EntityKind.code} set status_id = :status_id where id = :id", new { status_id = cs.to_status_id, id = current }, transaction);
+                            transaction.Commit();
                         }
-                        catch (ParameterNotFoundException pe)
+                        catch (Exception ex)
                         {
-                            MessageBox.Show($"Невозможно обновить поле {result.DataField}, т.к. возникла ошибка при выполнении запроса '{data.Query}' - {pe.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-
-                    if (result != null)
-                    {
-                        if (result.Value == null)
-                        {
-                            context.Variables.Remove(result.DataField);
-                        }
-                        else 
-                        {
-                            context.Variables[result.DataField] = result.Value;
+                            transaction.Rollback();
+                            ExceptionHelper.MesssageBox(ex);
                         }
                     }
                 }
             }
-            finally
-            {
-                locked.Remove(editor_control.DataField);
-            }
-        }
 
-        private void ActionButton_Click(object sender, EventArgs e)
-        {
-            ToolStripButton button = sender as ToolStripButton;
-            ChangingStatus cs = button.Tag as ChangingStatus;
-
-            if (UpdateEntity())
-            {
-                using (var transaction = Session.BeginTransaction())
-                {
-                    try
-                    {
-                        string name = editor.Dataset.Name ?? kind.Code;
-                        Session.CreateSQLQuery($"update {name} set status_id = :status_id where id = :id")
-                            .SetInt32("status_id", cs.ToStatus.Id)
-                            .SetGuid("id", current)
-                            .ExecuteUpdate();
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        ExceptionHelper.MesssageBox(ex);
-                    }
-                }
-            }
-
-            RefreshPage(false);
+            RefreshPage();
         }
 
         private bool UpdateEntity()
         {
-            using (var transaction = Session.BeginTransaction())
+            if (entity == null)
             {
-                IQuery query = Session.CreateSQLQuery(editor.Dataset.Update);
+                return false;
+            }
 
-                var controls = editor.GetControls().OfType<IBindingEditorControl>().ToList();
-                foreach (Match match in Regex.Matches(editor.Dataset.Update, "(?<!:):([a-zA-Z_]+)"))
+            using (var conn = Db.OpenConnection())
+            {
+                using (var transaction = conn.BeginTransaction())
                 {
-                    string prop = match.Groups[1].Value;
-                    if (prop == "id")
+                    try
                     {
-                        query.SetGuid("id", current);
-                        continue;
+                        command.Editor.Update(conn, transaction, editorData);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        ExceptionHelper.MesssageBox(e);
                     }
 
-                    var c = controls.FirstOrDefault(x => x.DataField == prop);
-                    if (c == null)
-                    {
-                        if (prop == "parent_id")
-                            Db.SetQueryParameter(query, prop, parent, parent.GetType());
-                        else if (prop == "owner_id")
-                            Db.SetQueryParameter(query, prop, owner, owner.GetType());
-                        else
-                            throw new Exception($"В запросе '{editor.Dataset.Update}' присутствует поле {prop} значение для которого не установлено.");
-                    }
-                    else
-                    {
-                        Db.SetQueryParameter(query, prop, c.Value, c.ValueType);
-                    }
-                }
-
-                try
-                {
-                    query.ExecuteUpdate();
-                    transaction.Commit();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    ExceptionHelper.MesssageBox(ex);
                 }
             }
 
@@ -684,31 +470,23 @@ namespace DocumentFlow
         {
             if (gridDocuments.CurrentItem is DocumentRefs refs)
             {
-                var result = refEditor.Edit(refs);
-                using (var transaction = Session.BeginTransaction())
+                if (refEditor.Edit(refs))
                 {
-                    try
+                    using (var conn = Db.OpenConnection())
                     {
-
-                        switch (result)
+                        using (var transaction = conn.BeginTransaction())
                         {
-                            case DocumentRefEditor.EditingResult.Ok:
-                                Session.SaveOrUpdate(refs);
+                            try
+                            {
+                                conn.Query("update document_refs set file_name = :file_name, note = :note, crc = :crc where id = :id", refs, transaction);
                                 transaction.Commit();
-                                break;
-                            case DocumentRefEditor.EditingResult.RemovalRequired:
-                                Session.Delete(refs);
-                                transaction.Commit();
-                                documents.Remove(refs);
-                                break;
-                            default:
-                                break;
+                            }
+                            catch (Exception e)
+                            {
+                                transaction.Rollback();
+                                ExceptionHelper.MesssageBox(e);
+                            }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        ExceptionHelper.MesssageBox(e);
                     }
                 }
 
@@ -733,97 +511,98 @@ namespace DocumentFlow
 
         private void CreateChildDataGrids()
         {
-            if (editor?.Childs == null)
-                return;
-
-            foreach (ChildViewerData child in editor.Childs)
+            using (var conn = Db.OpenConnection())
             {
-                Command command = Session.QueryOver<Command>().Where(x => x.Code == child.Name).SingleOrDefault();
-                if (command == null)
-                    continue;
+                documents = new System.ComponentModel.BindingList<DocumentRefs>(
+                    conn.Query<DocumentRefs>("select * from document_refs where owner_id = :owner_id", new { owner_id = current }).ToList()
+                    );
 
-                if (!string.IsNullOrEmpty(child.Visible))
-                {
-                    IGenericExpression<bool> expression = context.CompileGeneric<bool>(child.Visible);
-                    if (!expression.Evaluate())
-                        continue;
-                }
-
-                ContentViewer viewer = new ContentViewer(commands, command, current)
-                {
-                    Dock = DockStyle.Fill
-                };
-
-                TabSplitterPage page = new TabSplitterPage
-                {
-                    Text = command.Name
-                };
-
-                childs.Add(viewer);
-                page.Controls.Add(viewer);
-
-                tabSplitterContainer1.SecondaryPages.Insert(tabSplitterContainer1.SecondaryPages.Count - 2, page);
-                tabSplitterContainer1.SecondaryPages.SelectedIndex = 0;
+                gridDocuments.DataSource = documents;
             }
         }
 
-        /// <summary>
-        /// Процедура обновляет текущую страницу: производится запрос к БД, обновляются поля данных и панель кнопок. Если createControls = true,
-        /// то после чтения данных из БД, создаются элементы управления.
-        /// </summary>
-        /// <param name="createControls">true, создать элементы управления</param>
-        private void RefreshPage(bool createControls)
+        private void RefreshPage()
+        {
+            ReadDataEntity();
+            SuspendLayout();
+            try
+            {
+                UpdateCurrentStatusInfo();
+                PopulateControls();
+                CreateActionButtons();
+            }
+            finally
+            {
+                ResumeLayout();
+                PerformLayout();
+            }
+
+            CreateChildDataGrids();
+        }
+
+        private void CreatePageControls()
         {
             ReadDataEntity();
 
-            if (createControls)
+            creatingPage = true;
+            tabSplitterMaster.SuspendLayout();
+            try
             {
-                UnbindEvents();
-                foreach (IEditorControl ec in editor.Controls)
+                editorData = new EditorData(controlContainer, ownerBrowser, parameters)
                 {
-                    ec.CreateControl(Session, tabSplitterMaster, context);
-                }
+                    Entity = entity
+                };
+                command.Editor.Initialize(editorData, this);
+                UpdateCurrentStatusInfo();
+                PopulateControls();
+                CreateActionButtons();
             }
-
-            UpdateCurrentStatusInfo();
-            CreateActionButtons();
-            PopulateControls();
-            //UpdatePrintItems();
-
-            if (createControls)
+            finally
             {
-                BindEvents();
+                tabSplitterMaster.ResumeLayout();
+                tabSplitterMaster.PerformLayout();
+                creatingPage = false;
             }
+
+            CreateChildDataGrids();
         }
 
-        private void buttonSave_Click(object sender, EventArgs e) => UpdateEntity();
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            UpdateEntity();
+            UpdateCurrentStatusInfo();
+        }
 
         private void buttonSaveAndClose_Click(object sender, EventArgs e)
         {
-            if (UpdateEntity())
-            {
-                ((TabPageAdv)Parent).Close();
-            }
+            UpdateEntity();
+            Close();
         }
 
         private void buttonCreate_Click(object sender, EventArgs e)
         {
             DocumentRefs refs = refEditor.Create(current);
             if (refs == null)
-                return;
-
-            using (var transaction = Session.BeginTransaction())
             {
-                try
+                return;
+            }
+
+            using (var conn = Db.OpenConnection())
+            {
+                using (var transaction = conn.BeginTransaction())
                 {
-                    Session.SaveOrUpdate(refs);
-                    transaction.Commit();
-                    documents.Add(refs);
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    ExceptionHelper.MesssageBox(ex);
+                    try
+                    {
+                        conn.Query("insert into document_refs (owner_id, file_name, note, crc) values (:owner_id, :file_name, :note, :crc)", refs, transaction);
+                        transaction.Commit();
+
+                        documents.Add(refs);
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        ExceptionHelper.MesssageBox(ex);
+                    }
                 }
             }
         }
@@ -837,60 +616,22 @@ namespace DocumentFlow
                 if (MessageBox.Show($"Вы действительно хотите удалить файл?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     refEditor.Delete(refs);
-
-                    using (var transaction = Session.BeginTransaction())
-                    {
-                        try
-                        {
-                            Session.Delete(refs);
-                            transaction.Commit();
-                            documents.Remove(refs);
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            ExceptionHelper.MesssageBox(ex);
-                        }
-                    }
                 }
             }
         }
 
         private void buttonOpenFolder_Click(object sender, EventArgs e)
         {
-            if (System.IO.Directory.Exists(destLocalPath))
-            {
-                Process.Start(destLocalPath);
-            }
+            Process.Start($"ftp://{Settings.Default.FtpHost}{ftpPath}");
         }
 
         private void buttonOpenFile_Click(object sender, EventArgs e)
         {
             if (gridDocuments.CurrentItem is DocumentRefs refs)
             {
-                using (var transaction = Session.BeginTransaction())
+                if (refEditor.GetLocalFileName(refs, out string file))
                 {
-                    try
-                    {
-                        switch (refEditor.GetLocalFileName(refs, out string file))
-                        {
-                            case DocumentRefEditor.EditingResult.Ok:
-                                Session.SaveOrUpdate(refs);
-                                transaction.Commit();
-                                Process.Start(file);
-                                break;
-                            case DocumentRefEditor.EditingResult.RemovalRequired:
-                                Session.Delete(refs);
-                                transaction.Commit();
-                                documents.Remove(refs);
-                                break;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        ExceptionHelper.MesssageBox(ex);
-                    }
+                    Process.Start(file);
                 }
             }
         }
@@ -901,7 +642,7 @@ namespace DocumentFlow
 
         private void buttonScanLandscape_Click(object sender, EventArgs e) => SaveDocument(WIAScanner.Scan(true));
 
-        private void buttonRefresh_Click(object sender, EventArgs e) => RefreshPage(false);
+        private void buttonRefresh_Click(object sender, EventArgs e) => RefreshPage();
 
         private void timerDatabaseListen_Tick(object sender, EventArgs e)
         {
@@ -911,10 +652,10 @@ namespace DocumentFlow
                 switch (message.Action)
                 {
                     case "refresh":
-                        RefreshPage(false);
+                        RefreshPage();
                         break;
                     case "delete":
-                        ((TabPageAdv)Parent).Close();
+                        Close();
                         break;
                     default:
                         break;
@@ -925,7 +666,7 @@ namespace DocumentFlow
 
         private void buttonStatus_Click(object sender, EventArgs e)
         {
-            HistoryWindow win = new HistoryWindow(Session, current);
+            HistoryWindow win = new HistoryWindow(current);
             win.ShowDialog();
         }
 
@@ -933,8 +674,13 @@ namespace DocumentFlow
         {
             if (sender is ToolStripItem item && item.Tag is PrintForm form)
             {
-                Printer.Preview(form, Session, row);
+                Printer.Preview(form, entity);
             }
+        }
+
+        private void buttonCustomization_Click(object sender, EventArgs e)
+        {
+            commandFactory.Execute("open-browser-code", command);
         }
     }
 }

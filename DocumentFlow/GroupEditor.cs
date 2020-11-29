@@ -6,26 +6,25 @@
 // Time: 21:00
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using Dapper;
+using DocumentFlow.Core;
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow
 {
-    using System;
-    using System.Windows.Forms;
-    using NHibernate;
-    using NHibernate.Transform;
-    using Syncfusion.Windows.Forms;
-    using DocumentFlow.Core;
-    using DocumentFlow.Data.Core;
-
     public enum CommandAction { Create, Edit }
 
-    public partial class GroupEditor : MetroForm
+    public partial class GroupEditor : Form
     {
         private readonly string table;
         private Guid? id;
         private Guid entityKindId;
         private CommandAction action;
         
-
         private class Group
         {
             public string Code { get; set; }
@@ -54,12 +53,10 @@ namespace DocumentFlow
 
             action = CommandAction.Edit;
             id = groupId;
-            using (var session = Db.OpenSession())
+            using (var conn = Db.OpenConnection())
             {
-                Group g = session.CreateSQLQuery($"select code, name from {table} where id = :id")
-                    .SetGuid("id", groupId)
-                    .SetResultTransformer(Transformers.AliasToBean<Group>())
-                    .UniqueResult<Group>();
+                string sql = $"select code, name from {table} where id =:id";
+                Group g = conn.Query<Group>(sql, new { id = groupId }).SingleOrDefault();
 
                 if (g == null)
                     return false;
@@ -73,25 +70,22 @@ namespace DocumentFlow
 
         private void DoCommit()
         {
-            using (var session = Db.OpenSession())
+            using (var conn = Db.OpenConnection())
             {
-                using (var transaction = session.BeginTransaction())
+                using (var transaction = conn.BeginTransaction())
                 {
-                    IQuery query = null;
+                    string sql = null;
+                    DynamicParameters parameters = null;
+
                     switch (action)
                     {
                         case CommandAction.Create:
-                            query = session.CreateSQLQuery($"insert into {table} (status_id, entity_kind_id, code, name, parent_id) values (500, :kind, :code, :name, :parent)")
-                                .SetGuid("kind", entityKindId)
-                                .SetString("code", textCode.Text)
-                                .SetString("name", textName.Text)
-                                .SetParameter("parent", id);
+                            sql = $"insert into {table} (status_id, entity_kind_id, code, name, parent_id) values (500, :kind, :code, :name, :parent)";
+                            parameters = new DynamicParameters(new { kind = entityKindId, code = textCode.Text, name = textName.Text, parent = id });
                             break;
                         case CommandAction.Edit:
-                            query = session.CreateSQLQuery($"update {table} set code = :code, name = :name where id = :id")
-                                .SetString("code", textCode.Text)
-                                .SetString("name", textName.Text)
-                                .SetGuid("id", id.Value);
+                            sql = $"update {table} set code = :code, name = :name where id = :id";
+                            parameters = new DynamicParameters(new { code = textCode.Text, name = textName.Text, id });
                             break;
                         default:
                             break;
@@ -99,7 +93,7 @@ namespace DocumentFlow
 
                     try
                     {
-                        query.ExecuteUpdate();
+                        conn.Execute(sql, parameters, transaction);
                         transaction.Commit();
                     }
                     catch (Exception e)

@@ -6,20 +6,16 @@
 // Time: 15:30
 //-----------------------------------------------------------------------
 
+using System;
+using System.Windows.Forms;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Core;
+
 namespace DocumentFlow
 {
-    using System;
-    using System.Windows.Forms;
-    using Syncfusion.Windows.Forms;
-    using DocumentFlow.Core;
-    using DocumentFlow.DataSchema;
-
-    public partial class SelectDateRangeWindow : MetroForm
+    public partial class SelectDateRangeWindow : Form
     {
         private int year;
-
-        public DateTime DateFrom { get; set; }
-        public DateTime DateTo { get; set; }
 
         public SelectDateRangeWindow()
         {
@@ -28,6 +24,10 @@ namespace DocumentFlow
             year = DateTime.Today.Year;
             labelYear.Text = $"{year} год";
         }
+
+        public DateTime DateFrom { get; set; }
+
+        public DateTime DateTo { get; set; }
 
         private void SelectMonth(object sender, EventArgs e)
         {
@@ -55,21 +55,21 @@ namespace DocumentFlow
         private void buttonYear_Click(object sender, EventArgs e)
         {
             DateFrom = new DateTime(year, 1, 1);
-            DateTo = new DateTime(year, 12, 31);
+            DateTo = new DateTime(year, 12, 31, 23, 59, 59);
             DialogResult = DialogResult.OK;
         }
 
         private void button9Months_Click(object sender, EventArgs e)
         {
             DateFrom = new DateTime(year, 1, 1);
-            DateTo = new DateTime(year, 9, 30);
+            DateTo = new DateTime(year, 9, 30, 23, 59, 59);
             DialogResult = DialogResult.OK;
         }
 
         private void buttonHalfYear_Click(object sender, EventArgs e)
         {
             DateFrom = new DateTime(year, 1, 1);
-            DateTo = new DateTime(year, 6, 30);
+            DateTo = new DateTime(year, 6, 30, 23, 59, 59);
             DialogResult = DialogResult.OK;
         }
 
@@ -95,6 +95,14 @@ namespace DocumentFlow
         private void buttonNextYear_Click(object sender, EventArgs e)
         {
             labelYear.Text = $"{++year} год";
+        }
+
+        private void SelectDateRangeWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                DialogResult = DialogResult.Cancel;
+            }
         }
     }
 }

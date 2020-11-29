@@ -6,24 +6,24 @@
 // Time: 14:53
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+#if DEBUG
+using System.IO;
+#endif
+using System.Linq;
+using System.Windows.Forms;
+using Dapper;
+using Npgsql;
+using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Entities;
+using DocumentFlow.Authorization.Properties;
+
 namespace DocumentFlow.Authorization
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Configuration;
-#if DEBUG
-    using System.IO;
-#endif
-    using System.Linq;
-    using System.Windows.Forms;
-    using NHibernate;
-    using Npgsql;
-    using Syncfusion.Windows.Forms;
-    using DocumentFlow.Data.Core;
-    using DocumentFlow.Data.Entities;
-    using DocumentFlow.Authorization.Properties;
-
-    public partial class LoginForm : MetroForm
+    public partial class LoginForm : Form
     {
         private Form mainWindow;
         private readonly Type windowType;
@@ -32,13 +32,6 @@ namespace DocumentFlow.Authorization
         {
             InitializeComponent();
 
-            GetConnectionStrings();
-
-            windowType = type;
-        }
-
-        private void GetConnectionStrings()
-        {
             if (string.IsNullOrEmpty(Settings.Default.LastConnectedDatabase))
             {
                 Settings.Default.Upgrade();
@@ -55,6 +48,8 @@ namespace DocumentFlow.Authorization
 
                 comboDatabase.SelectedItem = Settings.Default.LastConnectedDatabase;
             }
+
+            windowType = type;
         }
 
         private void ButtonLogin_Click(object sender, EventArgs e)
@@ -71,7 +66,7 @@ namespace DocumentFlow.Authorization
                 return;
             }
 
-            string userName = comboUsers.SelectedItem is UserAlias c ? c.PgName : comboUsers.Text;
+            string userName = comboUsers.SelectedItem is UserAlias c ? c.pg_name : comboUsers.Text;
 
             Settings.Default.PreviousUser = userName;
             Settings.Default.LastConnectedDatabase = comboDatabase.SelectedItem.ToString();
@@ -80,14 +75,9 @@ namespace DocumentFlow.Authorization
             {
                 try
                 {
-                    using (var session = Db.OpenSession(comboDatabase.SelectedItem.ToString(), userName, textPassword.Text))
+                    using (var connection = Db.OpenConnection(comboDatabase.SelectedItem.ToString(), userName, textPassword.Text))
                     {
-                        using (var transaction = session.BeginTransaction())
-                        {
-                            IQuery query = session.CreateSQLQuery("select login()");
-                            query.ExecuteUpdate();
-                            transaction.Commit();
-                        }
+                        connection.Execute("login", commandType: CommandType.StoredProcedure);
                     }
                 }
                 catch (PostgresException ex)
@@ -98,7 +88,7 @@ namespace DocumentFlow.Authorization
                         return;
                     }
                     else
-                        throw ex;
+                        throw;
                 }
 
                 Settings.Default.Save();
@@ -124,22 +114,23 @@ namespace DocumentFlow.Authorization
             if (comboDatabase.SelectedItem == null)
                 return;
 
-            using (var session = Db.OpenSession(comboDatabase.SelectedItem.ToString(), "guest", "guest"))
+            using (var connection = Db.OpenGuestConnection(comboDatabase.SelectedItem.ToString()))
             {
-                using (var transaction = session.BeginTransaction())
-                {
+                List<UserAlias> users;
 #if DEBUG
-                    comboUsers.DataSource = session.QueryOver<UserAlias>().Where(u => !u.IsSystem || u.PgName == "postgres").OrderBy(u => u.Name).Asc.List();
+                string sql = "select * from user_alias where not is_system or pg_name = 'postgres' order by name";
 #else
-                    comboUsers.DataSource = session.QueryOver<UserAlias>().Where(u => !u.IsSystem).OrderBy(u => u.Name).Asc.List();
+                string sql = "select* from user_alias where not is_system order by name";
 #endif
-                }
+
+                users = connection.Query<UserAlias>(sql).ToList();
+                comboUsers.DataSource = users;
 
 #if DEBUG
-                comboUsers.SelectedItem = (comboUsers.DataSource as List<UserAlias>).FirstOrDefault(u => u.PgName == "postgres");
+                comboUsers.SelectedItem = users.FirstOrDefault(u => u.pg_name == "postgres");
                 textPassword.Text = File.ReadLines("password.txt").First();
 #else
-                comboUsers.SelectedItem = (comboUsers.DataSource as List<UserAlias>).FirstOrDefault(u => u.Name == Settings.Default.PreviousUser);
+                comboUsers.SelectedItem = users.FirstOrDefault(u => u.name == Settings.Default.PreviousUser);
 #endif
             }
         }

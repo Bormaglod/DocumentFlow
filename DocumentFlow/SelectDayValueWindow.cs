@@ -6,15 +6,14 @@
 // Time: 16:40
 //-----------------------------------------------------------------------
 
+using System;
+using System.Windows.Forms;
+using Syncfusion.WinForms.Input;
+using Syncfusion.WinForms.Input.Events;
+
 namespace DocumentFlow
 {
-    using System;
-    using System.Windows.Forms;
-    using Syncfusion.WinForms.Input;
-    using Syncfusion.Windows.Forms;
-    using Syncfusion.WinForms.Input.Events;
-
-    public partial class SelectDayValueWindow : MetroForm
+    public partial class SelectDayValueWindow : Form
     {
         public SelectDayValueWindow()
         {
@@ -26,6 +25,14 @@ namespace DocumentFlow
         private void sfCalendar1_SelectionChanging(SfCalendar sender, SelectionChangingEventArgs e)
         {
             DialogResult = DialogResult.OK;
+        }
+
+        private void SelectDayValueWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                DialogResult = DialogResult.Cancel;
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace DocumentFlow.Controls
+﻿namespace DocumentFlow.Controls.Editor
 {
     partial class L_DataGrid
     {
@@ -58,6 +58,11 @@
             this.gridMain.NavigationMode = Syncfusion.WinForms.DataGrid.Enums.NavigationMode.Row;
             this.gridMain.Size = new System.Drawing.Size(725, 264);
             this.gridMain.Style.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this.gridMain.Style.ProgressBarStyle.BackgroundStyle = Syncfusion.WinForms.DataGrid.Enums.GridProgressBarStyle.None;
+            this.gridMain.Style.ProgressBarStyle.ForegroundStyle = Syncfusion.WinForms.DataGrid.Enums.GridProgressBarStyle.Tube;
+            this.gridMain.Style.ProgressBarStyle.ProgressTextColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.gridMain.Style.ProgressBarStyle.TubeForegroundEndColor = System.Drawing.Color.White;
+            this.gridMain.Style.ProgressBarStyle.TubeForegroundStartColor = System.Drawing.Color.SkyBlue;
             this.gridMain.TabIndex = 1;
             this.gridMain.CellDoubleClick += new Syncfusion.WinForms.DataGrid.Events.CellClickEventHandler(this.ExecuteDoubleClickCommand);
             // 

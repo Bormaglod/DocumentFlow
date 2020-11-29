@@ -8,16 +8,16 @@
 // https://stackoverflow.com/questions/5431202/using-a-scanner-without-dialogs-in-c-sharp#answers
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Drawing;
+using System.Windows.Forms;
+using Spire.Pdf;
+using Spire.Pdf.Graphics;
+
 namespace DocumentFlow.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Drawing;
-    using System.Windows.Forms;
-    using Spire.Pdf;
-    using Spire.Pdf.Graphics;
-
     public class WIAScanner
     {
         const string wiaFormatBMP = "{B96B3CAB-0728-11D3-9D7B-0000F81EF32E}";
@@ -145,9 +145,9 @@ namespace DocumentFlow.Core
                     // add file to output list
                     images.Add(Image.FromFile(fileName));
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
-                    throw exc;
+                    throw;
                 }
                 finally
                 {

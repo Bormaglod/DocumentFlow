@@ -6,10 +6,10 @@
 // Time: 10:15
 //-----------------------------------------------------------------------
 
+using System.Drawing;
+
 namespace DocumentFlow.Core
 {
-    using System.Drawing;
-
     public enum GraphicsUnit { Inch, Centimeter, Display, Point }
 
     public static class UnitConverter

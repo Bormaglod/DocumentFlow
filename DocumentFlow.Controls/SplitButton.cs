@@ -6,14 +6,14 @@
 // Time: 11:02
 //-----------------------------------------------------------------------
 
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using DocumentFlow.Core;
+
 namespace DocumentFlow.Controls
 {
-    using System;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Windows.Forms;
-    using DocumentFlow.Core;
-
     public class SplitButton : Control
     {
         private bool clicked = false;

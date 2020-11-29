@@ -6,33 +6,32 @@
 // Time: 23:15
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Controls
-{
-    using System;
-    using System.Drawing;
-    using System.Windows.Forms;
-    using DocumentFlow.DataSchema;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using DocumentFlow.Code;
+using DocumentFlow.Core;
 
-    public partial class L_TextBox : UserControl, ILabeled, ISized
+namespace DocumentFlow.Controls.Editor
+{
+    public partial class L_TextBox : UserControl, ILabelControl, IEditControl
     {
         public L_TextBox()
         {
             InitializeComponent();
         }
 
-        new public event EventHandler TextChanged;
+        public event EventHandler ValueChanged;
 
-        string ILabeled.Text { get => label1.Text; set => label1.Text = value; }
+        string ILabelControl.Text { get => label1.Text; set => label1.Text = value; }
 
-        int ILabeled.Width { get => label1.Width; set => label1.Width = value; }
+        int ILabelControl.Width { get => label1.Width; set => label1.Width = value; }
 
-        int ILabeled.EditWidth { get => textBoxExt.Width; set => textBoxExt.Width = value; }
+        bool ILabelControl.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
 
-        bool ILabeled.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
+        ContentAlignment ILabelControl.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
 
-        ContentAlignment ILabeled.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-        bool ILabeled.Visible
+        bool ILabelControl.Visible
         {
             get => label1.Visible;
             set
@@ -42,7 +41,22 @@ namespace DocumentFlow.Controls
             }
         }
 
-        void ISized.SetFullSize() => textBoxExt.Dock = DockStyle.Fill;
+        int IEditControl.Width { get => textBoxExt.Width; set => textBoxExt.Width = value; }
+
+        object IEditControl.Value 
+        {
+            get => textBoxExt.Text.NullIfEmpty();
+            set
+            {
+                textBoxExt.Text = value == null ? string.Empty : value.ToString();
+            }
+        }
+
+        bool IEditControl.FitToSize 
+        {
+            get => textBoxExt.Dock == DockStyle.Fill;
+            set => textBoxExt.Dock = DockStyle.Fill; 
+        }
 
         public bool Multiline { get => textBoxExt.Multiline; set => textBoxExt.Multiline = value; }
 
@@ -50,8 +64,7 @@ namespace DocumentFlow.Controls
 
         private void TextBoxExt_TextChanged(object sender, EventArgs e)
         {
-            if (TextChanged != null)
-                TextChanged.Invoke(this, e);
+            ValueChanged?.Invoke(this, e);
         }
     }
 }

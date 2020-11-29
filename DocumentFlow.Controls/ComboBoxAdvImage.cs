@@ -6,13 +6,13 @@
 // Time: 14:32
 //-----------------------------------------------------------------------
 
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using Syncfusion.Windows.Forms.Tools;
+
 namespace DocumentFlow.Controls
 {
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Windows.Forms;
-    using Syncfusion.Windows.Forms.Tools;
-
     public class ComboBoxAdvImage : ComboBoxAdv
     {
         private Image imageNear;

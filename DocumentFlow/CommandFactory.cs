@@ -6,67 +6,122 @@
 // Time: 18:23
 //-----------------------------------------------------------------------
 
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using Dapper;
+using DocumentFlow.Core.Exceptions;
+using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Entities;
+using DocumentFlow.Code;
+using DocumentFlow.Code.Implementation;
+
 namespace DocumentFlow
 {
-    using System;
-    using System.Windows.Forms;
-    using NHibernate.Transform;
-    using DocumentFlow.Core;
-    using DocumentFlow.Data.Core;
-    using DocumentFlow.Data.Entities;
-    using DocumentFlow.DataSchema;
-    using System.Collections.Generic;
-    using Newtonsoft.Json;
-    using NHibernate;
-    using DocumentFlow.DataSchema.Types.Converters;
-    using DocumentFlow.DataSchema.Types.Core;
-
-    public struct EditorParams
-    {
-        public Guid Id;
-        public Guid? Parent;
-        public Guid? Owner;
-        public EntityKind Kind;
-        public DatasetEditor Editor;
-    }
-
     public class CommandFactory : ICommandFactory
     {
-        private class DocumentParameters
-        {
-            public Guid? owner_id { get; set; }
-            public Guid entity_kind_id { get; set; }
-            public string data_schema { get; set; }
-        }
-
         private readonly IContainerPage container;
+        private readonly IEnumerable<Command> commands;
 
         public CommandFactory(IContainerPage container)
         {
             this.container = container;
+
+            using (var conn = Db.OpenConnection())
+            {
+                string sql = "select * from command c left join picture p on (p.id = c.picture_id) left join entity_kind ek on (ek.id = c.entity_kind_id)";
+                commands = conn.Query<Command, Picture, EntityKind, Command>(sql, (command, picture, entity) =>
+                {
+                    command.Picture = picture;
+                    command.EntityKind = entity;
+                    return command;
+                });
+            }
+        }
+
+        IEnumerable<Command> ICommandFactory.Commands => commands;
+
+        void ICommandFactory.OpenDocument(Guid id)
+        {
+            IPage page = null;
+            if (id != Guid.Empty)
+            {
+                page = container.Get<ContentEditor>(id);
+            }
+
+            if (page != null)
+            {
+                container.Selected = page;
+            }
+            else
+            {
+                using (var conn = Db.OpenConnection())
+                {
+                    string sql = "select c.*, ek.* from command c join entity_kind ek on (ek.id = c.entity_kind_id) join document_info di on (ek.id = di.entity_kind_id and di.id = :id)";
+                    Command command = conn.Query<Command, EntityKind, Command>(sql, (cmd, entity_kind) =>
+                    {
+                        cmd.EntityKind = entity_kind;
+                        return cmd;
+                    }, new { id }).Single();
+
+                    string parent = conn.Query<string>("select get_root_parent(:table)", new { table = command.EntityKind.code }).Single();
+                    if (parent == "document")
+                    {
+                        sql = $"select owner_id, organization_id from {command.EntityKind.code} where id = :id";
+                    }
+                    else
+                    {
+                        sql = $"select owner_id, parent_id from {command.EntityKind.code} where id = :id";
+                    }
+
+                    var row = conn.QuerySingle(sql, new { id });
+
+                    BrowserParameters editorParams = new BrowserParameters()
+                    {
+                        ParentId = parent == "document" ? null : row.parent_id,
+                        OwnerId = row.owner_id,
+                        OrganizationId = parent == "directory" ? null : row.organization_id
+                    };
+
+                    try
+                    {
+                        ContentEditor e = new ContentEditor(container, null, this, id, command, editorParams);
+                        container.Add(e);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHelper.MesssageBox(e);
+                    }
+                }
+            }
         }
 
         void ICommandFactory.Execute(Command command, params object[] parameters)
         {
-            switch (command.Code)
+            switch (command.code)
             {
                 case "profile":
                     break;
                 case "add-record":
-                    CreateControlEditor((EditorParams)parameters[0]);
+                    CreateControlEditor(parameters);
                     break;
                 case "edit-record":
-                    CreateControlEditor((EditorParams)parameters[0]);
+                    CreateControlEditor(parameters);
                     break;
                 case "view-picture":
                 case "documents-schema":
                     CreateControlViewer(command);
                     break;
                 case "open-diagram":
-                    CreateDiagramViewer((Guid)parameters[0]);
+                    OpenDiagram(parameters);
                     break;
                 case "open-document":
-                    CreateControlEditor((List<(string, object)>)parameters[1]);
+                    OpenDocument(parameters);
+                    break;
+                case "open-browser-code":
+                    OpenCodeEditor(parameters);
                     break;
                 default:
                     string sql = @"with recursive r as 
@@ -77,12 +132,9 @@ namespace DocumentFlow
                         ) select id from r where id = :id";
 
                     bool createViewer = false;
-                    using (var session = Db.OpenSession())
+                    using (var conn = Db.OpenConnection())
                     {
-                        createViewer = session.CreateSQLQuery(sql)
-                            .SetResultTransformer(Transformers.AliasToEntityMap)
-                            .SetGuid("id", command.Id)
-                            .UniqueResult() != null;
+                        createViewer = conn.Query(sql, new { id = command.Id }).SingleOrDefault() != null;
                     }
 
                     if (createViewer)
@@ -96,103 +148,33 @@ namespace DocumentFlow
 
         void ICommandFactory.Execute(string command, params object[] parameters)
         {
-            using (var session = Db.OpenSession())
+            using (var conn = Db.OpenConnection())
             {
-                Command cmd = session.QueryOver<Command>().Where(x => x.Code == command).SingleOrDefault();
+                Command cmd = commands.SingleOrDefault(x => x.code == command);
                 if (cmd != null)
                 {
                     ((ICommandFactory)this).Execute(cmd, parameters);
                 }
-            }
-        }
-
-        private void CreateDiagramViewer(Guid transitionId)
-        {
-            IPage page = container.Get(transitionId);
-            if (page != null)
-            {
-                container.Selected = page;
-            }
-            else
-            {
-                DiagramViewer viewer = new DiagramViewer(transitionId);
-                container.Add(viewer);
+                else
+                {
+                    switch (command)
+                    {
+                        case "logout":
+                            container.Logout();
+                            break;
+                        case "about":
+                            container.About();
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
 
         private void CreateControlViewer(Command command)
         {
-            IPage page = container.Get(command.Id);
-            if (page != null)
-            {
-                container.Selected = page;
-            }
-            else
-            {
-                ContentViewer viewer = new ContentViewer(this, command, null);
-                container.Add(viewer);
-            }
-        }
-
-        private void CreateControlEditor(List<(string, object)> parameters)
-        {
-            if (parameters.Count == 0)
-            {
-                LogHelper.Logger.Error("Команда open-document: редактор не открыт. Не указан идентификатор документа.");
-                return;
-            }
-
-            if (parameters[0].Item2 is Guid id)
-            {
-                using (ISession session = Db.OpenSession())
-                {
-                    DocumentParameters doc = session.CreateSQLQuery("select d.owner_id, d.entity_kind_id, c.data_schema from document d join command c on (c.entity_kind_id = d.entity_kind_id) where d.id = :id")
-                        .SetGuid("id", id)
-                        .SetResultTransformer(Transformers.AliasToBean<DocumentParameters>())
-                        .UniqueResult<DocumentParameters>();
-
-                    try
-                    {
-                        DatasetSchema schema = JsonConvert.DeserializeObject<DatasetSchema>(doc.data_schema, new ControlConverter());
-                        EditorParams p = new EditorParams()
-                        {
-                            Id = id,
-                            Parent = null,
-                            Owner = doc.owner_id,
-                            Kind = session.Get<EntityKind>(doc.entity_kind_id),
-                            Editor = schema?.Editor
-                        };
-
-                        CreateControlEditor(p);
-                    }
-                    catch (UnknownTypeException e)
-                    {
-                        MessageBox.Show(e.Message, "Ошибка JSON-данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            }
-            else
-                LogHelper.Logger.Error("Команда open-document: редактор не открыт. Неверный идентификатор документа.");
-        }
-
-        private void CreateControlEditor(EditorParams parameters)
-        {
-            if (parameters.Kind == null)
-            {
-                LogHelper.Logger.Error("Редактор не активирован. Значение параметра kind равно null.");
-                return;
-            }
-
-            if (parameters.Editor == null)
-            {
-                LogHelper.Logger.Error("Редактор не активирован. Значение параметра editor равно null.");
-                return;
-            }
-
-            IPage page = null;
-            if (parameters.Id != Guid.Empty)
-                page = container.Get(parameters.Id);
-
+            IPage page = container.Get<ContentViewer>(command.Id);
             if (page != null)
             {
                 container.Selected = page;
@@ -201,12 +183,211 @@ namespace DocumentFlow
             {
                 try
                 {
-                    ContentEditor e = new ContentEditor(this, parameters);
-                    container.Add(e);
+                    ContentViewer viewer = new ContentViewer(container, this, command);
+                    container.Add(viewer);
                 }
-                catch (Exception e)
+                catch (AggregateException e)
                 {
-                    ExceptionHelper.MesssageBox(e);
+                    e.Handle((x) =>
+                    {
+                        if (x is CompilerException xe)
+                        {
+                            if (MessageBox.Show("Код содержащий описание окна содержит ошибки, поэтому окно не может быть создано. Вы хотите исправить ошибки?", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
+                            {
+                                OpenCodeEditor(command, xe.Errors);
+                            }
+
+                            return true;
+                        }
+
+                        if (x is EmptyCodeException xc)
+                        {
+                            if (MessageBox.Show($"{xc.Message}\nОткрыть окно для создания кода?", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
+                            {
+                                OpenCodeEditor(command);
+                            }
+
+                            return true;
+                        }
+
+                        return false;
+                    });
+                }
+                catch (SqlExecuteException e)
+                {
+                    if (MessageBox.Show($"{ExceptionHelper.Message(e)}\nОткрыть окно для создания кода?", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
+                    {
+                        OpenCodeEditor(command);
+                    }
+                }
+            }
+        }
+
+        private void OpenDiagram(Guid id)
+        {
+            IPage page = container.Get<DiagramViewer>(id);
+            if (page != null)
+            {
+                container.Selected = page;
+            }
+            else
+            {
+                DiagramViewer viewer = new DiagramViewer(container, id);
+                container.Add(viewer);
+            }
+        }
+
+        private void OpenDiagram(params object[] parameters)
+        {
+            if (parameters.Length != 1)
+            {
+                return;
+            }
+
+            if (parameters[0] is Dictionary<string, object> parameterValues)
+            {
+                if (!parameterValues.ContainsKey("id"))
+                {
+                    throw new ArgumentException("Ожидался параметр id", "id");
+                }
+
+                if (parameterValues["id"] is Guid id)
+                {
+                    OpenDiagram(id);
+                }
+                else
+                    throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
+            }
+            else if (parameters[0] is Guid id)
+            {
+                OpenDiagram(id);
+            }
+            else
+                throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
+        }
+
+        private void OpenDocument(params object[] parameters)
+        {
+            if (parameters.Length != 1)
+            {
+                return;
+            }
+
+            ICommandFactory factory = this;
+            if (parameters[0] is Dictionary<string, object> parameterValues)
+            {
+                if (!parameterValues.ContainsKey("id"))
+                {
+                    throw new ArgumentException("Ожидался параметр id", "id");
+                }
+
+                if (parameterValues["id"] is Guid id)
+                {
+                    factory.OpenDocument(id);
+                }
+                else
+                    throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
+            }
+            else if (parameters[0] is Guid id)
+            {
+                factory.OpenDocument(id);
+            }
+            else
+                throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
+        }
+
+        private void CreateControlEditor(params object[] parameters)
+        {
+            if (parameters.Length != 4)
+            {
+                return;
+            }
+
+            if (parameters[0] is IBrowser browser && parameters[1] is Guid id && parameters[2] is Command command && parameters[3] is IBrowserParameters editorParams)
+            {
+                IPage page = null;
+                if (id != Guid.Empty)
+                {
+                    page = container.Get<ContentEditor>(id);
+                }
+
+                if (page != null)
+                {
+                    container.Selected = page;
+                }
+                else
+                {
+                    try
+                    {
+                        ContentEditor e = new ContentEditor(container, browser, this, id, command, editorParams);
+                        container.Add(e);
+                    }
+                    catch (Exception e)
+                    {
+                        if (MessageBox.Show($"{ExceptionHelper.Message(e)}\nОткрыть окно для создания кода?", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
+                        {
+                            OpenCodeEditor(command);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void OpenCodeEditor(params object[] parameters)
+        {
+            if (parameters.Length == 0)
+            {
+                return;
+            }
+
+            Command command = null;
+            if (parameters[0] is Command cmd)
+            {
+                command = cmd;
+            }
+            else if (parameters[0] is Guid id)
+            {
+                using (var conn = Db.OpenConnection())
+                {
+                    command = conn.QuerySingle<Command>("select * from command where id = :id", new { id });
+                }
+            }
+            else if (parameters[0] is Dictionary<string, object> parameterValues)
+            {
+                if (!parameterValues.ContainsKey("id"))
+                {
+                    throw new ArgumentException("Ожидался параметр id", "id");
+                }
+
+                if (parameterValues["id"] is Guid pid)
+                {
+                    using (var conn = Db.OpenConnection())
+                    {
+                        command = conn.QuerySingle<Command>("select * from command where id = :id", new { id = pid });
+                    }
+                }
+                else
+                    throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
+            }
+            else
+                throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
+
+            if (command != null)
+            {
+                IPage page = container.Get<CodeEditor>(command.Id);
+                if (page != null)
+                {
+                    container.Selected = page;
+                }
+                else
+                {
+                    page = new CodeEditor(container, command);
+                    container.Add(page);
+                }
+
+                if (parameters.Length > 1 && parameters[1] is CompilerErrorCollection errors)
+                {
+                    (page as CodeEditor).ShowErrors(errors);
                 }
             }
         }

@@ -6,61 +6,37 @@
 // Time: 18:35
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Controls
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using DocumentFlow.Code;
+using DocumentFlow.Controls.Editor.Forms;
+
+namespace DocumentFlow.Controls.Editor
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.IO;
-    using System.Linq;
-    using System.Windows.Forms;
-    using Syncfusion.Windows.Forms.Tools;
-    using DocumentFlow.Controls.Forms;
-    using DocumentFlow.DataSchema;
-
-    public enum SelectView { Tree, List, Folder, File }
-
-    public partial class L_SelectBox : UserControl, ILabeled, ISized
+    public partial class L_SelectBox : UserControl, ILabelControl, IEditControl
     {
-        private object selectedItem;
-        private readonly List<(object item, object parent, bool folder)> items;
+        private readonly List<IIdentifier> items = new List<IIdentifier>();
+        private IIdentifier selectedItem;
 
         public L_SelectBox()
         {
             InitializeComponent();
-            items = new List<(object, object, bool)>();
         }
 
-        public event EventHandler<SelectBoxValueChanged> ValueChanged;
+        public event EventHandler ValueChanged;
 
-        public SelectView SelectView { get; set; }
+        string ILabelControl.Text { get => label1.Text; set => label1.Text = value; }
 
-        string ILabeled.Text { get => LabelText; set => LabelText = value; }
+        int ILabelControl.Width { get => label1.Width; set => label1.Width = value; }
 
-        int ILabeled.Width { get => LabelWidth; set => LabelWidth = value; }
+        bool ILabelControl.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
 
-        int ILabeled.EditWidth { get => EditControlWidth; set => EditControlWidth = value; }
+        ContentAlignment ILabelControl.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
 
-        bool ILabeled.AutoSize { get => AutoSizeLabel; set => AutoSizeLabel = value; }
-
-        ContentAlignment ILabeled.TextAlign { get => TextAlign; set => TextAlign = value; }
-
-        bool ILabeled.Visible { get => ShowLabel; set => ShowLabel = value; }
-
-        void ISized.SetFullSize() => panelEdit.Dock = DockStyle.Fill;
-
-        public string LabelText { get => label1.Text; set => label1.Text = value; }
-
-        public int LabelWidth { get => label1.Width; set => label1.Width = value; }
-
-        public int EditControlWidth { get => panelEdit.Width; set => panelEdit.Width = value; }
-
-        public bool AutoSizeLabel { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-        public ContentAlignment TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-        public bool ShowLabel
+        bool ILabelControl.Visible
         {
             get => label1.Visible;
             set
@@ -70,108 +46,68 @@ namespace DocumentFlow.Controls
             }
         }
 
-        public object SelectedItem
-        {
-            get => selectedItem;
+        int IEditControl.Width { get => panelEdit.Width; set => panelEdit.Width = value; }
 
+        object IEditControl.Value
+        {
+            get => selectedItem?.id;
             set
             {
-                if (selectedItem != value)
+                if (value is Guid id)
                 {
-                    selectedItem = value;
-                    if (selectedItem == null)
-                        textValue.Text = string.Empty;
-                    else
-                    {
-                        switch (SelectView)
-                        {
-                            case SelectView.Tree:
-                                textValue.Text = selectedItem.ToString();
-                                break;
-                            case SelectView.Folder:
-                                textValue.Text = selectedItem.ToString();
-                                break;
-                            case SelectView.File:
-                                textValue.Text = Path.GetFileName(selectedItem.ToString());
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
-                    OnValueChanged(selectedItem);
+                    selectedItem = items.FirstOrDefault(x => x.id == id);
+                    textValue.Text = selectedItem?.ToString();
+                    OnValueChanged();
+                    return;
                 }
+
+                ClearCurrent();
             }
         }
 
-        public IEnumerable Items => items.ConvertAll(x => x.item);
+        bool IEditControl.FitToSize
+        {
+            get => panelEdit.Dock == DockStyle.Fill;
+            set => panelEdit.Dock = DockStyle.Fill;
+        }
 
-        public void Clear()
+        public bool ShowOnlyFolder { get; set; }
+
+        public void ClearCurrent()
+        {
+            textValue.Text = string.Empty;
+            selectedItem = null;
+
+            OnValueChanged();
+        }
+
+        public void AddItems(IEnumerable<IIdentifier> addingItems)
         {
             items.Clear();
+            items.AddRange(addingItems);
         }
 
-        public void AddItem(object item, object parent, bool IsFolder)
+        private void OnValueChanged()
         {
-            items.Add((item, parent, IsFolder));
-        }
-
-        private void AddItems(SelectBoxWindow window, TreeNodeAdv node, object parent)
-        {
-            foreach (var item in items.Where(x => x.parent == parent))
-            {
-                if (SelectView == SelectView.Folder && !item.folder)
-                    continue;
-
-                TreeNodeAdv n = window.AddItem(node, item.folder, item.item);
-                AddItems(window, n, item.item);
-            }
-        }
-
-        private void ShowWindow()
-        {
-            SelectBoxWindow window = new SelectBoxWindow(SelectView == SelectView.Folder);
-            AddItems(window, null, null);
-            window.ExpandAll();
-            window.SelectedItem = SelectedItem;
-            if (window.ShowDialog() == DialogResult.OK)
-            {
-                SelectedItem = window.SelectedItem;
-            }
-        }
-
-        private void OnValueChanged(object selectedItem)
-        {
-            if (ValueChanged != null)
-                ValueChanged.Invoke(this, new SelectBoxValueChanged(selectedItem));
+            ValueChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void ButtonDelete_Click(object sender, EventArgs e)
         {
-            SelectedItem = null;
-            OnValueChanged(SelectedItem);
+            ClearCurrent();
         }
 
         private void ButtonSelect_Click(object sender, EventArgs e)
         {
-            switch (SelectView)
+            SelectBoxWindow window = new SelectBoxWindow(ShowOnlyFolder);
+            window.AddItems(items);
+            window.SelectedItem = selectedItem;
+            if (window.ShowDialog() == DialogResult.OK)
             {
-                case SelectView.Tree:
-                    ShowWindow();
-                    break;
-                case SelectView.Folder:
-                    ShowWindow();
-                    break;
-                case SelectView.File:
-                    if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                    {
-                        SelectedItem = openFileDialog1.FileName;
-                        OnValueChanged(SelectedItem);
-                    }
+                selectedItem = window.SelectedItem;
+                textValue.Text = selectedItem.ToString();
 
-                    break;
-                default:
-                    break;
+                OnValueChanged();
             }
         }
     }

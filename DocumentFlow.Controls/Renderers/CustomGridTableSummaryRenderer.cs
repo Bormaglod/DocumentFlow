@@ -1,70 +1,66 @@
-﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
-// Contacts: <sergio.teplyashin@gmail.com>
-// License: https://opensource.org/licenses/GPL-3.0
-// Date: 26.04.2020
-// Time: 17:05
-//-----------------------------------------------------------------------
+﻿using System;
+using System.Drawing;
+using System.Globalization;
+using Syncfusion.WinForms.DataGrid;
+using Syncfusion.WinForms.DataGrid.Styles;
+using Syncfusion.WinForms.DataGrid.Renderers;
+using Syncfusion.WinForms.GridCommon.ScrollAxis;
+using Syncfusion.WinForms.Input.Enums;
+using DocumentFlow.Code;
 
 namespace DocumentFlow.Controls.Renderers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Globalization;
-    using System.Linq;
-    using System.Windows.Forms;
-    using Syncfusion.WinForms.DataGrid;
-    using Syncfusion.WinForms.DataGrid.Renderers;
-    using Syncfusion.WinForms.DataGrid.Styles;
-    using Syncfusion.WinForms.GridCommon.ScrollAxis;
-    using Syncfusion.WinForms.Input.Enums;
-    using DocumentFlow.DataSchema;
-
-    public class CustomGridTableSummaryRenderer : GridTableSummaryCellRenderer
+    public class CustomGridTableSummaryRenderer : GridSummaryCellRendererBase
     {
-        private readonly IList<DatasetColumn> columns;
+        private readonly IColumnCollection columns;
 
-        public CustomGridTableSummaryRenderer(IList<DatasetColumn> dataColumns)
+        public CustomGridTableSummaryRenderer(IColumnCollection columns)
         {
-            columns = dataColumns;
+            this.columns = columns;
         }
 
-        protected override void OnRender(Graphics paint, Rectangle cellRect, string cellValue, CellStyleInfo style, DataColumnBase column, RowColumnIndex rowColumnIndex)
+        protected override void OnRender(Graphics paint, Rectangle cellRect, string cellValue,
+            CellStyleInfo style, DataColumnBase column, RowColumnIndex rowColumnIndex)
         {
             if (string.IsNullOrEmpty(cellValue))
                 return;
 
-            DatasetColumn c = columns.FirstOrDefault(x => x.DataField == column.GridColumn.MappingName);
+            IColumn c = columns[column.GridColumn.MappingName];
             if (c == null)
                 return;
 
-            NumberFormatInfo format = new NumberFormatInfo
-            {
-                NumberDecimalDigits = c.DecimalDigits
-            };
+            NumberFormatInfo format = new NumberFormatInfo();
 
-
-            if (c.Type == DatasetColumnType.Integer || c.Type == DatasetColumnType.Numeric)
+            if (column.GridColumn is GridNumericColumn numericColumn)
             {
-                if (c.FormatMode == FormatMode.Percent)
+                format.NumberDecimalDigits = numericColumn.NumberFormatInfo.NumberDecimalDigits;
+                format.PercentDecimalDigits = numericColumn.NumberFormatInfo.PercentDecimalDigits;
+                format.NumberDecimalSeparator = numericColumn.NumberFormatInfo.NumberDecimalSeparator;
+                format.NumberGroupSeparator = numericColumn.NumberFormatInfo.NumberGroupSeparator;
+
+                if (numericColumn.FormatMode == FormatMode.Numeric)
                 {
-                    cellValue = Convert.ToDouble(decimal.Parse(cellValue)).ToString("N", format) + " %";
+                    cellValue = Convert.ToDouble(double.Parse(cellValue, NumberStyles.Number)).ToString("N", format);
                 }
+
+                StringFormat stringFormat = new StringFormat();
+                stringFormat.LineAlignment = StringAlignment.Center;
+
+                switch (numericColumn.CellStyle.HorizontalAlignment)
+                {
+                    case System.Windows.Forms.HorizontalAlignment.Left:
+                        stringFormat.Alignment = StringAlignment.Near;
+                        break;
+                    case System.Windows.Forms.HorizontalAlignment.Right:
+                        stringFormat.Alignment = StringAlignment.Far;
+                        break;
+                    case System.Windows.Forms.HorizontalAlignment.Center:
+                        stringFormat.Alignment = StringAlignment.Center;
+                        break;
+                }
+
+                paint.DrawString(cellValue, style.Font.GetFont(), Brushes.Black, cellRect, stringFormat);
             }
-
-            StringFormat stringFormat = new StringFormat
-            {
-                LineAlignment = StringAlignment.Center
-            };
-
-            if (c.HorizontalAlignment == HorizontalAlignment.Left)
-                stringFormat.Alignment = StringAlignment.Near;
-            else if (c.HorizontalAlignment == HorizontalAlignment.Center)
-                stringFormat.Alignment = StringAlignment.Center;
-            else if (c.HorizontalAlignment == HorizontalAlignment.Right)
-                stringFormat.Alignment = StringAlignment.Far;
-            paint.DrawString(cellValue, style.Font.GetFont(), Brushes.Black, new RectangleF(cellRect.Left + 3, cellRect.Top, cellRect.Width - 6, cellRect.Height), stringFormat);
         }
     }
 }

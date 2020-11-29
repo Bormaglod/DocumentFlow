@@ -6,13 +6,17 @@
 // Time: 22:51
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using DocumentFlow.Data.Entities;
+
 namespace DocumentFlow
 {
-    using DocumentFlow.Data.Entities;
-
     public interface ICommandFactory
     {
+        IEnumerable<Command> Commands { get; }
         void Execute(Command command, params object[] parameters);
         void Execute(string command, params object[] parameters);
+        void OpenDocument(Guid id);
     }
 }

@@ -32,7 +32,7 @@
             this.buttonOk = new Syncfusion.WinForms.Controls.SfButton();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.selectFile = new DocumentFlow.Controls.L_SelectBox();
+            this.selectFile = new DocumentFlow.Controls.Editor.L_FileSelectBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.textNote = new Syncfusion.Windows.Forms.Tools.TextBoxExt();
             this.label2 = new System.Windows.Forms.Label();
@@ -92,19 +92,16 @@
             // 
             this.selectFile.AutoSizeLabel = false;
             this.selectFile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.selectFile.EditControlWidth = 436;
+            this.selectFile.EditWidth = 436;
             this.selectFile.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.selectFile.LabelText = "Text";
             this.selectFile.LabelWidth = 117;
             this.selectFile.Location = new System.Drawing.Point(95, 10);
             this.selectFile.Name = "selectFile";
-            this.selectFile.SelectedItem = null;
-            this.selectFile.SelectView = DocumentFlow.Controls.SelectView.File;
             this.selectFile.ShowLabel = false;
             this.selectFile.Size = new System.Drawing.Size(436, 25);
             this.selectFile.TabIndex = 7;
             this.selectFile.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.selectFile.ValueChanged += new System.EventHandler<DocumentFlow.Controls.Forms.SelectBoxValueChanged>(this.SelectFile_ValueChanged);
             // 
             // panel2
             // 
@@ -174,7 +171,7 @@
         private Syncfusion.WinForms.Controls.SfButton buttonOk;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel1;
-        private Controls.L_SelectBox selectFile;
+        private Controls.Editor.L_FileSelectBox selectFile;
         private System.Windows.Forms.Panel panel2;
         private Syncfusion.Windows.Forms.Tools.TextBoxExt textNote;
         private System.Windows.Forms.Label label2;

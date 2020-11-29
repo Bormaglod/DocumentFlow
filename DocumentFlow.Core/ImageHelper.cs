@@ -6,12 +6,12 @@
 // Time: 19:55
 //-----------------------------------------------------------------------
 
+using System;
+using System.Drawing;
+using System.IO;
+
 namespace DocumentFlow.Core
 {
-    using System;
-    using System.Drawing;
-    using System.IO;
-
     public static class ImageHelper
     {
         public static Image Base64ToImage(string base64String)

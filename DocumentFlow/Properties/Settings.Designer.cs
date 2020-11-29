@@ -12,7 +12,7 @@ namespace DocumentFlow.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.6.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -32,33 +32,6 @@ namespace DocumentFlow.Properties {
             }
             set {
                 this["WindowState"] = value;
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Databases\\DocumentFlow")]
-        public string DocumentsFolder {
-            get {
-                return ((string)(this["DocumentsFolder"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("/apps/DocumentFlow Files")]
-        public string FtpPath {
-            get {
-                return ((string)(this["FtpPath"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("109.68.215.41")]
-        public string FtpHost {
-            get {
-                return ((string)(this["FtpHost"]));
             }
         }
         
@@ -88,6 +61,18 @@ namespace DocumentFlow.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("350")]
+        public int PanelMenuWidth {
+            get {
+                return ((int)(this["PanelMenuWidth"]));
+            }
+            set {
+                this["PanelMenuWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("SingleClick")]
         public global::Syncfusion.WinForms.DataGrid.Enums.SortClickAction SortClickAction {
             get {
@@ -107,6 +92,54 @@ namespace DocumentFlow.Properties {
             }
             set {
                 this["ShowSortNumbers"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("/apps/DocumentFlow Files")]
+        public string FtpPath {
+            get {
+                return ((string)(this["FtpPath"]));
+            }
+            set {
+                this["FtpPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FtpUser {
+            get {
+                return ((string)(this["FtpUser"]));
+            }
+            set {
+                this["FtpUser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FtpPassword {
+            get {
+                return ((string)(this["FtpPassword"]));
+            }
+            set {
+                this["FtpPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("109.68.215.41")]
+        public string FtpHost {
+            get {
+                return ((string)(this["FtpHost"]));
+            }
+            set {
+                this["FtpHost"] = value;
             }
         }
     }

@@ -9,9 +9,8 @@
 namespace DocumentFlow.Printing
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Dynamic;
+    using System.ComponentModel;
     using System.IO;
     using System.IO.Packaging;
     using System.Linq;
@@ -21,70 +20,92 @@ namespace DocumentFlow.Printing
     using System.Windows.Documents;
     using System.Windows.Markup;
     using System.Windows.Xps.Packaging;
+    using Dapper;
     using DotLiquid;
     using Newtonsoft.Json;
-    using NHibernate;
     using Spire.Pdf;
     using DocumentFlow.Core;
     using DocumentFlow.Data.Core;
     using DocumentFlow.Data.Entities;
-    using DocumentFlow.DataSchema;
-    using DocumentFlow.Printing.Xaml;
+    using DocumentFlow.Printing.Core;
 
     public class Printer
     {
-        private IDictionary ownerRow;
-
-        public static void Preview(PrintForm form, ISession session, IDictionary row)
+        public class PrintDataset
         {
-            Printer printer = new Printer();
-            printer.PrepareAndPreview(form, session, row);
+            [JsonProperty("name")]
+            public string Name { get; set; }
+
+            [JsonProperty("sql-query")]
+            public string Query { get; set; }
+
+            [DefaultValue(false)]
+            [JsonProperty("unique-result", DefaultValueHandling = DefaultValueHandling.Populate)]
+            public bool UniqueResult { get; set; }
         }
 
-        private void PrepareAndPreview(PrintForm form, ISession session, IDictionary row)
+        public class PrintDatasets
         {
-            ownerRow = row;
+            [JsonProperty("title", Required = Required.Always)]
+            public string QueryTitle { get; set; }
+
+            [JsonProperty("datasets")]
+            public IList<PrintDataset> Datasets { get; set; }
+        }
+
+        public static void Preview(PrintForm form, object entity)
+        {
+            Printer printer = new Printer();
+            printer.PrepareAndPreview(form, entity);
+        }
+
+        private void PrepareAndPreview(PrintForm form, object entity)
+        {
             Preview win = new Preview();
 
-            PrintDatasets pd = JsonConvert.DeserializeObject<PrintDatasets>(form.Properties);
+            PrintDatasets pd = JsonConvert.DeserializeObject<PrintDatasets>(form.properties);
 
-            Dictionary<string, object> objects = new Dictionary<string, object>();
-            try
+            var objects = new Dictionary<string, object>();
+
+            using (var conn = Db.OpenConnection())
             {
-                dynamic titleRow = new ExpandoObject().With(Db.ExecuteSelect(session, pd.QueryTitle, null, (x) => row[x]).Single());
-                win.Title = titleRow.title;
-                
+                win.Title = conn.Query<string>(pd.QueryTitle, entity).Single();
+
                 foreach (var d in pd.Datasets)
                 {
                     if (d.UniqueResult)
                     {
-                        objects.Add(d.Name, Db.ExecuteSelect(session, d.Query, null, (x) => row[x]).Single());
+                        var t = conn.Query(d.Query, entity).Single();
+                        objects.Add(d.Name, t);
                     }
                     else
                     {
-                        List<object> res = new List<object>();
-                        foreach (IDictionary item in Db.ExecuteSelect(session, d.Query, null, (x) => ownerRow[x]))
+                        List<object> list = new List<object>();
+                        foreach (var item in conn.Query(d.Query, entity))
                         {
-                            res.Add(item);
+                            if (item is IDictionary<string, object> dict)
+                            {
+                                var res = new Dictionary<string, object>();
+                                foreach (var key in dict.Keys)
+                                {
+                                    res.Add(key.ToString(), dict[key]);
+                                }
+
+                                list.Add(res);
+                            }
                         }
 
-                        if (res.Count > 0)
-                            objects.Add(d.Name, res);
+                        objects.Add(d.Name, list);
                     }
                 }
-            }
-            catch (ParameterNotFoundException pe)
-            {
-                System.Windows.Forms.MessageBox.Show($"Печать невозможна из-за ошибки - {pe.Message}", "Ошибка", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-                return;
             }
 
             string pdfFileName = (Path.GetTempPath() + win.Title.Replace('/', '-').Replace('\\', '-') + ".pdf");
 
-            Template template = Template.Parse(form.FormText);
+            Template template = Template.Parse(form.form_text);
             string xml = template.Render(Hash.FromDictionary(objects));
 
-            using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
             {
                 if (XamlReader.Load(stream) is FlowDocument doc)
                 {
@@ -108,12 +129,12 @@ namespace DocumentFlow.Printing
                     }
 
                     DocumentPaginator paginator = ((IDocumentPaginatorSource)doc).DocumentPaginator;
-                    using (MemoryStream xpsStream = new MemoryStream())
+                    using (var xpsStream = new MemoryStream())
                     {
                         docPackage = Package.Open(xpsStream, FileMode.Create, FileAccess.ReadWrite);
                         PackageStore.AddPackage(uri, docPackage);
 
-                        XpsDocument xpsDoc = new XpsDocument(docPackage, CompressionOption.Maximum)
+                        var xpsDoc = new XpsDocument(docPackage, CompressionOption.Maximum)
                         {
                             Uri = uri
                         };
@@ -124,7 +145,7 @@ namespace DocumentFlow.Printing
 
                         xpsStream.Position = 0;
 
-                        PdfDocument pdfDoc = new PdfDocument();
+                        var pdfDoc = new PdfDocument();
                         pdfDoc.LoadFromXPS(xpsStream);
                         using (var pdfStream = new FileStream(pdfFileName, FileMode.Create))
                         {

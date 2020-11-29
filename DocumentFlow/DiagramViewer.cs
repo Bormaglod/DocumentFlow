@@ -6,46 +6,48 @@
 // Time: 23:30
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Printing;
+using System.Drawing.Text;
+using System.IO;
+using System.Linq;
+using Dapper;
+using Syncfusion.Windows.Forms.Diagram;
+using Syncfusion.Windows.Forms.Diagram.Controls;
+using Syncfusion.Windows.Forms.Edit.Enums;
+using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Entities;
+
 namespace DocumentFlow
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Drawing.Drawing2D;
-    using System.Drawing.Printing;
-    using System.Drawing.Text;
-    using System.Data;
-    using System.IO;
-    using System.Linq;
-    using NHibernate;
-    using Syncfusion.Windows.Forms.Diagram;
-    using Syncfusion.Windows.Forms.Diagram.Controls;
-    using Syncfusion.Windows.Forms.Edit.Enums;
-    using Syncfusion.Windows.Forms.Tools;
-    using DocumentFlow.Core;
-    using DocumentFlow.Data.Core;
-    using Entities = Data.Entities;
-
-    public partial class DiagramViewer : System.Windows.Forms.UserControl, IPage
+    public partial class DiagramViewer : ToolWindow, IPage
     {
-        private Entities.Transition transition;
+        private readonly IContainerPage containerPage;
+        private Data.Entities.Transition transition;
 
-        public DiagramViewer(Guid transitionId)
+        public DiagramViewer(IContainerPage container, Guid transitionId)
         {
             InitializeComponent();
-            NewSession();
 
-            transition = Session.Get<Entities.Transition>(transitionId);
+            containerPage = container;
+
+            using (var conn = Db.OpenConnection())
+            {
+                transition = conn.QuerySingle<Data.Entities.Transition>("select * from transition where id = :id", new { id = transitionId });
+            }
 
             editControl1.ApplyConfiguration(KnownLanguages.XML);
 
-            Text = transition.Name;
+            Text = transition.name;
 
             diagram1.EventSink.NodeCollectionChanged += EventSink_NodeCollectionChanged;
             System.Windows.Forms.Application.Idle += Application_Idle;
 
             PrepareModelDiagram(model1);
-            if (transition.DiagramModel == null)
+            if (transition.diagram_model == null)
             {
                 CreateDiagram();
             }
@@ -53,22 +55,24 @@ namespace DocumentFlow
             {
                 using (MemoryStream stream = new MemoryStream())
                 {
-                    stream.Write(transition.DiagramModel, 0, transition.DiagramModel.Length);
+                    stream.Write(transition.diagram_model, 0, transition.diagram_model.Length);
                     stream.Position = 0;
                     diagram1.LoadBinary(stream);
                 }
             }
         }
 
-        protected ISession Session { get; private set; }
+        #region IPage implementation
+
+        IContainerPage IPage.Container => containerPage;
 
         Guid IPage.Id => transition.Id;
 
         Guid IPage.ContentId => transition.Id;
 
-        void IPage.OnClosed() { }
+        void IPage.Rebuild() { }
 
-        protected void NewSession() => Session = Db.OpenSession();
+        #endregion
 
         private bool Save()
         {
@@ -76,31 +80,27 @@ namespace DocumentFlow
             {
                 diagram1.SaveBinary(stream);
 
-                transition.DiagramModel = stream.ToArray();
-                using (var transaction = Session.BeginTransaction())
+                transition.diagram_model = stream.ToArray();
+                using (var conn = Db.OpenConnection())
                 {
-                    try
+                    using (var transaction = conn.BeginTransaction())
                     {
-                        Session.SaveOrUpdate(transition);
-                        transaction.Commit();
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        ExceptionHelper.MesssageBox(ex);
-                        NewSession();
-                        transition = Session.Merge(transition);
+                        try
+                        {
+                            conn.Execute("update transition set diagram_model = :DiagramModel where id = :Id", transition, transaction);
+                            transaction.Commit();
+                            return true;
+                        }
+                        catch (Exception e)
+                        {
+                            transaction.Rollback();
+                            ExceptionHelper.MesssageBox(e);
+                        }
                     }
                 }
             }
 
             return false;
-        }
-
-        private void Close()
-        {
-            ((TabPageAdv)Parent).Close();
         }
 
         private void Application_Idle(object sender, EventArgs e)
@@ -113,8 +113,8 @@ namespace DocumentFlow
                 buttonSaveAndClose.Enabled = true;
                 buttonCut.Enabled = diagram1.CanCut;
                 buttonCopy.Enabled = diagram1.CanCopy;
-                /*if (this.WindowState != FormWindowState.Minimized)
-                    this.pasteToolStripButton.Enabled = diagram1.CanPaste;*/
+                //if (this.WindowState != FormWindowState.Minimized)
+                //    this.pasteToolStripButton.Enabled = diagram1.CanPaste;
                 buttonUndo.Enabled = diagram1.Model.HistoryManager.CanUndo;
                 buttonRedo.Enabled = diagram1.Model.HistoryManager.CanRedo;
                 buttonDelete.Enabled = (diagram1.View.SelectionList.Count > 0);
@@ -128,8 +128,8 @@ namespace DocumentFlow
                 buttonSaveAndClose.Enabled = false;
                 buttonCut.Enabled = false;
                 buttonCopy.Enabled = false;
-                /*if (this.WindowState != FormWindowState.Minimized)
-                    this.pasteToolStripButton.Enabled = false;*/
+                //if (this.WindowState != FormWindowState.Minimized)
+                //    this.pasteToolStripButton.Enabled = false;
                 buttonUndo.Enabled = false;
                 buttonRedo.Enabled = false;
                 buttonDelete.Enabled = false;
@@ -169,7 +169,7 @@ namespace DocumentFlow
 
                     Label label = CreateLabel(line, "");
                     label.AdjustRotateAngle = true;
-                    label.Position = Syncfusion.Windows.Forms.Diagram.Position.TopCenter;
+                    label.Position = Position.TopCenter;
                     label.FontStyle.PointSize = 8;
                 }
             }
@@ -200,16 +200,16 @@ namespace DocumentFlow
             }
         }
 
-        private RoundRect CreateRoundRect(int x, int y, Entities.Status status)
+        private RoundRect CreateRoundRect(int x, int y, Status status)
         {
             RoundRect rect = new RoundRect(x, y, 30, 16, MeasureUnits.Millimeter);
 
-            rect.PropertyBag.Add("StatusId", status.Id);
+            rect.PropertyBag.Add("StatusId", status.id);
 
             diagram1.Model.AppendChild(rect);
 
             if (!rect.Labels.IsEmpty)
-                rect.Labels[0].Text = status.Note;
+                rect.Labels[0].Text = status.note;
 
             return rect;
         }
@@ -226,15 +226,15 @@ namespace DocumentFlow
                 line.Labels[0].Text = labelText;
         }
 
-        private RoundRect CreateRoundRect(IDictionary<long, RoundRect> nodes, Entities.Status status, ref int x, ref int y)
+        private RoundRect CreateRoundRect(IDictionary<int, RoundRect> nodes, Status status, ref int x, ref int y)
         {
             RoundRect rect;
-            if (nodes.ContainsKey(status.Id))
-                rect = nodes[status.Id];
+            if (nodes.ContainsKey(status.id))
+                rect = nodes[status.id];
             else
             {
                 rect = CreateRoundRect(x, y, status);
-                nodes.Add(status.Id, rect);
+                nodes.Add(status.id, rect);
 
                 x += 20;
                 if (x + 30 >= 210)
@@ -247,14 +247,14 @@ namespace DocumentFlow
             return rect;
         }
 
-        private void CreateExtremeShape(IDictionary<long, RoundRect> nodes, Entities.Status status, int x, int y, bool reverse)
+        private void CreateExtremeShape(IDictionary<int, RoundRect> nodes, int? status, int x, int y, bool reverse)
         {
-            if (status == null)
+            if (!status.HasValue)
                 return;
 
-            if (nodes.ContainsKey(status.Id))
+            if (nodes.ContainsKey(status.Value))
             {
-                RoundRect rect = nodes[status.Id];
+                RoundRect rect = nodes[status.Value];
 
                 Ellipse node = new Ellipse(x, y, 10, 10, MeasureUnits.Millimeter);
                 node.FillStyle.Color = Color.FromArgb(0, 120, 212);
@@ -271,20 +271,28 @@ namespace DocumentFlow
         {
             diagram1.BeginUpdate();
 
-            Dictionary<long, RoundRect> nodes = new Dictionary<long, RoundRect>();
-            using (var transaction = Session.BeginTransaction())
+            Dictionary<int, RoundRect> nodes = new Dictionary<int, RoundRect>();
+            using (var conn = Db.OpenConnection())
             {
                 int x = 40;
                 int y = 20;
-                foreach (var cs in from Entities.ChangingStatus cs in Session.QueryOver<Entities.ChangingStatus>().Where(p => p.Transition == transition).OrderBy(p => p.FromStatus).Asc.List() select cs)
+
+                string sql = "select * from changing_status cs join status s_f on (s_f.id = cs.from_status_id) join status s_t on (s_t.id = cs.to_status_id) where transition_id = :id order by order_index";
+                IEnumerable<ChangingStatus> list = conn.Query<ChangingStatus, Status, Status, ChangingStatus>(sql, (changing_status, status_from, status_to) =>
+                {
+                    changing_status.FromStatus = status_from;
+                    changing_status.ToStatus = status_to;
+                    return changing_status;
+                }, new { id = transition.Id });
+                foreach (ChangingStatus cs in list)
                 {
                     RoundRect left = CreateRoundRect(nodes, cs.FromStatus, ref x, ref y);
                     RoundRect right = CreateRoundRect(nodes, cs.ToStatus, ref x, ref y);
-                    CreateConnector(left, right, cs.Name);
+                    CreateConnector(left, right, cs.name);
                 }
 
-                CreateExtremeShape(nodes, transition.Starting, 20, 20, false);
-                CreateExtremeShape(nodes, transition.Finishing, x, y, true);
+                CreateExtremeShape(nodes, transition.starting_id, 20, 20, false);
+                CreateExtremeShape(nodes, transition.finishing_id, x, y, true);
             }
 
             diagram1.EndUpdate();
@@ -305,8 +313,8 @@ namespace DocumentFlow
 
         private void GroupBarAppearance()
         {
-            this.paletteGroupBar1.BorderColor = ColorTranslator.FromHtml("#626262");
-            foreach (GroupBarItem item in paletteGroupBar1.GroupBarItems)
+            paletteGroupBar1.BorderColor = ColorTranslator.FromHtml("#626262");
+            foreach (Syncfusion.Windows.Forms.Tools.GroupBarItem item in paletteGroupBar1.GroupBarItems)
             {
                  if (item.Client is PaletteGroupView)
                 {

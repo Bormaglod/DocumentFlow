@@ -29,36 +29,13 @@
         private void InitializeComponent()
         {
             Syncfusion.Windows.Forms.Tools.MetroSplitButtonRenderer metroSplitButtonRenderer1 = new Syncfusion.Windows.Forms.Tools.MetroSplitButtonRenderer();
-            this.splitButton1 = new Syncfusion.Windows.Forms.Tools.SplitButton();
             this.panelCrumbs = new Syncfusion.Windows.Forms.Tools.GradientPanel();
             this.buttonHome = new DocumentFlow.Controls.ToolButton();
             this.buttonRefresh = new DocumentFlow.Controls.ToolButton();
             this.buttonUp = new DocumentFlow.Controls.ToolButton();
-            this.toolSplitItem1 = new DocumentFlow.Controls.ToolSplitItem();
-            this.toolSplitItem2 = new DocumentFlow.Controls.ToolSplitItem();
             ((System.ComponentModel.ISupportInitialize)(this.panelCrumbs)).BeginInit();
             this.panelCrumbs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // splitButton1
-            // 
-            this.splitButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
-            this.splitButton1.BeforeTouchSize = new System.Drawing.Size(146, 25);
-            this.splitButton1.DropDownIconColor = System.Drawing.Color.White;
-            this.splitButton1.DropDownPosition = Syncfusion.Windows.Forms.Tools.Position.Right;
-            this.splitButton1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.splitButton1.ForeColor = System.Drawing.Color.White;
-            this.splitButton1.Location = new System.Drawing.Point(361, 237);
-            this.splitButton1.MinimumSize = new System.Drawing.Size(75, 23);
-            this.splitButton1.Name = "splitButton1";
-            metroSplitButtonRenderer1.SplitButton = this.splitButton1;
-            this.splitButton1.Renderer = metroSplitButtonRenderer1;
-            this.splitButton1.ShowDropDownOnButtonClick = false;
-            this.splitButton1.Size = new System.Drawing.Size(146, 25);
-            this.splitButton1.Style = Syncfusion.Windows.Forms.Tools.SplitButtonVisualStyle.Metro;
-            this.splitButton1.TabIndex = 2;
-            this.splitButton1.Text = "splitButton1";
-            this.splitButton1.ThemeName = "Metro";
             // 
             // panelCrumbs
             // 
@@ -125,18 +102,6 @@
             this.buttonUp.Text = "toolButton3";
             this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
             // 
-            // toolSplitItem1
-            // 
-            this.toolSplitItem1.Name = "toolSplitItem1";
-            this.toolSplitItem1.Size = new System.Drawing.Size(23, 23);
-            this.toolSplitItem1.Text = "toolSplitItem1";
-            // 
-            // toolSplitItem2
-            // 
-            this.toolSplitItem2.Name = "toolSplitItem2";
-            this.toolSplitItem2.Size = new System.Drawing.Size(23, 23);
-            this.toolSplitItem2.Text = "toolSplitItem2";
-            // 
             // Breadcrumb
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -145,7 +110,6 @@
             this.Controls.Add(this.panelCrumbs);
             this.Controls.Add(this.buttonRefresh);
             this.Controls.Add(this.buttonUp);
-            this.Controls.Add(this.splitButton1);
             this.Name = "Breadcrumb";
             this.Size = new System.Drawing.Size(772, 25);
             ((System.ComponentModel.ISupportInitialize)(this.panelCrumbs)).EndInit();
@@ -155,12 +119,9 @@
         }
 
         #endregion
-        private Syncfusion.Windows.Forms.Tools.SplitButton splitButton1;
         private ToolButton buttonUp;
         private ToolButton buttonRefresh;
         private Syncfusion.Windows.Forms.Tools.GradientPanel panelCrumbs;
         private ToolButton buttonHome;
-        private ToolSplitItem toolSplitItem1;
-        private ToolSplitItem toolSplitItem2;
     }
 }

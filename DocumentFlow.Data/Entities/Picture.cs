@@ -6,32 +6,32 @@
 // Time: 12:51
 //-----------------------------------------------------------------------
 
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using DocumentFlow.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.IO;
-    using DocumentFlow.Core;
-
     public class Picture : Directory
     {
-        public virtual string SizeSmall { get; set; }
-        public virtual string SizeLarge { get; set; }
-        public virtual string ImgName { get; set; }
-        public virtual string Note { get; set; }
+        public string size_small { get; set; }
+        public string size_large { get; set; }
+        public string img_name { get; set; }
+        public string note { get; set; }
 
-        public virtual Image GetImageSmall() => ImageHelper.Base64ToImage(SizeSmall);
+        public Image GetImageSmall() => ImageHelper.Base64ToImage(size_small);
 
-        public virtual Image GetImageLarge() => ImageHelper.Base64ToImage(SizeLarge);
+        public Image GetImageLarge() => ImageHelper.Base64ToImage(size_large);
 
-        public virtual byte[] ImageSmall => GetImage(GetImageSmall());
+        public byte[] ImageSmall => GetImage(GetImageSmall());
 
         byte[] GetImage(Image image)
         {
             if (image == null)
                 return null;
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
             image.Save(ms, ImageFormat.Png);
             return ms.ToArray();
         }

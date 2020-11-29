@@ -1,25 +1,19 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 22.12.2019
-// Time: 14:07
+// Date: 21.10.2020
+// Time: 22:31
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Controls
-{
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Data;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
-    using DocumentFlow.DataSchema;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using DocumentFlow.Code;
 
-    public partial class L_DateTimePicker : UserControl, ILabeled, ISized
+namespace DocumentFlow.Controls.Editor
+{
+    public partial class L_DateTimePicker : UserControl, ILabelControl, IEditControl
     {
         public L_DateTimePicker()
         {
@@ -27,17 +21,17 @@ namespace DocumentFlow.Controls
             datePickerAdv.NullableValue = DateTime.MinValue;
         }
 
-        string ILabeled.Text { get => label1.Text; set => label1.Text = value; }
+        public event EventHandler ValueChanged;
 
-        int ILabeled.Width { get => label1.Width; set => label1.Width = value; }
+        string ILabelControl.Text { get => label1.Text; set => label1.Text = value; }
 
-        int ILabeled.EditWidth { get => datePickerAdv.Width; set => datePickerAdv.Width = value; }
+        int ILabelControl.Width { get => label1.Width; set => label1.Width = value; }
 
-        bool ILabeled.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
+        bool ILabelControl.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
 
-        ContentAlignment ILabeled.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
+        ContentAlignment ILabelControl.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
 
-        bool ILabeled.Visible
+        bool ILabelControl.Visible
         {
             get => label1.Visible;
             set
@@ -47,7 +41,29 @@ namespace DocumentFlow.Controls
             }
         }
 
-        void ISized.SetFullSize() => datePickerAdv.Dock = DockStyle.Fill;
+        int IEditControl.Width { get => datePickerAdv.Width; set => datePickerAdv.Width = value; }
+
+        object IEditControl.Value
+        {
+            get
+            { 
+                if (!datePickerAdv.ShowCheckBox || datePickerAdv.Checked)
+                    return datePickerAdv.Value;
+
+                return null;
+            }
+            set
+            {
+                datePickerAdv.Value = value == null ? DateTime.Now : Convert.ToDateTime(value);
+                datePickerAdv.Checked = datePickerAdv.ShowCheckBox && value != null;
+            }
+        }
+
+        bool IEditControl.FitToSize
+        {
+            get => datePickerAdv.Dock == DockStyle.Fill;
+            set => datePickerAdv.Dock = DockStyle.Fill;
+        }
 
         public string CustomFormat { get => datePickerAdv.CustomFormat; set => datePickerAdv.CustomFormat = value; }
 
@@ -55,6 +71,14 @@ namespace DocumentFlow.Controls
 
         public bool ShowCheckBox { get => datePickerAdv.ShowCheckBox; set => datePickerAdv.ShowCheckBox = value; }
 
-        public DateTime Value { get => datePickerAdv.Value; set => datePickerAdv.Value = value; }
+        private void datePickerAdv_ValueChanged(object sender, EventArgs e)
+        {
+            ValueChanged?.Invoke(this, e);
+        }
+
+        private void datePickerAdv_CheckBoxCheckedChanged(object sender, EventArgs e)
+        {
+            ValueChanged?.Invoke(this, e);
+        }
     }
 }

@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Syncfusion.WinForms.DataGrid.GridTextColumn gridTextColumn3 = new Syncfusion.WinForms.DataGrid.GridTextColumn();
-            Syncfusion.WinForms.DataGrid.GridTextColumn gridTextColumn4 = new Syncfusion.WinForms.DataGrid.GridTextColumn();
+            Syncfusion.WinForms.DataGrid.GridTextColumn gridTextColumn1 = new Syncfusion.WinForms.DataGrid.GridTextColumn();
+            Syncfusion.WinForms.DataGrid.GridTextColumn gridTextColumn2 = new Syncfusion.WinForms.DataGrid.GridTextColumn();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonStatus = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -40,6 +40,7 @@
             this.buttonSaveAndClose = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
+            this.buttonCustomization = new System.Windows.Forms.ToolStripButton();
             this.buttonPrint = new System.Windows.Forms.ToolStripSplitButton();
             this.tabSplitterContainer1 = new Syncfusion.Windows.Forms.Tools.TabSplitterContainer();
             this.tabSplitterMaster = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
@@ -101,10 +102,11 @@
             this.buttonSaveAndClose,
             this.toolStripSeparator6,
             this.buttonRefresh,
+            this.buttonCustomization,
             this.buttonPrint});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1134, 52);
+            this.toolStrip1.Size = new System.Drawing.Size(1118, 52);
             this.toolStrip1.TabIndex = 6;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -177,6 +179,17 @@
             this.buttonRefresh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
+            // buttonCustomization
+            // 
+            this.buttonCustomization.Image = global::DocumentFlow.Properties.Resources.icons8_source_30;
+            this.buttonCustomization.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.buttonCustomization.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonCustomization.Name = "buttonCustomization";
+            this.buttonCustomization.Size = new System.Drawing.Size(70, 49);
+            this.buttonCustomization.Text = "Настройка";
+            this.buttonCustomization.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.buttonCustomization.Click += new System.EventHandler(this.buttonCustomization_Click);
+            // 
             // buttonPrint
             // 
             this.buttonPrint.Image = global::DocumentFlow.Properties.Resources.icons8_print_30;
@@ -198,9 +211,9 @@
             this.tabSplitterContainer1.SecondaryPages.AddRange(new Syncfusion.Windows.Forms.Tools.TabSplitterPage[] {
             this.tabSplitterDocs,
             this.tabSplitterInfo});
-            this.tabSplitterContainer1.Size = new System.Drawing.Size(1134, 463);
+            this.tabSplitterContainer1.Size = new System.Drawing.Size(1118, 424);
             this.tabSplitterContainer1.SplitterBackColor = System.Drawing.SystemColors.Control;
-            this.tabSplitterContainer1.SplitterPosition = 302;
+            this.tabSplitterContainer1.SplitterPosition = 277;
             this.tabSplitterContainer1.TabIndex = 7;
             this.tabSplitterContainer1.Text = "tabSplitterContainer1";
             // 
@@ -213,7 +226,7 @@
             this.tabSplitterMaster.Location = new System.Drawing.Point(0, 0);
             this.tabSplitterMaster.Name = "tabSplitterMaster";
             this.tabSplitterMaster.Padding = new System.Windows.Forms.Padding(15);
-            this.tabSplitterMaster.Size = new System.Drawing.Size(1134, 302);
+            this.tabSplitterMaster.Size = new System.Drawing.Size(1118, 277);
             this.tabSplitterMaster.TabIndex = 1;
             this.tabSplitterMaster.Text = "Данные";
             // 
@@ -224,9 +237,9 @@
             this.tabSplitterDocs.Controls.Add(this.toolStrip2);
             this.tabSplitterDocs.Hide = false;
             this.tabSplitterDocs.Image = global::DocumentFlow.Properties.Resources.icons8_documents_11;
-            this.tabSplitterDocs.Location = new System.Drawing.Point(0, 322);
+            this.tabSplitterDocs.Location = new System.Drawing.Point(0, 297);
             this.tabSplitterDocs.Name = "tabSplitterDocs";
-            this.tabSplitterDocs.Size = new System.Drawing.Size(1134, 141);
+            this.tabSplitterDocs.Size = new System.Drawing.Size(1118, 127);
             this.tabSplitterDocs.TabIndex = 2;
             this.tabSplitterDocs.Text = "Документы";
             // 
@@ -240,27 +253,27 @@
             this.gridDocuments.AutoGenerateColumns = false;
             this.gridDocuments.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.LastColumnFill;
             this.gridDocuments.BackColor = System.Drawing.SystemColors.Window;
-            gridTextColumn3.AllowEditing = false;
-            gridTextColumn3.AllowGrouping = false;
-            gridTextColumn3.AllowResizing = true;
-            gridTextColumn3.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.Fill;
-            gridTextColumn3.HeaderText = "Описание";
-            gridTextColumn3.MappingName = "Note";
-            gridTextColumn4.AllowEditing = false;
-            gridTextColumn4.AllowGrouping = false;
-            gridTextColumn4.AllowResizing = true;
-            gridTextColumn4.HeaderText = "Имя файла";
-            gridTextColumn4.MappingName = "FileName";
-            gridTextColumn4.Width = 300D;
-            this.gridDocuments.Columns.Add(gridTextColumn3);
-            this.gridDocuments.Columns.Add(gridTextColumn4);
+            gridTextColumn1.AllowEditing = false;
+            gridTextColumn1.AllowGrouping = false;
+            gridTextColumn1.AllowResizing = true;
+            gridTextColumn1.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.Fill;
+            gridTextColumn1.HeaderText = "Описание";
+            gridTextColumn1.MappingName = "note";
+            gridTextColumn2.AllowEditing = false;
+            gridTextColumn2.AllowGrouping = false;
+            gridTextColumn2.AllowResizing = true;
+            gridTextColumn2.HeaderText = "Имя файла";
+            gridTextColumn2.MappingName = "file_name";
+            gridTextColumn2.Width = 300D;
+            this.gridDocuments.Columns.Add(gridTextColumn1);
+            this.gridDocuments.Columns.Add(gridTextColumn2);
             this.gridDocuments.ContextMenuStrip = this.contextMenuStripEx1;
             this.gridDocuments.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridDocuments.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.gridDocuments.Location = new System.Drawing.Point(0, 25);
             this.gridDocuments.Name = "gridDocuments";
             this.gridDocuments.NavigationMode = Syncfusion.WinForms.DataGrid.Enums.NavigationMode.Row;
-            this.gridDocuments.Size = new System.Drawing.Size(1134, 116);
+            this.gridDocuments.Size = new System.Drawing.Size(1118, 102);
             this.gridDocuments.Style.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this.gridDocuments.Style.GroupDropAreaStyle.BackColor = System.Drawing.SystemColors.Window;
             this.gridDocuments.Style.TableSummaryRowStyle.Font.Facename = "Segoe UI";
@@ -342,7 +355,7 @@
             this.buttonScanLandscape});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(1134, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(1118, 25);
             this.toolStrip2.TabIndex = 1;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -442,9 +455,9 @@
             this.tabSplitterInfo.Controls.Add(this.label1);
             this.tabSplitterInfo.Hide = false;
             this.tabSplitterInfo.Image = global::DocumentFlow.Properties.Resources.icons8_info_11;
-            this.tabSplitterInfo.Location = new System.Drawing.Point(0, 322);
+            this.tabSplitterInfo.Location = new System.Drawing.Point(0, 297);
             this.tabSplitterInfo.Name = "tabSplitterInfo";
-            this.tabSplitterInfo.Size = new System.Drawing.Size(1134, 141);
+            this.tabSplitterInfo.Size = new System.Drawing.Size(1118, 127);
             this.tabSplitterInfo.TabIndex = 3;
             this.tabSplitterInfo.Text = "Информация";
             // 
@@ -555,8 +568,8 @@
             this.dateTimeCreate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeCreate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-3772, 0);
-            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(3947, 25);
+            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-5197, 0);
+            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(5372, 25);
             this.dateTimeCreate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -567,7 +580,7 @@
             this.dateTimeCreate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeCreate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-3772, 25);
+            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-5197, 25);
             this.dateTimeCreate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeCreate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -638,8 +651,8 @@
             this.dateTimeUpdate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeUpdate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-3772, 0);
-            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(3947, 25);
+            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-5197, 0);
+            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(5372, 25);
             this.dateTimeUpdate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -650,7 +663,7 @@
             this.dateTimeUpdate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeUpdate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-3772, 25);
+            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-5197, 25);
             this.dateTimeUpdate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeUpdate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -691,10 +704,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(1118, 476);
             this.Controls.Add(this.tabSplitterContainer1);
             this.Controls.Add(this.toolStrip1);
             this.Name = "ContentEditor";
-            this.Size = new System.Drawing.Size(1134, 515);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.tabSplitterContainer1.ResumeLayout(false);
@@ -763,5 +776,6 @@
         private System.Windows.Forms.ToolStripMenuItem menuOpenFolderDocument;
         private System.Windows.Forms.ToolStripMenuItem menuOpenFileDocument;
         private System.Windows.Forms.Timer timerDatabaseListen;
+        private System.Windows.Forms.ToolStripButton buttonCustomization;
     }
 }

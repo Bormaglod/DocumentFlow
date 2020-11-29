@@ -17,6 +17,10 @@ namespace DocumentFlow
             //Register Syncfusion license
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(File.ReadLines("license.txt").First());
 
+#if DEBUG
+            Npgsql.Logging.NpgsqlLogManager.Provider = new Core.NLogLoggingProvider();
+#endif
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new LoginForm(typeof(DocumentFlowForm)));

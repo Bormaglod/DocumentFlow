@@ -6,10 +6,10 @@
 // Time: 12:19
 //-----------------------------------------------------------------------
 
+using NLog;
+
 namespace DocumentFlow.Core
 {
-    using NLog;
-
     public class LogHelper
     {
         static public Logger Logger { get; } = LogManager.GetCurrentClassLogger();

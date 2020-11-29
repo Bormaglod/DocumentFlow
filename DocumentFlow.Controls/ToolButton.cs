@@ -6,13 +6,13 @@
 // Time: 17:34
 //-----------------------------------------------------------------------
 
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using DocumentFlow.Core;
+
 namespace DocumentFlow.Controls
 {
-    using System;
-    using System.Drawing;
-    using System.Windows.Forms;
-    using DocumentFlow.Core;
-
     public enum ToolButtonKind { Back, Forward, Up, Down, Refresh, Home, Delete, Select }
 
     public class ToolButton : Control

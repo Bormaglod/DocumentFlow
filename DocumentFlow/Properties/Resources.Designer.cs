@@ -63,6 +63,26 @@ namespace DocumentFlow.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_assembly_line_16 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_assembly_line_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_assembly_line_30 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_assembly_line_30", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_cancel_16 {
             get {
                 object obj = ResourceManager.GetObject("icons8_cancel_16", resourceCulture);
@@ -626,6 +646,26 @@ namespace DocumentFlow.Properties {
         internal static System.Drawing.Bitmap icons8_source_14x10 {
             get {
                 object obj = ResourceManager.GetObject("icons8_source_14x10", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_source_16 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_source_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_source_30 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_source_30", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

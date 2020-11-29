@@ -5,26 +5,32 @@
     <Setting Name="WindowState" Type="System.Windows.Forms.FormWindowState" Scope="User">
       <Value Profile="(Default)">Maximized</Value>
     </Setting>
-    <Setting Name="DocumentsFolder" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">C:\Databases\DocumentFlow</Value>
-    </Setting>
-    <Setting Name="FtpPath" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">/apps/DocumentFlow Files</Value>
-    </Setting>
-    <Setting Name="FtpHost" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">109.68.215.41</Value>
-    </Setting>
     <Setting Name="Location" Type="System.Drawing.Point" Scope="User">
       <Value Profile="(Default)">0, 0</Value>
     </Setting>
     <Setting Name="Size" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">0, 0</Value>
     </Setting>
+    <Setting Name="PanelMenuWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">350</Value>
+    </Setting>
     <Setting Name="SortClickAction" Type="Syncfusion.WinForms.DataGrid.Enums.SortClickAction" Scope="User">
       <Value Profile="(Default)">SingleClick</Value>
     </Setting>
     <Setting Name="ShowSortNumbers" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="FtpPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/apps/DocumentFlow Files</Value>
+    </Setting>
+    <Setting Name="FtpUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FtpPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FtpHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">109.68.215.41</Value>
     </Setting>
   </Settings>
 </SettingsFile>

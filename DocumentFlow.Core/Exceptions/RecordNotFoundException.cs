@@ -6,10 +6,10 @@
 // Time: 05:04
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Core
-{
-    using System;
+using System;
 
+namespace DocumentFlow.Core.Exceptions
+{
     public class RecordNotFoundException : Exception
     {
         public RecordNotFoundException(Guid id) : base($"Запись с идентификатором '{id}' не нйадена.") { }

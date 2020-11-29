@@ -15,28 +15,22 @@ namespace DocumentFlow
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Dapper;
     using MimeKit;
     using MailKit.Net.Smtp;
     using MailKit.Security;
-    using NHibernate;
-    using NHibernate.Transform;
     using Syncfusion.Windows.Forms;
     using DocumentFlow.Data.Core;
     using DocumentFlow.Data.Entities;
 
     public partial class SelectEmailWindow : MetroForm
     {
-        private ISession session;
         private IEnumerable<string> attachments = null;
         private class EmailAddress
         {
             public string Name { get; set; }
             public string Email { get; set; }
-
-            public override string ToString()
-            {
-                return $"{Name} <{Email}>";
-            }
+            public override string ToString() => $"{Name} <{Email}>";
         }
 
         public SelectEmailWindow()
@@ -49,23 +43,14 @@ namespace DocumentFlow
 
         public bool ShowWindow(string title)
         {
-            session = Db.OpenSession();
-
-            using (var transaction = session.BeginTransaction())
+            using (var conn = Db.OpenConnection())
             {
-                IList<EmailAddress> orgs = session.CreateSQLQuery("select name, email from organization")
-                    .SetResultTransformer(Transformers.AliasToBean<EmailAddress>())
-                    .List<EmailAddress>();
-
-                IEnumerable<EmailAddress> emps = session.CreateSQLQuery("select p.name, e.email from employee e join organization o on (o.id = e.owner_id) join person p on (p.id = e.person_id) where e.email is not null")
-                    .SetResultTransformer(Transformers.AliasToBean<EmailAddress>())
-                    .List<EmailAddress>();
+                var orgs = conn.Query<EmailAddress>("select name, email from organization");
+                var emps = conn.Query<EmailAddress>("select p.name, e.email from employee e join organization o on (o.id = e.owner_id) join person p on (p.id = e.person_id) where e.email is not null");
 
                 comboFrom.DataSource = orgs.Concat(emps);
 
-                IEnumerable<EmailAddress> contractors = session.CreateSQLQuery("select p.name || ' (' || c.short_name || ')' as name, e.email from employee e join contractor c on (e.owner_id = c.id) join person p on (e.person_id = p.id) where e.email is not null")
-                    .SetResultTransformer(Transformers.AliasToBean<EmailAddress>())
-                    .List<EmailAddress>();
+                var contractors = conn.Query<EmailAddress>("select p.name || ' (' || c.short_name || ')' as name, e.email from employee e join contractor c on (e.owner_id = c.id) join person p on (e.person_id = p.id) where e.email is not null");
 
                 comboTo.DataSource = contractors;
             }
@@ -98,8 +83,8 @@ namespace DocumentFlow
                 //
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-                client.Connect(email.Host, email.Port, SecureSocketOptions.Auto);
-                client.Authenticate(email.Address, email.Password);
+                client.Connect(email.host, email.port, SecureSocketOptions.Auto);
+                client.Authenticate(email.address, email.password);
 
                 MimeMessage message = new MimeMessage();
                 message.From.Add(new MailboxAddress(emailFrom.Name, emailFrom.Email));
@@ -111,14 +96,14 @@ namespace DocumentFlow
                 message.Subject = subject;
 
                 BodyBuilder builder = new BodyBuilder();
-                if (!string.IsNullOrEmpty(email.SignaturePlain))
+                if (!string.IsNullOrEmpty(email.signature_plain))
                 {
-                    builder.TextBody = string.Format("\n--\n{0}", email.SignaturePlain);
+                    builder.TextBody = string.Format("\n--\n{0}", email.signature_plain);
                 }
 
-                if (!string.IsNullOrEmpty(email.SignatureHtml))
+                if (!string.IsNullOrEmpty(email.signature_html))
                 {
-                    builder.HtmlBody = string.Format("<br/>{0}", email.SignatureHtml);
+                    builder.HtmlBody = string.Format("<br/>{0}", email.signature_html);
                 }
 
                 if (attachments != null &&  attachments.Any())
@@ -148,28 +133,26 @@ namespace DocumentFlow
 
             EmailAddress from = comboFrom.CheckedItems[0] as EmailAddress;
 
-            Email email = session.QueryOver<Email>().Where(x => x.Address == from.Email).SingleOrDefault();
-            if (email == null)
+            using (var conn = Db.OpenConnection())
             {
-                MessageBox.Show($"Для адреса <{from.Email}> не указаны параметры SMTP-сревера", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                DialogResult = DialogResult.None;
-                return;
+                var email = conn.QuerySingleOrDefault<Email>("select * from email where address = :email", new { email = from.Email });
+                if (email == null)
+                {
+                    MessageBox.Show($"Для адреса <{from.Email}> не указаны параметры SMTP-сревера", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DialogResult = DialogResult.None;
+                    return;
+                }
+
+                IEnumerable<EmailAddress> to = comboTo.CheckedItems.Cast<EmailAddress>();
+                if (!to.Any())
+                {
+                    MessageBox.Show("Не указан адрес получателя", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DialogResult = DialogResult.None;
+                    return;
+                }
+
+                SendEmailAsync(email, from, to, textSubject.Text, attachments).GetAwaiter();
             }
-
-            IEnumerable<EmailAddress> to = comboTo.CheckedItems.Cast<EmailAddress>();
-            if (!to.Any())
-            {
-                MessageBox.Show("Не указан адрес получателя", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                DialogResult = DialogResult.None;
-                return;
-            }
-
-            SendEmailAsync(email, from, to, textSubject.Text, attachments).GetAwaiter();
-        }
-
-        private void SelectEmailWindow_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            session.Close();
         }
     }
 }

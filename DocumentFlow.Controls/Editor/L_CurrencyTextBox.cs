@@ -6,33 +6,31 @@
 // Time: 22:38
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Controls
-{
-    using System;
-    using System.Drawing;
-    using System.Windows.Forms;
-    using DocumentFlow.DataSchema;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using DocumentFlow.Code;
 
-    public partial class L_CurrencyTextBox : UserControl, ILabeled, ISized
+namespace DocumentFlow.Controls.Editor
+{
+    public partial class L_CurrencyTextBox : UserControl, ILabelControl, IEditControl
     {
         public L_CurrencyTextBox()
         {
             InitializeComponent();
         }
 
-        public event EventHandler<EventArgs> DecimalValueChanged;
+        public event EventHandler ValueChanged;
 
-        string ILabeled.Text { get => label1.Text; set => label1.Text = value; }
+        string ILabelControl.Text { get => label1.Text; set => label1.Text = value; }
 
-        int ILabeled.Width { get => label1.Width; set => label1.Width = value; }
+        int ILabelControl.Width { get => label1.Width; set => label1.Width = value; }
 
-        int ILabeled.EditWidth { get => currencyTextBox1.Width; set => currencyTextBox1.Width = value; }
+        bool ILabelControl.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
 
-        bool ILabeled.AutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
+        ContentAlignment ILabelControl.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
 
-        ContentAlignment ILabeled.TextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-        bool ILabeled.Visible
+        bool ILabelControl.Visible
         {
             get => label1.Visible;
             set
@@ -42,14 +40,23 @@ namespace DocumentFlow.Controls
             }
         }
 
-        void ISized.SetFullSize() => currencyTextBox1.Dock = DockStyle.Fill;
+        int IEditControl.Width { get => currencyTextBox1.Width; set => currencyTextBox1.Width = value; }
 
-        public decimal DecimalValue { get => currencyTextBox1.DecimalValue; set => currencyTextBox1.DecimalValue = value; }
+        object IEditControl.Value
+        {
+            get => currencyTextBox1.DecimalValue;
+            set => currencyTextBox1.DecimalValue = value == null ? default : Convert.ToDecimal(value);
+        }
+
+        bool IEditControl.FitToSize
+        {
+            get => currencyTextBox1.Dock == DockStyle.Fill;
+            set => currencyTextBox1.Dock = DockStyle.Fill;
+        }
 
         private void CurrencyTextBox1_DecimalValueChanged(object sender, EventArgs e)
         {
-            if (DecimalValueChanged != null)
-                DecimalValueChanged.Invoke(this, e);
+            ValueChanged?.Invoke(this, e);
         }
     }
 }

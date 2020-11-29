@@ -6,33 +6,34 @@
 // Time: 21:15
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using Dapper;
+using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Entities;
+
 namespace DocumentFlow
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using NHibernate;
-    using Syncfusion.Windows.Forms;
-    using DocumentFlow.Data.Entities;
-
-    public partial class HistoryWindow : MetroForm
+    public partial class HistoryWindow : Form
     {
-        public HistoryWindow(ISession session, Guid entityId)
+        public HistoryWindow(Guid entityId)
         {
             InitializeComponent();
             
-            using (ITransaction transaction = session.BeginTransaction())
+            using (var conn = Db.OpenConnection())
             {
-                IList<History> history = session.QueryOver<History>()
-                    .Where(x => x.ReferenceId == entityId)
-                    .OrderBy(x => x.Changed).Desc
-                    .List();
-
-                gridHistory.DataSource = new BindingList<History>(history);
+                string sql = "select h.*, fs.*, ts.*, ua.name as user_name from history h join status fs on (fs.id = h.from_status_id) join status ts on (ts.id = h.to_status_id) join user_alias ua on (ua.id = h.user_id) where reference_id = :id order by changed desc";
+                IEnumerable<History> list = conn.Query<History, Status, Status, History>(sql, (history, fromStatus, toStatus) => {
+                    history.FromStatus = fromStatus;
+                    history.ToStatus = toStatus;
+                    return history;
+                }, new { id = entityId });
+                gridHistory.DataSource = list;
             }
         }
 
-        private void SfButton1_Click(object sender, System.EventArgs e)
+        private void SfButton1_Click(object sender, EventArgs e)
         {
             Close();
         }

@@ -1,4 +1,4 @@
-﻿namespace DocumentFlow.Controls
+﻿namespace DocumentFlow.Controls.Editor
 {
     partial class L_DateTimePicker
     {
@@ -75,9 +75,9 @@
             this.datePickerAdv.Calendar.NoneButton.AutoSize = true;
             this.datePickerAdv.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.datePickerAdv.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.datePickerAdv.Calendar.NoneButton.Location = new System.Drawing.Point(77, 0);
-            this.datePickerAdv.Calendar.NoneButton.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.datePickerAdv.Calendar.NoneButton.Size = new System.Drawing.Size(98, 26);
+            this.datePickerAdv.Calendar.NoneButton.Location = new System.Drawing.Point(20, 0);
+            this.datePickerAdv.Calendar.NoneButton.Margin = new System.Windows.Forms.Padding(3, 12, 3, 12);
+            this.datePickerAdv.Calendar.NoneButton.Size = new System.Drawing.Size(155, 26);
             this.datePickerAdv.Calendar.NoneButton.ThemeName = "Metro";
             this.datePickerAdv.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -88,11 +88,12 @@
             this.datePickerAdv.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.datePickerAdv.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.datePickerAdv.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.datePickerAdv.Calendar.TodayButton.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.datePickerAdv.Calendar.TodayButton.Size = new System.Drawing.Size(77, 26);
+            this.datePickerAdv.Calendar.TodayButton.Margin = new System.Windows.Forms.Padding(3, 12, 3, 12);
+            this.datePickerAdv.Calendar.TodayButton.Size = new System.Drawing.Size(20, 26);
             this.datePickerAdv.Calendar.TodayButton.ThemeName = "Metro";
             this.datePickerAdv.Calendar.TodayButton.UseVisualStyle = true;
             this.datePickerAdv.CalendarSize = new System.Drawing.Size(189, 176);
+            this.datePickerAdv.Dock = System.Windows.Forms.DockStyle.Left;
             this.datePickerAdv.DropDownImage = null;
             this.datePickerAdv.DropDownNormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.datePickerAdv.DropDownPressedColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
@@ -106,6 +107,8 @@
             this.datePickerAdv.Style = Syncfusion.Windows.Forms.VisualStyle.Metro;
             this.datePickerAdv.TabIndex = 0;
             this.datePickerAdv.Value = new System.DateTime(2019, 12, 21, 14, 1, 46, 517);
+            this.datePickerAdv.CheckBoxCheckedChanged += new System.EventHandler(this.datePickerAdv_CheckBoxCheckedChanged);
+            this.datePickerAdv.ValueChanged += new System.EventHandler(this.datePickerAdv_ValueChanged);
             // 
             // panel1
             // 

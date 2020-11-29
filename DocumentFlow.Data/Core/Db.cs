@@ -6,43 +6,16 @@
 // Time: 22:42
 //-----------------------------------------------------------------------
 
+using System.Configuration;
+using System.Data;
+using Npgsql;
+
 namespace DocumentFlow.Data.Core
 {
-    using System;
-    using System.Configuration;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-    using FluentNHibernate.Automapping;
-    using FluentNHibernate.Cfg;
-    using FluentNHibernate.Cfg.Db;
-    using NHibernate;
-    using NHibernate.Transform;
-    using Npgsql;
-    using DocumentFlow.Data.Mappings;
-    using DocumentFlow.Core;
-
     public static class Db
     {
-        private static ISessionFactory sessionFactory;
-        private static readonly string default_connection = "default";
         private static readonly string default_user = "guest";
         private static readonly string default_password = "guest";
-
-        public static ISessionFactory SessionFactory
-        {
-            get
-            {
-                if (sessionFactory == null)
-                {
-                    ConnectionName = default_connection;
-                    sessionFactory = CreateSessionFactory(default_user, default_password);
-                }
-
-                return sessionFactory;
-            }
-        }
 
         public static string ConnectionString { get; private set; } = string.Empty;
         public static string ConnectionName { get; private set; }
@@ -52,182 +25,33 @@ namespace DocumentFlow.Data.Core
         /// </summary>
         public static string ParameterPattern { get; } = "(?<!:):([a-zA-Z_]+)";
 
-        public static ISession OpenSession()
+        public static IDbConnection OpenGuestConnection(string connectionName)
         {
-            return SessionFactory.OpenSession();
+            return OpenConnection(connectionName, default_user, default_password);
         }
 
-        public static ISession OpenSession(string connection, string userName, string password)
+        public static IDbConnection OpenConnection(string connectionName, string userName, string password)
         {
-            ConnectionName = connection;
-            sessionFactory = CreateSessionFactory(userName, password);
-            return SessionFactory.OpenSession();
-        }
+            ConnectionName = connectionName;
 
-        public static IList<IDictionary> ExecuteSelect(ISession session, string sql, IDictionary<string, Type> types, params (string, object)[] values)
-        {
-            Dictionary<string, object> row = new Dictionary<string, object>();
-            foreach ((string Field, object Value) in values)
-            {
-                row.Add(Field, Value);
-            }
-
-            return ExecuteSelect(session, sql, types, (x) => row.ContainsKey(x) ? row[x] : null);
-        }
-
-        public static IList<IDictionary> ExecuteSelect(ISession session, string sql, IDictionary<string, Type> types, Func<string, object> dataValues)
-        {
-            IQuery query = session.CreateSQLQuery(sql)
-                .SetResultTransformer(Transformers.AliasToEntityMap);
-            CreateQueryParameters(query, types, dataValues);
-            return query.List<IDictionary>();
-        }
-
-        public static IList<T> ExecuteSelect<T>(ISession session, string sql, IDictionary<string, Type> types, Func<string, object> dataValues)
-        {
-            IQuery query = session.CreateSQLQuery(sql)
-                .SetResultTransformer(Transformers.AliasToBean<T>());
-            CreateQueryParameters(query, types, dataValues);
-            return query.List<T>();
-        }
-
-        public static void ExecuteUpdate(ISession session, string sql, IDictionary<string, Type> types, Func<string, object> dataValues)
-        {
-            IQuery query = session.CreateSQLQuery(sql);
-            CreateQueryParameters(query, types, dataValues);
-            query.ExecuteUpdate();
-        }
-
-        public static void CreateQueryParameters(IQuery query, IDictionary<string, Type> types, params (string, object)[] values)
-        {
-            Dictionary<string, object> row = new Dictionary<string, object>();
-            foreach ((string Field, object Value) in values)
-            {
-                row.Add(Field, Value);
-            }
-
-            CreateQueryParameters(query, types, (x) => row.ContainsKey(x) ? row[x] : null);
-        }
-
-        public static void SetQueryParameter(IQuery query, string parameterName, object parameter, Type parameterType)
-        {
-            if (parameterType == null)
-                return;
-
-            if (parameter != null)
-            {
-                if (parameter is Guid guid && guid == Guid.Empty)
-                {
-                    parameter = null;
-                }
-
-                if (parameter == null)
-                    parameterType = typeof(Guid?);
-            }
-
-            if (parameter == null)
-            {
-                Type type = parameterType;
-
-                if (type.GenericTypeArguments.Any())
-                {
-                    type = type.GenericTypeArguments[0];
-                }
-
-                switch (Type.GetTypeCode(type))
-                {
-                    case TypeCode.Int32:
-                        query.SetParameter(parameterName, (int?)null);
-                        break;
-                    case TypeCode.Int64:
-                        query.SetParameter(parameterName, (long?)null);
-                        break;
-                    case TypeCode.Decimal:
-                        query.SetParameter(parameterName, (decimal?)null);
-                        break;
-                    case TypeCode.String:
-                        query.SetString(parameterName, null);
-                        break;
-                    case TypeCode.DateTime:
-                        query.SetParameter(parameterName, (DateTime?)null);
-                        break;
-                    default:
-                        if (parameterType == typeof(Guid?))
-                            query.SetParameter(parameterName, (Guid?)null);
-                        break;
-                }
-            }
-            else
-            {
-                switch (parameter)
-                {
-                    case int value:
-                        query.SetInt32(parameterName, value);
-                        break;
-                    case long value:
-                        query.SetInt64(parameterName, value);
-                        break;
-                    case Guid value:
-                        query.SetGuid(parameterName, value);
-                        break;
-                    case string value:
-                        query.SetString(parameterName, value);
-                        break;
-                    case DateTime value:
-                        query.SetDateTime(parameterName, value);
-                        break;
-                    default:
-                        query.SetParameter(parameterName, parameter);
-                        break;
-                }
-            }
-        }
-
-        public static void CreateQueryParameters(IQuery query, IDictionary<string, Type> types, Func<string, object> dataValues)
-        {
-            if (dataValues != null)
-            {
-                foreach (Match match in Regex.Matches(query.QueryString, ParameterPattern))
-                {
-                    string prop = match.Groups[1].Value;
-                    Type type;
-                    try
-                    {
-                        if (types != null)
-                            type = types.ContainsKey(prop) ? types[prop] : dataValues(prop).GetType();
-                        else
-                            type = dataValues(prop).GetType();
-
-                        SetQueryParameter(query, prop, dataValues(prop), type);
-                    }
-                    catch (NullReferenceException)
-                    {
-                        throw new ParameterNotFoundException(prop);
-                    }
-                }
-            }
-        }
-
-        private static ISessionFactory CreateSessionFactory(string user, string password)
-        {
-            string newConnectionString = ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString;
+            string newConnectionString = ConfigurationManager.ConnectionStrings[connectionName].ConnectionString;
             NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(newConnectionString)
             {
-                Username = user,
+                Username = userName,
                 Password = password
             };
 
             ConnectionString = builder.ConnectionString;
 
-            ISessionFactory sessionFactory = Fluently.Configure()
-                .Database(PostgreSQLConfiguration.PostgreSQL82.Driver<NpgsqlDriverExtended>()
-                    .ConnectionString(ConnectionString)
-                    .ShowSql())
-                .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Entity>(new AutomappingConfiguration())
-                    .Conventions.AddFromAssemblyOf<Entity>()))
-                .ExposeConfiguration(x => x.SetInterceptor(new SqlStatementInterceptor()))
-                .BuildSessionFactory();
-            return sessionFactory;
+            return OpenConnection();
+        }
+
+        public static IDbConnection OpenConnection()
+        {
+            NpgsqlConnection conn = new NpgsqlConnection(ConnectionString);
+            conn.Open();
+
+            return conn;
         }
     }
 }

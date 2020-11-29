@@ -1,4 +1,4 @@
-﻿namespace DocumentFlow.Controls
+﻿namespace DocumentFlow.Controls.Editor
 {
     partial class L_IntegerTextBox
     {
@@ -56,6 +56,7 @@
             this.integerTextBox1.TabIndex = 2;
             this.integerTextBox1.Text = "1";
             this.integerTextBox1.ThemeName = "Metro";
+            this.integerTextBox1.IntegerValueChanged += new System.EventHandler(this.integerTextBox1_IntegerValueChanged);
             // 
             // L_IntegerTextBox
             // 

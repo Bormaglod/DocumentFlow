@@ -6,11 +6,11 @@
 // Time: 18:44
 //-----------------------------------------------------------------------
 
+using System;
+using Newtonsoft.Json;
+
 namespace DocumentFlow.Data.Core
 {
-    using System;
-    using Newtonsoft.Json;
-
     public enum MessageDestination { Object, List }
 
     public class NotifyMessage

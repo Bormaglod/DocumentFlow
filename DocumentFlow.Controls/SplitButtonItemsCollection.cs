@@ -6,10 +6,10 @@
 // Time: 11:10
 //-----------------------------------------------------------------------
 
+using System.Collections;
+
 namespace DocumentFlow.Controls
 {
-    using System.Collections;
-
     public class SplitButtonItemsCollection : CollectionBase
     {
         private SplitButton Owner;

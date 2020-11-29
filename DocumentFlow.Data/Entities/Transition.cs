@@ -6,15 +6,19 @@
 // Time: 15:24
 //-----------------------------------------------------------------------
 
+using System;
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using DocumentFlow.Data.Core;
-
     public class Transition : EntityUID
     {
-        public virtual string Name { get; set; }
-        public virtual Status Starting { get; set; }
-        public virtual Status Finishing { get; set; }
-        public virtual byte[] DiagramModel { get; set; }
+        public string name { get; set; }
+        public int starting_id { get; set; }
+        public int? finishing_id { get; set; }
+        public byte[] diagram_model { get; set; }
+        public Status Starting { get; set; }
+        public Status Finishing { get; set; }
+        public override string ToString() => name;
     }
 }

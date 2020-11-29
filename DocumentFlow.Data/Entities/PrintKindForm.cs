@@ -6,14 +6,17 @@
 // Time: 18:21
 //-----------------------------------------------------------------------
 
+using System;
+using DocumentFlow.Data.Core;
+
 namespace DocumentFlow.Data.Entities
 {
-    using DocumentFlow.Data.Core;
-
     public class PrintKindForm : EntityID
     {
-        public virtual EntityKind EntityKind { get; set; }
-        public virtual PrintForm PrintForm { get; set; }
-        public virtual bool DefaultForm { get; set; }
+        public Guid entity_kind_id { get; set; }
+        public Guid print_form_id { get; set; }
+        public bool default_form { get; set; }
+        public EntityKind EntityKind { get; set; }
+        public PrintForm PrintForm { get; set; }
     }
 }

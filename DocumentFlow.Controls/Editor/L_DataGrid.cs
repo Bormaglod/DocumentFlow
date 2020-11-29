@@ -6,98 +6,59 @@
 // Time: 21:04
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Controls
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Drawing;
-    using System.Windows.Forms;
-    using NHibernate;
-    using Npgsql;
-    using Syncfusion.WinForms.DataGrid.Enums;
-    using Syncfusion.WinForms.DataGrid.Events;
-    using DocumentFlow.Controls.Extensions;
-    using DocumentFlow.Controls.Forms;
-    using DocumentFlow.Data.Core;
-    using DocumentFlow.DataSchema;
-    
-    public partial class L_DataGrid : UserControl, IEnabled
-    {
-        private ModalEditor editor;
-        private IDictionary row;
-        private int status;
+using System;
+using System.Collections;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms;
+using Syncfusion.WinForms.DataGrid.Events;
+using DocumentFlow.Controls.Forms;
+using DocumentFlow.Data.Core;
+using DocumentFlow.Code;
+using DocumentFlow.Code.Implementation;
 
-        public L_DataGrid()
+namespace DocumentFlow.Controls.Editor
+{
+    public partial class L_DataGrid : UserControl, IGridDataControl
+    {
+        private Func<IDbConnection, IList> getItemsFunc;
+        private Type entityType;
+        private Guid owner;
+
+        public L_DataGrid(Guid ownerId, Func<IDbConnection, IList> getItems)
         {
             InitializeComponent();
-
-            gridMain.Style.ProgressBarStyle.ForegroundStyle = GridProgressBarStyle.Tube;
-            gridMain.Style.ProgressBarStyle.TubeForegroundEndColor = Color.White;
-            gridMain.Style.ProgressBarStyle.TubeForegroundStartColor = Color.SkyBlue;
             gridMain.Style.ProgressBarStyle.AllowForegroundSegments = true;
-            gridMain.Style.ProgressBarStyle.ProgressTextColor = Color.FromArgb(68, 68, 68);
+            Columns = new GridColumnCollection(gridMain, null);
+            getItemsFunc = getItems;
+            owner = ownerId;
         }
 
-        public NpgsqlDataAdapter DataAdapter { get; set; }
+        public IColumnCollection Columns { get; }
 
-        bool IEnabled.Enabled
-        {
-            get => toolStrip1.Enabled;
-            set
-            {
-                toolStrip1.Enabled = value;
-                contextMenuStripEx1.Enabled = value;
-            }
-        }
+        public IEditorCode Editor { get; set; }
 
-        public void InitializeProperties(IDictionary ownerRow, int ownerStatus, IList<DatasetColumn> columns)
-        {
-            row = ownerRow;
-            status = ownerStatus;
+        public string HeaderText { get; set; }
 
-            gridMain.Columns.Clear();
-            if (columns != null)
-            {
-                foreach (DatasetColumn c in columns)
-                {
-                    gridMain.CreateColumn(c);
-                }
-
-                gridMain.CreateSummaryRow(columns);
-            }
-        }
-
-        public void CreateModalWindow(ISession session, string title, DatasetEditor schema)
-        {
-            editor = new ModalEditor(session, title, schema)
-            {
-                Text = title
-            };
-        }
+        public Action<object> CheckValues { get; set; }
 
         public void RefreshData()
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection(Db.ConnectionString))
+            using (var conn = Db.OpenConnection())
             {
-                DataAdapter.SelectCommand.Connection = connection;
-
-                DataSet ds = new DataSet();
-                DataAdapter.Fill(ds);
-                gridMain.DataSource = ds.Tables[0];
+                IList list = getItemsFunc(conn);
+                entityType = list.GetType().GetGenericArguments().First();
+                gridMain.DataSource = list;
             }
         }
 
         private void Edit()
         {
-            if (gridMain.CurrentItem == null)
-                return;
-
-            DataRowView rowView = (DataRowView)gridMain.CurrentItem;
-            long id = Convert.ToInt64(rowView.Row["id"]);
-            if (editor.Edit(id, status))
+            ModalEditor editorForm = new ModalEditor(owner, HeaderText, CheckValues);
+            if (gridMain.SelectedItem is IDetail detail && editorForm.Edit(Editor, detail.id))
+            {
                 RefreshData();
+            }
         }
 
         private void ExecuteDoubleClickCommand(object sender, CellClickEventArgs e)
@@ -107,8 +68,11 @@ namespace DocumentFlow.Controls
 
         private void BttonCreate_Click(object sender, EventArgs e)
         {
-            if (editor.Create((Guid)row["id"], status))
+            ModalEditor editorForm = new ModalEditor(owner, HeaderText, CheckValues);
+            if (editorForm.Create(Editor, entityType))
+            {
                 RefreshData();
+            }
         }
 
         private void ButtonEdit_Click(object sender, EventArgs e)
@@ -118,12 +82,10 @@ namespace DocumentFlow.Controls
 
         private void ButtonDelete_Click(object sender, EventArgs e)
         {
-            if (((IEnabled)this).Enabled)
+            ModalEditor editorForm = new ModalEditor(owner, HeaderText, CheckValues);
+            if (gridMain.SelectedItem is IDetail detail && editorForm.Delete(Editor, detail.id))
             {
-                DataRowView rowView = (DataRowView)gridMain.CurrentItem;
-                long id = Convert.ToInt64(rowView.Row["id"]);
-                if (editor.Delete(id, status))
-                    RefreshData();
+                RefreshData();
             }
         }
     }

@@ -6,59 +6,57 @@
 // Time: 12:48
 //-----------------------------------------------------------------------
 
+using System;
+using System.IO;
+using System.Net;
+using System.Windows.Forms;
+using Crc32C;
+using Dapper;
+using FluentFTP;
+using DocumentFlow.Authorization;
+using DocumentFlow.Core.Exceptions;
+using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Entities;
+using DocumentFlow.Properties;
+
 namespace DocumentFlow
 {
-    using System;
-    using IO = System.IO;
-    using System.Net;
-    using System.Windows.Forms;
-    using Crc32C;
-    using FluentFTP;
-    using Syncfusion.Windows.Forms;
-    using DocumentFlow.Core;
-    using DocumentFlow.Data.Entities;
-    using DocumentFlow.Properties;
-
-    public partial class DocumentRefEditor : MetroForm
+    public partial class DocumentRefEditor : Form
     {
-        private const string FtpUser = "sergio";
-        private const string FtpPassword = "271117";
+        private string ftpPath;
 
-        private string selectedFileName;
-        private readonly string localPath;
-        private readonly string ftpPath;
-
-        public enum EditingResult { Ok, Cancel, RemovalRequired }
-
-        public DocumentRefEditor(string destLocalPath, string destFtpPath)
+        public DocumentRefEditor(string ftpPath)
         {
             InitializeComponent();
 
-            localPath = destLocalPath;
-            ftpPath = destFtpPath;
+            this.ftpPath = ftpPath;
         }
 
         public DocumentRefs Create(Guid owner, string sourceFileName)
         {
-            selectedFileName = sourceFileName;
-            selectFile.SelectedItem = sourceFileName;
+            selectFile.FileName = sourceFileName;
             selectFile.Enabled = false;
             return Create(owner);
         }
 
         public DocumentRefs Create(Guid owner)
         {
-            selectFile.SelectedItem = null;
+            selectFile.ClearCurrent();
             textNote.Text = string.Empty;
 
             if (ShowDialog() != DialogResult.OK)
                 return null;
 
-            string name = IO.Path.GetFileName(selectedFileName);
+            string name = Path.GetFileName(selectFile.FileName);
+
+            if (CanceledFtpConnection())
+            {
+                return null;
+            }
 
             FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
             {
-                Credentials = new NetworkCredential(FtpUser, FtpPassword)
+                Credentials = new NetworkCredential(Settings.Default.FtpUser, Settings.Default.FtpPassword)
             };
 
             ftp.Connect();
@@ -67,23 +65,14 @@ namespace DocumentFlow
             {
                 DocumentRefs docRef = new DocumentRefs()
                 {
-                    OwnerId = owner,
-                    FileName = name,
-                    Note = textNote.Text,
-                    Crc = GetCrcFile(selectedFileName)
+                    owner_id = owner,
+                    file_name = name,
+                    note = textNote.Text,
+                    crc = GetCrcFile(selectFile.FileName)
                 };
 
-                if (ftp.UploadFile(selectedFileName, IO.Path.Combine(ftpPath, name), FtpRemoteExists.Overwrite, true) != FtpStatus.Success)
+                if (ftp.UploadFile(selectFile.FileName, Path.Combine(ftpPath, name), FtpRemoteExists.Overwrite, true) != FtpStatus.Success)
                     throw new FtpUploadException($"Файл {name} не получилось загрузить на сервер.");
-
-                if (!IO.Directory.Exists(localPath))
-                {
-                    IO.Directory.CreateDirectory(localPath);
-                }
-
-                string localFile = IO.Path.Combine(localPath, name);
-                if (selectedFileName != localFile)
-                    IO.File.Copy(selectedFileName, localFile, true);
 
                 return docRef;
             }
@@ -93,96 +82,52 @@ namespace DocumentFlow
             }
         }
 
-        public EditingResult Edit(DocumentRefs refs)
+        public bool Edit(DocumentRefs refs)
         {
+            if (CanceledFtpConnection())
+            {
+                return false;
+            }
+
             FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
             {
-                Credentials = new NetworkCredential(FtpUser, FtpPassword)
+                Credentials = new NetworkCredential(Settings.Default.FtpUser, Settings.Default.FtpPassword)
             };
 
             ftp.Connect();
 
+            string ftpName = Path.Combine(ftpPath, refs.file_name);
+            if (!ftp.FileExists(ftpName))
+            {
+                if (MessageBox.Show($"Файл {refs.file_name} отсутствует. Удалить запись?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    Delete(ftp, refs);
+                    return false;
+                }
+            }
+
             try
             {
-                string localName = IO.Path.Combine(localPath, refs.FileName);
-                string ftpName = IO.Path.Combine(ftpPath, refs.FileName);
-
-                selectFile.SelectedItem = localName;
-                textNote.Text = refs.Note;
-
-                // Если отсутствует локальный файл, то попробуем его загрузить с сервера (или удалим запись о файле)
-                if (!IO.File.Exists(localName))
-                {
-                    if (MessageBox.Show($"Файл {refs.FileName} отсутствует. Восстановить файл?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                    {
-                        if (ftp.DownloadFile(localName, ftpName) == FtpStatus.Failed)
-                        {
-                            if (MessageBox.Show($"Возникла проблема при загрузке файла {refs.FileName}. Удалить запись?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                            {
-                                Delete(ftp, refs);
-                                return EditingResult.RemovalRequired;
-                            }
-                            else
-                                return EditingResult.Cancel;
-                        }
-                    }
-                    else
-                    {
-                        if (MessageBox.Show($"Удалить запись?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                        {
-                            Delete(ftp, refs);
-                            return EditingResult.RemovalRequired;
-                        }
-                        else
-                            return EditingResult.Cancel;
-                    }
-                }
-
-                uint crc = GetCrcFile(localName);
-
-                // Если файл отсутствует на сервере, то загрузим его туда
-                if (!ftp.FileExists(ftpName))
-                {
-                    ftp.UploadFile(localName, ftpName, FtpRemoteExists.Overwrite, true);
-                    refs.Crc = crc;
-                }
-
-                // Если локальный файл файл присутствует, то проверим его CRC и если это число не совпадает, то опять пробуем скачать его с сервера.
-                // Если не удалось скачать, то редактировать не дадим (надо разобраться в чём проблема)
-                // Если пользователь отказывается загружать файл, то это его проблемы
-                if (refs.Crc != crc)
-                {
-                    if (MessageBox.Show($"Файл {refs.FileName} отличается от файла на сервере. Восстановить его?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                    {
-                        if (ftp.DownloadFile(localName, ftpName) == FtpStatus.Failed)
-                        {
-                            throw new FtpDownloadException($"Возникла проблема при загрузке файла {refs.FileName}");
-                        }
-
-                        refs.Crc = crc;
-                    }
-                }
+                selectFile.FileName = ftpName;
+                textNote.Text = refs.note;
 
                 if (ShowDialog() == DialogResult.OK)
                 {
-                    if (!string.IsNullOrEmpty(selectedFileName) && selectedFileName != localName)
+                    if (selectFile.FileName != ftpName)
                     {
-                        IO.File.Delete(localName);
                         ftp.DeleteFile(ftpName);
 
-                        refs.FileName = IO.Path.GetFileName(selectedFileName);
-                        refs.Crc = GetCrcFile(selectedFileName);
+                        refs.file_name = Path.GetFileName(selectFile.FileName);
+                        refs.crc = GetCrcFile(selectFile.FileName);
 
-                        localName = IO.Path.Combine(localPath, refs.FileName);
-                        ftpName = IO.Path.Combine(ftpPath, refs.FileName);
+                        ftpName = Path.Combine(ftpPath, refs.file_name);
 
-                        ftp.UploadFile(selectedFileName, ftpName, FtpRemoteExists.Overwrite, true);
-                        IO.File.Copy(selectedFileName, localName, true);
+                        ftp.UploadFile(selectFile.FileName, ftpName, FtpRemoteExists.Overwrite, true);
                     }
 
-                    refs.Note = textNote.Text;
+                    refs.note = textNote.Text;
 
-                    return EditingResult.Ok;
+                    return true;
                 }
             }
             finally
@@ -190,14 +135,19 @@ namespace DocumentFlow
                 ftp.Disconnect();
             }
 
-            return EditingResult.Cancel;
+            return false;
         }
 
         public void Delete(DocumentRefs refs)
         {
+            if (CanceledFtpConnection())
+            {
+                return;
+            }
+
             FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
             {
-                Credentials = new NetworkCredential(FtpUser, FtpPassword)
+                Credentials = new NetworkCredential(Settings.Default.FtpUser, Settings.Default.FtpPassword)
             };
 
             ftp.Connect();
@@ -205,77 +155,47 @@ namespace DocumentFlow
             Delete(ftp, refs);
         }
 
-        public EditingResult GetLocalFileName(DocumentRefs refs, out string localName)
+        public bool GetLocalFileName(DocumentRefs refs, out string localName)
         {
+            localName = Path.Combine(Path.GetTempPath(), refs.file_name);
+            if (CanceledFtpConnection())
+            {
+                return false;
+            }
+
             FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
             {
-                Credentials = new NetworkCredential(FtpUser, FtpPassword)
+                Credentials = new NetworkCredential(Settings.Default.FtpUser, Settings.Default.FtpPassword)
             };
 
             ftp.Connect();
 
             try
             {
-                localName = IO.Path.Combine(localPath, refs.FileName);
-                string ftpName = IO.Path.Combine(ftpPath, refs.FileName);
+                string ftpName = Path.Combine(ftpPath, refs.file_name);
 
-                if (!IO.File.Exists(localName))
+                if (File.Exists(localName))
                 {
-                    IO.DirectoryInfo di = IO.Directory.GetParent(localPath);
-                    string p_file = IO.Path.Combine(di.FullName, refs.FileName);
-
-                    // Если отсутствует локальный файл, то попробуем его загрузить с сервера (или удалим запись о файле)
-                    if (!IO.File.Exists(p_file))
+                    uint crc = GetCrcFile(localName);
+                    if (crc == refs.crc)
                     {
-                        if (ftp.DownloadFile(localName, ftpName) == FtpStatus.Failed)
-                        {
-                            if (MessageBox.Show($"Файл {refs.FileName} отсутствует. Удалить запись?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                            {
-                                Delete(ftp, refs);
-                                return EditingResult.RemovalRequired;
-                            }
-                            else
-                                return EditingResult.Cancel;
-                        }
-
-                        return EditingResult.Ok;
+                        return true;
                     }
-                    else
-                    {
-                        if (!IO.Directory.Exists(localPath))
-                        {
-                            IO.Directory.CreateDirectory(localPath);
-                        }
 
-                        IO.File.Move(p_file, localName);
-                    }
+                    File.Delete(localName);
                 }
 
-                uint crc = GetCrcFile(localName);
-                
-                // Если файл отсутствует на сервере, то загрузим его туда
-                if (!ftp.FileExists(ftpName))
+                if (ftp.DownloadFile(localName, ftpName) == FtpStatus.Failed)
                 {
-                    ftp.UploadFile(localName, ftpName, FtpRemoteExists.Overwrite, true);
-                    refs.Crc = crc;
-
-                    return EditingResult.Ok;
-                }
-
-                if (refs.Crc != crc)
-                {
-                    if (MessageBox.Show($"Файл {refs.FileName} отличается от файла на сервере. Восстановить его?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (MessageBox.Show($"Файл {refs.file_name} отсутствует. Удалить запись?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        if (ftp.DownloadFile(localName, ftpName) == FtpStatus.Failed)
-                        {
-                            throw new FtpDownloadException($"Возникла проблема при загрузке файла {refs.FileName}");
-                        }
-
-                        refs.Crc = crc;
+                        Delete(ftp, refs);
                     }
+
+                    return false;
                 }
 
-                return EditingResult.Ok;
+                return true;
             }
             finally
             {
@@ -283,21 +203,51 @@ namespace DocumentFlow
             }
         }
 
+        private bool CanceledFtpConnection()
+        {
+            if (string.IsNullOrEmpty(Settings.Default.FtpUser) || string.IsNullOrEmpty(Settings.Default.FtpPassword))
+            {
+                FtpLoginForm ftpLogin = new FtpLoginForm(Settings.Default.FtpUser, Settings.Default.FtpPassword);
+                if (ftpLogin.ShowDialog() == DialogResult.Cancel)
+                {
+                    return true;
+                }
+
+                Settings.Default.FtpUser = ftpLogin.UserName;
+                Settings.Default.FtpPassword = ftpLogin.Password;
+            }
+
+            return false;
+        }
+
         private void Delete(FtpClient ftp, DocumentRefs refs)
         {
-            string fileName = IO.Path.Combine(localPath, refs.FileName);
-            if (IO.File.Exists(fileName))
-                IO.File.Delete(fileName);
-
-            fileName = IO.Path.Combine(ftpPath, refs.FileName);
+            string fileName = Path.Combine(ftpPath, refs.file_name);
             if (ftp.FileExists(fileName))
                 ftp.DeleteFile(fileName);
+
+            using (var conn = Db.OpenConnection())
+            {
+                using (var transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        conn.Query("delete from document_refs where id = :id", new { refs.Id }, transaction);
+                        transaction.Commit();
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        ExceptionHelper.MesssageBox(e);
+                    }
+                }
+            }
         }
 
         private uint GetCrcFile(string fileName)
         {
             uint crc = 0;
-            using (IO.FileStream stream = IO.File.Open(fileName, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read))
+            using (FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 int length = stream.Length > int.MaxValue ? int.MaxValue : Convert.ToInt32(stream.Length);
 
@@ -310,14 +260,9 @@ namespace DocumentFlow
             return crc;
         }
 
-        private void SelectFile_ValueChanged(object sender, Controls.Forms.SelectBoxValueChanged e)
-        {
-            selectedFileName = e.SelectedItem?.ToString();
-        }
-
         private void buttonOk_Click(object sender, EventArgs e)
         {
-            if (selectFile.SelectedItem == null)
+            if (string.IsNullOrEmpty(selectFile.FileName))
             {
                 MessageBox.Show("Необходимо выбрать файл. Без файла - никак.....", "Файл", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 DialogResult = DialogResult.None;

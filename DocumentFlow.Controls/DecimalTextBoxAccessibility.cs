@@ -6,11 +6,11 @@
 // Time: 22:51
 //-----------------------------------------------------------------------
 
+using System.Drawing;
+using System.Windows.Forms;
+
 namespace DocumentFlow.Controls
 {
-    using System.Drawing;
-    using System.Windows.Forms;
-
     public class DecimalTextBoxAccessibility : Control.ControlAccessibleObject
     {
         /// <summary>
