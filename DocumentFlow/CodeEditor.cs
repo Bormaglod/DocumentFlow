@@ -127,7 +127,7 @@ namespace DocumentFlow
                 {
                     try
                     {
-                        conn.Execute("update command set script = :scriptcode where id = :id", command, transaction);
+                        conn.Execute("update command set script = :script where id = :id", command, transaction);
                         transaction.Commit();
                     }
                     catch (Exception ex)

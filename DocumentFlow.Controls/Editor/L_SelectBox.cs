@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
 using DocumentFlow.Code;
 using DocumentFlow.Controls.Editor.Forms;
 
@@ -24,6 +25,7 @@ namespace DocumentFlow.Controls.Editor
         public L_SelectBox()
         {
             InitializeComponent();
+            Nullable = true;
         }
 
         public event EventHandler ValueChanged;
@@ -50,7 +52,20 @@ namespace DocumentFlow.Controls.Editor
 
         object IEditControl.Value
         {
-            get => selectedItem?.id;
+            get
+            {
+                if (Nullable)
+                {
+                    return selectedItem?.id;
+                }
+                else if (selectedItem != null)
+                {
+                    return selectedItem.id;
+                }
+                else
+                    throw new ArgumentNullException($"Значение поля {((ILabelControl)this).Text} не может быть пустым.");
+            }
+
             set
             {
                 if (value is Guid id)
@@ -58,10 +73,13 @@ namespace DocumentFlow.Controls.Editor
                     selectedItem = items.FirstOrDefault(x => x.id == id);
                     textValue.Text = selectedItem?.ToString();
                     OnValueChanged();
-                    return;
                 }
-
-                ClearCurrent();
+                else if (value == null)
+                {
+                    ClearCurrent();
+                }
+                else
+                    throw new ArgumentException($"Значение поля {((ILabelControl)this).Text} Должно быть идентификатором типа GUID");
             }
         }
 
@@ -70,6 +88,8 @@ namespace DocumentFlow.Controls.Editor
             get => panelEdit.Dock == DockStyle.Fill;
             set => panelEdit.Dock = DockStyle.Fill;
         }
+
+        public bool Nullable { get; set; }
 
         public bool ShowOnlyFolder { get; set; }
 

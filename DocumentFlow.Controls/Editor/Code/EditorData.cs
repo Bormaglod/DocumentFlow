@@ -185,7 +185,7 @@ namespace DocumentFlow.Controls.Code
             return controlData;
         }
 
-        IBindingControl IEditor.CreateInteger(string fieldName, string label)
+        IBindingControl IEditor.CreateInteger(string fieldName, string label, IntegerLength length)
         {
             L_IntegerTextBox integerTextBox = new L_IntegerTextBox()
             {

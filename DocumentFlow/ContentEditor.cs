@@ -213,7 +213,7 @@ namespace DocumentFlow
 
                 while (!token.IsCancellationRequested)
                 {
-                    conn.WaitAsync(token);
+                    conn.Wait();
                 }
 
                 while (conn.FullState.HasFlag(System.Data.ConnectionState.Fetching)) ;

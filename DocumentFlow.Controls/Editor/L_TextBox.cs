@@ -19,6 +19,7 @@ namespace DocumentFlow.Controls.Editor
         public L_TextBox()
         {
             InitializeComponent();
+            Nullable = true;
         }
 
         public event EventHandler ValueChanged;
@@ -45,11 +46,8 @@ namespace DocumentFlow.Controls.Editor
 
         object IEditControl.Value 
         {
-            get => textBoxExt.Text.NullIfEmpty();
-            set
-            {
-                textBoxExt.Text = value == null ? string.Empty : value.ToString();
-            }
+            get => Nullable ? textBoxExt.Text.NullIfEmpty() : textBoxExt.Text;
+            set => textBoxExt.Text = value == null ? string.Empty : value.ToString();
         }
 
         bool IEditControl.FitToSize 
@@ -58,9 +56,9 @@ namespace DocumentFlow.Controls.Editor
             set => textBoxExt.Dock = DockStyle.Fill; 
         }
 
-        public bool Multiline { get => textBoxExt.Multiline; set => textBoxExt.Multiline = value; }
+        public bool Nullable { get; set; }
 
-        public override string Text { get => textBoxExt.Text; set => textBoxExt.Text = value; }
+        public bool Multiline { get => textBoxExt.Multiline; set => textBoxExt.Multiline = value; }
 
         private void TextBoxExt_TextChanged(object sender, EventArgs e)
         {

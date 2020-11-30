@@ -127,6 +127,23 @@ namespace DocumentFlow.Code.Implementation
             }
         }
 
+        /*public bool Nullable
+        {
+            get
+            {
+                if (Owner is IEditControl edit)
+                    return edit.Nullable;
+
+                throw new Exception("Объект не реализует интерфейс IEditControl. Присваивание значение не возможно.");
+            }
+
+            set
+            {
+                if (Owner is IEditControl edit)
+                    edit.Nullable = value;
+            }
+        }*/
+
         public object Value 
         { 
             get
@@ -169,6 +186,18 @@ namespace DocumentFlow.Code.Implementation
             ControlWidth = controlWidth;
             return this;
         }
+
+        /*public IBindingControl AsNullable()
+        {
+            Nullable = true;
+            return this;
+        }
+
+        public IBindingControl AsNotNullable()
+        {
+            Nullable = false;
+            return this;
+        }*/
 
         public IBindingControl ValueChangedAction(EventHandler<ValueChangedEventArgs> valueChanged)
         {

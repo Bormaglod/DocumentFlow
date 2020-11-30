@@ -9,8 +9,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-
 using DocumentFlow.Code;
+using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Controls.Editor
 {
@@ -19,6 +19,7 @@ namespace DocumentFlow.Controls.Editor
         public L_IntegerTextBox()
         {
             InitializeComponent();
+            Length = IntegerLength.Int32;
         }
 
         public event EventHandler ValueChanged;
@@ -45,8 +46,21 @@ namespace DocumentFlow.Controls.Editor
 
         object IEditControl.Value
         {
-            get => integerTextBox1.IntegerValue;
-            set => integerTextBox1.IntegerValue = value == null ? default : Convert.ToInt32(value);
+            get
+            {
+                if (Length == IntegerLength.Int64)
+                    return IntegerValue;
+                else
+                    return Convert.ToInt32(IntegerValue);
+            }
+
+            set
+            {
+                if (Length == IntegerLength.Int64)
+                    IntegerValue = value == null ? default(long) : Convert.ToInt64(value);
+                else
+                    IntegerValue = value == null ? default(int) : Convert.ToInt32(value);
+            }
         }
 
         bool IEditControl.FitToSize
@@ -66,6 +80,8 @@ namespace DocumentFlow.Controls.Editor
         public int[] NumberGroupSizes { get => integerTextBox1.NumberGroupSizes; set => integerTextBox1.NumberGroupSizes = value; }
 
         public long IntegerValue { get => integerTextBox1.IntegerValue; set => integerTextBox1.IntegerValue = value; }
+
+        public IntegerLength Length { get; set; }
 
         private void integerTextBox1_IntegerValueChanged(object sender, EventArgs e)
         {

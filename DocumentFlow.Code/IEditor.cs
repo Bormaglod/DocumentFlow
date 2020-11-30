@@ -33,7 +33,7 @@ namespace DocumentFlow.Code
         IBindingControl CreateComboBox(string fieldName, string label, ChoiceItems getItems);
         IBindingControl CreateComboBox(string fieldName, string label, СriterionChoiceItems getItems);
         IBindingControl CreateChoice(string fieldName, string label, IDictionary<int, string> keyValues);
-        IBindingControl CreateInteger(string fieldName, string label);
+        IBindingControl CreateInteger(string fieldName, string label, IntegerLength length = IntegerLength.Int32);
         IBindingControl CreateNumeric(string fieldName, string label, int numberDecimalDigits = 3);
         IBindingControl CreateCurrency(string fieldName, string label);
         IBindingControl CreatePercent(string fieldName, string label, int percentDecimalDigits = 0, double minValue = 0, double maxValue = 100);

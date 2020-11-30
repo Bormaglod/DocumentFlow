@@ -54,6 +54,8 @@ namespace DocumentFlow.Controls.Editor
             set => percentTextBox1.Dock = DockStyle.Fill;
         }
 
+        public bool Nullable { get; set; }
+
         public int PercentDecimalDigits { get => percentTextBox1.PercentDecimalDigits; set => percentTextBox1.PercentDecimalDigits = value; }
 
         public double MaxValue { get => percentTextBox1.MaxValue; set => percentTextBox1.MaxValue = value; }

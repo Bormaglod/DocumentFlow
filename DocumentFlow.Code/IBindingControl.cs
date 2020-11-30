@@ -50,7 +50,15 @@ namespace DocumentFlow.Code
         /// </summary>
         int ControlWidth { get; set; }
 
+        /// <summary>
+        /// Возвращает или устанавливает возможность принимать данными значение null.
+        /// </summary>
+        /// <value>true, если данные могут иметь значение null. Значение по умолчанию - true - для ссылочных типов и false - для остальных.</value>
+        //bool Nullable { get; set; }
+
         object Value { get; set; }
+
+        //object DefaultValue { get; set; }
 
         IPopulate AsPopulateControl();
 
@@ -81,6 +89,12 @@ namespace DocumentFlow.Code
         /// <param name="controlWidth">Ширина элемента управления.</param>
         /// <returns></returns>
         IBindingControl SetControlWidth(int controlWidth);
+
+        /*IBindingControl AsNullable();
+
+        IBindingControl AsNotNullable();
+
+        IBindingControl SetDefaultValue(object defaultValue);*/
 
         IBindingControl ValueChangedAction(EventHandler<ValueChangedEventArgs> valueChanged);
     }

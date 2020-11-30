@@ -525,7 +525,7 @@ namespace DocumentFlow
 
                 while (!token.IsCancellationRequested)
                 {
-                    conn.WaitAsync(token);
+                    conn.Wait();
                 }
 
                 while (conn.FullState.HasFlag(ConnectionState.Fetching)) ;

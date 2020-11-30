@@ -40,7 +40,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOperationImp
                 join status s on (s.id = po.status_id) 
                 join goods g on (g.id = po.goods_id) 
                 join operation o on (o.id = po.operation_id) 
-            where po.owner_id = :owner_id";
+            where {0}";
 
         public void Initialize(IBrowser browser)
         {

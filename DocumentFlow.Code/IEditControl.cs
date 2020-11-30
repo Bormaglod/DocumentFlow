@@ -16,6 +16,8 @@ namespace DocumentFlow.Code
 
         int Width { get; set; }
         object Value { get; set; }
+        //object DefaultValue { get; set; }
         bool FitToSize { get; set; }
+        //bool Nullable { get; set; }
     }
 }

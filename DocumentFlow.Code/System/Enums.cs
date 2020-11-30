@@ -12,6 +12,8 @@ namespace DocumentFlow.Code.System
 
     public enum DataType { None, Directory, Document, Report }
 
+    public enum IntegerLength { Int32, Int64 }
+
     public enum NumberFormatMode
     {
         //

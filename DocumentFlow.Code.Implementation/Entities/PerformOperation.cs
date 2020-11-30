@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -229,7 +229,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(350);
 
-            IControl amount = editor.CreateNumeric("amount", "Количество", numberDecimalDigits: 0)
+            IControl amount = editor.CreateInteger("amount", "Количество")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
 
