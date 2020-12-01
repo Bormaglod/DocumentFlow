@@ -38,7 +38,7 @@
             this.label1.Dock = System.Windows.Forms.DockStyle.Left;
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(136, 25);
+            this.label1.Size = new System.Drawing.Size(136, 32);
             this.label1.TabIndex = 1;
             this.label1.Text = "Text";
             // 
@@ -72,7 +72,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "L_NumericTextBox";
-            this.Size = new System.Drawing.Size(719, 25);
+            this.Size = new System.Drawing.Size(719, 32);
             ((System.ComponentModel.ISupportInitialize)(this.decimalText)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

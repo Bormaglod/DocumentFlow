@@ -41,7 +41,7 @@ namespace DocumentFlow.Code.Core
         abstract protected string GetSelectById();
         virtual protected string GetDelete()
         {
-            return $"delete from {nameof(T).Underscore()} where id = :id";
+            return $"delete from {typeof(T).Name.Underscore()} where id = :id";
         }
     }
 }

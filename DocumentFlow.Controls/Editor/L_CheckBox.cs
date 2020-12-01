@@ -18,6 +18,7 @@ namespace DocumentFlow.Controls.Editor
         public L_CheckBox()
         {
             InitializeComponent();
+            Nullable = false;
         }
 
         public event EventHandler ValueChanged;
@@ -36,11 +37,20 @@ namespace DocumentFlow.Controls.Editor
 
         object IEditControl.Value
         {
-            get => checkBoxAdv1.BoolValue;
+            get
+            {
+                if (Nullable && checkBoxAdv1.BoolValue == default)
+                    return null;
+
+                return checkBoxAdv1.BoolValue;
+            }
+
             set => checkBoxAdv1.BoolValue = value == null ? default : Convert.ToBoolean(value);
         }
 
         bool IEditControl.FitToSize { get; set; }
+
+        public bool Nullable { get; set; }
 
         private void checkBoxAdv1_CheckedChanged(object sender, EventArgs e)
         {

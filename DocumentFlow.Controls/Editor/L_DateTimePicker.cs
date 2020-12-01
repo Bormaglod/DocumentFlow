@@ -52,6 +52,7 @@ namespace DocumentFlow.Controls.Editor
 
                 return null;
             }
+
             set
             {
                 datePickerAdv.Value = value == null ? DateTime.Now : Convert.ToDateTime(value);
@@ -64,6 +65,8 @@ namespace DocumentFlow.Controls.Editor
             get => datePickerAdv.Dock == DockStyle.Fill;
             set => datePickerAdv.Dock = DockStyle.Fill;
         }
+
+        public bool Nullable { get; set; }
 
         public string CustomFormat { get => datePickerAdv.CustomFormat; set => datePickerAdv.CustomFormat = value; }
 

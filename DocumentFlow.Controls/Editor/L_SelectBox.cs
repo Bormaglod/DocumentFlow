@@ -79,7 +79,7 @@ namespace DocumentFlow.Controls.Editor
                     ClearCurrent();
                 }
                 else
-                    throw new ArgumentException($"Значение поля {((ILabelControl)this).Text} Должно быть идентификатором типа GUID");
+                    throw new ArgumentException($"Значение поля {((ILabelControl)this).Text} должно быть идентификатором типа GUID");
             }
         }
 

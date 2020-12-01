@@ -308,7 +308,10 @@ namespace DocumentFlow
                 IPage page = null;
                 if (id != Guid.Empty)
                 {
-                    page = container.Get<ContentEditor>(id);
+                    page = container.GetAll<ContentEditor>()
+                        .OfType<IPage>()
+                        .Where(x => x.InfoId == id)
+                        .FirstOrDefault();
                 }
 
                 if (page != null)

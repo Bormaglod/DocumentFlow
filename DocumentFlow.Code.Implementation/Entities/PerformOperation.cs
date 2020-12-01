@@ -214,7 +214,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(350);
 
-            IControl operation_id = editor.CreateSelectBox("operation_id", "Изделие", (e, c) =>
+            IControl operation_id = editor.CreateSelectBox("operation_id", "Операция", (e, c) =>
                 {
                     PerformOperation po = e.Entity as PerformOperation;
                     return c.Query<GroupDataItem>(operationSelect, new { po.order_id, po.goods_id, po.operation_id });

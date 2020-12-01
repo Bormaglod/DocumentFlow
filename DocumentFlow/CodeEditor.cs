@@ -66,7 +66,7 @@ namespace DocumentFlow
 
         Guid IPage.Id => command.Id;
 
-        Guid IPage.ContentId => command.Id;
+        Guid IPage.InfoId => command.Id;
 
         IContainerPage IPage.Container => containerPage;
 
@@ -87,7 +87,7 @@ namespace DocumentFlow
         private void Compile()
         {
             IList<IPage> list = containerPage.Get(command.Id)
-                .Where(x => x.Id != x.ContentId)
+                .Where(x => x.Id != x.InfoId)
                 .AsList();
 
             try
@@ -138,7 +138,7 @@ namespace DocumentFlow
                 }
             }
 
-            IList<IPage> list = containerPage.Get(command.Id).Where(x => x.Id != x.ContentId).AsList();
+            IList<IPage> list = containerPage.Get(command.Id).Where(x => x.Id != x.InfoId).AsList();
             if (list.Count > 0)
             {
                 Compile();

@@ -18,6 +18,7 @@ namespace DocumentFlow.Controls.Editor
         public L_PercentTextBox()
         {
             InitializeComponent();
+            Nullable = false;
         }
 
         public event EventHandler ValueChanged;
@@ -44,7 +45,14 @@ namespace DocumentFlow.Controls.Editor
 
         object IEditControl.Value
         {
-            get => percentTextBox1.PercentValue;
+            get
+            {
+                if (Nullable && percentTextBox1.PercentValue == default)
+                    return null;
+
+                return percentTextBox1.PercentValue;
+            }
+
             set => percentTextBox1.PercentValue = value == null ? default : Convert.ToDouble(value);
         }
 

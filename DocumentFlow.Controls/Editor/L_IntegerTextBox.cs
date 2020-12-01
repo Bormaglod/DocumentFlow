@@ -20,6 +20,7 @@ namespace DocumentFlow.Controls.Editor
         {
             InitializeComponent();
             Length = IntegerLength.Int32;
+            Nullable = false;
         }
 
         public event EventHandler ValueChanged;
@@ -48,6 +49,11 @@ namespace DocumentFlow.Controls.Editor
         {
             get
             {
+                if (Nullable && IntegerValue == default(long))
+                {
+                    return null;
+                }
+
                 if (Length == IntegerLength.Int64)
                     return IntegerValue;
                 else
@@ -68,6 +74,8 @@ namespace DocumentFlow.Controls.Editor
             get => integerTextBox1.Dock == DockStyle.Fill;
             set => integerTextBox1.Dock = DockStyle.Fill;
         }
+
+        public bool Nullable { get; set; }
 
         public long MinValue { get => integerTextBox1.MinValue; set => integerTextBox1.MinValue = value; }
 

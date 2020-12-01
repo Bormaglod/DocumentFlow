@@ -18,6 +18,7 @@ namespace DocumentFlow.Controls.Editor
         public L_NumericTextBox()
         {
             InitializeComponent();
+            Nullable = false;
         }
 
         public event EventHandler ValueChanged;
@@ -44,7 +45,14 @@ namespace DocumentFlow.Controls.Editor
 
         object IEditControl.Value
         {
-            get => decimalText.DecimalValue;
+            get
+            {
+                if (Nullable && decimalText.DecimalValue == default)
+                    return null;
+
+                return decimalText.DecimalValue;
+            }
+
             set => decimalText.DecimalValue = value == null ? default : Convert.ToDecimal(value);
         }
 
@@ -53,6 +61,8 @@ namespace DocumentFlow.Controls.Editor
             get => decimalText.Dock == DockStyle.Fill;
             set => decimalText.Dock = DockStyle.Fill;
         }
+
+        public bool Nullable { get; set; }
 
         public int NumberDecimalDigits { get => decimalText.NumberDecimalDigits; set => decimalText.NumberDecimalDigits = value; }
 

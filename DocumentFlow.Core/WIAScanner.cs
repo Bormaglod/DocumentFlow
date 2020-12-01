@@ -56,9 +56,10 @@ namespace DocumentFlow.Core
             WIA.ICommonDialog dialog = new WIA.CommonDialog();
             WIA.Device device = dialog.ShowSelectDevice(WIA.WiaDeviceType.UnspecifiedDeviceType, true, false);
 
-            List<Image> images = new List<Image>();
             if (device != null)
             {
+                List<Image> images = new List<Image>();
+
                 do
                 {
                     images.AddRange(Scan(device.DeviceID));

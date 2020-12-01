@@ -28,7 +28,7 @@ namespace DocumentFlow
 
         Guid IPage.Id => viewerControl1.ExecutedCommand.Id;
 
-        Guid IPage.ContentId => viewerControl1.ContentId;
+        Guid IPage.InfoId => viewerControl1.InfoId;
 
         IContainerPage IPage.Container => viewerControl1.ContainerForm;
 

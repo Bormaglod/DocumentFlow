@@ -68,7 +68,7 @@ namespace DocumentFlow
 
         Guid IPage.Id => transition.Id;
 
-        Guid IPage.ContentId => transition.Id;
+        Guid IPage.InfoId => transition.Id;
 
         void IPage.Rebuild() { }
 

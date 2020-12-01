@@ -127,7 +127,7 @@ namespace DocumentFlow.Code.Implementation
             }
         }
 
-        /*public bool Nullable
+        public bool Nullable
         {
             get
             {
@@ -142,7 +142,7 @@ namespace DocumentFlow.Code.Implementation
                 if (Owner is IEditControl edit)
                     edit.Nullable = value;
             }
-        }*/
+        }
 
         public object Value 
         { 
@@ -160,6 +160,8 @@ namespace DocumentFlow.Code.Implementation
                     edit.Value = value;
             }
         }
+
+        public object DefaultValue { get; set; }
 
         public IPopulate AsPopulateControl() => this;
 
@@ -187,17 +189,23 @@ namespace DocumentFlow.Code.Implementation
             return this;
         }
 
-        /*public IBindingControl AsNullable()
+        public IBindingControl AsNullable()
         {
             Nullable = true;
             return this;
         }
 
-        public IBindingControl AsNotNullable()
+        public IBindingControl AsRequired()
         {
             Nullable = false;
             return this;
-        }*/
+        }
+
+        public IBindingControl SetDefaultValue(object defaultValue)
+        {
+            DefaultValue = defaultValue;
+            return this;
+        }
 
         public IBindingControl ValueChangedAction(EventHandler<ValueChangedEventArgs> valueChanged)
         {

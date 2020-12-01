@@ -54,11 +54,11 @@ namespace DocumentFlow.Code
         /// Возвращает или устанавливает возможность принимать данными значение null.
         /// </summary>
         /// <value>true, если данные могут иметь значение null. Значение по умолчанию - true - для ссылочных типов и false - для остальных.</value>
-        //bool Nullable { get; set; }
+        bool Nullable { get; set; }
 
         object Value { get; set; }
 
-        //object DefaultValue { get; set; }
+        object DefaultValue { get; set; }
 
         IPopulate AsPopulateControl();
 
@@ -90,11 +90,11 @@ namespace DocumentFlow.Code
         /// <returns></returns>
         IBindingControl SetControlWidth(int controlWidth);
 
-        /*IBindingControl AsNullable();
+        IBindingControl AsNullable();
 
-        IBindingControl AsNotNullable();
+        IBindingControl AsRequired();
 
-        IBindingControl SetDefaultValue(object defaultValue);*/
+        IBindingControl SetDefaultValue(object defaultValue);
 
         IBindingControl ValueChangedAction(EventHandler<ValueChangedEventArgs> valueChanged);
     }

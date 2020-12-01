@@ -45,6 +45,8 @@ namespace DocumentFlow
         /// <returns>Страницы, идентификатор которой равен id.</returns>
         IEnumerable<IPage> Get(Guid id);
 
+        IEnumerable<T> GetAll<T>();
+
         void Logout();
         void About();
     }

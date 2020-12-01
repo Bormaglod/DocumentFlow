@@ -26,6 +26,8 @@ namespace DocumentFlow.Controls.Editor
             {
                 comboBoxAdv1.Items.Add(new ChoiceDataItem() { id = item, name = keyValues[item] });
             }
+
+            Nullable = true;
         }
 
         public event EventHandler ValueChanged;
@@ -51,8 +53,26 @@ namespace DocumentFlow.Controls.Editor
         int IEditControl.Width { get => comboBoxAdv1.Width; set => comboBoxAdv1.Width = value; }
 
         object IEditControl.Value 
-        { 
-            get => (comboBoxAdv1.SelectedItem as ChoiceDataItem)?.id;
+        {
+            get
+            {
+                if (comboBoxAdv1.SelectedItem is ChoiceDataItem selectedItem)
+                {
+                    if (Nullable)
+                    {
+                        return selectedItem?.id;
+                    }
+                    else if (selectedItem != null)
+                    {
+                        return selectedItem.id;
+                    }
+                    else
+                        throw new ArgumentNullException($"Значение поля {((ILabelControl)this).Text} не может быть пустым.");
+                }
+
+                return null;
+            }
+
             set
             {
                 if (value is int id)
@@ -74,6 +94,8 @@ namespace DocumentFlow.Controls.Editor
             get => comboBoxAdv1.Dock == DockStyle.Fill;
             set => comboBoxAdv1.Dock = DockStyle.Fill;
         }
+
+        public bool Nullable { get; set; }
 
         private void OnValueChanged()
         {

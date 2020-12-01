@@ -687,7 +687,7 @@ namespace DocumentFlow
             }
         }
 
-        public Guid ContentId
+        public Guid InfoId
         {
             get
             {

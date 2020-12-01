@@ -132,9 +132,9 @@ namespace DocumentFlow
 
         #region IPage implementation
 
-        Guid IPage.Id => command.Id;
+        Guid IPage.Id => command.Id; 
 
-        Guid IPage.ContentId => current;
+        Guid IPage.InfoId => current;
 
         IContainerPage IPage.Container => containerPage;
 

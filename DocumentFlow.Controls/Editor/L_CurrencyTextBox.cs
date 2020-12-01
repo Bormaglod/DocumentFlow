@@ -18,6 +18,7 @@ namespace DocumentFlow.Controls.Editor
         public L_CurrencyTextBox()
         {
             InitializeComponent();
+            Nullable = false;
         }
 
         public event EventHandler ValueChanged;
@@ -44,7 +45,14 @@ namespace DocumentFlow.Controls.Editor
 
         object IEditControl.Value
         {
-            get => currencyTextBox1.DecimalValue;
+            get
+            {
+                if (Nullable && currencyTextBox1.DecimalValue == default)
+                    return null;
+
+                return currencyTextBox1.DecimalValue;
+            }
+
             set => currencyTextBox1.DecimalValue = value == null ? default : Convert.ToDecimal(value);
         }
 
@@ -53,6 +61,8 @@ namespace DocumentFlow.Controls.Editor
             get => currencyTextBox1.Dock == DockStyle.Fill;
             set => currencyTextBox1.Dock = DockStyle.Fill;
         }
+
+        public bool Nullable { get; set; }
 
         private void CurrencyTextBox1_DecimalValueChanged(object sender, EventArgs e)
         {

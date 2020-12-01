@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -211,7 +211,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
             IContainer container = editor.CreateContainer(32);
 
-            IControl doc_number = editor.CreateTextBox("doc_number", "Номер")
+            IControl doc_number = editor.CreateInteger("doc_number", "Номер")
                 .SetControlWidth(110)
                 .SetLabelAutoSize(true)
                 .SetWidth(165)
@@ -241,15 +241,15 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     InvoiceReceipt ir = e.Entity as InvoiceReceipt;
                     return c.Query<GroupDataItem>(contractorSelect, new { ir.contractor_id });
                 })
-                .SetLabelWidth(120)
+                .SetLabelWidth(90)
                 .SetControlWidth(700);
 
-            IControl owner_id = editor.CreateSelectBox("owner_id", "Контрагент", (e, c) =>
+            IControl owner_id = editor.CreateSelectBox("owner_id", "Заказ", (e, c) =>
                 {
                     InvoiceReceipt ir = e.Entity as InvoiceReceipt;
                     return c.Query<GroupDataItem>(ownerSelect, new { ir.contractor_id, ir.owner_id });
                 })
-                .SetLabelWidth(120)
+                .SetLabelWidth(90)
                 .SetControlWidth(450);
 
             IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<InvoiceReceiptDetail>(gridSelect, new { ((IIdentifier)editor.Entity).id }).AsList(); })

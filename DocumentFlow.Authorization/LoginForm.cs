@@ -130,7 +130,7 @@ namespace DocumentFlow.Authorization
                 comboUsers.SelectedItem = users.FirstOrDefault(u => u.pg_name == "postgres");
                 textPassword.Text = File.ReadLines("password.txt").First();
 #else
-                comboUsers.SelectedItem = users.FirstOrDefault(u => u.name == Settings.Default.PreviousUser);
+                comboUsers.SelectedItem = users.FirstOrDefault(u => u.pg_name == Settings.Default.PreviousUser);
 #endif
             }
         }

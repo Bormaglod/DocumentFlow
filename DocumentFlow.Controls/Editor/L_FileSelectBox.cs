@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using DocumentFlow.Code;
+using DocumentFlow.Core;
 
 namespace DocumentFlow.Controls.Editor
 {
@@ -21,6 +22,7 @@ namespace DocumentFlow.Controls.Editor
         public L_FileSelectBox()
         {
             InitializeComponent();
+            Nullable = true;
         }
 
         public event EventHandler ValueChanged;
@@ -39,7 +41,7 @@ namespace DocumentFlow.Controls.Editor
 
         object IEditControl.Value
         {
-            get => selectedItem;
+            get => Nullable ? selectedItem.NullIfEmpty() : selectedItem;
             set
             {
                 if (value is string file)
@@ -89,6 +91,8 @@ namespace DocumentFlow.Controls.Editor
                 edit.Value = value;
             } 
         }
+
+        public bool Nullable { get; set; }
 
         public void ClearCurrent()
         {

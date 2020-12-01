@@ -95,6 +95,8 @@ namespace DocumentFlow
                 .Where(page => page.Id == id);
         }
 
+        IEnumerable<T> IContainerPage.GetAll<T>() => dockPanel1.Contents.OfType<T>();
+
         void IContainerPage.Logout()
         {
             Hide();

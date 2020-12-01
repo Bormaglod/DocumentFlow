@@ -21,7 +21,8 @@ namespace DocumentFlow.Controls.Editor
         public L_ImageViewerBox()
         {
             InitializeComponent();
-        }
+            Nullable = true;
+    }
 
         public event EventHandler ValueChanged;
 
@@ -58,11 +59,13 @@ namespace DocumentFlow.Controls.Editor
 
         object IEditControl.Value
         {
-            get => Base64Image;
+            get => Nullable ? Base64Image.NullIfEmpty() : base64Image;
             set => Base64Image = value == null ? string.Empty : value.ToString();
         }
 
         bool IEditControl.FitToSize { get; set; }
+
+        public bool Nullable { get; set; }
 
         private void ButtonSelectImage_Click_1(object sender, EventArgs e)
         {
