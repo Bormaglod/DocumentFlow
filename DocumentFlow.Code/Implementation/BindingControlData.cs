@@ -16,9 +16,8 @@ using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation
 {
-    public class BindingControlData: ControlData, IBindingControl, IPopulate
+    public class BindingControlData : ControlData, IBindingControl, IPopulate
     {
-        private bool populating;
         private object populateData;
         private readonly List<string> locked = new List<string>();
 
@@ -29,8 +28,6 @@ namespace DocumentFlow.Code.Implementation
             binding.ControlWidth = 100;
             binding.Visible = true;
 
-            populating = false;
-
             if (control is IEditControl edit)
             {
                 edit.ValueChanged += Edit_ValueChanged;
@@ -40,8 +37,8 @@ namespace DocumentFlow.Code.Implementation
         public event EventHandler<ValueChangedEventArgs> ValueChanged;
         public event EventHandler AfterPopulation;
 
-        public string LabelText 
-        { 
+        public string LabelText
+        {
             get
             {
                 if (Owner is ILabelControl label)
@@ -59,8 +56,8 @@ namespace DocumentFlow.Code.Implementation
 
         public string FieldName { get; set; }
 
-        public bool LabelAutoSize 
-        { 
+        public bool LabelAutoSize
+        {
             get
             {
                 if (Owner is ILabelControl label)
@@ -76,7 +73,7 @@ namespace DocumentFlow.Code.Implementation
             }
         }
 
-        public ContentAlignment LabelTextAlignment 
+        public ContentAlignment LabelTextAlignment
         {
             get
             {
@@ -93,7 +90,7 @@ namespace DocumentFlow.Code.Implementation
             }
         }
 
-        public int LabelWidth 
+        public int LabelWidth
         {
             get
             {
@@ -144,8 +141,8 @@ namespace DocumentFlow.Code.Implementation
             }
         }
 
-        public object Value 
-        { 
+        public object Value
+        {
             get
             {
                 if (Owner is IEditControl edit)
@@ -219,36 +216,23 @@ namespace DocumentFlow.Code.Implementation
             return this;
         }
 
-        public void DoAfterPopulation()
-        {
-            AfterPopulation?.Invoke(this, EventArgs.Empty);
-        }
+        public void DoAfterPopulation() => AfterPopulation?.Invoke(this, EventArgs.Empty);
 
         virtual public void Populate(IDbConnection connection, object data)
         {
             if (Owner is IEditControl edit)
             {
                 populateData = data;
-                populating = true;
-                try
-                {
-                    PropertyInfo prop = data.GetType().GetProperty(FieldName);
-                    edit.Value = prop.GetValue(data);
-                }
-                finally
-                {
-                    populating = false;
-                }
+                PropertyInfo prop = data.GetType().GetProperty(FieldName);
+                if (prop == null)
+                    throw new ArgumentNullException($"Предпринята попытка заполнить отсутствующее в объекте поле {FieldName}");
+
+                edit.Value = prop.GetValue(data);
             }
         }
 
         private void Edit_ValueChanged(object sender, EventArgs e)
         {
-            if (populating)
-            {
-                return;
-            }
-
             if (sender is IEditControl edit)
             {
                 if (!locked.Contains(FieldName))

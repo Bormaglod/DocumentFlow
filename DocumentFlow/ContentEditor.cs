@@ -146,13 +146,13 @@ namespace DocumentFlow
         {
             using (var conn = Db.OpenConnection())
             {
-                Command command = commandFactory.Commands.SingleOrDefault(x => x.code == commandCode);
+                var command = commandFactory.Commands.SingleOrDefault(x => x.code == commandCode);
                 if (command == null)
                 {
                     return;
                 }
 
-                ViewerControl viewer = new ViewerControl(BrowserMode.Dependent)
+                var viewer = new ViewerControl(BrowserMode.Dependent)
                 {
                     CommandFactory = commandFactory,
                     ExecutedCommand = command,
@@ -164,7 +164,7 @@ namespace DocumentFlow
                 {
                     viewer.InitializeViewer();
 
-                    TabSplitterPage page = new TabSplitterPage
+                    var page = new TabSplitterPage
                     {
                         Text = command.name
                     };
@@ -248,7 +248,7 @@ namespace DocumentFlow
             timerDatabaseListen.Stop();
 #endif
 
-            foreach (ViewerControl viewer in childs)
+            foreach (var viewer in childs)
             {
                 viewer.OnClosing();
             }
@@ -378,13 +378,13 @@ namespace DocumentFlow
             panelItemActions.Items.Clear();
             using (var conn = Db.OpenConnection())
             {
-                IList<ChangingStatus> list = conn.Query<ChangingStatus, Picture, ChangingStatus>("select * from changing_status cs left join picture p on (cs.picture_id = p.id) where cs.transition_id = :transition_id and cs.from_status_id = :status_id and not cs.is_system order by cs.order_index", (cs, picture) =>
+                var list = conn.Query<ChangingStatus, Picture, ChangingStatus>("select * from changing_status cs left join picture p on (cs.picture_id = p.id) where cs.transition_id = :transition_id and cs.from_status_id = :status_id and not cs.is_system order by cs.order_index", (cs, picture) =>
                 {
                     cs.Picture = picture;
                     return cs;
-                }, new { transition_id = command.EntityKind.transition_id, status_id = status.id }).ToList();
+                }, new { command.EntityKind.transition_id, status_id = status.id }).ToList();
 
-                foreach (ChangingStatus cs in list)
+                foreach (var cs in list)
                 {
                     bool access = conn.Query<bool>("select access_changing_status(:id, :changing_status_id)", new { id = current, changing_status_id = cs.Id }).Single();
                     if (!access)
@@ -392,7 +392,7 @@ namespace DocumentFlow
                         continue;
                     }
 
-                    ToolStripButton button = new ToolStripButton()
+                    var button = new ToolStripButton
                     {
                         Image = cs.Picture?.GetImageLarge(),
                         Text = cs.name,
@@ -581,7 +581,7 @@ namespace DocumentFlow
 
         private void buttonCreate_Click(object sender, EventArgs e)
         {
-            DocumentRefs refs = refEditor.Create(current);
+            var refs = refEditor.Create(current);
             if (refs == null)
             {
                 return;
@@ -620,10 +620,7 @@ namespace DocumentFlow
             }
         }
 
-        private void buttonOpenFolder_Click(object sender, EventArgs e)
-        {
-            Process.Start($"ftp://{Settings.Default.FtpHost}{ftpPath}");
-        }
+        private void buttonOpenFolder_Click(object sender, EventArgs e) => Process.Start($"ftp://{Settings.Default.FtpHost}{ftpPath}");
 
         private void buttonOpenFile_Click(object sender, EventArgs e)
         {
@@ -678,9 +675,6 @@ namespace DocumentFlow
             }
         }
 
-        private void buttonCustomization_Click(object sender, EventArgs e)
-        {
-            commandFactory.Execute("open-browser-code", command);
-        }
+        private void buttonCustomization_Click(object sender, EventArgs e) => commandFactory.Execute("open-browser-code", command);
     }
 }

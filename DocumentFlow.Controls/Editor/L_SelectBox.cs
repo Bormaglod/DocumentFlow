@@ -107,15 +107,9 @@ namespace DocumentFlow.Controls.Editor
             items.AddRange(addingItems);
         }
 
-        private void OnValueChanged()
-        {
-            ValueChanged?.Invoke(this, EventArgs.Empty);
-        }
+        private void OnValueChanged() => ValueChanged?.Invoke(this, EventArgs.Empty);
 
-        private void ButtonDelete_Click(object sender, EventArgs e)
-        {
-            ClearCurrent();
-        }
+        private void ButtonDelete_Click(object sender, EventArgs e) => ClearCurrent();
 
         private void ButtonSelect_Click(object sender, EventArgs e)
         {
