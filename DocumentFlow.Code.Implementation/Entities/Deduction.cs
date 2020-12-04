@@ -65,7 +65,8 @@ namespace DocumentFlow.Code.Implementation.DeductionImp
                     .SetAllowGrouping(true)
                     .SetWidth(160);
 
-                columns.CreateNumeric("percentage", "Процент", NumberFormatMode.Percent, decimalDigits: 2)
+                columns.CreateNumeric("percentage", "Процент", NumberFormatMode.Percent)
+                    .SetDecimalDigits(2)
                     .SetWidth(100);
 
                 columns.CreateSortedColumns()

@@ -127,7 +127,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                     .SetWidth(140)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-                columns.CreateNumeric("salary", "Зарплата", NumberFormatMode.Currency, decimalDigits: 2)
+                columns.CreateNumeric("salary", "Зарплата", NumberFormatMode.Currency)
                     .SetWidth(120)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 

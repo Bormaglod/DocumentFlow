@@ -69,7 +69,7 @@ namespace DocumentFlow.Code.Implementation.ArchivePriceImp
                 .SetHideable(false)
                 .SetWidth(150);
 
-            columns.CreateNumeric("price_value", "Цена", NumberFormatMode.Currency, decimalDigits: 2)
+            columns.CreateNumeric("price_value", "Цена", NumberFormatMode.Currency)
                 .SetHideable(false)
                 .SetWidth(100);
 

@@ -89,15 +89,16 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
                 .SetHideable(false)
                 .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateNumeric("amount", "Количество", decimalDigits: 3)
+            columns.CreateNumeric("amount", "Количество")
+                .SetDecimalDigits(3)
                 .SetWidth(150)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-            columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency, decimalDigits: 2)
+            columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                 .SetWidth(150)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-            columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency, decimalDigits: 2)
+            columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency)
                 .SetWidth(150)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 

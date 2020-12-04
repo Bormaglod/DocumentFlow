@@ -96,11 +96,11 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 columns.CreateDate("date_debited", "Дата операции", "dd.MM.yyyy")
                     .SetWidth(150);
 
-                columns.CreateNumeric("income", "Приход", NumberFormatMode.Currency, decimalDigits: 2)
+                columns.CreateNumeric("income", "Приход", NumberFormatMode.Currency)
                     .SetWidth(120)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-                columns.CreateNumeric("expense", "Расход", NumberFormatMode.Currency, decimalDigits: 2)
+                columns.CreateNumeric("expense", "Расход", NumberFormatMode.Currency)
                     .SetWidth(120)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 

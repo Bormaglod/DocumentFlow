@@ -121,7 +121,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
                 .SetAllowGrouping(true)
                 .SetVisibility(false);
 
-            columns.CreateNumeric("salary", "Зар. плата, руб.", NumberFormatMode.Currency, decimalDigits: 2)
+            columns.CreateNumeric("salary", "Зар. плата, руб.", NumberFormatMode.Currency)
                 .SetWidth(150)
                 .SetVisibility(false)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right);
@@ -132,7 +132,8 @@ namespace DocumentFlow.Code.Implementation.OperationImp
                 .SetVisible(false)
                 .SetVisibility(false);
 
-            columns.CreateNumeric("left_cleaning", "Длина зачистки слева", decimalDigits: 1)
+            columns.CreateNumeric("left_cleaning", "Длина зачистки слева")
+                .SetDecimalDigits(1)
                 .SetWidth(100)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right)
                 .SetVisible(false)
@@ -144,7 +145,8 @@ namespace DocumentFlow.Code.Implementation.OperationImp
                 .SetVisible(false)
                 .SetVisibility(false);
 
-            columns.CreateNumeric("right_cleaning", "Длина зачистки справа", decimalDigits: 1)
+            columns.CreateNumeric("right_cleaning", "Длина зачистки справа")
+                .SetDecimalDigits(1)
                 .SetWidth(100)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right)
                 .SetVisible(false)
@@ -198,7 +200,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
                 {
                     Operation op = browser.ExecuteSqlCommand<Operation>("select * from operation where id = :id", new { id = browser.Parameters.ParentId });
                     if (op.parent_id.HasValue)
-                        root = browser.ExecuteSqlCommand<string>("select get_operation_root_code(:id)", new { id = browser.Parameters.ParentId });
+                        root = browser.ExecuteSqlCommand<string>("select root_code_operation(:id)", new { id = browser.Parameters.ParentId });
                     else
                         root = op.code;
                 }
@@ -253,7 +255,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
             controls.Add(editor.CreateCurrency("salary", "Зарплата, руб.")
                 .SetLabelWidth(labelWidth));
 
-            string root = editor.ExecuteSqlCommand<string>("select get_operation_root_code(:id)", new { ((IIdentifier)editor.Entity).id });
+            string root = editor.ExecuteSqlCommand<string>("select root_code_operation(:id)", new { ((IIdentifier)editor.Entity).id });
             if (root == "Резка")
             {
                 controls.Add(editor.CreateNumeric("length", "Длина провода", numberDecimalDigits: 0)

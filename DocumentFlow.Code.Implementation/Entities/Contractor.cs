@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -18,10 +18,10 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
         public Guid? parent_id { get; set; }
         public string short_name { get; set; }
         public string full_name { get; set; }
-        public decimal inn { get; set; }
-        public decimal kpp { get; set; }
-        public decimal ogrn { get; set; }
-        public decimal okpo { get; set; }
+        public decimal? inn { get; set; }
+        public decimal? kpp { get; set; }
+        public decimal? ogrn { get; set; }
+        public decimal? okpo { get; set; }
         public Guid? okopf_id { get; set; }
         public string okopf_name { get; set; }
         public Guid? account_id { get; set; }
@@ -62,65 +62,70 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
 
             browser.CreateStatusColumnRenderer();
 
-            IColumnCollection columns = browser.Columns;
+            browser.CreateColumns((columns) =>
+			{
+	            columns.CreateText("id", "Id")
+    	            .SetWidth(180)
+        	        .SetVisible(false);
 
-            columns.CreateText("id", "Id")
-                .SetWidth(180)
-                .SetVisible(false);
+	            columns.CreateInteger("status_id", "Код состояния")
+    	            .SetWidth(80)
+        	        .SetAllowGrouping(true)
+            	    .SetVisible(false);
 
-            columns.CreateInteger("status_id", "Код состояния")
-                .SetWidth(80)
-                .SetAllowGrouping(true)
-                .SetVisible(false);
+	            columns.CreateText("status_name", "Состояние")
+    	            .SetWidth(110)
+        	        .SetAllowGrouping(true)
+            	    .SetVisible(false);
 
-            columns.CreateText("status_name", "Состояние")
-                .SetWidth(110)
-                .SetAllowGrouping(true)
-                .SetVisible(false);
+	            columns.CreateText("name", "Наименование")
+    	            .SetAutoSizeColumnsMode(SizeColumnsMode.Fill)
+        	        .SetHideable(false);
 
-            columns.CreateText("name", "Наименование")
-                .SetAutoSizeColumnsMode(SizeColumnsMode.Fill)
-                .SetHideable(false);
+	            columns.CreateText("short_name", "Краткое наименование")
+    	            .SetWidth(150)
+					.SetVisible(false)
+        	        .SetVisibility(false);
 
-            columns.CreateText("short_name", "Краткое наименование")
-                .SetWidth(150)
-                .SetVisible(false);
+            	columns.CreateText("full_name", "Полное наименование")
+                	.SetWidth(200)
+					.SetVisible(false)
+	                .SetVisibility(false);
 
-            columns.CreateText("full_name", "Полное наименование")
-                .SetWidth(200)
-                .SetVisible(false);
+    	        columns.CreateInteger("inn", "ИНН")
+        	        .SetWidth(100)
+					.SetVisibility(false);
 
-            columns.CreateInteger("inn", "ИНН")
-                .SetWidth(100);
+	            columns.CreateInteger("kpp", "КПП")
+					.SetFormat("0000 00 000")
+        	        .SetWidth(100)
+					.SetVisibility(false);
 
-            columns.CreateInteger("kpp", "КПП")
-                .SetWidth(100);
+            	columns.CreateInteger("okpo", "ОКПО")
+					.SetFormat("00 00000 0")
+	                .SetWidth(100)
+    	            .SetVisibility(false);
 
-            columns.CreateInteger("okpo", "ОКПО")
-                .SetWidth(100)
-                .SetVisible(false);
+            	columns.CreateInteger("ogrn", "ОГРН")
+					.SetFormat("0 00 00 00 00000 0")
+	                .SetWidth(120)
+					.SetVisibility(false);
 
-            columns.CreateInteger("ogrn", "ОГРН")
-                .SetWidth(120);
+	            columns.CreateText("okopf_name", "ОКОПФ")
+    	            .SetWidth(300)
+        	        .SetAllowGrouping(true)
+					.SetVisibility(false);
 
-            columns.CreateText("okopf_name", "ОКОПФ")
-                .SetWidth(300)
-                .SetAllowGrouping(true);
+	            columns.CreateBoolean("tax_payer", "Плательщик НДС")
+					.SetWidth(150)
+    	            .SetAllowGrouping(true)
+        	        .SetVisibility(false);
 
-            columns.CreateBoolean("tax_payer", "Плательщик НДС")
-                .SetAllowGrouping(true)
-                .SetVisible(false);
+	            columns.CreateSortedColumns()
+    	            .Add("name", SortDirection.Ascending);
+			});
 
-            columns.CreateBoolean("supplier", "Поставщик")
-                .SetAllowGrouping(true)
-                .SetVisible(false);
-
-            columns.CreateBoolean("buyer", "Покупатель")
-                .SetAllowGrouping(true)
-                .SetVisible(false);
-
-            columns.CreateSortedColumns()
-                .Add("name", SortDirection.Ascending);
+			browser.ChangeParent += Browser_ChangeParent;
         }
 
         public IEditorCode CreateEditor()
@@ -142,6 +147,39 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
         {
             return string.Format(baseSelect, "c.id = :id");
         }
+
+		private void Browser_ChangeParent(object sender, ChangeParentEventArgs e)
+		{
+			IBrowser browser = sender as IBrowser;
+            if (browser != null)
+            {
+				string root = string.Empty;
+				if (browser.Parameters.ParentId.HasValue)
+                {
+                    Contractor g = browser.ExecuteSqlCommand<Contractor>("select * from contractor where id = :id", new { id = browser.Parameters.ParentId });
+                    if (g.parent_id.HasValue)
+                        root = browser.ExecuteSqlCommand<string>("select root_code_contractor(:id)", new { id = browser.Parameters.ParentId });
+                    else
+                        root = g.code;
+                }
+
+				foreach (string column in new string[] { "short_name", "full_name", "inn" })
+                {
+                    browser.Columns[column].Visibility = !string.IsNullOrEmpty(root);
+                }
+
+				foreach (string column in new string[] { "kpp", "okpo", "ogrn", "okopf_name", "tax_payer" })
+                {
+                    browser.Columns[column].Visibility = root == "Юр";
+                }
+
+				if (!string.IsNullOrEmpty(root))
+				{
+					string format = root == "Юр" ? "0000 00000 0" : "0000 000000 00";
+					((INumericColumn)browser.Columns["inn"]).Format = format;
+				}
+			}
+		}
     }
 
     public class ContractorEditor : EditorCodeBase<Contractor>, IEditorCode
@@ -169,15 +207,19 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
                 .SetHeight(75)
                 .SetPadding(bottom: 7);
             IControl inn = editor.CreateNumeric("inn", "ИНН", numberDecimalDigits: 0)
+				.AsNullable()
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
             IControl kpp = editor.CreateNumeric("kpp", "КПП", numberDecimalDigits: 0)
+				.AsNullable()
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
             IControl ogrn = editor.CreateNumeric("ogrn", "ОГРН", numberDecimalDigits: 0)
+				.AsNullable()
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
             IControl okpo = editor.CreateNumeric("okpo", "ОКПО", numberDecimalDigits: 0)
+				.AsNullable()
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
             IControl okopf = editor.CreateComboBox("okopf_id", "ОКОПФ", (c) => { return c.Query<ComboBoxDataItem>(okopfSelect); })

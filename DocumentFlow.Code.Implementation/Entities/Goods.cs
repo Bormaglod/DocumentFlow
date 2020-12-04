@@ -109,7 +109,8 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                     .SetHorizontalAlignment(HorizontalAlignmentText.Center)
                     .SetVisibility(false);
 
-                columns.CreateNumeric("min_order", "Мин. партия", decimalDigits: 3)
+                columns.CreateNumeric("min_order", "Мин. партия")
+                    .SetDecimalDigits(3)
                     .SetWidth(100)
                     .SetAllowGrouping(true)
                     .SetVisible(false)
@@ -121,22 +122,23 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                     .SetAllowGrouping(true)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Center);
 
-                columns.CreateNumeric("cost", "Себестоимость", NumberFormatMode.Currency, 2)
+                columns.CreateNumeric("cost", "Себестоимость", NumberFormatMode.Currency)
                     .SetWidth(120)
                     .SetVisibility(false)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-                columns.CreateNumeric("profit_percent", "Прибыль, %", NumberFormatMode.Percent, 2)
+                columns.CreateNumeric("profit_percent", "Прибыль, %", NumberFormatMode.Percent)
+                    .SetDecimalDigits(2)
                     .SetWidth(110)
                     .SetVisibility(false)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Center);
 
-                columns.CreateNumeric("profit_value", "Прибыль", NumberFormatMode.Currency, 2)
+                columns.CreateNumeric("profit_value", "Прибыль", NumberFormatMode.Currency)
                     .SetWidth(100)
                     .SetVisibility(false)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-                columns.CreateNumeric("calc_price", "Цена расчётная", NumberFormatMode.Currency, 2)
+                columns.CreateNumeric("calc_price", "Цена расчётная", NumberFormatMode.Currency)
                     .SetWidth(75)
                     .SetVisible(false)
                     .SetVisibility(false)
@@ -183,7 +185,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 {
                     Goods g = browser.ExecuteSqlCommand<Goods>("select * from goods where id = :id", new { id = browser.Parameters.ParentId });
                     if (g.parent_id.HasValue)
-                        root = browser.ExecuteSqlCommand<string>("select get_goods_root_code(:id)", new { id = browser.Parameters.ParentId });
+                        root = browser.ExecuteSqlCommand<string>("select root_code_goods(:id)", new { id = browser.Parameters.ParentId });
                     else
                         root = g.code;
                 }
@@ -252,7 +254,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 is_service
             });
 
-            string root = editor.ExecuteSqlCommand<string>("select get_goods_root_code(:id)", new { ((IIdentifier)editor.Entity).id });
+            string root = editor.ExecuteSqlCommand<string>("select root_code_goods(:id)", new { ((IIdentifier)editor.Entity).id });
             if (root == "Прд")
             {
                 dependentViewer.AddDependentViewer("view-calculation");

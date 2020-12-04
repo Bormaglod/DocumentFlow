@@ -83,14 +83,15 @@ namespace DocumentFlow.Code.Implementation.CalcItemDeductionImp
                 .SetHideable(false)
                 .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateNumeric("percentage", "Процент", NumberFormatMode.Percent, decimalDigits: 2)
+            columns.CreateNumeric("percentage", "Процент", NumberFormatMode.Percent)
+                .SetDecimalDigits(2)
                 .SetWidth(150);
 
-            columns.CreateNumeric("price", "База", NumberFormatMode.Currency, decimalDigits: 2)
+            columns.CreateNumeric("price", "База", NumberFormatMode.Currency)
                 .SetWidth(150)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-            columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency, decimalDigits: 2)
+            columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                 .SetWidth(150)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 

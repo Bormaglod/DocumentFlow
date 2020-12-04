@@ -183,7 +183,8 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
                     columns.CreateText("goods_name", "Материал")
                         .SetHideable(false)
                         .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
-                    columns.CreateNumeric("amount", "Количество", decimalDigits: 3)
+                    columns.CreateNumeric("amount", "Количество")
+                        .SetDecimalDigits(3)
                         .SetWidth(100)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignmentText.Right);

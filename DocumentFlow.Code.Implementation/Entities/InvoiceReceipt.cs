@@ -127,7 +127,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 columns.CreateInteger("purchase_number", "Номер")
                     .SetWidth(100);
 
-                columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency, decimalDigits: 2)
+                columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                     .SetWidth(120)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
@@ -136,11 +136,11 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     .SetHorizontalAlignment(HorizontalAlignmentText.Center)
                     .SetAllowGrouping(true);
 
-                columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency, decimalDigits: 2)
+                columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency)
                     .SetWidth(120)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-                columns.CreateNumeric("cost_with_tax", "Всего с НДС", NumberFormatMode.Currency, decimalDigits: 2)
+                columns.CreateNumeric("cost_with_tax", "Всего с НДС", NumberFormatMode.Currency)
                     .SetWidth(120)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
@@ -258,15 +258,16 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     columns.CreateText("goods_name", "Номенклатура")
                         .SetHideable(false)
                         .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
-                    columns.CreateNumeric("amount", "Количество", decimalDigits: 3)
+                    columns.CreateNumeric("amount", "Количество")
+                        .SetDecimalDigits(3)
                         .SetWidth(100)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignmentText.Right);
-                    columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency, decimalDigits: 2)
+                    columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                         .SetWidth(100)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignmentText.Right);
-                    columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency, decimalDigits: 2)
+                    columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignmentText.Right);
@@ -274,11 +275,11 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                         .SetWidth(80)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignmentText.Center);
-                    columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency, decimalDigits: 2)
+                    columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignmentText.Right);
-                    columns.CreateNumeric("cost_with_tax", "Всего", NumberFormatMode.Currency, decimalDigits: 2)
+                    columns.CreateNumeric("cost_with_tax", "Всего", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignmentText.Right);

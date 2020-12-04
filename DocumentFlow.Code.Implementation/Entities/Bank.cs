@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -58,9 +58,11 @@ namespace DocumentFlow.Code.Implementation.BankImp
                 .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
             columns.CreateInteger("bik", "БИК")
+				.SetFormat("00 00 00 000")
                 .SetWidth(100);
 
             columns.CreateInteger("account", "Корр. счёт")
+				.SetFormat("000 00 000 0 00000000 000")
                 .SetWidth(180);
 
             columns.CreateSortedColumns()

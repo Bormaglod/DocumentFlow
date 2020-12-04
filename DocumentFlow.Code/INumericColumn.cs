@@ -2,17 +2,21 @@
 // Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 30.09.2020
-// Time: 19:46
+// Date: 03.12.2020
+// Time: 23:35
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code
 {
-    public interface INumericColumn
+    public interface INumericColumn : IColumn
     {
         NumberFormatMode FormatMode { get; }
-        int DecimalDigits { get; }
+        int DecimalDigits { get; set; }
+        string Format { get; set; }
+        INumericColumn SetDecimalDigits(int decimalDigits);
+        INumericColumn SetGroupSizes(int[] groupSizes);
+        INumericColumn SetFormat(string format);
     }
 }

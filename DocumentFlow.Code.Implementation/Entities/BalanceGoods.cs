@@ -109,11 +109,13 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
                 .SetWidth(100)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-            columns.CreateNumeric("amount", "Количество", decimalDigits: 3)
+            columns.CreateNumeric("amount", "Количество")
+                .SetDecimalDigits(3)
                 .SetWidth(130)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-            columns.CreateNumeric("remainder", "Остаток", decimalDigits: 3)
+            columns.CreateNumeric("remainder", "Остаток")
+                .SetDecimalDigits(3)
                 .SetWidth(130)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right)
                 .SetBackgroundColor("#DAE5F5");

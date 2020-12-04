@@ -17,8 +17,8 @@ namespace DocumentFlow.Code
         IColumn this[int index] { get; }
         IColumn this[string dataField] { get; }
         IColumn CreateText(string dataField, string headerText);
-        IColumn CreateInteger(string dataField, string headerText, NumberFormatMode formatMode = NumberFormatMode.Numeric);
-        IColumn CreateNumeric(string dataField, string headerText, NumberFormatMode formatMode = NumberFormatMode.Numeric, int decimalDigits = 0);
+        INumericColumn CreateInteger(string dataField, string headerText, NumberFormatMode formatMode = NumberFormatMode.Numeric);
+        INumericColumn CreateNumeric(string dataField, string headerText, NumberFormatMode formatMode = NumberFormatMode.Numeric);
         IColumn CreateBoolean(string dataField, string headerText);
         IColumn CreateDate(string dataField, string headerText, string format = "dd.MM.yyyy HH:mm:ss");
         IColumn CreateImage(string dataField, string headerText);

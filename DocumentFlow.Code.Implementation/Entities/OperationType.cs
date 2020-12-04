@@ -50,7 +50,7 @@ namespace DocumentFlow.Code.Implementation.OperationTypeImp
                 .SetHideable(false)
                 .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateNumeric("hourly_salary", "Расценка, руб./час", NumberFormatMode.Currency, decimalDigits: 2)
+            columns.CreateNumeric("hourly_salary", "Расценка, руб./час", NumberFormatMode.Currency)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right)
                 .SetWidth(200);
 

@@ -55,7 +55,7 @@ namespace DocumentFlow.Code.Implementation
             return AddColumn(DataColumnType.Text, gridColumn);
         }
 
-        IColumn IColumnCollection.CreateInteger(string dataField, string headerText, NumberFormatMode formatMode)
+        INumericColumn IColumnCollection.CreateInteger(string dataField, string headerText, NumberFormatMode formatMode)
         {
             NumberFormatInfo numberFormat = Application.CurrentCulture.NumberFormat.Clone() as NumberFormatInfo;
             numberFormat.NumberDecimalDigits = 0;
@@ -69,14 +69,14 @@ namespace DocumentFlow.Code.Implementation
                 NumberFormatInfo = numberFormat
             };
 
-            return AddColumn(DataColumnType.Integer, gridColumn);
+            return AddColumn(DataColumnType.Integer, gridColumn) as INumericColumn;
         }
 
-        IColumn IColumnCollection.CreateNumeric(string dataField, string headerText, NumberFormatMode formatMode, int decimalDigits)
+        INumericColumn IColumnCollection.CreateNumeric(string dataField, string headerText, NumberFormatMode formatMode/*, int decimalDigits*/)
         {
             NumberFormatInfo numberFormat = Application.CurrentCulture.NumberFormat.Clone() as NumberFormatInfo;
-            numberFormat.NumberDecimalDigits = decimalDigits;
-            numberFormat.PercentDecimalDigits = decimalDigits;
+            numberFormat.NumberDecimalDigits = 0;
+            numberFormat.PercentDecimalDigits = 0;
 
             GridColumn gridColumn = new GridDecimalColumn()
             {
@@ -86,7 +86,7 @@ namespace DocumentFlow.Code.Implementation
                 NumberFormatInfo = numberFormat
             };
 
-            return AddColumn(DataColumnType.Numeric, gridColumn);
+            return AddColumn(DataColumnType.Numeric, gridColumn) as INumericColumn;
         }
 
         IColumn IColumnCollection.CreateBoolean(string dataField, string headerText)
@@ -142,15 +142,9 @@ namespace DocumentFlow.Code.Implementation
             return AddColumn(DataColumnType.Progress, gridProgress);
         }
 
-        ISorted IColumnCollection.CreateSortedColumns()
-        {
-            return new SortedColumnsData(gridContent);
-        }
+        ISorted IColumnCollection.CreateSortedColumns() => new SortedColumnsData(gridContent);
 
-        IStackedColumn IColumnCollection.CreateStackedColumns()
-        {
-            return new StackedColumnData(gridContent);
-        }
+        IStackedColumn IColumnCollection.CreateStackedColumns() => new StackedColumnData(gridContent);
 
         ISummary IColumnCollection.CreateTableSummaryRow(GroupVerticalPosition position)
         {
@@ -201,8 +195,7 @@ namespace DocumentFlow.Code.Implementation
             IColumn column;
             if (gridColumn is GridNumericColumn numberColumn)
             {
-                NumberFormatMode mode = EnumHelper.TransformEnum<NumberFormatMode, FormatMode>(numberColumn.FormatMode);
-                column = new GridNumericColumnData(type, mode, numberColumn.NumberFormatInfo.NumberDecimalDigits, gridColumn, item);
+                column = new GridNumericColumnData(type, gridColumn, item);
             }
             else
             {

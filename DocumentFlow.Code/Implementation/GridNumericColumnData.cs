@@ -8,23 +8,56 @@
 
 using System.Windows.Forms;
 using Syncfusion.WinForms.DataGrid;
+using Syncfusion.WinForms.Input.Enums;
+using DocumentFlow.Code.Controls;
 using DocumentFlow.Code.System;
+using DocumentFlow.Core;
 
 namespace DocumentFlow.Code.Implementation
 {
     public class GridNumericColumnData : GridColumnData, INumericColumn
     {
-        private readonly NumberFormatMode formatMode;
-        private readonly int decimalDigits;
+        public GridNumericColumnData(DataColumnType type, GridColumn column, ToolStripMenuItem toolStripItem) : base(type, column, toolStripItem) { }
 
-        public GridNumericColumnData(DataColumnType type, NumberFormatMode formatMode, int decimalDigits, GridColumn column, ToolStripMenuItem toolStripItem) : base(type, column, toolStripItem)
+        private GridNumericColumn NumericColumn => (GridNumericColumn)Owner;
+
+        NumberFormatMode INumericColumn.FormatMode => EnumHelper.TransformEnum<NumberFormatMode, FormatMode>(NumericColumn.FormatMode);
+
+        int INumericColumn.DecimalDigits
         {
-            this.formatMode = formatMode;
-            this.decimalDigits = decimalDigits;
+            get => NumericColumn.NumberFormatInfo.NumberDecimalDigits;
+            set => NumericColumn.NumberFormatInfo.NumberDecimalDigits = value;
         }
 
-        NumberFormatMode INumericColumn.FormatMode => formatMode;
+        string INumericColumn.Format 
+        {
+            get => Owner.Format;
+            set => Owner.Format = value;
+        }
 
-        int INumericColumn.DecimalDigits => decimalDigits;
+        INumericColumn INumericColumn.SetDecimalDigits(int decimalDigits)
+        {
+            if (Owner is GridDecimalColumn)
+            {
+                NumericColumn.NumberFormatInfo.NumberDecimalDigits = decimalDigits;
+                NumericColumn.NumberFormatInfo.PercentDecimalDigits = decimalDigits;
+            }
+
+            return this;
+        }
+
+        INumericColumn INumericColumn.SetGroupSizes(int[] groupSizes)
+        {
+            NumericColumn.NumberFormatInfo.NumberGroupSizes = groupSizes;
+            NumericColumn.NumberFormatInfo.PercentGroupSizes = groupSizes;
+            NumericColumn.NumberFormatInfo.CurrencyGroupSizes = groupSizes;
+            return this;
+        }
+
+        INumericColumn INumericColumn.SetFormat(string format)
+        {
+            Owner.Format = format;
+            return this;
+        }
     }
 }

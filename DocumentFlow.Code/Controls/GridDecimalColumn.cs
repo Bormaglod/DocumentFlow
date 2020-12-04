@@ -8,6 +8,7 @@
 
 using System;
 using System.Globalization;
+
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.Input.Enums;
 
@@ -24,6 +25,20 @@ namespace DocumentFlow.Code.Controls
                     return value;
 
                 return string.Empty;
+            }
+
+            if (!string.IsNullOrEmpty(Format))
+            {
+                string format = Format.Contains("{") ? Format : "{0:" + Format + "}";
+
+                if (FormatProvider != null)
+                {
+                    return FormatProvider.Format(format, this, record, value);
+                }
+                else
+                {
+                    return string.Format(format, value);
+                }
             }
 
             if (decimal.TryParse(value.ToString(), out decimal result))

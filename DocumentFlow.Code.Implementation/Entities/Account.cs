@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -63,7 +63,8 @@ namespace DocumentFlow.Code.Implementation.AccountImp
                     .SetHideable(false)
                     .SetWidth(200);
 
-                columns.CreateNumeric("account_value", "Расчётный счёт")
+                columns.CreateNumeric("account_value", "Расчётный счёт2")
+					.SetFormat("000 00 000 0 0000 0000000")
                     .SetWidth(200);
 
                 columns.CreateText("bank_name", "Банк")

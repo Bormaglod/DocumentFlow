@@ -71,15 +71,16 @@ namespace DocumentFlow.Code.Implementation.CalculationImp
                 .SetHideable(false)
                 .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateNumeric("cost", "Себестоимость", NumberFormatMode.Currency, 2)
+            columns.CreateNumeric("cost", "Себестоимость", NumberFormatMode.Currency)
                 .SetWidth(150)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-            columns.CreateNumeric("profit_percent", "Прибыль, %", NumberFormatMode.Percent, 2)
+            columns.CreateNumeric("profit_percent", "Прибыль, %", NumberFormatMode.Percent)
+                .SetDecimalDigits(2)
                 .SetWidth(120)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Center);
 
-            columns.CreateNumeric("profit_value", "Прибыль", NumberFormatMode.Currency, 2)
+            columns.CreateNumeric("profit_value", "Прибыль", NumberFormatMode.Currency)
                 .SetWidth(150)
                 .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 

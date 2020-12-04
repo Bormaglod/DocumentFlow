@@ -149,15 +149,16 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
                     .SetAllowGrouping(true)
                     .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-                columns.CreateNumeric("amount", "Количество", decimalDigits: 3)
+                columns.CreateNumeric("amount", "Количество")
+                    .SetDecimalDigits(3)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right)
                     .SetWidth(120);
 
-                columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency, decimalDigits: 2)
+                columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                     .SetWidth(100)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-                columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency, decimalDigits: 2)
+                columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency)
                     .SetWidth(100)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 

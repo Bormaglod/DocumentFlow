@@ -38,6 +38,10 @@ namespace DocumentFlow.Code.Implementation
             visibility = true;
         }
 
+        public ToolStripMenuItem MenuItem { get; }
+
+        protected GridColumn Owner => owner;
+
         string IColumn.FieldName => owner.MappingName;
 
         DataColumnType IColumn.ColumnType => columnType;
@@ -133,8 +137,6 @@ namespace DocumentFlow.Code.Implementation
                 MenuItem.Enabled = value;
             }
         }
-
-        public ToolStripMenuItem MenuItem { get; }
 
         IColumn IColumn.SetWidth(double width)
         {

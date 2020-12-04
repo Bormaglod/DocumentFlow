@@ -78,15 +78,16 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
                     .SetWidth(150)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-                columns.CreateNumeric("produced_time", "Время, с", decimalDigits: 1)
+                columns.CreateNumeric("produced_time", "Время, с")
+                    .SetDecimalDigits(1)
                     .SetWidth(150)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-                columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency, decimalDigits: 2)
+                columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                     .SetWidth(150)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
-                columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency, decimalDigits: 2)
+                columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency)
                     .SetWidth(150)
                     .SetHorizontalAlignment(HorizontalAlignmentText.Right);
 
@@ -167,11 +168,13 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
                     columns.CreateText("goods_name", "Номенклатура")
                         .SetHideable(false)
                         .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
-                    columns.CreateNumeric("count_by_goods", "Количество на изд.", decimalDigits: 3)
+                    columns.CreateNumeric("count_by_goods", "Количество на изд.")
+                        .SetDecimalDigits(3)
                         .SetWidth(150)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignmentText.Right);
-                    columns.CreateNumeric("count_by_operation", "Количество на опер.", decimalDigits: 3)
+                    columns.CreateNumeric("count_by_operation", "Количество на опер.")
+                        .SetDecimalDigits(3)
                         .SetWidth(150)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignmentText.Right);

@@ -98,6 +98,7 @@
     <Compile Include="Implementation\SortedColumnsData.cs" />
     <Compile Include="Implementation\StackedColumnData.cs" />
     <Compile Include="Implementation\SummaryRowData.cs" />
+    <Compile Include="INumericColumn.cs" />
     <Compile Include="IPopulate.cs" />
     <Compile Include="IGridDataControl.cs" />
     <Compile Include="IStackedColumn.cs" />
@@ -129,7 +130,6 @@
     <Compile Include="IEditor.cs" />
     <Compile Include="IEditorCode.cs" />
     <Compile Include="IIdentifier.cs" />
-    <Compile Include="INumericColumn.cs" />
     <Compile Include="IParent.cs" />
     <Compile Include="ISorted.cs" />
     <Compile Include="ISummary.cs" />
