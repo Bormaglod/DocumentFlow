@@ -93,11 +93,13 @@
             this.selectFile.AutoSizeLabel = false;
             this.selectFile.Dock = System.Windows.Forms.DockStyle.Fill;
             this.selectFile.EditWidth = 436;
+            this.selectFile.FileName = null;
             this.selectFile.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.selectFile.LabelText = "Text";
             this.selectFile.LabelWidth = 117;
             this.selectFile.Location = new System.Drawing.Point(95, 10);
             this.selectFile.Name = "selectFile";
+            this.selectFile.Nullable = true;
             this.selectFile.ShowLabel = false;
             this.selectFile.Size = new System.Drawing.Size(436, 25);
             this.selectFile.TabIndex = 7;
@@ -149,6 +151,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.MaximizeBox = false;
             this.MinimizeBox = false;

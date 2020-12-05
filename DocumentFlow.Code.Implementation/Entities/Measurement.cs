@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
 
@@ -79,7 +79,7 @@ namespace DocumentFlow.Code.Implementation.MeasurementImp
 
     public class MeasurementEditor : EditorCodeBase<Measurement>, IEditorCode
     {
-        private const int labelWidth = 160;
+        private const int labelWidth = 360;
 
         public void Initialize(IEditor editor, IDependentViewer dependentViewer)
         {

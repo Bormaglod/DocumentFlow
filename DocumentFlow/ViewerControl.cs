@@ -741,12 +741,14 @@ namespace DocumentFlow
             gridContent.AllowSorting = true;
             gridContent.ShowGroupDropArea = false;
 
-            gridContent.Columns.Clear();
+            columns.Clear();
             gridContent.StackedHeaderRows.Clear();
 
             fromDate = DateRanges.FirstMonthDay;
             toDate = DateRanges.LastMonthDay;
             dataType = DataType.None;
+
+            parentId = null;
 
             toolBarData = new ToolBarData(this, toolStrip1, ButtonDisplayStyle.ImageAndText, ButtonIconSize.Large);
 
@@ -1007,7 +1009,7 @@ namespace DocumentFlow
 
         private void breadcrumb1_CrumbClick(object sender, CrumbClickEventArgs e)
         {
-            Guid oldParent = parentId.HasValue ? parentId.Value : Guid.Empty;
+            var oldParent = parentId ?? Guid.Empty;
             switch (e.Kind)
             {
                 case ToolButtonKind.Up:
@@ -1023,7 +1025,7 @@ namespace DocumentFlow
                     break;
             }
 
-            Guid newParent = parentId.HasValue ? parentId.Value : Guid.Empty;
+            var newParent = parentId ?? Guid.Empty;
             ChangeParent?.Invoke(this, new ChangeParentEventArgs(oldParent, newParent));
 
             RefreshCurrenView();
@@ -1073,10 +1075,10 @@ namespace DocumentFlow
             {
                 if (row.status_id == 500 && gridContent.SelectedItem is IDirectory dir)
                 {
-                    Guid oldParent = parentId.HasValue ? parentId.Value : Guid.Empty;
+                    var oldParent = parentId ?? Guid.Empty;
                     parentId = dir.id;
                     breadcrumb1.Push(parentId.Value, dir.name);
-                    Guid newParent = parentId.HasValue ? parentId.Value : Guid.Empty;
+                    var newParent = parentId ?? Guid.Empty;
                     ChangeParent?.Invoke(this, new ChangeParentEventArgs(oldParent, newParent));
                     RefreshCurrenView();
                     return;

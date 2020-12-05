@@ -14,6 +14,18 @@ namespace DocumentFlow.Code.Implementation.BankImp
         public string name { get; set; }
         public decimal bik { get; set; }
         public decimal account { get; set; }
+        public string bik_text 
+        {
+            get
+			{
+				return bik.ToString("00 00 00 000");
+			}
+
+            set 
+			{
+				bik = Convert.ToDecimal(value);
+			}
+        }
     }
 
     public class BankBrowser : BrowserCodeBase<Bank>, IBrowserCode
@@ -96,10 +108,10 @@ namespace DocumentFlow.Code.Implementation.BankImp
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
-            IControl bik = editor.CreateNumeric("bik", "БИК", numberDecimalDigits: 0)
+            IControl bik = editor.CreateMaskedText<string>("bik_text", "БИК", "## ## ## ###")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(100);
-            IControl account = editor.CreateNumeric("account", "Корр. счёт", numberDecimalDigits: 0)
+            IControl account = editor.CreateMaskedText<decimal>("account", "Корр. счёт", "### ## ### # ######## ###")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(180);
 

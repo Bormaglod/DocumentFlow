@@ -50,7 +50,7 @@ namespace DocumentFlow.Controls.Code
 
         IContainer IEditor.CreateContainer(int height)
         {
-            Panel panel = new Panel()
+            var panel = new Panel
             {
                 Padding = new Padding(1),
                 Height = height,
@@ -65,7 +65,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateTextBox(string fieldName, string label, bool multiline)
         {
-            L_TextBox textBox = new L_TextBox
+            var textBox = new L_TextBox
             {
                 Multiline = multiline,
                 Height = 32,
@@ -83,7 +83,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateSelectBox(string fieldName, string label, ChoiceItems getItems, bool showOnlyFolder)
         {
-            L_SelectBox selectBox = new L_SelectBox()
+            var selectBox = new L_SelectBox
             {
                 ShowOnlyFolder = showOnlyFolder,
                 Height = 32,
@@ -101,7 +101,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateSelectBox(string fieldName, string label, СriterionChoiceItems getItems, bool showOnlyFolder)
         {
-            L_SelectBox selectBox = new L_SelectBox()
+            var selectBox = new L_SelectBox
             {
                 ShowOnlyFolder = showOnlyFolder,
                 Height = 32,
@@ -119,7 +119,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateComboBox(string fieldName, string label, СriterionChoiceItems getItems)
         {
-            L_ComboBox comboBox = new L_ComboBox()
+            var comboBox = new L_ComboBox
             {
                 Height = 32,
                 Dock = DockStyle.Top
@@ -136,7 +136,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateComboBox(string fieldName, string label, ChoiceItems getItems)
         {
-            L_ComboBox comboBox = new L_ComboBox()
+            var comboBox = new L_ComboBox
             {
                 Height = 32,
                 Dock = DockStyle.Top
@@ -153,7 +153,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateCurrency(string fieldName, string label)
         {
-            L_CurrencyTextBox currencyTextBox = new L_CurrencyTextBox()
+            var currencyTextBox = new L_CurrencyTextBox
             {
                 Height = 32,
                 Dock = DockStyle.Top
@@ -170,7 +170,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateChoice(string fieldName, string label, IDictionary<int, string> keyValues)
         {
-            L_Choice choice = new L_Choice(keyValues)
+            var choice = new L_Choice(keyValues)
             {
                 Height = 32,
                 Dock = DockStyle.Top
@@ -187,7 +187,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateInteger(string fieldName, string label, IntegerLength length)
         {
-            L_IntegerTextBox integerTextBox = new L_IntegerTextBox()
+            var integerTextBox = new L_IntegerTextBox
             {
                 Height = 32,
                 Dock = DockStyle.Top
@@ -204,7 +204,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateNumeric(string fieldName, string label, int numberDecimalDigits)
         {
-            L_NumericTextBox numericTextBox = new L_NumericTextBox()
+            var numericTextBox = new L_NumericTextBox
             {
                 NumberDecimalDigits = numberDecimalDigits,
                 Height = 32,
@@ -222,7 +222,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateCheckBox(string fieldName, string label)
         {
-            L_CheckBox checkBox = new L_CheckBox()
+            var checkBox = new L_CheckBox
             {
                 Height = 32,
                 Dock = DockStyle.Top
@@ -239,7 +239,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreatePercent(string fieldName, string label, int percentDecimalDigits, double minValue, double maxValue)
         {
-            L_PercentTextBox percentTextBox = new L_PercentTextBox()
+            var percentTextBox = new L_PercentTextBox
             {
                 PercentDecimalDigits = percentDecimalDigits,
                 MinValue = minValue,
@@ -259,7 +259,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateDateTimePicker(string fieldName, string label, DateTimeFormat dateTimeFormat, string customFormat, bool showCheck)
         {
-            L_DateTimePicker dateTimePicker = new L_DateTimePicker()
+            var dateTimePicker = new L_DateTimePicker
             {
                 Format = EnumHelper.TransformEnum<DateTimePickerFormat, DateTimeFormat>(dateTimeFormat),
                 CustomFormat = customFormat,
@@ -279,7 +279,7 @@ namespace DocumentFlow.Controls.Code
 
         IBindingControl IEditor.CreateImageBox(string fieldName, string label)
         {
-            L_ImageViewerBox imageViewerBox = new L_ImageViewerBox()
+            var imageViewerBox = new L_ImageViewerBox
             {
                 Height = 32,
                 Dock = DockStyle.Top
@@ -294,11 +294,30 @@ namespace DocumentFlow.Controls.Code
             return controlData;
         }
 
+        IBindingControl IEditor.CreateMaskedText<T>(string fieldName, string label, string mask, char promtCharacter)
+        {
+            var maskedTextBox = new L_MaskedTextBox<T>
+            {
+                Height = 32,
+                Dock = DockStyle.Top,
+                Mask = mask,
+                PromptCharacter = promtCharacter
+            };
+
+            IBindingControl controlData = new BindingControlData(maskedTextBox)
+            {
+                LabelText = label,
+                FieldName = fieldName
+            };
+
+            return controlData;
+        }
+
         IDataGrid IEditor.CreateDataGrid(string name, Func<IDbConnection, IList> getItems)
         {
             if (Entity is IIdentifier identifier)
             {
-                L_DataGrid dataGrid = new L_DataGrid(identifier.id, getItems)
+                var dataGrid = new L_DataGrid(identifier.id, getItems)
                 {
                     Height = 100,
                     Dock = DockStyle.Top

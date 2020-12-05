@@ -32,16 +32,18 @@ namespace DocumentFlow
             this.ftpPath = ftpPath;
         }
 
-        public DocumentRefs Create(Guid owner, string sourceFileName)
+        public DocumentRefs Create(Guid owner, string sourceFileName = null)
         {
-            selectFile.FileName = sourceFileName;
-            selectFile.Enabled = false;
-            return Create(owner);
-        }
+            if (string.IsNullOrEmpty(sourceFileName))
+            {
+                selectFile.ClearCurrent();
+            }
+            else
+            {
+                selectFile.FileName = sourceFileName;
+                selectFile.Enabled = false;
+            }
 
-        public DocumentRefs Create(Guid owner)
-        {
-            selectFile.ClearCurrent();
             textNote.Text = string.Empty;
 
             if (ShowDialog() != DialogResult.OK)

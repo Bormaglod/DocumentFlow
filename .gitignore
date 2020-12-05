@@ -260,12 +260,8 @@ paket-files/
 __pycache__/
 *.pyc
 packages
-/temp
-/DocumentFlow/password.txt
 /DocumentFlow.RestAPI/logs
 /DocumentFlow.RestAPI/vendor
 /DocumentFlow.RestAPI/*.lock
-/pg_money_convert
-/Resources
-/Test
-/DocumentFlow.Code.Implementation/passwords.txt
+
+

@@ -181,6 +181,12 @@ namespace DocumentFlow.Code.Implementation
             return new SummaryRowData(groupSummaryRow);
         }
 
+        public void Clear()
+        {
+            columns.Clear();
+            gridContent.Columns.Clear();
+        }
+
         private IColumn AddColumn(DataColumnType type, GridColumn gridColumn)
         {
             gridContent.Columns.Add(gridColumn);

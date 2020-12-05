@@ -160,6 +160,12 @@
     <Compile Include="Editor\L_ImageViewerBox.designer.cs">
       <DependentUpon>L_ImageViewerBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Editor\L_MaskedTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\L_MaskedTextBox.designer.cs">
+      <DependentUpon>L_MaskedTextBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editor\L_NumericTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -249,6 +255,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\L_ImageViewerBox.resx">
       <DependentUpon>L_ImageViewerBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\L_MaskedTextBox.resx">
+      <DependentUpon>L_MaskedTextBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\L_NumericTextBox.resx">
       <DependentUpon>L_NumericTextBox.cs</DependentUpon>

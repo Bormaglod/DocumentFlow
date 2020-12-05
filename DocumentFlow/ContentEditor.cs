@@ -23,6 +23,7 @@ using System.Windows.Forms;
 #endif
 using Dapper;
 using Spire.Pdf;
+using Spire.Pdf.Graphics;
 using Syncfusion.Windows.Forms.Tools;
 using Syncfusion.WinForms.DataGrid.Events;
 using DocumentFlow.Core;
@@ -635,10 +636,6 @@ namespace DocumentFlow
 
         private void gridDocuments_CellDoubleClick(object sender, CellClickEventArgs e) => EditDocumentRefs();
 
-        private void buttonScanPortrait_Click(object sender, EventArgs e) => SaveDocument(WIAScanner.Scan(false));
-
-        private void buttonScanLandscape_Click(object sender, EventArgs e) => SaveDocument(WIAScanner.Scan(true));
-
         private void buttonRefresh_Click(object sender, EventArgs e) => RefreshPage();
 
         private void timerDatabaseListen_Tick(object sender, EventArgs e)
@@ -676,5 +673,48 @@ namespace DocumentFlow
         }
 
         private void buttonCustomization_Click(object sender, EventArgs e) => commandFactory.Execute("open-browser-code", command);
+
+        private void twain32_AcquireCompleted(object sender, EventArgs e)
+        {
+            try
+            {
+                if (twain32.ImageCount > 0)
+                {
+                    PdfDocument pdf = new PdfDocument();
+                    for (int i = 0; i < twain32.ImageCount; i++)
+                    {
+                        Image image = twain32.GetImage(i);
+                        PdfImage pdfImage = PdfImage.FromImage(image);
+
+                        PdfUnitConvertor uinit = new PdfUnitConvertor();
+
+                        SizeF sizeImage = new SizeF(image.Width / image.HorizontalResolution, image.Height / image.VerticalResolution);
+                        SizeF pageSize = UnitConverter.Convert(sizeImage, Core.GraphicsUnit.Inch, Core.GraphicsUnit.Point);
+
+                        PdfPageBase page = pdf.Pages.Add(pageSize, new PdfMargins(0f));
+
+                        page.Canvas.DrawImage(pdfImage, new PointF(0, 0));
+                    }
+
+                    SaveDocument(pdf);
+                }
+            }
+            catch (Exception ex)
+            {
+                ExceptionHelper.MesssageBox(ex);
+            }
+        }
+
+        private void buttonScan_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                twain32.Acquire();
+            }
+            catch (Exception ex)
+            {
+                ExceptionHelper.MesssageBox(ex);
+            }
+        }
     }
 }

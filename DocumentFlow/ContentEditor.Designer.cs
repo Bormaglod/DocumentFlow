@@ -61,8 +61,7 @@
             this.buttonOpenFolder = new System.Windows.Forms.ToolStripButton();
             this.buttonOpenFile = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.buttonScanPortrait = new System.Windows.Forms.ToolStripButton();
-            this.buttonScanLandscape = new System.Windows.Forms.ToolStripButton();
+            this.buttonScan = new System.Windows.Forms.ToolStripButton();
             this.tabSplitterInfo = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
             this.label4 = new System.Windows.Forms.Label();
             this.textBoxUpdater = new Syncfusion.Windows.Forms.Tools.TextBoxExt();
@@ -75,6 +74,7 @@
             this.dateTimeUpdate = new Syncfusion.Windows.Forms.Tools.DateTimePickerAdv();
             this.label1 = new System.Windows.Forms.Label();
             this.timerDatabaseListen = new System.Windows.Forms.Timer(this.components);
+            this.twain32 = new Saraff.Twain.Twain32(this.components);
             this.toolStrip1.SuspendLayout();
             this.tabSplitterContainer1.SuspendLayout();
             this.tabSplitterDocs.SuspendLayout();
@@ -351,8 +351,7 @@
             this.buttonOpenFolder,
             this.buttonOpenFile,
             this.toolStripSeparator3,
-            this.buttonScanPortrait,
-            this.buttonScanLandscape});
+            this.buttonScan});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Size = new System.Drawing.Size(1118, 25);
@@ -419,25 +418,15 @@
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
-            // buttonScanPortrait
+            // buttonScan
             // 
-            this.buttonScanPortrait.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonScanPortrait.Image = global::DocumentFlow.Properties.Resources.icons8_rescan_portrait_16;
-            this.buttonScanPortrait.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonScanPortrait.Name = "buttonScanPortrait";
-            this.buttonScanPortrait.Size = new System.Drawing.Size(23, 22);
-            this.buttonScanPortrait.Text = "Сканировать документы (portrait)";
-            this.buttonScanPortrait.Click += new System.EventHandler(this.buttonScanPortrait_Click);
-            // 
-            // buttonScanLandscape
-            // 
-            this.buttonScanLandscape.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonScanLandscape.Image = global::DocumentFlow.Properties.Resources.icons8_rescan_landscape_16;
-            this.buttonScanLandscape.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonScanLandscape.Name = "buttonScanLandscape";
-            this.buttonScanLandscape.Size = new System.Drawing.Size(23, 22);
-            this.buttonScanLandscape.Text = "Сканировать документы landscape)";
-            this.buttonScanLandscape.Click += new System.EventHandler(this.buttonScanLandscape_Click);
+            this.buttonScan.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonScan.Image = global::DocumentFlow.Properties.Resources.icons8_rescan_portrait_16;
+            this.buttonScan.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonScan.Name = "buttonScan";
+            this.buttonScan.Size = new System.Drawing.Size(23, 22);
+            this.buttonScan.Text = "Сканировать документы";
+            this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
             // 
             // tabSplitterInfo
             // 
@@ -568,8 +557,8 @@
             this.dateTimeCreate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeCreate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-5197, 0);
-            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(5372, 25);
+            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-7136, 0);
+            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(7311, 25);
             this.dateTimeCreate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -580,7 +569,7 @@
             this.dateTimeCreate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeCreate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-5197, 25);
+            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-7136, 25);
             this.dateTimeCreate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeCreate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -651,8 +640,8 @@
             this.dateTimeUpdate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeUpdate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-5197, 0);
-            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(5372, 25);
+            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-7136, 0);
+            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(7311, 25);
             this.dateTimeUpdate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -663,7 +652,7 @@
             this.dateTimeUpdate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeUpdate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-5197, 25);
+            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-7136, 25);
             this.dateTimeUpdate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeUpdate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -699,6 +688,13 @@
             // timerDatabaseListen
             // 
             this.timerDatabaseListen.Tick += new System.EventHandler(this.timerDatabaseListen_Tick);
+            // 
+            // twain32
+            // 
+            this.twain32.AppProductName = "Saraff.Twain.NET";
+            this.twain32.Country = Saraff.Twain.TwCountry.USSR;
+            this.twain32.Parent = null;
+            this.twain32.AcquireCompleted += new System.EventHandler(this.twain32_AcquireCompleted);
             // 
             // ContentEditor
             // 
@@ -766,8 +762,7 @@
         private System.Windows.Forms.ToolStripButton buttonOpenFolder;
         private System.Windows.Forms.ToolStripButton buttonOpenFile;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripButton buttonScanPortrait;
-        private System.Windows.Forms.ToolStripButton buttonScanLandscape;
+        private System.Windows.Forms.ToolStripButton buttonScan;
         private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextMenuStripEx1;
         private System.Windows.Forms.ToolStripMenuItem menuCreateDocument;
         private System.Windows.Forms.ToolStripMenuItem menuEditDocument;
@@ -777,5 +772,6 @@
         private System.Windows.Forms.ToolStripMenuItem menuOpenFileDocument;
         private System.Windows.Forms.Timer timerDatabaseListen;
         private System.Windows.Forms.ToolStripButton buttonCustomization;
+        private Saraff.Twain.Twain32 twain32;
     }
 }

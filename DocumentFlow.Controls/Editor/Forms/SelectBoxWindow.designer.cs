@@ -30,8 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectBoxWindow));
-            Syncfusion.Windows.Forms.Tools.TreeNodeAdvStyleInfo treeNodeAdvStyleInfo1 = new Syncfusion.Windows.Forms.Tools.TreeNodeAdvStyleInfo();
-            Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvStyleInfo treeNodeAdvStyleInfo2 = new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvStyleInfo();
+            Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvStyleInfo treeNodeAdvStyleInfo1 = new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvStyleInfo();
             Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvSubItemStyleInfo treeNodeAdvSubItemStyleInfo1 = new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvSubItemStyleInfo();
             Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeColumnAdvStyleInfo treeColumnAdvStyleInfo1 = new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeColumnAdvStyleInfo();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -70,12 +69,12 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(6);
-            this.panel1.Size = new System.Drawing.Size(489, 37);
+            this.panel1.Size = new System.Drawing.Size(612, 37);
             this.panel1.TabIndex = 2;
             // 
             // textBoxExt1
             // 
-            this.textBoxExt1.BeforeTouchSize = new System.Drawing.Size(242, 25);
+            this.textBoxExt1.BeforeTouchSize = new System.Drawing.Size(365, 25);
             this.textBoxExt1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(211)))), ((int)(((byte)(212)))));
             this.textBoxExt1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxExt1.Cursor = System.Windows.Forms.Cursors.Arrow;
@@ -84,7 +83,7 @@
             this.textBoxExt1.Location = new System.Drawing.Point(108, 6);
             this.textBoxExt1.Name = "textBoxExt1";
             this.textBoxExt1.NearImage = global::DocumentFlow.Controls.Properties.Resources.icons8_find_filled_16;
-            this.textBoxExt1.Size = new System.Drawing.Size(242, 25);
+            this.textBoxExt1.Size = new System.Drawing.Size(365, 25);
             this.textBoxExt1.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Metro;
             this.textBoxExt1.TabIndex = 2;
             this.textBoxExt1.ThemeName = "Metro";
@@ -100,7 +99,7 @@
             // panel3
             // 
             this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel3.Location = new System.Drawing.Point(350, 6);
+            this.panel3.Location = new System.Drawing.Point(473, 6);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(6, 25);
             this.panel3.TabIndex = 5;
@@ -115,7 +114,7 @@
             this.toolButton1.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.toolButton1.Dock = System.Windows.Forms.DockStyle.Right;
             this.toolButton1.Kind = DocumentFlow.Controls.ToolButtonKind.Delete;
-            this.toolButton1.Location = new System.Drawing.Point(356, 6);
+            this.toolButton1.Location = new System.Drawing.Point(479, 6);
             this.toolButton1.Name = "toolButton1";
             this.toolButton1.Size = new System.Drawing.Size(25, 25);
             this.toolButton1.TabIndex = 3;
@@ -124,7 +123,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(381, 6);
+            this.panel2.Location = new System.Drawing.Point(504, 6);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(6, 25);
             this.panel2.TabIndex = 4;
@@ -135,7 +134,7 @@
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Dock = System.Windows.Forms.DockStyle.Right;
             this.buttonCancel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonCancel.Location = new System.Drawing.Point(387, 6);
+            this.buttonCancel.Location = new System.Drawing.Point(510, 6);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 25);
             this.buttonCancel.TabIndex = 1;
@@ -159,26 +158,26 @@
             this.treeSelect.AutoGenerateColumns = true;
             this.treeSelect.AutoSizeMode = Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.AutoSizeMode.AllCellsWithLastColumnFill;
             this.treeSelect.BackColor = System.Drawing.Color.White;
-            treeNodeAdvStyleInfo2.CheckBoxTickThickness = 1;
-            treeNodeAdvStyleInfo2.CheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            treeNodeAdvStyleInfo2.DisabledCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            treeNodeAdvStyleInfo2.DisabledOptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
-            treeNodeAdvStyleInfo2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            treeNodeAdvStyleInfo2.HoverCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            treeNodeAdvStyleInfo2.HoverOptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
-            treeNodeAdvStyleInfo2.IntermediateCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            treeNodeAdvStyleInfo2.IntermediateDisabledCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            treeNodeAdvStyleInfo2.IntermediateHoverCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            treeNodeAdvStyleInfo2.OptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            treeNodeAdvStyleInfo2.SelectedOptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            treeNodeAdvStyleInfo2.ShowPlusMinus = true;
+            treeNodeAdvStyleInfo1.CheckBoxTickThickness = 1;
+            treeNodeAdvStyleInfo1.CheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            treeNodeAdvStyleInfo1.DisabledCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            treeNodeAdvStyleInfo1.DisabledOptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
+            treeNodeAdvStyleInfo1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            treeNodeAdvStyleInfo1.HoverCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            treeNodeAdvStyleInfo1.HoverOptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
+            treeNodeAdvStyleInfo1.IntermediateCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            treeNodeAdvStyleInfo1.IntermediateDisabledCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            treeNodeAdvStyleInfo1.IntermediateHoverCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            treeNodeAdvStyleInfo1.OptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            treeNodeAdvStyleInfo1.SelectedOptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            treeNodeAdvStyleInfo1.ShowPlusMinus = true;
             treeNodeAdvSubItemStyleInfo1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             treeColumnAdvStyleInfo1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.treeSelect.BaseStylePairs.AddRange(new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.StyleNamePair[] {
-            new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.StyleNamePair("Standard", treeNodeAdvStyleInfo2),
+            new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.StyleNamePair("Standard", treeNodeAdvStyleInfo1),
             new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.StyleNamePair("Standard - SubItem", treeNodeAdvSubItemStyleInfo1),
             new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.StyleNamePair("Standard - Column", treeColumnAdvStyleInfo1)});
-            this.treeSelect.BeforeTouchSize = new System.Drawing.Size(489, 462);
+            this.treeSelect.BeforeTouchSize = new System.Drawing.Size(612, 410);
             this.treeSelect.Border3DStyle = System.Windows.Forms.Border3DStyle.Flat;
             this.treeSelect.BorderSingle = System.Windows.Forms.ButtonBorderStyle.None;
             this.treeSelect.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -204,7 +203,7 @@
             this.treeSelect.Name = "treeSelect";
             this.treeSelect.SelectedNodeBackground = new Syncfusion.Drawing.BrushInfo(System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220))))));
             this.treeSelect.ShowLines = false;
-            this.treeSelect.Size = new System.Drawing.Size(489, 462);
+            this.treeSelect.Size = new System.Drawing.Size(612, 410);
             this.treeSelect.Style = Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.MultiColumnVisualStyle.Metro;
             this.treeSelect.TabIndex = 3;
             this.treeSelect.Text = "multiColumnTreeView1";
@@ -229,7 +228,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(489, 499);
+            this.ClientSize = new System.Drawing.Size(612, 447);
             this.Controls.Add(this.treeSelect);
             this.Controls.Add(this.panel1);
             this.MaximizeBox = false;

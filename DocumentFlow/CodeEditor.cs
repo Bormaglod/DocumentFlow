@@ -137,12 +137,6 @@ namespace DocumentFlow
                     }
                 }
             }
-
-            IList<IPage> list = containerPage.Get(command.Id).Where(x => x.Id != x.InfoId).AsList();
-            if (list.Count > 0)
-            {
-                Compile();
-            }
         }
 
         private void buttonSave_Click(object sender, EventArgs e)

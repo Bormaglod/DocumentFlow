@@ -192,6 +192,19 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
             const string okopfSelect = "select id, name from okopf where status_id = 1001 order by name";
             const string accountSelect = "select id, name from account where (owner_id = :id and status_id = 1002) or (id = :account_id)";
 
+			string root = string.Empty;
+			if (editor.Parameters.ParentId.HasValue)
+            {
+                Contractor g = editor.ExecuteSqlCommand<Contractor>("select * from contractor where id = :id", new { id = editor.Parameters.ParentId });
+                if (g.parent_id.HasValue)
+            		root = editor.ExecuteSqlCommand<string>("select root_code_contractor(:id)", new { id = editor.Parameters.ParentId });
+                else
+                    root = g.code;
+            }
+
+			if (string.IsNullOrEmpty(root))
+				throw new Exception("Для добавления контрагента необходимо выбрать соответствующую папку.");
+
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
@@ -206,53 +219,56 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
                 .SetControlWidth(450)
                 .SetHeight(75)
                 .SetPadding(bottom: 7);
-            IControl inn = editor.CreateNumeric("inn", "ИНН", numberDecimalDigits: 0)
-				.AsNullable()
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(150);
-            IControl kpp = editor.CreateNumeric("kpp", "КПП", numberDecimalDigits: 0)
-				.AsNullable()
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(150);
-            IControl ogrn = editor.CreateNumeric("ogrn", "ОГРН", numberDecimalDigits: 0)
-				.AsNullable()
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(150);
-            IControl okpo = editor.CreateNumeric("okpo", "ОКПО", numberDecimalDigits: 0)
-				.AsNullable()
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(150);
-            IControl okopf = editor.CreateComboBox("okopf_id", "ОКОПФ", (c) => { return c.Query<ComboBoxDataItem>(okopfSelect); })
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(330);
-            IControl account = editor.CreateComboBox("account_id", "Расчётный счёт", (e, c) => {
-                    Contractor contractor = e.Entity as Contractor;
-                    return c.Query<ComboBoxDataItem>(accountSelect, new { contractor.id, contractor.account_id }); 
-                })
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(330);
-            IControl tax_payer = editor.CreateCheckBox("tax_payer", "Плательщик НДС")
-                .SetLabelWidth(labelWidth);
-            IControl supplier = editor.CreateCheckBox("supplier", "Поставщик")
-                .SetLabelWidth(labelWidth);
-            IControl buyer = editor.CreateCheckBox("buyer", "Покупатель")
-                .SetLabelWidth(labelWidth);
 
-            editor.Container.Add(new IControl[] {
+			string format = root == "Юр" ? "#### ##### #" : "#### ###### ##";
+            IControl inn = editor.CreateMaskedText<decimal>("inn", "ИНН", format)
+				.AsNullable()
+                .SetLabelWidth(labelWidth)
+                .SetControlWidth(150);
+
+			editor.Container.Add(new IControl[] {
                 name,
                 parent,
                 short_name,
                 full_name,
-                inn,
-                kpp,
-                ogrn,
-                okpo,
-                okopf,
-                account,
-                tax_payer,
-                supplier,
-                buyer
+                inn
             });
+
+			if (root == "Юр")
+			{
+	            IControl kpp = editor.CreateMaskedText<decimal>("kpp", "КПП", "#### ## ###")
+					.AsNullable()
+        	        .SetLabelWidth(labelWidth)
+            	    .SetControlWidth(150);
+		        IControl ogrn = editor.CreateMaskedText<decimal>("ogrn", "ОГРН", "# ## ## ## ##### #")
+					.AsNullable()
+            	    .SetLabelWidth(labelWidth)
+                	.SetControlWidth(150);
+	            IControl okpo = editor.CreateMaskedText<decimal>("okpo", "ОКПО", "## ##### #")
+					.AsNullable()
+        	        .SetLabelWidth(labelWidth)
+            	    .SetControlWidth(150);
+	            IControl okopf = editor.CreateComboBox("okopf_id", "ОКОПФ", (c) => { return c.Query<ComboBoxDataItem>(okopfSelect); })
+    	            .SetLabelWidth(labelWidth)
+        	        .SetControlWidth(330);
+	            IControl account = editor.CreateComboBox("account_id", "Расчётный счёт", (e, c) => {
+    	                Contractor contractor = e.Entity as Contractor;
+        	            return c.Query<ComboBoxDataItem>(accountSelect, new { contractor.id, contractor.account_id }); 
+            	    })
+                	.SetLabelWidth(labelWidth)
+	                .SetControlWidth(330);
+	            IControl tax_payer = editor.CreateCheckBox("tax_payer", "Плательщик НДС")
+    	            .SetLabelWidth(labelWidth);
+
+				editor.Container.Add(new IControl[] {
+	                kpp,
+    	            ogrn,
+        	        okpo,
+            	    okopf,
+                	account,
+                	tax_payer
+            	});
+			}
 
             dependentViewer.AddDependentViewers(new string[] { "view-contract", "view-account", "view-employee", "view-balance-contr" });
         }

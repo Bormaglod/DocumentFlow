@@ -40,6 +40,7 @@ namespace DocumentFlow.Code
         IBindingControl CreateCheckBox(string fieldName, string label);
         IBindingControl CreateDateTimePicker(string fieldName, string label, DateTimeFormat dateTimeFormat = DateTimeFormat.Custom, string customFormat = "dd.MM.yyyy HH:mm:ss", bool showCheck = false);
         IBindingControl CreateImageBox(string fieldName, string label);
+        IBindingControl CreateMaskedText<T>(string fieldName, string label, string mask, char promtCharacter = '_') where T : IComparable<T>;
         IDataGrid CreateDataGrid(string name, Func<IDbConnection, IList> getItems);
         T ExecuteSqlCommand<T>(string sql, object param = null);
     }
