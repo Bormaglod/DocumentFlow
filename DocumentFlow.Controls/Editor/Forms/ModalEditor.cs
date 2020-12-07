@@ -39,8 +39,12 @@ namespace DocumentFlow.Controls.Forms
         {
             editorData = new EditorData(container, null, parameters)
             {
-                Entity = Activator.CreateInstance(entityType)
+                Entity = Activator.CreateInstance(entityType) as IIdentifier
             };
+
+            if (editorData.Entity == null)
+                throw new ArgumentNullException($"Объект типа {entityType} должен реализовывать интерфейс IIdentifier");
+
             editor.Initialize(editorData);
             CalculateHeightForm();
             using (var conn = Db.OpenConnection())
@@ -74,10 +78,9 @@ namespace DocumentFlow.Controls.Forms
         {
             using (var conn = Db.OpenConnection())
             {
-                object entity = editor.SelectById(conn, id, parameters);
                 editorData = new EditorData(container, null, parameters)
                 {
-                    Entity = entity
+                    Entity = editor.SelectById(conn, id, parameters) as IIdentifier
                 };
                 editor.Initialize(editorData);
                 CalculateHeightForm();

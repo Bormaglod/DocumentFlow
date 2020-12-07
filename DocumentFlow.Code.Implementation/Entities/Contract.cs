@@ -19,6 +19,10 @@ namespace DocumentFlow.Code.Implementation.ContractImp
         public int contract_type_value { get; set; }
         public string contract_type_name { get; set; }
         public string contractor_name { get; protected set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class ContractBrowser : BrowserCodeBase<Contract>, IBrowserCode

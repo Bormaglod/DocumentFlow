@@ -31,6 +31,10 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
         public string replacing_goods_name { get; protected set; }
         public int amount { get; set; }
         public decimal salary { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class PerformOperationBrowser : BrowserCodeBase<PerformOperation>, IBrowserCode

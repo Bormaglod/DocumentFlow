@@ -12,6 +12,10 @@ namespace DocumentFlow.Code.Implementation.MeasurementImp
         public string code { get; set; }
         public string name { get; set; }
         public string abbreviation { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class MeasurementBrowser : BrowserCodeBase<Measurement>, IBrowserCode

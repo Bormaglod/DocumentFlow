@@ -11,10 +11,18 @@ using System;
 namespace DocumentFlow.Code
 {
     /// <summary>
-    /// Общий интерфейс для объектов имеющих первичный ключ id типа UUID
+    /// Общий интерфейс для объектов имеющих первичный ключ id
     /// </summary>
-    public interface IIdentifier
+    public interface IIdentifier 
     {
-        Guid id { get; }
+        object oid { get; }
+    }
+
+    /// <summary>
+    /// Общий интерфейс для объектов имеющих первичный ключ id указанного типа
+    /// </summary>
+    public interface IIdentifier<T> where T: IComparable<T>
+    {
+        T id { get; }
     }
 }

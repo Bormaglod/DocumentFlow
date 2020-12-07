@@ -10,14 +10,13 @@ using System;
 
 namespace DocumentFlow.Code.Core
 {
-    public class ComboBoxDataItem : IIdentifier
+    public class ComboBoxDataItem : IIdentifier, IIdentifier<Guid>
     {
         public Guid id { get; set; }
         public string name { get; set; }
 
-        public override string ToString()
-        {
-            return name;
-        }
+        object IIdentifier.oid => id;
+
+        public override string ToString() => name;
     }
 }

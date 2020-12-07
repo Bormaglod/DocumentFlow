@@ -56,11 +56,18 @@ namespace DocumentFlow.Controls.Editor
             {
                 if (Nullable)
                 {
-                    return selectedItem?.id;
+                    if (selectedItem == null)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return new Guid(selectedItem.oid.ToString());
+                    }
                 }
                 else if (selectedItem != null)
                 {
-                    return selectedItem.id;
+                    return selectedItem.oid;
                 }
                 else
                     throw new ArgumentNullException($"Значение поля {((ILabelControl)this).Text} не может быть пустым.");
@@ -70,7 +77,7 @@ namespace DocumentFlow.Controls.Editor
             {
                 if (value is Guid id)
                 {
-                    selectedItem = items.FirstOrDefault(x => x.id == id);
+                    selectedItem = items.FirstOrDefault(x => (x.oid is Guid guid) ? guid == id : false);
                     textValue.Text = selectedItem?.ToString();
                     OnValueChanged();
                 }

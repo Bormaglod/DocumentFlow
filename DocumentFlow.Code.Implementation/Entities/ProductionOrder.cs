@@ -28,6 +28,10 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         public decimal tax_value { get; protected set; }
         public decimal cost_with_tax { get; protected set; }
         public int complete_status { get; protected set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class ProductionOrderBrowser : BrowserCodeBase<ProductionOrder>, IBrowserCode
@@ -181,6 +185,10 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         public int complete_status { get; set; }
         public Guid calculation_id { get; set; }
         public string calculation_code { get; protected set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class ProductionOrderEditor : EditorCodeBase<ProductionOrder>, IEditorCode
@@ -189,7 +197,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and buyer) or (status_id = 500) or (id = :contractor_id) order by name";
-            const string gridSelect = "select pod.id, pod.owner_id, g.name as goods_name, pod.amount, pod.price, pod.cost, pod.tax, pod.tax_value, pod.cost_with_tax, pod.complete_status, c.code as calculation_code from production_order_detail pod join goods g on (g.id = pod.goods_id) join calculation c on (c.id = pod.calculation_id) where pod.owner_id = :id";
+            const string gridSelect = "select pod.id, pod.owner_id, g.name as goods_name, pod.amount, pod.price, pod.cost, pod.tax, pod.tax_value, pod.cost_with_tax, pod.complete_status, c.code as calculation_code from production_order_detail pod join goods g on (g.id = pod.goods_id) join calculation c on (c.id = pod.calculation_id) where pod.owner_id = :oid";
 
             IContainer container = editor.CreateContainer(32);
 
@@ -226,7 +234,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 .SetLabelWidth(120)
                 .SetControlWidth(700);
 
-            IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<ProductionOrderDetail>(gridSelect, new { ((IIdentifier)editor.Entity).id }).AsList(); })
+            IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<ProductionOrderDetail>(gridSelect, new { editor.Entity.oid }).AsList(); })
                 .CreateColumns((columns) =>
                 {
                     columns.CreateText("goods_name", "Номенклатура")

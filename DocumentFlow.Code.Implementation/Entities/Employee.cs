@@ -24,6 +24,10 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
         public string email { get; set; }
         public int post_role { get; set; }
         public string post_role_text { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class EmployeeBrowser : BrowserCodeBase<Employee>, IBrowserCode

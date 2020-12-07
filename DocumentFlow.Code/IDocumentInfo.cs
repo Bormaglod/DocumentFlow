@@ -6,12 +6,14 @@
 // Time: 18:57
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace DocumentFlow.Code
 {
     /// <summary>
     /// Интерфейс определяющий свойства объекта для всех типов документов и справочников
     /// </summary>
-    public interface IDocumentInfo : IIdentifier
+    public interface IDocumentInfo : IIdentifier, IIdentifier<Guid>
     {
         /// <summary>
         /// Возвращает идентификатор состояния документа

@@ -19,6 +19,11 @@ namespace DocumentFlow.Code.Implementation.AccountImp
         public Guid? bank_id { get; set; }
         public string bank_name { get; set; }
         public string company_name { get; set; }
+
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class AccountBrowser : BrowserCodeBase<Account>, IBrowserCode
@@ -110,7 +115,7 @@ namespace DocumentFlow.Code.Implementation.AccountImp
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(400);
-            IControl account_value = editor.CreateNumeric("account_value", "Номер счета", numberDecimalDigits: 0)
+            IControl account_value = editor.CreateMaskedText<decimal>("account_value", "Номер счета", "### ## ### # #### #######")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(250);
             IControl bank = editor.CreateComboBox("bank_id", "Банк", (conn) => { return conn.Query<ComboBoxDataItem>(bankSelect); })

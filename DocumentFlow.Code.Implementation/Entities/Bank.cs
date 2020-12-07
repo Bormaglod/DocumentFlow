@@ -26,6 +26,10 @@ namespace DocumentFlow.Code.Implementation.BankImp
 				bik = Convert.ToDecimal(value);
 			}
         }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class BankBrowser : BrowserCodeBase<Bank>, IBrowserCode

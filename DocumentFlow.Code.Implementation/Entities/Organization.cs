@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Dapper;
 using DocumentFlow.Code.Core;
@@ -26,6 +26,10 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
         public string phone { get; set; }
         public string email { get; set; }
         public bool default_org { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class OrganizationBrowser : BrowserCodeBase<Organization>, IBrowserCode
@@ -84,22 +88,27 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
                     .SetVisible(false);
 
                 columns.CreateInteger("inn", "ИНН")
+					.SetFormat("0000 00000 0")
                     .SetWidth(100);
 
                 columns.CreateInteger("kpp", "КПП")
+					.SetFormat("0000 00 000")
                     .SetWidth(100);
 
                 columns.CreateInteger("okpo", "ОКПО")
+					.SetFormat("00 00000 0")
                     .SetWidth(100)
                     .SetVisible(false);
 
                 columns.CreateInteger("ogrn", "ОГРН")
+					.SetFormat("0 00 00 00 00000 0")
                     .SetWidth(120);
 
                 columns.CreateText("okopf_name", "ОКОПФ")
                     .SetWidth(300);
 
                 columns.CreateText("address", "Адрес")
+					.SetVisible(false)
                     .SetWidth(250);
 
                 columns.CreateText("phone", "Телефон")
@@ -152,16 +161,16 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
                 .SetControlWidth(450)
                 .SetHeight(75)
                 .SetPadding(bottom: 7);
-            IControl inn = editor.CreateNumeric("inn", "ИНН", numberDecimalDigits: 0)
+            IControl inn = editor.CreateMaskedText<decimal>("inn", "ИНН", "#### ##### #")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
-            IControl kpp = editor.CreateNumeric("kpp", "КПП", numberDecimalDigits: 0)
+            IControl kpp = editor.CreateMaskedText<decimal>("kpp", "КПП", "#### ## ###")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
-            IControl ogrn = editor.CreateNumeric("ogrn", "ОГРН", numberDecimalDigits: 0)
+            IControl ogrn = editor.CreateMaskedText<decimal>("ogrn", "ОГРН", "# ## ## ## ##### #")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
-            IControl okpo = editor.CreateNumeric("okpo", "ОКПО", numberDecimalDigits: 0)
+            IControl okpo = editor.CreateMaskedText<decimal>("okpo", "ОКПО", "## ##### #")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
             IControl okopf = editor.CreateComboBox("okopf_id", "ОКОПФ", (conn) => { return conn.Query<ComboBoxDataItem>(okopfSelect); })

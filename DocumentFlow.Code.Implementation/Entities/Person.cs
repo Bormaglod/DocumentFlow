@@ -17,6 +17,10 @@ namespace DocumentFlow.Code.Implementation.PersonImp
         public string middle_name { get; set; }
         public string phone { get; set; }
         public string email { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class PersonBrowser : BrowserCodeBase<Person>, IBrowserCode

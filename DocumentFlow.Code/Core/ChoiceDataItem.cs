@@ -6,16 +6,17 @@
 // Time: 20:25
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace DocumentFlow.Code.Core
 {
-    public class ChoiceDataItem
+    public class ChoiceDataItem : IIdentifier, IIdentifier<int>
     {
         public int id { get; set; }
         public string name { get; set; }
 
-        public override string ToString()
-        {
-            return name;
-        }
+        object IIdentifier.oid => id;
+
+        public override string ToString() => name;
     }
 }

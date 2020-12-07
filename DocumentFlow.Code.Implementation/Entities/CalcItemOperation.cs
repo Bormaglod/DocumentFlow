@@ -27,6 +27,11 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
 
         public decimal produced_time { get; set; }
 #pragma warning restore IDE1006 // Стили именования
+
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class CalcItemOperationBrowser : BrowserCodeBase<CalcItemOperation>, IBrowserCode
@@ -136,6 +141,11 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
         {
             get { return calc_item_operation_id; }
         }
+
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class CalcItemOperationEditor : EditorCodeBase<CalcItemOperation>, IEditorCode
@@ -144,7 +154,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
         {
             const int labelWidth = 120;
             const string itemSelect = "with recursive r as (select id, status_id, parent_id, name, code from operation where parent_id is null and status_id in (500, 1002) union select o.id, o.status_id, o.parent_id, o.name, o.code from operation o join r on r.id = o.parent_id and o.status_id in (500, 1002)) select id, status_id, parent_id, name from r order by code";
-            const string gridSelect = "select um.id, g.name as goods_name, um.count_by_goods, um.count_by_operation from used_material um join goods g on (g.id = um.goods_id) where um.calc_item_operation_id = :id";
+            const string gridSelect = "select um.id, g.name as goods_name, um.count_by_goods, um.count_by_operation from used_material um join goods g on (g.id = um.goods_id) where um.calc_item_operation_id = :oid";
 
             IControl calculation_name = editor.CreateTextBox("calculation_name", "Калькуляция")
                 .SetLabelWidth(labelWidth)
@@ -162,7 +172,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
             IControl cost = editor.CreateCurrency("cost", "Стоимость")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(200);
-            IControl grid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<UsedMaterial>(gridSelect, new { ((IIdentifier)editor.Entity).id }).AsList(); })
+            IControl grid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<UsedMaterial>(gridSelect, new { editor.Entity.oid }).AsList(); })
                 .CreateColumns((columns) =>
                 {
                     columns.CreateText("goods_name", "Номенклатура")

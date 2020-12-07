@@ -24,6 +24,10 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
         public string view_number { get; set; }
         public Guid organization_id { get; set; }
         public string organization_name { get; protected set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class InventoryBrowser : BrowserCodeBase<Inventory>, IBrowserCode
@@ -132,6 +136,10 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
         public Guid goods_id { get; set; }
         public string goods_name { get; protected set; }
         public decimal amount { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class InventoryEditor : EditorCodeBase<Inventory>, IEditorCode
@@ -140,7 +148,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string empSelect = "select e.id, e.status_id, p.name from inventory i join organization org on (org.id = i.organization_id) join employee e on (e.owner_id = org.id) join person p on (p.id = e.person_id) where i.id = :id and (e.status_id = 1002 or e.id = :employee_id)";
-            const string gridSelect = "select i.id, i.owner_id, g.name as goods_name, i.amount from inventory_detail i left join goods g on (g.id = i.goods_id) where i.owner_id = :id";
+            const string gridSelect = "select i.id, i.owner_id, g.name as goods_name, i.amount from inventory_detail i left join goods g on (g.id = i.goods_id) where i.owner_id = :oid";
 
             IContainer container = editor.CreateContainer(32);
 
@@ -177,7 +185,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
                 .SetLabelWidth(120)
                 .SetControlWidth(350);
 
-            IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<InventoryDetail>(gridSelect, new { ((IIdentifier)editor.Entity).id }).AsList(); })
+            IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<InventoryDetail>(gridSelect, new { editor.Entity.oid }).AsList(); })
                 .CreateColumns((columns) =>
                 {
                     columns.CreateText("goods_name", "Материал")

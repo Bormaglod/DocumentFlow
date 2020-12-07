@@ -19,15 +19,20 @@ namespace DocumentFlow.Controls.Editor
 {
     public partial class L_Choice : UserControl, ILabelControl, IEditControl
     {
-        public L_Choice(IDictionary<int, string> keyValues)
+        private bool nullable;
+
+        public L_Choice()
         {
             InitializeComponent();
+            nullable = true;
+        }
+
+        public L_Choice(IDictionary<int, string> keyValues) : this()
+        {
             foreach (int item in keyValues.Keys)
             {
                 comboBoxAdv1.Items.Add(new ChoiceDataItem() { id = item, name = keyValues[item] });
             }
-
-            Nullable = true;
         }
 
         public event EventHandler ValueChanged;
@@ -46,38 +51,36 @@ namespace DocumentFlow.Controls.Editor
             set
             {
                 label1.Visible = value;
-                comboBoxAdv1.Dock = value ? DockStyle.Left : DockStyle.Top;
+                panelEdit.Dock = value ? DockStyle.Left : DockStyle.Top;
             }
         }
 
-        int IEditControl.Width { get => comboBoxAdv1.Width; set => comboBoxAdv1.Width = value; }
+        int IEditControl.Width { get => panelEdit.Width; set => panelEdit.Width = value; }
 
         object IEditControl.Value 
         {
             get
             {
-                if (comboBoxAdv1.SelectedItem is ChoiceDataItem selectedItem)
+                if (comboBoxAdv1.SelectedItem != null && comboBoxAdv1.SelectedItem is IIdentifier<int> selectedItem)
                 {
-                    if (Nullable)
-                    {
-                        return selectedItem?.id;
-                    }
-                    else if (selectedItem != null)
-                    {
-                        return selectedItem.id;
-                    }
-                    else
-                        throw new ArgumentNullException($"Значение поля {((ILabelControl)this).Text} не может быть пустым.");
+                    return selectedItem.id;
                 }
 
-                return null;
+                if (Nullable)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new ArgumentNullException($"Значение поля {((ILabelControl)this).Text} не может быть пустым.");
+                }
             }
 
             set
             {
                 if (value is int id)
                 {
-                    ChoiceDataItem identifier = comboBoxAdv1.Items.OfType<ChoiceDataItem>().FirstOrDefault(x => x.id == id);
+                    IIdentifier<int> identifier = comboBoxAdv1.Items.OfType<IIdentifier<int>>().FirstOrDefault(x => x.id == id);
                     comboBoxAdv1.SelectedItem = identifier;
                 }
                 else
@@ -95,15 +98,30 @@ namespace DocumentFlow.Controls.Editor
             set => comboBoxAdv1.Dock = DockStyle.Fill;
         }
 
-        public bool Nullable { get; set; }
-
-        private void OnValueChanged()
+        public bool Nullable
         {
-            ValueChanged?.Invoke(this, EventArgs.Empty);
+            get { return nullable; }
+            set
+            {
+                nullable = value;
+                buttonDelete.Visible = nullable;
+                panelSeparator1.Visible = nullable;
+            }
         }
 
-        private void ComboBoxAdv1_SelectedIndexChanging(object sender, SelectedIndexChangingArgs e)
+        public void AddItems(IEnumerable<IIdentifier> addingItems)
         {
+            comboBoxAdv1.Items.Clear();
+            comboBoxAdv1.Items.AddRange(addingItems.ToArray());
+        }
+
+        private void OnValueChanged() => ValueChanged?.Invoke(this, EventArgs.Empty);
+
+        private void ComboBoxAdv1_SelectedIndexChanging(object sender, SelectedIndexChangingArgs e) => OnValueChanged();
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            comboBoxAdv1.SelectedItem = null;
             OnValueChanged();
         }
     }

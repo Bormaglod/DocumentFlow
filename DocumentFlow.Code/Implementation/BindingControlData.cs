@@ -241,7 +241,15 @@ namespace DocumentFlow.Code.Implementation
                     try
                     {
                         PropertyInfo prop = populateData.GetType().GetProperty(FieldName);
-                        prop.SetValue(populateData, edit.Value);
+                        object value = edit.Value;
+                        if (value != null && value.GetType() != prop.PropertyType)
+                        {
+                            Type type = global::System.Nullable.GetUnderlyingType(prop.PropertyType);
+                            if (type == null)
+                                value = Convert.ChangeType(value, prop.PropertyType);
+                        }
+
+                        prop.SetValue(populateData, value);
 
                         ValueChanged?.Invoke(this, new ValueChangedEventArgs(edit.Value));
                     }

@@ -32,6 +32,10 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
         public decimal cost { get; protected set; }
         public decimal tax_value { get; protected set; }
         public decimal cost_with_tax { get; protected set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class InvoiceSalesBrowser : BrowserCodeBase<InvoiceSales>, IBrowserCode
@@ -198,6 +202,10 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
         public int tax { get; set; }
         public decimal tax_value { get; set; }
         public decimal cost_with_tax { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class InvoiceSalesEditor : EditorCodeBase<InvoiceSales>, IEditorCode
@@ -207,7 +215,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and buyer) or (status_id = 500) or (id = :contractor_id) order by name";
             const string ownerSelect = "select po.id, ek.name || ' №' || po.view_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join entity_kind ek on (ek.id = po.entity_kind_id) join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where (po.status_id = 3100 or (po.id = :owner_id)) and (po.contractor_id = :contractor_id or :contractor_id is null) group by po.id, ek.name, po.view_number, po.doc_date, c.name";
-            const string gridSelect = "select isd.id, isd.owner_id, g.name as goods_name, isd.amount, isd.price, isd.cost, isd.tax, isd.tax_value, isd.cost_with_tax from invoice_sales_detail isd left join goods g on (g.id = isd.goods_id) where isd.owner_id = :id";
+            const string gridSelect = "select isd.id, isd.owner_id, g.name as goods_name, isd.amount, isd.price, isd.cost, isd.tax, isd.tax_value, isd.cost_with_tax from invoice_sales_detail isd left join goods g on (g.id = isd.goods_id) where isd.owner_id = :oid";
 
             IContainer container = editor.CreateContainer(32);
 
@@ -252,7 +260,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 .SetLabelWidth(90)
                 .SetControlWidth(450);
 
-            IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<InvoiceSalesDetail>(gridSelect, new { ((IIdentifier)editor.Entity).id }).AsList(); })
+            IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<InvoiceSalesDetail>(gridSelect, new { editor.Entity.oid }).AsList(); })
                 .CreateColumns((columns) =>
                 {
                     columns.CreateText("goods_name", "Номенклатура")

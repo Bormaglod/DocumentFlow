@@ -11,7 +11,7 @@ using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Core
 {
-    public class GroupDataItem : IIdentifier, IParent
+    public class GroupDataItem : IIdentifier, IIdentifier<Guid>, IParent
     {
         public Guid id { get; protected set; }
 
@@ -22,14 +22,10 @@ namespace DocumentFlow.Code.Core
 
         public int status_id { get; set; }
 
-        public bool is_folder
-        {
-            get { return status_id == 500; }
-        }
+        public bool is_folder => status_id == 500;
 
-        public override string ToString()
-        {
-            return name;
-        }
+        object IIdentifier.oid => id;
+
+        public override string ToString() => name;
     }
 }

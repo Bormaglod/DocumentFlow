@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -22,7 +22,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
         public Guid? type_id { get; set; }
         public string operation_type_name { get; protected set; }
         public decimal salary { get; set; }
-        public int program { get; set; }
+        public int? program { get; set; }
         public Guid? measurement_id { get; set; }
         public string abbreviation { get; set; }
         public int length { get; set; }
@@ -30,6 +30,11 @@ namespace DocumentFlow.Code.Implementation.OperationImp
         public int left_sweep { get; set; }
         public decimal right_cleaning { get; set; }
         public int right_sweep { get; set; }
+
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class OperationBrowser : BrowserCodeBase<Operation>, IBrowserCode
@@ -229,6 +234,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
             const string typeSelect = "select id, name from operation_type where status_id = 1002 order by name";
             const string folderSelect = "select id, parent_id, name, status_id from operation where status_id = 500 order by name";
             const string measurementSelect = "select id, name from measurement where status_id = 1001 order by name";
+			const string programSelect = "with all_programs as ( select generate_series(1, 99) as id ) select a.id, '' || a.id as name from all_programs a left join operation on (program = a.id and status_id = 1002) where program is null or program = :program order by a.id";
 
             List<IControl> controls = new List<IControl>();
 
@@ -246,27 +252,34 @@ namespace DocumentFlow.Code.Implementation.OperationImp
             controls.Add(editor.CreateComboBox("measurement_id", "Еденица измерения", (conn) => { return conn.Query<ComboBoxDataItem>(measurementSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(250));
-            controls.Add(editor.CreateNumeric("produced", "Выработка", numberDecimalDigits: 0)
+            controls.Add(editor.CreateInteger("produced", "Выработка")
                 .SetLabelWidth(labelWidth));
-            controls.Add(editor.CreateNumeric("prod_time", "Время выработки, сек.", numberDecimalDigits: 0)
+            controls.Add(editor.CreateInteger("prod_time", "Время выработки, сек.")
                 .SetLabelWidth(labelWidth));
-            controls.Add(editor.CreateNumeric("production_rate", "Норма выработка, ед./час", numberDecimalDigits: 0)
+            controls.Add(editor.CreateInteger("production_rate", "Норма выработка, ед./час")
                 .SetLabelWidth(labelWidth));
             controls.Add(editor.CreateCurrency("salary", "Зарплата, руб.")
                 .SetLabelWidth(labelWidth));
 
-            string root = editor.ExecuteSqlCommand<string>("select root_code_operation(:id)", new { ((IIdentifier)editor.Entity).id });
+            string root = editor.ExecuteSqlCommand<string>("select root_code_operation(:oid)", new { editor.Entity.oid });
             if (root == "Резка")
             {
-                controls.Add(editor.CreateNumeric("length", "Длина провода", numberDecimalDigits: 0)
+				controls.Add(editor.CreateChoice("program", "Программа", (conn) => 
+                	{
+                    	Operation o = editor.Entity as Operation;
+	                    return conn.Query<ChoiceDataItem>(programSelect, new { o.program }); 
+    	            })
+        	        .SetLabelWidth(labelWidth)
+            	    .SetControlWidth(250));
+                controls.Add(editor.CreateInteger("length", "Длина провода")
                     .SetLabelWidth(labelWidth));
                 controls.Add(editor.CreateNumeric("left_cleaning", "Длина зачистки с начала провода", numberDecimalDigits: 1)
                     .SetLabelWidth(labelWidth));
-                controls.Add(editor.CreateNumeric("left_sweep", "Ширина окна на которое снимается изоляция в начале провода", numberDecimalDigits: 0)
+                controls.Add(editor.CreateInteger("left_sweep", "Ширина окна на которое снимается изоляция в начале провода")
                     .SetLabelWidth(labelWidth));
                 controls.Add(editor.CreateNumeric("right_cleaning", "Длина зачистки с конца провода", numberDecimalDigits: 1)
                     .SetLabelWidth(labelWidth));
-                controls.Add(editor.CreateNumeric("right_sweep", "Ширина окна на которое снимается изоляция в конце провода", numberDecimalDigits: 0)
+                controls.Add(editor.CreateInteger("right_sweep", "Ширина окна на которое снимается изоляция в конце провода")
                     .SetLabelWidth(labelWidth));
             }
 

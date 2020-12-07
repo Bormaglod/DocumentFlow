@@ -10,9 +10,8 @@ using System;
 
 namespace DocumentFlow.Code
 {
-    public interface IDetail
+    public interface IDetail : IIdentifier, IIdentifier<long>
     {
-        long id { get; }
         Guid owner_id { get; }
     }
 }

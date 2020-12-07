@@ -12,6 +12,10 @@ namespace DocumentFlow.Code.Implementation.OperationTypeImp
         public string code { get; set; }
         public string name { get; set; }
         public decimal hourly_salary { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class OperationTypeBrowser : BrowserCodeBase<OperationType>, IBrowserCode

@@ -25,6 +25,10 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
         public int doc_number { get; set; }
         public DateTime doc_date { get; set; }
         public string view_number { get; protected set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class BalanceContractorBrowser : BrowserCodeBase<BalanceContractor>, IBrowserCode

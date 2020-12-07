@@ -18,6 +18,10 @@ namespace DocumentFlow.Code.Implementation.ArchivePriceImp
         public DateTime date_to { get; set; }
         public decimal price_value { get; set; }
         public string user_name { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class ArchivePriceBrowser : BrowserCodeBase<ArchivePrice>, IBrowserCode

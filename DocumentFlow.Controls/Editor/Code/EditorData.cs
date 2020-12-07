@@ -36,7 +36,7 @@ namespace DocumentFlow.Controls.Code
             ownerBrowser = browser;
         }
 
-        public object Entity { get; set; }
+        public IIdentifier Entity { get; set; }
 
         IContainer IEditor.Container => controlContainer;
 
@@ -185,6 +185,23 @@ namespace DocumentFlow.Controls.Code
             return controlData;
         }
 
+        IBindingControl IEditor.CreateChoice(string fieldName, string label, ChoiceItems getItems)
+        {
+            var choice = new L_Choice
+            {
+                Height = 32,
+                Dock = DockStyle.Top
+            };
+
+            IBindingControl controlData = new ListControlData(choice, getItems, choice.AddItems)
+            {
+                LabelText = label,
+                FieldName = fieldName
+            };
+
+            return controlData;
+        }
+
         IBindingControl IEditor.CreateInteger(string fieldName, string label, IntegerLength length)
         {
             var integerTextBox = new L_IntegerTextBox
@@ -315,7 +332,7 @@ namespace DocumentFlow.Controls.Code
 
         IDataGrid IEditor.CreateDataGrid(string name, Func<IDbConnection, IList> getItems)
         {
-            if (Entity is IIdentifier identifier)
+            if (Entity is IIdentifier<Guid> identifier)
             {
                 var dataGrid = new L_DataGrid(identifier.id, getItems)
                 {

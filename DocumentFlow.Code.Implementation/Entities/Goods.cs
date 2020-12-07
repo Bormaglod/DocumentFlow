@@ -28,6 +28,10 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
         public decimal profit_value { get; set; }
         public decimal calc_price { get; set; }
         public DateTime? approved { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class GoodsBrowser : BrowserCodeBase<Goods>, IBrowserCode
@@ -254,7 +258,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 is_service
             });
 
-            string root = editor.ExecuteSqlCommand<string>("select root_code_goods(:id)", new { ((IIdentifier)editor.Entity).id });
+            string root = editor.ExecuteSqlCommand<string>("select root_code_goods(:oid)", new { editor.Entity.oid });
             if (root == "Прд")
             {
                 dependentViewer.AddDependentViewer("view-calculation");

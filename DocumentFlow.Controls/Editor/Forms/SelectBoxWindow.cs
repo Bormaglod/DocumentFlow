@@ -81,7 +81,7 @@ namespace DocumentFlow.Controls.Editor.Forms
             treeSelect.Select();
         }
 
-        private void AddItems(IList<IIdentifier> items, TreeNodeAdv node, IIdentifier parent)
+        private void AddItems(IList<IIdentifier> items, TreeNodeAdv node, IIdentifier<Guid> parent)
         {
             foreach (var item in items.OfType<IParent>().Where(x => x.parent_id == parent?.id))
             {
@@ -90,12 +90,15 @@ namespace DocumentFlow.Controls.Editor.Forms
                     continue;
                 }
 
-                TreeNodeAdv new_node = AddItem(node, item.is_folder, (IIdentifier)item);
-                AddItems(items, new_node, (IIdentifier)item);
+                if (item is IIdentifier<Guid> id_item)
+                {
+                    TreeNodeAdv new_node = AddItem(node, item.is_folder, id_item);
+                    AddItems(items, new_node, id_item);
+                }
             }
         }
 
-        private TreeNodeAdv AddItem(TreeNodeAdv node, bool isFolder, IIdentifier data)
+        private TreeNodeAdv AddItem(TreeNodeAdv node, bool isFolder, IIdentifier<Guid> data)
         {
             TreeNodeAdv n = new TreeNodeAdv
             {

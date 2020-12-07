@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DocumentFlow.Code.Core;
@@ -16,6 +16,10 @@ namespace DocumentFlow.Code.Implementation.DeductionImp
         public int accrual_base { get; set; }
         public string accrual_base_name { get; protected set; }
         public decimal percentage { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class DeductionBrowser : BrowserCodeBase<Deduction>, IBrowserCode
@@ -102,7 +106,7 @@ namespace DocumentFlow.Code.Implementation.DeductionImp
             IControl accrual_base = editor.CreateChoice("accrual_base", "База для начисления", new Dictionary<int, string>() { { 1, "Материалы" }, { 2, "ФОТ" } })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(180);
-            IControl percentage = editor.CreatePercent("percentage", "Корр. счёт", percentDecimalDigits: 2)
+            IControl percentage = editor.CreatePercent("percentage", "Процент", percentDecimalDigits: 2)
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(70);
 

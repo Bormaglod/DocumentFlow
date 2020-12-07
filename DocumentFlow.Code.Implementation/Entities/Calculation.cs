@@ -21,6 +21,10 @@ namespace DocumentFlow.Code.Implementation.CalculationImp
         public decimal profit_value { get; set; }
         public decimal price { get; set; }
         public string note { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class CalculationBrowser : BrowserCodeBase<Calculation>, IBrowserCode

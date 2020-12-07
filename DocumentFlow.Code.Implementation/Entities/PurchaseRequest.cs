@@ -28,6 +28,10 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         public decimal cost { get; protected set; }
         public decimal tax_value { get; protected set; }
         public decimal cost_with_tax { get; protected set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class PurchaseRequestBrowser : BrowserCodeBase<PurchaseRequest>, IBrowserCode
@@ -166,6 +170,10 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         public int tax { get; set; }
         public decimal tax_value { get; set; }
         public decimal cost_with_tax { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class PurchaseRequestEditor : EditorCodeBase<PurchaseRequest>, IEditorCode
@@ -174,7 +182,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and supplier) or (status_id = 500) or (id = :contractor_id) order by name";
-            const string gridSelect = "select prd.id, prd.owner_id, g.name as goods_name, prd.amount, prd.price, prd.cost, prd.tax, prd.tax_value, prd.cost_with_tax from purchase_request_detail prd join goods g on g.id = prd.goods_id where prd.owner_id = :id";
+            const string gridSelect = "select prd.id, prd.owner_id, g.name as goods_name, prd.amount, prd.price, prd.cost, prd.tax, prd.tax_value, prd.cost_with_tax from purchase_request_detail prd join goods g on g.id = prd.goods_id where prd.owner_id = :oid";
 
             IContainer container = editor.CreateContainer(32);
 
@@ -211,7 +219,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 .SetLabelWidth(120)
                 .SetControlWidth(700);
 
-            IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<PurchaseRequestDetail>(gridSelect, new { ((IIdentifier)editor.Entity).id }).AsList(); })
+            IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<PurchaseRequestDetail>(gridSelect, new { editor.Entity.oid }).AsList(); })
                 .CreateColumns((columns) =>
                 {
                     columns.CreateText("goods_name", "Номенклатура")

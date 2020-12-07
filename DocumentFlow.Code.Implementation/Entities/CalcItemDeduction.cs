@@ -38,6 +38,11 @@ namespace DocumentFlow.Code.Implementation.CalcItemDeductionImp
         /// </summary>
         public decimal percentage { get; set; }
 #pragma warning restore IDE1006 // Стили именования
+
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class CalcItemDeductionBrowser : BrowserCodeBase<CalcItemDeduction>, IBrowserCode

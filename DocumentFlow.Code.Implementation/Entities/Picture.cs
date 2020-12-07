@@ -19,6 +19,10 @@ namespace DocumentFlow.Code.Implementation.PictureImp
         public string size_large { get; set; }
         public string img_name { get; set; }
         public string note { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class PictureBrowser : BrowserCodeBase<Picture>, IBrowserCode

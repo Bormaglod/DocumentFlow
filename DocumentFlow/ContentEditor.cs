@@ -313,7 +313,7 @@ namespace DocumentFlow
                 entity = command.Editor.SelectById(conn, current, parameters);
                 if (editorData != null)
                 {
-                    editorData.Entity = entity;
+                    editorData.Entity = entity as IIdentifier;
                 }
             }
         }
@@ -551,7 +551,7 @@ namespace DocumentFlow
             {
                 editorData = new EditorData(controlContainer, ownerBrowser, parameters)
                 {
-                    Entity = entity
+                    Entity = entity as IIdentifier
                 };
                 command.Editor.Initialize(editorData, this);
                 UpdateCurrentStatusInfo();

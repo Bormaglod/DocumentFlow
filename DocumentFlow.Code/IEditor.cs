@@ -22,7 +22,7 @@ namespace DocumentFlow.Code
         IContainer Container { get; }
         IBrowser Browser { get; }
         IBrowserParameters Parameters { get; }
-        object Entity { get; }
+        IIdentifier Entity { get; }
         IBindingControl this[string name] { get; }
         IContainer CreateContainer();
         IContainer CreateContainer(int height);
@@ -33,6 +33,7 @@ namespace DocumentFlow.Code
         IBindingControl CreateComboBox(string fieldName, string label, ChoiceItems getItems);
         IBindingControl CreateComboBox(string fieldName, string label, СriterionChoiceItems getItems);
         IBindingControl CreateChoice(string fieldName, string label, IDictionary<int, string> keyValues);
+        IBindingControl CreateChoice(string fieldName, string label, ChoiceItems getItems);
         IBindingControl CreateInteger(string fieldName, string label, IntegerLength length = IntegerLength.Int32);
         IBindingControl CreateNumeric(string fieldName, string label, int numberDecimalDigits = 3);
         IBindingControl CreateCurrency(string fieldName, string label);

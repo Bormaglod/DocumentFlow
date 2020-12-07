@@ -43,6 +43,11 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
         /// </summary>
         public int percent_uses { get; set; }
 #pragma warning restore IDE1006 // Стили именования
+
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class CalcItemGoodsBrowser : BrowserCodeBase<CalcItemGoods>, IBrowserCode

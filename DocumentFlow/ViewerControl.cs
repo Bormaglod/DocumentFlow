@@ -691,7 +691,7 @@ namespace DocumentFlow
         {
             get
             {
-                if (gridContent.SelectedItem is IDocumentInfo row)
+                if (gridContent.SelectedItem is IIdentifier<Guid> row)
                     return row.id;
                 else
                     return Guid.Empty;
@@ -922,7 +922,7 @@ namespace DocumentFlow
         {
             for (int i = 0; i < list.Count; i++)
             {
-                if (list[i] is IIdentifier item && item.id == id)
+                if (list[i] is IIdentifier<Guid> item && item.id == id)
                 {
                     return i;
                 }

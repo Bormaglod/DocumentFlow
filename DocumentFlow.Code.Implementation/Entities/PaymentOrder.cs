@@ -27,6 +27,10 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
         public string organization_name { get; protected set; }
 		public decimal amount_debited { get; set; }
         public Guid? purchase_id { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class PaymentOrderBrowser : BrowserCodeBase<PaymentOrder>, IBrowserCode

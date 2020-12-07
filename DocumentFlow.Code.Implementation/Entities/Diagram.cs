@@ -12,6 +12,10 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
         public string status_name { get; set; }
         public string code { get; set; }
         public string name { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class DiagramBrowser : BrowserCodeBase<Diagram>, IBrowserCode

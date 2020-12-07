@@ -21,6 +21,10 @@ namespace DocumentFlow.Code.Implementation.ProductionOperationImp
         public int amount { get; set; }
         public int completed { get; set; }
         public int complete_status { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class ProductionOperationBrowser : BrowserCodeBase<ProductionOperation>, IBrowserCode

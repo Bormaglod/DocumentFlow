@@ -28,6 +28,10 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
         public decimal price { get; set; }
         public decimal cost { get; set; }
         public string contractor_name { get; protected set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class ReadyGoodsBrowser : BrowserCodeBase<ReadyGoods>, IBrowserCode

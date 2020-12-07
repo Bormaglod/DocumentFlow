@@ -26,8 +26,10 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
         public string okopf_name { get; set; }
         public Guid? account_id { get; set; }
         public bool tax_payer { get; set; }
-        public bool supplier { get; set; }
-        public bool buyer { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
     }
 
     public class ContractorBrowser : BrowserCodeBase<Contractor>, IBrowserCode
@@ -46,9 +48,7 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
                 c.ogrn, 
                 c.okpo,     
                 o.name as okopf_name, 
-                c.tax_payer, 
-                c.supplier, 
-                c.buyer 
+                c.tax_payer
             from contractor c 
                 join status s on (s.id = c.status_id) 
                 left join okopf o on (o.id = c.okopf_id) 
@@ -275,12 +275,12 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
 
         protected override string GetSelect()
         {
-            return "select id, name, parent_id, short_name, full_name, inn, kpp, ogrn, okpo, okopf_id, account_id, tax_payer, supplier, buyer from contractor where id = :id";
+            return "select id, name, parent_id, short_name, full_name, inn, kpp, ogrn, okpo, okopf_id, account_id, tax_payer from contractor where id = :id";
         }
 
         protected override string GetUpdate(Contractor contractor)
         {
-            return "update contractor set name = :name, parent_id = :parent_id, short_name = :short_name, full_name = :full_name, inn = :inn, kpp = :kpp, ogrn = :ogrn, okpo = :okpo, okopf_id = :okopf_id, account_id = :account_id, tax_payer = :tax_payer, supplier = :supplier, buyer = :buyer where id = :id";
+            return "update contractor set name = :name, parent_id = :parent_id, short_name = :short_name, full_name = :full_name, inn = :inn, kpp = :kpp, ogrn = :ogrn, okpo = :okpo, okopf_id = :okopf_id, account_id = :account_id, tax_payer = :tax_payer where id = :id";
         }
 
         public override bool GetEnabledValue(string field, string status_name)
