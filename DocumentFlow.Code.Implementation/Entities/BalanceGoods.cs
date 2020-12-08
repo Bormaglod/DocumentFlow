@@ -24,9 +24,8 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
         public decimal amount { get; set; }
         public string goods_name { get; protected set; }
         public decimal remainder { get; protected set; }
-        public int doc_number { get; set; }
+        public string doc_number { get; set; }
         public DateTime doc_date { get; set; }
-        public string view_number { get; protected set; }
         object IIdentifier.oid
         {
             get { return id; }
@@ -60,8 +59,7 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
                 g.name as goods_name, 
                 sum(bg.amount * sign(bg.operation_summa::numeric)) over (order by document_date, document_number) as remainder, 
                 bg.doc_date, 
-                bg.doc_number, 
-                bg.view_number 
+                bg.doc_number
             from balance_goods bg 
                 join status s on (s.id = bg.status_id) 
                 left join goods g on (g.id = bg.reference_id) 

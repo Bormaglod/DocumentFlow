@@ -20,7 +20,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; protected set; }
         public DateTime doc_date { get; set; }
-        public int doc_number { get; set; }
+        public string doc_number { get; set; }
         public Guid organization_id { get; set; }
         public string organization_name { get; protected set; }
         public int tax { get; protected set; }
@@ -106,7 +106,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                     .SetWidth(150)
                     .SetHideable(false);
 
-                columns.CreateInteger("doc_number", "Номер")
+                columns.CreateText("doc_number", "Номер")
                     .SetWidth(100);
 
                 columns.CreateText("organization_name", "Организация")
@@ -290,7 +290,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 
         protected override string GetSelect()
         {
-            return "select id, '№' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, contractor_id, doc_date, doc_number, organization_id from production_order where id = :id";
+            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, contractor_id, doc_date, doc_number, organization_id from production_order where id = :id";
         }
 
         protected override string GetUpdate(ProductionOrder entity)

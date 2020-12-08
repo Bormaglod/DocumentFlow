@@ -21,7 +21,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; set; }
         public DateTime doc_date { get; set; }
-        public long doc_number { get; set; }
+        public string doc_number { get; set; }
         public Guid organization_id { get; set; }
         public string organization_name { get; protected set; }
         public DateTime? invoice_date { get; set; }
@@ -52,7 +52,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 o.name as organization_name, 
                 i_s.invoice_date, 
                 i_s.invoice_number, 
-                po.view_number as order_number, 
+                po.doc_number as order_number, 
                 po.doc_date as order_date, 
                 case 
                     when c.tax_payer then 20 
@@ -69,7 +69,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 left join contractor c on (c.id = i_s.contractor_id) 
                 left join production_order po on (po.id = i_s.owner_id) 
             where {0} 
-            group by i_s.id, i_s.status_id, ua.name, c.name, i_s.doc_date, i_s.doc_number, s.note, o.name, c.tax_payer, i_s.invoice_date, i_s.invoice_number, po.view_number, po.doc_date";
+            group by i_s.id, i_s.status_id, ua.name, c.name, i_s.doc_date, i_s.doc_number, s.note, o.name, c.tax_payer, i_s.invoice_date, i_s.invoice_number, po.doc_number, po.doc_date";
 
         public void Initialize(IBrowser browser)
         {
@@ -105,7 +105,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                     .SetWidth(150)
                     .SetHideable(false);
 
-                columns.CreateInteger("doc_number", "Номер")
+                columns.CreateText("doc_number", "Номер")
                     .SetWidth(100);
 
                 columns.CreateText("organization_name", "Организация")
@@ -214,7 +214,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and buyer) or (status_id = 500) or (id = :contractor_id) order by name";
-            const string ownerSelect = "select po.id, ek.name || ' №' || po.view_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join entity_kind ek on (ek.id = po.entity_kind_id) join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where (po.status_id = 3100 or (po.id = :owner_id)) and (po.contractor_id = :contractor_id or :contractor_id is null) group by po.id, ek.name, po.view_number, po.doc_date, c.name";
+            const string ownerSelect = "select po.id, ek.name || ' №' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join entity_kind ek on (ek.id = po.entity_kind_id) join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where (po.status_id = 3100 or (po.id = :owner_id)) and (po.contractor_id = :contractor_id or :contractor_id is null) group by po.id, ek.name, po.doc_number, po.doc_date, c.name";
             const string gridSelect = "select isd.id, isd.owner_id, g.name as goods_name, isd.amount, isd.price, isd.cost, isd.tax, isd.tax_value, isd.cost_with_tax from invoice_sales_detail isd left join goods g on (g.id = isd.goods_id) where isd.owner_id = :oid";
 
             IContainer container = editor.CreateContainer(32);
@@ -325,7 +325,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
 
         protected override string GetSelect()
         {
-            return "select id, '№' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, owner_id, contractor_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_sales where id = :id";
+            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, owner_id, contractor_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_sales where id = :id";
         }
 
         protected override string GetUpdate(InvoiceSales entity)

@@ -21,7 +21,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; set; }
         public DateTime doc_date { get; set; }
-        public long doc_number { get; set; }
+        public string doc_number { get; set; }
         public Guid organization_id { get; set; }
         public string organization_name { get; protected set; }
         public DateTime? invoice_date { get; set; }
@@ -52,7 +52,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 o.name as organization_name, 
                 ir.invoice_date, 
                 ir.invoice_number, 
-                pr.view_number as purchase_number, 
+                pr.doc_number as purchase_number, 
                 pr.doc_date as purchase_date, 
                 case 
                     when c.tax_payer then 20 
@@ -69,7 +69,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 left join contractor c on (c.id = ir.contractor_id) 
                 left join purchase_request pr on (pr.id = ir.owner_id) 
             where {0} 
-            group by ir.id, ir.status_id, ua.name, c.name, ir.doc_date, ir.doc_number, s.note, o.name, c.tax_payer, ir.invoice_date, ir.invoice_number, pr.view_number, pr.doc_date";
+            group by ir.id, ir.status_id, ua.name, c.name, ir.doc_date, ir.doc_number, s.note, o.name, c.tax_payer, ir.invoice_date, ir.invoice_number, pr.doc_number, pr.doc_date";
 
         public void Initialize(IBrowser browser)
         {
@@ -105,7 +105,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     .SetWidth(150)
                     .SetHideable(false);
 
-                columns.CreateInteger("doc_number", "Номер")
+                columns.CreateText("doc_number", "Номер")
                     .SetWidth(100);
 
                 columns.CreateText("organization_name", "Организация")
@@ -214,12 +214,12 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and supplier) or (status_id = 500) or (id = :contractor_id) order by name";
-            const string ownerSelect = "select pr.id, ek.name || ' №' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) || ' (' || c.name || ')' as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) join contractor c on (c.id = pr.contractor_id) where (pr.status_id in (1001, 3001, 3002, 3003) or (pr.id = :owner_id)) and (pr.contractor_id = :contractor_id or :contractor_id is null) group by pr.id, ek.name, view_number, doc_date, c.name";
+            const string ownerSelect = "select pr.id, ek.name || ' №' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) || ' (' || c.name || ')' as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) join contractor c on (c.id = pr.contractor_id) where (pr.status_id in (1001, 3001, 3002, 3003) or (pr.id = :owner_id)) and (pr.contractor_id = :contractor_id or :contractor_id is null) group by pr.id, ek.name, doc_number, doc_date, c.name";
             const string gridSelect = "select ird.id, ird.owner_id, g.name as goods_name, ird.amount, ird.price, ird.cost, ird.tax, ird.tax_value, ird.cost_with_tax from invoice_receipt_detail ird join goods g on (g.id = ird.goods_id) where ird.owner_id = :oid";
 
             IContainer container = editor.CreateContainer(32);
 
-            IControl doc_number = editor.CreateInteger("doc_number", "Номер")
+            IControl doc_number = editor.CreateTextBox("doc_number", "Номер")
                 .SetControlWidth(110)
                 .SetLabelAutoSize(true)
                 .SetWidth(165)
@@ -325,7 +325,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
         protected override string GetSelect()
         {
-            return "select id, '№' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, owner_id, contractor_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_receipt where id = :id";
+            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, owner_id, contractor_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_receipt where id = :id";
         }
 
         protected override string GetUpdate(InvoiceReceipt entity)

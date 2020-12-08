@@ -20,8 +20,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
         public Guid? employee_id { get; set; }
         public string employee_name { get; protected set; }
         public DateTime doc_date { get; set; }
-        public long doc_number { get; set; }
-        public string view_number { get; set; }
+        public string doc_number { get; set; }
         public Guid organization_id { get; set; }
         public string organization_name { get; protected set; }
         object IIdentifier.oid
@@ -40,7 +39,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
                 ua.name as user_created, 
                 p.name as employee_name, 
                 i.doc_date, 
-                i.view_number, 
+                i.doc_number, 
                 o.name as organization_name 
             from inventory i 
                 join status s on (s.id  = i.status_id) 
@@ -84,7 +83,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
                     .SetWidth(150)
                     .SetHideable(false);
 
-                columns.CreateText("view_number", "Номер")
+                columns.CreateText("doc_number", "Номер")
                     .SetWidth(150)
                     .SetHideable(false);
 
@@ -99,7 +98,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
 
                 columns.CreateSortedColumns()
                     .Add("doc_date")
-                    .Add("view_number");
+                    .Add("doc_number");
             });
         }
 
@@ -209,7 +208,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
 
         protected override string GetSelect()
         {
-            return "select id, '№' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, doc_date, doc_number, organization_id, employee_id from inventory where id = :id";
+            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, doc_date, doc_number, organization_id, employee_id from inventory where id = :id";
         }
 
         protected override string GetUpdate(Inventory entity)

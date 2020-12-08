@@ -14,8 +14,7 @@ namespace DocumentFlow.Data.Entities
     {
         public DateTime doc_date { get; set; }
         public int doc_year { get; set; }
-        public long doc_number { get; set; }
-        public string view_number { get; set; }
+        public string doc_number { get; set; }
         public Guid organization_id { get; set; }
     }
 }

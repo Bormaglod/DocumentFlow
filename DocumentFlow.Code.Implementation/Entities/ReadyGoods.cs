@@ -20,7 +20,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
         public DateTime order_date { get; protected set; }
         public string order_number { get; protected set; }
         public DateTime doc_date { get; set; }
-        public string view_number { get; set; }
+        public string doc_number { get; set; }
         public string organization_name { get; protected set; }
         public Guid? goods_id { get; set; }
         public string goods_name { get; protected set; }
@@ -42,7 +42,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
                 rg.status_id, 
                 s.note as status_name, 
                 rg.doc_date, 
-                rg.view_number, 
+                rg.doc_number, 
                 o.name as organization_name, 
                 g.name as goods_name, 
                 rg.amount, 
@@ -60,9 +60,9 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
                 s.note as status_name, 
                 ua.name as user_created, 
                 po.doc_date as order_date, 
-                po.view_number as order_number, 
+                po.doc_number as order_number, 
                 rg.doc_date, 
-                rg.view_number, 
+                rg.doc_number, 
                 o.name as organization_name, 
                 g.name as goods_name, 
                 rg.amount, 
@@ -128,7 +128,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
                     .SetWidth(150)
                     .SetHideable(false);
 
-                columns.CreateText("view_number", "Номер")
+                columns.CreateText("doc_number", "Номер")
                     .SetWidth(100);
 
                 columns.CreateText("organization_name", "Организация")
@@ -245,7 +245,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
         {
             const int labelWidth = 190;
             const string goodsSelect = "with recursive r as (select id, status_id, name, parent_id from goods where id = '4da429d1-cd8f-4757-bea8-49c99adc48d8' union all select g.id, g.status_id, g.name, g.parent_id from goods g join r on (r.id = g.parent_id and g.status_id = 500)) select id, status_id, name, parent_id from r union all select g.id, g.status_id, g.name, g.parent_id from goods g join production_order_detail pod on (pod.owner_id = :owner_id and pod.goods_id = g.id) order by name";
-            const string ownerSelect = "select po.id, po.status_id, '№' || po.view_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') as name from production_order po where po.status_id = 3100 or po.id = :owner_id";
+            const string ownerSelect = "select po.id, po.status_id, '№' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') as name from production_order po where po.status_id = 3100 or po.id = :owner_id";
 
             main = editor.Browser == null || editor.Browser.Mode == BrowserMode.Main;
 
@@ -313,7 +313,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
 
         protected override string GetSelect()
         {
-            return "select rg.id, rg.owner_id, '№' || po.view_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') as document_name, rg.doc_date, rg.doc_number, rg.goods_id, rg.amount, rg.price, rg.cost from ready_goods rg left join production_order po on (po.id = rg.owner_id) where rg.id = :id";
+            return "select rg.id, rg.owner_id, '№' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') as document_name, rg.doc_date, rg.doc_number, rg.goods_id, rg.amount, rg.price, rg.cost from ready_goods rg left join production_order po on (po.id = rg.owner_id) where rg.id = :id";
         }
 
         protected override string GetInsert()

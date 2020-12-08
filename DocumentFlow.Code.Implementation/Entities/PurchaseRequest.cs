@@ -16,12 +16,11 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         public int status_id { get; set; }
         public string status_name { get; set; }
         public string document_name { get; protected set; }
-        public string view_number { get; protected set; }
         public string user_created { get; protected set; }
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; protected set; }
         public DateTime doc_date { get; set; }
-        public int doc_number { get; set; }
+        public string doc_number { get; set; }
         public Guid organization_id { get; set; }
         public string organization_name { get; protected set; }
         public int tax { get; protected set; }
@@ -41,7 +40,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 pr.id, 
                 pr.status_id, 
                 s.note as status_name, 
-                pr.view_number, 
+                pr.doc_number, 
                 ua.name as user_created, 
                 pr.contractor_id,
                 c.name as contractor_name, 
@@ -98,7 +97,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                     .SetWidth(150)
                     .SetHideable(false);
 
-                columns.CreateInteger("doc_number", "Номер")
+                columns.CreateText("doc_number", "Номер")
                     .SetWidth(100);
 
                 columns.CreateText("organization_name", "Организация")
@@ -267,7 +266,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 
         protected override string GetSelect()
         {
-            return "select id, '№' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, contractor_id, doc_date, doc_number, organization_id from purchase_request where id = :id";
+            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, contractor_id, doc_date, doc_number, organization_id from purchase_request where id = :id";
         }
 
         protected override string GetUpdate(PurchaseRequest entity)

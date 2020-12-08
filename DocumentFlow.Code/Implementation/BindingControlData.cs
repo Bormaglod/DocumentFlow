@@ -18,8 +18,8 @@ namespace DocumentFlow.Code.Implementation
 {
     public class BindingControlData : ControlData, IBindingControl, IPopulate
     {
+        private bool populating;
         private object populateData;
-        private readonly List<string> locked = new List<string>();
 
         public BindingControlData(Control control) : base(control)
         {
@@ -27,6 +27,8 @@ namespace DocumentFlow.Code.Implementation
             binding.LabelWidth = 100;
             binding.ControlWidth = 100;
             binding.Visible = true;
+
+            populating = false;
 
             if (control is IEditControl edit)
             {
@@ -160,6 +162,8 @@ namespace DocumentFlow.Code.Implementation
 
         public object DefaultValue { get; set; }
 
+        internal IList<string> Locked { get; set; }
+
         public IPopulate AsPopulateControl() => this;
 
         public IBindingControl SetLabelAutoSize(bool autoSize)
@@ -223,11 +227,19 @@ namespace DocumentFlow.Code.Implementation
             if (Owner is IEditControl edit)
             {
                 populateData = data;
-                PropertyInfo prop = data.GetType().GetProperty(FieldName);
-                if (prop == null)
-                    throw new ArgumentNullException($"Предпринята попытка заполнить отсутствующее в объекте поле {FieldName}");
+                populating = true;
+                try
+                {
+                    PropertyInfo prop = data.GetType().GetProperty(FieldName);
+                    if (prop == null)
+                        throw new ArgumentNullException($"Предпринята попытка заполнить отсутствующее в объекте поле {FieldName}");
 
-                edit.Value = prop.GetValue(data);
+                    edit.Value = prop.GetValue(data);
+                }
+                finally
+                {
+                    populating = false;
+                }
             }
         }
 
@@ -235,9 +247,9 @@ namespace DocumentFlow.Code.Implementation
         {
             if (sender is IEditControl edit)
             {
-                if (!locked.Contains(FieldName))
+                if (!Locked.Contains(FieldName))
                 {
-                    locked.Add(FieldName);
+                    Locked.Add(FieldName);
                     try
                     {
                         PropertyInfo prop = populateData.GetType().GetProperty(FieldName);
@@ -251,11 +263,14 @@ namespace DocumentFlow.Code.Implementation
 
                         prop.SetValue(populateData, value);
 
-                        ValueChanged?.Invoke(this, new ValueChangedEventArgs(edit.Value));
+                        if (!populating)
+                        {
+                            ValueChanged?.Invoke(this, new ValueChangedEventArgs(edit.Value));
+                        }
                     }
                     finally
                     {
-                        locked.Remove(FieldName);
+                        Locked.Remove(FieldName);
                     }
                 }
             }

@@ -34,7 +34,7 @@
                     <Paragraph>№</Paragraph>
                 </TableCell>
                 <TableCell TextAlignment="Center"  BorderThickness="0,0,0,1" BorderBrush="Black">
-                    <Paragraph><Run>{{ context.view_number }}</Run></Paragraph>
+                    <Paragraph><Run>{{ context.doc_number }}</Run></Paragraph>
                 </TableCell>
             </TableRow>
         </TableRowGroup>

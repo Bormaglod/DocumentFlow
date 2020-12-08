@@ -22,9 +22,8 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
         public decimal? income { get; protected set; }
         public decimal? expense { get; protected set; }
         public string contractor_name { get; protected set; }
-        public int doc_number { get; set; }
+        public string doc_number { get; set; }
         public DateTime doc_date { get; set; }
-        public string view_number { get; protected set; }
         object IIdentifier.oid
         {
             get { return id; }

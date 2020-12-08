@@ -17,11 +17,10 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
         public string document_name { get; protected set; }
         public string user_created { get; protected set; }
         public DateTime doc_date { get; set; }
-        public long doc_number { get; set; }
-        public string view_number { get; set; }
+        public string doc_number { get; set; }
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; set; }
-        public DateTime date_debited { get; set; }
+        public DateTime? date_debited { get; set; }
         public decimal? expense { get; set; }
         public decimal? income { get; set; }
         public string organization_name { get; protected set; }
@@ -42,7 +41,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 status_name, 
                 user_created, 
                 doc_date, 
-                view_number, 
+                doc_number, 
                 contractor_name,
                 date_debited, 
                 expense, 
@@ -85,7 +84,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                     .SetWidth(150)
                     .SetHideable(false);
 
-                columns.CreateText("view_number", "Номер")
+                columns.CreateText("doc_number", "Номер")
                     .SetWidth(100);
 
                 columns.CreateText("organization_name", "Организация")
@@ -150,7 +149,8 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
         {
             const int labelWidth = 210;
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id in (500, 1002)) or (id = :contractor_id) order by name";
-            const string purchaseSelect = "select pr.id, ek.name || ' №' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) where (pr.status_id in (3002, 3004) or pr.id = :purchase_id) and (pr.contractor_id = :contractor_id) group by pr.id, ek.name, view_number, doc_date";
+            const string purchaseSelect1 = "select pr.id, ek.name || ' №' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) where (pr.status_id in (3002, 3004) or pr.id = :purchase_id) and (pr.contractor_id = :contractor_id) group by pr.id, ek.name, doc_number, doc_date";
+			const string purchaseSelect2 = "select pr.id, ek.name || ' №' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) where (pr.status_id in (3002, 3004) or pr.id = :purchase_id) group by pr.id, ek.name, doc_number, doc_date";
 
             IControl contractor_id = editor.CreateSelectBox("contractor_id", "Контрагент", (e, c) =>
                 {
@@ -171,7 +171,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(140);
 
-            IControl doc_number = editor.CreateInteger("doc_number", "Номер п/п")
+            IControl doc_number = editor.CreateTextBox("doc_number", "Номер п/п")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(140);
 
@@ -185,7 +185,10 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
             IControl purchase_id = editor.CreateSelectBox("purchase_id", "Заявка на расход", (e, c) =>
                 {
                     PaymentOrder po = e.Entity as PaymentOrder;
-                    return c.Query<GroupDataItem>(purchaseSelect, new { po.contractor_id, po.purchase_id });
+					if (po.contractor_id != null)
+                    	return c.Query<GroupDataItem>(purchaseSelect1, new { po.contractor_id, po.purchase_id });
+					else
+						return c.Query<GroupDataItem>(purchaseSelect2, new { po.purchase_id });
                 })
                 .ValueChangedAction((s, e) =>
                 {
@@ -210,7 +213,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
 
         protected override string GetSelect()
         {
-            return "select po.id, '№' || view_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as name, doc_date, doc_number, contractor_id, date_debited, amount_debited, purchase_id, s.code as cur_status_name from payment_order po join status s on (s.id = status_id) where po.id = :id";
+            return "select po.id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as name, doc_date, doc_number, contractor_id, date_debited, amount_debited, purchase_id, s.code as cur_status_name from payment_order po join status s on (s.id = status_id) where po.id = :id";
         }
 
         protected override string GetUpdate(PaymentOrder pay)

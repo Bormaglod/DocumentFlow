@@ -17,12 +17,10 @@ namespace DocumentFlow.Code.Implementation
 {
     public class ContainerData : ControlData, IContainer
     {
-        private List<IControl> controls;
+        private readonly List<IControl> controls = new List<IControl>();
+        private readonly List<string> locked = new List<string>();
 
-        public ContainerData(Control container) : base(container)
-        {
-            controls = new List<IControl>();
-        }
+        public ContainerData(Control container) : base(container) { }
 
         IEnumerable<IControl> IContainer.Controls => controls.OfType<IControl>();
 
@@ -31,8 +29,8 @@ namespace DocumentFlow.Code.Implementation
             get
             {
                 IContainer container = this;
-                List<IControl> all = new List<IControl>(container.Controls);
-                foreach (IContainer c in controls.OfType<IContainer>())
+                var all = new List<IControl>(container.Controls);
+                foreach (var c in controls.OfType<IContainer>())
                 {
                     all.AddRange(c.ControlsAll);
                 }
@@ -48,6 +46,11 @@ namespace DocumentFlow.Code.Implementation
                 Owner.Controls.Add(data.Owner);
                 controls.Add(control);
                 data.Owner.BringToFront();
+            }
+
+            if (control is BindingControlData binding)
+            {
+                binding.Locked = locked;
             }
         }
 
