@@ -80,6 +80,8 @@
     <Compile Include="Controls\GridDecimalColumn.cs" />
     <Compile Include="Core\BrowserCodeBase.cs" />
     <Compile Include="Core\PopulateControlException.cs" />
+    <Compile Include="Data\CodeContent.cs" />
+    <Compile Include="Data\CommandExtension.cs" />
     <Compile Include="IDataGrid.cs" />
     <Compile Include="IDetail.cs" />
     <Compile Include="IEditControl.cs" />
@@ -144,6 +146,10 @@
     <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
       <Project>{acca0ba9-e646-44f2-bcec-fe269a109983}</Project>
       <Name>DocumentFlow.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
+      <Project>{15265407-1cdd-474d-93f6-205707fd0de7}</Project>
+      <Name>DocumentFlow.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

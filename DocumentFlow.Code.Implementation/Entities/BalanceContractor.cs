@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -64,7 +65,7 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
             browser.AllowSorting = false;
             browser.DataType = DataType.Document;
             browser.CommandBarVisible = false;
-            browser.ToolBar.ButtonStyle = ButtonDisplayStyle.Image;
+            browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
             browser.ToolBar.IconSize = ButtonIconSize.Small;
 
             browser.CreateStatusColumnRenderer();
@@ -97,11 +98,11 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
 
             columns.CreateNumeric("income", "Приход", NumberFormatMode.Currency)
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             columns.CreateNumeric("expense", "Расход", NumberFormatMode.Currency)
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             ICommandAdded open_document = browser.Commands.Add(CommandMethod.UserDefined, "open-document", "toolbar");
             open_document.Click += OpenDocumentClick;

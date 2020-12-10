@@ -14,10 +14,7 @@ namespace DocumentFlow.Data.Core
     {
         public Guid Id { get; protected set; }
 
-        public Guid GetReferenceId(Type type)
-        {
-            return GetReference(type) is EntityUID e ? e.Id : Guid.Empty;
-        }
+        public Guid GetReferenceId(Type type) => GetReference(type) is EntityUID e ? e.Id : Guid.Empty;
 
         public Guid GetReferenceId<T>() where T : EntityUID => GetReferenceId(typeof(T));
     }

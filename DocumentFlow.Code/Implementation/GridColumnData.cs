@@ -100,10 +100,10 @@ namespace DocumentFlow.Code.Implementation
             set => owner.AllowGrouping = value;
         }
 
-        HorizontalAlignmentText IColumn.HorizontalAlignment
+        HorizontalAlignment IColumn.HorizontalAlignment
         {
-            get => EnumHelper.TransformEnum<HorizontalAlignmentText, HorizontalAlignment>(owner.CellStyle.HorizontalAlignment);
-            set => owner.CellStyle.HorizontalAlignment = EnumHelper.TransformEnum<HorizontalAlignment, HorizontalAlignmentText>(value);
+            get => owner.CellStyle.HorizontalAlignment;
+            set => owner.CellStyle.HorizontalAlignment = value;
         }
 
         string IColumn.BackColor
@@ -180,7 +180,7 @@ namespace DocumentFlow.Code.Implementation
             return column;
         }
 
-        IColumn IColumn.SetHorizontalAlignment(HorizontalAlignmentText alignment)
+        IColumn IColumn.SetHorizontalAlignment(HorizontalAlignment alignment)
         {
             IColumn column = this;
             column.HorizontalAlignment = alignment;

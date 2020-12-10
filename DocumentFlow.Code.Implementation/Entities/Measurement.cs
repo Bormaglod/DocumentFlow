@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
 
@@ -62,7 +63,7 @@ namespace DocumentFlow.Code.Implementation.MeasurementImp
                 .SetWidth(160);
 
             columns.CreateSortedColumns()
-                .Add("name", SortDirection.Ascending);
+                .Add("name", ListSortDirection.Ascending);
         }
 
         public IEditorCode CreateEditor()

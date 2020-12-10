@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -64,7 +66,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemDeductionImp
         public void Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
-            browser.ToolBar.ButtonStyle = ButtonDisplayStyle.Image;
+            browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
             browser.ToolBar.IconSize = ButtonIconSize.Small;
             browser.CommandBarVisible = false;
 
@@ -94,18 +96,18 @@ namespace DocumentFlow.Code.Implementation.CalcItemDeductionImp
 
             columns.CreateNumeric("price", "База", NumberFormatMode.Currency)
                 .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                 .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             columns.CreateGroupSummaryRow()
                 .AddColumn("name", RowSummaryType.CountAggregate, "Всего наименований: {Count}")
                 .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}");
 
             columns.CreateSortedColumns()
-                .Add("name", SortDirection.Ascending);
+                .Add("name", ListSortDirection.Ascending);
         }
 
         public IEditorCode CreateEditor()

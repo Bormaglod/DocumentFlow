@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.Code", "Docume
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.Code.Implementation", "DocumentFlow.Code.Implementation\DocumentFlow.Code.Implementation.csproj", "{56442BA4-C339-4DF8-B669-E41A32278B97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.ForTest", "DocumentFlow.ForTest\DocumentFlow.ForTest.csproj", "{39194537-70DE-4BB1-B684-A110B94D163E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,14 +81,6 @@ Global
 		{56442BA4-C339-4DF8-B669-E41A32278B97}.Release|Any CPU.Build.0 = Release|Any CPU
 		{56442BA4-C339-4DF8-B669-E41A32278B97}.Release|x86.ActiveCfg = Release|Any CPU
 		{56442BA4-C339-4DF8-B669-E41A32278B97}.Release|x86.Build.0 = Release|Any CPU
-		{39194537-70DE-4BB1-B684-A110B94D163E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39194537-70DE-4BB1-B684-A110B94D163E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39194537-70DE-4BB1-B684-A110B94D163E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{39194537-70DE-4BB1-B684-A110B94D163E}.Debug|x86.Build.0 = Debug|Any CPU
-		{39194537-70DE-4BB1-B684-A110B94D163E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39194537-70DE-4BB1-B684-A110B94D163E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39194537-70DE-4BB1-B684-A110B94D163E}.Release|x86.ActiveCfg = Release|Any CPU
-		{39194537-70DE-4BB1-B684-A110B94D163E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

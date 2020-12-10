@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -120,20 +121,20 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 
                 columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                     .SetWidth(120)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateInteger("tax", "НДС%", NumberFormatMode.Percent)
                     .SetWidth(80)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Center)
+                    .SetHorizontalAlignment(HorizontalAlignment.Center)
                     .SetAllowGrouping(true);
 
                 columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency)
                     .SetWidth(120)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateNumeric("cost_with_tax", "Всего с НДС", NumberFormatMode.Currency)
                     .SetWidth(120)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateProgress("complete_status", "Готовность")
                     .SetWidth(100);
@@ -205,14 +206,14 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 .SetControlWidth(110)
                 .SetLabelAutoSize(true)
                 .SetWidth(165)
-                .SetDock(DockStyleControl.Left);
+                .SetDock(DockStyle.Left);
 
             IControl doc_date = editor.CreateDateTimePicker("doc_date", "от")
                 .SetLabelWidth(40)
                 .SetControlWidth(170)
                 .SetLabelTextAlignment(ContentAlignment.TopCenter)
                 .SetWidth(210)
-                .SetDock(DockStyleControl.Left);
+                .SetDock(DockStyle.Left);
 
             IControl organization_id = editor.CreateComboBox("organization_id", "Организация", (conn) => { return conn.Query<ComboBoxDataItem>(orgSelect); })
                 .SetLabelWidth(150)
@@ -247,27 +248,27 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                         .SetDecimalDigits(3)
                         .SetWidth(100)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                         .SetWidth(100)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateNumeric("tax", "%НДС", NumberFormatMode.Percent)
                         .SetWidth(80)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Center);
+                        .SetHorizontalAlignment(HorizontalAlignment.Center);
                     columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateNumeric("cost_with_tax", "Всего", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateProgress("complete_status", "Выполнено")
                         .SetWidth(100)
                         .SetHideable(false);

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -82,7 +83,7 @@ namespace DocumentFlow.Code.Implementation.BankImp
                 .SetWidth(180);
 
             columns.CreateSortedColumns()
-                .Add("name", SortDirection.Ascending);
+                .Add("name", ListSortDirection.Ascending);
         }
 
         public IEditorCode CreateEditor()

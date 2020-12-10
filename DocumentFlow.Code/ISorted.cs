@@ -6,12 +6,13 @@
 // Time: 19:20
 //-----------------------------------------------------------------------
 
+using System.ComponentModel;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code
 {
     public interface ISorted
     {
-        ISorted Add(string columnName, SortDirection direction = SortDirection.Ascending);
+        ISorted Add(string columnName, ListSortDirection direction = ListSortDirection.Ascending);
     }
 }

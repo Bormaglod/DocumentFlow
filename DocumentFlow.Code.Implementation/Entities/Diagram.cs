@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -48,7 +49,7 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
                     .SetAutoSizeColumnsMode(SizeColumnsMode.LastColumnFill);
 
                 columns.CreateSortedColumns()
-                    .Add("name", SortDirection.Ascending);
+                    .Add("name", ListSortDirection.Ascending);
             });
         }
 

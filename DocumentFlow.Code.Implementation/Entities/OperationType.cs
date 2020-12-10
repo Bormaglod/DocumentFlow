@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Windows.Forms;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
 
@@ -55,11 +57,11 @@ namespace DocumentFlow.Code.Implementation.OperationTypeImp
                 .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
             columns.CreateNumeric("hourly_salary", "Расценка, руб./час", NumberFormatMode.Currency)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .SetWidth(200);
 
             columns.CreateSortedColumns()
-                .Add("name", SortDirection.Ascending);
+                .Add("name", ListSortDirection.Ascending);
         }
 
         public IEditorCode CreateEditor()

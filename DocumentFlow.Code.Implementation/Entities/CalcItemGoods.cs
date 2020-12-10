@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -70,7 +72,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
         public void Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
-            browser.ToolBar.ButtonStyle = ButtonDisplayStyle.Image;
+            browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
             browser.ToolBar.IconSize = ButtonIconSize.Small;
             browser.CommandBarVisible = false;
 
@@ -97,15 +99,15 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
             columns.CreateNumeric("amount", "Количество")
                 .SetDecimalDigits(3)
                 .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                 .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency)
                 .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             columns.CreateProgress("percent_uses", "Использовано, %")
                 .SetWidth(150);
@@ -116,7 +118,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
                 .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}");
 
             columns.CreateSortedColumns()
-                .Add("name", SortDirection.Ascending);
+                .Add("name", ListSortDirection.Ascending);
         }
 
         public IEditorCode CreateEditor()

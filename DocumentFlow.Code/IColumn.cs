@@ -6,6 +6,7 @@
 // Time: 19:08
 //-----------------------------------------------------------------------
 
+using System.Windows.Forms;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code
@@ -20,7 +21,7 @@ namespace DocumentFlow.Code
         bool Visibility { get; set; }
         bool AllowResizing { get; set; }
         bool AllowGrouping { get; set; }
-        HorizontalAlignmentText HorizontalAlignment { get; set; }
+        HorizontalAlignment HorizontalAlignment { get; set; }
         string BackColor { get; set; }
         string TextColor { get; set; }
         string NegativeValueColor { get; set; }
@@ -32,7 +33,7 @@ namespace DocumentFlow.Code
         IColumn SetAllowGrouping(bool allowGrouping);
         IColumn SetHideable(bool hideable);
         IColumn SetAutoSizeColumnsMode(SizeColumnsMode mode);
-        IColumn SetHorizontalAlignment(HorizontalAlignmentText alignment);
+        IColumn SetHorizontalAlignment(HorizontalAlignment alignment);
         IColumn SetBackgroundColor(string color);
         IColumn SetTextColor(string color);
     }

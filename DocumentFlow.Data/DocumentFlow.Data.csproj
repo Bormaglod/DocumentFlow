@@ -122,10 +122,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DocumentFlow.Code\DocumentFlow.Code.csproj">
-      <Project>{1e6ad92b-9bcb-4cdf-a646-af0ce209f0f4}</Project>
-      <Name>DocumentFlow.Code</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
       <Project>{acca0ba9-e646-44f2-bcec-fe269a109983}</Project>
       <Name>DocumentFlow.Core</Name>

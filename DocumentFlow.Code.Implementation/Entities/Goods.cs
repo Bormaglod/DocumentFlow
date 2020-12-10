@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -98,19 +100,19 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 columns.CreateText("abbreviation", "Ед. изм.")
                     .SetWidth(90)
                     .SetAllowGrouping(true)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Center)
+                    .SetHorizontalAlignment(HorizontalAlignment.Center)
                     .SetVisibility(false);
 
                 columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                     .SetWidth(100)
                     .SetAllowGrouping(true)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
                     .SetVisibility(false);
 
                 columns.CreateInteger("tax", "НДС", NumberFormatMode.Percent)
                     .SetWidth(80)
                     .SetAllowGrouping(true)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Center)
+                    .SetHorizontalAlignment(HorizontalAlignment.Center)
                     .SetVisibility(false);
 
                 columns.CreateNumeric("min_order", "Мин. партия")
@@ -124,36 +126,36 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                     .SetWidth(100)
                     .SetVisibility(false)
                     .SetAllowGrouping(true)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Center);
+                    .SetHorizontalAlignment(HorizontalAlignment.Center);
 
                 columns.CreateNumeric("cost", "Себестоимость", NumberFormatMode.Currency)
                     .SetWidth(120)
                     .SetVisibility(false)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateNumeric("profit_percent", "Прибыль, %", NumberFormatMode.Percent)
                     .SetDecimalDigits(2)
                     .SetWidth(110)
                     .SetVisibility(false)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Center);
+                    .SetHorizontalAlignment(HorizontalAlignment.Center);
 
                 columns.CreateNumeric("profit_value", "Прибыль", NumberFormatMode.Currency)
                     .SetWidth(100)
                     .SetVisibility(false)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateNumeric("calc_price", "Цена расчётная", NumberFormatMode.Currency)
                     .SetWidth(75)
                     .SetVisible(false)
                     .SetVisibility(false)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateDate("approved", "Дата утв.")
                     .SetWidth(120)
                     .SetVisibility(false);
 
                 columns.CreateSortedColumns()
-                    .Add("code", SortDirection.Ascending);
+                    .Add("code", ListSortDirection.Ascending);
             });
 
             browser.ChangeParent += Browser_ChangeParent;

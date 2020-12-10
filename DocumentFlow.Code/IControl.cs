@@ -8,7 +8,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
-using DocumentFlow.Code.System;
+using System.Windows.Forms;
 
 namespace DocumentFlow.Code
 {
@@ -20,7 +20,7 @@ namespace DocumentFlow.Code
         int Height { get; set; }
         bool Enabled { get; set; }
         bool Visible { get; set; }
-        DockStyleControl Dock { get; set; }
+        DockStyle Dock { get; set; }
         IList<int> Margin { get; set; }
         IList<int> Padding { get; set; }
         bool FitToSize { get; set; }
@@ -33,7 +33,7 @@ namespace DocumentFlow.Code
         IControl SetSize(Size size);
         IControl SetEnabled(bool enabled);
         IControl SetVisible(bool visible);
-        IControl SetDock(DockStyleControl dock);
+        IControl SetDock(DockStyle dock);
         IControl SetMargin(int left = 0, int top = 0, int right = 0, int bottom = 0);
         IControl SetMargin(int all);
         IControl SetPadding(int left = 0, int top = 0, int right = 0, int bottom = 0);

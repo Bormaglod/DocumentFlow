@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -45,7 +47,7 @@ namespace DocumentFlow.Code.Implementation.ContractImp
         public void Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
-            browser.ToolBar.ButtonStyle = ButtonDisplayStyle.Image;
+            browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
             browser.ToolBar.IconSize = ButtonIconSize.Small;
             browser.CommandBarVisible = false;
 
@@ -76,7 +78,7 @@ namespace DocumentFlow.Code.Implementation.ContractImp
                 .SetWidth(200);
 
             columns.CreateSortedColumns()
-                .Add("name", SortDirection.Ascending);
+                .Add("name", ListSortDirection.Ascending);
         }
 
         public IEditorCode CreateEditor()

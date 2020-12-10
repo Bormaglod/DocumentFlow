@@ -6,13 +6,14 @@
 // Time: 18:50
 //-----------------------------------------------------------------------
 
+using System.Windows.Forms;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code
 {
     public interface IToolBar
     {
-        ButtonDisplayStyle ButtonStyle { get; set; }
+        ToolStripItemDisplayStyle ButtonStyle { get; set; }
         ButtonIconSize IconSize { get; set; }
     }
 }

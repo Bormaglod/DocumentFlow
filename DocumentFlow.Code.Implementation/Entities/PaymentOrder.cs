@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
 using DocumentFlow.Code.Core;
@@ -101,11 +102,11 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
 
                 columns.CreateNumeric("income", "Приход", NumberFormatMode.Currency)
                     .SetWidth(120)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateNumeric("expense", "Расход", NumberFormatMode.Currency)
                     .SetWidth(120)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateStackedColumns()
                     .Add("income")

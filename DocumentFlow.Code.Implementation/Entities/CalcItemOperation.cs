@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -55,7 +57,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
         public void Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
-            browser.ToolBar.ButtonStyle = ButtonDisplayStyle.Image;
+            browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
             browser.ToolBar.IconSize = ButtonIconSize.Small;
             browser.CommandBarVisible = false;
 
@@ -81,20 +83,20 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
 
                 columns.CreateNumeric("amount", "Количество")
                     .SetWidth(150)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateNumeric("produced_time", "Время, с")
                     .SetDecimalDigits(1)
                     .SetWidth(150)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                     .SetWidth(150)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency)
                     .SetWidth(150)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateGroupSummaryRow()
                     .AddColumn("name", RowSummaryType.CountAggregate, "Всего наименований: {Count}")
@@ -103,7 +105,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
                     .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}");
 
                 columns.CreateSortedColumns()
-                    .Add("name", SortDirection.Ascending);
+                    .Add("name", ListSortDirection.Ascending);
             });
         }
 
@@ -182,12 +184,12 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
                         .SetDecimalDigits(3)
                         .SetWidth(150)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateNumeric("count_by_operation", "Количество на опер.")
                         .SetDecimalDigits(3)
                         .SetWidth(150)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                 })
                 .SetEditor("Номенклатура", new UsedMaterialEditor(), (e) =>
                 {

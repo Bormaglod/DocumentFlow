@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -48,7 +50,7 @@ namespace DocumentFlow.Code.Implementation.CalculationImp
         public void Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
-            browser.ToolBar.ButtonStyle = ButtonDisplayStyle.Image;
+            browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
             browser.ToolBar.IconSize = ButtonIconSize.Small;
             browser.CommandBarVisible = false;
 
@@ -77,23 +79,23 @@ namespace DocumentFlow.Code.Implementation.CalculationImp
 
             columns.CreateNumeric("cost", "Себестоимость", NumberFormatMode.Currency)
                 .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             columns.CreateNumeric("profit_percent", "Прибыль, %", NumberFormatMode.Percent)
                 .SetDecimalDigits(2)
                 .SetWidth(120)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Center);
+                .SetHorizontalAlignment(HorizontalAlignment.Center);
 
             columns.CreateNumeric("profit_value", "Прибыль", NumberFormatMode.Currency)
                 .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                 .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             columns.CreateSortedColumns()
-                .Add("code", SortDirection.Ascending);
+                .Add("code", ListSortDirection.Ascending);
         }
 
         public IEditorCode CreateEditor()

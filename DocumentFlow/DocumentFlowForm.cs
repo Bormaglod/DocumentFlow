@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using DocumentFlow.Authorization;
+using DocumentFlow.Code.Data;
 using DocumentFlow.Data.Entities;
 using DocumentFlow.Properties;
 
@@ -152,11 +153,6 @@ namespace DocumentFlow
                     Size = Settings.Default.Size;
                 }
             }
-        }
-
-        private void statusBarAdv1_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

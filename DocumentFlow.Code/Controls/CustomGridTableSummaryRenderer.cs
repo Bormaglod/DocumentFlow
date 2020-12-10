@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Windows.Forms;
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Renderers;
 using Syncfusion.WinForms.DataGrid.Styles;
@@ -55,11 +56,11 @@ namespace DocumentFlow.Code.Controls
                 LineAlignment = StringAlignment.Center
             };
 
-            if (c.HorizontalAlignment == HorizontalAlignmentText.Left)
+            if (c.HorizontalAlignment == HorizontalAlignment.Left)
                 stringFormat.Alignment = StringAlignment.Near;
-            else if (c.HorizontalAlignment == HorizontalAlignmentText.Center)
+            else if (c.HorizontalAlignment == HorizontalAlignment.Center)
                 stringFormat.Alignment = StringAlignment.Center;
-            else if (c.HorizontalAlignment == HorizontalAlignmentText.Right)
+            else if (c.HorizontalAlignment == HorizontalAlignment.Right)
                 stringFormat.Alignment = StringAlignment.Far;
             paint.DrawString(cellValue, style.Font.GetFont(), Brushes.Black, new RectangleF(cellRect.Left + 3, cellRect.Top, cellRect.Width - 6, cellRect.Height), stringFormat);
         }

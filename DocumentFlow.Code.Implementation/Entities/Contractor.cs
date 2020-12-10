@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using Dapper;
@@ -122,7 +123,7 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
         	        .SetVisibility(false);
 
 	            columns.CreateSortedColumns()
-    	            .Add("name", SortDirection.Ascending);
+    	            .Add("name", ListSortDirection.Ascending);
 			});
 
 			browser.ChangeParent += Browser_ChangeParent;

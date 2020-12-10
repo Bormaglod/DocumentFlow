@@ -37,6 +37,7 @@ using Syncfusion.WinForms.DataGrid.Events;
 using Syncfusion.WinForms.DataGrid.Interactivity;
 using DocumentFlow.Code;
 using DocumentFlow.Code.Core;
+using DocumentFlow.Code.Data;
 using DocumentFlow.Code.Implementation;
 using DocumentFlow.Code.System;
 using DocumentFlow.Core;
@@ -55,10 +56,10 @@ namespace DocumentFlow
         {
             private ViewerControl viewer;
             private ToolStrip buttonStrip;
-            private ButtonDisplayStyle buttonStyle;
+            private ToolStripItemDisplayStyle buttonStyle;
             private ButtonIconSize iconSize;
 
-            public ToolBarData(ViewerControl viewer, ToolStrip toolStrip, ButtonDisplayStyle style, ButtonIconSize size)
+            public ToolBarData(ViewerControl viewer, ToolStrip toolStrip, ToolStripItemDisplayStyle style, ButtonIconSize size)
             {
                 this.viewer = viewer;
 
@@ -67,7 +68,7 @@ namespace DocumentFlow
                 iconSize = size;
             }
 
-            public ButtonDisplayStyle ButtonStyle
+            public ToolStripItemDisplayStyle ButtonStyle
             {
                 get => buttonStyle;
                 set
@@ -77,7 +78,7 @@ namespace DocumentFlow
                         buttonStyle = value;
                         foreach (ToolStripItem item in buttonStrip.Items)
                         {
-                            item.DisplayStyle = EnumHelper.TransformEnum<ToolStripItemDisplayStyle, ButtonDisplayStyle>(buttonStyle);
+                            item.DisplayStyle = buttonStyle;
                         }
                     }
                 }
@@ -392,7 +393,7 @@ namespace DocumentFlow
                         {
                             Text = tools.Command.name,
                             Image = viewer.toolBarData.IconSize == ButtonIconSize.Small ? tools.Command.Picture.GetImageSmall() : tools.Command.Picture.GetImageLarge(),
-                            DisplayStyle = EnumHelper.TransformEnum<ToolStripItemDisplayStyle, ButtonDisplayStyle>(viewer.toolBarData.ButtonStyle),
+                            DisplayStyle = viewer.toolBarData.ButtonStyle,
                             ImageScaling = ToolStripItemImageScaling.None,
                             TextImageRelation = TextImageRelation.ImageAboveText
                         };
@@ -750,7 +751,7 @@ namespace DocumentFlow
 
             parentId = null;
 
-            toolBarData = new ToolBarData(this, toolStrip1, ButtonDisplayStyle.ImageAndText, ButtonIconSize.Large);
+            toolBarData = new ToolBarData(this, toolStrip1, ToolStripItemDisplayStyle.ImageAndText, ButtonIconSize.Large);
 
             panelCommandBar.Height = 30;
             panelCommandBar.Visible = true;
@@ -758,7 +759,7 @@ namespace DocumentFlow
             menuVisibleColumns.DropDownItems.Clear();
             CreateCommands();
 
-            ExecutedCommand.Browser.Initialize(this);
+            ExecutedCommand.Browser().Initialize(this);
 
             if (dataType == DataType.None)
             {
@@ -905,7 +906,7 @@ namespace DocumentFlow
                 IBrowser browser = this;
                 try
                 {
-                    var list = ExecutedCommand.Browser.Select(conn, browser.Parameters);
+                    var list = ExecutedCommand.Browser().Select(conn, browser.Parameters);
                     Type entityType = list.GetType().GetGenericArguments().First();
                     Type genericType = typeof(BindingList<>).MakeGenericType(entityType);
                     gridContent.DataSource = Activator.CreateInstance(genericType, list);
@@ -940,7 +941,7 @@ namespace DocumentFlow
                 {
                     using (var conn = Db.OpenConnection())
                     {
-                        var new_row = ExecutedCommand.Browser.SelectById(conn, id, Parameters);
+                        var new_row = ExecutedCommand.Browser().SelectById(conn, id, Parameters);
                         if (new_row != null)
                         {
                             list[index] = new_row;
@@ -959,7 +960,7 @@ namespace DocumentFlow
                 {
                     using (var conn = Db.OpenConnection())
                     {
-                        var new_row = ExecutedCommand.Browser.SelectById(conn, id, Parameters);
+                        var new_row = ExecutedCommand.Browser().SelectById(conn, id, Parameters);
                         if (new_row != null)
                         {
                             list.Add(new_row);
@@ -1132,7 +1133,7 @@ namespace DocumentFlow
                     {
                         try
                         {
-                            ExecutedCommand.Browser.Delete(conn, transaction, row.id);
+                            ExecutedCommand.Browser().Delete(conn, transaction, row.id);
                             transaction.Commit();
 #if !USE_LISTENER
                             RefreshCurrenView();

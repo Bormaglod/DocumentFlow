@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using Dapper;
 using DocumentFlow.Code.Core;
@@ -121,7 +122,7 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
                     .SetWidth(70);
 
                 columns.CreateSortedColumns()
-                    .Add("name", SortDirection.Ascending);
+                    .Add("name", ListSortDirection.Ascending);
             });
         }
 

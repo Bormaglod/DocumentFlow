@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -100,24 +102,24 @@ namespace DocumentFlow.Code.Implementation.OperationImp
             columns.CreateText("abbreviation", "Ед. изм.")
                 .SetWidth(100)
                 .SetAllowGrouping(true)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Center)
+                .SetHorizontalAlignment(HorizontalAlignment.Center)
                 .SetVisibility(false);
 
             columns.CreateInteger("produced", "Выработка")
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .SetVisible(false)
                 .SetVisibility(false);
 
             columns.CreateInteger("prod_time", "Время выработки, мин.")
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .SetVisible(false)
                 .SetVisibility(false);
 
             columns.CreateInteger("production_rate", "Норма выработки, ед./час")
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .SetVisible(false)
                 .SetVisibility(false);
 
@@ -129,48 +131,48 @@ namespace DocumentFlow.Code.Implementation.OperationImp
             columns.CreateNumeric("salary", "Зар. плата, руб.", NumberFormatMode.Currency)
                 .SetWidth(150)
                 .SetVisibility(false)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
 
             columns.CreateInteger("length", "Длина провода")
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .SetVisible(false)
                 .SetVisibility(false);
 
             columns.CreateNumeric("left_cleaning", "Длина зачистки слева")
                 .SetDecimalDigits(1)
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .SetVisible(false)
                 .SetVisibility(false);
 
             columns.CreateInteger("left_sweep", "Окно слева")
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .SetVisible(false)
                 .SetVisibility(false);
 
             columns.CreateNumeric("right_cleaning", "Длина зачистки справа")
                 .SetDecimalDigits(1)
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .SetVisible(false)
                 .SetVisibility(false);
 
             columns.CreateInteger("right_sweep", "Окно справа")
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .SetVisible(false)
                 .SetVisibility(false);
 
             columns.CreateInteger("program", "Программа")
                 .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .SetVisible(false)
                 .SetVisibility(false);
 
             columns.CreateSortedColumns()
-                .Add("code", SortDirection.Ascending);
+                .Add("code", ListSortDirection.Ascending);
 
             browser.ChangeParent += Browser_ChangeParent;
         }

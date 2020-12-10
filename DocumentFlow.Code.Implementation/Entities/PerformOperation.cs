@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
 using DocumentFlow.Code.Core;
@@ -129,11 +131,11 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
 
                 columns.CreateInteger("amount", "Количество")
                     .SetWidth(140)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateNumeric("salary", "Зарплата", NumberFormatMode.Currency)
                     .SetWidth(120)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateGroupSummaryRow()
                     .AddColumn("salary", RowSummaryType.DoubleAggregate, "{Sum:c}");
@@ -142,7 +144,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                     .AddColumn("salary", RowSummaryType.DoubleAggregate, "{Sum:c}");
 
                 columns.CreateSortedColumns()
-                    .Add("doc_date", SortDirection.Descending);
+                    .Add("doc_date", ListSortDirection.Descending);
             });
 
             browser.CreateGroups()

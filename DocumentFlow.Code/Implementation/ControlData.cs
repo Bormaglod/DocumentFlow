@@ -9,8 +9,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using DocumentFlow.Code.System;
-using DocumentFlow.Core;
 
 namespace DocumentFlow.Code.Implementation
 {
@@ -57,10 +55,10 @@ namespace DocumentFlow.Code.Implementation
             set => Owner.Visible = value;
         }
 
-        DockStyleControl IControl.Dock 
+        DockStyle IControl.Dock 
         {
-            get => EnumHelper.TransformEnum<DockStyleControl, DockStyle>(Owner.Dock);
-            set => Owner.Dock = EnumHelper.TransformEnum<DockStyle, DockStyleControl>(value);
+            get => Owner.Dock;
+            set => Owner.Dock = value;
         }
 
         IList<int> IControl.Margin 
@@ -150,7 +148,7 @@ namespace DocumentFlow.Code.Implementation
             return control;
         }
 
-        IControl IControl.SetDock(DockStyleControl dock)
+        IControl IControl.SetDock(DockStyle dock)
         {
             IControl control = this;
             control.Dock = dock;

@@ -23,12 +23,12 @@ namespace DocumentFlow.Code.Implementation
             gridContent.SortColumnDescriptions.Clear();
         }
 
-        ISorted ISorted.Add(string columnName, SortDirection direction)
+        ISorted ISorted.Add(string columnName, ListSortDirection direction)
         {
             SortColumnDescription sort = new SortColumnDescription()
             {
                 ColumnName = columnName,
-                SortDirection = EnumHelper.TransformEnum<ListSortDirection, SortDirection>(direction)
+                SortDirection = EnumHelper.TransformEnum<ListSortDirection, ListSortDirection>(direction)
             };
 
             gridContent.SortColumnDescriptions.Add(sort);

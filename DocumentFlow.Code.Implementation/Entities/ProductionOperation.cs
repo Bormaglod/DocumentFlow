@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
-
+using System.Windows.Forms;
 using Dapper;
-
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
 
@@ -50,7 +50,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOperationImp
         {
             browser.AllowGrouping = true;
             browser.DataType = DataType.Document;
-            browser.ToolBar.ButtonStyle = ButtonDisplayStyle.Image;
+            browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
             browser.ToolBar.IconSize = ButtonIconSize.Small;
             browser.CommandBarVisible = false;
 
@@ -88,17 +88,17 @@ namespace DocumentFlow.Code.Implementation.ProductionOperationImp
 
                 columns.CreateInteger("amount", "Количество")
                     .SetWidth(150)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateInteger("completed", "Выполнено")
                     .SetWidth(150)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateProgress("complete_status", "Выполнено, %")
                     .SetWidth(150);
 
                 columns.CreateSortedColumns()
-                    .Add("date_updated", SortDirection.Descending);
+                    .Add("date_updated", ListSortDirection.Descending);
 
                 columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
                     .AddColumn("operation_name", RowSummaryType.CountAggregate, "Всего наименований: {Count}");

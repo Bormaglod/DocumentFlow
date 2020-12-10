@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
 using DocumentFlow.Code.Core;
@@ -155,14 +156,14 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
                 .SetControlWidth(110)
                 .SetLabelAutoSize(true)
                 .SetWidth(165)
-                .SetDock(DockStyleControl.Left);
+                .SetDock(DockStyle.Left);
 
             IControl doc_date = editor.CreateDateTimePicker("doc_date", "от")
                 .SetLabelWidth(40)
                 .SetControlWidth(170)
                 .SetLabelTextAlignment(ContentAlignment.TopCenter)
                 .SetWidth(210)
-                .SetDock(DockStyleControl.Left);
+                .SetDock(DockStyle.Left);
 
             IControl organization_id = editor.CreateComboBox("organization_id", "Организация", (conn) => { return conn.Query<ComboBoxDataItem>(orgSelect); })
                 .SetLabelWidth(150)
@@ -194,7 +195,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
                         .SetDecimalDigits(3)
                         .SetWidth(100)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                 })
                 .SetEditor("Номенклатура", new InventoryDetailEditor())
                 .SetHeight(350);

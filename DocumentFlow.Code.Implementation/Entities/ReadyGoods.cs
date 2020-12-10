@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
@@ -88,7 +90,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
             browser.DataType = DataType.Document;
             if (browser.Mode == BrowserMode.Dependent)
             {
-                browser.ToolBar.ButtonStyle = ButtonDisplayStyle.Image;
+                browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
                 browser.ToolBar.IconSize = ButtonIconSize.Small;
                 browser.CommandBarVisible = false;
             }
@@ -155,16 +157,16 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
 
                 columns.CreateNumeric("amount", "Количество")
                     .SetDecimalDigits(3)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
                     .SetWidth(120);
 
                 columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                     .SetWidth(100)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency)
                     .SetWidth(100)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 if (browser.Mode == BrowserMode.Main)
                 {
@@ -176,7 +178,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
                 }
 
                 columns.CreateSortedColumns()
-                    .Add("doc_date", SortDirection.Descending);
+                    .Add("doc_date", ListSortDirection.Descending);
 
                 columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
                     .AddColumn("amount", RowSummaryType.DoubleAggregate, "{Sum}")

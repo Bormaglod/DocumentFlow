@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using Dapper;
 using DocumentFlow.Code.Core;
@@ -74,7 +75,7 @@ namespace DocumentFlow.Code.Implementation.PictureImp
                 .SetWidth(100);
 
             columns.CreateSortedColumns()
-                .Add("name", SortDirection.Ascending);
+                .Add("name", ListSortDirection.Ascending);
         }
 
         public IEditorCode CreateEditor()

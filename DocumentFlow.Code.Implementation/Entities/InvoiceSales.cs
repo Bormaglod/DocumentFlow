@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
 using DocumentFlow.Code.Core;
@@ -133,20 +134,20 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
 
                 columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                     .SetWidth(120)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateInteger("tax", "НДС%", NumberFormatMode.Percent)
                     .SetWidth(80)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Center)
+                    .SetHorizontalAlignment(HorizontalAlignment.Center)
                     .SetAllowGrouping(true);
 
                 columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency)
                     .SetWidth(120)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateNumeric("cost_with_tax", "Всего с НДС", NumberFormatMode.Currency)
                     .SetWidth(120)
-                    .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
                 columns.CreateSortedColumns()
                     .Add("doc_date")
@@ -223,14 +224,14 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 .SetControlWidth(110)
                 .SetLabelAutoSize(true)
                 .SetWidth(165)
-                .SetDock(DockStyleControl.Left);
+                .SetDock(DockStyle.Left);
 
             IControl doc_date = editor.CreateDateTimePicker("doc_date", "от")
                 .SetLabelWidth(40)
                 .SetControlWidth(170)
                 .SetLabelTextAlignment(ContentAlignment.TopCenter)
                 .SetWidth(210)
-                .SetDock(DockStyleControl.Left);
+                .SetDock(DockStyle.Left);
 
             IControl organization_id = editor.CreateComboBox("organization_id", "Организация", (conn) => { return conn.Query<ComboBoxDataItem>(orgSelect); })
                 .SetLabelWidth(150)
@@ -270,27 +271,27 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                         .SetDecimalDigits(3)
                         .SetWidth(100)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                         .SetWidth(100)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateNumeric("tax", "%НДС", NumberFormatMode.Percent)
                         .SetWidth(80)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Center);
+                        .SetHorizontalAlignment(HorizontalAlignment.Center);
                     columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateNumeric("cost_with_tax", "Всего", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
-                        .SetHorizontalAlignment(HorizontalAlignmentText.Right);
+                        .SetHorizontalAlignment(HorizontalAlignment.Right);
                     columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
                         .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}")
                         .AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
@@ -306,12 +307,12 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
             IControl invoice_number = editor.CreateTextBox("invoice_number", "Счёт фактура №")
                 .SetLabelAutoSize(true)
                 .SetWidth(225)
-                .SetDock(DockStyleControl.Left);
+                .SetDock(DockStyle.Left);
 
             IControl invoice_date = editor.CreateDateTimePicker("invoice_date", "от", customFormat: "dd.MM.yyyy")
                 .SetLabelWidth(40)
                 .SetLabelTextAlignment(ContentAlignment.TopCenter)
-                .SetDock(DockStyleControl.Left)
+                .SetDock(DockStyle.Left)
                 .SetWidth(210);
 
             editor.Container.Add(new IControl[] {

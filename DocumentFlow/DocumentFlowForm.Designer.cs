@@ -69,7 +69,6 @@
             this.statusBarAdv1.Style = Syncfusion.Windows.Forms.Tools.StatusbarStyle.Metro;
             this.statusBarAdv1.TabIndex = 3;
             this.statusBarAdv1.ThemeName = "Metro";
-            this.statusBarAdv1.Click += new System.EventHandler(this.statusBarAdv1_Click);
             // 
             // statusBarAdvPanel1
             // 

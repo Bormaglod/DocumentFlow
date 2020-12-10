@@ -29,6 +29,7 @@ using Syncfusion.WinForms.DataGrid.Events;
 using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Code;
+using DocumentFlow.Code.Data;
 using DocumentFlow.Code.System;
 using DocumentFlow.Code.Implementation;
 using DocumentFlow.Controls.Code;
@@ -66,7 +67,7 @@ namespace DocumentFlow
             InitializeComponent();
 
             ownerBrowser = browser;
-            if (commandEditor.Editor == null)
+            if (commandEditor.Editor() == null)
             {
                 throw new Exception($"В команде [{commandEditor.name}] не определен редактор.");
             }
@@ -285,7 +286,7 @@ namespace DocumentFlow
                     {
                         if (current == Guid.Empty)
                         {
-                            current = command.Editor.Insert<Guid>(conn, transaction, parameters, editorData);
+                            current = command.Editor().Insert<Guid>(conn, transaction, parameters, editorData);
                         }
 
                         conn.Execute("lock_document", new { document_id = current }, transaction, commandType: CommandType.StoredProcedure);
@@ -310,7 +311,7 @@ namespace DocumentFlow
         {
             using (var conn = Db.OpenConnection())
             {
-                entity = command.Editor.SelectById(conn, current, parameters);
+                entity = command.Editor().SelectById(conn, current, parameters);
                 if (editorData != null)
                 {
                     editorData.Entity = entity as IIdentifier;
@@ -325,10 +326,10 @@ namespace DocumentFlow
                 DataFieldParameter getVisible = null;
                 if (!creatingPage)
                 {
-                    getVisible = (f) => { return command.Editor.GetVisibleValue(f, status.code); };
+                    getVisible = (f) => { return command.Editor().GetVisibleValue(f, status.code); };
                 }
 
-                DataFieldParameter getEnable = (f) => { return command.Editor.GetEnabledValue(f, status.code); };
+                DataFieldParameter getEnable = (f) => { return command.Editor().GetEnabledValue(f, status.code); };
 
                 controlContainer.Populate(conn, entity, getEnable, getVisible);
             }
@@ -451,7 +452,7 @@ namespace DocumentFlow
                 {
                     try
                     {
-                        command.Editor.Update(conn, transaction, editorData);
+                        command.Editor().Update(conn, transaction, editorData);
                         transaction.Commit();
                         return true;
                     }
@@ -553,7 +554,7 @@ namespace DocumentFlow
                 {
                     Entity = entity as IIdentifier
                 };
-                command.Editor.Initialize(editorData, this);
+                command.Editor().Initialize(editorData, this);
                 UpdateCurrentStatusInfo();
                 PopulateControls();
                 CreateActionButtons();
