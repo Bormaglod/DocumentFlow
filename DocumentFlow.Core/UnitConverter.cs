@@ -31,8 +31,6 @@ namespace DocumentFlow.Core
             return metricValue;
         }
 
-        public static float ConvertCentimeter(float metricValue, GraphicsUnit to) => Convert(metricValue, GraphicsUnit.Centimeter, to);
-
         public static SizeF Convert(SizeF metricValue, GraphicsUnit from, GraphicsUnit to)
         {
             return new SizeF(
@@ -46,19 +44,10 @@ namespace DocumentFlow.Core
             return metricValue * metrics[(int)to];
         }
 
-        private static float ConvertFromCentimeter(float metricValue, GraphicsUnit to)
-        {
-            return ConvertFromInch(metricValue, to) / 2.54f;
-        }
+        private static float ConvertFromCentimeter(float metricValue, GraphicsUnit to) => ConvertFromInch(metricValue, to) / 2.54f;
 
-        private static float ConvertFromDisplay(float metricValue, GraphicsUnit to)
-        {
-            return ConvertFromInch(metricValue, to) / 96;
-        }
+        private static float ConvertFromDisplay(float metricValue, GraphicsUnit to) => ConvertFromInch(metricValue, to) / 96;
 
-        private static float ConvertFromPoint(float metricValue, GraphicsUnit to)
-        {
-            return ConvertFromInch(metricValue, to) / 72;
-        }
+        private static float ConvertFromPoint(float metricValue, GraphicsUnit to) => ConvertFromInch(metricValue, to) / 72;
     }
 }

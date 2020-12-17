@@ -17,8 +17,8 @@ namespace DocumentFlow.Code.Implementation
 {
     public class GridColumnData : IColumn
     {
-        private DataColumnType columnType;
-        private GridColumn owner;
+        private readonly DataColumnType columnType;
+        private readonly GridColumn owner;
         private bool hideable;
         private bool visible;
         private bool visibility;

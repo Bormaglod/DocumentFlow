@@ -22,15 +22,14 @@ namespace DocumentFlow
     public partial class DocumentFlowForm : Form, IContainerPage
     {
         private readonly LoginForm loginForm;
-        private readonly ICommandFactory сommandFactory;
-        private CatalogWindow catalogWindow;
+        private readonly ICommandFactory commandFactory;
 
         public DocumentFlowForm()
         {
             InitializeComponent();
 
-            сommandFactory = new CommandFactory(this);
-            catalogWindow = new CatalogWindow(сommandFactory);
+            commandFactory = new CommandFactory(this);
+            var catalogWindow = new CatalogWindow(commandFactory);
             catalogWindow.ShowWindow(dockPanel1, DockState.DockLeft);
 
             _ = CreateCompilerTask();
@@ -38,7 +37,7 @@ namespace DocumentFlow
 
         async private Task CreateCompilerTask()
         {
-            foreach (Command command in сommandFactory.Commands)
+            foreach (var command in commandFactory.Commands)
             {
                 try
                 {

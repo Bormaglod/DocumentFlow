@@ -12,9 +12,6 @@ namespace DocumentFlow.Core
 {
     public class NLogLoggingProvider : INpgsqlLoggingProvider
     {
-        public NpgsqlLogger CreateLogger(string name)
-        {
-            return new NLogLogger(name);
-        }
+        public NpgsqlLogger CreateLogger(string name) => new NLogLogger(name);
     }
 }

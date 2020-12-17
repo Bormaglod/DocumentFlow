@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -102,7 +102,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemDeductionImp
                 .SetWidth(150)
                 .SetHorizontalAlignment(HorizontalAlignment.Right);
 
-            columns.CreateGroupSummaryRow()
+            columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
                 .AddColumn("name", RowSummaryType.CountAggregate, "Всего наименований: {Count}")
                 .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}");
 

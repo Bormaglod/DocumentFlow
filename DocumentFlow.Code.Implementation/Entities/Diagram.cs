@@ -29,9 +29,6 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
             browser.CommandBarVisible = false;
             browser.DefineDoubleClickCommand("open-diagram");
 
-            ICommandAdded open_diagram = browser.Commands.Add(CommandMethod.UserDefined, "open-diagram", "toolbar");
-            open_diagram.Click += OpenDiagramClick;
-
             string[] visible = new string[] { "refresh", "open-diagram" };
             foreach (ICommand cmd in browser.Commands)
             {
@@ -51,6 +48,11 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
                 columns.CreateSortedColumns()
                     .Add("name", ListSortDirection.Ascending);
             });
+
+            ICommand open_diagram = browser.Commands.Add(CommandMethod.UserDefined, "open-diagram");
+            open_diagram.Click += OpenDiagramClick;
+
+            browser.ToolBar.AddCommand(open_diagram);
         }
 
         private void OpenDiagramClick(object sender, ExecuteEventArgs e)

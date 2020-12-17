@@ -25,6 +25,7 @@ using Dapper;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
 using Syncfusion.Windows.Forms.Tools;
+using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Events;
 using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
@@ -32,7 +33,6 @@ using DocumentFlow.Code;
 using DocumentFlow.Code.Data;
 using DocumentFlow.Code.System;
 using DocumentFlow.Code.Implementation;
-using DocumentFlow.Controls.Code;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
 using DocumentFlow.Printing;
@@ -42,10 +42,24 @@ namespace DocumentFlow
 {
     public partial class ContentEditor : ToolWindow, IPage, IDependentViewer
     {
+        public class GridFileSizeColumn : GridNumericColumn
+        {
+            protected override object GetFormattedValue(object record, object value)
+            {
+                if (decimal.TryParse(value.ToString(), out var originalValue))
+                {
+                    long kb = Convert.ToInt64(originalValue / 1024);
+                    return $"{kb} КБ";
+                }
+
+                return value;
+            }
+        }
+
         private readonly ICommandFactory commandFactory;
         private readonly IContainerPage containerPage;
-        private IBrowserParameters parameters;
-        private Command command;
+        private readonly IBrowserParameters parameters;
+        private readonly Command command;
         private Guid current;
         private object entity;
         private Status status;
@@ -56,7 +70,7 @@ namespace DocumentFlow
         private readonly string ftpPath;
         private readonly DocumentRefEditor refEditor;
         private EditorData editorData;
-        private IBrowser ownerBrowser;
+        private readonly IBrowser ownerBrowser;
 #if USE_LISTENER
         private CancellationTokenSource listenerToken;
         private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
@@ -299,6 +313,18 @@ namespace DocumentFlow
                     }
                 }
             }
+
+            var fileSizeColumn = new GridFileSizeColumn
+            {
+                AllowEditing = false,
+                AllowGrouping = false,
+                AllowResizing = true,
+                HeaderText = "Размер",
+                MappingName = "length",
+                Width = 150D
+            };
+
+            gridDocuments.Columns.Add(fileSizeColumn);
         }
 
         /// <summary>
@@ -480,7 +506,7 @@ namespace DocumentFlow
                         {
                             try
                             {
-                                conn.Query("update document_refs set file_name = :file_name, note = :note, crc = :crc where id = :id", refs, transaction);
+                                conn.Query("update document_refs set file_name = :file_name, note = :note, crc = :crc, length = :length where id = :id", refs, transaction);
                                 transaction.Commit();
                             }
                             catch (Exception e)
@@ -496,6 +522,28 @@ namespace DocumentFlow
             }
         }
 
+        private void AddDocument(DocumentRefs refs)
+        {
+            using (var conn = Db.OpenConnection())
+            {
+                using (var transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        conn.Query("insert into document_refs (owner_id, file_name, note, crc, length) values (:owner_id, :file_name, :note, :crc, :length)", refs, transaction);
+                        transaction.Commit();
+
+                        documents.Add(refs);
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        ExceptionHelper.MesssageBox(ex);
+                    }
+                }
+            }
+        }
+
         private void SaveDocument(PdfDocument pdf)
         {
             if (pdf == null)
@@ -507,7 +555,7 @@ namespace DocumentFlow
             DocumentRefs refs = refEditor.Create(current, source);
             if (refs != null)
             {
-                documents.Add(refs);
+                AddDocument(refs);
             }
         }
 
@@ -550,10 +598,12 @@ namespace DocumentFlow
             tabSplitterMaster.SuspendLayout();
             try
             {
-                editorData = new EditorData(controlContainer, ownerBrowser, parameters)
+                
+                editorData = new EditorData(controlContainer, ownerBrowser, commandFactory, parameters, toolStripMain)
                 {
                     Entity = entity as IIdentifier
                 };
+
                 command.Editor().Initialize(editorData, this);
                 UpdateCurrentStatusInfo();
                 PopulateControls();
@@ -589,24 +639,7 @@ namespace DocumentFlow
                 return;
             }
 
-            using (var conn = Db.OpenConnection())
-            {
-                using (var transaction = conn.BeginTransaction())
-                {
-                    try
-                    {
-                        conn.Query("insert into document_refs (owner_id, file_name, note, crc) values (:owner_id, :file_name, :note, :crc)", refs, transaction);
-                        transaction.Commit();
-
-                        documents.Add(refs);
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        ExceptionHelper.MesssageBox(ex);
-                    }
-                }
-            }
+            AddDocument(refs);
         }
 
         private void buttonEdit_Click(object sender, EventArgs e) => EditDocumentRefs();
@@ -618,6 +651,7 @@ namespace DocumentFlow
                 if (MessageBox.Show($"Вы действительно хотите удалить файл?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     refEditor.Delete(refs);
+                    documents.Remove(refs);
                 }
             }
         }
@@ -715,6 +749,14 @@ namespace DocumentFlow
             catch (Exception ex)
             {
                 ExceptionHelper.MesssageBox(ex);
+            }
+        }
+
+        private void tabSplitterMaster_VisibleChanged(object sender, EventArgs e)
+        {
+            if (editorData.ToolBar is ToolBarData toolBar)
+            {
+                toolBar.UpdateButtonVisibleStatus();
             }
         }
     }

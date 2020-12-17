@@ -38,6 +38,7 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.menuCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.menuAddFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.panelDirectory = new System.Windows.Forms.Panel();
             this.breadcrumb1 = new DocumentFlow.Controls.Breadcrumb();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -60,6 +61,7 @@
             this.menuAddRecord = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuAddGroup = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.panelCommandBar = new System.Windows.Forms.Panel();
             this.buttonHistory = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -83,6 +85,7 @@
             this.menuVisibleColumns = new System.Windows.Forms.ToolStripMenuItem();
             this.contextRowMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             this.menuDeleteRow = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.contextGroupMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             this.menuHideGroupArea = new System.Windows.Forms.ToolStripMenuItem();
             this.menuExpandAll = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,10 +130,11 @@
             this.menuDelete,
             this.toolStripSeparator4,
             this.menuCopy,
-            this.menuAddFolder});
+            this.menuAddFolder,
+            this.toolStripSeparator9});
             this.contextRecordMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
             this.contextRecordMenu.Name = "contextGridMenu";
-            this.contextRecordMenu.Size = new System.Drawing.Size(182, 148);
+            this.contextRecordMenu.Size = new System.Drawing.Size(182, 154);
             this.contextRecordMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
             this.contextRecordMenu.Tag = "main-context-menu";
             this.contextRecordMenu.ThemeName = "Metro";
@@ -141,7 +145,7 @@
             this.menuCopyClipboard.Name = "menuCopyClipboard";
             this.menuCopyClipboard.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.menuCopyClipboard.Size = new System.Drawing.Size(181, 22);
-            this.menuCopyClipboard.Tag = "copy-text|edit-text-context";
+            this.menuCopyClipboard.Tag = "copy-text";
             this.menuCopyClipboard.Text = "Копировать";
             this.menuCopyClipboard.Click += new System.EventHandler(this.menuCopyClipboard_Click);
             // 
@@ -149,14 +153,14 @@
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(178, 6);
-            this.toolStripSeparator6.Tag = "|edit-context";
+            this.toolStripSeparator6.Tag = "";
             // 
             // menuCreate
             // 
             this.menuCreate.Image = global::DocumentFlow.Properties.Resources.icons8_file_add_16;
             this.menuCreate.Name = "menuCreate";
             this.menuCreate.Size = new System.Drawing.Size(181, 22);
-            this.menuCreate.Tag = "add-record|edit";
+            this.menuCreate.Tag = "add-record";
             this.menuCreate.Text = "Создать";
             this.menuCreate.Click += new System.EventHandler(this.buttonCreate_Click);
             // 
@@ -165,7 +169,7 @@
             this.menuEdit.Image = global::DocumentFlow.Properties.Resources.icons8_file_edit_16;
             this.menuEdit.Name = "menuEdit";
             this.menuEdit.Size = new System.Drawing.Size(181, 22);
-            this.menuEdit.Tag = "edit-record|edit-context";
+            this.menuEdit.Tag = "edit-record";
             this.menuEdit.Text = "Изменить";
             this.menuEdit.Click += new System.EventHandler(this.buttonEdit_Click);
             // 
@@ -174,7 +178,7 @@
             this.menuDelete.Image = global::DocumentFlow.Properties.Resources.icons8_file_delete_16;
             this.menuDelete.Name = "menuDelete";
             this.menuDelete.Size = new System.Drawing.Size(181, 22);
-            this.menuDelete.Tag = "delete-record|edit-context";
+            this.menuDelete.Tag = "delete-record";
             this.menuDelete.Text = "Удалить";
             this.menuDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
@@ -182,14 +186,14 @@
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(178, 6);
-            this.toolStripSeparator4.Tag = "|additional-context";
+            this.toolStripSeparator4.Tag = "";
             // 
             // menuCopy
             // 
             this.menuCopy.Image = global::DocumentFlow.Properties.Resources.icons8_copy_edit_16;
             this.menuCopy.Name = "menuCopy";
             this.menuCopy.Size = new System.Drawing.Size(181, 22);
-            this.menuCopy.Tag = "copy-record|additional-context";
+            this.menuCopy.Tag = "copy-record";
             this.menuCopy.Text = "Создать копию";
             this.menuCopy.Click += new System.EventHandler(this.buttonCopy_Click);
             // 
@@ -198,9 +202,14 @@
             this.menuAddFolder.Image = global::DocumentFlow.Properties.Resources.icons8_folder_add_16;
             this.menuAddFolder.Name = "menuAddFolder";
             this.menuAddFolder.Size = new System.Drawing.Size(181, 22);
-            this.menuAddFolder.Tag = "create-group|additional-context";
+            this.menuAddFolder.Tag = "create-group";
             this.menuAddFolder.Text = "Группа";
             this.menuAddFolder.Click += new System.EventHandler(this.buttonAddFolder_Click);
+            // 
+            // toolStripSeparator9
+            // 
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(178, 6);
             // 
             // panelDirectory
             // 
@@ -547,10 +556,11 @@
             this.contextGridMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuAddRecord,
             this.toolStripSeparator1,
-            this.menuAddGroup});
+            this.menuAddGroup,
+            this.toolStripSeparator11});
             this.contextGridMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
             this.contextGridMenu.Name = "contextGridMenu";
-            this.contextGridMenu.Size = new System.Drawing.Size(118, 54);
+            this.contextGridMenu.Size = new System.Drawing.Size(118, 60);
             this.contextGridMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
             this.contextGridMenu.Tag = "grid-context-menu";
             this.contextGridMenu.ThemeName = "Metro";
@@ -560,7 +570,7 @@
             this.menuAddRecord.Image = global::DocumentFlow.Properties.Resources.icons8_file_add_16;
             this.menuAddRecord.Name = "menuAddRecord";
             this.menuAddRecord.Size = new System.Drawing.Size(117, 22);
-            this.menuAddRecord.Tag = "add-record|edit-grid-context";
+            this.menuAddRecord.Tag = "add-record";
             this.menuAddRecord.Text = "Создать";
             this.menuAddRecord.Click += new System.EventHandler(this.buttonCreate_Click);
             // 
@@ -568,16 +578,21 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(114, 6);
-            this.toolStripSeparator1.Tag = "|additional-grid-context";
+            this.toolStripSeparator1.Tag = "";
             // 
             // menuAddGroup
             // 
             this.menuAddGroup.Image = global::DocumentFlow.Properties.Resources.icons8_folder_add_16;
             this.menuAddGroup.Name = "menuAddGroup";
             this.menuAddGroup.Size = new System.Drawing.Size(117, 22);
-            this.menuAddGroup.Tag = "create-group|additional-grid-context";
+            this.menuAddGroup.Tag = "create-group";
             this.menuAddGroup.Text = "Группа";
             this.menuAddGroup.Click += new System.EventHandler(this.buttonAddFolder_Click);
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(114, 6);
             // 
             // panelCommandBar
             // 
@@ -596,7 +611,7 @@
             this.buttonHistory.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonHistory.Name = "buttonHistory";
             this.buttonHistory.Size = new System.Drawing.Size(58, 49);
-            this.buttonHistory.Tag = "history|history";
+            this.buttonHistory.Tag = "history";
             this.buttonHistory.Text = "История";
             this.buttonHistory.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonHistory.Click += new System.EventHandler(this.buttonHistory_Click);
@@ -605,7 +620,7 @@
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 52);
-            this.toolStripSeparator2.Tag = "|edit";
+            this.toolStripSeparator2.Tag = "";
             // 
             // buttonCreate
             // 
@@ -614,7 +629,7 @@
             this.buttonCreate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonCreate.Name = "buttonCreate";
             this.buttonCreate.Size = new System.Drawing.Size(54, 49);
-            this.buttonCreate.Tag = "add-record|edit";
+            this.buttonCreate.Tag = "add-record";
             this.buttonCreate.Text = "Создать";
             this.buttonCreate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonCreate.Click += new System.EventHandler(this.buttonCreate_Click);
@@ -626,7 +641,7 @@
             this.buttonEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonEdit.Name = "buttonEdit";
             this.buttonEdit.Size = new System.Drawing.Size(65, 49);
-            this.buttonEdit.Tag = "edit-record|edit";
+            this.buttonEdit.Tag = "edit-record";
             this.buttonEdit.Text = "Изменить";
             this.buttonEdit.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
@@ -638,7 +653,7 @@
             this.buttonDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(55, 49);
-            this.buttonDelete.Tag = "delete-record|edit";
+            this.buttonDelete.Tag = "delete-record";
             this.buttonDelete.Text = "Удалить";
             this.buttonDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
@@ -647,7 +662,7 @@
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 52);
-            this.toolStripSeparator3.Tag = "|additional";
+            this.toolStripSeparator3.Tag = "";
             // 
             // buttonCopy
             // 
@@ -656,7 +671,7 @@
             this.buttonCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonCopy.Name = "buttonCopy";
             this.buttonCopy.Size = new System.Drawing.Size(45, 49);
-            this.buttonCopy.Tag = "copy-record|additional";
+            this.buttonCopy.Tag = "copy-record";
             this.buttonCopy.Text = "Копия";
             this.buttonCopy.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonCopy.ToolTipText = "Создать копированием";
@@ -669,7 +684,7 @@
             this.buttonAddFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonAddFolder.Name = "buttonAddFolder";
             this.buttonAddFolder.Size = new System.Drawing.Size(50, 49);
-            this.buttonAddFolder.Tag = "create-group|additional";
+            this.buttonAddFolder.Tag = "create-group";
             this.buttonAddFolder.Text = "Группа";
             this.buttonAddFolder.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonAddFolder.Click += new System.EventHandler(this.buttonAddFolder_Click);
@@ -682,7 +697,7 @@
             this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(65, 49);
-            this.buttonRefresh.Tag = "refresh|refresh";
+            this.buttonRefresh.Tag = "refresh";
             this.buttonRefresh.Text = "Обновить";
             this.buttonRefresh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonRefresh.Click += new System.EventHandler(this.RefreshEntities);
@@ -713,7 +728,7 @@
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             this.toolStripSeparator7.Size = new System.Drawing.Size(6, 52);
-            this.toolStripSeparator7.Tag = "|settings";
+            this.toolStripSeparator7.Tag = "";
             // 
             // buttonCustomization
             // 
@@ -722,7 +737,7 @@
             this.buttonCustomization.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonCustomization.Name = "buttonCustomization";
             this.buttonCustomization.Size = new System.Drawing.Size(79, 49);
-            this.buttonCustomization.Tag = "open-browser-code|settings";
+            this.buttonCustomization.Tag = "open-browser-code";
             this.buttonCustomization.Text = "Настройка...";
             this.buttonCustomization.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonCustomization.Click += new System.EventHandler(this.buttonCustomization_Click);
@@ -731,7 +746,7 @@
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
             this.toolStripSeparator8.Size = new System.Drawing.Size(6, 52);
-            this.toolStripSeparator8.Tag = "|user-defined";
+            this.toolStripSeparator8.Tag = "";
             this.toolStripSeparator8.Visible = false;
             // 
             // timerDatabaseListen
@@ -793,10 +808,11 @@
             // 
             this.contextRowMenu.DropShadowEnabled = false;
             this.contextRowMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuDeleteRow});
+            this.menuDeleteRow,
+            this.toolStripSeparator10});
             this.contextRowMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
             this.contextRowMenu.Name = "contextRowMenu";
-            this.contextRowMenu.Size = new System.Drawing.Size(119, 26);
+            this.contextRowMenu.Size = new System.Drawing.Size(119, 32);
             this.contextRowMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
             this.contextRowMenu.Tag = "row-context-menu";
             this.contextRowMenu.ThemeName = "Metro";
@@ -807,8 +823,13 @@
             this.menuDeleteRow.Image = global::DocumentFlow.Properties.Resources.icons8_file_delete_16;
             this.menuDeleteRow.Name = "menuDeleteRow";
             this.menuDeleteRow.Size = new System.Drawing.Size(118, 22);
-            this.menuDeleteRow.Tag = "delete-record|edit-row-context";
+            this.menuDeleteRow.Tag = "delete-record";
             this.menuDeleteRow.Text = "Удалить";
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(115, 6);
             // 
             // contextGroupMenu
             // 
@@ -1017,5 +1038,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripButton buttonCustomization;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
     }
 }

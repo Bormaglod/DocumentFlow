@@ -24,9 +24,9 @@ namespace DocumentFlow.Code.Implementation
 {
     public class GridColumnCollection : IColumnCollection
     {
-        private SfDataGrid gridContent;
-        private IList<IColumn> columns = new List<IColumn>();
-        private ToolStripMenuItem menuItemVisibles;
+        private readonly SfDataGrid gridContent;
+        private readonly IList<IColumn> columns = new List<IColumn>();
+        private readonly ToolStripMenuItem menuItemVisibles;
 
         public GridColumnCollection(SfDataGrid dataGrid, ToolStripMenuItem menuItems)
         {
@@ -46,7 +46,7 @@ namespace DocumentFlow.Code.Implementation
 
         IColumn IColumnCollection.CreateText(string dataField, string headerText)
         {
-            GridColumn gridColumn = new GridTextColumn()
+            var gridColumn = new GridTextColumn()
             {
                 MappingName = dataField,
                 HeaderText = headerText
@@ -61,7 +61,7 @@ namespace DocumentFlow.Code.Implementation
             numberFormat.NumberDecimalDigits = 0;
             numberFormat.PercentDecimalDigits = 0;
 
-            GridColumn gridColumn = new GridNumericColumn()
+            var gridColumn = new GridNumericColumn()
             {
                 MappingName = dataField,
                 HeaderText = headerText,
@@ -78,7 +78,7 @@ namespace DocumentFlow.Code.Implementation
             numberFormat.NumberDecimalDigits = 0;
             numberFormat.PercentDecimalDigits = 0;
 
-            GridColumn gridColumn = new GridDecimalColumn()
+            var gridColumn = new GridDecimalColumn()
             {
                 MappingName = dataField,
                 HeaderText = headerText,
@@ -91,7 +91,7 @@ namespace DocumentFlow.Code.Implementation
 
         IColumn IColumnCollection.CreateBoolean(string dataField, string headerText)
         {
-            GridColumn gridColumn = new GridCheckBoxColumn()
+            var gridColumn = new GridCheckBoxColumn()
             {
                 MappingName = dataField,
                 HeaderText = headerText
@@ -102,7 +102,7 @@ namespace DocumentFlow.Code.Implementation
 
         IColumn IColumnCollection.CreateDate(string dataField, string headerText, string format)
         {
-            GridColumn gridColumn = new GridDateTimeColumn()
+            var gridColumn = new GridDateTimeColumn()
             {
                 MappingName = dataField,
                 HeaderText = headerText,
@@ -115,7 +115,7 @@ namespace DocumentFlow.Code.Implementation
 
         IColumn IColumnCollection.CreateImage(string dataField, string headerText)
         {
-            GridImageColumn gridColumn = new GridImageColumn()
+            var gridColumn = new GridImageColumn()
             {
                 MappingName = dataField,
                 HeaderText = headerText,
@@ -130,7 +130,7 @@ namespace DocumentFlow.Code.Implementation
 
         IColumn IColumnCollection.CreateProgress(string dataField, string headerText)
         {
-            GridProgressBarColumn gridProgress = new GridProgressBarColumn()
+            var gridProgress = new GridProgressBarColumn()
             {
                 MappingName = dataField,
                 HeaderText = headerText,
@@ -149,7 +149,7 @@ namespace DocumentFlow.Code.Implementation
         ISummary IColumnCollection.CreateTableSummaryRow(GroupVerticalPosition position)
         {
             gridContent.TableSummaryRows.Clear();
-            GridTableSummaryRow tableSummaryRow = new GridTableSummaryRow()
+            var tableSummaryRow = new GridTableSummaryRow()
             {
                 Name = "TableRowSummary",
                 ShowSummaryInRow = false,
@@ -167,7 +167,7 @@ namespace DocumentFlow.Code.Implementation
         ISummary IColumnCollection.CreateGroupSummaryRow()
         {
             gridContent.GroupSummaryRows.Clear();
-            GridSummaryRow groupSummaryRow = new GridSummaryRow()
+            var groupSummaryRow = new GridSummaryRow()
             {
                 Name = "GroupSummaryRow",
                 ShowSummaryInRow = false
@@ -191,7 +191,7 @@ namespace DocumentFlow.Code.Implementation
         {
             gridContent.Columns.Add(gridColumn);
 
-            ToolStripMenuItem item = new ToolStripMenuItem()
+            var item = new ToolStripMenuItem()
             {
                 Text = gridColumn.HeaderText,
                 CheckOnClick = true,
@@ -219,9 +219,6 @@ namespace DocumentFlow.Code.Implementation
             return column;
         }
 
-        private void OnChangeColumnVisible(object sender, EventArgs e)
-        {
-            ChangeColumnVisible?.Invoke(sender, EventArgs.Empty);
-        }
+        private void OnChangeColumnVisible(object sender, EventArgs e) => ChangeColumnVisible?.Invoke(sender, EventArgs.Empty);
     }
 }

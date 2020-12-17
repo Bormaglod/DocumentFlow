@@ -15,7 +15,6 @@ namespace DocumentFlow.Code
     public interface IBrowser
     {
         event EventHandler<ChangeParentEventArgs> ChangeParent;
-        //event EventHandler CreateEditor;
 
         BrowserMode Mode { get; }
 
@@ -28,6 +27,12 @@ namespace DocumentFlow.Code
         /// Возвращает ссылку на интерфейс определяющий вид строки кнопок.
         /// </summary>
         IToolBar ToolBar { get; }
+
+        IContextMenu ContextMenuRecord { get; }
+
+        IContextMenu ContextMenuRow { get; }
+
+        IContextMenu ContextMenuGrid { get; }
 
         /// <summary>
         /// Возвращает ссылку на нтерфейс содержащий список доступных команд и определяющий работу с ними.

@@ -12,18 +12,15 @@ namespace DocumentFlow.Code.Implementation
 {
     public class GroupColumnCollection : IGroupColumnCollection
     {
-        private SfDataGrid grid;
+        private readonly SfDataGrid grid;
 
-        public GroupColumnCollection(SfDataGrid grid)
-        {
-            this.grid = grid;
-        }
+        public GroupColumnCollection(SfDataGrid grid) => this.grid = grid;
 
         IGroupColumnCollection IGroupColumnCollection.Add(string columnName)
         {
             if (grid.AllowGrouping)
             {
-                GroupColumnDescription groupColumn = new GroupColumnDescription()
+                var groupColumn = new GroupColumnDescription()
                 {
                     ColumnName = columnName,
                     SortGroupRecords = false

@@ -13,6 +13,7 @@ namespace DocumentFlow.Data.Entities
 {
     public class DocumentRefs : EntityID
     {
+#pragma warning disable IDE1006 // Стили именования
         public Guid owner_id { get; set; }
 
         public string file_name { get; set; }
@@ -20,5 +21,8 @@ namespace DocumentFlow.Data.Entities
         public string note { get; set; }
 
         public long crc { get; set; }
+
+        public long length { get; set; }
+#pragma warning restore IDE1006 // Стили именования
     }
 }

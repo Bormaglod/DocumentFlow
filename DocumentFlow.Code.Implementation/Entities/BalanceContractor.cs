@@ -70,42 +70,45 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
 
             browser.CreateStatusColumnRenderer();
 
-            IColumnCollection columns = browser.Columns;
+            browser.CreateColumns((columns) =>
+            {
+                columns.CreateText("id", "Id")
+                    .SetWidth(180)
+                    .SetVisible(false);
 
-            columns.CreateText("id", "Id")
-                .SetWidth(180)
-                .SetVisible(false);
+                columns.CreateInteger("status_id", "Код состояния")
+                    .SetWidth(80)
+                    .SetVisible(false)
+                    .SetAllowGrouping(true);
 
-            columns.CreateInteger("status_id", "Код состояния")
-                .SetWidth(80)
-                .SetVisible(false)
-                .SetAllowGrouping(true);
+                columns.CreateText("status_name", "Состояние")
+                    .SetWidth(110)
+                    .SetVisible(false)
+                    .SetAllowGrouping(true);
 
-            columns.CreateText("status_name", "Состояние")
-                .SetWidth(110)
-                .SetVisible(false)
-                .SetAllowGrouping(true);
+                columns.CreateText("document_name", "Документ")
+                    .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateText("document_name", "Документ")
-                .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
+                columns.CreateDate("document_date", "Дата")
+                    .SetHideable(false)
+                    .SetWidth(150);
 
-            columns.CreateDate("document_date", "Дата")
-                .SetHideable(false)
-                .SetWidth(150);
+                columns.CreateText("document_number", "Номер")
+                    .SetWidth(100);
 
-            columns.CreateText("document_number", "Номер")
-                .SetWidth(100);
+                columns.CreateNumeric("income", "Приход", NumberFormatMode.Currency)
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
-            columns.CreateNumeric("income", "Приход", NumberFormatMode.Currency)
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right);
+                columns.CreateNumeric("expense", "Расход", NumberFormatMode.Currency)
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
+            });
 
-            columns.CreateNumeric("expense", "Расход", NumberFormatMode.Currency)
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right);
-
-            ICommandAdded open_document = browser.Commands.Add(CommandMethod.UserDefined, "open-document", "toolbar");
+            ICommand open_document = browser.Commands.Add(CommandMethod.UserDefined, "open-document");
             open_document.Click += OpenDocumentClick;
+
+            browser.ToolBar.AddCommand(open_document);
         }
 
         public IEditorCode CreateEditor()

@@ -7,15 +7,16 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code
 {
-    public interface ICommandCollection : IEnumerable<ICommand>
+    public interface ICommandCollection : IEnumerable, IEnumerable<ICommand>
     {
         ICommand Get(string name);
-        ICommandAdded Add(CommandMethod method, string name, params string[] toolStripNames);
+        ICommand Add(CommandMethod method, string name);
         void OpenDocument(Guid id);
         void OpenDiagram(Guid id);
     }

@@ -11,8 +11,7 @@ using System.Collections;
 using System.Windows.Forms;
 using DocumentFlow.Code;
 using DocumentFlow.Code.Implementation;
-using DocumentFlow.Core;
-using DocumentFlow.Controls.Code;
+using DocumentFlow.Controls.Editor.Code;
 using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Controls.Forms
@@ -37,7 +36,7 @@ namespace DocumentFlow.Controls.Forms
 
         public bool Create(IEditorCode editor, Type entityType)
         {
-            editorData = new EditorData(container, null, parameters)
+            editorData = new ModalEditorData(container, parameters)
             {
                 Entity = Activator.CreateInstance(entityType) as IIdentifier
             };
@@ -78,7 +77,7 @@ namespace DocumentFlow.Controls.Forms
         {
             using (var conn = Db.OpenConnection())
             {
-                editorData = new EditorData(container, null, parameters)
+                editorData = new ModalEditorData(container, parameters)
                 {
                     Entity = editor.SelectById(conn, id, parameters) as IIdentifier
                 };

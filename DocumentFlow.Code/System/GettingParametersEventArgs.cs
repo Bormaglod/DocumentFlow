@@ -15,6 +15,7 @@ namespace DocumentFlow.Code.System
         private Dictionary<string, object> parameters = new Dictionary<string, object>();
 
         public GettingParametersEventArgs(IBrowser browser) : base(browser) { }
+        public GettingParametersEventArgs(IEditor editor) : base(editor) { }
 
         public IDictionary<string, object> Parameters => parameters;
     }

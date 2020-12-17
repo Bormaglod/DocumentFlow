@@ -32,7 +32,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>2.0.8.0</ApplicationVersion>
+    <ApplicationVersion>2.0.9.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -246,7 +246,9 @@
     <Compile Include="CatalogWindow.Designer.cs">
       <DependentUpon>CatalogWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="CommandFactory.cs" />
+    <Compile Include="Core\CommandCollection.cs" />
+    <Compile Include="Core\CommandFactory.cs" />
+    <Compile Include="Core\CommandItem.cs" />
     <Compile Include="ContentEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -259,6 +261,8 @@
     <Compile Include="ContentViewer.Designer.cs">
       <DependentUpon>ContentViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Core\ContextMenuData.cs" />
+    <Compile Include="Core\EditorData.cs" />
     <Compile Include="DiagramViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -271,17 +275,25 @@
     <Compile Include="DocumentRefEditor.designer.cs">
       <DependentUpon>DocumentRefEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\ICommandExecutor.cs" />
     <Compile Include="Printing\Core\Preview.xaml.cs">
       <DependentUpon>Preview.xaml</DependentUpon>
     </Compile>
     <Compile Include="Printing\Core\PrintCommands.cs" />
     <Compile Include="Printing\Printer.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="SelectEmailWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SelectEmailWindow.designer.cs">
       <DependentUpon>SelectEmailWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Core\ToolBarData.cs" />
+    <Compile Include="Core\ToolStripData.cs" />
     <Compile Include="ViewerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -306,10 +318,10 @@
     <Compile Include="HistoryWindow.designer.cs">
       <DependentUpon>HistoryWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="ICommandFactory.cs" />
-    <Compile Include="IContainerPage.cs" />
-    <Compile Include="IPage.cs" />
-    <Compile Include="ISettings.cs" />
+    <Compile Include="Infrastructure\ICommandFactory.cs" />
+    <Compile Include="Infrastructure\IContainerPage.cs" />
+    <Compile Include="Infrastructure\IPage.cs" />
+    <Compile Include="Infrastructure\ISettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CodeEditor.cs">
@@ -345,6 +357,10 @@
     <Resource Include="Printing\Core\icons8-одна-страница-16.png" />
     <None Include="Printing\Forms\RequestPrinting.json" />
     <None Include="Printing\Forms\SpecificationPrinting.json" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Resources\icons8-assembly-line-30.png" />
     <None Include="Resources\icons8-assembly-line-16.png" />
     <EmbeddedResource Include="AboutForm.resx">
@@ -482,15 +498,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

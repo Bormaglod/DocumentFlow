@@ -20,7 +20,7 @@ namespace DocumentFlow
 {
     public partial class CatalogWindow : ToolWindow
     {
-        private ICommandFactory сommandFactory;
+        private readonly ICommandFactory сommandFactory;
 
         public CatalogWindow(ICommandFactory сommandFactory)
         {
@@ -30,15 +30,15 @@ namespace DocumentFlow
 
             using (var conn = Db.OpenConnection())
             {
-                Picture pic_default = conn.Query<Picture>("select * from picture where code = :code", new { code = "file" }).SingleOrDefault();
+                var pic_default = conn.Query<Picture>("select * from picture where code = :code", new { code = "file" }).SingleOrDefault();
 
                 if (pic_default != null)
                 {
                     imageMenu.Images.Add("default-icon", pic_default.GetImageSmall());
                 }
 
-                IEnumerable<Catalog> catalog = conn.Query<Catalog>("select * from menu");
-                foreach (Catalog catalogItem in catalog)
+                var catalog = conn.Query<Catalog>("select * from menu");
+                foreach (var catalogItem in catalog)
                 {
                     catalogItem.Command = сommandFactory.Commands.FirstOrDefault(x => x.Id == catalogItem.command_id);
                 }
@@ -65,7 +65,7 @@ namespace DocumentFlow
 
         private void RefreshSidebar(IEnumerable<Catalog> catalog, TreeNodeAdv parentNode = null, Guid? parent = null)
         {
-            foreach (Catalog item in catalog.Where(x => x.parent_id == parent).OrderBy(x => x.order_index).ThenBy(x => x.name))
+            foreach (var item in catalog.Where(x => x.parent_id == parent).OrderBy(x => x.order_index).ThenBy(x => x.name))
             {
                 var node = new TreeNodeAdv(item.name)
                 {

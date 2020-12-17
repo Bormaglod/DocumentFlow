@@ -14,25 +14,13 @@ namespace DocumentFlow.Core
 
     public static class DateExtension
     {
-        public static DateTime BeginningOfTime(this DateTime date)
-        {
-            return new DateTime(1900, 1, 1, 00, 00, 01);
-        }
+        public static DateTime BeginningOfTime(this DateTime date) => new DateTime(1900, 1, 1, 00, 00, 01);
 
-        public static DateTime EndOfTime(this DateTime date)
-        {
-            return new DateTime(2900, 12, 31, 23, 59, 59);
-        }
+        public static DateTime EndOfTime(this DateTime date) => new DateTime(2900, 12, 31, 23, 59, 59);
 
-        public static DateTime StartOfDay(this DateTime date)
-        {
-            return new DateTime(date.Year, date.Month, date.Day, 00, 00, 01);
-        }
+        public static DateTime StartOfDay(this DateTime date) => new DateTime(date.Year, date.Month, date.Day, 00, 00, 01);
 
-        public static DateTime EndOfDay(this DateTime date)
-        {
-            return new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
-        }
+        public static DateTime EndOfDay(this DateTime date) => new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
 
         public static DateTime FromDateRanges(this DateTime date, DateRanges ranges)
         {

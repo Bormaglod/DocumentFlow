@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             Syncfusion.WinForms.DataGrid.GridTextColumn gridTextColumn1 = new Syncfusion.WinForms.DataGrid.GridTextColumn();
             Syncfusion.WinForms.DataGrid.GridTextColumn gridTextColumn2 = new Syncfusion.WinForms.DataGrid.GridTextColumn();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripMain = new System.Windows.Forms.ToolStrip();
             this.buttonStatus = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.panelItemActions = new Syncfusion.Windows.Forms.Tools.ToolStripPanelItem();
@@ -42,6 +42,7 @@
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
             this.buttonCustomization = new System.Windows.Forms.ToolStripButton();
             this.buttonPrint = new System.Windows.Forms.ToolStripSplitButton();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.tabSplitterContainer1 = new Syncfusion.Windows.Forms.Tools.TabSplitterContainer();
             this.tabSplitterMaster = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
             this.tabSplitterDocs = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
@@ -53,7 +54,7 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuOpenFolderDocument = new System.Windows.Forms.ToolStripMenuItem();
             this.menuOpenFileDocument = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.toolStripDocuments = new System.Windows.Forms.ToolStrip();
             this.buttonCreate = new System.Windows.Forms.ToolStripButton();
             this.buttonEdit = new System.Windows.Forms.ToolStripButton();
             this.buttonDelete = new System.Windows.Forms.ToolStripButton();
@@ -75,12 +76,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.timerDatabaseListen = new System.Windows.Forms.Timer(this.components);
             this.twain32 = new Saraff.Twain.Twain32(this.components);
-            this.toolStrip1.SuspendLayout();
+            this.toolStripMain.SuspendLayout();
             this.tabSplitterContainer1.SuspendLayout();
             this.tabSplitterDocs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDocuments)).BeginInit();
             this.contextMenuStripEx1.SuspendLayout();
-            this.toolStrip2.SuspendLayout();
+            this.toolStripDocuments.SuspendLayout();
             this.tabSplitterInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxUpdater)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxCreator)).BeginInit();
@@ -91,9 +92,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dateTimeUpdate.Calendar)).BeginInit();
             this.SuspendLayout();
             // 
-            // toolStrip1
+            // toolStripMain
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonStatus,
             this.toolStripSeparator4,
             this.panelItemActions,
@@ -103,12 +104,13 @@
             this.toolStripSeparator6,
             this.buttonRefresh,
             this.buttonCustomization,
-            this.buttonPrint});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1118, 52);
-            this.toolStrip1.TabIndex = 6;
-            this.toolStrip1.Text = "toolStrip1";
+            this.buttonPrint,
+            this.toolStripSeparator7});
+            this.toolStripMain.Location = new System.Drawing.Point(0, 0);
+            this.toolStripMain.Name = "toolStripMain";
+            this.toolStripMain.Size = new System.Drawing.Size(1118, 52);
+            this.toolStripMain.TabIndex = 6;
+            this.toolStripMain.Text = "toolStripMain";
             // 
             // buttonStatus
             // 
@@ -116,6 +118,7 @@
             this.buttonStatus.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonStatus.Name = "buttonStatus";
             this.buttonStatus.Size = new System.Drawing.Size(70, 49);
+            this.buttonStatus.Tag = "history";
             this.buttonStatus.Text = "Состояние";
             this.buttonStatus.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonStatus.Click += new System.EventHandler(this.buttonStatus_Click);
@@ -147,6 +150,7 @@
             this.buttonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(70, 49);
+            this.buttonSave.Tag = "save";
             this.buttonSave.Text = "Сохранить";
             this.buttonSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
@@ -158,6 +162,7 @@
             this.buttonSaveAndClose.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonSaveAndClose.Name = "buttonSaveAndClose";
             this.buttonSaveAndClose.Size = new System.Drawing.Size(127, 49);
+            this.buttonSaveAndClose.Tag = "save-as";
             this.buttonSaveAndClose.Text = "Сохранить и закрыть";
             this.buttonSaveAndClose.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonSaveAndClose.Click += new System.EventHandler(this.buttonSaveAndClose_Click);
@@ -175,6 +180,7 @@
             this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(65, 49);
+            this.buttonRefresh.Tag = "refresh";
             this.buttonRefresh.Text = "Обновить";
             this.buttonRefresh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
@@ -186,6 +192,7 @@
             this.buttonCustomization.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonCustomization.Name = "buttonCustomization";
             this.buttonCustomization.Size = new System.Drawing.Size(70, 49);
+            this.buttonCustomization.Tag = "open-browser-code";
             this.buttonCustomization.Text = "Настройка";
             this.buttonCustomization.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonCustomization.Click += new System.EventHandler(this.buttonCustomization_Click);
@@ -197,9 +204,15 @@
             this.buttonPrint.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonPrint.Name = "buttonPrint";
             this.buttonPrint.Size = new System.Drawing.Size(62, 49);
+            this.buttonPrint.Tag = "print";
             this.buttonPrint.Text = "Печать";
             this.buttonPrint.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonPrint.ButtonClick += new System.EventHandler(this.buttonPrint_ButtonClick);
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 52);
             // 
             // tabSplitterContainer1
             // 
@@ -229,12 +242,13 @@
             this.tabSplitterMaster.Size = new System.Drawing.Size(1118, 277);
             this.tabSplitterMaster.TabIndex = 1;
             this.tabSplitterMaster.Text = "Данные";
+            this.tabSplitterMaster.VisibleChanged += new System.EventHandler(this.tabSplitterMaster_VisibleChanged);
             // 
             // tabSplitterDocs
             // 
             this.tabSplitterDocs.AutoScroll = true;
             this.tabSplitterDocs.Controls.Add(this.gridDocuments);
-            this.tabSplitterDocs.Controls.Add(this.toolStrip2);
+            this.tabSplitterDocs.Controls.Add(this.toolStripDocuments);
             this.tabSplitterDocs.Hide = false;
             this.tabSplitterDocs.Image = global::DocumentFlow.Properties.Resources.icons8_documents_11;
             this.tabSplitterDocs.Location = new System.Drawing.Point(0, 297);
@@ -283,6 +297,7 @@
             // 
             // contextMenuStripEx1
             // 
+            this.contextMenuStripEx1.DropShadowEnabled = false;
             this.contextMenuStripEx1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuCreateDocument,
             this.menuEditDocument,
@@ -293,8 +308,8 @@
             this.contextMenuStripEx1.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
             this.contextMenuStripEx1.Name = "contextMenuStripEx1";
             this.contextMenuStripEx1.Size = new System.Drawing.Size(157, 120);
-            this.contextMenuStripEx1.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Default;
-            this.contextMenuStripEx1.ThemeName = "Default";
+            this.contextMenuStripEx1.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
+            this.contextMenuStripEx1.ThemeName = "Metro";
             // 
             // menuCreateDocument
             // 
@@ -341,9 +356,9 @@
             this.menuOpenFileDocument.Text = "Открыть файл";
             this.menuOpenFileDocument.Click += new System.EventHandler(this.buttonOpenFile_Click);
             // 
-            // toolStrip2
+            // toolStripDocuments
             // 
-            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripDocuments.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonCreate,
             this.buttonEdit,
             this.buttonDelete,
@@ -352,11 +367,11 @@
             this.buttonOpenFile,
             this.toolStripSeparator3,
             this.buttonScan});
-            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(1118, 25);
-            this.toolStrip2.TabIndex = 1;
-            this.toolStrip2.Text = "toolStrip2";
+            this.toolStripDocuments.Location = new System.Drawing.Point(0, 0);
+            this.toolStripDocuments.Name = "toolStripDocuments";
+            this.toolStripDocuments.Size = new System.Drawing.Size(1118, 25);
+            this.toolStripDocuments.TabIndex = 1;
+            this.toolStripDocuments.Text = "toolStripDocuments";
             // 
             // buttonCreate
             // 
@@ -557,8 +572,8 @@
             this.dateTimeCreate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeCreate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-7136, 0);
-            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(7311, 25);
+            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-18258, 0);
+            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(18433, 25);
             this.dateTimeCreate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -569,7 +584,7 @@
             this.dateTimeCreate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeCreate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-7136, 25);
+            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-18258, 25);
             this.dateTimeCreate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeCreate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -640,8 +655,8 @@
             this.dateTimeUpdate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeUpdate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-7136, 0);
-            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(7311, 25);
+            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-18258, 0);
+            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(18433, 25);
             this.dateTimeUpdate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -652,7 +667,7 @@
             this.dateTimeUpdate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeUpdate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-7136, 25);
+            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-18258, 25);
             this.dateTimeUpdate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeUpdate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -702,17 +717,17 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1118, 476);
             this.Controls.Add(this.tabSplitterContainer1);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.toolStripMain);
             this.Name = "ContentEditor";
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.toolStripMain.ResumeLayout(false);
+            this.toolStripMain.PerformLayout();
             this.tabSplitterContainer1.ResumeLayout(false);
             this.tabSplitterDocs.ResumeLayout(false);
             this.tabSplitterDocs.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDocuments)).EndInit();
             this.contextMenuStripEx1.ResumeLayout(false);
-            this.toolStrip2.ResumeLayout(false);
-            this.toolStrip2.PerformLayout();
+            this.toolStripDocuments.ResumeLayout(false);
+            this.toolStripDocuments.PerformLayout();
             this.tabSplitterInfo.ResumeLayout(false);
             this.tabSplitterInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxUpdater)).EndInit();
@@ -729,7 +744,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip toolStripMain;
         private System.Windows.Forms.ToolStripButton buttonStatus;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private Syncfusion.Windows.Forms.Tools.ToolStripPanelItem panelItemActions;
@@ -754,7 +769,7 @@
         private Syncfusion.Windows.Forms.Tools.DateTimePickerAdv dateTimeUpdate;
         private System.Windows.Forms.Label label1;
         private Syncfusion.WinForms.DataGrid.SfDataGrid gridDocuments;
-        private System.Windows.Forms.ToolStrip toolStrip2;
+        private System.Windows.Forms.ToolStrip toolStripDocuments;
         private System.Windows.Forms.ToolStripButton buttonCreate;
         private System.Windows.Forms.ToolStripButton buttonEdit;
         private System.Windows.Forms.ToolStripButton buttonDelete;
@@ -773,5 +788,6 @@
         private System.Windows.Forms.Timer timerDatabaseListen;
         private System.Windows.Forms.ToolStripButton buttonCustomization;
         private Saraff.Twain.Twain32 twain32;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
     }
 }

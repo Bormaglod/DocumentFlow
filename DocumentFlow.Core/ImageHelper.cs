@@ -28,9 +28,9 @@ namespace DocumentFlow.Core
 
         public static string ImageToBase64(string path)
         {
-            using (Image image = Image.FromFile(path))
+            using (var image = Image.FromFile(path))
             {
-                using (MemoryStream m = new MemoryStream())
+                using (var m = new MemoryStream())
                 {
                     image.Save(m, image.RawFormat);
                     byte[] imageBytes = m.ToArray();

@@ -162,6 +162,16 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     .Add("purchase_date")
                     .Add("purchase_number")
                     .Header("Заявка");
+
+				columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
+                    .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}")
+					.AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
+					.AddColumn("cost_with_tax", RowSummaryType.DoubleAggregate, "{Sum:c}");
+
+				columns.CreateGroupSummaryRow()
+                    .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}")
+					.AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
+					.AddColumn("cost_with_tax", RowSummaryType.DoubleAggregate, "{Sum:c}");
             });
         }
 

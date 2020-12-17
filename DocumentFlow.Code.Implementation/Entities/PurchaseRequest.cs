@@ -20,6 +20,8 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         public string user_created { get; protected set; }
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; protected set; }
+        public Guid contract_id { get; set; }
+        public string contract_name { get; protected set; }
         public DateTime doc_date { get; set; }
         public string doc_number { get; set; }
         public Guid organization_id { get; set; }
@@ -44,7 +46,9 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 pr.doc_number, 
                 ua.name as user_created, 
                 pr.contractor_id,
-                c.name as contractor_name, 
+                c.name as contractor_name,
+                pr.contract_id,
+                contract.name as contract_name,
                 pr.doc_date, 
                 pr.doc_number, 
                 o.name as organization_name, 
@@ -59,10 +63,11 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 join status s on (s.id  = pr.status_id) 
                 join user_alias ua on (ua.id = pr.user_created_id) 
                 join organization o on (o.id = pr.organization_id) 
+                left join contract on (contract.id = pr.contract_id)
                 left join purchase_request_detail prd on (prd.owner_id = pr.id) 
                 left join contractor c on (c.id = pr.contractor_id) 
             where {0}
-            group by pr.id, pr.status_id, ua.name, c.name, pr.doc_date, pr.doc_number, s.note, o.name, c.tax_payer";
+            group by pr.id, pr.status_id, ua.name, c.name, contract.name, pr.doc_date, pr.doc_number, s.note, o.name, c.tax_payer";
 
         public void Initialize(IBrowser browser)
         {
@@ -108,6 +113,11 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 
                 columns.CreateText("contractor_name", "Контрагент")
                     .SetAutoSizeColumnsMode(SizeColumnsMode.Fill)
+                    .SetAllowGrouping(true);
+
+                columns.CreateText("contract_name", "Договор")
+                    .SetWidth(150)
+                    .SetVisible(false)
                     .SetAllowGrouping(true);
 
                 columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
@@ -181,15 +191,16 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         public void Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
-            const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and supplier) or (status_id = 500) or (id = :contractor_id) order by name";
+            const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contract_type = 'purchase'::contract_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
             const string gridSelect = "select prd.id, prd.owner_id, g.name as goods_name, prd.amount, prd.price, prd.cost, prd.tax, prd.tax_value, prd.cost_with_tax from purchase_request_detail prd join goods g on g.id = prd.goods_id where prd.owner_id = :oid";
+            const string contractSelect = "select id, status_id, name, parent_id from contract where owner_id = :contractor_id and contract_type = 'purchase'::contract_type";
 
             IContainer container = editor.CreateContainer(32);
 
             IControl doc_number = editor.CreateTextBox("doc_number", "Номер")
                 .SetControlWidth(110)
                 .SetLabelAutoSize(true)
-                .SetWidth(165)
+                .SetWidth(170)
                 .SetDock(DockStyle.Left);
 
             IControl doc_date = editor.CreateDateTimePicker("doc_date", "от")
@@ -200,8 +211,8 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 .SetDock(DockStyle.Left);
 
             IControl organization_id = editor.CreateComboBox("organization_id", "Организация", (conn) => { return conn.Query<ComboBoxDataItem>(orgSelect); })
-                .SetLabelWidth(150)
-                .SetControlWidth(300)
+                .SetLabelWidth(100)
+                .SetControlWidth(200)
                 .SetLabelTextAlignment(ContentAlignment.TopRight);
 
             container.Add(new IControl[]
@@ -211,13 +222,29 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 organization_id
             });
 
-            IControl contractor_id = editor.CreateSelectBox("contractor_id", "Контрагент", (e, c) => 
+            IControl contractor_id = editor.CreateSelectBox("contractor_id", "Контрагент", (e, c) =>
                 {
                     PurchaseRequest pr = e.Entity as PurchaseRequest;
-                    return c.Query<GroupDataItem>(contractorSelect, new { pr.contractor_id }); 
+                    return c.Query<GroupDataItem>(contractorSelect, new { pr.contractor_id });
                 })
-                .SetLabelWidth(120)
-                .SetControlWidth(700);
+                .ValueChangedAction((s, e) =>
+                {
+                    using (var conn = editor.CreateConnection())
+                    {
+                        editor["contract_id"].AsPopulateControl().Populate(conn, editor.Entity);
+                        editor["contract_id"].Value = editor.ExecuteSqlCommand<Guid>("select id from contract where owner_id = :contractor_id and contract.contract_type = 'purchase'::contract_type and contract.is_default", new { contractor_id = editor["contractor_id"].Value });
+                    }
+                })
+                .SetLabelWidth(100)
+                .SetControlWidth(580);
+
+            IControl contract_id = editor.CreateSelectBox("contract_id", "Договор", (e, c) =>
+                {
+                    PurchaseRequest pr = e.Entity as PurchaseRequest;
+                    return c.Query<GroupDataItem>(contractSelect, new { pr.contractor_id });
+                })
+                .SetLabelWidth(100)
+                .SetControlWidth(580);
 
             IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<PurchaseRequestDetail>(gridSelect, new { editor.Entity.oid }).AsList(); })
                 .CreateColumns((columns) =>
@@ -261,18 +288,49 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
             editor.Container.Add(new IControl[] {
                 container.AsControl(),
                 contractor_id,
+                contract_id,
                 datagrid
             });
+
+            editor.Commands.Add(CommandMethod.UserDefined, "open-document")
+                .SetIcon("organization")
+                .SetTitle("Контрагент")
+                .AppendTo(editor.ToolBar)
+                .ExecuteAction(OpenContractorClick);
+
+            editor.Commands.Add(CommandMethod.UserDefined, "open-document")
+                .SetIcon("stack-books")
+                .SetTitle("Договор")
+                .AppendTo(editor.ToolBar)
+                .ExecuteAction(OpenContractClick);
+        }
+
+        private void OpenContractorClick(object sender, ExecuteEventArgs e)
+        {
+            PurchaseRequest pr = e.Editor.Entity as PurchaseRequest;
+            if (pr != null && pr.contractor_id.HasValue)
+            {
+                e.Editor.Commands.OpenDocument(pr.contractor_id.Value);
+            }
+        }
+
+        private void OpenContractClick(object sender, ExecuteEventArgs e)
+        {
+            PurchaseRequest pr = e.Editor.Entity as PurchaseRequest;
+            if (pr != null)
+            {
+                e.Editor.Commands.OpenDocument(pr.contract_id);
+            }
         }
 
         protected override string GetSelect()
         {
-            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, contractor_id, doc_date, doc_number, organization_id from purchase_request where id = :id";
+            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, contractor_id, contract_id, doc_date, doc_number, organization_id from purchase_request where id = :id";
         }
 
         protected override string GetUpdate(PurchaseRequest entity)
         {
-            return "update purchase_request set contractor_id = :contractor_id, doc_date = :doc_date, doc_number = :doc_number where id = :id";
+            return "update purchase_request set contractor_id = :contractor_id, contract_id = :contract_id, doc_date = :doc_date, doc_number = :doc_number where id = :id";
         }
 
         public override bool GetEnabledValue(string field, string status_name)

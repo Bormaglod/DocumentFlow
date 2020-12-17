@@ -36,9 +36,6 @@ namespace DocumentFlow.Data.Core
 
         public void SetReference<T>(T entity) where T : Entity => SetReference(typeof(T), entity);
 
-        protected void NotifyPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        protected void NotifyPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

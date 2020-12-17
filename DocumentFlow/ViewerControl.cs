@@ -52,406 +52,6 @@ namespace DocumentFlow
 {
     public partial class ViewerControl : UserControl, ISettings, IBrowser
     {
-        private class ToolBarData : IToolBar
-        {
-            private ViewerControl viewer;
-            private ToolStrip buttonStrip;
-            private ToolStripItemDisplayStyle buttonStyle;
-            private ButtonIconSize iconSize;
-
-            public ToolBarData(ViewerControl viewer, ToolStrip toolStrip, ToolStripItemDisplayStyle style, ButtonIconSize size)
-            {
-                this.viewer = viewer;
-
-                buttonStrip = toolStrip;
-                buttonStyle = style;
-                iconSize = size;
-            }
-
-            public ToolStripItemDisplayStyle ButtonStyle
-            {
-                get => buttonStyle;
-                set
-                {
-                    if (buttonStyle != value)
-                    {
-                        buttonStyle = value;
-                        foreach (ToolStripItem item in buttonStrip.Items)
-                        {
-                            item.DisplayStyle = buttonStyle;
-                        }
-                    }
-                }
-            }
-
-            public ButtonIconSize IconSize
-            {
-                get => iconSize;
-                set
-                {
-                    if (iconSize != value)
-                    {
-                        iconSize = value;
-                        foreach (ToolStripButton item in buttonStrip.Items.OfType<ToolStripButton>())
-                        {
-                            Command command = viewer.commandCollection.GetToolStripCommand(item);
-                            if (command != null)
-                            {
-                                switch (iconSize)
-                                {
-                                    case ButtonIconSize.Small:
-                                        item.Image = command.Picture.GetImageSmall();
-                                        break;
-                                    case ButtonIconSize.Large:
-                                        item.Image = command.Picture.GetImageLarge();
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Этот класс содержит список кнопок (или элементов меню). Эта группа отделяется рт других с помощью сепаратора, который находится
-        /// в начале группы.
-        /// </summary>
-        private class CommandGroup
-        {
-            private ToolStripSeparator separator;
-            private readonly List<ToolStripItem> items;
-
-            public CommandGroup(string groupName) : this(groupName, true) { }
-
-            public CommandGroup(string groupName, bool createSeparator = false)
-            {
-                Name = groupName;
-                items = new List<ToolStripItem>();
-                if (createSeparator)
-                    separator = new ToolStripSeparator();
-            }
-
-            public string Name { get; }
-
-            public void Add(ToolStripItem item)
-            {
-                if (item is ToolStripSeparator s)
-                    separator = s;
-                else
-                {
-                    items.Add(item);
-                    item.VisibleChanged += Item_VisibleChanged;
-                }
-            }
-            public override string ToString() => Name;
-
-            public void UpdateSeparatorVisibility()
-            {
-                if (separator != null)
-                {
-                    separator.Visible = items.Any(x => x.Visible);
-                }
-            }
-
-            private void Item_VisibleChanged(object sender, EventArgs e)
-            {
-                UpdateSeparatorVisibility();
-            }
-        }
-
-        private class CommandGroupCollection : IEnumerable<CommandGroup>
-        {
-            private List<CommandGroup> groups = new List<CommandGroup>();
-            private List<ToolStrip> toolStrips = new List<ToolStrip>();
-
-            public IEnumerator<CommandGroup> GetEnumerator() => groups.GetEnumerator();
-            IEnumerator IEnumerable.GetEnumerator() => groups.GetEnumerator();
-
-            public void Add(ToolStripItem item, string toolbarGroupName)
-            {
-                ToolStrip toolStrip = item.Owner;
-                if (toolStrips.FirstOrDefault(x => x == toolStrip) == null)
-                {
-                    toolStrips.Add(toolStrip);
-                }
-
-                CommandGroup g = groups.FirstOrDefault(x => x.Name == toolbarGroupName);
-                if (g == null)
-                {
-                    g = new CommandGroup(toolbarGroupName);
-                    groups.Add(g);
-                }
-
-                g.Add(item);
-            }
-
-            public ToolStrip GetToolStrip(string toolStripName) => toolStrips.FirstOrDefault(x => x.Tag.ToString() == toolStripName);
-        }
-
-        private class CommandTools : ICommand, ICommandAdded
-        {
-            private ViewerControl viewer;
-            private List<ToolStripItem> tools = new List<ToolStripItem>();
-
-            public CommandTools(Command command, ViewerControl viewer)
-            {
-                this.viewer = viewer;
-
-                Command = command;
-            }
-
-            public event EventHandler<GettingParametersEventArgs> GettingParameters;
-            public event EventHandler<ExecuteEventArgs> Click;
-
-            public Command Command { get; }
-
-            public bool Contains(ToolStripItem toolStripItem) => tools.Contains(toolStripItem);
-
-            public void AddTool(ToolStripItem toolStripItem)
-            {
-                tools.Add(toolStripItem);
-            }
-
-            public void Execute()
-            {
-                Click?.Invoke(this, new ExecuteEventArgs(viewer));
-            }
-
-            public IDictionary<string, object> GetParameters()
-            {
-                if (GettingParameters != null)
-                {
-                    GettingParametersEventArgs args = new GettingParametersEventArgs(viewer);
-                    GettingParameters.Invoke(this, args);
-                    return args.Parameters;
-                }
-
-                return null;
-            }
-
-            string ICommand.Code => Command.code;
-
-            ICommand ICommand.SetEnabled(bool enabled)
-            {
-                foreach (ToolStripItem item in tools)
-                {
-                    item.Enabled = enabled;
-                }
-
-                return this;
-            }
-
-            ICommand ICommand.SetVisible(bool visible)
-            {
-                foreach (ToolStripItem item in tools)
-                {
-                    item.Visible = visible;
-                }
-
-                return this;
-            }
-
-            ICommandAdded ICommandAdded.SetIcon(string name)
-            {
-                foreach (ToolSplitItem item in tools)
-                {
-                    if (item.GetCurrentParent() is ContextMenuStripEx)
-                    {
-                        item.Image = Command.Picture.GetImageSmall();
-                    }
-                    else
-                    {
-                        item.Image = viewer.toolBarData.IconSize == ButtonIconSize.Small ? Command.Picture.GetImageSmall() : Command.Picture.GetImageLarge();
-                    }
-                }
-
-                return this;
-            }
-        }
-
-        private class CommandCollection : ICommandCollection
-        {
-            private List<CommandTools> commandTools = new List<CommandTools>();
-            private CommandGroupCollection groupItems = new CommandGroupCollection();
-            private ViewerControl viewer;
-
-            public CommandCollection(ViewerControl viewer)
-            {
-                this.viewer = viewer;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator() => commandTools.GetEnumerator();
-
-            public IEnumerator<ICommand> GetEnumerator() => commandTools.GetEnumerator();
-
-            public void AddToolStrip(ToolStrip toolStrip)
-            {
-                foreach (var item in toolStrip.Items.OfType<ToolStripItem>().Where(x => x.Tag != null))
-                {
-                    AddToolStripItem(item);
-                }
-            }
-
-            private void AddToolStripItem(ToolStripItem toolStripItem)
-            {
-                string[] tag = toolStripItem.Tag.ToString().Split('|');
-
-                if (!string.IsNullOrEmpty(tag[0]))
-                {
-                    Command cmd = viewer.CommandFactory.Commands.FirstOrDefault(x => x.code == tag[0]);
-                    if (cmd == null)
-                        return;
-
-                    CommandTools tools = commandTools.FirstOrDefault(x => x.Command.Id == cmd.Id);
-                    if (tools == null)
-                    {
-                        tools = new CommandTools(cmd, viewer);
-                        commandTools.Add(tools);
-                    }
-
-                    tools.AddTool(toolStripItem);
-                }
-
-                groupItems.Add(toolStripItem, tag[1]);
-            }
-
-            void ICommandCollection.OpenDocument(Guid id) => viewer.CommandFactory.OpenDocument(id);
-
-            void ICommandCollection.OpenDiagram(Guid id) => viewer.CommandFactory.Execute("open-diagram", id);
-
-            ICommand ICommandCollection.Get(string name)
-            {
-                return commandTools.FirstOrDefault(x => x.Command.code == name);
-            }
-
-            ICommandAdded ICommandCollection.Add(CommandMethod method, string name, params string[] toolStripNames)
-            {
-                switch (method)
-                {
-                    case CommandMethod.Sql:
-                        break;
-                    case CommandMethod.Embedded:
-                        return AddEmbededCommand(name, toolStripNames);
-                    case CommandMethod.UserDefined:
-                        return AddUserDefinedCommand(name, toolStripNames);
-                    default:
-                        break;
-                }
-
-                return null;
-            }
-
-            public Command GetToolStripCommand(ToolStripItem toolStripItem)
-            {
-                return commandTools.FirstOrDefault(x => x.Contains(toolStripItem))?.Command;
-            }
-
-            public void UpdateSeparatorVisibility()
-            {
-                foreach (var item in groupItems)
-                {
-                    item.UpdateSeparatorVisibility();
-                }
-            }
-
-            private CommandTools CreateTools(string name)
-            {
-                Command cmd = viewer.CommandFactory.Commands.FirstOrDefault(x => x.code == name);
-                if (cmd == null)
-                    throw new CommandNotFoundException($"Команда {name} не существует.");
-
-                CommandTools tools = commandTools.FirstOrDefault(x => x.Command.Id == cmd.Id);
-                if (tools == null)
-                {
-                    tools = new CommandTools(cmd, viewer);
-                    commandTools.Add(tools);
-                }
-
-                return tools;
-            }
-
-            private IEnumerable<ToolStripItem> CreateToolStripItem(CommandTools tools, params string[] toolStripNames)
-            {
-                List<ToolStripItem> items = new List<ToolStripItem>();
-                foreach (string toolStripName in toolStripNames)
-                {
-                    ToolStrip toolStrip = groupItems.GetToolStrip(toolStripName);
-                    if (toolStrip == null)
-                        throw new IncorrectToolStripNameException($"Панель кнопок или контекстное меню указанное как {toolStripName} отсутствует.");
-
-                    ToolStripItem item;
-                    if (toolStrip is ContextMenuStripEx)
-                    {
-                        item = new ToolStripMenuItem(tools.Command.name, tools.Command.Picture.GetImageSmall());
-                    }
-                    else
-                    {
-                        item = new ToolStripButton()
-                        {
-                            Text = tools.Command.name,
-                            Image = viewer.toolBarData.IconSize == ButtonIconSize.Small ? tools.Command.Picture.GetImageSmall() : tools.Command.Picture.GetImageLarge(),
-                            DisplayStyle = viewer.toolBarData.ButtonStyle,
-                            ImageScaling = ToolStripItemImageScaling.None,
-                            TextImageRelation = TextImageRelation.ImageAboveText
-                        };
-                    }
-
-                    toolStrip.Items.Add(item);
-                    tools.AddTool(item);
-                    groupItems.Add(item, "user-defined");
-
-                    items.Add(item);
-                }
-
-                return items;
-            }
-
-            private ICommandAdded AddUserDefinedCommand(string name, params string[] toolStripNames)
-            {
-                CommandTools tools = CreateTools(name);
-                foreach (ToolStripItem item in CreateToolStripItem(tools, toolStripNames))
-                {
-                    item.Click += UserDefinedCommand_Click;
-                }
-
-                return tools;
-            }
-
-            private ICommandAdded AddEmbededCommand(string name, params string[] toolStripNames)
-            {
-                CommandTools tools = CreateTools(name);
-                foreach (ToolStripItem item in CreateToolStripItem(tools, toolStripNames))
-                {
-                    item.Click += EmbededCommand_Click;
-                }
-
-                return tools;
-            }
-
-            private void UserDefinedCommand_Click(object sender, EventArgs e)
-            {
-                if (sender is ToolStripItem item)
-                {
-                    commandTools.FirstOrDefault(x => x.Contains(item))?.Execute();
-                }
-            }
-
-            private void EmbededCommand_Click(object sender, EventArgs e)
-            {
-                if (sender is ToolStripItem item)
-                {
-                    CommandTools command = commandTools.FirstOrDefault(x => x.Contains(item));
-
-                    if (viewer.gridContent.SelectedItem is IDocumentInfo row)
-                    {
-                        viewer.CommandFactory.Execute(command.Command.code, command.GetParameters());
-                    }
-                }
-            }
-        }
 
 #if USE_SETTINGS
         private const string settingsFile = "viewer.json";
@@ -462,6 +62,7 @@ namespace DocumentFlow
         private DateRanges toDate;
         private GridColumnCollection columns;
         private ToolBarData toolBarData;
+        private Dictionary<string, ContextMenuData> contextMenuData;
         private Guid? parentId;
         private CommandCollection commandCollection;
         private string doubleClickCommand;
@@ -563,6 +164,9 @@ namespace DocumentFlow
         object IBrowser.CurrentRow => gridContent.SelectedItem;
 
         IToolBar IBrowser.ToolBar => toolBarData;
+        IContextMenu IBrowser.ContextMenuRecord => contextMenuData["record"];
+        IContextMenu IBrowser.ContextMenuRow => contextMenuData["row"];
+        IContextMenu IBrowser.ContextMenuGrid => contextMenuData["grid"];
 
         ICommandCollection IBrowser.Commands => commandCollection;
 
@@ -751,13 +355,19 @@ namespace DocumentFlow
 
             parentId = null;
 
-            toolBarData = new ToolBarData(this, toolStrip1, ToolStripItemDisplayStyle.ImageAndText, ButtonIconSize.Large);
+            commandCollection = new CommandCollection(this, CommandFactory);
+            toolBarData = new ToolBarData(toolStrip1, commandCollection);
+            contextMenuData = new Dictionary<string, ContextMenuData>()
+            {
+                { "record", new ContextMenuData(contextRecordMenu, commandCollection) },
+                { "row", new ContextMenuData(contextRowMenu, commandCollection) },
+                { "grid", new ContextMenuData(contextGridMenu, commandCollection) }
+            };
 
             panelCommandBar.Height = 30;
             panelCommandBar.Visible = true;
 
             menuVisibleColumns.DropDownItems.Clear();
-            CreateCommands();
 
             ExecutedCommand.Browser().Initialize(this);
 
@@ -993,15 +603,6 @@ namespace DocumentFlow
                     column.Visible = item.Checked;
                 }
             }
-        }
-
-        private void CreateCommands()
-        {
-            commandCollection = new CommandCollection(this);
-            commandCollection.AddToolStrip(toolStrip1);
-            commandCollection.AddToolStrip(contextRecordMenu);
-            commandCollection.AddToolStrip(contextRowMenu);
-            commandCollection.AddToolStrip(contextGridMenu);
         }
 
         private void RefreshEntities(object sender, EventArgs e) => RefreshCurrenView();
@@ -1443,7 +1044,11 @@ namespace DocumentFlow
 
         private void gridContent_VisibleChanged(object sender, EventArgs e)
         {
-            commandCollection.UpdateSeparatorVisibility();
+            toolBarData.UpdateButtonVisibleStatus();
+            foreach (var item in contextMenuData.Values)
+            {
+                item.UpdateButtonVisibleStatus();
+            }
         }
     }
 }

@@ -15,10 +15,10 @@ namespace DocumentFlow.Code.Implementation
 {
     public class ListControlData : BindingControlData
     {
-        private IEditor editor;
-        private Action<IEnumerable<IIdentifier>> addItems;
-        private ChoiceItems getItems2;
-        private СriterionChoiceItems getItems3;
+        private readonly IEditor editor;
+        private readonly Action<IEnumerable<IIdentifier>> addItems;
+        private readonly ChoiceItems getItems2;
+        private readonly СriterionChoiceItems getItems3;
 
         public ListControlData(Control control, ChoiceItems getItems, Action<IEnumerable<IIdentifier>> addItems) : base(control) 
         {

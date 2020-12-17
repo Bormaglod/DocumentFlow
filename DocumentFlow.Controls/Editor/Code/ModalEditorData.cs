@@ -10,37 +10,37 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code;
 using DocumentFlow.Code.Implementation;
 using DocumentFlow.Code.System;
-using DocumentFlow.Controls.Editor;
 using DocumentFlow.Core;
 using DocumentFlow.Data.Core;
 
-namespace DocumentFlow.Controls.Code
+namespace DocumentFlow.Controls.Editor.Code
 {
-    public class EditorData : IEditor
+    public class ModalEditorData : IEditor
     {
-        private IContainer controlContainer;
-        private IBrowserParameters parameters;
-        private IBrowser ownerBrowser;
+        private readonly IContainer controlContainer;
+        private readonly IBrowserParameters parameters;
 
-        public EditorData(IContainer container, IBrowser browser, IBrowserParameters browserParameters)
+        public ModalEditorData(IContainer container, IBrowserParameters browserParameters)
         {
             controlContainer = container;
             parameters = browserParameters;
-            ownerBrowser = browser;
         }
 
         public IIdentifier Entity { get; set; }
 
+        public IToolBar ToolBar => GetToolBar();
+
         IContainer IEditor.Container => controlContainer;
 
-        IBrowser IEditor.Browser => ownerBrowser;
+        ICommandCollection IEditor.Commands => GetCommandCollection();
+
+        IBrowser IEditor.Browser => GetBrowser();
 
         IBrowserParameters IEditor.Parameters => parameters;
 
@@ -355,5 +355,11 @@ namespace DocumentFlow.Controls.Code
                 return conn.QuerySingleOrDefault<T>(sql, param);
             }
         }
+
+        protected virtual IToolBar GetToolBar() => null;
+
+        protected virtual ICommandCollection GetCommandCollection() => null;
+
+        protected virtual IBrowser GetBrowser() => null;
     }
 }

@@ -82,6 +82,7 @@
     <Compile Include="Core\PopulateControlException.cs" />
     <Compile Include="Data\CodeContent.cs" />
     <Compile Include="Data\CommandExtension.cs" />
+    <Compile Include="IContextMenu.cs" />
     <Compile Include="IDataGrid.cs" />
     <Compile Include="IDetail.cs" />
     <Compile Include="IEditControl.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="IPopulate.cs" />
     <Compile Include="IGridDataControl.cs" />
     <Compile Include="IStackedColumn.cs" />
+    <Compile Include="ITool.cs" />
     <Compile Include="System\ValueChangedEventArgs.cs" />
     <Compile Include="System\ChangeParentEventArgs.cs" />
     <Compile Include="Core\ChoiceDataItem.cs" />
@@ -121,7 +123,6 @@
     <Compile Include="IColumn.cs" />
     <Compile Include="IColumnCollection.cs" />
     <Compile Include="ICommand.cs" />
-    <Compile Include="ICommandAdded.cs" />
     <Compile Include="ICommandCollection.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="IControl.cs" />

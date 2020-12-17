@@ -65,12 +65,14 @@ namespace DocumentFlow
 
             try
             {
+                FileInfo fileInfo = new FileInfo(selectFile.FileName);
                 DocumentRefs docRef = new DocumentRefs()
                 {
                     owner_id = owner,
                     file_name = name,
                     note = textNote.Text,
-                    crc = GetCrcFile(selectFile.FileName)
+                    crc = GetCrcFile(selectFile.FileName),
+                    length = fileInfo.Length
                 };
 
                 if (ftp.UploadFile(selectFile.FileName, Path.Combine(ftpPath, name), FtpRemoteExists.Overwrite, true) != FtpStatus.Success)
@@ -121,10 +123,16 @@ namespace DocumentFlow
 
                         refs.file_name = Path.GetFileName(selectFile.FileName);
                         refs.crc = GetCrcFile(selectFile.FileName);
+                        refs.length = (new FileInfo(selectFile.FileName)).Length;
 
                         ftpName = Path.Combine(ftpPath, refs.file_name);
 
                         ftp.UploadFile(selectFile.FileName, ftpName, FtpRemoteExists.Overwrite, true);
+                    }
+
+                    if (refs.length == 0)
+                    {
+                        refs.length = ftp.GetFileSize(selectFile.FileName);
                     }
 
                     refs.note = textNote.Text;

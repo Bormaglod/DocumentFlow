@@ -8,14 +8,13 @@
 
 using System.ComponentModel;
 using Syncfusion.WinForms.DataGrid;
-using DocumentFlow.Code.System;
 using DocumentFlow.Core;
 
 namespace DocumentFlow.Code.Implementation
 {
     public class SortedColumnsData : ISorted
     {
-        private SfDataGrid gridContent;
+        private readonly SfDataGrid gridContent;
 
         public SortedColumnsData(SfDataGrid grid)
         {
@@ -25,7 +24,7 @@ namespace DocumentFlow.Code.Implementation
 
         ISorted ISorted.Add(string columnName, ListSortDirection direction)
         {
-            SortColumnDescription sort = new SortColumnDescription()
+            var sort = new SortColumnDescription()
             {
                 ColumnName = columnName,
                 SortDirection = EnumHelper.TransformEnum<ListSortDirection, ListSortDirection>(direction)

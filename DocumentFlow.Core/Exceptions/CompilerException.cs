@@ -13,10 +13,7 @@ namespace DocumentFlow.Core.Exceptions
 {
     public class CompilerException : Exception
     {
-        public CompilerException(string message, CompilerErrorCollection errors) : base(message)
-        {
-            Errors = errors;
-        }
+        public CompilerException(string message, CompilerErrorCollection errors) : base(message) => Errors = errors;
 
         public CompilerErrorCollection Errors { get; }
     }

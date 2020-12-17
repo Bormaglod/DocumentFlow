@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -112,7 +112,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
             columns.CreateProgress("percent_uses", "Использовано, %")
                 .SetWidth(150);
 
-            columns.CreateGroupSummaryRow()
+            columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
                 .AddColumn("name", RowSummaryType.CountAggregate, "Всего наименований: {Count}")
                 .AddColumn("amount", RowSummaryType.DoubleAggregate, "{Sum}")
                 .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}");

@@ -15,16 +15,13 @@ namespace DocumentFlow.Code.Implementation
 {
     public class SummaryRowData : ISummary
     {
-        private GridSummaryRow summaryRow;
+        private readonly GridSummaryRow summaryRow;
 
-        public SummaryRowData(GridSummaryRow row)
-        {
-            summaryRow = row;
-        }
+        public SummaryRowData(GridSummaryRow row) => summaryRow = row;
 
         ISummary ISummary.AddColumn(string fieldName, RowSummaryType type, string format)
         {
-            GridSummaryColumn summaryColumn = new GridSummaryColumn
+            var summaryColumn = new GridSummaryColumn
             {
                 SummaryType = EnumHelper.TransformEnum<SummaryType, RowSummaryType>(type),
                 Format = format,

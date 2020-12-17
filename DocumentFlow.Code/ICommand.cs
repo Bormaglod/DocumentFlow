@@ -6,12 +6,29 @@
 // Time: 19:18
 //-----------------------------------------------------------------------
 
+using System;
+using DocumentFlow.Code.System;
+
 namespace DocumentFlow.Code
 {
     public interface ICommand
     {
+        event EventHandler<ExecuteEventArgs> Click;
+        event EventHandler<GettingParametersEventArgs> GettingParameters;
+
         string Code { get; }
-        ICommand SetEnabled(bool enabled);
+        string Name { get; }
+        string Icon { get; }
+        string Title { get; }
+        bool Enabled { get; }
+        bool Visible { get; }
+        CommandMethod Method { get; }
+        ICommand SetEnabled(bool enabledValue);
         ICommand SetVisible(bool visible);
+        ICommand SetIcon(string name);
+        ICommand ExecuteAction(EventHandler<ExecuteEventArgs> eventHandler);
+        ICommand SetTitle(string title);
+        ICommand AppendTo(IToolBar toolBar);
+        ICommand AppendTo(IContextMenu contextMenu);
     }
 }

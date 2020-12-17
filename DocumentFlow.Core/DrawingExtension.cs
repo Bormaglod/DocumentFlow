@@ -17,30 +17,15 @@ namespace DocumentFlow.Core
 
         public static Font Font = new Font(FontFamily.GenericSansSerif, 10);
 
-        public static Point Add(this Point point, Point other)
-        {
-            return new Point(point.X + other.X, point.Y + other.Y);
-        }
+        public static Point Add(this Point point, Point other) => new Point(point.X + other.X, point.Y + other.Y);
 
-        public static Point Sub(this Point point, Point other)
-        {
-            return new Point(point.X - other.X, point.Y - other.Y);
-        }
+        public static Point Sub(this Point point, Point other) => new Point(point.X - other.X, point.Y - other.Y);
 
-        public static Point OffsetX(this Point point, int dx)
-        {
-            return new Point(point.X + dx, point.Y);
-        }
+        public static Point OffsetX(this Point point, int dx) => new Point(point.X + dx, point.Y);
 
-        public static Color Opaque(this Color color, float opaque)
-        {
-            return Color.FromArgb((opaque * color.A / 255).To255(), color);
-        }
+        public static Color Opaque(this Color color, float opaque) => Color.FromArgb((opaque * color.A / 255).To255(), color);
 
-        public static Size Resize(this Size size, int delta)
-        {
-            return new Size(size.Width + delta, size.Height + delta);
-        }
+        public static Size Resize(this Size size, int delta) => new Size(size.Width + delta, size.Height + delta);
 
         public static byte To255(this float v)
         {

@@ -41,62 +41,11 @@ namespace DocumentFlow
             }
         }
 
+        #region ICommandFactory implementation
+
+        Command ICommandFactory.this[string code] => commands.FirstOrDefault(x => x.code == code);
+
         IEnumerable<Command> ICommandFactory.Commands => commands;
-
-        void ICommandFactory.OpenDocument(Guid id)
-        {
-            IPage page = null;
-            if (id != Guid.Empty)
-            {
-                page = container.Get<ContentEditor>(id);
-            }
-
-            if (page != null)
-            {
-                container.Selected = page;
-            }
-            else
-            {
-                using (var conn = Db.OpenConnection())
-                {
-                    string sql = "select c.*, ek.* from command c join entity_kind ek on (ek.id = c.entity_kind_id) join document_info di on (ek.id = di.entity_kind_id and di.id = :id)";
-                    Command command = conn.Query<Command, EntityKind, Command>(sql, (cmd, entity_kind) =>
-                    {
-                        cmd.EntityKind = entity_kind;
-                        return cmd;
-                    }, new { id }).Single();
-
-                    string parent = conn.Query<string>("select get_root_parent(:table)", new { table = command.EntityKind.code }).Single();
-                    if (parent == "document")
-                    {
-                        sql = $"select owner_id, organization_id from {command.EntityKind.code} where id = :id";
-                    }
-                    else
-                    {
-                        sql = $"select owner_id, parent_id from {command.EntityKind.code} where id = :id";
-                    }
-
-                    var row = conn.QuerySingle(sql, new { id });
-
-                    BrowserParameters editorParams = new BrowserParameters()
-                    {
-                        ParentId = parent == "document" ? null : row.parent_id,
-                        OwnerId = row.owner_id,
-                        OrganizationId = parent == "directory" ? null : row.organization_id
-                    };
-
-                    try
-                    {
-                        ContentEditor e = new ContentEditor(container, null, this, id, command, editorParams);
-                        container.Add(e);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHelper.MesssageBox(e);
-                    }
-                }
-            }
-        }
 
         void ICommandFactory.Execute(Command command, params object[] parameters)
         {
@@ -105,14 +54,14 @@ namespace DocumentFlow
                 case "profile":
                     break;
                 case "add-record":
-                    CreateControlEditor(parameters);
+                    OpenEditor(parameters);
                     break;
                 case "edit-record":
-                    CreateControlEditor(parameters);
+                    OpenEditor(parameters);
                     break;
                 case "view-picture":
                 case "documents-schema":
-                    CreateControlViewer(command);
+                    OpenDataViewer(command);
                     break;
                 case "open-diagram":
                     OpenDiagram(parameters);
@@ -139,7 +88,7 @@ namespace DocumentFlow
 
                     if (createViewer)
                     {
-                        CreateControlViewer(command);
+                        OpenDataViewer(command);
                     }
 
                     break;
@@ -172,7 +121,9 @@ namespace DocumentFlow
             }
         }
 
-        private void CreateControlViewer(Command command)
+        #endregion
+
+        private void OpenDataViewer(Command command)
         {
             IPage page = container.Get<ContentViewer>(command.Id);
             if (page != null)
@@ -266,6 +217,61 @@ namespace DocumentFlow
                 throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
         }
 
+        private void OpenDocument(Guid id)
+        {
+            IPage page = null;
+            if (id != Guid.Empty)
+            {
+                page = container.Get<ContentEditor>(id);
+            }
+
+            if (page != null)
+            {
+                container.Selected = page;
+            }
+            else
+            {
+                using (var conn = Db.OpenConnection())
+                {
+                    string sql = "select c.*, ek.* from command c join entity_kind ek on (ek.id = c.entity_kind_id) join document_info di on (ek.id = di.entity_kind_id and di.id = :id)";
+                    Command command = conn.Query<Command, EntityKind, Command>(sql, (cmd, entity_kind) =>
+                    {
+                        cmd.EntityKind = entity_kind;
+                        return cmd;
+                    }, new { id }).Single();
+
+                    string parent = conn.Query<string>("select get_root_parent(:table)", new { table = command.EntityKind.code }).Single();
+                    if (parent == "document")
+                    {
+                        sql = $"select owner_id, organization_id from {command.EntityKind.code} where id = :id";
+                    }
+                    else
+                    {
+                        sql = $"select owner_id, parent_id from {command.EntityKind.code} where id = :id";
+                    }
+
+                    var row = conn.QuerySingle(sql, new { id });
+
+                    BrowserParameters editorParams = new BrowserParameters()
+                    {
+                        ParentId = parent == "document" ? null : row.parent_id,
+                        OwnerId = row.owner_id,
+                        OrganizationId = parent == "directory" ? null : row.organization_id
+                    };
+
+                    try
+                    {
+                        ContentEditor e = new ContentEditor(container, null, this, id, command, editorParams);
+                        container.Add(e);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHelper.MesssageBox(e);
+                    }
+                }
+            }
+        }
+
         private void OpenDocument(params object[] parameters)
         {
             if (parameters.Length != 1)
@@ -273,7 +279,6 @@ namespace DocumentFlow
                 return;
             }
 
-            ICommandFactory factory = this;
             if (parameters[0] is Dictionary<string, object> parameterValues)
             {
                 if (!parameterValues.ContainsKey("id"))
@@ -283,20 +288,20 @@ namespace DocumentFlow
 
                 if (parameterValues["id"] is Guid id)
                 {
-                    factory.OpenDocument(id);
+                    OpenDocument(id);
                 }
                 else
                     throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
             }
             else if (parameters[0] is Guid id)
             {
-                factory.OpenDocument(id);
+                OpenDocument(id);
             }
             else
                 throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
         }
 
-        private void CreateControlEditor(params object[] parameters)
+        private void OpenEditor(params object[] parameters)
         {
             if (parameters.Length != 4)
             {

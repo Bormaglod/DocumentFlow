@@ -16,15 +16,9 @@ namespace DocumentFlow.Core
     {
         readonly Logger log;
 
-        internal NLogLogger(string name)
-        {
-            log = LogManager.GetLogger(name);
-        }
+        internal NLogLogger(string name) => log = LogManager.GetLogger(name);
 
-        public override bool IsEnabled(NpgsqlLogLevel level)
-        {
-            return log.IsEnabled(ToNLogLogLevel(level));
-        }
+        public override bool IsEnabled(NpgsqlLogLevel level) => log.IsEnabled(ToNLogLogLevel(level));
 
         public override void Log(NpgsqlLogLevel level, int connectorId, string msg, Exception exception = null)
         {

@@ -13,8 +13,8 @@ namespace DocumentFlow.Code.Implementation
 {
     public class StackedColumnData : IStackedColumn
     {
-        private List<string> fields = new List<string>();
-        private SfDataGrid gridContent;
+        private readonly List<string> fields = new List<string>();
+        private readonly SfDataGrid gridContent;
 
         public StackedColumnData(SfDataGrid grid)
         {

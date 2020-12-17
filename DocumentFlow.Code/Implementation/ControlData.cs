@@ -14,10 +14,7 @@ namespace DocumentFlow.Code.Implementation
 {
     public class ControlData : IControl
     {
-        public ControlData(Control control)
-        {
-            Owner = control;
-        }
+        public ControlData(Control control) => Owner = control;
 
         int IControl.Left 
         {

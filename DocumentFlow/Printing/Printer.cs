@@ -110,12 +110,12 @@ namespace DocumentFlow.Printing
                 if (XamlReader.Load(stream) is FlowDocument doc)
                 {
                     doc.PagePadding = new Thickness(
-                        UnitConverter.ConvertCentimeter(2, GraphicsUnit.Display),
-                        UnitConverter.ConvertCentimeter(1, GraphicsUnit.Display),
-                        UnitConverter.ConvertCentimeter(1, GraphicsUnit.Display),
-                        UnitConverter.ConvertCentimeter(1, GraphicsUnit.Display));
-                    doc.PageWidth = UnitConverter.ConvertCentimeter(21f, GraphicsUnit.Display);
-                    doc.PageHeight = UnitConverter.ConvertCentimeter(29.7f, GraphicsUnit.Display);
+                        UnitConverter.Convert(2, GraphicsUnit.Centimeter, GraphicsUnit.Display),
+                        UnitConverter.Convert(1, GraphicsUnit.Centimeter, GraphicsUnit.Display),
+                        UnitConverter.Convert(1, GraphicsUnit.Centimeter, GraphicsUnit.Display),
+                        UnitConverter.Convert(1, GraphicsUnit.Centimeter, GraphicsUnit.Display));
+                    doc.PageWidth = UnitConverter.Convert(21f, GraphicsUnit.Centimeter, GraphicsUnit.Display);
+                    doc.PageHeight = UnitConverter.Convert(29.7f, GraphicsUnit.Centimeter, GraphicsUnit.Display);
                     doc.ColumnWidth = doc.PageWidth;
 
                     // http://stackoverflow.com/questions/14903362/keeping-bindings-when-putting-a-flowdocument-through-pagination

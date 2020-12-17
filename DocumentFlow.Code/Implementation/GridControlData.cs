@@ -14,8 +14,8 @@ namespace DocumentFlow.Code.Implementation
 {
     public class GridControlData : ControlData, IDataGrid
     {
-        private string gridName;
-        private IColumnCollection gridColumns;
+        private readonly string gridName;
+        private readonly IColumnCollection gridColumns;
 
         public GridControlData(Control control, string name, IColumnCollection columns) : base(control)
         {
@@ -33,10 +33,7 @@ namespace DocumentFlow.Code.Implementation
             return this;
         }
 
-        void IPopulate.DoAfterPopulation()
-        {
-            AfterPopulation?.Invoke(this, EventArgs.Empty);
-        }
+        void IPopulate.DoAfterPopulation() => AfterPopulation?.Invoke(this, EventArgs.Empty);
 
         void IPopulate.Populate(IDbConnection connection, object data)
         {

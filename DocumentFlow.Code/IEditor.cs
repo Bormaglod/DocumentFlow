@@ -20,7 +20,9 @@ namespace DocumentFlow.Code
     public interface IEditor
     {
         IContainer Container { get; }
+        ICommandCollection Commands { get; }
         IBrowser Browser { get; }
+        IToolBar ToolBar { get; }
         IBrowserParameters Parameters { get; }
         IIdentifier Entity { get; }
         IBindingControl this[string name] { get; }

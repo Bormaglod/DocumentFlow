@@ -12,11 +12,10 @@ namespace DocumentFlow.Code.System
 {
     public class ExecuteEventArgs : EventArgs
     {
-        public ExecuteEventArgs(IBrowser browser)
-        {
-            Browser = browser;
-        }
+        public ExecuteEventArgs(IBrowser browser) => Browser = browser;
+        public ExecuteEventArgs(IEditor editor) => Editor = editor;
 
         public IBrowser Browser { get; }
+        public IEditor Editor { get; }
     }
 }
