@@ -67,6 +67,7 @@ namespace DocumentFlow
         private CommandCollection commandCollection;
         private string doubleClickCommand;
         private BrowserMode mode;
+        private bool moveToEnd;
 
 #if USE_LISTENER
         private bool initializing;
@@ -229,6 +230,8 @@ namespace DocumentFlow
 
         void IBrowser.DefineDoubleClickCommand(string name) => doubleClickCommand = name;
 
+        void IBrowser.MoveToEnd() => moveToEnd = true;
+
         T IBrowser.ExecuteSqlCommand<T>(string sql, object param)
         {
             using (var conn = Db.OpenConnection())
@@ -325,6 +328,8 @@ namespace DocumentFlow
             {
                 form.Text = ExecutedCommand.name;
             }
+
+            moveToEnd = false;
 
             gridContent.ColumnHeaderContextMenu = contextHeaderMenu;
             gridContent.RowHeaderContextMenu = contextRowMenu;
@@ -435,6 +440,16 @@ namespace DocumentFlow
 
             gridContent.CellRenderers.Remove("GroupSummary");
             gridContent.CellRenderers.Add("GroupSummary", new CustomGridTableSummaryRenderer(columns));
+
+            //FIX: По кактим-то причинам перемещение в конец таблицы не происходит при первом открытии окна. Повторное открытие этого или какого другого устраняет проблему
+            if (moveToEnd && gridContent.DataSource is IBindingList bindingList)
+            {
+                gridContent.SelectedIndex = bindingList.Count - 1;
+
+                gridContent.TableControl.ScrollRows.ScrollInView(bindingList.Count - 1);
+                gridContent.TableControl.ScrollRows.UpdateScrollBar();
+            }
+
 
 #if USE_LISTENER
             initializing = true;

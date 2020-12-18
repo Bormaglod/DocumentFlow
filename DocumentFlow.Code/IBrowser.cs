@@ -72,6 +72,7 @@ namespace DocumentFlow.Code
         void CreateStatusColumnRenderer();
         IGroupColumnCollection CreateGroups();
         void DefineDoubleClickCommand(string name);
+        void MoveToEnd();
         T ExecuteSqlCommand<T>(string sql, object param = null);
     }
 }

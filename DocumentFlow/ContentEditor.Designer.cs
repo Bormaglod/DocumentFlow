@@ -42,7 +42,7 @@
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
             this.buttonCustomization = new System.Windows.Forms.ToolStripButton();
             this.buttonPrint = new System.Windows.Forms.ToolStripSplitButton();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparatorUserCommands = new System.Windows.Forms.ToolStripSeparator();
             this.tabSplitterContainer1 = new Syncfusion.Windows.Forms.Tools.TabSplitterContainer();
             this.tabSplitterMaster = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
             this.tabSplitterDocs = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
@@ -105,7 +105,7 @@
             this.buttonRefresh,
             this.buttonCustomization,
             this.buttonPrint,
-            this.toolStripSeparator7});
+            this.toolStripSeparatorUserCommands});
             this.toolStripMain.Location = new System.Drawing.Point(0, 0);
             this.toolStripMain.Name = "toolStripMain";
             this.toolStripMain.Size = new System.Drawing.Size(1118, 52);
@@ -209,10 +209,10 @@
             this.buttonPrint.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonPrint.ButtonClick += new System.EventHandler(this.buttonPrint_ButtonClick);
             // 
-            // toolStripSeparator7
+            // toolStripSeparatorUserCommands
             // 
-            this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 52);
+            this.toolStripSeparatorUserCommands.Name = "toolStripSeparatorUserCommands";
+            this.toolStripSeparatorUserCommands.Size = new System.Drawing.Size(6, 52);
             // 
             // tabSplitterContainer1
             // 
@@ -255,6 +255,7 @@
             this.tabSplitterDocs.Name = "tabSplitterDocs";
             this.tabSplitterDocs.Size = new System.Drawing.Size(1118, 127);
             this.tabSplitterDocs.TabIndex = 2;
+            this.tabSplitterDocs.Tag = "system";
             this.tabSplitterDocs.Text = "Документы";
             // 
             // gridDocuments
@@ -463,6 +464,7 @@
             this.tabSplitterInfo.Name = "tabSplitterInfo";
             this.tabSplitterInfo.Size = new System.Drawing.Size(1118, 127);
             this.tabSplitterInfo.TabIndex = 3;
+            this.tabSplitterInfo.Tag = "system";
             this.tabSplitterInfo.Text = "Информация";
             // 
             // label4
@@ -572,8 +574,8 @@
             this.dateTimeCreate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeCreate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-18258, 0);
-            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(18433, 25);
+            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-24914, 0);
+            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(25089, 25);
             this.dateTimeCreate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -584,7 +586,7 @@
             this.dateTimeCreate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeCreate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-18258, 25);
+            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-24914, 25);
             this.dateTimeCreate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeCreate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -655,8 +657,8 @@
             this.dateTimeUpdate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeUpdate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-18258, 0);
-            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(18433, 25);
+            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-24914, 0);
+            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(25089, 25);
             this.dateTimeUpdate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -667,7 +669,7 @@
             this.dateTimeUpdate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeUpdate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-18258, 25);
+            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-24914, 25);
             this.dateTimeUpdate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeUpdate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -788,6 +790,6 @@
         private System.Windows.Forms.Timer timerDatabaseListen;
         private System.Windows.Forms.ToolStripButton buttonCustomization;
         private Saraff.Twain.Twain32 twain32;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparatorUserCommands;
     }
 }

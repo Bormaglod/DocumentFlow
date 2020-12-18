@@ -66,7 +66,8 @@ namespace DocumentFlow
                 Image = toolBar.IconSize == ButtonIconSize.Small ? picture?.GetImageSmall() : picture?.GetImageLarge(),
                 DisplayStyle = toolBar.ButtonStyle,
                 ImageScaling = ToolStripItemImageScaling.None,
-                TextImageRelation = TextImageRelation.ImageAboveText
+                TextImageRelation = TextImageRelation.ImageAboveText,
+                Tag = "user-defined"
             };
         }
 

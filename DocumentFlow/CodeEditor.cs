@@ -25,17 +25,14 @@ namespace DocumentFlow
     public partial class CodeEditor : ToolWindow, IPage
     {
         private readonly IContainerPage containerPage;
-        private Command command;
-        private BindingList<ErrorData> errorList = new BindingList<ErrorData>();
+        private readonly Command command;
+        private readonly BindingList<ErrorData> errorList = new BindingList<ErrorData>();
 
         private class ErrorData
         {
             private CompilerError error;
 
-            public ErrorData(CompilerError error)
-            {
-                this.error = error;
-            }
+            public ErrorData(CompilerError error) => this.error = error;
 
             [Display(Name = "Код")]
             public string Code => error.ErrorNumber;

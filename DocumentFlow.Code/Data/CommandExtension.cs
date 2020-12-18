@@ -23,9 +23,9 @@ namespace DocumentFlow.Code.Data
     {
         private static readonly Dictionary<Command, CodeContent> codes = new Dictionary<Command, CodeContent>();
 
-        public static IBrowserCode Browser(this Command command) => Task.Run(() => command.Compile()).Result.browser;
+        public static IBrowserCode Browser(this Command command) => Task.Run(() => command.Compile()).Result.Browser;
 
-        public static IEditorCode Editor(this Command command) => Task.Run(() => command.Compile()).Result.editor;
+        public static IEditorCode Editor(this Command command) => Task.Run(() => command.Compile()).Result.Editor;
 
         public static CodeContent Compile(this Command command)
         {
@@ -36,7 +36,7 @@ namespace DocumentFlow.Code.Data
                     throw new EmptyCodeException($"Отсутствует код для создания окна просмотра: {command}.");
                 }
 
-                if (!command.IsChanged && codes.ContainsKey(command))
+                if (codes.ContainsKey(command) && codes[command].Compiled)
                 {
                     return codes[command];
                 }
@@ -91,9 +91,8 @@ namespace DocumentFlow.Code.Data
                     else
                     {
                         codes.Add(command, (browser, editor));
+                        command.PropertyChanged += Command_PropertyChanged;
                     }
-
-                    command.IsChanged = false;
                 }
                 catch (InvalidOperationException e)
                 {
@@ -101,6 +100,14 @@ namespace DocumentFlow.Code.Data
                 }
 
                 return codes[command];
+            }
+        }
+
+        private static void Command_PropertyChanged(object sender, global::System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "script" && sender is Command command && codes.ContainsKey(command))
+            {
+                codes[command].Reset();
             }
         }
     }

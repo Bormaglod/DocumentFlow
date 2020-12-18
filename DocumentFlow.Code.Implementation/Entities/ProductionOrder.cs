@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -286,6 +286,12 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 datagrid
             });
 
+			editor.Commands.Add(CommandMethod.UserDefined, "open-document")
+                .SetIcon("organization")
+                .SetTitle("Контрагент")
+                .AppendTo(editor.ToolBar)
+                .ExecuteAction(OpenContractorClick);
+
             dependentViewer.AddDependentViewers(new string[] { "view-prod-oper", "view-ready-goods" });
         }
 
@@ -302,6 +308,15 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         public override bool GetEnabledValue(string field, string status_name)
         {
             return new string[] { "compiled", "is changing" }.Contains(status_name);
+        }
+
+		private void OpenContractorClick(object sender, ExecuteEventArgs e)
+        {
+            ProductionOrder po = e.Editor.Entity as ProductionOrder;
+            if (po != null && po.contractor_id.HasValue)
+            {
+                e.Editor.Commands.OpenDocument(po.contractor_id.Value);
+            }
         }
     }
 

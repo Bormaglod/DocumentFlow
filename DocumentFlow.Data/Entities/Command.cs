@@ -15,14 +15,28 @@ namespace DocumentFlow.Data.Entities
     public class Command : EntityUID
     {
         public object Locker = new object();
+        private string scriptCode;
 
+#pragma warning disable IDE1006 // Стили именования
         public string code { get; set; }
         public string name { get; set; }
         public Guid? parent_id { get; set; }
         public Guid? picture_id { get; set; }
         public string note { get; set; }
         public Guid? entity_kind_id { get; set; }
-        public string script { get; set; }
+        public string script 
+        {
+            get => scriptCode;
+            set
+            {
+                if (scriptCode != value)
+                {
+                    scriptCode = value;
+                    NotifyPropertyChanged("script");
+                }
+            }
+        }
+#pragma warning restore IDE1006 // Стили именования
 
         public Picture Picture { get; set; }
         public EntityKind EntityKind { get; set; }

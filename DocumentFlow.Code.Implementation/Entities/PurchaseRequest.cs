@@ -141,6 +141,8 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                     .Add("doc_date")
                     .Add("doc_number");
             });
+
+            browser.MoveToEnd();
         }
 
         public override IEnumerable<PurchaseRequest> SelectAll(IDbConnection connection, IBrowserParameters parameters)

@@ -10,46 +10,56 @@ using System.Collections.Generic;
 
 namespace DocumentFlow.Code.Data
 {
-    public struct CodeContent
+    public class CodeContent
     {
-        public IBrowserCode browser;
-        public IEditorCode editor;
-
-        public CodeContent(IBrowserCode browser, IEditorCode editor)
+        public CodeContent(IBrowserCode browser, IEditorCode editor, bool compiled)
         {
-            this.browser = browser;
-            this.editor = editor;
+            Browser = browser;
+            Editor = editor;
+            Compiled = compiled;
         }
+
+        public IBrowserCode Browser { get; set; }
+        public IEditorCode Editor { get; set; }
+        public bool Compiled { get; set; }
 
         public override bool Equals(object obj)
         {
             return obj is CodeContent other &&
-                   EqualityComparer<IBrowserCode>.Default.Equals(browser, other.browser) &&
-                   EqualityComparer<IEditorCode>.Default.Equals(editor, other.editor);
+                   EqualityComparer<IBrowserCode>.Default.Equals(Browser, other.Browser) &&
+                   EqualityComparer<IEditorCode>.Default.Equals(Editor, other.Editor);
         }
 
         public override int GetHashCode()
         {
             int hashCode = 480819551;
-            hashCode = hashCode * -1521134295 + EqualityComparer<IBrowserCode>.Default.GetHashCode(browser);
-            hashCode = hashCode * -1521134295 + EqualityComparer<IEditorCode>.Default.GetHashCode(editor);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IBrowserCode>.Default.GetHashCode(Browser);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IEditorCode>.Default.GetHashCode(Editor);
             return hashCode;
         }
 
-        public void Deconstruct(out IBrowserCode browser, out IEditorCode editor)
+        public void Deconstruct(out IBrowserCode browser, out IEditorCode editor, out bool compiled)
         {
-            browser = this.browser;
-            editor = this.editor;
+            browser = Browser;
+            editor = Editor;
+            compiled = Compiled;
         }
 
-        public static implicit operator (IBrowserCode browser, IEditorCode editor)(CodeContent value)
+        public void Reset() => Compiled = false;
+
+        public static implicit operator (IBrowserCode browser, IEditorCode editor, bool compiled)(CodeContent value)
         {
-            return (value.browser, value.editor);
+            return (value.Browser, value.Editor, value.Compiled);
+        }
+
+        public static implicit operator CodeContent((IBrowserCode browser, IEditorCode editor, bool compiled) value)
+        {
+            return new CodeContent(value.browser, value.editor, value.compiled);
         }
 
         public static implicit operator CodeContent((IBrowserCode browser, IEditorCode editor) value)
         {
-            return new CodeContent(value.browser, value.editor);
+            return new CodeContent(value.browser, value.editor, true);
         }
     }
 }

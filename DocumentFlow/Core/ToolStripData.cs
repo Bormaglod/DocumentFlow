@@ -29,6 +29,12 @@ namespace DocumentFlow
             ToolStrip = toolStrip;
             commands = commandCollection;
 
+            var list = toolStrip.Items.OfType<ToolStripItem>().Where(x => x.Tag?.ToString() == "user-defined").ToList();
+            foreach (var item in list)
+            {
+                toolStrip.Items.Remove(item);
+            }
+
             foreach (ToolStripItem item in toolStrip.Items)
             {
                 if (item is ToolStripSeparator || item.Tag == null)
@@ -56,6 +62,8 @@ namespace DocumentFlow
                     item.Click += UserDefinedCommand_Click;
                     break;
             }
+
+            UpdateButtonVisibleStatus();
         }
 
         protected ToolStrip ToolStrip { get; }
@@ -74,7 +82,10 @@ namespace DocumentFlow
                 }
                 else
                 {
-                    visibleCount++;
+                    if (ToolStrip.Items[i].Visible)
+                    {
+                        visibleCount++;
+                    }
                 }
             }
 

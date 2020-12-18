@@ -133,5 +133,11 @@ namespace DocumentFlow.Code.Implementation
         }
 
         IControl IContainer.AsControl() => this;
+
+        public void Clear()
+        {
+            controls.Clear();
+            Owner.Controls.Clear();
+        }
     }
 }

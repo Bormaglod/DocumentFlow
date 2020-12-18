@@ -63,7 +63,7 @@ namespace DocumentFlow
         private Guid current;
         private object entity;
         private Status status;
-        private IContainer controlContainer;
+        private ContainerData controlContainer;
         private System.ComponentModel.BindingList<DocumentRefs> documents;
         private readonly List<ViewerControl> childs = new List<ViewerControl>();
         private bool creatingPage;
@@ -154,7 +154,22 @@ namespace DocumentFlow
 
         IContainerPage IPage.Container => containerPage;
 
-        void IPage.Rebuild() { }
+        void IPage.Rebuild() 
+        {
+            controlContainer.Clear();
+            panelItemActions.Items.Clear();
+
+            List<TabSplitterPage> removedTabs = tabSplitterContainer1.SecondaryPages
+                .OfType<TabSplitterPage>()
+                .Where(x => x.Tag.ToString() != "system")
+                .ToList();
+            foreach (var tab in removedTabs)
+            {
+                tabSplitterContainer1.SecondaryPages.Remove(tab);
+            }
+
+            CreatePageControls();
+        }
 
         #endregion
 
@@ -357,7 +372,7 @@ namespace DocumentFlow
 
                 DataFieldParameter getEnable = (f) => { return command.Editor().GetEnabledValue(f, status.code); };
 
-                controlContainer.Populate(conn, entity, getEnable, getVisible);
+                ((IContainer)controlContainer).Populate(conn, entity, getEnable, getVisible);
             }
         }
 
