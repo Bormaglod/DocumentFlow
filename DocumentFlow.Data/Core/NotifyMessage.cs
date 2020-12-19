@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace DocumentFlow.Data.Core
 {
@@ -15,16 +15,16 @@ namespace DocumentFlow.Data.Core
 
     public class NotifyMessage
     {
-        [JsonProperty("destination")]
+        [JsonPropertyName("destination")]
         public MessageDestination Destination { get; set; }
 
-        [JsonProperty("entity-id")]
+        [JsonPropertyName("entity-id")]
         public Guid EntityId { get; set; }
 
-        [JsonProperty("object-id")]
+        [JsonPropertyName("object-id")]
         public Guid ObjectId { get; set; }
 
-        [JsonProperty("action")]
+        [JsonPropertyName("action")]
         public string Action { get; set; }
     }
 }

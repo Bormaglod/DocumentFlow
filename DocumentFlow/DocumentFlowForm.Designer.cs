@@ -73,7 +73,7 @@
             // statusBarAdvPanel1
             // 
             this.statusBarAdvPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(114)))), ((int)(((byte)(198)))));
-            this.statusBarAdvPanel1.BeforeTouchSize = new System.Drawing.Size(112, 20);
+            this.statusBarAdvPanel1.BeforeTouchSize = new System.Drawing.Size(108, 20);
             this.statusBarAdvPanel1.Border3DStyle = System.Windows.Forms.Border3DStyle.Flat;
             this.statusBarAdvPanel1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(114)))), ((int)(((byte)(198)))));
             this.statusBarAdvPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -81,7 +81,7 @@
             this.statusBarAdvPanel1.Location = new System.Drawing.Point(0, 2);
             this.statusBarAdvPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.statusBarAdvPanel1.Name = "statusBarAdvPanel1";
-            this.statusBarAdvPanel1.Size = new System.Drawing.Size(112, 20);
+            this.statusBarAdvPanel1.Size = new System.Drawing.Size(108, 20);
             this.statusBarAdvPanel1.SizeToContent = true;
             this.statusBarAdvPanel1.TabIndex = 0;
             this.statusBarAdvPanel1.Text = "statusBarAdvPanel1";

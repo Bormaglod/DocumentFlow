@@ -34,7 +34,7 @@ namespace DocumentFlow
 
         private readonly List<Lib> libs = new List<Lib>();
 
-        public AboutForm()
+        private AboutForm()
         {
             InitializeComponent();
             labelVersion.Text = string.Format(labelVersion.Text, Assembly.GetExecutingAssembly().GetName().Version);
@@ -57,6 +57,12 @@ namespace DocumentFlow
 
             listLibs.DataSource = libs.OrderBy(x => x.Name);
             labelDatabase.Text = string.Format(labelDatabase.Text, Db.ConnectionName);
+        }
+
+        public static void ShowWindow()
+        {
+            var form = new AboutForm();
+            form.ShowDialog();
         }
 
         private void listLibs_SelectionChanging(object sender, ItemSelectionChangingEventArgs e)

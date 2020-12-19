@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ViewerControl));
             this.contextRecordMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             this.menuCopyClipboard = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
@@ -77,8 +76,6 @@
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonCustomization = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.timerDatabaseListen = new System.Windows.Forms.Timer(this.components);
             this.contextHeaderMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             this.menuSortAsc = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,6 +98,8 @@
             this.contextGroupCaptionMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             this.menuGroupCaptionExpand = new System.Windows.Forms.ToolStripMenuItem();
             this.menuGroupCaptionCollapse = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDocuments = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.contextRecordMenu.SuspendLayout();
             this.panelDirectory.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxSearchDirectory)).BeginInit();
@@ -134,13 +133,16 @@
             this.toolStripSeparator4,
             this.menuCopy,
             this.menuAddFolder,
-            this.toolStripSeparator9});
+            this.toolStripSeparator9,
+            this.menuDocuments,
+            this.toolStripSeparator12});
             this.contextRecordMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
             this.contextRecordMenu.Name = "contextGridMenu";
-            this.contextRecordMenu.Size = new System.Drawing.Size(182, 154);
+            this.contextRecordMenu.Size = new System.Drawing.Size(182, 204);
             this.contextRecordMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
             this.contextRecordMenu.Tag = "main-context-menu";
             this.contextRecordMenu.ThemeName = "Metro";
+            this.contextRecordMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextRecordMenu_Opening);
             // 
             // menuCopyClipboard
             // 
@@ -719,9 +721,7 @@
             this.buttonRefresh,
             this.toolStripSeparator7,
             this.buttonCustomization,
-            this.toolStripSeparator8,
-            this.toolStripTextBox1,
-            this.toolStripButton1});
+            this.toolStripSeparator8});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
@@ -752,21 +752,6 @@
             this.toolStripSeparator8.Name = "toolStripSeparator8";
             this.toolStripSeparator8.Size = new System.Drawing.Size(6, 52);
             this.toolStripSeparator8.Tag = "";
-            // 
-            // toolStripTextBox1
-            // 
-            this.toolStripTextBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.toolStripTextBox1.Name = "toolStripTextBox1";
-            this.toolStripTextBox1.Size = new System.Drawing.Size(100, 52);
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 49);
-            this.toolStripButton1.Text = "toolStripButton1";
             // 
             // timerDatabaseListen
             // 
@@ -954,6 +939,17 @@
             this.menuGroupCaptionCollapse.Text = "Свернуть";
             this.menuGroupCaptionCollapse.Click += new System.EventHandler(this.menuGroupCaptionCollapse_Click);
             // 
+            // menuDocuments
+            // 
+            this.menuDocuments.Name = "menuDocuments";
+            this.menuDocuments.Size = new System.Drawing.Size(181, 22);
+            this.menuDocuments.Text = "Документы";
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(178, 6);
+            // 
             // ViewerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1060,7 +1056,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
-        private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripMenuItem menuDocuments;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
     }
 }

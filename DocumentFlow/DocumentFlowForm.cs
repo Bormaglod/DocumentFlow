@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using DocumentFlow.Authorization;
 using DocumentFlow.Code.Data;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Properties;
 
 namespace DocumentFlow
@@ -33,7 +33,11 @@ namespace DocumentFlow
             catalogWindow.ShowWindow(dockPanel1, DockState.DockLeft);
 
             _ = CreateCompilerTask();
+
+            Text += $" - {Db.ConnectionName}";
         }
+
+        public DocumentFlowForm(LoginForm loginForm) : this() => this.loginForm = loginForm;
 
         async private Task CreateCompilerTask()
         {
@@ -50,11 +54,6 @@ namespace DocumentFlow
             }
 
             statusBarAdv1.Panels[0].Text = string.Empty;
-        }
-
-        public DocumentFlowForm(LoginForm loginForm) : this()
-        {
-            this.loginForm = loginForm;
         }
 
         #region IContainerPage implemented
@@ -103,11 +102,7 @@ namespace DocumentFlow
             loginForm.Show();
         }
 
-        void IContainerPage.About()
-        {
-            var form = new AboutForm();
-            form.ShowDialog();
-        }
+        void IContainerPage.About() => AboutForm.ShowWindow();
 
         #endregion
 

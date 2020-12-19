@@ -15,9 +15,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
-#if USE_SETTINGS
+using System.Diagnostics;
+//#if USE_SETTINGS
     using System.IO;
-#endif
+//#endif
 using System.Linq;
 using System.Reflection;
 #if USE_LISTENER
@@ -27,7 +28,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Dapper;
 #if USE_LISTENER
-    using Newtonsoft.Json;
+    using System.Text.Json;
     using Npgsql;
 #endif
 using Syncfusion.Windows.Forms.Tools;
@@ -46,6 +47,7 @@ using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Renderers;
+using DocumentFlow.Properties;
 
 
 namespace DocumentFlow
@@ -111,7 +113,7 @@ namespace DocumentFlow
                 conn.Open();
                 conn.Notification += (o, e) =>
                 {
-                    NotifyMessage message = JsonConvert.DeserializeObject<NotifyMessage>(e.Payload);
+                    NotifyMessage message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload);
                     if (message.EntityId == ExecutedCommand.EntityKind.Id)
                     {
                         if (message.Destination == MessageDestination.List && OwnerId != null && message.ObjectId != OwnerId)
@@ -338,8 +340,8 @@ namespace DocumentFlow
             gridContent.GroupDropAreaItemContextMenu = contextGroupItemMenu;
             gridContent.GroupCaptionContextMenu = contextGroupCaptionMenu;
 
-            gridContent.SortClickAction = Properties.Settings.Default.SortClickAction;
-            gridContent.ShowSortNumbers = Properties.Settings.Default.ShowSortNumbers;
+            gridContent.SortClickAction = Settings.Default.SortClickAction;
+            gridContent.ShowSortNumbers = Settings.Default.ShowSortNumbers;
 
             gridContent.Style.ProgressBarStyle.ForegroundStyle = GridProgressBarStyle.Tube;
             gridContent.Style.ProgressBarStyle.TubeForegroundEndColor = Color.White;
@@ -798,8 +800,7 @@ namespace DocumentFlow
         {
             if (gridContent.SelectedItem is IDocumentInfo row)
             {
-                HistoryWindow win = new HistoryWindow(row.id);
-                win.ShowDialog();
+                HistoryWindow.ShowWindow(row.id);
             }
         }
 
@@ -857,7 +858,7 @@ namespace DocumentFlow
 
         private void buttonSelectRange_Click(object sender, EventArgs e)
         {
-            SelectDateRangeWindow win = new SelectDateRangeWindow();
+            var win = new SelectDateRangeWindow();
             if (win.ShowDialog() == DialogResult.OK)
             {
                 dateTimePickerFrom.Value = win.DateFrom;
@@ -1060,9 +1061,44 @@ namespace DocumentFlow
         private void gridContent_VisibleChanged(object sender, EventArgs e)
         {
             toolBarData.UpdateButtonVisibleStatus();
-            foreach (var item in contextMenuData.Values)
+        }
+
+        private void contextRecordMenu_Opening(object sender, CancelEventArgs e)
+        {
+            menuDocuments.DropDownItems.Clear();
+            if (gridContent.SelectedItem is IDocumentInfo row)
             {
-                item.UpdateButtonVisibleStatus();
+                using (var conn = Db.OpenConnection())
+                {
+                    var kind_code = conn.QueryFirst<string>("select ek.code from document_info di join entity_kind ek on (ek.id = di.entity_kind_id) where di.id = :id", new { row.id });
+                    menuDocuments.Tag = kind_code;
+
+                    var docs = conn.Query<DocumentRefs>("select * from document_refs where owner_id = :id", new { row.id });
+                    foreach (var doc in docs)
+                    {
+                        var menuItem = new ToolStripMenuItem
+                        {
+                            Text = doc.note,
+                            Tag = doc
+                        };
+
+                        menuItem.Click += DocumenuMenuItem_Click;
+                        menuDocuments.DropDownItems.Add(menuItem);
+                    }
+                }
+            }
+        }
+
+        private void DocumenuMenuItem_Click(object sender, EventArgs e)
+        {
+            if (sender is ToolStripMenuItem menuItem && menuItem.Tag is DocumentRefs doc)
+            {
+                string ftpPath = Path.Combine(Settings.Default.FtpPath, menuDocuments.Tag.ToString(), doc.owner_id.ToString());
+                DocumentRefEditor refEditor = new DocumentRefEditor(ftpPath);
+                if (refEditor.GetLocalFileName(doc, out var file))
+                {
+                    Process.Start(file);
+                }
             }
         }
     }

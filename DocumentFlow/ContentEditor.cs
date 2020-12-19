@@ -16,9 +16,9 @@ using System.Linq;
 using System.Windows.Forms;
 #if USE_LISTENER
     using System.Collections.Concurrent;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
     using Npgsql;
 #endif
 using Dapper;
@@ -230,7 +230,7 @@ namespace DocumentFlow
                 conn.Open();
                 conn.Notification += (o, e) =>
                 {
-                    NotifyMessage message = JsonConvert.DeserializeObject<NotifyMessage>(e.Payload);
+                    NotifyMessage message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload);
                     if (message.Destination == MessageDestination.Object && message.ObjectId == current)
                     {
                         notifies.Enqueue(message);
@@ -677,7 +677,7 @@ namespace DocumentFlow
         {
             if (gridDocuments.CurrentItem is DocumentRefs refs)
             {
-                if (refEditor.GetLocalFileName(refs, out string file))
+                if (refEditor.GetLocalFileName(refs, out var file))
                 {
                     Process.Start(file);
                 }
@@ -708,11 +708,7 @@ namespace DocumentFlow
 #endif
         }
 
-        private void buttonStatus_Click(object sender, EventArgs e)
-        {
-            HistoryWindow win = new HistoryWindow(current);
-            win.ShowDialog();
-        }
+        private void buttonStatus_Click(object sender, EventArgs e) => HistoryWindow.ShowWindow(current);
 
         private void buttonPrint_ButtonClick(object sender, EventArgs e)
         {

@@ -15,6 +15,8 @@ namespace DocumentFlow.Printing
     using System.IO.Packaging;
     using System.Linq;
     using System.Text;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
@@ -22,7 +24,6 @@ namespace DocumentFlow.Printing
     using System.Windows.Xps.Packaging;
     using Dapper;
     using DotLiquid;
-    using Newtonsoft.Json;
     using Spire.Pdf;
     using DocumentFlow.Core;
     using DocumentFlow.Data.Core;
@@ -33,23 +34,23 @@ namespace DocumentFlow.Printing
     {
         public class PrintDataset
         {
-            [JsonProperty("name")]
+            [JsonPropertyName("name")]
             public string Name { get; set; }
 
-            [JsonProperty("sql-query")]
+            [JsonPropertyName("sql-query")]
             public string Query { get; set; }
 
             [DefaultValue(false)]
-            [JsonProperty("unique-result", DefaultValueHandling = DefaultValueHandling.Populate)]
+            [JsonPropertyName("unique-result")]
             public bool UniqueResult { get; set; }
         }
 
         public class PrintDatasets
         {
-            [JsonProperty("title", Required = Required.Always)]
+            [JsonPropertyName("title")]
             public string QueryTitle { get; set; }
 
-            [JsonProperty("datasets")]
+            [JsonPropertyName("datasets")]
             public IList<PrintDataset> Datasets { get; set; }
         }
 
@@ -63,7 +64,7 @@ namespace DocumentFlow.Printing
         {
             Preview win = new Preview();
 
-            PrintDatasets pd = JsonConvert.DeserializeObject<PrintDatasets>(form.properties);
+            PrintDatasets pd = JsonSerializer.Deserialize<PrintDatasets>(form.properties);
 
             var objects = new Dictionary<string, object>();
 

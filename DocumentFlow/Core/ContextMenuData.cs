@@ -14,7 +14,18 @@ namespace DocumentFlow
 {
     public class ContextMenuData : ToolStripData, IContextMenu
     {
-        public ContextMenuData(ToolStrip toolStrip, CommandCollection commandCollection) : base(toolStrip, commandCollection) { }
+        public ContextMenuData(ToolStrip toolStrip, CommandCollection commandCollection) : base(toolStrip, commandCollection) 
+        { 
+            if (toolStrip is ContextMenuStrip menu)
+            {
+                menu.Opened += Menu_Opened; ;
+            }
+        }
+
+        private void Menu_Opened(object sender, System.EventArgs e)
+        {
+            UpdateButtonVisibleStatus();
+        }
 
         protected override ToolStripItem CreateToolStripItem(ICommand command, Picture picture)
         {

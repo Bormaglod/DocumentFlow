@@ -17,7 +17,7 @@ namespace DocumentFlow
 {
     public partial class HistoryWindow : Form
     {
-        public HistoryWindow(Guid entityId)
+        private HistoryWindow(Guid entityId)
         {
             InitializeComponent();
             
@@ -31,6 +31,12 @@ namespace DocumentFlow
                 }, new { id = entityId });
                 gridHistory.DataSource = list;
             }
+        }
+
+        public static void ShowWindow(Guid entityId)
+        {
+            HistoryWindow win = new HistoryWindow(entityId);
+            win.ShowDialog();
         }
 
         private void SfButton1_Click(object sender, EventArgs e)

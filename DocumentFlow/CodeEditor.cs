@@ -137,10 +137,7 @@ namespace DocumentFlow
             }
         }
 
-        private void buttonSave_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
+        private void buttonSave_Click(object sender, EventArgs e) => Save();
 
         private void buttonSaveAndClose_Click(object sender, EventArgs e)
         {
@@ -148,10 +145,7 @@ namespace DocumentFlow
             Close();
         }
 
-        private void editControl_Closing(object sender, StreamCloseEventArgs e)
-        {
-            e.Action = SaveChangesAction.Discard;
-        }
+        private void editControl_Closing(object sender, StreamCloseEventArgs e) => e.Action = SaveChangesAction.Discard;
 
         private void buttonCompile_Click(object sender, EventArgs e)
         {
