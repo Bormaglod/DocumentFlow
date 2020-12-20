@@ -26,7 +26,7 @@ namespace DocumentFlow
     public partial class DiagramViewer : ToolWindow, IPage
     {
         private readonly IContainerPage containerPage;
-        private Data.Entities.Transition transition;
+        private readonly Data.Entities.Transition transition;
 
         public DiagramViewer(IContainerPage container, Guid transitionId)
         {
@@ -53,7 +53,7 @@ namespace DocumentFlow
             }
             else
             {
-                using (MemoryStream stream = new MemoryStream())
+                using (var stream = new MemoryStream())
                 {
                     stream.Write(transition.diagram_model, 0, transition.diagram_model.Length);
                     stream.Position = 0;
@@ -76,7 +76,7 @@ namespace DocumentFlow
 
         private bool Save()
         {
-            using (MemoryStream stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
                 diagram1.SaveBinary(stream);
 
@@ -87,7 +87,7 @@ namespace DocumentFlow
                     {
                         try
                         {
-                            conn.Execute("update transition set diagram_model = :DiagramModel where id = :Id", transition, transaction);
+                            conn.Execute("update transition set diagram_model = :diagram_model where id = :id", transition, transaction);
                             transaction.Commit();
                             return true;
                         }
@@ -189,7 +189,7 @@ namespace DocumentFlow
 
         private void CreatePorts(FilledPath rect)
         {
-            for (var p = Syncfusion.Windows.Forms.Diagram.Position.TopLeft; p < Syncfusion.Windows.Forms.Diagram.Position.Custom; p++)
+            for (var p = Position.TopLeft; p < Position.Custom; p++)
             {
                 ConnectionPoint point = new ConnectionPoint()
                 {
@@ -278,13 +278,14 @@ namespace DocumentFlow
                 int y = 20;
 
                 string sql = "select * from changing_status cs join status s_f on (s_f.id = cs.from_status_id) join status s_t on (s_t.id = cs.to_status_id) where transition_id = :id order by order_index";
-                IEnumerable<ChangingStatus> list = conn.Query<ChangingStatus, Status, Status, ChangingStatus>(sql, (changing_status, status_from, status_to) =>
+                var list = conn.Query<ChangingStatus, Status, Status, ChangingStatus>(sql, (changing_status, status_from, status_to) =>
                 {
                     changing_status.FromStatus = status_from;
                     changing_status.ToStatus = status_to;
                     return changing_status;
                 }, new { id = transition.Id });
-                foreach (ChangingStatus cs in list)
+
+                foreach (var cs in list)
                 {
                     RoundRect left = CreateRoundRect(nodes, cs.FromStatus, ref x, ref y);
                     RoundRect right = CreateRoundRect(nodes, cs.ToStatus, ref x, ref y);
@@ -338,10 +339,7 @@ namespace DocumentFlow
             }
         }
 
-        private void buttonSave_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
+        private void buttonSave_Click(object sender, EventArgs e) => Save();
 
         private void buttonSaveAndClose_Click(object sender, EventArgs e)
         {
@@ -367,15 +365,9 @@ namespace DocumentFlow
 
         }
 
-        private void buttonUndo_Click(object sender, EventArgs e)
-        {
-            diagram1.Model.HistoryManager.Undo();
-        }
+        private void buttonUndo_Click(object sender, EventArgs e) => diagram1.Model.HistoryManager.Undo();
 
-        private void buttonRedo_Click(object sender, EventArgs e)
-        {
-            diagram1.Model.HistoryManager.Redo();
-        }
+        private void buttonRedo_Click(object sender, EventArgs e) => diagram1.Model.HistoryManager.Redo();
 
         private void buttonCut_Click(object sender, EventArgs e)
         {

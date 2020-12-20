@@ -429,7 +429,7 @@ namespace DocumentFlow
 
                 foreach (var cs in list)
                 {
-                    bool access = conn.Query<bool>("select access_changing_status(:id, :changing_status_id)", new { id = current, changing_status_id = cs.Id }).Single();
+                    bool access = conn.QuerySingle<bool>("select access_changing_status(:id, :changing_status_id)", new { id = current, changing_status_id = cs.Id });
                     if (!access)
                     {
                         continue;
