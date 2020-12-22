@@ -162,7 +162,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 {
                     using (var conn = editor.CreateConnection())
                     {
-                        editor["purchase_id"].AsPopulateControl().Populate(conn, editor.Entity);
+                        editor.Populates["purchase_id"].Populate(conn, editor.Entity);
                     }
                 })
                 .SetLabelWidth(labelWidth)
@@ -196,7 +196,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                     using (var conn = editor.CreateConnection())
                     {
                         Guid id = editor.ExecuteSqlCommand<Guid>("select contractor_id from purchase_request where id = :purchase_id", new { purchase_id = e.Value });
-                        editor["contractor_id"].Value = id;
+                        editor.Data["contractor_id"] = id;
                     }
                 })
                 .SetLabelWidth(labelWidth)

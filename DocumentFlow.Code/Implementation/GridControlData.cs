@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace DocumentFlow.Code.Implementation
 {
-    public class GridControlData : ControlData, IDataGrid
+    public class GridControlData : ControlData, IDataGrid, IDataName
     {
         private readonly string gridName;
         private readonly IColumnCollection gridColumns;
@@ -25,7 +25,7 @@ namespace DocumentFlow.Code.Implementation
 
         public event EventHandler AfterPopulation;
 
-        string IDataGrid.Name => gridName;
+        string IDataName.Name => gridName;
 
         IControl IPopulate.AfterPopulationAction(EventHandler afterPopulation)
         {

@@ -2,17 +2,14 @@
 // Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 07.11.2020
-// Time: 20:38
+// Date: 22.12.2020
+// Time: 23:31
 //-----------------------------------------------------------------------
-
-using System;
 
 namespace DocumentFlow.Code
 {
-    public interface IDataGrid : IControl, IPopulate
+    public interface IPopulateCollection
     {
-        IDataGrid CreateColumns(Action<IColumnCollection> createColumns);
-        IDataGrid SetEditor(string headerText, IEditorCode editor, Action<object> checkValues = null);
+        IPopulate this[string name] { get; }
     }
 }

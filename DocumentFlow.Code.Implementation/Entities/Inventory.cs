@@ -230,7 +230,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
             const int labelWidth = 100;
             const string goodsSelect = "with recursive r as (select id, status_id, name, parent_id from goods where code = 'Мат' union all select g.id, g.status_id, g.name, g.parent_id from goods g join r on (g.parent_id = r.id)) select id, status_id, name, parent_id from r where status_id in (500, 1002) or id = :goods_id order by name";
 
-            IControl goods_id = editor.CreateSelectBox("goods_id", "Материал", (c) => { return c.Query<GroupDataItem>(goodsSelect, new { goods_id = editor["goods_id"].Value }); })
+            IControl goods_id = editor.CreateSelectBox("goods_id", "Материал", (c) => { return c.Query<GroupDataItem>(goodsSelect, new { goods_id = editor.Data["goods_id"] }); })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
 

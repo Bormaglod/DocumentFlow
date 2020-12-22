@@ -194,6 +194,8 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
                 browser.CreateGroups()
                     .Add("goods_name");
             }
+
+			browser.MoveToEnd();
         }
 
         public override IEnumerable<ReadyGoods> SelectAll(IDbConnection connection, IBrowserParameters parameters)
@@ -262,7 +264,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
                     .ValueChangedAction((s, e) => {
                         using (IDbConnection conn = editor.CreateConnection())
                         {
-                            editor["goods_id"].AsPopulateControl().Populate(conn, editor.Entity);
+                            editor.Populates["goods_id"].Populate(conn, editor.Entity);
                         }
                     })
                     .SetLabelWidth(labelWidth)

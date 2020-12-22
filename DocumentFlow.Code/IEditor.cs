@@ -25,7 +25,9 @@ namespace DocumentFlow.Code
         IToolBar ToolBar { get; }
         IBrowserParameters Parameters { get; }
         IIdentifier Entity { get; }
-        IBindingControl this[string name] { get; }
+        IControl this[string name] { get; }
+        IDataCollection Data { get; }
+        IPopulateCollection Populates { get; }
         IContainer CreateContainer();
         IContainer CreateContainer(int height);
         IDbConnection CreateConnection();

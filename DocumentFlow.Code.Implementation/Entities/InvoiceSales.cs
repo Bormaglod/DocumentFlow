@@ -361,30 +361,30 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 .ValueChangedAction((s, e) =>
                 {
                     decimal goods_price = editor.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
-                    editor["price"].Value = goods_price;
+                    editor.Data["price"] = goods_price;
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
             IControl amount = editor.CreateNumeric("amount", "Количество")
                 .ValueChangedAction((s, e) =>
                 {
-                    editor["cost"].Value = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor["price"].Value);
+                    editor.Data["cost"] = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor.Data["price"]);
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
             IControl price = editor.CreateCurrency("price", "Цена")
                 .ValueChangedAction((s, e) =>
                 {
-                    editor["cost"].Value = Convert.ToDecimal(editor["amount"].Value) * Convert.ToDecimal(e.Value);
+                    editor.Data["cost"] = Convert.ToDecimal(editor.Data["amount"]) * Convert.ToDecimal(e.Value);
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
             IControl cost = editor.CreateCurrency("cost", "Сумма")
                 .ValueChangedAction((s, e) =>
                 {
-                    decimal tax_price = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor["tax"].Value) / 100;
-                    editor["tax_value"].Value = tax_price;
-                    editor["cost_with_tax"].Value = Convert.ToDecimal(e.Value) + tax_price;
+                    decimal tax_price = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor.Data["tax"]) / 100;
+                    editor.Data["tax_value"] = tax_price;
+                    editor.Data["cost_with_tax"] = Convert.ToDecimal(e.Value) + tax_price;
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
@@ -392,20 +392,20 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 .ValueChangedAction((s, e) =>
                 {
                     int tax_percent = Convert.ToInt32(e.Value);
-                    editor["tax_value"].Value = Convert.ToDecimal(editor["cost"].Value) * tax_percent / 100;
+                    editor.Data["tax_value"] = Convert.ToDecimal(editor.Data["cost"]) * tax_percent / 100;
                     editor["tax_value"].Enabled = tax_percent != 0;
                 })
                 .SetLabelWidth(labelWidth)
-                .AsPopulateControl().AfterPopulationAction((s, e) =>
+                .AsPopulate().AfterPopulationAction((s, e) =>
                 {
-                    int tax_percent = Convert.ToInt32(editor["tax"].Value);
+                    int tax_percent = Convert.ToInt32(editor.Data["tax"]);
                     editor["tax_value"].Enabled = tax_percent != 0;
                 })
                 .SetFitToSize(true);
             IControl tax_value = editor.CreateCurrency("tax_value", "НДС")
                 .ValueChangedAction((s, e) =>
                 {
-                    editor["cost_with_tax"].Value = Convert.ToDecimal(editor["cost"].Value) + Convert.ToDecimal(e.Value);
+                    editor.Data["cost_with_tax"] = Convert.ToDecimal(editor.Data["cost"]) + Convert.ToDecimal(e.Value);
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);

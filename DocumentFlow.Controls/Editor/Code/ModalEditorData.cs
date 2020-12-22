@@ -25,11 +25,15 @@ namespace DocumentFlow.Controls.Editor.Code
     {
         private readonly IContainer controlContainer;
         private readonly IBrowserParameters parameters;
+        private readonly IDataCollection dataCollection;
+        private readonly IPopulateCollection populateCollection;
 
         public ModalEditorData(IContainer container, IBrowserParameters browserParameters)
         {
             controlContainer = container;
             parameters = browserParameters;
+            dataCollection = new DataCollection(container);
+            populateCollection = new PopulateCollection(container);
         }
 
         public IIdentifier Entity { get; set; }
@@ -44,7 +48,11 @@ namespace DocumentFlow.Controls.Editor.Code
 
         IBrowserParameters IEditor.Parameters => parameters;
 
-        IBindingControl IEditor.this[string name] => controlContainer.ControlsAll.OfType<IBindingControl>().First(x => x.FieldName == name);
+        IControl IEditor.this[string name] => controlContainer.ControlsAll.OfType<IDataName>().First(x => x.Name == name) as IControl;
+
+        IDataCollection IEditor.Data => dataCollection;
+
+        IPopulateCollection IEditor.Populates => populateCollection;
 
         IContainer IEditor.CreateContainer() => ((IEditor)this).CreateContainer(100);
 

@@ -15,6 +15,7 @@ namespace DocumentFlow.Code
 
     public interface IContainer
     {
+        IControl this[string controlName] { get; }
         IEnumerable<IControl> Controls { get; }
         IEnumerable<IControl> ControlsAll { get; }
         void Add(IControl control);

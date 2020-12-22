@@ -83,8 +83,8 @@ namespace DocumentFlow.Controls.Editor
 
         bool IEditControl.FitToSize
         {
-            get => comboBoxAdv1.Dock == DockStyle.Fill;
-            set => comboBoxAdv1.Dock = DockStyle.Fill;
+            get => panelEdit.Dock == DockStyle.Fill;
+            set => panelEdit.Dock = DockStyle.Fill;
         }
 
         public bool Nullable 

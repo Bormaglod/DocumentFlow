@@ -22,6 +22,15 @@ namespace DocumentFlow.Code.Implementation
 
         public ContainerData(Control container) : base(container) { }
 
+        IControl IContainer.this[string controlName] 
+        { 
+            get
+            {
+                IContainer container = this;
+                return container.ControlsAll.Where(x => x.ControlName == controlName).Single();
+            }
+        }
+
         IEnumerable<IControl> IContainer.Controls => controls.OfType<IControl>();
 
         IEnumerable<IControl> IContainer.ControlsAll
@@ -79,13 +88,9 @@ namespace DocumentFlow.Code.Implementation
                         continue;
 
                     string field = string.Empty;
-                    if (control is IBindingControl binding)
+                    if (control is IDataName dataName)
                     {
-                        field = binding.FieldName;
-                    }
-                    else if (control is IDataGrid dataGrid)
-                    {
-                        field = dataGrid.Name;
+                        field = dataName.Name;
                     }
 
                     if (string.IsNullOrEmpty(field))

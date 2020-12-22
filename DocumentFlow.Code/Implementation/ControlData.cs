@@ -14,7 +14,11 @@ namespace DocumentFlow.Code.Implementation
 {
     public class ControlData : IControl
     {
+        private string controlName = string.Empty;
+
         public ControlData(Control control) => Owner = control;
+
+        string IControl.ControlName => controlName;
 
         int IControl.Left 
         {
@@ -89,6 +93,12 @@ namespace DocumentFlow.Code.Implementation
                     edit.FitToSize = value;
                 }
             }
+        }
+
+        IControl IControl.SetControlName(string name)
+        {
+            controlName = name; ;
+            return this;
         }
 
         IControl IControl.SetLeft(int left)

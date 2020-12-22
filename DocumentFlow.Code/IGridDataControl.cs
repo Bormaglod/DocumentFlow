@@ -15,7 +15,6 @@ namespace DocumentFlow.Code
         string HeaderText { get; set; }
         IEditorCode Editor { get; set; }
         Action<object> CheckValues { get; set; }
-
         void RefreshData();
     }
 }

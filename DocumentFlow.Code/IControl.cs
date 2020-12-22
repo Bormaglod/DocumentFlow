@@ -14,6 +14,7 @@ namespace DocumentFlow.Code
 {
     public interface IControl
     {
+        string ControlName { get; }
         int Left { get; set; }
         int Top { get; set; }
         int Width { get; set; }
@@ -25,6 +26,7 @@ namespace DocumentFlow.Code
         IList<int> Padding { get; set; }
         bool FitToSize { get; set; }
 
+        IControl SetControlName(string name);
         IControl SetLeft(int left);
         IControl SetTop(int top);
         IControl SetWidth(int width);

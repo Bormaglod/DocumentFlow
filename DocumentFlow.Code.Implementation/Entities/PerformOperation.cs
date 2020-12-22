@@ -199,7 +199,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 {
                     using (var conn = editor.CreateConnection())
                     {
-                        editor["goods_id"].AsPopulateControl().Populate(conn, editor.Entity);
+                        editor.Populates["goods_id"].Populate(conn, editor.Entity);
                     }
                 })
                 .SetLabelWidth(labelWidth)
@@ -214,7 +214,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 {
                     using (var conn = editor.CreateConnection())
                     {
-                        editor["operation_id"].AsPopulateControl().Populate(conn, editor.Entity);
+                        editor.Populates["operation_id"].Populate(conn, editor.Entity);
                     }
                 })
                 .SetLabelWidth(labelWidth)
@@ -229,7 +229,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 {
                     using (var conn = editor.CreateConnection())
                     {
-                        editor["using_goods_id"].AsPopulateControl().Populate(conn, editor.Entity);
+                        editor.Populates["using_goods_id"].Populate(conn, editor.Entity);
                     }
                 })
                 .SetLabelWidth(labelWidth)

@@ -20,7 +20,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         public string user_created { get; protected set; }
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; protected set; }
-        public Guid contract_id { get; set; }
+        public Guid? contract_id { get; set; }
         public string contract_name { get; protected set; }
         public DateTime doc_date { get; set; }
         public string doc_number { get; set; }
@@ -193,9 +193,9 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         public void Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
-            const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contract_type = 'purchase'::contract_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
+            const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'seller'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
             const string gridSelect = "select prd.id, prd.owner_id, g.name as goods_name, prd.amount, prd.price, prd.cost, prd.tax, prd.tax_value, prd.cost_with_tax from purchase_request_detail prd join goods g on g.id = prd.goods_id where prd.owner_id = :oid";
-            const string contractSelect = "select id, status_id, name, parent_id from contract where owner_id = :contractor_id and contract_type = 'purchase'::contract_type";
+            const string contractSelect = "select id, status_id, name, parent_id from contract where owner_id = :contractor_id and contractor_type = 'seller'::contractor_type";
 
             IContainer container = editor.CreateContainer(32);
 
@@ -233,8 +233,8 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 {
                     using (var conn = editor.CreateConnection())
                     {
-                        editor["contract_id"].AsPopulateControl().Populate(conn, editor.Entity);
-                        editor["contract_id"].Value = editor.ExecuteSqlCommand<Guid>("select id from contract where owner_id = :contractor_id and contract.contract_type = 'purchase'::contract_type and contract.is_default", new { contractor_id = editor["contractor_id"].Value });
+                        editor.Populates["contract_id"].Populate(conn, editor.Entity);
+                        editor.Data["contract_id"] = editor.ExecuteSqlCommand<Guid>("select id from contract where owner_id = :contractor_id and contract.contractor_type = 'seller'::contractor_type and contract.is_default", new { contractor_id = editor.Data["contractor_id"] });
                     }
                 })
                 .SetLabelWidth(100)
@@ -310,9 +310,12 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         private void OpenContractorClick(object sender, ExecuteEventArgs e)
         {
             PurchaseRequest pr = e.Editor.Entity as PurchaseRequest;
-            if (pr != null && pr.contractor_id.HasValue)
+            if (pr != null)
             {
-                e.Editor.Commands.OpenDocument(pr.contractor_id.Value);
+                if (pr.contractor_id.HasValue)
+                {
+                    e.Editor.Commands.OpenDocument(pr.contractor_id.Value);
+                }
             }
         }
 
@@ -321,7 +324,10 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
             PurchaseRequest pr = e.Editor.Entity as PurchaseRequest;
             if (pr != null)
             {
-                e.Editor.Commands.OpenDocument(pr.contract_id);
+                if (pr.contract_id.HasValue)
+                {
+                    e.Editor.Commands.OpenDocument(pr.contract_id.Value);
+                }
             }
         }
 
@@ -352,30 +358,30 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 .ValueChangedAction((s, e) =>
                 {
                     decimal goods_price = editor.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
-                    editor["price"].Value = goods_price;
+                    editor.Data["price"] = goods_price;
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
             IControl amount = editor.CreateNumeric("amount", "Количество")
                 .ValueChangedAction((s, e) =>
                 {
-                    editor["cost"].Value = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor["price"].Value);
+                    editor.Data["cost"] = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor.Data["price"]);
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
             IControl price = editor.CreateCurrency("price", "Цена")
                 .ValueChangedAction((s, e) =>
                 {
-                    editor["cost"].Value = Convert.ToDecimal(editor["amount"].Value) * Convert.ToDecimal(e.Value);
+                    editor.Data["cost"] = Convert.ToDecimal(editor.Data["amount"]) * Convert.ToDecimal(e.Value);
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
             IControl cost = editor.CreateCurrency("cost", "Сумма")
                 .ValueChangedAction((s, e) =>
                 {
-                    decimal tax_price = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor["tax"].Value) / 100;
-                    editor["tax_value"].Value = tax_price;
-                    editor["cost_with_tax"].Value = Convert.ToDecimal(e.Value) + tax_price;
+                    decimal tax_price = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor.Data["tax"]) / 100;
+                    editor.Data["tax_value"] = tax_price;
+                    editor.Data["cost_with_tax"] = Convert.ToDecimal(e.Value) + tax_price;
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
@@ -383,20 +389,20 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 .ValueChangedAction((s, e) =>
                 {
                     int tax_percent = Convert.ToInt32(e.Value);
-                    editor["tax_value"].Value = Convert.ToDecimal(editor["cost"].Value) * tax_percent / 100;
+                    editor.Data["tax_value"] = Convert.ToDecimal(editor.Data["cost"]) * tax_percent / 100;
                     editor["tax_value"].Enabled = tax_percent != 0;
                 })
                 .SetLabelWidth(labelWidth)
-                .AsPopulateControl().AfterPopulationAction((s, e) =>
+                .AsPopulate().AfterPopulationAction((s, e) =>
                 {
-                    int tax_percent = Convert.ToInt32(editor["tax"].Value);
+                    int tax_percent = Convert.ToInt32(editor.Data["tax"]);
                     editor["tax_value"].Enabled = tax_percent != 0;
                 })
                 .SetFitToSize(true);
             IControl tax_value = editor.CreateCurrency("tax_value", "НДС")
                 .ValueChangedAction((s, e) =>
                 {
-                    editor["cost_with_tax"].Value = Convert.ToDecimal(editor["cost"].Value) + Convert.ToDecimal(e.Value);
+                    editor.Data["cost_with_tax"] = Convert.ToDecimal(editor.Data["cost"]) + Convert.ToDecimal(e.Value);
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);

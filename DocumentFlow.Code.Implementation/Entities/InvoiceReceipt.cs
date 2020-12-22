@@ -21,6 +21,8 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         public Guid? owner_id { get; set; }
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; set; }
+        public Guid? contract_id { get; set; }
+        public string contract_name { get; protected set; }
         public DateTime doc_date { get; set; }
         public string doc_number { get; set; }
         public Guid organization_id { get; set; }
@@ -47,12 +49,15 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 ir.status_id, 
                 s.note as status_name, 
                 ua.name as user_created, 
-                c.name as contractor_name, 
+                c.name as contractor_name,
+                ir.contract_id,
+                contract.name as contract_name,
                 ir.doc_date, 
                 ir.doc_number, 
                 o.name as organization_name, 
                 ir.invoice_date, 
                 ir.invoice_number, 
+                ir.receipt_date,
                 pr.doc_number as purchase_number, 
                 pr.doc_date as purchase_date, 
                 case 
@@ -69,8 +74,9 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 left join invoice_receipt_detail ird on (ird.owner_id = ir.id) 
                 left join contractor c on (c.id = ir.contractor_id) 
                 left join purchase_request pr on (pr.id = ir.owner_id) 
+                left join contract on (contract.id = ir.contract_id)
             where {0} 
-            group by ir.id, ir.status_id, ua.name, c.name, ir.doc_date, ir.doc_number, s.note, o.name, c.tax_payer, ir.invoice_date, ir.invoice_number, pr.doc_number, pr.doc_date";
+            group by ir.id, ir.status_id, ua.name, c.name, ir.doc_date, ir.doc_number, s.note, o.name, c.tax_payer, ir.invoice_date, ir.invoice_number, pr.doc_number, pr.doc_date, contract.name";
 
         public void Initialize(IBrowser browser)
         {
@@ -123,6 +129,10 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
                 columns.CreateText("contractor_name", "Контрагент")
                     .SetAutoSizeColumnsMode(SizeColumnsMode.Fill)
+                    .SetAllowGrouping(true);
+
+                columns.CreateText("contract_name", "Договор")
+                    .SetWidth(150)
                     .SetAllowGrouping(true);
 
                 columns.CreateDate("purchase_date", "Дата")
@@ -221,19 +231,26 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
     public class InvoiceReceiptEditor : EditorCodeBase<InvoiceReceipt>, IEditorCode
     {
+        private class PurchaseRequestData
+        {
+            public Guid contractor_id { get; set; }
+            public Guid contract_id { get; set; }
+        }
+
         public void Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
-            const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and supplier) or (status_id = 500) or (id = :contractor_id) order by name";
+            const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'seller'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
             const string ownerSelect = "select pr.id, ek.name || ' №' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) || ' (' || c.name || ')' as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) join contractor c on (c.id = pr.contractor_id) where (pr.status_id in (1001, 3001, 3002, 3003) or (pr.id = :owner_id)) and (pr.contractor_id = :contractor_id or :contractor_id is null) group by pr.id, ek.name, doc_number, doc_date, c.name";
             const string gridSelect = "select ird.id, ird.owner_id, g.name as goods_name, ird.amount, ird.price, ird.cost, ird.tax, ird.tax_value, ird.cost_with_tax from invoice_receipt_detail ird join goods g on (g.id = ird.goods_id) where ird.owner_id = :oid";
+            const string contractSelect = "select id, status_id, name, parent_id from contract where owner_id = :contractor_id and contractor_type = 'seller'::contractor_type";
 
             IContainer container = editor.CreateContainer(32);
 
             IControl doc_number = editor.CreateTextBox("doc_number", "Номер")
                 .SetControlWidth(110)
                 .SetLabelAutoSize(true)
-                .SetWidth(165)
+                .SetWidth(170)
                 .SetDock(DockStyle.Left);
 
             IControl doc_date = editor.CreateDateTimePicker("doc_date", "от")
@@ -244,8 +261,8 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 .SetDock(DockStyle.Left);
 
             IControl organization_id = editor.CreateComboBox("organization_id", "Организация", (conn) => { return conn.Query<ComboBoxDataItem>(orgSelect); })
-                .SetLabelWidth(150)
-                .SetControlWidth(300)
+                .SetLabelWidth(100)
+                .SetControlWidth(200)
                 .SetLabelTextAlignment(ContentAlignment.TopRight);
 
             container.Add(new IControl[]
@@ -260,15 +277,60 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     InvoiceReceipt ir = e.Entity as InvoiceReceipt;
                     return c.Query<GroupDataItem>(contractorSelect, new { ir.contractor_id });
                 })
-                .SetLabelWidth(90)
-                .SetControlWidth(700);
+                .ValueChangedAction((s, e) =>
+                {
+                    using (var conn = editor.CreateConnection())
+                    {
+                        editor.Populates["contract_id"].Populate(conn, editor.Entity);
+                        editor.Data["contract_id"] = editor.ExecuteSqlCommand<Guid>("select id from contract where owner_id = :contractor_id and contract.contractor_type = 'seller'::contractor_type and contract.is_default", new { contractor_id = editor.Data["contractor_id"] });
+                        editor.Populates["owner_id"].Populate(conn, editor.Entity);
+                    }
+                })
+                .SetLabelWidth(100)
+                .SetControlWidth(580);
+
+            IControl contract_id = editor.CreateSelectBox("contract_id", "Договор", (e, c) =>
+                {
+                    InvoiceReceipt ir = e.Entity as InvoiceReceipt;
+                    return c.Query<GroupDataItem>(contractSelect, new { ir.contractor_id });
+                })
+                .ValueChangedAction((s, e) =>
+                {
+                    using (var conn = editor.CreateConnection())
+                    {
+                        Guid? cid = e.Value as Guid?;
+                        if (cid.HasValue)
+                        {
+                            editor.Container["InvoicePanel"].Visible = conn.QuerySingle<bool>("select tax_payer from contract where id = :id", new { id = cid.Value });
+                        }
+                        else
+                        {
+                            editor.Container["InvoicePanel"].Visible = false;
+                        }
+                    }
+                })
+                .SetLabelWidth(100)
+                .SetControlWidth(580);
 
             IControl owner_id = editor.CreateSelectBox("owner_id", "Заказ", (e, c) =>
                 {
                     InvoiceReceipt ir = e.Entity as InvoiceReceipt;
                     return c.Query<GroupDataItem>(ownerSelect, new { ir.contractor_id, ir.owner_id });
                 })
-                .SetLabelWidth(90)
+                .ValueChangedAction((s, e) =>
+                {
+                    using (var conn = editor.CreateConnection())
+                    {
+                        var cc = conn.QuerySingle<PurchaseRequestData>("select contractor_id, contract_id from purchase_request where id = :id", new { id = e.Value });
+                        editor.Data["contractor_id"] = cc.contractor_id;
+                        editor.Data["contract_id"] = cc.contract_id;
+
+                        InvoiceReceipt ir = editor.Entity as InvoiceReceipt;
+                        conn.Execute("select fill_invoice_details(:invoice_id, :purchase_id)", new { invoice_id = ir.id, purchase_id = e.Value });
+                        editor.Populates["datagrid"].Populate(conn, editor.Entity);
+                    }
+                })
+                .SetLabelWidth(100)
                 .SetControlWidth(450);
 
             IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<InvoiceReceiptDetail>(gridSelect, new { editor.Entity.oid }).AsList(); })
@@ -312,11 +374,12 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
             IContainer invoice_panel = editor.CreateContainer(42);
             invoice_panel.AsControl()
+                .SetControlName("InvoicePanel")
                 .SetPadding(top: 10);
 
             IControl invoice_number = editor.CreateTextBox("invoice_number", "Счёт фактура №")
                 .SetLabelAutoSize(true)
-                .SetWidth(225)
+                .SetWidth(230)
                 .SetDock(DockStyle.Left);
 
             IControl invoice_date = editor.CreateDateTimePicker("invoice_date", "от", customFormat: "dd.MM.yyyy")
@@ -325,28 +388,71 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 .SetDock(DockStyle.Left)
                 .SetWidth(210);
 
+            invoice_panel.Add(new IControl[]
+            {
+                invoice_number,
+                invoice_date
+            });
+
             editor.Container.Add(new IControl[] {
                 container.AsControl(),
                 contractor_id,
+                contract_id,
                 owner_id,
                 datagrid,
                 invoice_panel.AsControl()
             });
-        }
 
-        protected override string GetSelect()
-        {
-            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, owner_id, contractor_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_receipt where id = :id";
-        }
+            editor.Commands.Add(CommandMethod.UserDefined, "open-document")
+                .SetIcon("organization")
+                .SetTitle("Контрагент")
+                .AppendTo(editor.ToolBar)
+                .ExecuteAction(OpenContractorClick);
 
-        protected override string GetUpdate(InvoiceReceipt entity)
-        {
-            return "update invoice_receipt set contractor_id = :contractor_id, doc_date = :doc_date, doc_number = :doc_number, invoice_date = :invoice_date, invoice_number = :invoice_number, owner_id = :owner_id where id = :id";
+            editor.Commands.Add(CommandMethod.UserDefined, "open-document")
+                .SetIcon("stack-books")
+                .SetTitle("Договор")
+                .AppendTo(editor.ToolBar)
+                .ExecuteAction(OpenContractClick);
         }
 
         public override bool GetEnabledValue(string field, string status_name)
         {
             return new string[] { "compiled", "is changing" }.Contains(status_name);
+        }
+
+        protected override string GetSelect()
+        {
+            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, owner_id, contractor_id, contract_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_receipt where id = :id";
+        }
+
+        protected override string GetUpdate(InvoiceReceipt entity)
+        {
+            return "update invoice_receipt set contractor_id = :contractor_id, contract_id = :contract_id, doc_date = :doc_date, doc_number = :doc_number, invoice_date = :invoice_date, invoice_number = :invoice_number, owner_id = :owner_id where id = :id";
+        }
+
+        private void OpenContractorClick(object sender, ExecuteEventArgs e)
+        {
+            InvoiceReceipt ir = e.Editor.Entity as InvoiceReceipt;
+            if (ir != null)
+            {
+                if (ir.contractor_id.HasValue)
+                {
+                    e.Editor.Commands.OpenDocument(ir.contractor_id.Value);
+                }
+            }
+        }
+
+        private void OpenContractClick(object sender, ExecuteEventArgs e)
+        {
+            InvoiceReceipt ir = e.Editor.Entity as InvoiceReceipt;
+            if (ir != null)
+            {
+                if (ir.contractor_id.HasValue)
+                {
+                    e.Editor.Commands.OpenDocument(ir.contract_id.Value);
+                }
+            }
         }
     }
 
@@ -361,30 +467,30 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 .ValueChangedAction((s, e) =>
                 {
                     decimal goods_price = editor.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
-                    editor["price"].Value = goods_price;
+                    editor.Data["price"] = goods_price;
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
             IControl amount = editor.CreateNumeric("amount", "Количество")
                 .ValueChangedAction((s, e) =>
                 {
-                    editor["cost"].Value = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor["price"].Value);
+                    editor.Data["cost"] = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor.Data["price"]);
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
             IControl price = editor.CreateCurrency("price", "Цена")
                 .ValueChangedAction((s, e) =>
                 {
-                    editor["cost"].Value = Convert.ToDecimal(editor["amount"].Value) * Convert.ToDecimal(e.Value);
+                    editor.Data["cost"] = Convert.ToDecimal(editor.Data["amount"]) * Convert.ToDecimal(e.Value);
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
             IControl cost = editor.CreateCurrency("cost", "Сумма")
                 .ValueChangedAction((s, e) =>
                 {
-                    decimal tax_price = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor["tax"].Value) / 100;
-                    editor["tax_value"].Value = tax_price;
-                    editor["cost_with_tax"].Value = Convert.ToDecimal(e.Value) + tax_price;
+                    decimal tax_price = Convert.ToDecimal(e.Value) * Convert.ToDecimal(editor.Data["tax"]) / 100;
+                    editor.Data["tax_value"] = tax_price;
+                    editor.Data["cost_with_tax"] = Convert.ToDecimal(e.Value) + tax_price;
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
@@ -392,20 +498,20 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 .ValueChangedAction((s, e) =>
                 {
                     int tax_percent = Convert.ToInt32(e.Value);
-                    editor["tax_value"].Value = Convert.ToDecimal(editor["cost"].Value) * tax_percent / 100;
+                    editor.Data["tax_value"] = Convert.ToDecimal(editor.Data["cost"]) * tax_percent / 100;
                     editor["tax_value"].Enabled = tax_percent != 0;
                 })
                 .SetLabelWidth(labelWidth)
-                .AsPopulateControl().AfterPopulationAction((s, e) =>
+                .AsPopulate().AfterPopulationAction((s, e) =>
                 {
-                    int tax_percent = Convert.ToInt32(editor["tax"].Value);
+                    int tax_percent = Convert.ToInt32(editor.Data["tax"]);
                     editor["tax_value"].Enabled = tax_percent != 0;
                 })
                 .SetFitToSize(true);
             IControl tax_value = editor.CreateCurrency("tax_value", "НДС")
                 .ValueChangedAction((s, e) =>
                 {
-                    editor["cost_with_tax"].Value = Convert.ToDecimal(editor["cost"].Value) + Convert.ToDecimal(e.Value);
+                    editor.Data["cost_with_tax"] = Convert.ToDecimal(editor.Data["cost"]) + Convert.ToDecimal(e.Value);
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);

@@ -16,7 +16,7 @@ using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation
 {
-    public class BindingControlData : ControlData, IBindingControl, IPopulate
+    public class BindingControlData : ControlData, IBindingControl, IPopulate, IDataName
     {
         private bool populating;
         private object populateData;
@@ -38,6 +38,8 @@ namespace DocumentFlow.Code.Implementation
 
         public event EventHandler<ValueChangedEventArgs> ValueChanged;
         public event EventHandler AfterPopulation;
+
+        string IDataName.Name => FieldName;
 
         public string LabelText
         {
@@ -164,7 +166,7 @@ namespace DocumentFlow.Code.Implementation
 
         internal IList<string> Locked { get; set; }
 
-        public IPopulate AsPopulateControl() => this;
+        public IPopulate AsPopulate() => this;
 
         public IBindingControl SetLabelAutoSize(bool autoSize)
         {

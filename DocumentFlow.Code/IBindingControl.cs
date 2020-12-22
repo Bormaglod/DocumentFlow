@@ -60,7 +60,7 @@ namespace DocumentFlow.Code
 
         object DefaultValue { get; set; }
 
-        IPopulate AsPopulateControl();
+        IPopulate AsPopulate();
 
         /// <summary>
         /// Устанавливает флаг который определяет способ определения ширины подписи элемента управления.
