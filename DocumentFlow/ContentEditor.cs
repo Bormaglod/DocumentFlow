@@ -17,6 +17,7 @@ using System.Windows.Forms;
 #if USE_LISTENER
     using System.Collections.Concurrent;
     using System.Text.Json;
+    using System.Text.Json.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
     using Npgsql;
@@ -230,7 +231,15 @@ namespace DocumentFlow
                 conn.Open();
                 conn.Notification += (o, e) =>
                 {
-                    NotifyMessage message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload);
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters =
+                            {
+                                new JsonStringEnumConverter()
+                            }
+                    };
+                    NotifyMessage message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload, options);
                     if (message.Destination == MessageDestination.Object && message.ObjectId == current)
                     {
                         notifies.Enqueue(message);

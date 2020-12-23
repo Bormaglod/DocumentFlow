@@ -67,7 +67,7 @@
             gridDateTimeColumn1.AllowResizing = true;
             gridDateTimeColumn1.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.AllCells;
             gridDateTimeColumn1.HeaderText = "Дата/время изменения";
-            gridDateTimeColumn1.MappingName = "Changed";
+            gridDateTimeColumn1.MappingName = "changed";
             gridDateTimeColumn1.MaxDateTime = new System.DateTime(9999, 12, 31, 23, 59, 59, 999);
             gridDateTimeColumn1.Pattern = Syncfusion.WinForms.Input.Enums.DateTimePattern.FullDateTime;
             gridDateTimeColumn1.Width = 180D;
@@ -76,7 +76,7 @@
             gridTextColumn3.AllowResizing = true;
             gridTextColumn3.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.Fill;
             gridTextColumn3.HeaderText = "Пользователь";
-            gridTextColumn3.MappingName = "User";
+            gridTextColumn3.MappingName = "user_name";
             this.gridHistory.Columns.Add(gridTextColumn1);
             this.gridHistory.Columns.Add(gridTextColumn2);
             this.gridHistory.Columns.Add(gridDateTimeColumn1);

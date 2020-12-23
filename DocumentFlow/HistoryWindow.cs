@@ -23,7 +23,7 @@ namespace DocumentFlow
             
             using (var conn = Db.OpenConnection())
             {
-                string sql = "select h.*, fs.*, ts.*, ua.name as user_name from history h join status fs on (fs.id = h.from_status_id) join status ts on (ts.id = h.to_status_id) join user_alias ua on (ua.id = h.user_id) where reference_id = :id order by changed desc";
+                string sql = "select ua.name as user_name, h.*, fs.*, ts.* from history h join status fs on (fs.id = h.from_status_id) join status ts on (ts.id = h.to_status_id) join user_alias ua on (ua.id = h.user_id) where reference_id = :id order by changed desc";
                 IEnumerable<History> list = conn.Query<History, Status, Status, History>(sql, (history, fromStatus, toStatus) => {
                     history.FromStatus = fromStatus;
                     history.ToStatus = toStatus;

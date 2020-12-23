@@ -10,26 +10,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 #if USE_LISTENER
-    using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 #endif
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Diagnostics;
-//#if USE_SETTINGS
-    using System.IO;
-//#endif
+using System.IO;
 using System.Linq;
 using System.Reflection;
 #if USE_LISTENER
-    using System.Threading;
-    using System.Threading.Tasks;
+using System.Threading;
+using System.Threading.Tasks;
 #endif
 using System.Windows.Forms;
 using Dapper;
 #if USE_LISTENER
-    using System.Text.Json;
-    using Npgsql;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Npgsql;
 #endif
 using Syncfusion.Windows.Forms.Tools;
 using Syncfusion.WinForms.DataGrid;
@@ -113,7 +112,15 @@ namespace DocumentFlow
                 conn.Open();
                 conn.Notification += (o, e) =>
                 {
-                    NotifyMessage message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload);
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters =
+                            {
+                                new JsonStringEnumConverter()
+                            }
+                    };
+                    NotifyMessage message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload, options);
                     if (message.EntityId == ExecutedCommand.EntityKind.Id)
                     {
                         if (message.Destination == MessageDestination.List && OwnerId != null && message.ObjectId != OwnerId)
