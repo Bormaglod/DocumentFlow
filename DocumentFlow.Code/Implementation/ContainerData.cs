@@ -17,10 +17,11 @@ namespace DocumentFlow.Code.Implementation
 {
     public class ContainerData : ControlData, IContainer
     {
+        private IInformation info;
         private readonly List<IControl> controls = new List<IControl>();
         private readonly List<string> locked = new List<string>();
 
-        public ContainerData(Control container) : base(container) { }
+        public ContainerData(Control container, IInformation information = null) : base(container) => info = information;
 
         IControl IContainer.this[string controlName] 
         { 
@@ -61,6 +62,11 @@ namespace DocumentFlow.Code.Implementation
             {
                 binding.Locked = locked;
             }
+
+            if (control is ContainerData containerData)
+            {
+                containerData.Update(info);
+            }
         }
 
         void IContainer.Add(IControl[] controls)
@@ -72,7 +78,7 @@ namespace DocumentFlow.Code.Implementation
             }
         }
 
-        void IContainer.Populate(IDbConnection conn, object entity, DataFieldParameter getEnabled, DataFieldParameter getVisible)
+        void IContainer.Populate(IDbConnection conn, object entity, IControlEnabled enabled, IControlVisible visible)
         {
             IContainer container = this;
             foreach (IControl control in container.ControlsAll)
@@ -84,7 +90,7 @@ namespace DocumentFlow.Code.Implementation
                         populateControl.Populate(conn, entity);
                     }
 
-                    if (getEnabled == null && getVisible == null)
+                    if (enabled == null && visible == null)
                         continue;
 
                     string field = string.Empty;
@@ -96,11 +102,11 @@ namespace DocumentFlow.Code.Implementation
                     if (string.IsNullOrEmpty(field))
                         continue;
 
-                    if (getEnabled != null)
-                        control.Enabled = getEnabled(field);
+                    if (enabled != null && info != null)
+                        control.Enabled = enabled.Ability(entity, field, info);
 
-                    if (getVisible != null)
-                        control.Visible = getVisible(field);
+                    if (visible != null && info != null)
+                        control.Visible = visible.Ability(entity, field, info);
                 }
                 catch (Exception e)
                 {
@@ -112,7 +118,7 @@ namespace DocumentFlow.Code.Implementation
 
                     throw new PopulateControlException(control, PopulateMethod.Populate, $"Ошибка при попытке заполнения элемента управления{controlName}.", e);
                 }
-                
+
             }
 
             foreach (IControl control in container.ControlsAll)
@@ -143,6 +149,17 @@ namespace DocumentFlow.Code.Implementation
         {
             controls.Clear();
             Owner.Controls.Clear();
+        }
+
+        public void Update(IInformation information)
+        {
+            info = information;
+
+            IContainer container = this;
+            foreach (var item in container.ControlsAll.OfType<ContainerData>())
+            {
+                item.Update(info);
+            }
         }
     }
 }

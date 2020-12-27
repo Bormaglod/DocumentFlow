@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -35,7 +36,28 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         }
     }
 
-    public class ProductionOrderBrowser : BrowserCodeBase<ProductionOrder>, IBrowserCode
+    public class ProductionOrderDetail : IDetail
+    {
+        public long id { get; protected set; }
+        public Guid owner_id { get; set; }
+        public Guid goods_id { get; set; }
+        public string goods_name { get; protected set; }
+        public decimal amount { get; set; }
+        public decimal price { get; set; }
+        public decimal cost { get; set; }
+        public int tax { get; set; }
+        public decimal tax_value { get; set; }
+        public decimal cost_with_tax { get; set; }
+        public int complete_status { get; set; }
+        public Guid calculation_id { get; set; }
+        public string calculation_code { get; protected set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
+    }
+
+    public class ProductionOrderBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             with cte as 
@@ -73,7 +95,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
             where {0}
             group by po.id, po.status_id, ua.name, c.name, po.doc_date, po.doc_number, s.note, o.name, c.tax_payer, cte.complete_status";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowGrouping = true;
             browser.DataType = DataType.Document;
@@ -145,56 +167,35 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
             });
         }
 
-        public override IEnumerable<ProductionOrder> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<ProductionOrder>(GetSelect(), new
+            return connection.Query<ProductionOrder>(string.Format(baseSelect, "po.doc_date between :from_date and :to_date and po.organization_id = :organization_id"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
                 organization_id = parameters.OrganizationId
-            });
+            }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "po.doc_date between :from_date and :to_date and po.organization_id = :organization_id");
+            return connection.QuerySingleOrDefault<ProductionOrder>(string.Format(baseSelect, "po.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "po.id = :id");
+            return connection.Execute("delete from production_order where id = :id", new { id }, transaction);
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new ProductionOrderEditor();
         }
     }
 
-    public class ProductionOrderDetail : IDetail
+    public class ProductionOrderEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        public long id { get; protected set; }
-        public Guid owner_id { get; set; }
-        public Guid goods_id { get; set; }
-        public string goods_name { get; protected set; }
-        public decimal amount { get; set; }
-        public decimal price { get; set; }
-        public decimal cost { get; set; }
-        public int tax { get; set; }
-        public decimal tax_value { get; set; }
-        public decimal cost_with_tax { get; set; }
-        public int complete_status { get; set; }
-        public Guid calculation_id { get; set; }
-        public string calculation_code { get; protected set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
-    }
-
-    public class ProductionOrderEditor : EditorCodeBase<ProductionOrder>, IEditorCode
-    {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and buyer) or (status_id = 500) or (id = :contractor_id) order by name";
@@ -241,37 +242,46 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                     columns.CreateText("goods_name", "Номенклатура")
                         .SetHideable(false)
                         .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
+
                     columns.CreateText("calculation_code", "Калькуляция")
                         .SetHideable(false)
                         .SetWidth(150);
+
                     columns.CreateNumeric("amount", "Количество")
                         .SetDecimalDigits(3)
                         .SetWidth(100)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                         .SetWidth(100)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("tax", "%НДС", NumberFormatMode.Percent)
                         .SetWidth(80)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Center);
+
                     columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("cost_with_tax", "Всего", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateProgress("complete_status", "Выполнено")
                         .SetWidth(100)
                         .SetHideable(false);
+
                     columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
                         .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}")
                         .AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
@@ -295,19 +305,41 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
             dependentViewer.AddDependentViewers(new string[] { "view-prod-oper", "view-ready-goods" });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, contractor_id, doc_date, doc_number, organization_id from production_order where id = :id";
+            string sql = @"
+                select 
+                    id, 
+                    '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, 
+                    contractor_id, 
+                    doc_date, 
+                    doc_number, 
+                    organization_id
+                from production_order
+                where id = :id";
+            return connection.QuerySingleOrDefault<ProductionOrder>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(ProductionOrder entity)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update production_order set contractor_id = :contractor_id, doc_date = :doc_date, doc_number = :doc_number where id = :id";
+            string sql = "insert into production_order default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            string sql = "update production_order set contractor_id = :contractor_id, doc_date = :doc_date, doc_number = :doc_number where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from production_order where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
 
 		private void OpenContractorClick(object sender, ExecuteEventArgs e)
@@ -320,9 +352,9 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         }
     }
 
-    public class ProductionOrderDetailEditor : EditorCodeBase<ProductionOrderDetail>, IEditorCode
+    public class ProductionOrderDetailEditor : IEditorCode, IDataOperation
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const int labelWidth = 120;
             const string goodsSelect = "with recursive gp as (select id, status_id, name, parent_id from goods where status_id in (500, 1002) and id = '4da429d1-cd8f-4757-bea8-49c99adc48d8' union all select gc.id, gc.status_id, gc.name, gc.parent_id from goods gc join gp on (gc.parent_id = gp.id) where gc.status_id in (500, 1002)) select * from gp order by name";
@@ -341,9 +373,11 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl calculation_id = editor.CreateSelectBox("calculation_id", "Калькуляция", (c) => { return c.Query<GroupDataItem>(goodsCalculation, new { goods_id = editor.Data["goods_id"] }); })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl amount = editor.CreateNumeric("amount", "Количество")
                 .ValueChangedAction((s, e) =>
                 {
@@ -351,6 +385,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl price = editor.CreateCurrency("price", "Цена")
                 .ValueChangedAction((s, e) =>
                 {
@@ -358,6 +393,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl cost = editor.CreateCurrency("cost", "Сумма")
                 .ValueChangedAction((s, e) =>
                 {
@@ -367,6 +403,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl tax = editor.CreateChoice("tax", "НДС%", new Dictionary<int, string>() { { 0, "Без НДС" }, { 10, "10%" }, { 20, "20%" } })
                 .ValueChangedAction((s, e) =>
                 {
@@ -381,6 +418,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                     editor["tax_value"].Enabled = tax_percent != 0;
                 })
                 .SetFitToSize(true);
+
             IControl tax_value = editor.CreateCurrency("tax_value", "НДС")
                 .ValueChangedAction((s, e) =>
                 {
@@ -388,6 +426,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl cost_with_tax = editor.CreateCurrency("cost_with_tax", "Всего с НДС")
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
@@ -404,10 +443,17 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
             });
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
+            string sql = "select id, owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax, calculation_id from production_order_detail where id = :id";
+            return connection.QuerySingleOrDefault<ProductionOrderDetail>(sql, new { id = id.oid });
+        }
+
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        {
+            string sql = "insert into production_order_detail (owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax, calculation_id) values (:owner_id, :goods_id, :amount, :price, :cost, :tax, :tax_value, :cost_with_tax, :calculation_id) returning id";
             ProductionOrderDetail detail = editor.Entity as ProductionOrderDetail;
-            return connection.QuerySingle<TId>(GetInsert(),
+            return connection.QuerySingle<long>(sql,
                 new
                 {
                     owner_id = parameters.OwnerId,
@@ -423,19 +469,15 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 transaction: transaction);
         }
 
-        protected override string GetSelect()
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "select id, owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax, calculation_id from production_order_detail where id = :id";
+            string sql = "update production_order_detail set goods_id = :goods_id, amount = :amount, price = :price, cost = :cost, tax = :tax, tax_value = :tax_value, cost_with_tax = :cost_with_tax, calculation_id = :calculation_id where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        protected override string GetInsert()
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            return "insert into production_order_detail (owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax, calculation_id) values (:owner_id, :goods_id, :amount, :price, :cost, :tax, :tax_value, :cost_with_tax, :calculation_id) returning id";
-        }
-
-        protected override string GetUpdate(ProductionOrderDetail entity)
-        {
-            return "update production_order_detail set goods_id = :goods_id, amount = :amount, price = :price, cost = :cost, tax = :tax, tax_value = :tax_value, cost_with_tax = :cost_with_tax, calculation_id = :calculation_id where id = :id";
+            return connection.Execute("delete from production_order_detail where id = :id", new { id = id.oid }, transaction);
         }
     }
 }

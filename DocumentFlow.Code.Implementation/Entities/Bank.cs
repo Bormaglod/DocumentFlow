@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
-using DocumentFlow.Code.Core;
+using Dapper;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation.BankImp
@@ -33,7 +35,7 @@ namespace DocumentFlow.Code.Implementation.BankImp
         }
     }
 
-    public class BankBrowser : BrowserCodeBase<Bank>, IBrowserCode
+    public class BankBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -47,75 +49,84 @@ namespace DocumentFlow.Code.Implementation.BankImp
             from bank b 
                 join status s on s.id = b.status_id";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
 
             browser.CreateStatusColumnRenderer();
 
-            IColumnCollection columns = browser.Columns;
+            browser.CreateColumns((columns) =>
+            {
+                columns.CreateText("id", "Id")
+                    .SetWidth(180)
+                    .SetVisible(false);
 
-            columns.CreateText("id", "Id")
-                .SetWidth(180)
-                .SetVisible(false);
+                columns.CreateInteger("status_id", "Код состояния")
+                    .SetWidth(80)
+                    .SetVisible(false);
 
-            columns.CreateInteger("status_id", "Код состояния")
-                .SetWidth(80)
-                .SetVisible(false);
+                columns.CreateText("status_name", "Состояние")
+                    .SetWidth(110)
+                    .SetVisible(false);
 
-            columns.CreateText("status_name", "Состояние")
-                .SetWidth(110)
-                .SetVisible(false);
+                columns.CreateText("code", "Код")
+                    .SetWidth(110);
 
-            columns.CreateText("code", "Код")
-                .SetWidth(110);
+                columns.CreateText("name", "Наименование")
+                    .SetHideable(false)
+                    .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateText("name", "Наименование")
-                .SetHideable(false)
-                .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
+                columns.CreateInteger("bik", "БИК")
+                    .SetFormat("00 00 00 000")
+                    .SetWidth(100);
 
-            columns.CreateInteger("bik", "БИК")
-				.SetFormat("00 00 00 000")
-                .SetWidth(100);
+                columns.CreateInteger("account", "Корр. счёт")
+                    .SetFormat("000 00 000 0 00000000 000")
+                    .SetWidth(180);
 
-            columns.CreateInteger("account", "Корр. счёт")
-				.SetFormat("000 00 000 0 00000000 000")
-                .SetWidth(180);
-
-            columns.CreateSortedColumns()
-                .Add("name", ListSortDirection.Ascending);
+                columns.CreateSortedColumns()
+                    .Add("name", ListSortDirection.Ascending);
+            });
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new BankEditor();
         }
 
-        protected override string GetSelect()
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return baseSelect;
+            return connection.Query<Bank>(baseSelect).AsList();
         }
 
-        protected override string GetSelectById()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return baseSelect + " where b.id = :id";
+            return connection.QuerySingleOrDefault<Bank>(baseSelect + " where b.id = :id", new { id });
+        }
+
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
+        {
+            return connection.Execute("delete from bank where id = :id", new { id }, transaction);
         }
     }
 
-    public class BankEditor : EditorCodeBase<Bank>, IEditorCode
+    public class BankEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        private const int labelWidth = 160;
+        private const int labelWidth = 120;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             IControl code = editor.CreateTextBox("code", "Код")
                 .SetLabelWidth(labelWidth);
+
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
+
             IControl bik = editor.CreateMaskedText<string>("bik_text", "БИК", "## ## ## ###")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(100);
+
             IControl account = editor.CreateMaskedText<decimal>("account", "Корр. счёт", "### ## ### # ######## ###")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(180);
@@ -128,19 +139,32 @@ namespace DocumentFlow.Code.Implementation.BankImp
             });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, code, name, bik, account from bank where id = :id";
+            string sql = "select id, code, name, bik, account from bank where id = :id";
+            return connection.QuerySingleOrDefault<Bank>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(Bank bank)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update bank set code = :code, name = :name, bik = :bik, account = :account where id = :id";
+            string sql = "insert into bank default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            string sql = "update bank set code = :code, name = :name, bik = :bik, account = :account where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from bank where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
     }
 }

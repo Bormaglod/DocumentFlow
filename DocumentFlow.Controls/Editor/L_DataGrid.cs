@@ -55,7 +55,7 @@ namespace DocumentFlow.Controls.Editor
         private void Edit()
         {
             ModalEditor editorForm = new ModalEditor(owner, HeaderText, CheckValues);
-            if (gridMain.SelectedItem is IDetail detail && editorForm.Edit(Editor, detail.id))
+            if (gridMain.SelectedItem is IDetail detail && editorForm.Edit(Editor, detail))
             {
                 RefreshData();
             }
@@ -83,7 +83,7 @@ namespace DocumentFlow.Controls.Editor
         private void ButtonDelete_Click(object sender, EventArgs e)
         {
             ModalEditor editorForm = new ModalEditor(owner, HeaderText, CheckValues);
-            if (gridMain.SelectedItem is IDetail detail && editorForm.Delete(Editor, detail.id))
+            if (gridMain.SelectedItem is IDetail detail && editorForm.Delete(Editor, detail))
             {
                 RefreshData();
             }

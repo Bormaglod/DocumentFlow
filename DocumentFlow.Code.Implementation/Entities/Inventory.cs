@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -30,7 +30,20 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
         }
     }
 
-    public class InventoryBrowser : BrowserCodeBase<Inventory>, IBrowserCode
+    public class InventoryDetail : IDetail
+    {
+        public long id { get; protected set; }
+        public Guid owner_id { get; set; }
+        public Guid goods_id { get; set; }
+        public string goods_name { get; protected set; }
+        public decimal amount { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
+    }
+
+    public class InventoryBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -50,7 +63,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
                 left join person p on (p.id = e.person_id) 
             where {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowGrouping = true;
             browser.DataType = DataType.Document;
@@ -103,46 +116,33 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
             });
         }
 
-        public override IEnumerable<Inventory> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<Inventory>(GetSelect(), new
+            return connection.Query<Inventory>(string.Format(baseSelect, "i.doc_date between :from_date and :to_date and i.organization_id = :organization_id"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
                 organization_id = parameters.OrganizationId
-            });
+            }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "i.doc_date between :from_date and :to_date and i.organization_id = :organization_id");
+            return connection.QuerySingleOrDefault<Inventory>(string.Format(baseSelect, "i.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "i.id = :id");
+            return connection.Execute("delete from inventory where id = :id", new { id }, transaction);
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new InventoryEditor();
         }
     }
 
-    public class InventoryDetail : IDetail
-    {
-        public long id { get; protected set; }
-        public Guid owner_id { get; set; }
-        public Guid goods_id { get; set; }
-        public string goods_name { get; protected set; }
-        public decimal amount { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
-    }
-
-    public class InventoryEditor : EditorCodeBase<Inventory>, IEditorCode
+    public class InventoryEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         public void Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
@@ -207,25 +207,38 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
             });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, doc_date, doc_number, organization_id, employee_id from inventory where id = :id";
+            string sql = "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, doc_date, doc_number, organization_id, employee_id from inventory where id = :id";
+            return connection.QuerySingleOrDefault<Inventory>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(Inventory entity)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update inventory set doc_date = :doc_date, doc_number = :doc_number, employee_id = :employee_id, organization_id = :organization_id where id = :id";
+            string sql = "insert into inventory default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            string sql = "update inventory set doc_date = :doc_date, doc_number = :doc_number, employee_id = :employee_id, organization_id = :organization_id where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from inventory where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
     }
 
-    public class InventoryDetailEditor : EditorCodeBase<InventoryDetail>, IEditorCode
+    public class InventoryDetailEditor : IEditorCode, IDataOperation
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const int labelWidth = 100;
             const string goodsSelect = "with recursive r as (select id, status_id, name, parent_id from goods where code = 'Мат' union all select g.id, g.status_id, g.name, g.parent_id from goods g join r on (g.parent_id = r.id)) select id, status_id, name, parent_id from r where status_id in (500, 1002) or id = :goods_id order by name";
@@ -244,10 +257,17 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
             });
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
+            string sql = "select id, owner_id, goods_id, amount from inventory_detail where id = :id";
+            return connection.QuerySingleOrDefault<InventoryDetail>(sql, new { id = id.oid });
+        }
+
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        {
+            string sql = "insert into inventory_detail (owner_id, goods_id, amount) values (:owner_id, :goods_id, :amount) returning id";
             InventoryDetail detail = editor.Entity as InventoryDetail;
-            return connection.QuerySingle<TId>(GetInsert(),
+            return connection.QuerySingle<long>(sql,
                 new
                 {
                     owner_id = parameters.OwnerId,
@@ -257,19 +277,15 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
                 transaction: transaction);
         }
 
-        protected override string GetSelect()
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "select id, owner_id, goods_id, amount from inventory_detail where id = :id";
+            string sql = "update inventory_detail set goods_id = :goods_id, amount = :amount where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        protected override string GetInsert()
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            return "insert into inventory_detail (owner_id, goods_id, amount) values (:owner_id, :goods_id, :amount) returning id";
-        }
-
-        protected override string GetUpdate(InventoryDetail entity)
-        {
-            return "update inventory_detail set goods_id = :goods_id, amount = :amount where id = :id";
+            return connection.Execute("delete from inventory_detail where id = :id", new { id = id.oid }, transaction);
         }
     }
 }

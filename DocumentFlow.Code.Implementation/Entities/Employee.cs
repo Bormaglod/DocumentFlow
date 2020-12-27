@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -32,7 +33,7 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
         }
     }
 
-    public class EmployeeBrowser : BrowserCodeBase<Employee>, IBrowserCode
+    public class EmployeeBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -56,7 +57,7 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
                 left join okpdtr on (okpdtr.id = e.post_id) 
             where {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
             browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
@@ -65,60 +66,61 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
 
             browser.CreateStatusColumnRenderer();
 
-            IColumnCollection columns = browser.Columns;
+            browser.CreateColumns((columns) =>
+            {
+                columns.CreateText("id", "Id")
+                    .SetWidth(180)
+                    .SetVisible(false);
 
-            columns.CreateText("id", "Id")
-                .SetWidth(180)
-                .SetVisible(false);
+                columns.CreateInteger("status_id", "Код состояния")
+                    .SetWidth(80)
+                    .SetVisible(false);
 
-            columns.CreateInteger("status_id", "Код состояния")
-                .SetWidth(80)
-                .SetVisible(false);
+                columns.CreateText("status_name", "Состояние")
+                    .SetWidth(110)
+                    .SetVisible(false);
 
-            columns.CreateText("status_name", "Состояние")
-                .SetWidth(110)
-                .SetVisible(false);
+                columns.CreateText("person_name", "Сотрудник")
+                    .SetHideable(false)
+                    .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateText("person_name", "Сотрудник")
-                .SetHideable(false)
-                .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
+                columns.CreateText("post_name", "Должность")
+                    .SetWidth(300);
 
-            columns.CreateText("post_name", "Должность")
-                .SetWidth(300);
+                columns.CreateText("email", "Эл. почта")
+                    .SetWidth(250);
 
-            columns.CreateText("email", "Эл. почта")
-                .SetWidth(250);
+                columns.CreateText("post_role", "Роль")
+                    .SetWidth(150)
+                    .SetVisible(false);
 
-            columns.CreateText("post_role", "Роль")
-                .SetWidth(150)
-                .SetVisible(false);
-
-            columns.CreateSortedColumns()
-                .Add("person_name", ListSortDirection.Ascending);
+                columns.CreateSortedColumns()
+                    .Add("person_name", ListSortDirection.Ascending);
+            });
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new EmployeeEditor();
         }
 
-        public override IEnumerable<Employee> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<Employee>(GetSelect(), new { owner_id = parameters.OwnerId });
+            return connection.Query<Employee>(string.Format(baseSelect, "e.owner_id = :owner_id"), new { owner_id = parameters.OwnerId }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "e.owner_id = :owner_id");
+            return connection.QuerySingleOrDefault<Employee>(string.Format(baseSelect, "e.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "e.id = :id");
+            return connection.Execute("delete from employee where id = :id", new { id }, transaction);
         }
     }
 
-    public class EmployeeEditor : EditorCodeBase<Employee>, IEditorCode
+    public class EmployeeEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private const int labelWidth = 120;
 
@@ -131,18 +133,23 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(400)
                 .SetEnabled(false);
+
             IControl person_id = editor.CreateComboBox("person_id", "Сотрудник", (conn) => { return conn.Query<GroupDataItem>(personSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(200);
+
             IControl post_id = editor.CreateComboBox("post_id", "Должность", (conn) => { return conn.Query<ComboBoxDataItem>(okpdtrSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(300);
+
             IControl phone = editor.CreateTextBox("phone", "Телефон")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(190);
+
             IControl email = editor.CreateTextBox("email", "Эл. почта")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(250);
+
             IControl post_role = editor.CreateChoice("post_role", "Роль", new Dictionary<int, string>() {
                 { 0, "Не определена" },
                 { 1, "Руководитель" },
@@ -162,32 +169,35 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
             });
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return connection.QuerySingle<TId>(GetInsert(), new { owner_id = parameters.OwnerId }, transaction: transaction);
+            string sql = "select e.id, c.name as company_name, e.person_id, e.post_id, e.phone, e.email, e.post_role from employee e join company c on (c.id = e.owner_id) left join person p on (p.id = e.person_id) where e.id = :id";
+            return connection.QuerySingleOrDefault<Employee>(sql, new { id = id.oid });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "select e.id, c.name as company_name, e.person_id, e.post_id, e.phone, e.email, e.post_role from employee e join company c on (c.id = e.owner_id) left join person p on (p.id = e.person_id) where e.id = :id";
+            string sql = "insert into employee (owner_id) values (:owner_id) returning id";
+            return connection.QuerySingle<Guid>(sql, new { owner_id = parameters.OwnerId }, transaction: transaction);
         }
 
-        protected override string GetInsert()
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "insert into employee (owner_id) values (:owner_id) returning id";
+            string sql = "update employee set person_id = :person_id, post_id = :post_id, phone = :phone, email = :email, post_role = :post_role where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        protected override string GetUpdate(Employee employee)
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            return "update employee set person_id = :person_id, post_id = :post_id, phone = :phone, email = :email, post_role = :post_role where id = :id";
+            return connection.Execute("delete from employee where id = :id", new { id = id.oid }, transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
         {
-            if (field == "company_name")
+            if (dataName == "company_name")
                 return false;
 
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
     }
 }

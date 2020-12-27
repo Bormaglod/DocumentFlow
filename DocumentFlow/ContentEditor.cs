@@ -94,11 +94,8 @@ namespace DocumentFlow
             command = commandEditor;
             current = id;
 
-            controlContainer = new ContainerData(tabSplitterMaster);
-
             CreateEditor();
             CreatePageControls();
-            CreateChildDataGrids();
 
 #if USE_LISTENER
             timerDatabaseListen.Start();
@@ -314,26 +311,42 @@ namespace DocumentFlow
             }
         }
 
+        private IInformation GetInformation()
+        {
+            return new Information
+            {
+                Id = current,
+                Created = dateTimeCreate.Value,
+                Changed = dateTimeUpdate.Value,
+                Author = textBoxCreator.Text,
+                Editor = textBoxUpdater.Text,
+                StatusCode = status.code
+            };
+        }
+
         private void CreateEditor()
         {
-            using (var conn = Db.OpenConnection())
+            if (command.Editor() is IDataOperation operation)
             {
-                using (var transaction = conn.BeginTransaction())
+                using (var conn = Db.OpenConnection())
                 {
-                    try
+                    using (var transaction = conn.BeginTransaction())
                     {
-                        if (current == Guid.Empty)
+                        try
                         {
-                            current = command.Editor().Insert<Guid>(conn, transaction, parameters, editorData);
-                        }
+                            if (current == Guid.Empty)
+                            {
+                                current = (Guid)operation.Insert(conn, transaction, parameters, editorData);
+                            }
 
-                        conn.Execute("lock_document", new { document_id = current }, transaction, commandType: CommandType.StoredProcedure);
-                        transaction.Commit();
-                    }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        ExceptionHelper.MesssageBox(e);
+                            conn.Execute("lock_document", new { document_id = current }, transaction, commandType: CommandType.StoredProcedure);
+                            transaction.Commit();
+                        }
+                        catch (Exception e)
+                        {
+                            transaction.Rollback();
+                            ExceptionHelper.MesssageBox(e);
+                        }
                     }
                 }
             }
@@ -359,12 +372,15 @@ namespace DocumentFlow
         /// </summary>
         private void ReadDataEntity()
         {
-            using (var conn = Db.OpenConnection())
+            if (command.Editor() is IDataOperation operation)
             {
-                entity = command.Editor().SelectById(conn, current, parameters);
-                if (editorData != null)
+                using (var conn = Db.OpenConnection())
                 {
-                    editorData.Entity = entity as IIdentifier;
+                    entity = operation.Select(conn, Identifier.Get(current), parameters);
+                    if (editorData != null)
+                    {
+                        editorData.Entity = entity as IIdentifier;
+                    }
                 }
             }
         }
@@ -373,15 +389,14 @@ namespace DocumentFlow
         {
             using (var conn = Db.OpenConnection())
             {
-                DataFieldParameter getVisible = null;
+                IControlVisible visible = null;
                 if (!creatingPage)
                 {
-                    getVisible = (f) => { return command.Editor().GetVisibleValue(f, status.code); };
+                    visible = command.Editor() as IControlVisible;
                 }
 
-                DataFieldParameter getEnable = (f) => { return command.Editor().GetEnabledValue(f, status.code); };
-
-                ((IContainer)controlContainer).Populate(conn, entity, getEnable, getVisible);
+                IControlEnabled enabled = command.Editor() as IControlEnabled;
+                ((IContainer)controlContainer).Populate(conn, entity, enabled, visible);
             }
         }
 
@@ -496,22 +511,25 @@ namespace DocumentFlow
                 return false;
             }
 
-            using (var conn = Db.OpenConnection())
+            if (command.Editor() is IDataOperation operation)
             {
-                using (var transaction = conn.BeginTransaction())
+                using (var conn = Db.OpenConnection())
                 {
-                    try
+                    using (var transaction = conn.BeginTransaction())
                     {
-                        command.Editor().Update(conn, transaction, editorData);
-                        transaction.Commit();
-                        return true;
-                    }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        ExceptionHelper.MesssageBox(e);
-                    }
+                        try
+                        {
+                            operation.Update(conn, transaction, editorData);
+                            transaction.Commit();
+                            return true;
+                        }
+                        catch (Exception e)
+                        {
+                            transaction.Rollback();
+                            ExceptionHelper.MesssageBox(e);
+                        }
 
+                    }
                 }
             }
 
@@ -602,6 +620,7 @@ namespace DocumentFlow
             try
             {
                 UpdateCurrentStatusInfo();
+                controlContainer.Update(GetInformation());
                 PopulateControls();
                 CreateActionButtons();
             }
@@ -622,14 +641,14 @@ namespace DocumentFlow
             tabSplitterMaster.SuspendLayout();
             try
             {
-                
+                UpdateCurrentStatusInfo();
+                controlContainer = new ContainerData(tabSplitterMaster, GetInformation());
                 editorData = new EditorData(controlContainer, ownerBrowser, commandFactory, parameters, toolStripMain)
                 {
                     Entity = entity as IIdentifier
                 };
 
                 command.Editor().Initialize(editorData, this);
-                UpdateCurrentStatusInfo();
                 PopulateControls();
                 CreateActionButtons();
             }

@@ -6,18 +6,10 @@
 // Time: 13:34
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections;
-using System.Data;
-
 namespace DocumentFlow.Code
 {
     public interface IBrowserCode
     {
         void Initialize(IBrowser browser);
-        IList Select(IDbConnection connection, IBrowserParameters parameters);
-        object SelectById(IDbConnection connection, Guid id, IBrowserParameters parameters);
-        int Delete(IDbConnection connection, IDbTransaction transaction, Guid id);
-        IEditorCode CreateEditor();
     }
 }

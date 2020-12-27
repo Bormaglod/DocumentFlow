@@ -78,17 +78,22 @@
   <ItemGroup>
     <Compile Include="Controls\CustomGridTableSummaryRenderer.cs" />
     <Compile Include="Controls\GridDecimalColumn.cs" />
-    <Compile Include="Core\BrowserCodeBase.cs" />
     <Compile Include="Core\PopulateControlException.cs" />
     <Compile Include="Data\CodeContent.cs" />
     <Compile Include="Data\CommandExtension.cs" />
+    <Compile Include="IBrowserOperation.cs" />
     <Compile Include="IContextMenu.cs" />
+    <Compile Include="IControlEnabled.cs" />
+    <Compile Include="IControlVisible.cs" />
     <Compile Include="IDataCollection.cs" />
+    <Compile Include="IDataEditor.cs" />
+    <Compile Include="IDataOperation.cs" />
     <Compile Include="IDataGrid.cs" />
     <Compile Include="IDataName.cs" />
     <Compile Include="IDetail.cs" />
     <Compile Include="IEditControl.cs" />
     <Compile Include="IGroupColumnCollection.cs" />
+    <Compile Include="IInformation.cs" />
     <Compile Include="ILabelControl.cs" />
     <Compile Include="Implementation\BindingControlData.cs" />
     <Compile Include="Implementation\BrowserParameters.cs" />
@@ -100,6 +105,7 @@
     <Compile Include="Implementation\GridColumnData.cs" />
     <Compile Include="Implementation\GridNumericColumnData.cs" />
     <Compile Include="Implementation\GroupColumnCollection.cs" />
+    <Compile Include="Implementation\Identifier.cs" />
     <Compile Include="Implementation\ListControlData.cs" />
     <Compile Include="Implementation\PopulateCollection.cs" />
     <Compile Include="Implementation\SortedColumnsData.cs" />
@@ -116,7 +122,6 @@
     <Compile Include="Core\ChoiceDataItem.cs" />
     <Compile Include="System\ColumnDescriptionAttribute.cs" />
     <Compile Include="Core\ComboBoxDataItem.cs" />
-    <Compile Include="Core\EditorCodeBase.cs" />
     <Compile Include="System\Enums.cs" />
     <Compile Include="System\ExecuteEventArgs.cs" />
     <Compile Include="System\GettingParametersEventArgs.cs" />

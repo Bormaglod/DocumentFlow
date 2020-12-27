@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -36,7 +37,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
         }
     }
 
-    public class ReadyGoodsBrowser : BrowserCodeBase<ReadyGoods>, IBrowserCode
+    public class ReadyGoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelectChild = @"
             select 
@@ -82,7 +83,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
 
         private BrowserMode mode;
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             mode = browser.Mode;
 
@@ -198,54 +199,49 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
 			browser.MoveToEnd();
         }
 
-        public override IEnumerable<ReadyGoods> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
             if (mode == BrowserMode.Main)
             {
-                return connection.Query<ReadyGoods>(GetSelect(), new
+                string sql = string.Format(baseSelectMain, "rg.doc_date between :from_date and :to_date and rg.organization_id = :organization_id");
+                return connection.Query<ReadyGoods>(sql, new
                 {
                     from_date = parameters.DateFrom,
                     to_date = parameters.DateTo,
                     organization_id = parameters.OrganizationId
-                });
+                }).AsList();
             }
             else
             {
-                return connection.Query<ReadyGoods>(GetSelect(), new
+                string sql = string.Format(baseSelectChild, "rg.owner_id = :owner_id");
+                return connection.Query<ReadyGoods>(sql, new
                 {
                     owner_id = parameters.OwnerId
-                });
+                }).AsList();
             }
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            if (mode == BrowserMode.Main)
-            {
-                return string.Format(baseSelectMain, "rg.doc_date between :from_date and :to_date and rg.organization_id = :organization_id");
-            }
-            else
-            {
-                return string.Format(baseSelectChild, "rg.owner_id = :owner_id");
-            }
+            return connection.QuerySingleOrDefault<ReadyGoods>(string.Format(mode == BrowserMode.Main ? baseSelectMain : baseSelectChild, "rg.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-			return string.Format(mode == BrowserMode.Main ? baseSelectMain : baseSelectChild, "rg.id = :id");
+            return connection.Execute("delete from ready_goods where id = :id", new { id }, transaction);
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new ReadyGoodsEditor();
         }
     }
 
-    public class ReadyGoodsEditor : EditorCodeBase<ReadyGoods>, IEditorCode
+    public class ReadyGoodsEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private bool main;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const int labelWidth = 190;
             const string goodsSelect = "with recursive r as (select id, status_id, name, parent_id from goods where id = '4da429d1-cd8f-4757-bea8-49c99adc48d8' union all select g.id, g.status_id, g.name, g.parent_id from goods g join r on (r.id = g.parent_id and g.status_id = 500)) select id, status_id, name, parent_id from r union all select g.id, g.status_id, g.name, g.parent_id from goods g join production_order_detail pod on (pod.owner_id = :owner_id and pod.goods_id = g.id) order by name";
@@ -310,35 +306,56 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
             });
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return connection.QuerySingle<TId>(GetInsert(), new { owner_id = parameters.OwnerId }, transaction: transaction);
+            string sql = @"
+                select 
+                    rg.id, 
+                    rg.owner_id, 
+                    '№' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') as document_name, 
+                    rg.doc_date, 
+                    rg.doc_number, 
+                    rg.goods_id, 
+                    rg.amount, 
+                    rg.price, 
+                    rg.cost
+                from ready_goods rg 
+                    left join production_order po on (po.id = rg.owner_id) 
+                where rg.id = :id";
+            return connection.QuerySingleOrDefault<ReadyGoods>(sql, new { id = id.oid });
         }
 
-        protected override string GetSelect()
-        {
-            return "select rg.id, rg.owner_id, '№' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') as document_name, rg.doc_date, rg.doc_number, rg.goods_id, rg.amount, rg.price, rg.cost from ready_goods rg left join production_order po on (po.id = rg.owner_id) where rg.id = :id";
-        }
-
-        protected override string GetInsert()
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
             if (main)
-                return base.GetInsert();
-            
-            return "insert into ready_goods (owner_id) values (:owner_id) returning id";
+            {
+                string sql = "insert into ready_goods default values returning id";
+                return connection.QuerySingle<Guid>(sql, transaction: transaction);
+            }
+            else
+            {
+                string sql = "insert into ready_goods (owner_id) values (:owner_id) returning id";
+                return connection.QuerySingle<Guid>(sql, new { owner_id = parameters.OwnerId }, transaction: transaction);
+            }
         }
 
-        protected override string GetUpdate(ReadyGoods entity)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "update ready_goods set owner_id = :owner_id, doc_date = :doc_date, goods_id = :goods_id, amount = :amount, price = :price, cost = :cost where id = :id";
+            string sql = "update ready_goods set owner_id = :owner_id, doc_date = :doc_date, goods_id = :goods_id, amount = :amount, price = :price, cost = :cost where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            if (field == "document_name")
+            return connection.Execute("delete from ready_goods where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            if (dataName == "document_name")
                 return false;
 
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
     }
 }

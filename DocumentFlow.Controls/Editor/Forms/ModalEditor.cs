@@ -44,28 +44,31 @@ namespace DocumentFlow.Controls.Forms
             if (editorData.Entity == null)
                 throw new ArgumentNullException($"Объект типа {entityType} должен реализовывать интерфейс IIdentifier");
 
-            editor.Initialize(editorData);
-            CalculateHeightForm();
-            using (var conn = Db.OpenConnection())
+            if (editor is IDataOperation operation)
             {
-                container.Populate(conn, editorData.Entity);
-
-                if (ShowDialog() == DialogResult.OK)
+                editor.Initialize(editorData);
+                CalculateHeightForm();
+                using (var conn = Db.OpenConnection())
                 {
-                    using (var transaction = conn.BeginTransaction())
-                    {
-                        try
-                        {
-                            editor.Insert<long>(conn, transaction, parameters, editorData);
-                            transaction.Commit();
-                            return true;
-                        }
-                        catch (Exception e)
-                        {
-                            transaction.Rollback();
-                            ExceptionHelper.MesssageBox(e);
-                        }
+                    container.Populate(conn, editorData.Entity);
 
+                    if (ShowDialog() == DialogResult.OK)
+                    {
+                        using (var transaction = conn.BeginTransaction())
+                        {
+                            try
+                            {
+                                operation.Insert(conn, transaction, parameters, editorData);
+                                transaction.Commit();
+                                return true;
+                            }
+                            catch (Exception e)
+                            {
+                                transaction.Rollback();
+                                ExceptionHelper.MesssageBox(e);
+                            }
+
+                        }
                     }
                 }
             }
@@ -73,26 +76,55 @@ namespace DocumentFlow.Controls.Forms
             return false;
         }
 
-        public bool Edit(IEditorCode editor, long id)
+        public bool Edit(IEditorCode editor, IIdentifier id)
         {
-            using (var conn = Db.OpenConnection())
+            if (editor is IDataOperation operation)
             {
-                editorData = new ModalEditorData(container, parameters)
+                using (var conn = Db.OpenConnection())
                 {
-                    Entity = editor.SelectById(conn, id, parameters) as IIdentifier
-                };
-                editor.Initialize(editorData);
-                CalculateHeightForm();
+                    editorData = new ModalEditorData(container, parameters)
+                    {
+                        Entity = operation.Select(conn, id, parameters) as IIdentifier
+                    };
+                    editor.Initialize(editorData);
+                    CalculateHeightForm();
 
-                container.Populate(conn, editorData.Entity);
+                    container.Populate(conn, editorData.Entity);
 
-                if (ShowDialog() == DialogResult.OK)
+                    if (ShowDialog() == DialogResult.OK)
+                    {
+                        using (var transaction = conn.BeginTransaction())
+                        {
+                            try
+                            {
+                                operation.Update(conn, transaction, editorData);
+                                transaction.Commit();
+                                return true;
+                            }
+                            catch (Exception e)
+                            {
+                                transaction.Rollback();
+                                ExceptionHelper.MesssageBox(e);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool Delete(IEditorCode editor, IIdentifier id)
+        {
+            if (editor is IDataOperation operation)
+            {
+                using (var conn = Db.OpenConnection())
                 {
                     using (var transaction = conn.BeginTransaction())
                     {
                         try
                         {
-                            editor.Update(conn, transaction, editorData);
+                            operation.Delete(conn, transaction, id);
                             transaction.Commit();
                             return true;
                         }
@@ -101,29 +133,6 @@ namespace DocumentFlow.Controls.Forms
                             transaction.Rollback();
                             ExceptionHelper.MesssageBox(e);
                         }
-                    }
-                }
-
-                return false;
-            }
-        }
-
-        public bool Delete(IEditorCode editor, long id)
-        {
-            using (var conn = Db.OpenConnection())
-            {
-                using (var transaction = conn.BeginTransaction())
-                {
-                    try
-                    {
-                        editor.Delete(conn, transaction, id);
-                        transaction.Commit();
-                        return true;
-                    }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        ExceptionHelper.MesssageBox(e);
                     }
                 }
             }

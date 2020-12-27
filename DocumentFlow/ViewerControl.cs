@@ -453,10 +453,13 @@ namespace DocumentFlow
             //FIX: По кактим-то причинам перемещение в конец таблицы не происходит при первом открытии окна. Повторное открытие этого или какого другого устраняет проблему
             if (moveToEnd && gridContent.DataSource is IBindingList bindingList)
             {
-                gridContent.SelectedIndex = bindingList.Count - 1;
+                if (bindingList.Count > 0)
+                {
+                    gridContent.SelectedIndex = bindingList.Count - 1;
 
-                gridContent.TableControl.ScrollRows.ScrollInView(bindingList.Count - 1);
-                gridContent.TableControl.ScrollRows.UpdateScrollBar();
+                    gridContent.TableControl.ScrollRows.ScrollInView(bindingList.Count - 1);
+                    gridContent.TableControl.ScrollRows.UpdateScrollBar();
+                }
             }
 
 
@@ -535,19 +538,22 @@ namespace DocumentFlow
 
         private void RefreshCurrenView()
         {
-            using (var conn = Db.OpenConnection())
+            if (ExecutedCommand.Browser() is IBrowserOperation operation)
             {
-                IBrowser browser = this;
-                try
+                using (var conn = Db.OpenConnection())
                 {
-                    var list = ExecutedCommand.Browser().Select(conn, browser.Parameters);
-                    Type entityType = list.GetType().GetGenericArguments().First();
-                    Type genericType = typeof(BindingList<>).MakeGenericType(entityType);
-                    gridContent.DataSource = Activator.CreateInstance(genericType, list);
-                }
-                catch (Exception e)
-                {
-                    throw new SqlExecuteException("При попытке выполнения команды SELECT произошла ошибка", e);
+                    IBrowser browser = this;
+                    try
+                    {
+                        var list = operation.Select(conn, browser.Parameters);
+                        Type entityType = list.GetType().GetGenericArguments().First();
+                        Type genericType = typeof(BindingList<>).MakeGenericType(entityType);
+                        gridContent.DataSource = Activator.CreateInstance(genericType, list);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new SqlExecuteException("При попытке выполнения команды SELECT произошла ошибка", e);
+                    }
                 }
             }
         }
@@ -568,14 +574,14 @@ namespace DocumentFlow
 
         private void RefreshRow(Guid id)
         {
-            if (gridContent.DataSource is IList list)
+            if (gridContent.DataSource is IList list && ExecutedCommand.Browser() is IBrowserOperation operation)
             {
                 int index = GetRowIndex(list, id);
                 if (index != -1)
                 {
                     using (var conn = Db.OpenConnection())
                     {
-                        var new_row = ExecutedCommand.Browser().SelectById(conn, id, Parameters);
+                        var new_row = operation.Select(conn, id, Parameters);
                         if (new_row != null)
                         {
                             list[index] = new_row;
@@ -587,14 +593,14 @@ namespace DocumentFlow
 
         private void AddRow(Guid id)
         {
-            if (gridContent.DataSource is IList list)
+            if (gridContent.DataSource is IList list && ExecutedCommand.Browser() is IBrowserOperation operation)
             {
                 int index = GetRowIndex(list, id);
                 if (index != -1)
                 {
                     using (var conn = Db.OpenConnection())
                     {
-                        var new_row = ExecutedCommand.Browser().SelectById(conn, id, Parameters);
+                        var new_row = operation.Select(conn, id, Parameters);
                         if (new_row != null)
                         {
                             list.Add(new_row);
@@ -752,22 +758,25 @@ namespace DocumentFlow
                 if (!delete)
                     return;
 
-                using (var conn = Db.OpenConnection())
+                if (ExecutedCommand.Browser() is IBrowserOperation operation)
                 {
-                    using (var transaction = conn.BeginTransaction())
+                    using (var conn = Db.OpenConnection())
                     {
-                        try
+                        using (var transaction = conn.BeginTransaction())
                         {
-                            ExecutedCommand.Browser().Delete(conn, transaction, row.id);
-                            transaction.Commit();
+                            try
+                            {
+                                operation.Delete(conn, transaction, row.id);
+                                transaction.Commit();
 #if !USE_LISTENER
-                            RefreshCurrenView();
+                                RefreshCurrenView();
 #endif
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            ExceptionHelper.MesssageBox(ex);
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction.Rollback();
+                                ExceptionHelper.MesssageBox(ex);
+                            }
                         }
                     }
                 }

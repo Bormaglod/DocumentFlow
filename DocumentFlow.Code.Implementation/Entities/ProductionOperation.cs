@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation.ProductionOperationImp
@@ -27,7 +26,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOperationImp
         }
     }
 
-    public class ProductionOperationBrowser : BrowserCodeBase<ProductionOperation>, IBrowserCode
+    public class ProductionOperationBrowser : IBrowserCode, IBrowserOperation
     {
         private const string baseSelect = @"
             select 
@@ -46,7 +45,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOperationImp
                 join operation o on (o.id = po.operation_id) 
             where {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowGrouping = true;
             browser.DataType = DataType.Document;
@@ -108,24 +107,19 @@ namespace DocumentFlow.Code.Implementation.ProductionOperationImp
                 .Add("goods_name");
         }
 
-        public override IEnumerable<ProductionOperation> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<ProductionOperation>(GetSelect(), new { owner_id = parameters.OwnerId });
+            return connection.Query<ProductionOperation>(string.Format(baseSelect, "po.owner_id = :owner_id"), new { owner_id = parameters.OwnerId }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "po.owner_id = :owner_id");
+            return connection.QuerySingleOrDefault<ProductionOperation>(string.Format(baseSelect, "po.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "po.id = :id");
-        }
-
-        public IEditorCode CreateEditor()
-        {
-            return null;
+            return connection.Execute("delete from production_operation where id = :id", new { id }, transaction);
         }
     }
 }

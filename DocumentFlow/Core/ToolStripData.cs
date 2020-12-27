@@ -40,7 +40,11 @@ namespace DocumentFlow
                 if (item is ToolStripSeparator || item.Tag == null)
                     continue;
 
-                commands.Add(CommandMethod.Embedded, item.Tag.ToString());
+                CommandItem ci = commands.Add(CommandMethod.Embedded, item.Tag.ToString());
+                if (ci != null)
+                {
+                    items.Add(ci, item);
+                }
             }
 
             UpdateButtonVisibleStatus();

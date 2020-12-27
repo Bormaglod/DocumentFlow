@@ -82,7 +82,11 @@ namespace DocumentFlow.Code.Data
                     }
 
                     IBrowserCode browser = Activator.CreateInstance(type) as IBrowserCode;
-                    IEditorCode editor = browser.CreateEditor();
+                    IEditorCode editor = null;
+                    if (browser is IDataEditor dataEditor)
+                    {
+                        editor = dataEditor.CreateEditor();
+                    }
 
                     if (codes.ContainsKey(command))
                     {

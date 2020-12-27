@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
@@ -33,7 +32,7 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
         }
     }
 
-    public class BalanceGoodsBrowser : BrowserCodeBase<BalanceGoods>, IBrowserCode
+    public class BalanceGoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -68,7 +67,7 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
                 {0} 
             order by bg.document_date desc";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowSorting = false;
             browser.DataType = DataType.Document;
@@ -130,19 +129,24 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
             browser.ToolBar.AddCommand(open_document);
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new BalanceGoodsEditor();
         }
 
-        protected override string GetSelect()
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "bg.reference_id = :owner_id");
+            return connection.Query<BalanceGoods>(string.Format(baseSelect, "bg.reference_id = :owner_id"), new { owner_id = parameters.OwnerId }).AsList();
         }
 
-        protected override string GetSelectById()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "bg.id = :id");
+            return connection.QuerySingleOrDefault<BalanceGoods>(string.Format(baseSelect, "bg.id = :id"), new { id });
+        }
+
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
+        {
+            return connection.Execute("delete from balance_goods where id = :id", new { id }, transaction);
         }
 
         private void OpenDocumentClick(object sender, ExecuteEventArgs e)
@@ -153,14 +157,9 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
                 e.Browser.Commands.OpenDocument(balance.document_id);
             }
         }
-
-        public override IEnumerable<BalanceGoods> SelectAll(IDbConnection connection, IBrowserParameters parameters)
-        {
-            return connection.Query<BalanceGoods>(GetSelect(), new { owner_id = parameters.OwnerId });
-        }
     }
 
-    public class BalanceGoodsEditor : EditorCodeBase<BalanceGoods>, IEditorCode
+    public class BalanceGoodsEditor : IEditorCode, IDataOperation, IControlEnabled, IControlVisible
     {
         private const int labelWidth = 140;
         private const string select = @"
@@ -187,7 +186,7 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
             where 
                 bg.id = :id";
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             BalanceGoods balance = editor.Entity as BalanceGoods;
             if (balance == null)
@@ -199,15 +198,18 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(400)
                 .SetEnabled(false);
+
             IControl document_name = editor.CreateTextBox("document_name", "Документ")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(250)
                 .SetEnabled(false)
                 .SetVisible(new string[] { "current balance", "inventory" }.Contains(balance.status_code));
+
             IControl document_number = editor.CreateTextBox("document_number", "Номер")
                 .SetLabelWidth(labelWidth)
                 .SetEnabled(false)
                 .SetVisible(new string[] { "current balance", "inventory" }.Contains(balance.status_code));
+
             IControl document_date = editor.CreateDateTimePicker("document_date", "Дата")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(170);
@@ -242,40 +244,45 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
             });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return select;
+            return connection.QuerySingleOrDefault<BalanceGoods>(select, new { id = id.oid });
         }
 
-        protected override string GetInsert()
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "insert into balance_goods (reference_id) values (:owner_id) returning id";
+            string sql = "insert into balance_goods (reference_id) values (:owner_id) returning id";
+            return connection.QuerySingle<Guid>(sql, new { owner_id = parameters.OwnerId }, transaction);
         }
 
-        protected override string GetUpdate(BalanceGoods balanceGoods)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "update balance_goods set operation_summa = :operation_summa, amount = :amount, document_date = :document_date where id = :id";
+            string sql = "update balance_goods set operation_summa = :operation_summa, amount = :amount, document_date = :document_date where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            return connection.QuerySingle<TId>(GetInsert(), new { owner_id = parameters.OwnerId }, transaction);
+            string sql = "delete from balance_goods where id = :id";
+            return connection.Execute(sql, new { id = id.oid }, transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
         {
-            if (field == "goods_name")
+            if (dataName == "goods_name")
                 return false;
             
             return 
-                new string[] { "document_date", "operation_summa", "amount" }.Contains(field) && 
-                new string[] { "compiled" }.Contains(status_name);
+                new string[] { "document_date", "operation_summa", "amount" }.Contains(dataName) && 
+                new string[] { "compiled" }.Contains(info.StatusCode);
         }
 
-        public override bool GetVisibleValue(string field, string status_name)
+        bool IControlVisible.Ability(object entity, string dataName, IInformation info)
         {
-            if (new string[] { "document_name", "document_number" }.Contains(field))
-                return new string[] { "current balance", "inventory" }.Contains(status_name);
+            if (new string[] { "document_name", "document_number" }.Contains(dataName))
+            {
+                return new string[] { "current balance", "inventory" }.Contains(info.StatusCode);
+            }
 
             return true;
         }

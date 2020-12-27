@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.ComponentModel;
-using DocumentFlow.Code.Core;
+using System.Data;
+using Dapper;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation.MeasurementImp
@@ -19,7 +21,7 @@ namespace DocumentFlow.Code.Implementation.MeasurementImp
         }
     }
 
-    public class MeasurementBrowser : BrowserCodeBase<Measurement>, IBrowserCode
+    public class MeasurementBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -32,67 +34,75 @@ namespace DocumentFlow.Code.Implementation.MeasurementImp
             from measurement m 
                 join status s on s.id = m.status_id";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
 
             browser.CreateStatusColumnRenderer();
 
-            IColumnCollection columns = browser.Columns;
+            browser.CreateColumns((columns) =>
+            {
+                columns.CreateText("id", "Id")
+                    .SetWidth(180)
+                    .SetVisible(false);
 
-            columns.CreateText("id", "Id")
-                .SetWidth(180)
-                .SetVisible(false);
+                columns.CreateInteger("status_id", "Код состояния")
+                    .SetWidth(80)
+                    .SetVisible(false);
 
-            columns.CreateInteger("status_id", "Код состояния")
-                .SetWidth(80)
-                .SetVisible(false);
+                columns.CreateText("status_name", "Состояние")
+                    .SetWidth(110)
+                    .SetVisible(false);
 
-            columns.CreateText("status_name", "Состояние")
-                .SetWidth(110)
-                .SetVisible(false);
+                columns.CreateText("code", "Код")
+                    .SetWidth(110);
 
-            columns.CreateText("code", "Код")
-                .SetWidth(110);
+                columns.CreateText("name", "Наименование")
+                    .SetHideable(false)
+                    .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateText("name", "Наименование")
-                .SetHideable(false)
-                .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
+                columns.CreateText("abbreviation", "Сокр. наименование")
+                    .SetWidth(160);
 
-            columns.CreateText("abbreviation", "Сокр. наименование")
-                .SetWidth(160);
-
-            columns.CreateSortedColumns()
-                .Add("name", ListSortDirection.Ascending);
+                columns.CreateSortedColumns()
+                    .Add("name", ListSortDirection.Ascending);
+            });
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new MeasurementEditor();
         }
 
-        protected override string GetSelect()
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return baseSelect;
+            return connection.Query<Measurement>(baseSelect).AsList();
         }
 
-        protected override string GetSelectById()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return baseSelect + " where id = :id";
+            return connection.QuerySingleOrDefault<Measurement>(baseSelect + " where id = :id", new { id });
+        }
+
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
+        {
+            return connection.Execute("delete from measurement where id = :id", new { id }, transaction);
         }
     }
 
-    public class MeasurementEditor : EditorCodeBase<Measurement>, IEditorCode
+    public class MeasurementEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        private const int labelWidth = 360;
+        private const int labelWidth = 160;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             IControl code = editor.CreateTextBox("code", "Код")
                 .SetLabelWidth(labelWidth);
+
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
+
             IControl abbreviation = editor.CreateTextBox("abbreviation", "Сокр. наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
@@ -104,19 +114,32 @@ namespace DocumentFlow.Code.Implementation.MeasurementImp
             });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, code, name, abbreviation from measurement where id = :id";
+            string sql = "select id, code, name, abbreviation from measurement where id = :id";
+            return connection.QuerySingleOrDefault<Measurement>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(Measurement measurement)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update measurement set code = :code, name = :name, abbreviation = :abbreviation where id = :id";
+            string sql = "insert into measurement default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return status_name == "compiled";
+            string sql = "update measurement set code = :code, name = :name, abbreviation = :abbreviation where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from measurement where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return info.StatusCode == "compiled";
         }
     }
 }

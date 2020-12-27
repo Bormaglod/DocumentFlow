@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
-using DocumentFlow.Code.Core;
+using System.Data;
+using Dapper;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation.OkopfImp
@@ -18,7 +20,7 @@ namespace DocumentFlow.Code.Implementation.OkopfImp
         }
     }
 
-    public class OkopfBrowser : BrowserCodeBase<Okopf>, IBrowserCode
+    public class OkopfBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -30,7 +32,7 @@ namespace DocumentFlow.Code.Implementation.OkopfImp
             from okopf o 
                 join status s on s.id = o.status_id";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
 
@@ -62,30 +64,36 @@ namespace DocumentFlow.Code.Implementation.OkopfImp
             });
         }
 
-        protected override string GetSelect()
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return baseSelect;
+            return connection.Query<Okopf>(baseSelect).AsList();
         }
 
-        protected override string GetSelectById()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return baseSelect + " where o.id = :id";
+            return connection.QuerySingleOrDefault<Okopf>(baseSelect + " where o.id = :id", new { id });
         }
 
-        public IEditorCode CreateEditor()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
+        {
+            return connection.Execute("delete from okopf where id = :id", new { id }, transaction);
+        }
+
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new OkopfEditor();
         }
     }
 
-    public class OkopfEditor : EditorCodeBase<Okopf>, IEditorCode
+    public class OkopfEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private const int labelWidth = 120;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             IControl code = editor.CreateTextBox("code", "Код")
                 .SetLabelWidth(labelWidth);
+
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
@@ -96,19 +104,32 @@ namespace DocumentFlow.Code.Implementation.OkopfImp
             });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, code, name from okopf where id = :id";
+            string sql = "select id, code, name from okopf where id = :id";
+            return connection.QuerySingleOrDefault<Okopf>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(Okopf okopf)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update okopf set code = :code, name = :name where id = :id";
+            string sql = "insert into okopf default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return status_name == "compiled";
+            string sql = "update okopf set code = :code, name = :name where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from okopf where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return info.StatusCode == "compiled";
         }
     }
 }

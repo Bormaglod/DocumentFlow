@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -36,7 +37,25 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         }
     }
 
-    public class PurchaseRequestBrowser : BrowserCodeBase<PurchaseRequest>, IBrowserCode
+    public class PurchaseRequestDetail : IDetail
+    {
+        public long id { get; protected set; }
+        public Guid owner_id { get; set; }
+        public Guid goods_id { get; set; }
+        public string goods_name { get; protected set; }
+        public decimal amount { get; set; }
+        public decimal price { get; set; }
+        public decimal cost { get; set; }
+        public int tax { get; set; }
+        public decimal tax_value { get; set; }
+        public decimal cost_with_tax { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
+    }
+
+    public class PurchaseRequestBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -69,7 +88,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
             where {0}
             group by pr.id, pr.status_id, ua.name, c.name, contract.name, pr.doc_date, pr.doc_number, s.note, o.name, c.tax_payer";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowGrouping = true;
             browser.DataType = DataType.Document;
@@ -145,52 +164,35 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
             browser.MoveToEnd();
         }
 
-        public override IEnumerable<PurchaseRequest> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<PurchaseRequest>(GetSelect(), new { 
-                from_date = parameters.DateFrom, 
-                to_date = parameters.DateTo, 
-                organization_id = parameters.OrganizationId 
-            });
+            return connection.Query<PurchaseRequest>(string.Format(baseSelect, "pr.doc_date between :from_date and :to_date and pr.organization_id = :organization_id"), new
+            {
+                from_date = parameters.DateFrom,
+                to_date = parameters.DateTo,
+                organization_id = parameters.OrganizationId
+            }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "pr.doc_date between :from_date and :to_date and pr.organization_id = :organization_id");
+            return connection.QuerySingleOrDefault<PurchaseRequest>(string.Format(baseSelect, "pr.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "pr.id = :id");
+            return connection.Execute("delete from purchase_request where id = :id", new { id }, transaction);
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new PurchaseRequestEditor();
         }
     }
 
-    public class PurchaseRequestDetail : IDetail
+    public class PurchaseRequestEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        public long id { get; protected set; }
-        public Guid owner_id { get; set; }
-        public Guid goods_id { get; set; }
-        public string goods_name { get; protected set; }
-        public decimal amount { get; set; }
-        public decimal price { get; set; }
-        public decimal cost { get; set; }
-        public int tax { get; set; }
-        public decimal tax_value { get; set; }
-        public decimal cost_with_tax { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
-    }
-
-    public class PurchaseRequestEditor : EditorCodeBase<PurchaseRequest>, IEditorCode
-    {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'seller'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
@@ -254,31 +256,38 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                     columns.CreateText("goods_name", "Номенклатура")
                         .SetHideable(false)
                         .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
+
                     columns.CreateNumeric("amount", "Количество")
                         .SetDecimalDigits(3)
                         .SetWidth(100)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                         .SetWidth(100)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("tax", "%НДС", NumberFormatMode.Percent)
                         .SetWidth(80)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Center);
+
                     columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("cost_with_tax", "Всего", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
                         .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}")
                         .AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
@@ -307,6 +316,44 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 .ExecuteAction(OpenContractClick);
         }
 
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
+        {
+            string sql = @"
+                select 
+                    id, 
+                    '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, 
+                    contractor_id, 
+                    contract_id, 
+                    doc_date, 
+                    doc_number, 
+                    organization_id
+                from purchase_request
+                where id = :id";
+            return connection.QuerySingleOrDefault<PurchaseRequest>(sql, new { id = id.oid });
+        }
+
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        {
+            string sql = "insert into purchase_request default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
+        }
+
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
+        {
+            string sql = "update purchase_request set contractor_id = :contractor_id, contract_id = :contract_id, doc_date = :doc_date, doc_number = :doc_number where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from purchase_request where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
+        }
+
         private void OpenContractorClick(object sender, ExecuteEventArgs e)
         {
             PurchaseRequest pr = e.Editor.Entity as PurchaseRequest;
@@ -330,26 +377,11 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 }
             }
         }
-
-        protected override string GetSelect()
-        {
-            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, contractor_id, contract_id, doc_date, doc_number, organization_id from purchase_request where id = :id";
-        }
-
-        protected override string GetUpdate(PurchaseRequest entity)
-        {
-            return "update purchase_request set contractor_id = :contractor_id, contract_id = :contract_id, doc_date = :doc_date, doc_number = :doc_number where id = :id";
-        }
-
-        public override bool GetEnabledValue(string field, string status_name)
-        {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
-        }
     }
 
-    public class PurchaseRequestDetailEditor : EditorCodeBase<PurchaseRequestDetail>, IEditorCode
+    public class PurchaseRequestDetailEditor : IEditorCode, IDataOperation
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const int labelWidth = 120;
             const string goodsSelect = "select id, status_id, name, parent_id from goods where status_id in (500, 1002) order by name";
@@ -362,6 +394,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl amount = editor.CreateNumeric("amount", "Количество")
                 .ValueChangedAction((s, e) =>
                 {
@@ -369,6 +402,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl price = editor.CreateCurrency("price", "Цена")
                 .ValueChangedAction((s, e) =>
                 {
@@ -376,6 +410,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl cost = editor.CreateCurrency("cost", "Сумма")
                 .ValueChangedAction((s, e) =>
                 {
@@ -385,6 +420,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl tax = editor.CreateChoice("tax", "НДС%", new Dictionary<int, string>() { { 0, "Без НДС" }, { 10, "10%" }, { 20, "20%" } })
                 .ValueChangedAction((s, e) =>
                 {
@@ -399,6 +435,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                     editor["tax_value"].Enabled = tax_percent != 0;
                 })
                 .SetFitToSize(true);
+
             IControl tax_value = editor.CreateCurrency("tax_value", "НДС")
                 .ValueChangedAction((s, e) =>
                 {
@@ -406,6 +443,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl cost_with_tax = editor.CreateCurrency("cost_with_tax", "Всего с НДС")
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
@@ -421,10 +459,17 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
             });
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
+            string sql = "select id, owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax from purchase_request_detail where id = :id";
+            return connection.QuerySingleOrDefault<PurchaseRequestDetail>(sql, new { id = id.oid });
+        }
+
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        {
+            string sql = "insert into purchase_request_detail (owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax) values (:owner_id, :goods_id, :amount, :price, :cost, :tax, :tax_value, :cost_with_tax) returning id";
             PurchaseRequestDetail detail = editor.Entity as PurchaseRequestDetail;
-            return connection.QuerySingle<TId>(GetInsert(),
+            return connection.QuerySingle<long>(sql,
                 new
                 {
                     owner_id = parameters.OwnerId,
@@ -439,19 +484,15 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 transaction: transaction);
         }
 
-        protected override string GetSelect()
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "select id, owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax from purchase_request_detail where id = :id";
+            string sql = "update purchase_request_detail set goods_id = :goods_id, amount = :amount, price = :price, cost = :cost, tax = :tax, tax_value = :tax_value, cost_with_tax = :cost_with_tax where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        protected override string GetInsert()
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            return "insert into purchase_request_detail (owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax) values (:owner_id, :goods_id, :amount, :price, :cost, :tax, :tax_value, :cost_with_tax) returning id";
-        }
-
-        protected override string GetUpdate(PurchaseRequestDetail entity)
-        {
-            return "update purchase_request_detail set goods_id = :goods_id, amount = :amount, price = :price, cost = :cost, tax = :tax, tax_value = :tax_value, cost_with_tax = :cost_with_tax where id = :id";
+            return connection.Execute("delete from purchase_request_detail where id = :id", new { id = id.oid }, transaction);
         }
     }
 }

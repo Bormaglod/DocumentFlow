@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
-using DocumentFlow.Code.Core;
+using Dapper;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation.DiagramImp
@@ -19,11 +21,11 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
         }
     }
 
-    public class DiagramBrowser : BrowserCodeBase<Diagram>, IBrowserCode
+    public class DiagramBrowser : IBrowserCode, IBrowserOperation
     {
         private const string baseSelect = "select id, name from transition";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
             browser.CommandBarVisible = false;
@@ -55,6 +57,21 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
             browser.ToolBar.AddCommand(open_diagram);
         }
 
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
+        {
+            return connection.Query<Diagram>(baseSelect).AsList();
+        }
+
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
+        {
+            return connection.QuerySingleOrDefault<Diagram>(baseSelect + " where id = :id", new { id });
+        }
+
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
         private void OpenDiagramClick(object sender, ExecuteEventArgs e)
         {
             Diagram diagram = e.Browser.CurrentRow as Diagram;
@@ -62,21 +79,6 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
             {
                 e.Browser.Commands.OpenDiagram(diagram.id);
             }
-        }
-
-        protected override string GetSelect()
-        {
-            return baseSelect;
-        }
-
-        protected override string GetSelectById()
-        {
-            return baseSelect + " where id = :id";
-        }
-
-        public IEditorCode CreateEditor()
-        {
-            return null;
         }
     }
 }

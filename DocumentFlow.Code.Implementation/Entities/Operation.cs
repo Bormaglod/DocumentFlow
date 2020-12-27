@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -39,7 +40,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
         }
     }
 
-    public class OperationBrowser : BrowserCodeBase<Operation>, IBrowserCode
+    public class OperationBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -68,133 +69,134 @@ namespace DocumentFlow.Code.Implementation.OperationImp
             where 
                 {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowGrouping = true;
             browser.DataType = DataType.Directory;
 
             browser.CreateStatusColumnRenderer();
 
-            IColumnCollection columns = browser.Columns;
+            browser.CreateColumns((columns) =>
+            {
+                columns.CreateText("id", "Id")
+                    .SetWidth(180)
+                    .SetVisible(false);
 
-            columns.CreateText("id", "Id")
-                .SetWidth(180)
-                .SetVisible(false);
+                columns.CreateInteger("status_id", "Код состояния")
+                    .SetWidth(80)
+                    .SetVisible(false)
+                    .SetAllowGrouping(true);
 
-            columns.CreateInteger("status_id", "Код состояния")
-                .SetWidth(80)
-                .SetVisible(false)
-                .SetAllowGrouping(true);
+                columns.CreateText("status_name", "Состояние")
+                    .SetWidth(110)
+                    .SetVisible(false)
+                    .SetAllowGrouping(true);
 
-            columns.CreateText("status_name", "Состояние")
-                .SetWidth(110)
-                .SetVisible(false)
-                .SetAllowGrouping(true);
+                columns.CreateText("code", "Код")
+                    .SetWidth(150)
+                    .SetVisible(false);
 
-            columns.CreateText("code", "Код")
-                .SetWidth(150)
-                .SetVisible(false);
+                columns.CreateText("name", "Наименование")
+                    .SetHideable(false)
+                    .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateText("name", "Наименование")
-                .SetHideable(false)
-                .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
+                columns.CreateText("abbreviation", "Ед. изм.")
+                    .SetWidth(100)
+                    .SetAllowGrouping(true)
+                    .SetHorizontalAlignment(HorizontalAlignment.Center)
+                    .SetVisibility(false);
 
-            columns.CreateText("abbreviation", "Ед. изм.")
-                .SetWidth(100)
-                .SetAllowGrouping(true)
-                .SetHorizontalAlignment(HorizontalAlignment.Center)
-                .SetVisibility(false);
+                columns.CreateInteger("produced", "Выработка")
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetVisible(false)
+                    .SetVisibility(false);
 
-            columns.CreateInteger("produced", "Выработка")
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right)
-                .SetVisible(false)
-                .SetVisibility(false);
+                columns.CreateInteger("prod_time", "Время выработки, мин.")
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetVisible(false)
+                    .SetVisibility(false);
 
-            columns.CreateInteger("prod_time", "Время выработки, мин.")
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right)
-                .SetVisible(false)
-                .SetVisibility(false);
+                columns.CreateInteger("production_rate", "Норма выработки, ед./час")
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetVisible(false)
+                    .SetVisibility(false);
 
-            columns.CreateInteger("production_rate", "Норма выработки, ед./час")
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right)
-                .SetVisible(false)
-                .SetVisibility(false);
+                columns.CreateText("operation_type_name", "Тип операции")
+                    .SetWidth(250)
+                    .SetAllowGrouping(true)
+                    .SetVisibility(false);
 
-            columns.CreateText("operation_type_name", "Тип операции")
-                .SetWidth(250)
-                .SetAllowGrouping(true)
-                .SetVisibility(false);
+                columns.CreateNumeric("salary", "Зар. плата, руб.", NumberFormatMode.Currency)
+                    .SetWidth(150)
+                    .SetVisibility(false)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
-            columns.CreateNumeric("salary", "Зар. плата, руб.", NumberFormatMode.Currency)
-                .SetWidth(150)
-                .SetVisibility(false)
-                .SetHorizontalAlignment(HorizontalAlignment.Right);
+                columns.CreateInteger("length", "Длина провода")
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetVisible(false)
+                    .SetVisibility(false);
 
-            columns.CreateInteger("length", "Длина провода")
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right)
-                .SetVisible(false)
-                .SetVisibility(false);
+                columns.CreateNumeric("left_cleaning", "Длина зачистки слева")
+                    .SetDecimalDigits(1)
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetVisible(false)
+                    .SetVisibility(false);
 
-            columns.CreateNumeric("left_cleaning", "Длина зачистки слева")
-                .SetDecimalDigits(1)
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right)
-                .SetVisible(false)
-                .SetVisibility(false);
+                columns.CreateInteger("left_sweep", "Окно слева")
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetVisible(false)
+                    .SetVisibility(false);
 
-            columns.CreateInteger("left_sweep", "Окно слева")
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right)
-                .SetVisible(false)
-                .SetVisibility(false);
+                columns.CreateNumeric("right_cleaning", "Длина зачистки справа")
+                    .SetDecimalDigits(1)
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetVisible(false)
+                    .SetVisibility(false);
 
-            columns.CreateNumeric("right_cleaning", "Длина зачистки справа")
-                .SetDecimalDigits(1)
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right)
-                .SetVisible(false)
-                .SetVisibility(false);
+                columns.CreateInteger("right_sweep", "Окно справа")
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetVisible(false)
+                    .SetVisibility(false);
 
-            columns.CreateInteger("right_sweep", "Окно справа")
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right)
-                .SetVisible(false)
-                .SetVisibility(false);
+                columns.CreateInteger("program", "Программа")
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetVisible(false)
+                    .SetVisibility(false);
 
-            columns.CreateInteger("program", "Программа")
-                .SetWidth(100)
-                .SetHorizontalAlignment(HorizontalAlignment.Right)
-                .SetVisible(false)
-                .SetVisibility(false);
-
-            columns.CreateSortedColumns()
-                .Add("code", ListSortDirection.Ascending);
+                columns.CreateSortedColumns()
+                    .Add("code", ListSortDirection.Ascending);
+            });
 
             browser.ChangeParent += Browser_ChangeParent;
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new OperationEditor();
         }
 
-        public override IEnumerable<Operation> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<Operation>(GetSelect(), new { parent_id = parameters.ParentId });
+            return connection.Query<Operation>(string.Format(baseSelect, "o.parent_id is not distinct from :parent_id"), new { parent_id = parameters.ParentId }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "o.parent_id is not distinct from :parent_id");
+            return connection.QuerySingleOrDefault<Operation>(string.Format(baseSelect, "o.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "o.id = :id");
+            return connection.Execute("delete from operation where id = :id", new { id }, transaction);
         }
 
         private void Browser_ChangeParent(object sender, ChangeParentEventArgs e)
@@ -227,11 +229,11 @@ namespace DocumentFlow.Code.Implementation.OperationImp
         }
     }
 
-    public class OperationEditor : EditorCodeBase<Operation>, IEditorCode
+    public class OperationEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private const int labelWidth = 200;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string typeSelect = "select id, name from operation_type where status_id = 1002 order by name";
             const string folderSelect = "select id, parent_id, name, status_id from operation where status_id = 500 order by name";
@@ -242,24 +244,32 @@ namespace DocumentFlow.Code.Implementation.OperationImp
 
             controls.Add(editor.CreateTextBox("code", "Код")
                 .SetLabelWidth(labelWidth));
+
             controls.Add(editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(380));
+
             controls.Add(editor.CreateSelectBox("type_id", "Тип операции", (c) => { return c.Query<ComboBoxDataItem>(typeSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(330));
+
             controls.Add(editor.CreateSelectBox("parent_id", "Группа", (c) => { return c.Query<GroupDataItem>(folderSelect); }, showOnlyFolder: true)
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360));
+
             controls.Add(editor.CreateComboBox("measurement_id", "Еденица измерения", (conn) => { return conn.Query<ComboBoxDataItem>(measurementSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(250));
+
             controls.Add(editor.CreateInteger("produced", "Выработка")
                 .SetLabelWidth(labelWidth));
+
             controls.Add(editor.CreateInteger("prod_time", "Время выработки, сек.")
                 .SetLabelWidth(labelWidth));
+
             controls.Add(editor.CreateInteger("production_rate", "Норма выработка, ед./час")
                 .SetLabelWidth(labelWidth));
+
             controls.Add(editor.CreateCurrency("salary", "Зарплата, руб.")
                 .SetLabelWidth(labelWidth));
 
@@ -273,14 +283,19 @@ namespace DocumentFlow.Code.Implementation.OperationImp
     	            })
         	        .SetLabelWidth(labelWidth)
             	    .SetControlWidth(250));
+
                 controls.Add(editor.CreateInteger("length", "Длина провода")
                     .SetLabelWidth(labelWidth));
+
                 controls.Add(editor.CreateNumeric("left_cleaning", "Длина зачистки с начала провода", numberDecimalDigits: 1)
                     .SetLabelWidth(labelWidth));
+
                 controls.Add(editor.CreateInteger("left_sweep", "Ширина окна на которое снимается изоляция в начале провода")
                     .SetLabelWidth(labelWidth));
+
                 controls.Add(editor.CreateNumeric("right_cleaning", "Длина зачистки с конца провода", numberDecimalDigits: 1)
                     .SetLabelWidth(labelWidth));
+
                 controls.Add(editor.CreateInteger("right_sweep", "Ширина окна на которое снимается изоляция в конце провода")
                     .SetLabelWidth(labelWidth));
             }
@@ -290,19 +305,32 @@ namespace DocumentFlow.Code.Implementation.OperationImp
             dependentViewer.AddDependentViewers(new string[] { "view-archive-price" });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, code, name, parent_id, produced, prod_time, production_rate, type_id, salary, length, left_cleaning, left_sweep, right_cleaning, right_sweep, program, measurement_id from operation where id = :id";
+            string sql = "select id, code, name, parent_id, produced, prod_time, production_rate, type_id, salary, length, left_cleaning, left_sweep, right_cleaning, right_sweep, program, measurement_id from operation where id = :id";
+            return connection.QuerySingleOrDefault<Operation>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(Operation operation)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update operation set code = :code, name = :name, parent_id = :parent_id, produced = :produced, prod_time = :prod_time, production_rate = :production_rate, type_id = :type_id, salary = :salary, length = :length, left_cleaning = :left_cleaning, left_sweep = :left_sweep, right_cleaning = :right_cleaning, right_sweep = :right_sweep, program = :program, measurement_id = :measurement_id where id = :id";
+            string sql = "insert into operation default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            string sql = "update operation set code = :code, name = :name, parent_id = :parent_id, produced = :produced, prod_time = :prod_time, production_rate = :production_rate, type_id = :type_id, salary = :salary, length = :length, left_cleaning = :left_cleaning, left_sweep = :left_sweep, right_cleaning = :right_cleaning, right_sweep = :right_sweep, program = :program, measurement_id = :measurement_id where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from operation where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
 
     }

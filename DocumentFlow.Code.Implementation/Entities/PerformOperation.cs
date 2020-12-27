@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
@@ -39,7 +39,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
         }
     }
 
-    public class PerformOperationBrowser : BrowserCodeBase<PerformOperation>, IBrowserCode
+    public class PerformOperationBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -71,7 +71,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 left join goods ur on (ur.id = po.replacing_goods_id) 
             where {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowGrouping = true;
             browser.AllowSorting = true;
@@ -152,35 +152,35 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 .Add("goods_name");
         }
 
-        public override IEnumerable<PerformOperation> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<PerformOperation>(GetSelect(), new
+            return connection.Query<PerformOperation>(string.Format(baseSelect, "po.doc_date between :from_date and :to_date and po.organization_id = :organization_id"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
                 organization_id = parameters.OrganizationId
-            });
+            }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "po.doc_date between :from_date and :to_date and po.organization_id = :organization_id");
+            return connection.QuerySingleOrDefault<PerformOperation>(string.Format(baseSelect, "po.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "po.id = :id");
+            return connection.Execute("delete from perform_operation where id = :id", new { id }, transaction);
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new PerformOperationEditor();
         }
     }
 
-    public class PerformOperationEditor : EditorCodeBase<PerformOperation>, IEditorCode
+    public class PerformOperationEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const int labelWidth = 210;
             const string orderSelect = "select po.id, po.status_id, '№' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where po.status_id = status_code('in production') or po.id = :order_id group by po.id, c.name order by po.doc_date, po.doc_number";
@@ -280,19 +280,45 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
             });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, doc_date, order_id, goods_id, operation_id, amount, using_goods_id, replacing_goods_id, employee_id, salary from perform_operation where id = :id";
+            string sql = @"
+                select 
+                    id, 
+                    doc_date, 
+                    order_id, 
+                    goods_id, 
+                    operation_id, 
+                    amount, 
+                    using_goods_id, 
+                    replacing_goods_id, 
+                    employee_id, 
+                    salary
+                from perform_operation
+                where id = :id";
+            return connection.QuerySingleOrDefault<PerformOperation>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(PerformOperation performOperation)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update perform_operation set doc_date = :doc_date, order_id = :order_id, goods_id = :goods_id, operation_id = :operation_id, amount = :amount, using_goods_id = :using_goods_id, replacing_goods_id = :replacing_goods_id, employee_id = :employee_id, salary = :salary where id = :id";
+            string sql = "insert into perform_operation default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return new string[] { "compiled", "is changing", "corrected" }.Contains(status_name);
+            string sql = "update perform_operation set doc_date = :doc_date, order_id = :order_id, goods_id = :goods_id, operation_id = :operation_id, amount = :amount, using_goods_id = :using_goods_id, replacing_goods_id = :replacing_goods_id, employee_id = :employee_id, salary = :salary where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from perform_operation where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing", "corrected" }.Contains(info.StatusCode);
         }
     }
 }

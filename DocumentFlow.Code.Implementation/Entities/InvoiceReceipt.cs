@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -41,7 +42,25 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         }
     }
 
-    public class InvoiceReceiptBrowser : BrowserCodeBase<InvoiceReceipt>, IBrowserCode
+    public class InvoiceReceiptDetail : IDetail
+    {
+        public long id { get; protected set; }
+        public Guid owner_id { get; set; }
+        public Guid goods_id { get; set; }
+        public string goods_name { get; protected set; }
+        public decimal amount { get; set; }
+        public decimal price { get; set; }
+        public decimal cost { get; set; }
+        public int tax { get; set; }
+        public decimal tax_value { get; set; }
+        public decimal cost_with_tax { get; set; }
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
+    }
+
+    public class InvoiceReceiptBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -78,7 +97,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
             where {0} 
             group by ir.id, ir.status_id, ua.name, c.name, ir.doc_date, ir.doc_number, s.note, o.name, c.tax_payer, ir.invoice_date, ir.invoice_number, pr.doc_number, pr.doc_date, contract.name";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowGrouping = true;
             browser.DataType = DataType.Document;
@@ -121,7 +140,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     .SetAllowGrouping(true);
 
                 columns.CreateDate("invoice_date", "Дата", "dd.MM.yyyy")
-                    .SetWidth(150)
+                    .SetWidth(100)
                     .SetHideable(false);
 
                 columns.CreateInteger("invoice_number", "Номер")
@@ -133,6 +152,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
                 columns.CreateText("contract_name", "Договор")
                     .SetWidth(150)
+					.SetVisible(false)
                     .SetAllowGrouping(true);
 
                 columns.CreateDate("purchase_date", "Дата")
@@ -183,53 +203,37 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 					.AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
 					.AddColumn("cost_with_tax", RowSummaryType.DoubleAggregate, "{Sum:c}");
             });
+
+            browser.MoveToEnd();
         }
 
-        public override IEnumerable<InvoiceReceipt> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<InvoiceReceipt>(GetSelect(), new
+            return connection.Query<InvoiceReceipt>(string.Format(baseSelect, "ir.doc_date between :from_date and :to_date and ir.organization_id = :organization_id"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
                 organization_id = parameters.OrganizationId
-            });
+            }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "ir.doc_date between :from_date and :to_date and ir.organization_id = :organization_id");
+            return connection.QuerySingleOrDefault<InvoiceReceipt>(string.Format(baseSelect, "ir.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "ir.id = :id");
+            return connection.Execute("delete from invoice_receipt where id = :id", new { id }, transaction);
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new InvoiceReceiptEditor();
         }
     }
 
-    public class InvoiceReceiptDetail : IDetail
-    {
-        public long id { get; protected set; }
-        public Guid owner_id { get; set; }
-        public Guid goods_id { get; set; }
-        public string goods_name { get; protected set; }
-        public decimal amount { get; set; }
-        public decimal price { get; set; }
-        public decimal cost { get; set; }
-        public int tax { get; set; }
-        public decimal tax_value { get; set; }
-        public decimal cost_with_tax { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
-    }
-
-    public class InvoiceReceiptEditor : EditorCodeBase<InvoiceReceipt>, IEditorCode
+    public class InvoiceReceiptEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private class PurchaseRequestData
         {
@@ -237,7 +241,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
             public Guid contract_id { get; set; }
         }
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'seller'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
@@ -339,31 +343,38 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     columns.CreateText("goods_name", "Номенклатура")
                         .SetHideable(false)
                         .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
+
                     columns.CreateNumeric("amount", "Количество")
                         .SetDecimalDigits(3)
                         .SetWidth(100)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                         .SetWidth(100)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("cost", "Сумма", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("tax", "%НДС", NumberFormatMode.Percent)
                         .SetWidth(80)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Center);
+
                     columns.CreateNumeric("tax_value", "НДС", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateNumeric("cost_with_tax", "Всего", NumberFormatMode.Currency)
                         .SetWidth(140)
                         .SetHideable(false)
                         .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                     columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
                         .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}")
                         .AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
@@ -416,19 +427,32 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 .ExecuteAction(OpenContractClick);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            string sql = "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, owner_id, contractor_id, contract_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_receipt where id = :id";
+            return connection.QuerySingleOrDefault<InvoiceReceipt>(sql, new { id = id.oid });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, owner_id, contractor_id, contract_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_receipt where id = :id";
+            string sql = "insert into invoice_receipt default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        protected override string GetUpdate(InvoiceReceipt entity)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "update invoice_receipt set contractor_id = :contractor_id, contract_id = :contract_id, doc_date = :doc_date, doc_number = :doc_number, invoice_date = :invoice_date, invoice_number = :invoice_number, owner_id = :owner_id where id = :id";
+            string sql = "update invoice_receipt set contractor_id = :contractor_id, contract_id = :contract_id, doc_date = :doc_date, doc_number = :doc_number, invoice_date = :invoice_date, invoice_number = :invoice_number, owner_id = :owner_id where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from invoice_receipt where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
 
         private void OpenContractorClick(object sender, ExecuteEventArgs e)
@@ -456,9 +480,9 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         }
     }
 
-    public class InvoiceReceiptDetailEditor : EditorCodeBase<InvoiceReceiptDetail>, IEditorCode
+    public class InvoiceReceiptDetailEditor : IEditorCode, IDataOperation
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const int labelWidth = 120;
             const string goodsSelect = "select id, status_id, name, parent_id from goods where status_id in (500, 1002) order by name";
@@ -471,6 +495,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl amount = editor.CreateNumeric("amount", "Количество")
                 .ValueChangedAction((s, e) =>
                 {
@@ -478,6 +503,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl price = editor.CreateCurrency("price", "Цена")
                 .ValueChangedAction((s, e) =>
                 {
@@ -485,6 +511,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl cost = editor.CreateCurrency("cost", "Сумма")
                 .ValueChangedAction((s, e) =>
                 {
@@ -494,6 +521,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl tax = editor.CreateChoice("tax", "НДС%", new Dictionary<int, string>() { { 0, "Без НДС" }, { 10, "10%" }, { 20, "20%" } })
                 .ValueChangedAction((s, e) =>
                 {
@@ -508,6 +536,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     editor["tax_value"].Enabled = tax_percent != 0;
                 })
                 .SetFitToSize(true);
+
             IControl tax_value = editor.CreateCurrency("tax_value", "НДС")
                 .ValueChangedAction((s, e) =>
                 {
@@ -515,6 +544,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl cost_with_tax = editor.CreateCurrency("cost_with_tax", "Всего с НДС")
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
@@ -530,10 +560,17 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
             });
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
+            string sql = "select id, owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax from invoice_receipt_detail where id = :id";
+            return connection.QuerySingleOrDefault<InvoiceReceipt>(sql, new { id = id.oid });
+        }
+
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        {
+            string sql = "insert into invoice_receipt_detail (owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax) values (:owner_id, :goods_id, :amount, :price, :cost, :tax, :tax_value, :cost_with_tax) returning id";
             InvoiceReceiptDetail detail = editor.Entity as InvoiceReceiptDetail;
-            return connection.QuerySingle<TId>(GetInsert(),
+            return connection.QuerySingle<long>(sql,
                 new
                 {
                     owner_id = parameters.OwnerId,
@@ -548,19 +585,15 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 transaction: transaction);
         }
 
-        protected override string GetSelect()
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "select id, owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax from invoice_receipt_detail where id = :id";
+            string sql = "update invoice_receipt_detail set goods_id = :goods_id, amount = :amount, price = :price, cost = :cost, tax = :tax, tax_value = :tax_value, cost_with_tax = :cost_with_tax where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        protected override string GetInsert()
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            return "insert into invoice_receipt_detail (owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax) values (:owner_id, :goods_id, :amount, :price, :cost, :tax, :tax_value, :cost_with_tax) returning id";
-        }
-
-        protected override string GetUpdate(InvoiceReceiptDetail entity)
-        {
-            return "update invoice_receipt_detail set goods_id = :goods_id, amount = :amount, price = :price, cost = :cost, tax = :tax, tax_value = :tax_value, cost_with_tax = :cost_with_tax where id = :id";
+            return connection.Execute("delete from invoice_receipt_detail where id = :id", new { id = id.oid }, transaction);
         }
     }
 }

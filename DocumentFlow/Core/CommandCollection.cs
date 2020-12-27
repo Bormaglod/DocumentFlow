@@ -57,14 +57,18 @@ namespace DocumentFlow
 
         void ICommandCollection.OpenDiagram(Guid id) => commandFactory.Execute("open-diagram", id);
 
-        public void Add(CommandMethod method, string name)
+        public CommandItem Add(CommandMethod method, string name)
         {
             var cmd = commandFactory.Commands.FirstOrDefault(x => x.code == name);
             if (cmd != null)
             {
                 var command = new CommandItem(owner, cmd, method);
                 commands.Add(command);
+
+                return command;
             }
+
+            return null;
         }
 
         public Command GetCommand(ICommand command) => commandFactory[command.Code];

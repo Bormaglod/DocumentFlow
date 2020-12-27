@@ -11,8 +11,6 @@ using System.Data;
 
 namespace DocumentFlow.Code
 {
-    public delegate bool DataFieldParameter(string dataField);
-
     public interface IContainer
     {
         IControl this[string controlName] { get; }
@@ -20,7 +18,7 @@ namespace DocumentFlow.Code
         IEnumerable<IControl> ControlsAll { get; }
         void Add(IControl control);
         void Add(IControl[] controls);
-        void Populate(IDbConnection conn, object entity, DataFieldParameter getEnabled = null, DataFieldParameter getVisible = null);
+        void Populate(IDbConnection conn, object entity, IControlEnabled enabled = null, IControlVisible visible = null);
         IControl AsControl();
     }
 }

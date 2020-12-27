@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
-using DocumentFlow.Code.Core;
+using Dapper;
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation.DeductionImp
@@ -23,7 +25,7 @@ namespace DocumentFlow.Code.Implementation.DeductionImp
         }
     }
 
-    public class DeductionBrowser : BrowserCodeBase<Deduction>, IBrowserCode
+    public class DeductionBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -41,7 +43,7 @@ namespace DocumentFlow.Code.Implementation.DeductionImp
             from deduction d 
                 join status s on (s.id = d.status_id)";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
             browser.AllowGrouping = true;
@@ -79,34 +81,41 @@ namespace DocumentFlow.Code.Implementation.DeductionImp
             });
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new DeductionEditor();
         }
 
-        protected override string GetSelect()
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return baseSelect;
+            return connection.Query<Deduction>(baseSelect).AsList();
         }
 
-        protected override string GetSelectById()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return baseSelect + " where d.id = :id";
+            return connection.QuerySingleOrDefault<Deduction>(baseSelect + " where d.id = :id", new { id });
+        }
+
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
+        {
+            return connection.Execute("delete from deduction where id = :id", new { id }, transaction);
         }
     }
 
-    public class DeductionEditor : EditorCodeBase<Deduction>, IEditorCode
+    public class DeductionEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private const int labelWidth = 170;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(400);
+
             IControl accrual_base = editor.CreateChoice("accrual_base", "База для начисления", new Dictionary<int, string>() { { 1, "Материалы" }, { 2, "ФОТ" } })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(180);
+
             IControl percentage = editor.CreatePercent("percentage", "Процент", percentDecimalDigits: 2)
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(70);
@@ -118,19 +127,32 @@ namespace DocumentFlow.Code.Implementation.DeductionImp
             });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, name, d.accrual_base, d.percentage from deduction d where id = :id";
+            string sql = "select id, name, d.accrual_base, d.percentage from deduction d where id = :id";
+            return connection.QuerySingleOrDefault<Deduction>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(Deduction deduction)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update deduction set name = :name, accrual_base = :accrual_base, percentage = :percentage where id = :id";
+            string sql = "insert into deduction default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            string sql = "update deduction set name = :name, accrual_base = :accrual_base, percentage = :percentage where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from deduction where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
     }
 }

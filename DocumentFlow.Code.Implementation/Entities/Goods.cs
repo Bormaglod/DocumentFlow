@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -30,37 +31,56 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
         public decimal profit_value { get; set; }
         public decimal calc_price { get; set; }
         public DateTime? approved { get; set; }
+		public decimal? balance { get; set; }
         object IIdentifier.oid
         {
             get { return id; }
         }
     }
 
-    public class GoodsBrowser : BrowserCodeBase<Goods>, IBrowserCode
+    public class GoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
+            with goods_sum as
+            (
+	            select reference_id as id, sum(amount * sign(operation_summa::numeric)) as balance from balance_goods group by reference_id
+            )
             select 
-                id, 
-                parent_id, 
-                status_id, 
-                status_name, 
-                code, 
-                ext_article, 
-                name, 
-                abbreviation, 
-                price, 
-                tax, 
-                min_order, 
-                is_service, 
-                cost, 
-                profit_percent, 
-                profit_value, 
-                calc_price, 
-                approved 
-            from goods_view 
+                g.id,
+                g.parent_id,
+                g.status_id,
+                s.note as status_name,
+                g.code,
+                g.ext_article,
+                g.name,
+                m.abbreviation,
+                g.price,
+                g.tax,
+                g.min_order,
+                g.is_service,
+                c.cost,
+                c.profit_percent,
+                c.profit_value,
+                c.price as calc_price,
+                ( 
+                    select history.changed
+                        from history
+                        where history.reference_id = c.id and history.to_status_id = 1002
+                        order by history.changed desc
+                        limit 1
+                ) as approved,
+                case 
+   				when goods_sum.balance = 0 then null
+   				else goods_sum.balance
+				end as balance
+            from goods g
+                join status s ON s.id = g.status_id
+                left join measurement m on g.measurement_id = m.id
+                left join goods_sum on (g.id = goods_sum.id)
+                left join calculation c on c.owner_id = g.id and c.status_id = 1002
             where {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowGrouping = true;
             browser.AllowSorting = true;
@@ -71,8 +91,8 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
             browser.CreateColumns((columns) =>
             {
                 columns.CreateText("id", "Id")
-                .SetWidth(180)
-                .SetVisible(false);
+                    .SetWidth(180)
+                    .SetVisible(false);
 
                 columns.CreateInteger("status_id", "Код состояния")
                     .SetWidth(80)
@@ -154,6 +174,12 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                     .SetWidth(120)
                     .SetVisibility(false);
 
+                columns.CreateNumeric("balance", "Тек. остаток")
+					.SetDecimalDigits(3)
+                    .SetWidth(120)
+                    .SetVisibility(false)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
+
                 columns.CreateSortedColumns()
                     .Add("code", ListSortDirection.Ascending);
             });
@@ -161,24 +187,24 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
             browser.ChangeParent += Browser_ChangeParent;
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new GoodsEditor();
         }
 
-        public override IEnumerable<Goods> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<Goods>(GetSelect(), new { parent_id = parameters.ParentId });
+            return connection.Query<Goods>(string.Format(baseSelect, "g.parent_id is not distinct from :parent_id"), new { parent_id = parameters.ParentId }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "parent_id is not distinct from :parent_id");
+            return connection.QuerySingleOrDefault<Goods>(string.Format(baseSelect, "g.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "id = :id");
+            return connection.Execute("delete from goods where id = :id", new { id }, transaction);
         }
 
         private void Browser_ChangeParent(object sender, ChangeParentEventArgs e)
@@ -201,7 +227,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                     browser.Columns[column].Visibility = root == "Прд";
                 }
 
-                foreach (string column in new string[] { "code", "abbreviation", "price", "tax" })
+                foreach (string column in new string[] { "code", "abbreviation", "price", "tax", "balance" })
                 {
                     browser.Columns[column].Visibility = !string.IsNullOrEmpty(root);
                 }
@@ -212,7 +238,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
         }
     }
 
-    public class GoodsEditor : EditorCodeBase<Goods>, IEditorCode
+    public class GoodsEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private const int labelWidth = 190;
 
@@ -224,27 +250,35 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
             IControl code = editor.CreateTextBox("code", "Артикул")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(160);
+
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
+
             IControl parent = editor.CreateSelectBox("parent_id", "Группа", (c) => { return c.Query<GroupDataItem>(folderSelect); }, showOnlyFolder: true)
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
+
             IControl ext_article = editor.CreateTextBox("ext_article", "Доп. артикул")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
+
             IControl measurement = editor.CreateComboBox("measurement_id", "Еденица измерения", (conn) => { return conn.Query<ComboBoxDataItem>(measurementSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
+
             IControl price = editor.CreateCurrency("price", "Цена без НДС")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
+
             IControl tax = editor.CreateChoice("tax", "НДС", new Dictionary<int, string>() { { 0, "Без НДС" }, { 10, "10%" }, { 20, "20%" } })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
+
             IControl min_order = editor.CreateNumeric("min_order", "Мин. заказ")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
+
             IControl is_service = editor.CreateCheckBox("is_service", "Услуга")
                 .SetLabelWidth(labelWidth);
 
@@ -269,19 +303,32 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
             dependentViewer.AddDependentViewers(new string[] { "view-balance-goods", "view-archive-price" });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, parent_id, code, name, ext_article, measurement_id, price, tax, min_order, is_service from goods where id = :id";
+            string sql = "select id, parent_id, code, name, ext_article, measurement_id, price, tax, min_order, is_service from goods where id = :id";
+            return connection.QuerySingleOrDefault<Goods>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(Goods goods)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update goods set code = :code, name = :name, parent_id = :parent_id, ext_article = :ext_article, measurement_id = :measurement_id, price = :price, tax = :tax, min_order = :min_order, is_service = :is_service where id = :id";
+            string sql = "insert into goods default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            string sql = "update goods set code = :code, name = :name, parent_id = :parent_id, ext_article = :ext_article, measurement_id = :measurement_id, price = :price, tax = :tax, min_order = :min_order, is_service = :is_service where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from goods where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
 
     }

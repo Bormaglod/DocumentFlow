@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
@@ -11,7 +11,6 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
 {
     public class CalcItemOperation : IDirectory
     {
-#pragma warning disable IDE1006 // Стили именования
         public Guid id { get; protected set; }
         public int status_id { get; set; }
         public string status_name { get; set; }
@@ -28,7 +27,6 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
         public decimal amount { get; set; }
 
         public decimal produced_time { get; set; }
-#pragma warning restore IDE1006 // Стили именования
 
         object IIdentifier.oid
         {
@@ -36,7 +34,27 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
         }
     }
 
-    public class CalcItemOperationBrowser : BrowserCodeBase<CalcItemOperation>, IBrowserCode
+    public class UsedMaterial : IDetail
+    {
+        public long id { get; protected set; }
+        public Guid calc_item_operation_id { get; set; }
+        public Guid goods_id { get; set; }
+        public string goods_name { get; protected set; }
+        public decimal count_by_goods { get; set; }
+        public decimal count_by_operation { get; set; }
+
+        Guid IDetail.owner_id
+        {
+            get { return calc_item_operation_id; }
+        }
+
+        object IIdentifier.oid
+        {
+            get { return id; }
+        }
+    }
+
+    public class CalcItemOperationBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -54,7 +72,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
             where 
                 {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
             browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
@@ -109,50 +127,30 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
             });
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new CalcItemOperationEditor();
         }
 
-        public override IEnumerable<CalcItemOperation> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<CalcItemOperation>(GetSelect(), new { owner_id = parameters.OwnerId });
+            return connection.Query<CalcItemOperation>(string.Format(baseSelect, "cio.owner_id = :owner_id"), new { owner_id = parameters.OwnerId }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "cio.owner_id = :owner_id");
+            return connection.QuerySingleOrDefault<CalcItemOperation>(string.Format(baseSelect, "cio.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "cio.id = :id");
-        }
-    }
-
-    public class UsedMaterial : IDetail
-    {
-        public long id { get; protected set; }
-        public Guid calc_item_operation_id { get; set; }
-        public Guid goods_id { get; set; }
-        public string goods_name { get; protected set; }
-        public decimal count_by_goods { get; set; }
-        public decimal count_by_operation { get; set; }
-
-        Guid IDetail.owner_id
-        {
-            get { return calc_item_operation_id; }
-        }
-
-        object IIdentifier.oid
-        {
-            get { return id; }
+            return connection.Execute("delete from calc_item_operation where id = :id", new { id }, transaction);
         }
     }
 
-    public class CalcItemOperationEditor : EditorCodeBase<CalcItemOperation>, IEditorCode
+    public class CalcItemOperationEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const int labelWidth = 120;
             const string itemSelect = "with recursive r as (select id, status_id, parent_id, name, code from operation where parent_id is null and status_id in (500, 1002) union select o.id, o.status_id, o.parent_id, o.name, o.code from operation o join r on r.id = o.parent_id and o.status_id in (500, 1002)) select id, status_id, parent_id, name from r order by code";
@@ -162,18 +160,23 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(300)
                 .SetEnabled(false);
+
             IControl item_id = editor.CreateSelectBox("item_id", "Операция", (c) => { return c.Query<GroupDataItem>(itemSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
+
             IControl amount = editor.CreateNumeric("amount", "Количество")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
+
             IControl price = editor.CreateCurrency("price", "Цена")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(200);
+
             IControl cost = editor.CreateCurrency("cost", "Стоимость")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(200);
+
             IControl grid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<UsedMaterial>(gridSelect, new { editor.Entity.oid }).AsList(); })
                 .CreateColumns((columns) =>
                 {
@@ -215,38 +218,44 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
             });
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return connection.QuerySingle<TId>(GetInsert(), new { owner_id = parameters.OwnerId }, transaction: transaction);
+            string sql = "select cio.id, c.name as calculation_name, cio.item_id, cio.cost, cio.price, cio.amount from calc_item_operation cio left join calculation c on (c.id = cio.owner_id) where cio.id = :id";
+            return connection.QuerySingleOrDefault<CalcItemOperation>(sql, new { id = id.oid });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "select cio.id, c.name as calculation_name, cio.item_id, cio.cost, cio.price, cio.amount from calc_item_operation cio left join calculation c on (c.id = cio.owner_id) where cio.id = :id";
+            return connection.QuerySingle<Guid>(
+                "insert into calc_item_operation (owner_id) values (:owner_id) returning id", 
+                new { owner_id = parameters.OwnerId }, 
+                transaction: transaction);
         }
 
-        protected override string GetInsert()
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "insert into calc_item_operation (owner_id) values (:owner_id) returning id";
+            string sql = "update calc_item_operation set item_id = :item_id, amount = :amount, price = :price, cost = :cost where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        protected override string GetUpdate(CalcItemOperation item)
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            return "update calc_item_operation set item_id = :item_id, amount = :amount, price = :price, cost = :cost where id = :id";
+            string sql = "delete from calc_item_operation where id = :id";
+            return connection.Execute(sql, new { id = id.oid }, transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
         {
-            if (field == "calculation_name")
+            if (dataName == "calculation_name")
                 return false;
 
-            return status_name == "compiled";
+            return info.StatusCode == "compiled";
         }
     }
 
-    public class UsedMaterialEditor : EditorCodeBase<UsedMaterial>, IEditorCode
+    public class UsedMaterialEditor : IEditorCode, IDataOperation
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const int labelWidth = 160;
             const string goodsSelect = "with recursive r as (select id, status_id, parent_id, name from goods where parent_id is null and not code in ('Прд', 'Усл') and status_id in (500, 1002) union select g.id, g.status_id, g.parent_id, g.name from goods g join r on r.id = g.parent_id and g.status_id in (500, 1002)) select * from r order by name";
@@ -254,9 +263,11 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
             IControl goods_id = editor.CreateSelectBox("goods_id", "Номенклатура", (c) => { return c.Query<GroupDataItem>(goodsSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl count_by_goods = editor.CreateNumeric("count_by_goods", "Количество на изд.")
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
+
             IControl count_by_operation = editor.CreateNumeric("count_by_operation", "Количество на опер.")
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
@@ -268,10 +279,18 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
             });
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
+            string sql = "select id, goods_id, count_by_goods, count_by_operation from used_material where id = :id";
+            return connection.QuerySingleOrDefault<UsedMaterial>(sql, new { id = id.oid });
+        }
+
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        {
+            string sql = "insert into used_material (calc_item_operation_id, goods_id, count_by_goods, count_by_operation) values (:owner_id, :goods_id, :count_by_goods, :count_by_operation) returning id";
+
             UsedMaterial material = editor.Entity as UsedMaterial;
-            return connection.QuerySingle<TId>(GetInsert(),
+            return connection.QuerySingle<long>(sql,
                 new
                 {
                     owner_id = parameters.OwnerId,
@@ -282,19 +301,16 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
                 transaction: transaction);
         }
 
-        protected override string GetSelect()
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "select id, goods_id, count_by_goods, count_by_operation from used_material where id = :id";
+            string sql = "update used_material set goods_id = :goods_id, count_by_goods = :count_by_goods, count_by_operation = :count_by_operation where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        protected override string GetInsert()
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            return "insert into used_material (calc_item_operation_id, goods_id, count_by_goods, count_by_operation) values (:owner_id, :goods_id, :count_by_goods, :count_by_operation) returning id";
-        }
-
-        protected override string GetUpdate(UsedMaterial entity)
-        {
-            return "update used_material set goods_id = :goods_id, count_by_goods = :count_by_goods, count_by_operation = :count_by_operation where id = :id";
+            string sql = "delete from used_material where id = :id";
+            return connection.Execute(sql, new { id = id.oid }, transaction);
         }
     }
 }

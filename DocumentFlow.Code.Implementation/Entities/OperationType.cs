@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
+using System.Data;
 using System.Windows.Forms;
-using DocumentFlow.Code.Core;
+using Dapper;
+
 using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation.OperationTypeImp
@@ -20,7 +23,7 @@ namespace DocumentFlow.Code.Implementation.OperationTypeImp
         }
     }
 
-    public class OperationTypeBrowser : BrowserCodeBase<OperationType>, IBrowserCode
+    public class OperationTypeBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -32,63 +35,70 @@ namespace DocumentFlow.Code.Implementation.OperationTypeImp
             from operation_type ot 
                 join status s on (s.id = ot.status_id)";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
 
             browser.CreateStatusColumnRenderer();
 
-            IColumnCollection columns = browser.Columns;
+            browser.CreateColumns((columns) =>
+            {
+                columns.CreateText("id", "Id")
+                    .SetWidth(180)
+                    .SetVisible(false);
 
-            columns.CreateText("id", "Id")
-                .SetWidth(180)
-                .SetVisible(false);
+                columns.CreateInteger("status_id", "Код состояния")
+                    .SetWidth(80)
+                    .SetVisible(false);
 
-            columns.CreateInteger("status_id", "Код состояния")
-                .SetWidth(80)
-                .SetVisible(false);
+                columns.CreateText("status_name", "Состояние")
+                    .SetWidth(110)
+                    .SetVisible(false);
 
-            columns.CreateText("status_name", "Состояние")
-                .SetWidth(110)
-                .SetVisible(false);
+                columns.CreateText("name", "Наименование")
+                    .SetHideable(false)
+                    .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateText("name", "Наименование")
-                .SetHideable(false)
-                .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
+                columns.CreateNumeric("hourly_salary", "Расценка, руб./час", NumberFormatMode.Currency)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetWidth(200);
 
-            columns.CreateNumeric("hourly_salary", "Расценка, руб./час", NumberFormatMode.Currency)
-                .SetHorizontalAlignment(HorizontalAlignment.Right)
-                .SetWidth(200);
-
-            columns.CreateSortedColumns()
-                .Add("name", ListSortDirection.Ascending);
+                columns.CreateSortedColumns()
+                    .Add("name", ListSortDirection.Ascending);
+            });
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new OperationTypeEditor();
         }
 
-        protected override string GetSelect()
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return baseSelect;
+            return connection.Query<OperationType>(baseSelect).AsList();
         }
 
-        protected override string GetSelectById()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return baseSelect + " where ot.id = :id";
+            return connection.QuerySingleOrDefault<OperationType>(baseSelect + " where ot.id = :id", new { id });
+        }
+
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
+        {
+            return connection.Execute("delete from operation_type where id = :id", new { id }, transaction);
         }
     }
 
-    public class OperationTypeEditor : EditorCodeBase<OperationType>, IEditorCode
+    public class OperationTypeEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private const int labelWidth = 140;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(380);
+
             IControl hourly_salary = editor.CreateCurrency("hourly_salary", "Расценка, руб./час")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(200);
@@ -101,19 +111,32 @@ namespace DocumentFlow.Code.Implementation.OperationTypeImp
             dependentViewer.AddDependentViewers(new string[] { "view-archive-price" });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, name, hourly_salary from operation_type where id = :id";
+            string sql = "select id, name, hourly_salaryfrom operation_type where id = :id";
+            return connection.QuerySingleOrDefault<OperationType>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(OperationType operationType)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update operation_type set name = :name, hourly_salary = :hourly_salary where id = :id";
+            string sql = "insert into operation_type default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return status_name == "compiled";
+            string sql = "update operation_type set name = :name, hourly_salary = :hourly_salary where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from operation_type where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return info.StatusCode == "compiled";
         }
     }
 }

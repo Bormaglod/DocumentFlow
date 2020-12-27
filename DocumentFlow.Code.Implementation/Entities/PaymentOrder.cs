@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
@@ -22,18 +22,19 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; set; }
         public DateTime? date_debited { get; set; }
+        public decimal amount_debited { get; set; }
         public decimal? expense { get; set; }
         public decimal? income { get; set; }
         public string organization_name { get; protected set; }
-		public decimal amount_debited { get; set; }
         public Guid? purchase_id { get; set; }
+        public Guid? invoice_receipt_id { get; set; }
         object IIdentifier.oid
         {
             get { return id; }
         }
     }
 
-    public class PaymentOrderBrowser : BrowserCodeBase<PaymentOrder>, IBrowserCode
+    public class PaymentOrderBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -51,7 +52,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
             from payment_order_view 
             where {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowGrouping = true;
             browser.DataType = DataType.Document;
@@ -116,42 +117,48 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 columns.CreateSortedColumns()
                     .Add("doc_date");
             });
+
+            browser.MoveToEnd();
         }
 
-        public override IEnumerable<PaymentOrder> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<PaymentOrder>(GetSelect(), new
+            return connection.Query<PaymentOrder>(string.Format(baseSelect, "doc_date between :from_date and :to_date and organization_id = :organization_id"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
                 organization_id = parameters.OrganizationId
-            });
+            }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "doc_date between :from_date and :to_date and organization_id = :organization_id");
+            return connection.QuerySingleOrDefault<PaymentOrder>(string.Format(baseSelect, "id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "id = :id");
+            return connection.Execute("delete from payment_order where id = :id", new { id }, transaction);
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new PaymentOrderEditor();
         }
     }
 
-    public class PaymentOrderEditor : EditorCodeBase<PaymentOrder>, IEditorCode
+    public class PaymentOrderEditor : IEditorCode, IDataOperation, IControlEnabled, IControlVisible
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const int labelWidth = 210;
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id in (500, 1002)) or (id = :contractor_id) order by name";
-            const string purchaseSelect1 = "select pr.id, ek.name || ' №' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) where (pr.status_id in (3002, 3004) or pr.id = :purchase_id) and (pr.contractor_id = :contractor_id) group by pr.id, ek.name, doc_number, doc_date";
-			const string purchaseSelect2 = "select pr.id, ek.name || ' №' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) where (pr.status_id in (3002, 3004) or pr.id = :purchase_id) group by pr.id, ek.name, doc_number, doc_date";
+            const string purchaseSelect1 = "select pr.id, 'Заявка №' || pr.doc_number || ' от ' || to_char(pr.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) as name from purchase_request pr join purchase_request_detail prd on (prd.owner_id = pr.id) where (pr.status_id = 3002 or pr.id = :purchase_id) and (pr.contractor_id = :contractor_id) group by pr.id, pr.doc_number, pr.doc_date";
+            const string purchaseSelect2 = "select pr.id, 'Заявка №' || pr.doc_number || ' от ' || to_char(pr.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) as name from purchase_request pr join purchase_request_detail prd on (prd.owner_id = pr.id) where (pr.status_id = 3002 or pr.id = :purchase_id) group by pr.id, pr.doc_number, pr.doc_date";
+            const string invoiceSelect1 = "select ir.id, 'Поступление №' || ir.doc_number || ' от ' || to_char(ir.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(ird.cost_with_tax) as name from invoice_receipt ir join invoice_receipt_detail ird on (ird.owner_id = ir.id) where (ir.status_id in (3004, 3006) or ir.id = :invoice_receipt_id) and (ir.contractor_id = :contractor_id) group by ir.id, ir.doc_number, ir.doc_date";
+            const string invoiceSelect2 = "select ir.id, 'Поступление №' || ir.doc_number || ' от ' || to_char(ir.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(ird.cost_with_tax) as name from invoice_receipt ir join invoice_receipt_detail ird on (ird.owner_id = ir.id) where (ir.status_id in (3004, 3006) or ir.id = :invoice_receipt_id) group by ir.id, ir.doc_number, ir.doc_date";
+
+			PaymentOrder order = editor.Entity as PaymentOrder;
 
             IControl contractor_id = editor.CreateSelectBox("contractor_id", "Контрагент", (e, c) =>
                 {
@@ -163,6 +170,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                     using (var conn = editor.CreateConnection())
                     {
                         editor.Populates["purchase_id"].Populate(conn, editor.Entity);
+                        editor.Populates["invoice_receipt_id"].Populate(conn, editor.Entity);
                     }
                 })
                 .SetLabelWidth(labelWidth)
@@ -186,10 +194,10 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
             IControl purchase_id = editor.CreateSelectBox("purchase_id", "Заявка на расход", (e, c) =>
                 {
                     PaymentOrder po = e.Entity as PaymentOrder;
-					if (po.contractor_id != null)
-                    	return c.Query<GroupDataItem>(purchaseSelect1, new { po.contractor_id, po.purchase_id });
-					else
-						return c.Query<GroupDataItem>(purchaseSelect2, new { po.purchase_id });
+                    if (po.contractor_id != null)
+                        return c.Query<GroupDataItem>(purchaseSelect1, new { po.contractor_id, po.purchase_id });
+                    else
+                        return c.Query<GroupDataItem>(purchaseSelect2, new { po.purchase_id });
                 })
                 .ValueChangedAction((s, e) =>
                 {
@@ -197,10 +205,33 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                     {
                         Guid id = editor.ExecuteSqlCommand<Guid>("select contractor_id from purchase_request where id = :purchase_id", new { purchase_id = e.Value });
                         editor.Data["contractor_id"] = id;
+                        editor.Data["invoice_receipt_id"] = null;
                     }
                 })
                 .SetLabelWidth(labelWidth)
-                .SetControlWidth(400);
+                .SetControlWidth(400)
+				.SetVisible(order.expense.HasValue);
+
+            IControl invoice_receipt_id = editor.CreateSelectBox("invoice_receipt_id", "Поступление товаров/материалов", (e, c) =>
+                {
+                    PaymentOrder po = e.Entity as PaymentOrder;
+                    if (po.contractor_id != null)
+                        return c.Query<GroupDataItem>(invoiceSelect1, new { po.contractor_id, po.invoice_receipt_id });
+                    else
+                        return c.Query<GroupDataItem>(invoiceSelect2, new { po.invoice_receipt_id });
+                })
+                .ValueChangedAction((s, e) =>
+                {
+                    using (var conn = editor.CreateConnection())
+                    {
+                        Guid id = editor.ExecuteSqlCommand<Guid>("select contractor_id from invoice_receipt where id = :invoice_receipt_id", new { invoice_receipt_id = e.Value });
+                        editor.Data["contractor_id"] = null;
+                        editor.Data["invoice_receipt_id"] = id;
+                    }
+                })
+                .SetLabelWidth(labelWidth)
+                .SetControlWidth(400)
+				.SetVisible(order.expense.HasValue);
 
             editor.Container.Add(new IControl[] {
                 contractor_id,
@@ -208,23 +239,59 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 doc_number,
                 date_debited,
                 amount_debited,
-                purchase_id
+                purchase_id,
+                invoice_receipt_id
             });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select po.id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as name, doc_date, doc_number, contractor_id, date_debited, amount_debited, purchase_id, s.code as cur_status_name from payment_order po join status s on (s.id = status_id) where po.id = :id";
+            string sql = @"
+                select 
+                    id, 
+                    '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, 
+                    doc_date, 
+                    doc_number, 
+                    contractor_id, 
+                    date_debited, 
+                    amount_debited, 
+                    purchase_id, 
+                    invoice_receipt_id
+                from payment_order
+                where id = :id";
+            return connection.QuerySingleOrDefault<PaymentOrder>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(PaymentOrder pay)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update payment_order set doc_date = :doc_date, doc_number = :doc_number, contractor_id = :contractor_id, date_debited = :date_debited, amount_debited = :amount_debited, purchase_id = :purchase_id where id = :id";
+            string sql = "insert into payment_order default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            string sql = "update payment_order set doc_date = :doc_date, doc_number = :doc_number, contractor_id = :contractor_id, date_debited = :date_debited, amount_debited = :amount_debited, purchase_id = :purchase_id, invoice_receipt_id = :invoice_receipt_id where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from payment_order where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
+        }
+
+        bool IControlVisible.Ability(object entity, string dataName, IInformation info)
+        {
+            if (new string[] { "purchase_id", "invoice_receipt_id" }.Contains(dataName))
+            {
+                return info.StatusCode == "expense" || (entity as PaymentOrder).expense.HasValue;
+            }
+
+            return true;
         }
     }
 }

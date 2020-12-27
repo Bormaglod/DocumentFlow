@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
@@ -26,14 +26,13 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
         public Guid? okopf_id { get; set; }
         public string okopf_name { get; set; }
         public Guid? account_id { get; set; }
-        public bool tax_payer { get; set; }
         object IIdentifier.oid
         {
             get { return id; }
         }
     }
 
-    public class ContractorBrowser : BrowserCodeBase<Contractor>, IBrowserCode
+    public class ContractorBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -48,15 +47,14 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
                 c.kpp, 
                 c.ogrn, 
                 c.okpo,     
-                o.name as okopf_name, 
-                c.tax_payer
+                o.name as okopf_name
             from contractor c 
                 join status s on (s.id = c.status_id) 
                 left join okopf o on (o.id = c.okopf_id) 
             where 
                 {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.AllowGrouping = true;
             browser.DataType = DataType.Directory;
@@ -117,11 +115,6 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
         	        .SetAllowGrouping(true)
 					.SetVisibility(false);
 
-	            columns.CreateBoolean("tax_payer", "Плательщик НДС")
-					.SetWidth(150)
-    	            .SetAllowGrouping(true)
-        	        .SetVisibility(false);
-
 	            columns.CreateSortedColumns()
     	            .Add("name", ListSortDirection.Ascending);
 			});
@@ -129,24 +122,24 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
 			browser.ChangeParent += Browser_ChangeParent;
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new ContractorEditor();
         }
 
-        public override IEnumerable<Contractor> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<Contractor>(GetSelect(), new { parent_id = parameters.ParentId });
+            return connection.Query<Contractor>(string.Format(baseSelect, "c.parent_id is not distinct from :parent_id"), new { parent_id = parameters.ParentId }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "c.parent_id is not distinct from :parent_id");
+            return connection.QuerySingleOrDefault<Contractor>(string.Format(baseSelect, "c.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "c.id = :id");
+            return connection.Execute("delete from contractor where id = :id", new { id }, transaction);
         }
 
 		private void Browser_ChangeParent(object sender, ChangeParentEventArgs e)
@@ -169,7 +162,7 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
                     browser.Columns[column].Visibility = !string.IsNullOrEmpty(root);
                 }
 
-				foreach (string column in new string[] { "kpp", "okpo", "ogrn", "okopf_name", "tax_payer" })
+				foreach (string column in new string[] { "kpp", "okpo", "ogrn", "okopf_name" })
                 {
                     browser.Columns[column].Visibility = root == "Юр";
                 }
@@ -183,11 +176,11 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
 		}
     }
 
-    public class ContractorEditor : EditorCodeBase<Contractor>, IEditorCode
+    public class ContractorEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private const int labelWidth = 190;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string folderSelect = "select id, parent_id, name, status_id from contractor where status_id = 500 order by name";
             const string okopfSelect = "select id, name from okopf where status_id = 1001 order by name";
@@ -209,12 +202,15 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
+
             IControl parent = editor.CreateSelectBox("parent_id", "Группа", (c) => { return c.Query<GroupDataItem>(folderSelect); }, showOnlyFolder: true)
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
+
             IControl short_name = editor.CreateTextBox("short_name", "Короткое наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
+
             IControl full_name = editor.CreateTextBox("full_name", "Полное наименование", true)
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450)
@@ -241,52 +237,66 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
 					.AsNullable()
         	        .SetLabelWidth(labelWidth)
             	    .SetControlWidth(150);
+
 		        IControl ogrn = editor.CreateMaskedText<decimal>("ogrn", "ОГРН", "# ## ## ## ##### #")
 					.AsNullable()
             	    .SetLabelWidth(labelWidth)
                 	.SetControlWidth(150);
+
 	            IControl okpo = editor.CreateMaskedText<decimal>("okpo", "ОКПО", "## ##### #")
 					.AsNullable()
         	        .SetLabelWidth(labelWidth)
             	    .SetControlWidth(150);
+
 	            IControl okopf = editor.CreateComboBox("okopf_id", "ОКОПФ", (c) => { return c.Query<ComboBoxDataItem>(okopfSelect); })
     	            .SetLabelWidth(labelWidth)
         	        .SetControlWidth(330);
+
 	            IControl account = editor.CreateComboBox("account_id", "Расчётный счёт", (e, c) => {
     	                Contractor contractor = e.Entity as Contractor;
         	            return c.Query<ComboBoxDataItem>(accountSelect, new { contractor.id, contractor.account_id }); 
             	    })
                 	.SetLabelWidth(labelWidth)
 	                .SetControlWidth(330);
-	            IControl tax_payer = editor.CreateCheckBox("tax_payer", "Плательщик НДС")
-    	            .SetLabelWidth(labelWidth);
 
 				editor.Container.Add(new IControl[] {
 	                kpp,
     	            ogrn,
         	        okpo,
             	    okopf,
-                	account,
-                	tax_payer
+                	account
             	});
 			}
 
             dependentViewer.AddDependentViewers(new string[] { "view-contract", "view-account", "view-employee", "view-balance-contr" });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, name, parent_id, short_name, full_name, inn, kpp, ogrn, okpo, okopf_id, account_id, tax_payer from contractor where id = :id";
+            string sql = "select id, name, parent_id, short_name, full_name, inn, kpp, ogrn, okpo, okopf_id, account_id from contractor where id = :id";
+            return connection.QuerySingleOrDefault<Contractor>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(Contractor contractor)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update contractor set name = :name, parent_id = :parent_id, short_name = :short_name, full_name = :full_name, inn = :inn, kpp = :kpp, ogrn = :ogrn, okpo = :okpo, okopf_id = :okopf_id, account_id = :account_id, tax_payer = :tax_payer where id = :id";
+            string sql = "insert into contractor default values returning id";
+            return connection.QuerySingle<Guid>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            string sql = "update contractor set name = :name, parent_id = :parent_id, short_name = :short_name, full_name = :full_name, inn = :inn, kpp = :kpp, ogrn = :ogrn, okpo = :okpo, okopf_id = :okopf_id, account_id = :account_id where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from contractor where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
     }
 }

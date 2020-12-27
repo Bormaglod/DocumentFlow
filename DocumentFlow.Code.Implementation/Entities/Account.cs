@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
@@ -28,7 +28,7 @@ namespace DocumentFlow.Code.Implementation.AccountImp
         }
     }
 
-    public class AccountBrowser : BrowserCodeBase<Account>, IBrowserCode
+    public class AccountBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -43,7 +43,7 @@ namespace DocumentFlow.Code.Implementation.AccountImp
                 left join bank b on (b.id = a.bank_id) 
             where {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
             browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
@@ -55,8 +55,8 @@ namespace DocumentFlow.Code.Implementation.AccountImp
             browser.CreateColumns((columns) =>
             {
                 columns.CreateText("id", "Id")
-                .SetWidth(180)
-                .SetVisible(false);
+                    .SetWidth(180)
+                    .SetVisible(false);
 
                 columns.CreateInteger("status_id", "Код состояния")
                     .SetWidth(80)
@@ -82,44 +82,47 @@ namespace DocumentFlow.Code.Implementation.AccountImp
             });
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new AccountEditor();
         }
 
-        public override IEnumerable<Account> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<Account>(GetSelect(), new { owner_id = parameters.OwnerId });
+            return connection.Query<Account>(string.Format(baseSelect, "a.owner_id = :owner_id"), new { owner_id = parameters.OwnerId }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "a.owner_id = :owner_id");
+            return connection.QuerySingleOrDefault<Account>(string.Format(baseSelect, "a.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "a.id = :id");
+            return connection.Execute("delete from account where id = :id", new { id }, transaction);
         }
     }
 
-    public class AccountEditor : EditorCodeBase<Account>, IEditorCode
+    public class AccountEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private const int labelWidth = 120;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string bankSelect = "select id, name from bank where status_id = 1002 order by name";
 
             IControl company_name = editor.CreateTextBox("company_name", "Контрагент")
                 .SetLabelWidth(labelWidth)
                 .SetEnabled(false);
+
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(400);
+
             IControl account_value = editor.CreateMaskedText<decimal>("account_value", "Номер счета", "### ## ### # #### #######")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(250);
+
             IControl bank = editor.CreateComboBox("bank_id", "Банк", (conn) => { return conn.Query<ComboBoxDataItem>(bankSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(330);
@@ -132,32 +135,45 @@ namespace DocumentFlow.Code.Implementation.AccountImp
             });
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return connection.QuerySingle<TId>(GetInsert(), new { owner_id = parameters.OwnerId }, transaction: transaction);
+            string sql = @"
+                select 
+                    a.id, 
+                    a.name, 
+                    a.account_value, 
+                    a.bank_id, 
+                    c.name as company_name
+                from account a 
+                    join company c on (c.id = a.owner_id) 
+                where a.id = :id";
+            return connection.QuerySingleOrDefault<Account>(sql, new { id = id.oid });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "select a.id, a.name, a.account_value, a.bank_id, c.name as company_name from account a join company c on (c.id = a.owner_id) where a.id = :id";
+            string sql = "insert into account (owner_id) values (:owner_id) returning id";
+            return connection.QuerySingle<Guid>(sql, new { owner_id = parameters.OwnerId }, transaction: transaction);
         }
 
-        protected override string GetInsert()
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "insert into account (owner_id) values (:owner_id) returning id";
+            string sql = "update account set name = :name, account_value = :account_value, bank_id = :bank_id where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        protected override string GetUpdate(Account account)
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            return "update account set name = :name, account_value = :account_value, bank_id = :bank_id where id = :id";
+            string sql = "delete from account where id = :id";
+            return connection.Execute(sql, new { id = id.oid }, transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
         {
-            if (field == "company_name")
+            if (dataName == "company_name")
                 return false;
 
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
     }
 }

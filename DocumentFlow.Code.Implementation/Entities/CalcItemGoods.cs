@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
@@ -11,7 +11,6 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
 {
     public class CalcItemGoods : IDirectory
     {
-#pragma warning disable IDE1006 // Стили именования
         public Guid id { get; protected set; }
         public int status_id { get; set; }
         public string status_name { get; set; }
@@ -44,7 +43,6 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
         /// Процент использования в операциях
         /// </summary>
         public int percent_uses { get; set; }
-#pragma warning restore IDE1006 // Стили именования
 
         object IIdentifier.oid
         {
@@ -52,7 +50,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
         }
     }
 
-    public class CalcItemGoodsBrowser : BrowserCodeBase<CalcItemGoods>, IBrowserCode
+    public class CalcItemGoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -69,7 +67,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
                 left join goods g on (g.id = cg.item_id) 
             where {0}";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
             browser.ToolBar.ButtonStyle = ToolStripItemDisplayStyle.Image;
@@ -78,75 +76,76 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
 
             browser.CreateStatusColumnRenderer();
 
-            IColumnCollection columns = browser.Columns;
+            browser.CreateColumns((columns) =>
+            {
+                columns.CreateText("id", "Id")
+                    .SetWidth(180)
+                    .SetVisible(false);
 
-            columns.CreateText("id", "Id")
-                .SetWidth(180)
-                .SetVisible(false);
+                columns.CreateInteger("status_id", "Код состояния")
+                    .SetWidth(80)
+                    .SetVisible(false);
 
-            columns.CreateInteger("status_id", "Код состояния")
-                .SetWidth(80)
-                .SetVisible(false);
+                columns.CreateText("status_name", "Состояние")
+                    .SetWidth(110)
+                    .SetVisible(false);
 
-            columns.CreateText("status_name", "Состояние")
-                .SetWidth(110)
-                .SetVisible(false);
+                columns.CreateText("name", "Номенклатура")
+                    .SetHideable(false)
+                    .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
-            columns.CreateText("name", "Номенклатура")
-                .SetHideable(false)
-                .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
+                columns.CreateNumeric("amount", "Количество")
+                    .SetDecimalDigits(3)
+                    .SetWidth(150)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
-            columns.CreateNumeric("amount", "Количество")
-                .SetDecimalDigits(3)
-                .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignment.Right);
+                columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
+                    .SetWidth(150)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
-            columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
-                .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignment.Right);
+                columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency)
+                    .SetWidth(150)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
-            columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency)
-                .SetWidth(150)
-                .SetHorizontalAlignment(HorizontalAlignment.Right);
+                columns.CreateProgress("percent_uses", "Использовано, %")
+                    .SetWidth(150);
 
-            columns.CreateProgress("percent_uses", "Использовано, %")
-                .SetWidth(150);
+                columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
+                    .AddColumn("name", RowSummaryType.CountAggregate, "Всего наименований: {Count}")
+                    .AddColumn("amount", RowSummaryType.DoubleAggregate, "{Sum}")
+                    .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}");
 
-            columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
-                .AddColumn("name", RowSummaryType.CountAggregate, "Всего наименований: {Count}")
-                .AddColumn("amount", RowSummaryType.DoubleAggregate, "{Sum}")
-                .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}");
-
-            columns.CreateSortedColumns()
-                .Add("name", ListSortDirection.Ascending);
+                columns.CreateSortedColumns()
+                    .Add("name", ListSortDirection.Ascending);
+            });
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new CalcItemGoodsEditor();
         }
 
-        public override IEnumerable<CalcItemGoods> SelectAll(IDbConnection connection, IBrowserParameters parameters)
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<CalcItemGoods>(GetSelect(), new { owner_id = parameters.OwnerId });
+            return connection.Query<CalcItemGoods>(string.Format(baseSelect, "cg.owner_id = :owner_id"), new { owner_id = parameters.OwnerId }).AsList();
         }
 
-        protected override string GetSelect()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return string.Format(baseSelect, "cg.owner_id = :owner_id");
+            return connection.QuerySingleOrDefault<CalcItemGoods>(string.Format(baseSelect, "cg.id = :id"), new { id });
         }
 
-        protected override string GetSelectById()
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
         {
-            return string.Format(baseSelect, "cg.id = :id");
+            return connection.Execute("delete from calc_item_goods where id = :id", new { id }, transaction);
         }
     }
 
-    public class CalcItemGoodsEditor : EditorCodeBase<CalcItemGoods>, IEditorCode
+    public class CalcItemGoodsEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private const int labelWidth = 120;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string itemSelect = "with recursive r as (select id, status_id, parent_id, name from goods where parent_id is null and not code in ('Прд', 'Усл') and status_id in (500, 1002) union select g.id, g.status_id, g.parent_id, g.name from goods g join r on r.id = g.parent_id and g.status_id in (500, 1002)) select * from r order by name";
 
@@ -154,15 +153,19 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(300)
                 .SetEnabled(false);
+
             IControl item_id = editor.CreateSelectBox("item_id", "Материал", (c) => { return c.Query<GroupDataItem>(itemSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
+
             IControl amount = editor.CreateNumeric("amount", "Количество")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
+
             IControl price = editor.CreateCurrency("price", "Цена")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(200);
+
             IControl cost = editor.CreateCurrency("cost", "Стоимость")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(200);
@@ -176,32 +179,35 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
             });
         }
 
-        public override TId Insert<TId>(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return connection.QuerySingle<TId>(GetInsert(), new { owner_id = parameters.OwnerId }, transaction: transaction);
+            string sql = "select cg.id, c.name as calculation_name, cg.item_id, cg.amount, cg.price, cg.cost from calc_item_goods cg join calculation c on (c.id = cg.owner_id) where cg.id = :id";
+            return connection.QuerySingleOrDefault<CalcItemGoods>(sql, new { id = id.oid });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "select cg.id, c.name as calculation_name, cg.item_id, cg.amount, cg.price, cg.cost from calc_item_goods cg join calculation c on (c.id = cg.owner_id) where cg.id = :id";
+            string sql = "insert into calc_item_goods (owner_id) values (:owner_id) returning id";
+            return connection.QuerySingle<Guid>(sql, new { owner_id = parameters.OwnerId }, transaction: transaction);
         }
 
-        protected override string GetInsert()
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return "insert into calc_item_goods (owner_id) values (:owner_id) returning id";
+            string sql = "update calc_item_goods set item_id = :item_id, amount = :amount, price = :price, cost = :cost where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
         }
 
-        protected override string GetUpdate(CalcItemGoods item)
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
         {
-            return "update calc_item_goods set item_id = :item_id, amount = :amount, price = :price, cost = :cost where id = :id";
+            return connection.Execute("delete from calc_item_goods where id = :id", new { id = id.oid }, transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
         {
-            if (field == "calculation_name")
+            if (dataName == "calculation_name")
                 return false;
 
-            return status_name == "compiled";
+            return info.StatusCode == "compiled";
         }
     }
 }

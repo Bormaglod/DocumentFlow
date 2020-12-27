@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using Dapper;
 using DocumentFlow.Code.Core;
@@ -33,7 +35,7 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
         }
     }
 
-    public class OrganizationBrowser : BrowserCodeBase<Organization>, IBrowserCode
+    public class OrganizationBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"
             select 
@@ -56,7 +58,7 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
                 join status s on (s.id = org.status_id) 
                 left join okopf o on (o.id = org.okopf_id)";
 
-        public void Initialize(IBrowser browser)
+        void IBrowserCode.Initialize(IBrowser browser)
         {
             browser.DataType = DataType.Directory;
 
@@ -126,27 +128,32 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
             });
         }
 
-        public IEditorCode CreateEditor()
+        IEditorCode IDataEditor.CreateEditor()
         {
             return new OrganizationEditor();
         }
 
-        protected override string GetSelect()
+        IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return baseSelect;
+            return connection.Query<Organization>(baseSelect).AsList();
         }
 
-        protected override string GetSelectById()
+        object IBrowserOperation.Select(IDbConnection connection, Guid id, IBrowserParameters parameters)
         {
-            return baseSelect + " where org.id = :id";
+            return connection.QuerySingleOrDefault<Organization>(baseSelect + " where org.id = :id", new { id });
+        }
+
+        int IBrowserOperation.Delete(IDbConnection connection, IDbTransaction transaction, Guid id)
+        {
+            return connection.Execute("delete from organization where id = :id", new { id }, transaction);
         }
     }
 
-    public class OrganizationEditor : EditorCodeBase<Organization>, IEditorCode
+    public class OrganizationEditor : IEditorCode, IDataOperation, IControlEnabled
     {
         private const int labelWidth = 190;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
         {
             const string okopfSelect = "select id, name from okopf where status_id = 1001 order by name";
             const string accountSelect = "select id, name from account where (owner_id = :id and status_id = 1002) or (id = :account_id)";
@@ -154,46 +161,58 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(360);
+
             IControl short_name = editor.CreateTextBox("short_name", "Короткое наименование")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
+
             IControl full_name = editor.CreateTextBox("full_name", "Полное наименование", true)
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450)
                 .SetHeight(75)
                 .SetPadding(bottom: 7);
+
             IControl inn = editor.CreateMaskedText<decimal>("inn", "ИНН", "#### ##### #")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
+
             IControl kpp = editor.CreateMaskedText<decimal>("kpp", "КПП", "#### ## ###")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
+
             IControl ogrn = editor.CreateMaskedText<decimal>("ogrn", "ОГРН", "# ## ## ## ##### #")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
+
             IControl okpo = editor.CreateMaskedText<decimal>("okpo", "ОКПО", "## ##### #")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
+
             IControl okopf = editor.CreateComboBox("okopf_id", "ОКОПФ", (conn) => { return conn.Query<ComboBoxDataItem>(okopfSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(330);
+
             IControl account = editor.CreateComboBox("account_id", "Расчётный счёт", (e, c) => {
                     Organization org = e.Entity as Organization;
                     return c.Query<ComboBoxDataItem>(accountSelect, new { org.id, org.account_id }); 
                 })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(330);
+
             IControl address = editor.CreateTextBox("address", "Адрес", true)
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450)
                 .SetHeight(75)
                 .SetPadding(bottom: 7);
+
             IControl phone = editor.CreateTextBox("phone", "Телефон")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(190);
+
             IControl email = editor.CreateTextBox("email", "Эл. почта")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(190);
+
             IControl default_org = editor.CreateCheckBox("default_org", "Основная организация")
                 .SetLabelWidth(labelWidth);
 
@@ -216,19 +235,32 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
             dependentViewer.AddDependentViewers(new string[] { "view-account", "view-employee" });
         }
 
-        protected override string GetSelect()
+        object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            return "select id, name, short_name, full_name, inn, kpp, ogrn, okpo, okopf_id, account_id, address, phone, email, default_org from organization where id = :id";
+            string sql = "select id, name, short_name, full_name, inn, kpp, ogrn, okpo, okopf_id, account_id, address, phone, email, default_org from organization where id = :id";
+            return connection.QuerySingleOrDefault<Organization>(sql, new { id = id.oid });
         }
 
-        protected override string GetUpdate(Organization organization)
+        object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            return "update organization set name = :name, short_name = :short_name, full_name = :full_name, inn = :inn, kpp = :kpp, ogrn = :ogrn, okpo = :okpo, okopf_id = :okopf_id, account_id = :account_id, address = :address, phone = :phone, email = :email, default_org = :default_org where id = :id";
+            string sql = "insert into organization default values returning id";
+            return connection.QuerySingle<Organization>(sql, transaction: transaction);
         }
 
-        public override bool GetEnabledValue(string field, string status_name)
+        int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            return new string[] { "compiled", "is changing" }.Contains(status_name);
+            string sql = "update organization set name = :name, short_name = :short_name, full_name = :full_name, inn = :inn, kpp = :kpp, ogrn = :ogrn, okpo = :okpo, okopf_id = :okopf_id, account_id = :account_id, address = :address, phone = :phone, email = :email, default_org = :default_org where id = :id";
+            return connection.Execute(sql, editor.Entity, transaction);
+        }
+
+        int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)
+        {
+            return connection.Execute("delete from organization where id = :id", new { id = id.oid }, transaction);
+        }
+
+        bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
+        {
+            return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
     }
 }
