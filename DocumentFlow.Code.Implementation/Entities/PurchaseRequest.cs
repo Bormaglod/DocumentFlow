@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -166,7 +166,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<PurchaseRequest>(string.Format(baseSelect, "pr.doc_date between :from_date and :to_date and pr.organization_id = :organization_id"), new
+            return connection.Query<PurchaseRequest>(string.Format(baseSelect, "(pr.doc_date between :from_date and :to_date and pr.organization_id = :organization_id) or (pr.status_id not in (1011, 3000))"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
@@ -192,7 +192,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 
     public class PurchaseRequestEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'seller'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
@@ -233,10 +233,10 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 })
                 .ValueChangedAction((s, e) =>
                 {
-                    using (var conn = editor.CreateConnection())
+                    using (var conn = database.CreateConnection())
                     {
                         editor.Populates["contract_id"].Populate(conn, editor.Entity);
-                        editor.Data["contract_id"] = editor.ExecuteSqlCommand<Guid>("select id from contract where owner_id = :contractor_id and contract.contractor_type = 'seller'::contractor_type and contract.is_default", new { contractor_id = editor.Data["contractor_id"] });
+                        editor.Data["contract_id"] = database.ExecuteSqlCommand<Guid>("select id from contract where owner_id = :contractor_id and contract.contractor_type = 'seller'::contractor_type and contract.is_default", new { contractor_id = editor.Data["contractor_id"] });
                     }
                 })
                 .SetLabelWidth(100)
@@ -381,7 +381,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 
     public class PurchaseRequestDetailEditor : IEditorCode, IDataOperation
     {
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 120;
             const string goodsSelect = "select id, status_id, name, parent_id from goods where status_id in (500, 1002) order by name";
@@ -389,7 +389,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
             IControl goods_id = editor.CreateSelectBox("goods_id", "Номенклатура", (c) => { return c.Query<GroupDataItem>(goodsSelect); })
                 .ValueChangedAction((s, e) =>
                 {
-                    decimal goods_price = editor.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
+                    decimal goods_price = database.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
                     editor.Data["price"] = goods_price;
                 })
                 .SetLabelWidth(labelWidth)

@@ -242,7 +242,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
     {
         private const int labelWidth = 190;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        public void Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string folderSelect = "select id, parent_id, name, status_id from goods where status_id = 500 order by name";
             const string measurementSelect = "select id, name from measurement where status_id = 1001 order by name";
@@ -294,7 +294,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 is_service
             });
 
-            string root = editor.ExecuteSqlCommand<string>("select root_code_goods(:oid)", new { editor.Entity.oid });
+            string root = database.ExecuteSqlCommand<string>("select root_code_goods(:oid)", new { editor.Entity.oid });
             if (root == "Прд")
             {
                 dependentViewer.AddDependentViewer("view-calculation");

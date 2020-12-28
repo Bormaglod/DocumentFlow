@@ -195,7 +195,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 
     public class ProductionOrderEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and buyer) or (status_id = 500) or (id = :contractor_id) order by name";
@@ -354,7 +354,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 
     public class ProductionOrderDetailEditor : IEditorCode, IDataOperation
     {
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 120;
             const string goodsSelect = "with recursive gp as (select id, status_id, name, parent_id from goods where status_id in (500, 1002) and id = '4da429d1-cd8f-4757-bea8-49c99adc48d8' union all select gc.id, gc.status_id, gc.name, gc.parent_id from goods gc join gp on (gc.parent_id = gp.id) where gc.status_id in (500, 1002)) select * from gp order by name";
@@ -363,10 +363,10 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
             IControl goods_id = editor.CreateSelectBox("goods_id", "Номенклатура", (c) => { return c.Query<GroupDataItem>(goodsSelect); })
                 .ValueChangedAction((s, e) =>
                 {
-                    decimal goods_price = editor.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
+                    decimal goods_price = database.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
                     editor.Data["price"] = goods_price;
 
-                    using (IDbConnection conn = editor.CreateConnection())
+                    using (IDbConnection conn = database.CreateConnection())
                     {
                         editor.Populates["calculation_id"].Populate(conn, editor.Entity);
                     }

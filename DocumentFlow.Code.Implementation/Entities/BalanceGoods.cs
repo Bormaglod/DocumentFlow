@@ -186,7 +186,7 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
             where 
                 bg.id = :id";
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             BalanceGoods balance = editor.Entity as BalanceGoods;
             if (balance == null)

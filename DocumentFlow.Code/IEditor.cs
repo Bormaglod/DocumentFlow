@@ -30,7 +30,6 @@ namespace DocumentFlow.Code
         IPopulateCollection Populates { get; }
         IContainer CreateContainer();
         IContainer CreateContainer(int height);
-        IDbConnection CreateConnection();
         IBindingControl CreateTextBox(string fieldName, string label, bool multiline = false);
         IBindingControl CreateSelectBox(string fieldName, string label, ChoiceItems getItems, bool showOnlyFolder = false);
         IBindingControl CreateSelectBox(string fieldName, string label, СriterionChoiceItems getItems, bool showOnlyFolder = false);
@@ -47,6 +46,5 @@ namespace DocumentFlow.Code
         IBindingControl CreateImageBox(string fieldName, string label);
         IBindingControl CreateMaskedText<T>(string fieldName, string label, string mask, char promtCharacter = '_') where T : IComparable<T>;
         IDataGrid CreateDataGrid(string name, Func<IDbConnection, IList> getItems);
-        T ExecuteSqlCommand<T>(string sql, object param = null);
     }
 }

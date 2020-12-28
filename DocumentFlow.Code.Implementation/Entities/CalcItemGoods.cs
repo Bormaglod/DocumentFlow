@@ -145,7 +145,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
     {
         private const int labelWidth = 120;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string itemSelect = "with recursive r as (select id, status_id, parent_id, name from goods where parent_id is null and not code in ('Прд', 'Усл') and status_id in (500, 1002) union select g.id, g.status_id, g.parent_id, g.name from goods g join r on r.id = g.parent_id and g.status_id in (500, 1002)) select * from r order by name";
 

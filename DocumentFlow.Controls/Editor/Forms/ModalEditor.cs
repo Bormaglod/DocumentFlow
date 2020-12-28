@@ -18,10 +18,10 @@ namespace DocumentFlow.Controls.Forms
 {
     public partial class ModalEditor : Form
     {
-        private IContainer container;
-        private IBrowserParameters parameters;
+        private readonly IContainer container;
+        private readonly IBrowserParameters parameters;
         private IEditor editorData;
-        private Action<object> checkValuesData;
+        private readonly Action<object> checkValuesData;
 
         public ModalEditor(Guid ownerId, string headerText, Action<object> checkValues)
         {
@@ -46,7 +46,7 @@ namespace DocumentFlow.Controls.Forms
 
             if (editor is IDataOperation operation)
             {
-                editor.Initialize(editorData);
+                editor.Initialize(editorData, new Database());
                 CalculateHeightForm();
                 using (var conn = Db.OpenConnection())
                 {
@@ -86,7 +86,7 @@ namespace DocumentFlow.Controls.Forms
                     {
                         Entity = operation.Select(conn, id, parameters) as IIdentifier
                     };
-                    editor.Initialize(editorData);
+                    editor.Initialize(editorData, new Database());
                     CalculateHeightForm();
 
                     container.Populate(conn, editorData.Entity);

@@ -124,7 +124,7 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
     {
         private const int labelWidth = 120;
 
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        public void Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string personSelect = "select id, name from person where status_id = 1002 order by name";
             const string okpdtrSelect = "select id, name from okpdtr where status_id = 1001 order by name";

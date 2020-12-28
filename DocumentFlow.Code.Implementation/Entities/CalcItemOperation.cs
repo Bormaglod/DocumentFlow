@@ -150,7 +150,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
 
     public class CalcItemOperationEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 120;
             const string itemSelect = "with recursive r as (select id, status_id, parent_id, name, code from operation where parent_id is null and status_id in (500, 1002) union select o.id, o.status_id, o.parent_id, o.name, o.code from operation o join r on r.id = o.parent_id and o.status_id in (500, 1002)) select id, status_id, parent_id, name from r order by code";
@@ -255,7 +255,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
 
     public class UsedMaterialEditor : IEditorCode, IDataOperation
     {
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 160;
             const string goodsSelect = "with recursive r as (select id, status_id, parent_id, name from goods where parent_id is null and not code in ('Прд', 'Усл') and status_id in (500, 1002) union select g.id, g.status_id, g.parent_id, g.name from goods g join r on r.id = g.parent_id and g.status_id in (500, 1002)) select * from r order by name";

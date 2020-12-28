@@ -241,7 +241,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
     {
         private bool main;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 190;
             const string goodsSelect = "with recursive r as (select id, status_id, name, parent_id from goods where id = '4da429d1-cd8f-4757-bea8-49c99adc48d8' union all select g.id, g.status_id, g.name, g.parent_id from goods g join r on (r.id = g.parent_id and g.status_id = 500)) select id, status_id, name, parent_id from r union all select g.id, g.status_id, g.name, g.parent_id from goods g join production_order_detail pod on (pod.owner_id = :owner_id and pod.goods_id = g.id) order by name";
@@ -258,7 +258,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
                         return c.Query<GroupDataItem>(ownerSelect, new { rg.owner_id });
                     })
                     .ValueChangedAction((s, e) => {
-                        using (IDbConnection conn = editor.CreateConnection())
+                        using (IDbConnection conn = database.CreateConnection())
                         {
                             editor.Populates["goods_id"].Populate(conn, editor.Entity);
                         }

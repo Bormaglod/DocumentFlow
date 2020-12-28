@@ -166,7 +166,7 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
             where 
                 bc.id = :id";
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             BalanceContractor balance = editor.Entity as BalanceContractor;
             if (balance == null)

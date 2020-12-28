@@ -48,7 +48,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 date_debited, 
                 expense, 
                 income, 
-                organization_name 
+                organization_name
             from payment_order_view 
             where {0}";
 
@@ -123,7 +123,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<PaymentOrder>(string.Format(baseSelect, "doc_date between :from_date and :to_date and organization_id = :organization_id"), new
+            return connection.Query<PaymentOrder>(string.Format(baseSelect, "(doc_date between :from_date and :to_date and organization_id = :organization_id) or (status_id != 1002)"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
@@ -149,7 +149,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
 
     public class PaymentOrderEditor : IEditorCode, IDataOperation, IControlEnabled, IControlVisible
     {
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 210;
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id in (500, 1002)) or (id = :contractor_id) order by name";
@@ -167,7 +167,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 })
                 .ValueChangedAction((s, e) =>
                 {
-                    using (var conn = editor.CreateConnection())
+                    using (var conn = database.CreateConnection())
                     {
                         editor.Populates["purchase_id"].Populate(conn, editor.Entity);
                         editor.Populates["invoice_receipt_id"].Populate(conn, editor.Entity);
@@ -201,11 +201,11 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 })
                 .ValueChangedAction((s, e) =>
                 {
-                    using (var conn = editor.CreateConnection())
+                    using (var conn = database.CreateConnection())
                     {
-                        Guid id = editor.ExecuteSqlCommand<Guid>("select contractor_id from purchase_request where id = :purchase_id", new { purchase_id = e.Value });
-                        editor.Data["contractor_id"] = id;
-                        editor.Data["invoice_receipt_id"] = null;
+                        Guid id = database.ExecuteSqlCommand<Guid>("select contractor_id from purchase_request where id = :purchase_id", new { purchase_id = e.Value });
+						editor.Data["invoice_receipt_id"] = null;
+                        editor.Data["contractor_id"] = id;                        
                     }
                 })
                 .SetLabelWidth(labelWidth)
@@ -222,11 +222,11 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 })
                 .ValueChangedAction((s, e) =>
                 {
-                    using (var conn = editor.CreateConnection())
+                    using (var conn = database.CreateConnection())
                     {
-                        Guid id = editor.ExecuteSqlCommand<Guid>("select contractor_id from invoice_receipt where id = :invoice_receipt_id", new { invoice_receipt_id = e.Value });
-                        editor.Data["contractor_id"] = null;
-                        editor.Data["invoice_receipt_id"] = id;
+                        Guid id = database.ExecuteSqlCommand<Guid>("select contractor_id from invoice_receipt where id = :invoice_receipt_id", new { invoice_receipt_id = e.Value });
+						editor.Data["purchase_id"] = null;
+                        editor.Data["contractor_id"] = id;
                     }
                 })
                 .SetLabelWidth(labelWidth)
@@ -256,7 +256,9 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                     date_debited, 
                     amount_debited, 
                     purchase_id, 
-                    invoice_receipt_id
+                    invoice_receipt_id,
+					iif(direction = 'expense'::document_direction, amount_debited, NULL::money) AS expense,
+    				iif(direction = 'income'::document_direction, amount_debited, NULL::money) AS income
                 from payment_order
                 where id = :id";
             return connection.QuerySingleOrDefault<PaymentOrder>(sql, new { id = id.oid });
@@ -281,6 +283,11 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
 
         bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
         {
+			if (new string[] { "purchase_id", "invoice_receipt_id" }.Contains(dataName))
+            {
+                return info.StatusCode == "expense" && (entity as PaymentOrder).expense.HasValue;
+            }
+
             return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
 

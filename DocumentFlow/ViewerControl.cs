@@ -68,7 +68,9 @@ namespace DocumentFlow
         private CommandCollection commandCollection;
         private string doubleClickCommand;
         private BrowserMode mode;
+#if TURN_MOVETOEND
         private bool moveToEnd;
+#endif
 
 #if USE_LISTENER
         private bool initializing;
@@ -164,7 +166,7 @@ namespace DocumentFlow
         }
 #endif
 
-        #region IBrowser implementation
+#region IBrowser implementation
 
         public event EventHandler<ChangeParentEventArgs> ChangeParent;
         public Func<IBrowser, IEditorCode> CreateEditor;
@@ -239,7 +241,12 @@ namespace DocumentFlow
 
         void IBrowser.DefineDoubleClickCommand(string name) => doubleClickCommand = name;
 
-        void IBrowser.MoveToEnd() => moveToEnd = true;
+        void IBrowser.MoveToEnd()
+        {
+#if TURN_MOVETOEND
+            moveToEnd = true;
+#endif
+        }
 
         T IBrowser.ExecuteSqlCommand<T>(string sql, object param)
         {
@@ -249,9 +256,9 @@ namespace DocumentFlow
             }
         }
 
-        #endregion
+#endregion
 
-        #region ISettings implementation
+#region ISettings implementation
 
         void ISettings.LoadSettings()
         {
@@ -286,7 +293,7 @@ namespace DocumentFlow
 #endif
         }
 
-        #endregion
+#endregion
 
         [Browsable(false)]
         public IBrowserParameters Parameters
@@ -338,7 +345,9 @@ namespace DocumentFlow
                 form.Text = ExecutedCommand.name;
             }
 
+#if TURN_MOVETOEND
             moveToEnd = false;
+#endif
 
             gridContent.ColumnHeaderContextMenu = contextHeaderMenu;
             gridContent.RowHeaderContextMenu = contextRowMenu;
@@ -450,19 +459,6 @@ namespace DocumentFlow
             gridContent.CellRenderers.Remove("GroupSummary");
             gridContent.CellRenderers.Add("GroupSummary", new CustomGridTableSummaryRenderer(columns));
 
-            //FIX: По кактим-то причинам перемещение в конец таблицы не происходит при первом открытии окна. Повторное открытие этого или какого другого устраняет проблему
-            if (moveToEnd && gridContent.DataSource is IBindingList bindingList)
-            {
-                if (bindingList.Count > 0)
-                {
-                    gridContent.SelectedIndex = bindingList.Count - 1;
-
-                    gridContent.TableControl.ScrollRows.ScrollInView(bindingList.Count - 1);
-                    gridContent.TableControl.ScrollRows.UpdateScrollBar();
-                }
-            }
-
-
 #if USE_LISTENER
             initializing = true;
 #endif
@@ -556,6 +552,22 @@ namespace DocumentFlow
                     }
                 }
             }
+
+            //FIX: По кактим-то причинам перемещение в конец таблицы не происходит при первом открытии окна. Повторное открытие этого или какого другого устраняет проблему
+            //FIX: Присвоение нового значения gridContent.DataSource не приводит к изменению gridContent.RowCount
+            //FIX: ОТКЛЮЧЕНО
+#if TURN_MOVETOEND
+            if (moveToEnd && gridContent.DataSource is IBindingList bindingList)
+            {
+                if (gridContent.RowCount > 0)
+                {
+                    gridContent.SelectedIndex = gridContent.RowCount - 1;
+
+                    gridContent.TableControl.ScrollRows.ScrollInView(gridContent.RowCount - 1);
+                    gridContent.TableControl.ScrollRows.UpdateScrollBar();
+                }
+            }
+#endif
         }
 
 #if USE_LISTENER

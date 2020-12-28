@@ -180,7 +180,7 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
     {
         private const int labelWidth = 190;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string folderSelect = "select id, parent_id, name, status_id from contractor where status_id = 500 order by name";
             const string okopfSelect = "select id, name from okopf where status_id = 1001 order by name";
@@ -189,9 +189,9 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
 			string root = string.Empty;
 			if (editor.Parameters.ParentId.HasValue)
             {
-                Contractor g = editor.ExecuteSqlCommand<Contractor>("select * from contractor where id = :id", new { id = editor.Parameters.ParentId });
+                Contractor g = database.ExecuteSqlCommand<Contractor>("select * from contractor where id = :id", new { id = editor.Parameters.ParentId });
                 if (g.parent_id.HasValue)
-            		root = editor.ExecuteSqlCommand<string>("select root_code_contractor(:id)", new { id = editor.Parameters.ParentId });
+            		root = database.ExecuteSqlCommand<string>("select root_code_contractor(:id)", new { id = editor.Parameters.ParentId });
                 else
                     root = g.code;
             }

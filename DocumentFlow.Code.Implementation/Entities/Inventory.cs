@@ -144,7 +144,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
 
     public class InventoryEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        public void Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string empSelect = "select e.id, e.status_id, p.name from inventory i join organization org on (org.id = i.organization_id) join employee e on (e.owner_id = org.id) join person p on (p.id = e.person_id) where i.id = :id and (e.status_id = 1002 or e.id = :employee_id)";
@@ -238,7 +238,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
 
     public class InventoryDetailEditor : IEditorCode, IDataOperation
     {
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 100;
             const string goodsSelect = "with recursive r as (select id, status_id, name, parent_id from goods where code = 'Мат' union all select g.id, g.status_id, g.name, g.parent_id from goods g join r on (g.parent_id = r.id)) select id, status_id, name, parent_id from r where status_id in (500, 1002) or id = :goods_id order by name";

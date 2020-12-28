@@ -180,7 +180,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
 
     public class PerformOperationEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 210;
             const string orderSelect = "select po.id, po.status_id, '№' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where po.status_id = status_code('in production') or po.id = :order_id group by po.id, c.name order by po.doc_date, po.doc_number";
@@ -197,7 +197,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 })
                 .ValueChangedAction((s, e) =>
                 {
-                    using (var conn = editor.CreateConnection())
+                    using (var conn = database.CreateConnection())
                     {
                         editor.Populates["goods_id"].Populate(conn, editor.Entity);
                     }
@@ -212,7 +212,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 })
                 .ValueChangedAction((s, e) =>
                 {
-                    using (var conn = editor.CreateConnection())
+                    using (var conn = database.CreateConnection())
                     {
                         editor.Populates["operation_id"].Populate(conn, editor.Entity);
                     }
@@ -227,7 +227,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 })
                 .ValueChangedAction((s, e) =>
                 {
-                    using (var conn = editor.CreateConnection())
+                    using (var conn = database.CreateConnection())
                     {
                         editor.Populates["using_goods_id"].Populate(conn, editor.Entity);
                     }

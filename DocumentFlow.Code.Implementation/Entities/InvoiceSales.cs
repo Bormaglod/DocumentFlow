@@ -222,7 +222,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
 
     public class InvoiceSalesEditor : IEditorCode, IDataOperation, IControlEnabled
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        public void Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and buyer) or (status_id = 500) or (id = :contractor_id) order by name";
@@ -373,7 +373,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
 
     public class InvoiceSalesDetailEditor : IEditorCode, IDataOperation
     {
-        public void Initialize(IEditor editor, IDependentViewer dependentViewer)
+        public void Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 120;
             const string goodsSelect = "select id, status_id, name, parent_id from goods where status_id in (500, 1002) order by name";
@@ -381,7 +381,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
             IControl goods_id = editor.CreateSelectBox("goods_id", "Номенклатура", (c) => { return c.Query<GroupDataItem>(goodsSelect); })
                 .ValueChangedAction((s, e) =>
                 {
-                    decimal goods_price = editor.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
+                    decimal goods_price = database.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
                     editor.Data["price"] = goods_price;
                 })
                 .SetLabelWidth(labelWidth)

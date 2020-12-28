@@ -2,14 +2,14 @@
 // Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 09.10.2020
-// Time: 23:26
+// Date: 28.12.2020
+// Time: 17:17
 //-----------------------------------------------------------------------
 
 namespace DocumentFlow.Code
 {
-    public interface IEditorCode
+    public interface IChangingStatus
     {
-        void Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer = null);
+        bool CanChange(IDatabase database, object entity, string status_from, string status_to);
     }
 }

@@ -12,12 +12,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
-using Dapper;
 using DocumentFlow.Code;
 using DocumentFlow.Code.Implementation;
 using DocumentFlow.Code.System;
 using DocumentFlow.Core;
-using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Controls.Editor.Code
 {
@@ -68,8 +66,6 @@ namespace DocumentFlow.Controls.Editor.Code
             ContainerData container = new ContainerData(panel);
             return container;
         }
-
-        IDbConnection IEditor.CreateConnection() => Db.OpenConnection();
 
         IBindingControl IEditor.CreateTextBox(string fieldName, string label, bool multiline)
         {
@@ -354,14 +350,6 @@ namespace DocumentFlow.Controls.Editor.Code
             }
 
             return null;
-        }
-
-        T IEditor.ExecuteSqlCommand<T>(string sql, object param)
-        {
-            using (var conn = Db.OpenConnection())
-            {
-                return conn.QuerySingleOrDefault<T>(sql, param);
-            }
         }
 
         protected virtual IToolBar GetToolBar() => null;

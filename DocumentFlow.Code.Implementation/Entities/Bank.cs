@@ -114,7 +114,7 @@ namespace DocumentFlow.Code.Implementation.BankImp
     {
         private const int labelWidth = 120;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             IControl code = editor.CreateTextBox("code", "Код")
                 .SetLabelWidth(labelWidth);

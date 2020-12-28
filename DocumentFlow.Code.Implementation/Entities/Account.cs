@@ -107,7 +107,7 @@ namespace DocumentFlow.Code.Implementation.AccountImp
     {
         private const int labelWidth = 120;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string bankSelect = "select id, name from bank where status_id = 1002 order by name";
 

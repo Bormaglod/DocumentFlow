@@ -112,7 +112,7 @@ namespace DocumentFlow.Code.Implementation.ContractImp
     {
         private const int labelWidth = 120;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             IControl contractor_name = editor.CreateTextBox("contractor_name", "Контрагент")
                 .SetLabelWidth(labelWidth)

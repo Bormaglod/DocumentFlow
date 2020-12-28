@@ -152,7 +152,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
                 columns.CreateText("contract_name", "Договор")
                     .SetWidth(150)
-					.SetVisible(false)
+                    .SetVisible(false)
                     .SetAllowGrouping(true);
 
                 columns.CreateDate("purchase_date", "Дата")
@@ -193,15 +193,15 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     .Add("purchase_number")
                     .Header("Заявка");
 
-				columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
+                columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
                     .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}")
-					.AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
-					.AddColumn("cost_with_tax", RowSummaryType.DoubleAggregate, "{Sum:c}");
+                    .AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
+                    .AddColumn("cost_with_tax", RowSummaryType.DoubleAggregate, "{Sum:c}");
 
-				columns.CreateGroupSummaryRow()
+                columns.CreateGroupSummaryRow()
                     .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}")
-					.AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
-					.AddColumn("cost_with_tax", RowSummaryType.DoubleAggregate, "{Sum:c}");
+                    .AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
+                    .AddColumn("cost_with_tax", RowSummaryType.DoubleAggregate, "{Sum:c}");
             });
 
             browser.MoveToEnd();
@@ -209,7 +209,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<InvoiceReceipt>(string.Format(baseSelect, "ir.doc_date between :from_date and :to_date and ir.organization_id = :organization_id"), new
+            return connection.Query<InvoiceReceipt>(string.Format(baseSelect, "(ir.doc_date between :from_date and :to_date and ir.organization_id = :organization_id) or (ir.status_id != 3000)"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
@@ -233,7 +233,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         }
     }
 
-    public class InvoiceReceiptEditor : IEditorCode, IDataOperation, IControlEnabled
+    public class InvoiceReceiptEditor : IEditorCode, IDataOperation, IControlEnabled, IChangingStatus
     {
         private class PurchaseRequestData
         {
@@ -241,7 +241,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
             public Guid contract_id { get; set; }
         }
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'seller'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
@@ -283,10 +283,10 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 })
                 .ValueChangedAction((s, e) =>
                 {
-                    using (var conn = editor.CreateConnection())
+                    using (var conn = database.CreateConnection())
                     {
                         editor.Populates["contract_id"].Populate(conn, editor.Entity);
-                        editor.Data["contract_id"] = editor.ExecuteSqlCommand<Guid>("select id from contract where owner_id = :contractor_id and contract.contractor_type = 'seller'::contractor_type and contract.is_default", new { contractor_id = editor.Data["contractor_id"] });
+                        editor.Data["contract_id"] = database.ExecuteSqlCommand<Guid>("select id from contract where owner_id = :contractor_id and contract.contractor_type = 'seller'::contractor_type and contract.is_default", new { contractor_id = editor.Data["contractor_id"] });
                         editor.Populates["owner_id"].Populate(conn, editor.Entity);
                     }
                 })
@@ -300,7 +300,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 })
                 .ValueChangedAction((s, e) =>
                 {
-                    using (var conn = editor.CreateConnection())
+                    using (var conn = database.CreateConnection())
                     {
                         Guid? cid = e.Value as Guid?;
                         if (cid.HasValue)
@@ -323,7 +323,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 })
                 .ValueChangedAction((s, e) =>
                 {
-                    using (var conn = editor.CreateConnection())
+                    using (var conn = database.CreateConnection())
                     {
                         var cc = conn.QuerySingle<PurchaseRequestData>("select contractor_id, contract_id from purchase_request where id = :id", new { id = e.Value });
                         editor.Data["contractor_id"] = cc.contractor_id;
@@ -429,7 +429,20 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            string sql = "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, owner_id, contractor_id, contract_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_receipt where id = :id";
+            string sql = @"
+                select 
+                    id, 
+                    '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, 
+                    owner_id, 
+                    contractor_id, 
+                    contract_id, 
+                    doc_date, 
+                    doc_number, 
+                    organization_id, 
+                    invoice_date, 
+                    invoice_number 
+                from invoice_receipt 
+                where id = :id";
             return connection.QuerySingleOrDefault<InvoiceReceipt>(sql, new { id = id.oid });
         }
 
@@ -453,6 +466,26 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
         {
             return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
+        }
+
+        bool IChangingStatus.CanChange(IDatabase database, object entity, string status_from, string status_to)
+        {
+            InvoiceReceipt ir = entity as InvoiceReceipt;
+            if (ir.owner_id.HasValue && status_from == "withdrawal" && status_to == "close")
+            {
+                DialogResult res = MessageBox.Show("Закрыть заявку на приобретение товаров/материалов?", "Вопрос", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (res == DialogResult.Cancel)
+                {
+                    return false;
+                }
+
+                if (res == DialogResult.Yes)
+                {
+                    database.ExecuteCommand("update purchase_request set status_id = 3000 where id = :owner_id", ir);
+                }
+            }
+
+            return true;
         }
 
         private void OpenContractorClick(object sender, ExecuteEventArgs e)
@@ -482,7 +515,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
     public class InvoiceReceiptDetailEditor : IEditorCode, IDataOperation
     {
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 120;
             const string goodsSelect = "select id, status_id, name, parent_id from goods where status_id in (500, 1002) order by name";
@@ -490,7 +523,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
             IControl goods_id = editor.CreateSelectBox("goods_id", "Номенклатура", (c) => { return c.Query<GroupDataItem>(goodsSelect); })
                 .ValueChangedAction((s, e) =>
                 {
-                    decimal goods_price = editor.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
+                    decimal goods_price = database.ExecuteSqlCommand<decimal>("select price from goods where id = :goods_id", new { goods_id = e.Value });
                     editor.Data["price"] = goods_price;
                 })
                 .SetLabelWidth(labelWidth)

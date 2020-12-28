@@ -112,7 +112,7 @@ namespace DocumentFlow.Code.Implementation.ArchivePriceImp
     {
         private const int labelWidth = 180;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             IControl date_to = editor.CreateDateTimePicker("date_to", "Дата окончания действия")
                 .SetLabelWidth(labelWidth)

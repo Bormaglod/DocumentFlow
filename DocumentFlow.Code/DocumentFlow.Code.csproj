@@ -34,9 +34,6 @@
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.2.0.78\lib\net461\Dapper.dll</HintPath>
     </Reference>
-    <Reference Include="Inflector, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Inflector.1.0.0.0\lib\net45\Inflector.dll</HintPath>
-    </Reference>
     <Reference Include="Syncfusion.Core.WinForms, Version=18.4460.0.31, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
       <HintPath>..\packages\Syncfusion.Core.WinForms.18.4.0.31\lib\net46\Syncfusion.Core.WinForms.dll</HintPath>
     </Reference>
@@ -82,9 +79,11 @@
     <Compile Include="Data\CodeContent.cs" />
     <Compile Include="Data\CommandExtension.cs" />
     <Compile Include="IBrowserOperation.cs" />
+    <Compile Include="IChangingStatus.cs" />
     <Compile Include="IContextMenu.cs" />
     <Compile Include="IControlEnabled.cs" />
     <Compile Include="IControlVisible.cs" />
+    <Compile Include="IDatabase.cs" />
     <Compile Include="IDataCollection.cs" />
     <Compile Include="IDataEditor.cs" />
     <Compile Include="IDataOperation.cs" />

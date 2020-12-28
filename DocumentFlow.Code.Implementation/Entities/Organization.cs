@@ -153,7 +153,7 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
     {
         private const int labelWidth = 190;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string okopfSelect = "select id, name from okopf where status_id = 1001 order by name";
             const string accountSelect = "select id, name from account where (owner_id = :id and status_id = 1002) or (id = :account_id)";

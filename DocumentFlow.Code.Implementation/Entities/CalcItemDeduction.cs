@@ -134,7 +134,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemDeductionImp
     {
         private const int labelWidth = 200;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string itemSelect = "select id, status_id, name, parent_id from deduction where status_id in (500, 1002) order by name";
 

@@ -28,6 +28,7 @@ using Spire.Pdf.Graphics;
 using Syncfusion.Windows.Forms.Tools;
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Events;
+using DocumentFlow.Controls.Editor.Code;
 using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Code;
@@ -72,6 +73,7 @@ namespace DocumentFlow
         private readonly DocumentRefEditor refEditor;
         private EditorData editorData;
         private readonly IBrowser ownerBrowser;
+        private IDatabase database;
 #if USE_LISTENER
         private CancellationTokenSource listenerToken;
         private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
@@ -171,6 +173,8 @@ namespace DocumentFlow
 
         #endregion
 
+        #region IDependentViewer implementation
+
         void IDependentViewer.AddDependentViewer(string commandCode)
         {
             using (var conn = Db.OpenConnection())
@@ -219,6 +223,8 @@ namespace DocumentFlow
                 editor.AddDependentViewer(commandCodes[i]);
             }
         }
+
+        #endregion
 
 #if USE_LISTENER
         private void Listener(CancellationToken token)
@@ -362,6 +368,8 @@ namespace DocumentFlow
             };
 
             gridDocuments.Columns.Add(fileSizeColumn);
+
+            database = new Database();
         }
 
         /// <summary>
@@ -445,11 +453,23 @@ namespace DocumentFlow
             panelItemActions.Items.Clear();
             using (var conn = Db.OpenConnection())
             {
-                var list = conn.Query<ChangingStatus, Picture, ChangingStatus>("select * from changing_status cs left join picture p on (cs.picture_id = p.id) where cs.transition_id = :transition_id and cs.from_status_id = :status_id and not cs.is_system order by cs.order_index", (cs, picture) =>
+                string sql = @"
+                    select * 
+                        from changing_status cs 
+                            join status s_from on (s_from.id = cs.from_status_id)
+                            join status s_to on (s_to.id = cs.to_status_id)
+                            left join picture p on (cs.picture_id = p.id) 
+                        where 
+                            cs.transition_id = :transition_id and 
+                            cs.from_status_id = :status_id and 
+                            not cs.is_system";
+                var list = conn.Query<ChangingStatus, Status, Status, Picture, ChangingStatus>(sql, (cs, status_from, status_to, picture) =>
                 {
+                    cs.FromStatus = status_from;
+                    cs.ToStatus = status_to;
                     cs.Picture = picture;
                     return cs;
-                }, new { command.EntityKind.transition_id, status_id = status.id }).ToList();
+                }, new { command.EntityKind.transition_id, status_id = status.id }).ToList().OrderBy(x => x.order_index);
 
                 foreach (var cs in list)
                 {
@@ -489,6 +509,14 @@ namespace DocumentFlow
                     {
                         try
                         {
+                            if (command.Editor() is IChangingStatus changingStatus)
+                            {
+                                if (!changingStatus.CanChange(database, entity, cs.FromStatus.code, cs.ToStatus.code))
+                                {
+                                    return;
+                                }
+                            }
+
                             conn.Execute($"update {command.EntityKind.code} set status_id = :status_id where id = :id", new { status_id = cs.to_status_id, id = current }, transaction);
                             transaction.Commit();
                         }
@@ -648,7 +676,7 @@ namespace DocumentFlow
                     Entity = entity as IIdentifier
                 };
 
-                command.Editor().Initialize(editorData, this);
+                command.Editor().Initialize(editorData, database, this);
                 PopulateControls();
                 CreateActionButtons();
             }

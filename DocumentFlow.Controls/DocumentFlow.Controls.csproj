@@ -105,6 +105,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DecimalTextBoxAccessibility.cs" />
+    <Compile Include="Editor\Code\Database.cs" />
     <Compile Include="Editor\Code\ModalEditorData.cs" />
     <Compile Include="Editor\Forms\ModalEditor.cs">
       <SubType>Form</SubType>

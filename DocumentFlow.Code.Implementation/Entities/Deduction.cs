@@ -106,7 +106,7 @@ namespace DocumentFlow.Code.Implementation.DeductionImp
     {
         private const int labelWidth = 170;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             IControl name = editor.CreateTextBox("name", "Наименование")
                 .SetLabelWidth(labelWidth)

@@ -103,7 +103,7 @@ namespace DocumentFlow.Code.Implementation.PictureImp
     {
         private const int labelWidth = 160;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             IControl code = editor.CreateTextBox("code", "Код")
                 .SetLabelWidth(labelWidth)

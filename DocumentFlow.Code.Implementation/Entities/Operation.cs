@@ -233,7 +233,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
     {
         private const int labelWidth = 200;
 
-        void IEditorCode.Initialize(IEditor editor, IDependentViewer dependentViewer)
+        void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string typeSelect = "select id, name from operation_type where status_id = 1002 order by name";
             const string folderSelect = "select id, parent_id, name, status_id from operation where status_id = 500 order by name";
@@ -273,7 +273,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
             controls.Add(editor.CreateCurrency("salary", "Зарплата, руб.")
                 .SetLabelWidth(labelWidth));
 
-            string root = editor.ExecuteSqlCommand<string>("select root_code_operation(:oid)", new { editor.Entity.oid });
+            string root = database.ExecuteSqlCommand<string>("select root_code_operation(:oid)", new { editor.Entity.oid });
             if (root == "Резка")
             {
 				controls.Add(editor.CreateChoice("program", "Программа", (conn) => 
