@@ -15,7 +15,7 @@ using Dapper;
 using FluentFTP;
 using DocumentFlow.Authorization;
 using DocumentFlow.Core.Exceptions;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Entities;
 using DocumentFlow.Properties;
 
@@ -23,7 +23,7 @@ namespace DocumentFlow
 {
     public partial class DocumentRefEditor : Form
     {
-        private string ftpPath;
+        private readonly string ftpPath;
 
         public DocumentRefEditor(string ftpPath)
         {
@@ -47,16 +47,18 @@ namespace DocumentFlow
             textNote.Text = string.Empty;
 
             if (ShowDialog() != DialogResult.OK)
-                return null;
+            {
+                throw new CanceledException();
+            }
 
             string name = Path.GetFileName(selectFile.FileName);
 
             if (CanceledFtpConnection())
             {
-                return null;
+                throw new CanceledException();
             }
 
-            FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
+            var ftp = new FtpClient(Settings.Default.FtpHost)
             {
                 Credentials = new NetworkCredential(Settings.Default.FtpUser, Settings.Default.FtpPassword)
             };
@@ -65,8 +67,8 @@ namespace DocumentFlow
 
             try
             {
-                FileInfo fileInfo = new FileInfo(selectFile.FileName);
-                DocumentRefs docRef = new DocumentRefs()
+                var fileInfo = new FileInfo(selectFile.FileName);
+                var docRef = new DocumentRefs
                 {
                     owner_id = owner,
                     file_name = name,
@@ -86,14 +88,14 @@ namespace DocumentFlow
             }
         }
 
-        public bool Edit(DocumentRefs refs)
+        public void Edit(DocumentRefs refs)
         {
             if (CanceledFtpConnection())
             {
-                return false;
+                throw new CanceledException();
             }
 
-            FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
+            var ftp = new FtpClient(Settings.Default.FtpHost)
             {
                 Credentials = new NetworkCredential(Settings.Default.FtpUser, Settings.Default.FtpPassword)
             };
@@ -106,7 +108,7 @@ namespace DocumentFlow
                 if (MessageBox.Show($"Файл {refs.file_name} отсутствует. Удалить запись?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     Delete(ftp, refs);
-                    return false;
+                    throw new CanceledException(true);
                 }
             }
 
@@ -136,23 +138,19 @@ namespace DocumentFlow
                     }
 
                     refs.note = textNote.Text;
-
-                    return true;
                 }
             }
             finally
             {
                 ftp.Disconnect();
             }
-
-            return false;
         }
 
         public void Delete(DocumentRefs refs)
         {
             if (CanceledFtpConnection())
             {
-                return;
+                throw new CanceledException();
             }
 
             FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
@@ -165,12 +163,12 @@ namespace DocumentFlow
             Delete(ftp, refs);
         }
 
-        public bool GetLocalFileName(DocumentRefs refs, out string localName)
+        public string GetLocalFileName(DocumentRefs refs)
         {
-            localName = Path.Combine(Path.GetTempPath(), refs.file_name);
+            string localName = Path.Combine(Path.GetTempPath(), refs.file_name);
             if (CanceledFtpConnection())
             {
-                return false;
+                throw new CanceledException();
             }
 
             FtpClient ftp = new FtpClient(Settings.Default.FtpHost)
@@ -189,7 +187,7 @@ namespace DocumentFlow
                     uint crc = GetCrcFile(localName);
                     if (crc == refs.crc)
                     {
-                        return true;
+                        return localName;
                     }
 
                     File.Delete(localName);
@@ -202,10 +200,10 @@ namespace DocumentFlow
                         Delete(ftp, refs);
                     }
 
-                    return false;
+                    throw new CanceledException(true);
                 }
 
-                return true;
+                return localName;
             }
             finally
             {
@@ -234,7 +232,9 @@ namespace DocumentFlow
         {
             string fileName = Path.Combine(ftpPath, refs.file_name);
             if (ftp.FileExists(fileName))
+            {
                 ftp.DeleteFile(fileName);
+            }
 
             using (var conn = Db.OpenConnection())
             {
@@ -242,13 +242,13 @@ namespace DocumentFlow
                 {
                     try
                     {
-                        conn.Query("delete from document_refs where id = :id", new { refs.Id }, transaction);
+                        conn.Query("delete from document_refs where id = :id", new { refs.id }, transaction);
                         transaction.Commit();
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         transaction.Rollback();
-                        ExceptionHelper.MesssageBox(e);
+                        throw;
                     }
                 }
             }

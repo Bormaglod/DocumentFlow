@@ -4,24 +4,17 @@ using System.Data;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.ArchivePriceImp
 {
-    public class ArchivePrice : IDirectory
+    public class ArchivePrice : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; protected set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public DateTime? date_from { get; set; }
         public DateTime date_to { get; set; }
         public decimal price_value { get; set; }
         public string user_name { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class ArchivePriceBrowser : IBrowserCode, IBrowserOperation, IDataEditor

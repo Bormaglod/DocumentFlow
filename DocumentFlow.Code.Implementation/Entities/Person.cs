@@ -5,25 +5,18 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.PersonImp
 {
-    public class Person : IDirectory
+    public class Person : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public string surname { get; set; }
         public string first_name { get; set; }
         public string middle_name { get; set; }
         public string phone { get; set; }
         public string email { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class PersonBrowser : IBrowserCode, IBrowserOperation, IDataEditor

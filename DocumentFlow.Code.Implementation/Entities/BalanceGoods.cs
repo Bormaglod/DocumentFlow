@@ -5,17 +5,15 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
 {
-    public class BalanceGoods : IDocument
+    public class BalanceGoods : Document
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
         public string status_code { get; protected set; }
-        public string status_name { get; protected set; }
         public Guid document_id { get; set; }
-        public string document_name { get; set; }
         public DateTime document_date { get; set; }
         public string document_number { get; set; }
         public decimal operation_summa { get; set; }
@@ -24,12 +22,6 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
         public decimal amount { get; set; }
         public string goods_name { get; protected set; }
         public decimal remainder { get; protected set; }
-        public string doc_number { get; set; }
-        public DateTime doc_date { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class BalanceGoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -151,7 +143,9 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
 
         private void OpenDocumentClick(object sender, ExecuteEventArgs e)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             BalanceGoods balance = e.Browser.CurrentRow as BalanceGoods;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (balance != null)
             {
                 e.Browser.Commands.OpenDocument(balance.document_id);
@@ -188,7 +182,9 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
 
         void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             BalanceGoods balance = editor.Entity as BalanceGoods;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (balance == null)
             {
                 throw new Exception("Ожидался объект типа BalanceGoods.");

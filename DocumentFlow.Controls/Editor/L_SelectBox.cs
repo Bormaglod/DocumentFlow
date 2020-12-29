@@ -11,9 +11,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-
 using DocumentFlow.Code;
 using DocumentFlow.Controls.Editor.Forms;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Controls.Editor
 {
@@ -77,7 +77,7 @@ namespace DocumentFlow.Controls.Editor
             {
                 if (value is Guid id)
                 {
-                    selectedItem = items.FirstOrDefault(x => (x.oid is Guid guid) ? guid == id : false);
+                    selectedItem = items.FirstOrDefault(x => (x.oid is Guid guid) && guid == id);
                     textValue.Text = selectedItem?.ToString();
                     OnValueChanged();
                 }

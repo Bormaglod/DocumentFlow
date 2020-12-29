@@ -5,16 +5,13 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.BankImp
 {
-    public class Bank : IDirectory
+    public class Bank : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public decimal bik { get; set; }
         public decimal account { get; set; }
         public string bik_text 
@@ -28,10 +25,6 @@ namespace DocumentFlow.Code.Implementation.BankImp
 			{
 				bik = Convert.ToDecimal(value);
 			}
-        }
-        object IIdentifier.oid
-        {
-            get { return id; }
         }
     }
 

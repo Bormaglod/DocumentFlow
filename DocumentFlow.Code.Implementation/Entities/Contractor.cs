@@ -4,19 +4,14 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.ContractorImp
 {
-    public class Contractor : IDirectory
+    public class Contractor : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
-        public Guid? parent_id { get; set; }
         public string short_name { get; set; }
         public string full_name { get; set; }
         public decimal? inn { get; set; }
@@ -26,10 +21,6 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
         public Guid? okopf_id { get; set; }
         public string okopf_name { get; set; }
         public Guid? account_id { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class ContractorBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -144,7 +135,9 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
 
 		private void Browser_ChangeParent(object sender, ChangeParentEventArgs e)
 		{
-			IBrowser browser = sender as IBrowser;
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
+            IBrowser browser = sender as IBrowser;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (browser != null)
             {
 				string root = string.Empty;

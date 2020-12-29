@@ -23,6 +23,7 @@ using System.Windows.Forms;
     using Npgsql;
 #endif
 using Dapper;
+using FluentFTP;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
 using Syncfusion.Windows.Forms.Tools;
@@ -35,6 +36,7 @@ using DocumentFlow.Code;
 using DocumentFlow.Code.Data;
 using DocumentFlow.Code.System;
 using DocumentFlow.Code.Implementation;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
 using DocumentFlow.Printing;
@@ -75,7 +77,7 @@ namespace DocumentFlow
         private readonly IBrowser ownerBrowser;
         private IDatabase database;
 #if USE_LISTENER
-        private CancellationTokenSource listenerToken;
+        private readonly CancellationTokenSource listenerToken;
         private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
 #endif
 
@@ -148,13 +150,13 @@ namespace DocumentFlow
 
         #region IPage implementation
 
-        Guid IPage.Id => command.Id; 
+        Guid IPage.Id => command.id;
 
         Guid IPage.InfoId => current;
 
         IContainerPage IPage.Container => containerPage;
 
-        void IPage.Rebuild() 
+        void IPage.Rebuild()
         {
             controlContainer.Clear();
             panelItemActions.Items.Clear();
@@ -268,7 +270,7 @@ namespace DocumentFlow
             }
         }
 
-        async private Task CreateListener(CancellationToken token)
+        private async Task CreateListener(CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return;
@@ -425,7 +427,7 @@ namespace DocumentFlow
 
             using (var conn = Db.OpenConnection())
             {
-                var info = conn.Query($"select di.status_id, di.date_created, di.date_updated, uc.name as user_created, uu.name as user_updated from {command.EntityKind.code} di join user_alias uc on uc.id  = di.user_created_id join user_alias uu on uu.id  = di.user_updated_id where di.id = :id", new { id = current }).SingleOrDefault();
+                var info = conn.Query<DocumentInfo>($"select di.status_id, di.date_created, di.date_updated, uc.name as user_created, uu.name as user_updated from {command.EntityKind.code} di join user_alias uc on uc.id  = di.user_created_id join user_alias uu on uu.id  = di.user_updated_id where di.id = :id", new { id = current }).SingleOrDefault();
                 if (info == null)
                     throw new RecordNotFoundException(current);
 
@@ -473,7 +475,7 @@ namespace DocumentFlow
 
                 foreach (var cs in list)
                 {
-                    bool access = conn.QuerySingle<bool>("select access_changing_status(:id, :changing_status_id)", new { id = current, changing_status_id = cs.Id });
+                    bool access = conn.QuerySingle<bool>("select access_changing_status(:id, :changing_status_id)", new { id = current, changing_status_id = cs.id });
                     if (!access)
                     {
                         continue;
@@ -568,22 +570,38 @@ namespace DocumentFlow
         {
             if (gridDocuments.CurrentItem is DocumentRefs refs)
             {
-                if (refEditor.Edit(refs))
+                try
                 {
-                    using (var conn = Db.OpenConnection())
+                    refEditor.Edit(refs);
+                }
+                catch (CanceledException ex)
+                {
+                    if (ex.NeedRemoveReference)
                     {
-                        using (var transaction = conn.BeginTransaction())
+                        documents.Remove(refs);
+                    }
+
+                    return;
+                }
+                catch (Exception e)
+                {
+                    ExceptionHelper.MesssageBox(e);
+                    return;
+                }
+
+                using (var conn = Db.OpenConnection())
+                {
+                    using (var transaction = conn.BeginTransaction())
+                    {
+                        try
                         {
-                            try
-                            {
-                                conn.Query("update document_refs set file_name = :file_name, note = :note, crc = :crc, length = :length where id = :id", refs, transaction);
-                                transaction.Commit();
-                            }
-                            catch (Exception e)
-                            {
-                                transaction.Rollback();
-                                ExceptionHelper.MesssageBox(e);
-                            }
+                            conn.Query("update document_refs set file_name = :file_name, note = :note, crc = :crc, length = :length where id = :id", refs, transaction);
+                            transaction.Commit();
+                        }
+                        catch (Exception e)
+                        {
+                            transaction.Rollback();
+                            ExceptionHelper.MesssageBox(e);
                         }
                     }
                 }
@@ -704,13 +722,20 @@ namespace DocumentFlow
 
         private void buttonCreate_Click(object sender, EventArgs e)
         {
-            var refs = refEditor.Create(current);
-            if (refs == null)
+            try
+            {
+                var refs = refEditor.Create(current);
+                AddDocument(refs);
+            }
+            catch (CanceledException)
             {
                 return;
             }
-
-            AddDocument(refs);
+            catch (Exception ex)
+            {
+                ExceptionHelper.MesssageBox(ex);
+                return;
+            }
         }
 
         private void buttonEdit_Click(object sender, EventArgs e) => EditDocumentRefs();
@@ -721,7 +746,20 @@ namespace DocumentFlow
             {
                 if (MessageBox.Show($"Вы действительно хотите удалить файл?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    refEditor.Delete(refs);
+                    try
+                    {
+                        refEditor.Delete(refs);
+                    }
+                    catch (CanceledException)
+                    {
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        ExceptionHelper.MesssageBox(ex);
+                        return;
+                    }
+
                     documents.Remove(refs);
                 }
             }
@@ -733,9 +771,21 @@ namespace DocumentFlow
         {
             if (gridDocuments.CurrentItem is DocumentRefs refs)
             {
-                if (refEditor.GetLocalFileName(refs, out var file))
+                try
                 {
+                    string file = refEditor.GetLocalFileName(refs);
                     Process.Start(file);
+                }
+                catch (CanceledException ex)
+                {
+                    if (ex.NeedRemoveReference)
+                    {
+                        documents.Remove(refs);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ExceptionHelper.MesssageBox(ex);
                 }
             }
         }
@@ -782,20 +832,17 @@ namespace DocumentFlow
             {
                 if (twain32.ImageCount > 0)
                 {
-                    PdfDocument pdf = new PdfDocument();
+                    var pdf = new PdfDocument();
                     for (int i = 0; i < twain32.ImageCount; i++)
                     {
-                        Image image = twain32.GetImage(i);
-                        PdfImage pdfImage = PdfImage.FromImage(image);
+                        var image = twain32.GetImage(i);
 
-                        PdfUnitConvertor uinit = new PdfUnitConvertor();
+                        var sizeImage = new SizeF(image.Width / image.HorizontalResolution, image.Height / image.VerticalResolution);
+                        var pageSize = UnitConverter.Convert(sizeImage, Core.GraphicsUnit.Inch, Core.GraphicsUnit.Point);
 
-                        SizeF sizeImage = new SizeF(image.Width / image.HorizontalResolution, image.Height / image.VerticalResolution);
-                        SizeF pageSize = UnitConverter.Convert(sizeImage, Core.GraphicsUnit.Inch, Core.GraphicsUnit.Point);
+                        var page = pdf.Pages.Add(pageSize, new PdfMargins(0f));
 
-                        PdfPageBase page = pdf.Pages.Add(pageSize, new PdfMargins(0f));
-
-                        page.Canvas.DrawImage(pdfImage, new PointF(0, 0));
+                        page.Canvas.DrawImage(PdfImage.FromImage(image), new PointF(0, 0));
                     }
 
                     SaveDocument(pdf);
@@ -811,6 +858,7 @@ namespace DocumentFlow
         {
             try
             {
+                twain32.CloseDataSource();
                 twain32.Acquire();
             }
             catch (Exception ex)
@@ -825,6 +873,13 @@ namespace DocumentFlow
             {
                 toolBar.UpdateButtonVisibleStatus();
             }
+        }
+
+        private void buttonMultipleScan_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+            /*ScanningWindow scanningWindow = new ScanningWindow();
+            scanningWindow.ShowDialog();*/
         }
     }
 }

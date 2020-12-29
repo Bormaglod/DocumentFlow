@@ -4,23 +4,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
 using Dapper;
-
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.OperationTypeImp
 {
-    public class OperationType : IDirectory
+    public class OperationType : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public decimal hourly_salary { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class OperationTypeBrowser : IBrowserCode, IBrowserOperation, IDataEditor

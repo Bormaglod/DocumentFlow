@@ -97,7 +97,7 @@
             this.buttonDelete.Size = new System.Drawing.Size(23, 23);
             this.buttonDelete.TabIndex = 3;
             this.buttonDelete.Text = "toolButton2";
-            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+            this.buttonDelete.Click += new System.EventHandler(this.ButtonDelete_Click);
             // 
             // panel1
             // 

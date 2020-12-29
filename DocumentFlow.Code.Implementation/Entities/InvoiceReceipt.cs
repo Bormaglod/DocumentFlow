@@ -7,26 +7,18 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 {
-    public class InvoiceReceipt : IDocument
+    public class InvoiceReceipt : Document
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string document_name { get; protected set; }
-        public string user_created { get; protected set; }
-        public Guid? owner_id { get; set; }
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; set; }
         public Guid? contract_id { get; set; }
         public string contract_name { get; protected set; }
-        public DateTime doc_date { get; set; }
-        public string doc_number { get; set; }
-        public Guid organization_id { get; set; }
         public string organization_name { get; protected set; }
         public DateTime? invoice_date { get; set; }
         public string invoice_number { get; set; }
@@ -36,16 +28,10 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         public decimal cost { get; protected set; }
         public decimal tax_value { get; protected set; }
         public decimal cost_with_tax { get; protected set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
-    public class InvoiceReceiptDetail : IDetail
+    public class InvoiceReceiptDetail : Detail
     {
-        public long id { get; protected set; }
-        public Guid owner_id { get; set; }
         public Guid goods_id { get; set; }
         public string goods_name { get; protected set; }
         public decimal amount { get; set; }
@@ -54,10 +40,6 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         public int tax { get; set; }
         public decimal tax_value { get; set; }
         public decimal cost_with_tax { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class InvoiceReceiptBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -490,7 +472,9 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
         private void OpenContractorClick(object sender, ExecuteEventArgs e)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             InvoiceReceipt ir = e.Editor.Entity as InvoiceReceipt;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (ir != null)
             {
                 if (ir.contractor_id.HasValue)
@@ -502,7 +486,9 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
         private void OpenContractClick(object sender, ExecuteEventArgs e)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             InvoiceReceipt ir = e.Editor.Entity as InvoiceReceipt;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (ir != null)
             {
                 if (ir.contractor_id.HasValue)

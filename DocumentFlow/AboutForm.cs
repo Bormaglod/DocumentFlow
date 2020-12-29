@@ -15,15 +15,15 @@ namespace DocumentFlow
     using System.Reflection;
     using System.Windows.Forms;
     using Syncfusion.WinForms.ListView.Events;
-    using DocumentFlow.Data.Core;
+    using DocumentFlow.Data;
 
     public partial class AboutForm : Form
     {
         class Lib
         {
-            private string name;
-            private Version version;
-            private string fullName;
+            private readonly string name;
+            private readonly Version version;
+            private readonly string fullName;
 
             public Lib(AssemblyName assemblyName) => (name, version, fullName) = (assemblyName.Name, assemblyName.Version, assemblyName.FullName);
             public string Name => name;

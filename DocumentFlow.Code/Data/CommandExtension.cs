@@ -52,7 +52,8 @@ namespace DocumentFlow.Code.Data
                     "System.Windows.Forms.dll",
                     "Dapper.dll",
                     "DocumentFlow.Code.dll",
-                    "DocumentFlow.Core.dll" });
+                    "DocumentFlow.Core.dll",
+                    "DocumentFlow.Data.Entities.dll" });
 
                 parameters.GenerateInMemory = true;
                 parameters.GenerateExecutable = false;

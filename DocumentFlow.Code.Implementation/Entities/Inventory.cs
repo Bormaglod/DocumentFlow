@@ -6,41 +6,24 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.InventoryImp
 {
-    public class Inventory : IDocument
+    public class Inventory : Document
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string document_name { get; protected set; }
-        public string user_created { get; protected set; }
         public Guid? employee_id { get; set; }
         public string employee_name { get; protected set; }
-        public DateTime doc_date { get; set; }
-        public string doc_number { get; set; }
-        public Guid organization_id { get; set; }
         public string organization_name { get; protected set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
-    public class InventoryDetail : IDetail
+    public class InventoryDetail : Detail
     {
-        public long id { get; protected set; }
-        public Guid owner_id { get; set; }
         public Guid goods_id { get; set; }
         public string goods_name { get; protected set; }
         public decimal amount { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class InventoryBrowser : IBrowserCode, IBrowserOperation, IDataEditor

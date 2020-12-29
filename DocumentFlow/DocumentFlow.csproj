@@ -32,7 +32,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>2.1.1.0</ApplicationVersion>
+    <ApplicationVersion>2.2.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -284,6 +284,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ScanningWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScanningWindow.Designer.cs">
+      <DependentUpon>ScanningWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="SelectEmailWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -344,6 +350,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Content Include="readme.txt" />
+    <None Include="Resources\icons8-rescan-document-30.png" />
+    <None Include="Resources\icons8-rescan-document-16.png" />
     <Resource Include="Printing\Core\icons8-actial-size-16.png" />
     <Resource Include="Printing\Core\icons8-copy-16.png" />
     <Resource Include="Printing\Core\icons8-fit-to-page-16.png" />
@@ -385,6 +393,9 @@
     <EmbeddedResource Include="CodeEditor.resx">
       <DependentUpon>CodeEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ScanningWindow.resx">
+      <DependentUpon>ScanningWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SelectDateRangeWindow.resx">
       <DependentUpon>SelectDateRangeWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -418,10 +429,6 @@
     <None Include="Resources\icons8-save-16.png" />
     <None Include="Resources\icons8-restart-30.png" />
     <None Include="Resources\icons8-restart-16.png" />
-    <None Include="Resources\icons8-rescan-portrait-30.png" />
-    <None Include="Resources\icons8-rescan-portrait-16.png" />
-    <None Include="Resources\icons8-rescan-landscape-30.png" />
-    <None Include="Resources\icons8-rescan-landscape-16.png" />
     <None Include="Resources\icons8-renew-30.png" />
     <None Include="Resources\icons8-renew-16.png" />
     <None Include="Resources\icons8-redo-30.png" />
@@ -525,8 +532,12 @@
       <Project>{acca0ba9-e646-44f2-bcec-fe269a109983}</Project>
       <Name>DocumentFlow.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Data.Entities\DocumentFlow.Data.Entities.csproj">
+      <Project>{b93432c6-6884-46d2-ba9d-7a33bf687374}</Project>
+      <Name>DocumentFlow.Data.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
-      <Project>{15265407-1cdd-474d-93f6-205707fd0de7}</Project>
+      <Project>{860413cf-8d35-4cc6-80ca-a4b54ca9e778}</Project>
       <Name>DocumentFlow.Data</Name>
     </ProjectReference>
   </ItemGroup>

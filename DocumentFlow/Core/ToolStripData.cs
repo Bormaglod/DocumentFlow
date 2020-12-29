@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code;
 using DocumentFlow.Code.System;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow

@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow

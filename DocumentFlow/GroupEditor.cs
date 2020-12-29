@@ -7,11 +7,10 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 
 namespace DocumentFlow

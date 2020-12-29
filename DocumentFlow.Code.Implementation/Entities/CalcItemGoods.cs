@@ -4,19 +4,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
 {
-    public class CalcItemGoods : IDirectory
+    public class CalcItemGoods : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
         public string calculation_name { get; protected set; }
-        public string code { get; set; }
-        public string name { get; set; }
 
         /// <summary>
         /// Ссылка на материал (goods)
@@ -43,11 +39,6 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
         /// Процент использования в операциях
         /// </summary>
         public int percent_uses { get; set; }
-
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class CalcItemGoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor

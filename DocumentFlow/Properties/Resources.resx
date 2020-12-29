@@ -256,17 +256,11 @@
   <data name="icons8_renew_30" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons8-renew-30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icons8_rescan_landscape_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons8-rescan-landscape-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="icons8_rescan_document_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons8-rescan-document-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icons8_rescan_landscape_30" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons8-rescan-landscape-30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icons8_rescan_portrait_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons8-rescan-portrait-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icons8_rescan_portrait_30" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons8-rescan-portrait-30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="icons8_rescan_document_30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons8-rescan-document-30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="icons8_restart_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons8-restart-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

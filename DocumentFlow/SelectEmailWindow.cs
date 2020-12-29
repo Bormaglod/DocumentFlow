@@ -20,7 +20,7 @@ namespace DocumentFlow
     using MailKit.Net.Smtp;
     using MailKit.Security;
     using Syncfusion.Windows.Forms;
-    using DocumentFlow.Data.Core;
+    using DocumentFlow.Data;
     using DocumentFlow.Data.Entities;
 
     public partial class SelectEmailWindow : MetroForm

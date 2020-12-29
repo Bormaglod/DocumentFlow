@@ -13,6 +13,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core.Exceptions;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
 using DocumentFlow.Code;
@@ -83,7 +84,7 @@ namespace DocumentFlow
                     bool createViewer = false;
                     using (var conn = Db.OpenConnection())
                     {
-                        createViewer = conn.Query(sql, new { id = command.Id }).SingleOrDefault() != null;
+                        createViewer = conn.Query(sql, new { command.id }).SingleOrDefault() != null;
                     }
 
                     if (createViewer)
@@ -125,7 +126,7 @@ namespace DocumentFlow
 
         private void OpenDataViewer(Command command)
         {
-            IPage page = container.Get<ContentViewer>(command.Id);
+            IPage page = container.Get<ContentViewer>(command.id);
             if (page != null)
             {
                 container.Selected = page;
@@ -382,7 +383,7 @@ namespace DocumentFlow
 
             if (command != null)
             {
-                IPage page = container.Get<CodeEditor>(command.Id);
+                IPage page = container.Get<CodeEditor>(command.id);
                 if (page != null)
                 {
                     container.Selected = page;

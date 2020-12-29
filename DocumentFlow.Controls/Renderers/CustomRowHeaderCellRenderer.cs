@@ -17,7 +17,7 @@ using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Renderers;
 using Syncfusion.WinForms.DataGrid.Styles;
 using Syncfusion.WinForms.GridCommon.ScrollAxis;
-using DocumentFlow.Code;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
 
@@ -25,8 +25,8 @@ namespace DocumentFlow.Controls.Renderers
 {
     public class CustomRowHeaderCellRenderer : GridRowHeaderCellRenderer
     {
-        private SfDataGrid grid;
-        private Dictionary<Guid, Image> stateImages;
+        private readonly SfDataGrid grid;
+        private readonly Dictionary<Guid, Image> stateImages;
         private IEnumerable<Status> states;
 
         public CustomRowHeaderCellRenderer(SfDataGrid dataGrid)
@@ -91,7 +91,7 @@ namespace DocumentFlow.Controls.Renderers
 
                 foreach (Picture image in pictures)
                 {
-                    stateImages.Add(image.Id, image.GetImageSmall());
+                    stateImages.Add(image.id, image.GetImageSmall());
                 }
 
                 states = conn.Query<Status>("select * from status");

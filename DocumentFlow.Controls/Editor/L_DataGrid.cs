@@ -16,12 +16,13 @@ using DocumentFlow.Controls.Forms;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Code;
 using DocumentFlow.Code.Implementation;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Controls.Editor
 {
     public partial class L_DataGrid : UserControl, IGridDataControl
     {
-        private Func<IDbConnection, IList> getItemsFunc;
+        private readonly Func<IDbConnection, IList> getItemsFunc;
         private Type entityType;
         private Guid owner;
 

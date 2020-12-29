@@ -7,10 +7,10 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 #if USE_LISTENER
-using System.Collections.Concurrent;
+    using System.Collections;
+    using System.Collections.Concurrent;
 #endif
 using System.ComponentModel;
 using System.Drawing;
@@ -20,28 +20,29 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 #if USE_LISTENER
-using System.Threading;
-using System.Threading.Tasks;
+    using System.Threading;
+    using System.Threading.Tasks;
 #endif
 using System.Windows.Forms;
 using Dapper;
 #if USE_LISTENER
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Npgsql;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
+    using Npgsql;
 #endif
+using Syncfusion.Data;
 using Syncfusion.Windows.Forms.Tools;
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.DataGrid.Events;
 using Syncfusion.WinForms.DataGrid.Interactivity;
 using DocumentFlow.Code;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.Data;
 using DocumentFlow.Code.Implementation;
 using DocumentFlow.Code.System;
 using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
 using DocumentFlow.Controls;
@@ -53,6 +54,42 @@ namespace DocumentFlow
 {
     public partial class ViewerControl : UserControl, ISettings, IBrowser
     {
+        public class CustomComparer : IComparer<object>, ISortDirection
+        {
+            private readonly PropertyInfo property;
+
+            public CustomComparer(Type entityType, string mappingName)
+            {
+                property = entityType.GetProperty(mappingName);
+            }
+
+            public int Compare(object x, object y)
+            {
+                int res;
+
+                if (x is IParent parent_x && y is IParent parent_y && (parent_x.is_folder != parent_y.is_folder))
+                {
+                    res = parent_x.is_folder ? -1 : 1;
+                }
+                else
+                {
+                    var obj_x = property.GetValue(x);
+                    var obj_y = property.GetValue(y);
+                    if (obj_x is IComparable cmp_x && obj_y is IComparable cmp_y)
+                    {
+                        res = cmp_x.CompareTo(cmp_y);
+                    }
+                    else
+                    {
+                        res = obj_x.ToString().CompareTo(obj_y.ToString());
+                    }
+                }
+
+                return SortDirection == ListSortDirection.Ascending ? res : -res;
+            }
+
+            public ListSortDirection SortDirection { get; set; }
+        }
 
 #if USE_SETTINGS
         private const string settingsFile = "viewer.json";
@@ -61,29 +98,26 @@ namespace DocumentFlow
         private DataType dataType;
         private DateRanges fromDate;
         private DateRanges toDate;
-        private GridColumnCollection columns;
+        private readonly GridColumnCollection columns;
         private ToolBarData toolBarData;
         private Dictionary<string, ContextMenuData> contextMenuData;
         private Guid? parentId;
         private CommandCollection commandCollection;
         private string doubleClickCommand;
-        private BrowserMode mode;
+        private readonly BrowserMode mode;
 #if TURN_MOVETOEND
         private bool moveToEnd;
 #endif
 
 #if USE_LISTENER
         private bool initializing;
-        private CancellationTokenSource listenerToken;
+        private readonly CancellationTokenSource listenerToken;
         private readonly ConcurrentQueue<NotifyMessage> notifies = new ConcurrentQueue<NotifyMessage>();
 #endif
 
         private GridColumn column = null;
         private SfDataGrid grid = null;
-        private Syncfusion.Data.Group group = null;
-        private int rowIndex = -1;
-        private int columnIndex = -1;
-        private object record = null;
+        private Group group = null;
 
         public ViewerControl() : this(BrowserMode.Main) { }
 
@@ -123,7 +157,7 @@ namespace DocumentFlow
                             }
                     };
                     NotifyMessage message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload, options);
-                    if (message.EntityId == ExecutedCommand.EntityKind.Id)
+                    if (message.EntityId == ExecutedCommand.EntityKind.id)
                     {
                         if (message.Destination == MessageDestination.List && OwnerId != null && message.ObjectId != OwnerId)
                             return;
@@ -166,7 +200,7 @@ namespace DocumentFlow
         }
 #endif
 
-#region IBrowser implementation
+        #region IBrowser implementation
 
         public event EventHandler<ChangeParentEventArgs> ChangeParent;
         public Func<IBrowser, IEditorCode> CreateEditor;
@@ -256,9 +290,9 @@ namespace DocumentFlow
             }
         }
 
-#endregion
+        #endregion
 
-#region ISettings implementation
+        #region ISettings implementation
 
         void ISettings.LoadSettings()
         {
@@ -293,7 +327,7 @@ namespace DocumentFlow
 #endif
         }
 
-#endregion
+        #endregion
 
         [Browsable(false)]
         public IBrowserParameters Parameters
@@ -442,7 +476,7 @@ namespace DocumentFlow
                 bool can_copy = false;
                 if (ExecutedCommand.EntityKind != null)
                 {
-                    Guid? id = conn.Query<Guid?>("select copy_entity(:kind_id, null)", new { kind_id = ExecutedCommand.EntityKind.Id }).SingleOrDefault();
+                    Guid? id = conn.Query<Guid?>("select copy_entity(:kind_id, null)", new { kind_id = ExecutedCommand.EntityKind.id }).SingleOrDefault();
                     can_copy = id.HasValue;
                 }
 
@@ -508,7 +542,7 @@ namespace DocumentFlow
             switch (action)
             {
                 case CommandAction.Create:
-                    result = editor.Create(ExecutedCommand.EntityKind.Id, id);
+                    result = editor.Create(ExecutedCommand.EntityKind.id, id);
                     break;
                 case CommandAction.Edit:
                     result = editor.Edit(id.Value);
@@ -544,6 +578,20 @@ namespace DocumentFlow
                         var list = operation.Select(conn, browser.Parameters);
                         Type entityType = list.GetType().GetGenericArguments().First();
                         Type genericType = typeof(BindingList<>).MakeGenericType(entityType);
+
+                        if (gridContent.SortComparers.Count == 0)
+                        {
+                            foreach (GridColumn column in gridContent.Columns)
+                            {
+                                gridContent.SortComparers.Add(
+                                    new SortComparer()
+                                    {
+                                        Comparer = new CustomComparer(entityType, column.MappingName),
+                                        PropertyName = column.MappingName
+                                    });
+                            }
+                        }
+
                         gridContent.DataSource = Activator.CreateInstance(genericType, list);
                     }
                     catch (Exception e)
@@ -805,7 +853,7 @@ namespace DocumentFlow
                     {
                         try
                         {
-                            Guid? id = conn.Query<Guid?>("select copy_entity(:kind_id, :copy_id)", new { kind_id = ExecutedCommand.EntityKind.Id, copy_id = row.id }, transaction).FirstOrDefault();
+                            Guid? id = conn.Query<Guid?>("select copy_entity(:kind_id, :copy_id)", new { kind_id = ExecutedCommand.EntityKind.id, copy_id = row.id }, transaction).FirstOrDefault();
                             transaction.Commit();
                             if (id.HasValue && MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                             {
@@ -942,9 +990,6 @@ namespace DocumentFlow
             if (e.ContextMenutype == ContextMenuType.Record || e.ContextMenutype == ContextMenuType.RowHeader)
             {
                 grid = (e.ContextMenuInfo as RowContextMenuInfo).DataGrid;
-                rowIndex = e.RowIndex;
-                columnIndex = e.ColumnIndex;
-                record = (e.ContextMenuInfo as RowContextMenuInfo).Row;
             }
         }
 
@@ -1123,9 +1168,22 @@ namespace DocumentFlow
             {
                 string ftpPath = Path.Combine(Settings.Default.FtpPath, menuDocuments.Tag.ToString(), doc.owner_id.ToString());
                 DocumentRefEditor refEditor = new DocumentRefEditor(ftpPath);
-                if (refEditor.GetLocalFileName(doc, out var file))
+
+                try
                 {
+                    string file = refEditor.GetLocalFileName(doc);
                     Process.Start(file);
+                }
+                catch (CanceledException ex)
+                {
+                    if (ex.NeedRemoveReference)
+                    {
+                        menuDocuments.DropDownItems.Remove(menuItem);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ExceptionHelper.MesssageBox(ex);
                 }
             }
         }

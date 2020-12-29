@@ -5,25 +5,18 @@ using System.Data;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.ProductionOperationImp
 {
-    public class ProductionOperation : IDocument
+    public class ProductionOperation : Document
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string document_name { get; protected set; }
-        public DateTime date_updated { get; set; }
         public string goods_name { get; protected set; }
         public string operation_name { get; protected set; }
         public int amount { get; set; }
         public int completed { get; set; }
         public int complete_status { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class ProductionOperationBrowser : IBrowserCode, IBrowserOperation

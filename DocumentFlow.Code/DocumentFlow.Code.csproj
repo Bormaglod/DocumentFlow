@@ -89,7 +89,6 @@
     <Compile Include="IDataOperation.cs" />
     <Compile Include="IDataGrid.cs" />
     <Compile Include="IDataName.cs" />
-    <Compile Include="IDetail.cs" />
     <Compile Include="IEditControl.cs" />
     <Compile Include="IGroupColumnCollection.cs" />
     <Compile Include="IInformation.cs" />
@@ -118,13 +117,10 @@
     <Compile Include="ITool.cs" />
     <Compile Include="System\ValueChangedEventArgs.cs" />
     <Compile Include="System\ChangeParentEventArgs.cs" />
-    <Compile Include="Core\ChoiceDataItem.cs" />
     <Compile Include="System\ColumnDescriptionAttribute.cs" />
-    <Compile Include="Core\ComboBoxDataItem.cs" />
     <Compile Include="System\Enums.cs" />
     <Compile Include="System\ExecuteEventArgs.cs" />
     <Compile Include="System\GettingParametersEventArgs.cs" />
-    <Compile Include="Core\GroupDataItem.cs" />
     <Compile Include="IBindingControl.cs" />
     <Compile Include="IBrowser.cs" />
     <Compile Include="IBrowserParameters.cs" />
@@ -136,13 +132,8 @@
     <Compile Include="IContainer.cs" />
     <Compile Include="IControl.cs" />
     <Compile Include="IDependentViewer.cs" />
-    <Compile Include="IDirectory.cs" />
-    <Compile Include="IDocument.cs" />
-    <Compile Include="IDocumentInfo.cs" />
     <Compile Include="IEditor.cs" />
     <Compile Include="IEditorCode.cs" />
-    <Compile Include="IIdentifier.cs" />
-    <Compile Include="IParent.cs" />
     <Compile Include="ISorted.cs" />
     <Compile Include="ISummary.cs" />
     <Compile Include="IToolBar.cs" />
@@ -157,11 +148,10 @@
       <Project>{acca0ba9-e646-44f2-bcec-fe269a109983}</Project>
       <Name>DocumentFlow.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
-      <Project>{15265407-1cdd-474d-93f6-205707fd0de7}</Project>
-      <Name>DocumentFlow.Data</Name>
+    <ProjectReference Include="..\DocumentFlow.Data.Entities\DocumentFlow.Data.Entities.csproj">
+      <Project>{b93432c6-6884-46d2-ba9d-7a33bf687374}</Project>
+      <Name>DocumentFlow.Data.Entities</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

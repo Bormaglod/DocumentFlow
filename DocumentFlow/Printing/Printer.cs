@@ -26,7 +26,7 @@ namespace DocumentFlow.Printing
     using DotLiquid;
     using Spire.Pdf;
     using DocumentFlow.Core;
-    using DocumentFlow.Data.Core;
+    using DocumentFlow.Data;
     using DocumentFlow.Data.Entities;
     using DocumentFlow.Printing.Core;
 

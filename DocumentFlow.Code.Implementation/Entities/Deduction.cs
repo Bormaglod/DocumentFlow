@@ -6,23 +6,16 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.DeductionImp
 {
-    public class Deduction : IDirectory
+    public class Deduction : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public int accrual_base { get; set; }
         public string accrual_base_name { get; protected set; }
         public decimal percentage { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class DeductionBrowser : IBrowserCode, IBrowserOperation, IDataEditor

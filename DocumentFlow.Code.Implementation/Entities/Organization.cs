@@ -4,18 +4,14 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.OrganizationImp
 {
-    public class Organization : IDirectory
+    public class Organization : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; protected set; }
-        public string status_name { get; protected set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public string short_name { get; set; }
         public string full_name { get; set; }
         public decimal inn { get; set; }
@@ -29,10 +25,6 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
         public string phone { get; set; }
         public string email { get; set; }
         public bool default_org { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class OrganizationBrowser : IBrowserCode, IBrowserOperation, IDataEditor

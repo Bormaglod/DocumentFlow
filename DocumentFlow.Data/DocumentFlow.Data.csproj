@@ -4,16 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{15265407-1CDD-474D-93F6-205707FD0DE7}</ProjectGuid>
+    <ProjectGuid>{860413CF-8D35-4CC6-80CA-A4B54CA9E778}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DocumentFlow.Data</RootNamespace>
-    <AssemblyName>DocumentFlow.Data</AssemblyName>
+    <RootNamespace>DocumentFlow.Data.Core</RootNamespace>
+    <AssemblyName>DocumentFlow.Data.Core</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <Deterministic>false</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,9 +37,6 @@
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.7.6\lib\net45\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="Npgsql, Version=5.0.1.1, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <HintPath>..\packages\Npgsql.5.0.1.1\lib\netstandard2.0\Npgsql.dll</HintPath>
     </Reference>
@@ -51,8 +46,6 @@
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
     </Reference>
@@ -63,8 +56,6 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Text.Encodings.Web, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Text.Encodings.Web.5.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
@@ -77,7 +68,6 @@
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -90,39 +80,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Db.cs" />
-    <Compile Include="Core\Entity.cs" />
-    <Compile Include="Core\EntityID.cs" />
-    <Compile Include="Core\EntityUID.cs" />
+    <Compile Include="Db.cs" />
     <Compile Include="Core\ExceptionHelper.cs" />
     <Compile Include="Core\NotifyMessage.cs" />
-    <Compile Include="Entities\ChangingStatus.cs" />
-    <Compile Include="Entities\Command.cs" />
-    <Compile Include="Entities\Document.cs" />
-    <Compile Include="Entities\Directory.cs" />
-    <Compile Include="Entities\DocumentInfo.cs" />
-    <Compile Include="Entities\DocumentRefs.cs" />
-    <Compile Include="Entities\Email.cs" />
-    <Compile Include="Entities\EntityKind.cs" />
-    <Compile Include="Entities\Catalog.cs" />
-    <Compile Include="Entities\History.cs" />
-    <Compile Include="Entities\Picture.cs" />
-    <Compile Include="Entities\PrintForm.cs" />
-    <Compile Include="Entities\PrintKindForm.cs" />
-    <Compile Include="Entities\Status.cs" />
-    <Compile Include="Entities\Transition.cs" />
-    <Compile Include="Entities\UserAlias.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
-      <Project>{acca0ba9-e646-44f2-bcec-fe269a109983}</Project>
-      <Name>DocumentFlow.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

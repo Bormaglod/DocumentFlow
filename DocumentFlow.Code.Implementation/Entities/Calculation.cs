@@ -6,26 +6,19 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.CalculationImp
 {
-    public class Calculation : IDirectory
+    public class Calculation : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
         public string goods_name { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public decimal cost { get; set; }
         public decimal profit_percent { get; set; }
         public decimal profit_value { get; set; }
         public decimal price { get; set; }
         public string note { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class CalculationBrowser : IBrowserCode, IBrowserOperation, IDataEditor

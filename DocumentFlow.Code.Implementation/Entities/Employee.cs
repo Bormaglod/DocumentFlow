@@ -6,18 +6,14 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.EmployeeImp
 {
-    public class Employee : IDirectory
+    public class Employee : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public string company_name { get; set; }
         public Guid? person_id { get; set; }
         public string person_name { get; set; }
@@ -27,10 +23,6 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
         public string email { get; set; }
         public int post_role { get; set; }
         public string post_role_text { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class EmployeeBrowser : IBrowserCode, IBrowserOperation, IDataEditor

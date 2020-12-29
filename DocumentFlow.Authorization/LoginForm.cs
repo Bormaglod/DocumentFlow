@@ -17,7 +17,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using Npgsql;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Entities;
 using DocumentFlow.Authorization.Properties;
 

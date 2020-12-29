@@ -4,19 +4,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
 {
-    public class CalcItemOperation : IDirectory
+    public class CalcItemOperation : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
         public string calculation_name { get; protected set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public Guid item_id { get; set; }
         public decimal cost { get; set; }
         public decimal price { get; set; }
@@ -27,11 +23,6 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
         public decimal amount { get; set; }
 
         public decimal produced_time { get; set; }
-
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class UsedMaterial : IDetail

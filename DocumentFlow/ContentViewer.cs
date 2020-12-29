@@ -26,7 +26,7 @@ namespace DocumentFlow
 
         public ContentViewer(IContainerPage container, ICommandFactory commandFactory, Command cmd) : this(container, commandFactory, cmd, null) { }
 
-        Guid IPage.Id => viewerControl1.ExecutedCommand.Id;
+        Guid IPage.Id => viewerControl1.ExecutedCommand.id;
 
         Guid IPage.InfoId => viewerControl1.InfoId;
 

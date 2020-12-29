@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Code.Implementation
 {
@@ -15,8 +16,7 @@ namespace DocumentFlow.Code.Implementation
         private readonly object identifier;
 
         private Identifier(object id) => identifier = id;
-        public static IIdentifier Get(Guid id) => new Identifier(id);
-        public static IIdentifier Get(long id) => new Identifier(id);
+        public static IIdentifier Get<T>(T id) => new Identifier(id);
         object IIdentifier.oid => identifier;
     }
 }

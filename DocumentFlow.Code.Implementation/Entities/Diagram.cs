@@ -5,20 +5,12 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.DiagramImp
 {
-    public class Diagram : IDirectory
+    public class Diagram : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class DiagramBrowser : IBrowserCode, IBrowserOperation
@@ -74,7 +66,9 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
 
         private void OpenDiagramClick(object sender, ExecuteEventArgs e)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             Diagram diagram = e.Browser.CurrentRow as Diagram;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (diagram != null)
             {
                 e.Browser.Commands.OpenDiagram(diagram.id);

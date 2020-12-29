@@ -17,6 +17,7 @@ using Syncfusion.Windows.Forms.Edit;
 using Syncfusion.Windows.Forms.Edit.Enums;
 using DocumentFlow.Code.Data;
 using DocumentFlow.Core.Exceptions;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
 
@@ -30,7 +31,7 @@ namespace DocumentFlow
 
         private class ErrorData
         {
-            private CompilerError error;
+            private readonly CompilerError error;
 
             public ErrorData(CompilerError error) => this.error = error;
 
@@ -62,9 +63,9 @@ namespace DocumentFlow
             Text = $"Настройка: {cmd.name}";
         }
 
-        Guid IPage.Id => command.Id;
+        Guid IPage.Id => command.id;
 
-        Guid IPage.InfoId => command.Id;
+        Guid IPage.InfoId => command.id;
 
         IContainerPage IPage.Container => containerPage;
 
@@ -84,7 +85,7 @@ namespace DocumentFlow
 
         private void Compile()
         {
-            IList<IPage> list = containerPage.Get(command.Id)
+            IList<IPage> list = containerPage.Get(command.id)
                 .Where(x => x.Id != x.InfoId)
                 .AsList();
 

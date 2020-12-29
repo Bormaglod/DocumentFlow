@@ -6,19 +6,14 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.PerformOperationImp
 {
-    public class PerformOperation : IDocument
+    public class PerformOperation : Document
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string document_name { get; protected set; }
-        public string user_created { get; protected set; }
-        public DateTime doc_date { get; set; }
         public Guid? order_id { get; set; }
         public string order_name { get; protected set; }
         public Guid? goods_id { get; set; }
@@ -33,10 +28,6 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
         public string replacing_goods_name { get; protected set; }
         public int amount { get; set; }
         public decimal salary { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class PerformOperationBrowser : IBrowserCode, IBrowserOperation, IDataEditor

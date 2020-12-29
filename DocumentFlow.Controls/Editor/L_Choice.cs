@@ -13,7 +13,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Syncfusion.Windows.Forms.Tools;
 using DocumentFlow.Code;
-using DocumentFlow.Code.Core;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Controls.Editor
 {
@@ -119,7 +119,7 @@ namespace DocumentFlow.Controls.Editor
 
         private void ComboBoxAdv1_SelectedIndexChanging(object sender, SelectedIndexChangingArgs e) => OnValueChanged();
 
-        private void buttonDelete_Click(object sender, EventArgs e)
+        private void ButtonDelete_Click(object sender, EventArgs e)
         {
             comboBoxAdv1.SelectedItem = null;
             OnValueChanged();

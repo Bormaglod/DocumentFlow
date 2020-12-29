@@ -5,29 +5,21 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.BalanceContractorImp
 {
-    public class BalanceContractor : IDocument
+    public class BalanceContractor : Document
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
         public string status_code { get; protected set; }
-        public string status_name { get; protected set; }
         public Guid document_id { get; set; }
-        public string document_name { get; set; }
         public DateTime document_date { get; set; }
         public string document_number { get; set; }
         public decimal operation_summa { get; set; }
         public decimal? income { get; protected set; }
         public decimal? expense { get; protected set; }
         public string contractor_name { get; protected set; }
-        public string doc_number { get; set; }
-        public DateTime doc_date { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class BalanceContractorBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -132,7 +124,9 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
 
         private void OpenDocumentClick(object sender, ExecuteEventArgs e)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             BalanceContractor balance = e.Browser.CurrentRow as BalanceContractor;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (balance != null)
             {
                 e.Browser.Commands.OpenDocument(balance.document_id);
@@ -168,7 +162,9 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
 
         void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             BalanceContractor balance = editor.Entity as BalanceContractor;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (balance == null)
             {
                 throw new Exception("Ожидался объект типа BalanceContractor.");

@@ -6,19 +6,14 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.OperationImp
 {
-    public class Operation : IDirectory
+    public class Operation : Directory
     {
-        public Guid id { get; protected set; }
-        public Guid? parent_id { get; set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public int produced { get; set; }
         public int prod_time { get; set; }
         public int production_rate { get; set; }
@@ -33,11 +28,6 @@ namespace DocumentFlow.Code.Implementation.OperationImp
         public int left_sweep { get; set; }
         public decimal right_cleaning { get; set; }
         public int right_sweep { get; set; }
-
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class OperationBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -201,7 +191,9 @@ namespace DocumentFlow.Code.Implementation.OperationImp
 
         private void Browser_ChangeParent(object sender, ChangeParentEventArgs e)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             IBrowser browser = sender as IBrowser;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (browser != null)
             {
                 string root = string.Empty;
@@ -240,38 +232,39 @@ namespace DocumentFlow.Code.Implementation.OperationImp
             const string measurementSelect = "select id, name from measurement where status_id = 1001 order by name";
 			const string programSelect = "with all_programs as ( select generate_series(1, 99) as id ) select a.id, '' || a.id as name from all_programs a left join operation on (program = a.id and status_id = 1002) where program is null or program = :program order by a.id";
 
-            List<IControl> controls = new List<IControl>();
+            List<IControl> controls = new List<IControl>
+            {
+                editor.CreateTextBox("code", "Код")
+                    .SetLabelWidth(labelWidth),
 
-            controls.Add(editor.CreateTextBox("code", "Код")
-                .SetLabelWidth(labelWidth));
+                editor.CreateTextBox("name", "Наименование")
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(380),
 
-            controls.Add(editor.CreateTextBox("name", "Наименование")
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(380));
+                editor.CreateSelectBox("type_id", "Тип операции", (c) => { return c.Query<ComboBoxDataItem>(typeSelect); })
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(330),
 
-            controls.Add(editor.CreateSelectBox("type_id", "Тип операции", (c) => { return c.Query<ComboBoxDataItem>(typeSelect); })
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(330));
+                editor.CreateSelectBox("parent_id", "Группа", (c) => { return c.Query<GroupDataItem>(folderSelect); }, showOnlyFolder: true)
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(360),
 
-            controls.Add(editor.CreateSelectBox("parent_id", "Группа", (c) => { return c.Query<GroupDataItem>(folderSelect); }, showOnlyFolder: true)
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(360));
+                editor.CreateComboBox("measurement_id", "Еденица измерения", (conn) => { return conn.Query<ComboBoxDataItem>(measurementSelect); })
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(250),
 
-            controls.Add(editor.CreateComboBox("measurement_id", "Еденица измерения", (conn) => { return conn.Query<ComboBoxDataItem>(measurementSelect); })
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(250));
+                editor.CreateInteger("produced", "Выработка")
+                    .SetLabelWidth(labelWidth),
 
-            controls.Add(editor.CreateInteger("produced", "Выработка")
-                .SetLabelWidth(labelWidth));
+                editor.CreateInteger("prod_time", "Время выработки, сек.")
+                    .SetLabelWidth(labelWidth),
 
-            controls.Add(editor.CreateInteger("prod_time", "Время выработки, сек.")
-                .SetLabelWidth(labelWidth));
+                editor.CreateInteger("production_rate", "Норма выработка, ед./час")
+                    .SetLabelWidth(labelWidth),
 
-            controls.Add(editor.CreateInteger("production_rate", "Норма выработка, ед./час")
-                .SetLabelWidth(labelWidth));
-
-            controls.Add(editor.CreateCurrency("salary", "Зарплата, руб.")
-                .SetLabelWidth(labelWidth));
+                editor.CreateCurrency("salary", "Зарплата, руб.")
+                    .SetLabelWidth(labelWidth)
+            };
 
             string root = database.ExecuteSqlCommand<string>("select root_code_operation(:oid)", new { editor.Entity.oid });
             if (root == "Резка")

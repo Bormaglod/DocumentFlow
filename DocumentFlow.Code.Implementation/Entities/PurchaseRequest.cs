@@ -7,34 +7,23 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 {
-    public class PurchaseRequest : IDocument
+    public class PurchaseRequest : Document
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string document_name { get; protected set; }
-        public string user_created { get; protected set; }
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; protected set; }
         public Guid? contract_id { get; set; }
         public string contract_name { get; protected set; }
-        public DateTime doc_date { get; set; }
-        public string doc_number { get; set; }
-        public Guid organization_id { get; set; }
         public string organization_name { get; protected set; }
         public int tax { get; protected set; }
         public decimal cost { get; protected set; }
         public decimal tax_value { get; protected set; }
         public decimal cost_with_tax { get; protected set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class PurchaseRequestDetail : IDetail
@@ -356,7 +345,9 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 
         private void OpenContractorClick(object sender, ExecuteEventArgs e)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             PurchaseRequest pr = e.Editor.Entity as PurchaseRequest;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (pr != null)
             {
                 if (pr.contractor_id.HasValue)
@@ -368,7 +359,9 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 
         private void OpenContractClick(object sender, ExecuteEventArgs e)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             PurchaseRequest pr = e.Editor.Entity as PurchaseRequest;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (pr != null)
             {
                 if (pr.contract_id.HasValue)

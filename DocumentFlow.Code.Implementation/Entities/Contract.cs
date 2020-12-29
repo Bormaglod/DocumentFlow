@@ -7,25 +7,18 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.ContractImp
 {
-    public class Contract : IDirectory
+    public class Contract : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public bool tax_payer { get; set; }
 		public bool is_default { get; set; }
         public int contractor_type_value { get; set; }
         public string contractor_type_name { get; set; }
         public string contractor_name { get; protected set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class ContractBrowser : IBrowserCode, IBrowserOperation, IDataEditor

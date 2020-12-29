@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using DocumentFlow.Code;
 using DocumentFlow.Code.Implementation;
 using DocumentFlow.Controls.Editor.Code;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Controls.Forms
@@ -168,7 +169,7 @@ namespace DocumentFlow.Controls.Forms
             Height = Math.Min(SystemInformation.WorkingArea.Height, height) + 12;
         }
 
-        private void buttonOk_Click(object sender, EventArgs e)
+        private void ButtonOk_Click(object sender, EventArgs e)
         {
             try
             {

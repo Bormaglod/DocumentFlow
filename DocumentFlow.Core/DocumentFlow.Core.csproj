@@ -94,6 +94,7 @@
     <Compile Include="DateExtension.cs" />
     <Compile Include="DrawingExtension.cs" />
     <Compile Include="EnumHelper.cs" />
+    <Compile Include="Exceptions\CanceledException.cs" />
     <Compile Include="Exceptions\IncorrectToolStripNameException.cs" />
     <Compile Include="Exceptions\CommandNotFoundException.cs" />
     <Compile Include="Exceptions\MissingImpException.cs" />

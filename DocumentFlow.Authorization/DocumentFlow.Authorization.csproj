@@ -159,8 +159,12 @@
       <Project>{6f1de0b7-9993-4964-9403-e098600773f3}</Project>
       <Name>DocumentFlow.Controls</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Data.Entities\DocumentFlow.Data.Entities.csproj">
+      <Project>{b93432c6-6884-46d2-ba9d-7a33bf687374}</Project>
+      <Name>DocumentFlow.Data.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
-      <Project>{089024a5-3602-4de6-93bf-efded0d1a0ec}</Project>
+      <Project>{860413cf-8d35-4cc6-80ca-a4b54ca9e778}</Project>
       <Name>DocumentFlow.Data</Name>
     </ProjectReference>
   </ItemGroup>

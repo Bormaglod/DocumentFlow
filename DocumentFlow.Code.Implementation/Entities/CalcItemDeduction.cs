@@ -4,19 +4,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.CalcItemDeductionImp
 {
-    public class CalcItemDeduction : IDirectory
+    public class CalcItemDeduction : Directory
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
         public string calculation_name { get; protected set; }
-        public string code { get; set; }
-        public string name { get; set; }
 
         /// <summary>
         /// Ссылка на материал (goods)
@@ -38,11 +34,6 @@ namespace DocumentFlow.Code.Implementation.CalcItemDeductionImp
         /// Процент от базы
         /// </summary>
         public decimal percentage { get; set; }
-
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class CalcItemDeductionBrowser : IBrowserCode, IBrowserOperation, IDataEditor

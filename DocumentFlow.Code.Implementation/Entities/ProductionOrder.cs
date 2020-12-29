@@ -6,34 +6,23 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
 using DocumentFlow.Core;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 {
-    public class ProductionOrder : IDocument
+    public class ProductionOrder : Document
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string document_name { get; protected set; }
-        public string user_created { get; protected set; }
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; protected set; }
-        public DateTime doc_date { get; set; }
-        public string doc_number { get; set; }
-        public Guid organization_id { get; set; }
         public string organization_name { get; protected set; }
         public int tax { get; protected set; }
         public decimal cost { get; protected set; }
         public decimal tax_value { get; protected set; }
         public decimal cost_with_tax { get; protected set; }
         public int complete_status { get; protected set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class ProductionOrderDetail : IDetail
@@ -344,7 +333,9 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 
 		private void OpenContractorClick(object sender, ExecuteEventArgs e)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             ProductionOrder po = e.Editor.Entity as ProductionOrder;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (po != null && po.contractor_id.HasValue)
             {
                 e.Editor.Commands.OpenDocument(po.contractor_id.Value);

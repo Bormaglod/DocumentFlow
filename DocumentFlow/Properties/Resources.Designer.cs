@@ -523,9 +523,9 @@ namespace DocumentFlow.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap icons8_rescan_landscape_16 {
+        internal static System.Drawing.Bitmap icons8_rescan_document_16 {
             get {
-                object obj = ResourceManager.GetObject("icons8_rescan_landscape_16", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_rescan_document_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -533,29 +533,9 @@ namespace DocumentFlow.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap icons8_rescan_landscape_30 {
+        internal static System.Drawing.Bitmap icons8_rescan_document_30 {
             get {
-                object obj = ResourceManager.GetObject("icons8_rescan_landscape_30", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap icons8_rescan_portrait_16 {
-            get {
-                object obj = ResourceManager.GetObject("icons8_rescan_portrait_16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap icons8_rescan_portrait_30 {
-            get {
-                object obj = ResourceManager.GetObject("icons8_rescan_portrait_30", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_rescan_document_30", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -1,29 +1,21 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
 using DocumentFlow.Core;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
 {
-    public class ReadyGoods : IDocument
+    public class ReadyGoods : Document
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public Guid? owner_id { get; set; }
-        public string user_created { get; protected set; }
-        public string document_name { get; protected set; }
         public DateTime order_date { get; protected set; }
         public string order_number { get; protected set; }
-        public DateTime doc_date { get; set; }
-        public string doc_number { get; set; }
         public string organization_name { get; protected set; }
         public Guid? goods_id { get; set; }
         public string goods_name { get; protected set; }
@@ -31,10 +23,6 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
         public decimal price { get; set; }
         public decimal cost { get; set; }
         public string contractor_name { get; protected set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class ReadyGoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor

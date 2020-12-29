@@ -8,6 +8,8 @@
 
 using System.Data;
 
+using DocumentFlow.Data;
+
 namespace DocumentFlow.Code
 {
     public interface IDataOperation

@@ -13,7 +13,7 @@ using System.Drawing;
 using System.Linq;
 using Dapper;
 using Syncfusion.Windows.Forms.Tools;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow
@@ -40,7 +40,7 @@ namespace DocumentFlow
                 var catalog = conn.Query<Catalog>("select * from menu");
                 foreach (var catalogItem in catalog)
                 {
-                    catalogItem.Command = сommandFactory.Commands.FirstOrDefault(x => x.Id == catalogItem.command_id);
+                    catalogItem.Command = сommandFactory.Commands.FirstOrDefault(x => x.id == catalogItem.command_id);
                 }
 
                 RefreshSidebar(catalog);
@@ -90,7 +90,7 @@ namespace DocumentFlow
                 else
                     parentNode.Nodes.Add(node);
 
-                RefreshSidebar(catalog, node, item.Id);
+                RefreshSidebar(catalog, node, item.id);
             }
         }
 

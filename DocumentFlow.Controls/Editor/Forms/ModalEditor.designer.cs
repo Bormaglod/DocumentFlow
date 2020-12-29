@@ -69,7 +69,7 @@
             this.buttonOk.Size = new System.Drawing.Size(112, 28);
             this.buttonOk.TabIndex = 0;
             this.buttonOk.Text = "Сохранить";
-            this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
+            this.buttonOk.Click += new System.EventHandler(this.ButtonOk_Click);
             // 
             // panelControls
             // 

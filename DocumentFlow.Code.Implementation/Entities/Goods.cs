@@ -6,20 +6,15 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.GoodsImp
 {
-    public class Goods : IDirectory
+    public class Goods : Directory
     {
-        public Guid id { get; protected set; }
-        public Guid? parent_id { get; set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string code { get; set; }
         public string ext_article { get; set; }
-        public string name { get; set; }
         public Guid? measurement_id { get; set; }
         public string abbreviation { get; set; }
         public decimal price { get; set; }
@@ -32,10 +27,6 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
         public decimal calc_price { get; set; }
         public DateTime? approved { get; set; }
 		public decimal? balance { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class GoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -209,7 +200,9 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
 
         private void Browser_ChangeParent(object sender, ChangeParentEventArgs e)
         {
+#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
             IBrowser browser = sender as IBrowser;
+#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
             if (browser != null)
             {
                 string root = string.Empty;

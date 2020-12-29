@@ -292,8 +292,12 @@
       <Project>{acca0ba9-e646-44f2-bcec-fe269a109983}</Project>
       <Name>DocumentFlow.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Data.Entities\DocumentFlow.Data.Entities.csproj">
+      <Project>{b93432c6-6884-46d2-ba9d-7a33bf687374}</Project>
+      <Name>DocumentFlow.Data.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
-      <Project>{15265407-1cdd-474d-93f6-205707fd0de7}</Project>
+      <Project>{860413cf-8d35-4cc6-80ca-a4b54ca9e778}</Project>
       <Name>DocumentFlow.Data</Name>
     </ProjectReference>
   </ItemGroup>

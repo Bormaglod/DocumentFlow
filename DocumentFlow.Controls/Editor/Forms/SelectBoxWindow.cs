@@ -14,8 +14,8 @@ using System.Reflection;
 using System.Windows.Forms;
 using Syncfusion.Drawing;
 using Syncfusion.Windows.Forms.Tools.MultiColumnTreeView;
-using DocumentFlow.Code;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Controls.Editor.Forms
 {
@@ -142,7 +142,7 @@ namespace DocumentFlow.Controls.Editor.Forms
             return null;
         }
 
-        private void treeSelect_NodeMouseDoubleClick(object sender, MultiColumnTreeViewAdvMouseClickEventArgs e)
+        private void TreeSelect_NodeMouseDoubleClick(object sender, MultiColumnTreeViewAdvMouseClickEventArgs e)
         {
             if (showOnlyFolder || e.Node.LeftImageIndices[0] == 1)
             {

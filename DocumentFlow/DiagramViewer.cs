@@ -18,6 +18,7 @@ using Dapper;
 using Syncfusion.Windows.Forms.Diagram;
 using Syncfusion.Windows.Forms.Diagram.Controls;
 using Syncfusion.Windows.Forms.Edit.Enums;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
 
@@ -66,9 +67,9 @@ namespace DocumentFlow
 
         IContainerPage IPage.Container => containerPage;
 
-        Guid IPage.Id => transition.Id;
+        Guid IPage.Id => transition.id;
 
-        Guid IPage.InfoId => transition.Id;
+        Guid IPage.InfoId => transition.id;
 
         void IPage.Rebuild() { }
 
@@ -283,7 +284,7 @@ namespace DocumentFlow
                     changing_status.FromStatus = status_from;
                     changing_status.ToStatus = status_to;
                     return changing_status;
-                }, new { id = transition.Id });
+                }, new { transition.id });
 
                 foreach (var cs in list)
                 {

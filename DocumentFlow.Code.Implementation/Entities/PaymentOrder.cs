@@ -5,20 +5,14 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
-using DocumentFlow.Code.Core;
 using DocumentFlow.Code.System;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.PaymentOrderImp
 {
-    public class PaymentOrder : IDocument
+    public class PaymentOrder : Document
     {
-        public Guid id { get; protected set; }
-        public int status_id { get; set; }
-        public string status_name { get; set; }
-        public string document_name { get; protected set; }
-        public string user_created { get; protected set; }
-        public DateTime doc_date { get; set; }
-        public string doc_number { get; set; }
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; set; }
         public DateTime? date_debited { get; set; }
@@ -28,10 +22,6 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
         public string organization_name { get; protected set; }
         public Guid? purchase_id { get; set; }
         public Guid? invoice_receipt_id { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
     }
 
     public class PaymentOrderBrowser : IBrowserCode, IBrowserOperation, IDataEditor

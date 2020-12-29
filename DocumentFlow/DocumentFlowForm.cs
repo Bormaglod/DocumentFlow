@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using DocumentFlow.Authorization;
 using DocumentFlow.Code.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Properties;
 
 namespace DocumentFlow
@@ -39,7 +39,7 @@ namespace DocumentFlow
 
         public DocumentFlowForm(LoginForm loginForm) : this() => this.loginForm = loginForm;
 
-        async private Task CreateCompilerTask()
+        private async Task CreateCompilerTask()
         {
             foreach (var command in commandFactory.Commands)
             {

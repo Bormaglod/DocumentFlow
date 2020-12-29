@@ -29,31 +29,23 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Syncfusion.WinForms.DataGrid.GridTextColumn gridTextColumn1 = new Syncfusion.WinForms.DataGrid.GridTextColumn();
-            Syncfusion.WinForms.DataGrid.GridTextColumn gridTextColumn2 = new Syncfusion.WinForms.DataGrid.GridTextColumn();
+            Syncfusion.WinForms.DataGrid.GridTextColumn gridTextColumn3 = new Syncfusion.WinForms.DataGrid.GridTextColumn();
+            Syncfusion.WinForms.DataGrid.GridTextColumn gridTextColumn4 = new Syncfusion.WinForms.DataGrid.GridTextColumn();
             this.toolStripMain = new System.Windows.Forms.ToolStrip();
             this.buttonStatus = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.panelItemActions = new Syncfusion.Windows.Forms.Tools.ToolStripPanelItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.buttonSave = new System.Windows.Forms.ToolStripButton();
-            this.buttonSaveAndClose = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
-            this.buttonCustomization = new System.Windows.Forms.ToolStripButton();
-            this.buttonPrint = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripSeparatorUserCommands = new System.Windows.Forms.ToolStripSeparator();
             this.tabSplitterContainer1 = new Syncfusion.Windows.Forms.Tools.TabSplitterContainer();
+            this.contextMenuStripEx1 = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.timerDatabaseListen = new System.Windows.Forms.Timer(this.components);
+            this.twain32 = new Saraff.Twain.Twain32(this.components);
             this.tabSplitterMaster = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
             this.tabSplitterDocs = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
             this.gridDocuments = new Syncfusion.WinForms.DataGrid.SfDataGrid();
-            this.contextMenuStripEx1 = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
-            this.menuCreateDocument = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuEditDocument = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuDeleteDocument = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuOpenFolderDocument = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuOpenFileDocument = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDocuments = new System.Windows.Forms.ToolStrip();
             this.buttonCreate = new System.Windows.Forms.ToolStripButton();
             this.buttonEdit = new System.Windows.Forms.ToolStripButton();
@@ -62,7 +54,9 @@
             this.buttonOpenFolder = new System.Windows.Forms.ToolStripButton();
             this.buttonOpenFile = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.buttonScan = new System.Windows.Forms.ToolStripButton();
+            this.buttonScan = new System.Windows.Forms.ToolStripSplitButton();
+            this.buttonSingleScan = new System.Windows.Forms.ToolStripMenuItem();
+            this.buttonMultipleScan = new System.Windows.Forms.ToolStripMenuItem();
             this.tabSplitterInfo = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
             this.label4 = new System.Windows.Forms.Label();
             this.textBoxUpdater = new Syncfusion.Windows.Forms.Tools.TextBoxExt();
@@ -74,13 +68,21 @@
             this.label2 = new System.Windows.Forms.Label();
             this.dateTimeUpdate = new Syncfusion.Windows.Forms.Tools.DateTimePickerAdv();
             this.label1 = new System.Windows.Forms.Label();
-            this.timerDatabaseListen = new System.Windows.Forms.Timer(this.components);
-            this.twain32 = new Saraff.Twain.Twain32(this.components);
+            this.buttonSave = new System.Windows.Forms.ToolStripButton();
+            this.buttonSaveAndClose = new System.Windows.Forms.ToolStripButton();
+            this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
+            this.buttonCustomization = new System.Windows.Forms.ToolStripButton();
+            this.buttonPrint = new System.Windows.Forms.ToolStripSplitButton();
+            this.menuCreateDocument = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuEditDocument = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDeleteDocument = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuOpenFolderDocument = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuOpenFileDocument = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMain.SuspendLayout();
             this.tabSplitterContainer1.SuspendLayout();
+            this.contextMenuStripEx1.SuspendLayout();
             this.tabSplitterDocs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDocuments)).BeginInit();
-            this.contextMenuStripEx1.SuspendLayout();
             this.toolStripDocuments.SuspendLayout();
             this.tabSplitterInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxUpdater)).BeginInit();
@@ -143,71 +145,10 @@
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 52);
             // 
-            // buttonSave
-            // 
-            this.buttonSave.Image = global::DocumentFlow.Properties.Resources.icons8_save_30;
-            this.buttonSave.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.buttonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(70, 49);
-            this.buttonSave.Tag = "save";
-            this.buttonSave.Text = "Сохранить";
-            this.buttonSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
-            // 
-            // buttonSaveAndClose
-            // 
-            this.buttonSaveAndClose.Image = global::DocumentFlow.Properties.Resources.icons8_save_close_30;
-            this.buttonSaveAndClose.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.buttonSaveAndClose.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonSaveAndClose.Name = "buttonSaveAndClose";
-            this.buttonSaveAndClose.Size = new System.Drawing.Size(127, 49);
-            this.buttonSaveAndClose.Tag = "save-as";
-            this.buttonSaveAndClose.Text = "Сохранить и закрыть";
-            this.buttonSaveAndClose.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.buttonSaveAndClose.Click += new System.EventHandler(this.buttonSaveAndClose_Click);
-            // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(6, 52);
-            // 
-            // buttonRefresh
-            // 
-            this.buttonRefresh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.buttonRefresh.Image = global::DocumentFlow.Properties.Resources.icons8_restart_30;
-            this.buttonRefresh.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonRefresh.Name = "buttonRefresh";
-            this.buttonRefresh.Size = new System.Drawing.Size(65, 49);
-            this.buttonRefresh.Tag = "refresh";
-            this.buttonRefresh.Text = "Обновить";
-            this.buttonRefresh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
-            // 
-            // buttonCustomization
-            // 
-            this.buttonCustomization.Image = global::DocumentFlow.Properties.Resources.icons8_source_30;
-            this.buttonCustomization.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.buttonCustomization.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonCustomization.Name = "buttonCustomization";
-            this.buttonCustomization.Size = new System.Drawing.Size(70, 49);
-            this.buttonCustomization.Tag = "open-browser-code";
-            this.buttonCustomization.Text = "Настройка";
-            this.buttonCustomization.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.buttonCustomization.Click += new System.EventHandler(this.buttonCustomization_Click);
-            // 
-            // buttonPrint
-            // 
-            this.buttonPrint.Image = global::DocumentFlow.Properties.Resources.icons8_print_30;
-            this.buttonPrint.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.buttonPrint.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonPrint.Name = "buttonPrint";
-            this.buttonPrint.Size = new System.Drawing.Size(62, 49);
-            this.buttonPrint.Tag = "print";
-            this.buttonPrint.Text = "Печать";
-            this.buttonPrint.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.buttonPrint.ButtonClick += new System.EventHandler(this.buttonPrint_ButtonClick);
             // 
             // toolStripSeparatorUserCommands
             // 
@@ -229,6 +170,38 @@
             this.tabSplitterContainer1.SplitterPosition = 277;
             this.tabSplitterContainer1.TabIndex = 7;
             this.tabSplitterContainer1.Text = "tabSplitterContainer1";
+            // 
+            // contextMenuStripEx1
+            // 
+            this.contextMenuStripEx1.DropShadowEnabled = false;
+            this.contextMenuStripEx1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuCreateDocument,
+            this.menuEditDocument,
+            this.menuDeleteDocument,
+            this.toolStripSeparator2,
+            this.menuOpenFolderDocument,
+            this.menuOpenFileDocument});
+            this.contextMenuStripEx1.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
+            this.contextMenuStripEx1.Name = "contextMenuStripEx1";
+            this.contextMenuStripEx1.Size = new System.Drawing.Size(157, 120);
+            this.contextMenuStripEx1.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
+            this.contextMenuStripEx1.ThemeName = "Metro";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(153, 6);
+            // 
+            // timerDatabaseListen
+            // 
+            this.timerDatabaseListen.Tick += new System.EventHandler(this.timerDatabaseListen_Tick);
+            // 
+            // twain32
+            // 
+            this.twain32.AppProductName = "Saraff.Twain.NET";
+            this.twain32.Country = Saraff.Twain.TwCountry.USSR;
+            this.twain32.Parent = null;
+            this.twain32.AcquireCompleted += new System.EventHandler(this.twain32_AcquireCompleted);
             // 
             // tabSplitterMaster
             // 
@@ -268,20 +241,20 @@
             this.gridDocuments.AutoGenerateColumns = false;
             this.gridDocuments.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.LastColumnFill;
             this.gridDocuments.BackColor = System.Drawing.SystemColors.Window;
-            gridTextColumn1.AllowEditing = false;
-            gridTextColumn1.AllowGrouping = false;
-            gridTextColumn1.AllowResizing = true;
-            gridTextColumn1.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.Fill;
-            gridTextColumn1.HeaderText = "Описание";
-            gridTextColumn1.MappingName = "note";
-            gridTextColumn2.AllowEditing = false;
-            gridTextColumn2.AllowGrouping = false;
-            gridTextColumn2.AllowResizing = true;
-            gridTextColumn2.HeaderText = "Имя файла";
-            gridTextColumn2.MappingName = "file_name";
-            gridTextColumn2.Width = 300D;
-            this.gridDocuments.Columns.Add(gridTextColumn1);
-            this.gridDocuments.Columns.Add(gridTextColumn2);
+            gridTextColumn3.AllowEditing = false;
+            gridTextColumn3.AllowGrouping = false;
+            gridTextColumn3.AllowResizing = true;
+            gridTextColumn3.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.Fill;
+            gridTextColumn3.HeaderText = "Описание";
+            gridTextColumn3.MappingName = "note";
+            gridTextColumn4.AllowEditing = false;
+            gridTextColumn4.AllowGrouping = false;
+            gridTextColumn4.AllowResizing = true;
+            gridTextColumn4.HeaderText = "Имя файла";
+            gridTextColumn4.MappingName = "file_name";
+            gridTextColumn4.Width = 300D;
+            this.gridDocuments.Columns.Add(gridTextColumn3);
+            this.gridDocuments.Columns.Add(gridTextColumn4);
             this.gridDocuments.ContextMenuStrip = this.contextMenuStripEx1;
             this.gridDocuments.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridDocuments.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -295,67 +268,6 @@
             this.gridDocuments.Style.TableSummaryRowStyle.Font.Size = 9F;
             this.gridDocuments.TabIndex = 3;
             this.gridDocuments.CellDoubleClick += new Syncfusion.WinForms.DataGrid.Events.CellClickEventHandler(this.gridDocuments_CellDoubleClick);
-            // 
-            // contextMenuStripEx1
-            // 
-            this.contextMenuStripEx1.DropShadowEnabled = false;
-            this.contextMenuStripEx1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuCreateDocument,
-            this.menuEditDocument,
-            this.menuDeleteDocument,
-            this.toolStripSeparator2,
-            this.menuOpenFolderDocument,
-            this.menuOpenFileDocument});
-            this.contextMenuStripEx1.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
-            this.contextMenuStripEx1.Name = "contextMenuStripEx1";
-            this.contextMenuStripEx1.Size = new System.Drawing.Size(157, 120);
-            this.contextMenuStripEx1.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
-            this.contextMenuStripEx1.ThemeName = "Metro";
-            // 
-            // menuCreateDocument
-            // 
-            this.menuCreateDocument.Image = global::DocumentFlow.Properties.Resources.icons8_file_add_16;
-            this.menuCreateDocument.Name = "menuCreateDocument";
-            this.menuCreateDocument.Size = new System.Drawing.Size(156, 22);
-            this.menuCreateDocument.Text = "Создать";
-            this.menuCreateDocument.Click += new System.EventHandler(this.buttonCreate_Click);
-            // 
-            // menuEditDocument
-            // 
-            this.menuEditDocument.Image = global::DocumentFlow.Properties.Resources.icons8_file_edit_16;
-            this.menuEditDocument.Name = "menuEditDocument";
-            this.menuEditDocument.Size = new System.Drawing.Size(156, 22);
-            this.menuEditDocument.Text = "Изменить";
-            this.menuEditDocument.Click += new System.EventHandler(this.buttonEdit_Click);
-            // 
-            // menuDeleteDocument
-            // 
-            this.menuDeleteDocument.Image = global::DocumentFlow.Properties.Resources.icons8_file_delete_16;
-            this.menuDeleteDocument.Name = "menuDeleteDocument";
-            this.menuDeleteDocument.Size = new System.Drawing.Size(156, 22);
-            this.menuDeleteDocument.Text = "Удалить";
-            this.menuDeleteDocument.Click += new System.EventHandler(this.buttonDelete_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(153, 6);
-            // 
-            // menuOpenFolderDocument
-            // 
-            this.menuOpenFolderDocument.Image = global::DocumentFlow.Properties.Resources.icons8_open_folder_16;
-            this.menuOpenFolderDocument.Name = "menuOpenFolderDocument";
-            this.menuOpenFolderDocument.Size = new System.Drawing.Size(156, 22);
-            this.menuOpenFolderDocument.Text = "Открыть папку";
-            this.menuOpenFolderDocument.Click += new System.EventHandler(this.buttonOpenFolder_Click);
-            // 
-            // menuOpenFileDocument
-            // 
-            this.menuOpenFileDocument.Image = global::DocumentFlow.Properties.Resources.icons8_open_document_16;
-            this.menuOpenFileDocument.Name = "menuOpenFileDocument";
-            this.menuOpenFileDocument.Size = new System.Drawing.Size(156, 22);
-            this.menuOpenFileDocument.Text = "Открыть файл";
-            this.menuOpenFileDocument.Click += new System.EventHandler(this.buttonOpenFile_Click);
             // 
             // toolStripDocuments
             // 
@@ -437,12 +349,29 @@
             // buttonScan
             // 
             this.buttonScan.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonScan.Image = global::DocumentFlow.Properties.Resources.icons8_rescan_portrait_16;
+            this.buttonScan.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.buttonSingleScan,
+            this.buttonMultipleScan});
+            this.buttonScan.Image = global::DocumentFlow.Properties.Resources.icons8_rescan_document_16;
             this.buttonScan.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonScan.Name = "buttonScan";
-            this.buttonScan.Size = new System.Drawing.Size(23, 22);
-            this.buttonScan.Text = "Сканировать документы";
-            this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
+            this.buttonScan.Size = new System.Drawing.Size(32, 22);
+            this.buttonScan.Text = "toolStripSplitButton1";
+            this.buttonScan.ButtonClick += new System.EventHandler(this.buttonScan_Click);
+            // 
+            // buttonSingleScan
+            // 
+            this.buttonSingleScan.Name = "buttonSingleScan";
+            this.buttonSingleScan.Size = new System.Drawing.Size(317, 22);
+            this.buttonSingleScan.Text = "Сканировать один лист/документ";
+            this.buttonSingleScan.Click += new System.EventHandler(this.buttonScan_Click);
+            // 
+            // buttonMultipleScan
+            // 
+            this.buttonMultipleScan.Name = "buttonMultipleScan";
+            this.buttonMultipleScan.Size = new System.Drawing.Size(317, 22);
+            this.buttonMultipleScan.Text = "Сканировать несколько листов/документов";
+            this.buttonMultipleScan.Click += new System.EventHandler(this.buttonMultipleScan_Click);
             // 
             // tabSplitterInfo
             // 
@@ -574,8 +503,8 @@
             this.dateTimeCreate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeCreate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-24914, 0);
-            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(25089, 25);
+            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-73631, 0);
+            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(73806, 25);
             this.dateTimeCreate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -586,7 +515,7 @@
             this.dateTimeCreate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeCreate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-24914, 25);
+            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-73631, 25);
             this.dateTimeCreate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeCreate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -657,8 +586,8 @@
             this.dateTimeUpdate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeUpdate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-24914, 0);
-            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(25089, 25);
+            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-73631, 0);
+            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(73806, 25);
             this.dateTimeUpdate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -669,7 +598,7 @@
             this.dateTimeUpdate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeUpdate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-24914, 25);
+            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-73631, 25);
             this.dateTimeUpdate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeUpdate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -702,16 +631,106 @@
             this.label1.TabIndex = 11;
             this.label1.Text = "Дата создания";
             // 
-            // timerDatabaseListen
+            // buttonSave
             // 
-            this.timerDatabaseListen.Tick += new System.EventHandler(this.timerDatabaseListen_Tick);
+            this.buttonSave.Image = global::DocumentFlow.Properties.Resources.icons8_save_30;
+            this.buttonSave.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.buttonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(70, 49);
+            this.buttonSave.Tag = "save";
+            this.buttonSave.Text = "Сохранить";
+            this.buttonSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
-            // twain32
+            // buttonSaveAndClose
             // 
-            this.twain32.AppProductName = "Saraff.Twain.NET";
-            this.twain32.Country = Saraff.Twain.TwCountry.USSR;
-            this.twain32.Parent = null;
-            this.twain32.AcquireCompleted += new System.EventHandler(this.twain32_AcquireCompleted);
+            this.buttonSaveAndClose.Image = global::DocumentFlow.Properties.Resources.icons8_save_close_30;
+            this.buttonSaveAndClose.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.buttonSaveAndClose.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonSaveAndClose.Name = "buttonSaveAndClose";
+            this.buttonSaveAndClose.Size = new System.Drawing.Size(127, 49);
+            this.buttonSaveAndClose.Tag = "save-as";
+            this.buttonSaveAndClose.Text = "Сохранить и закрыть";
+            this.buttonSaveAndClose.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.buttonSaveAndClose.Click += new System.EventHandler(this.buttonSaveAndClose_Click);
+            // 
+            // buttonRefresh
+            // 
+            this.buttonRefresh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.buttonRefresh.Image = global::DocumentFlow.Properties.Resources.icons8_restart_30;
+            this.buttonRefresh.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonRefresh.Name = "buttonRefresh";
+            this.buttonRefresh.Size = new System.Drawing.Size(65, 49);
+            this.buttonRefresh.Tag = "refresh";
+            this.buttonRefresh.Text = "Обновить";
+            this.buttonRefresh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
+            // 
+            // buttonCustomization
+            // 
+            this.buttonCustomization.Image = global::DocumentFlow.Properties.Resources.icons8_source_30;
+            this.buttonCustomization.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.buttonCustomization.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonCustomization.Name = "buttonCustomization";
+            this.buttonCustomization.Size = new System.Drawing.Size(70, 49);
+            this.buttonCustomization.Tag = "open-browser-code";
+            this.buttonCustomization.Text = "Настройка";
+            this.buttonCustomization.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.buttonCustomization.Click += new System.EventHandler(this.buttonCustomization_Click);
+            // 
+            // buttonPrint
+            // 
+            this.buttonPrint.Image = global::DocumentFlow.Properties.Resources.icons8_print_30;
+            this.buttonPrint.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.buttonPrint.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonPrint.Name = "buttonPrint";
+            this.buttonPrint.Size = new System.Drawing.Size(62, 49);
+            this.buttonPrint.Tag = "print";
+            this.buttonPrint.Text = "Печать";
+            this.buttonPrint.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.buttonPrint.ButtonClick += new System.EventHandler(this.buttonPrint_ButtonClick);
+            // 
+            // menuCreateDocument
+            // 
+            this.menuCreateDocument.Image = global::DocumentFlow.Properties.Resources.icons8_file_add_16;
+            this.menuCreateDocument.Name = "menuCreateDocument";
+            this.menuCreateDocument.Size = new System.Drawing.Size(156, 22);
+            this.menuCreateDocument.Text = "Создать";
+            this.menuCreateDocument.Click += new System.EventHandler(this.buttonCreate_Click);
+            // 
+            // menuEditDocument
+            // 
+            this.menuEditDocument.Image = global::DocumentFlow.Properties.Resources.icons8_file_edit_16;
+            this.menuEditDocument.Name = "menuEditDocument";
+            this.menuEditDocument.Size = new System.Drawing.Size(156, 22);
+            this.menuEditDocument.Text = "Изменить";
+            this.menuEditDocument.Click += new System.EventHandler(this.buttonEdit_Click);
+            // 
+            // menuDeleteDocument
+            // 
+            this.menuDeleteDocument.Image = global::DocumentFlow.Properties.Resources.icons8_file_delete_16;
+            this.menuDeleteDocument.Name = "menuDeleteDocument";
+            this.menuDeleteDocument.Size = new System.Drawing.Size(156, 22);
+            this.menuDeleteDocument.Text = "Удалить";
+            this.menuDeleteDocument.Click += new System.EventHandler(this.buttonDelete_Click);
+            // 
+            // menuOpenFolderDocument
+            // 
+            this.menuOpenFolderDocument.Image = global::DocumentFlow.Properties.Resources.icons8_open_folder_16;
+            this.menuOpenFolderDocument.Name = "menuOpenFolderDocument";
+            this.menuOpenFolderDocument.Size = new System.Drawing.Size(156, 22);
+            this.menuOpenFolderDocument.Text = "Открыть папку";
+            this.menuOpenFolderDocument.Click += new System.EventHandler(this.buttonOpenFolder_Click);
+            // 
+            // menuOpenFileDocument
+            // 
+            this.menuOpenFileDocument.Image = global::DocumentFlow.Properties.Resources.icons8_open_document_16;
+            this.menuOpenFileDocument.Name = "menuOpenFileDocument";
+            this.menuOpenFileDocument.Size = new System.Drawing.Size(156, 22);
+            this.menuOpenFileDocument.Text = "Открыть файл";
+            this.menuOpenFileDocument.Click += new System.EventHandler(this.buttonOpenFile_Click);
             // 
             // ContentEditor
             // 
@@ -724,10 +743,10 @@
             this.toolStripMain.ResumeLayout(false);
             this.toolStripMain.PerformLayout();
             this.tabSplitterContainer1.ResumeLayout(false);
+            this.contextMenuStripEx1.ResumeLayout(false);
             this.tabSplitterDocs.ResumeLayout(false);
             this.tabSplitterDocs.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDocuments)).EndInit();
-            this.contextMenuStripEx1.ResumeLayout(false);
             this.toolStripDocuments.ResumeLayout(false);
             this.toolStripDocuments.PerformLayout();
             this.tabSplitterInfo.ResumeLayout(false);
@@ -779,7 +798,6 @@
         private System.Windows.Forms.ToolStripButton buttonOpenFolder;
         private System.Windows.Forms.ToolStripButton buttonOpenFile;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripButton buttonScan;
         private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextMenuStripEx1;
         private System.Windows.Forms.ToolStripMenuItem menuCreateDocument;
         private System.Windows.Forms.ToolStripMenuItem menuEditDocument;
@@ -791,5 +809,8 @@
         private System.Windows.Forms.ToolStripButton buttonCustomization;
         private Saraff.Twain.Twain32 twain32;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparatorUserCommands;
+        private System.Windows.Forms.ToolStripSplitButton buttonScan;
+        private System.Windows.Forms.ToolStripMenuItem buttonSingleScan;
+        private System.Windows.Forms.ToolStripMenuItem buttonMultipleScan;
     }
 }

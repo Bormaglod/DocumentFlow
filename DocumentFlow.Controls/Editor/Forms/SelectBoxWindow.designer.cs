@@ -220,7 +220,7 @@
             this.treeSelect.ToolTipControl.Size = new System.Drawing.Size(41, 15);
             this.treeSelect.ToolTipControl.TabIndex = 1;
             this.treeSelect.ToolTipControl.Text = "toolTip";
-            this.treeSelect.NodeMouseDoubleClick += new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvMouseClickArgs(this.treeSelect_NodeMouseDoubleClick);
+            this.treeSelect.NodeMouseDoubleClick += new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvMouseClickArgs(this.TreeSelect_NodeMouseDoubleClick);
             // 
             // SelectBoxWindow
             // 

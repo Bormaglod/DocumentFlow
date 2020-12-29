@@ -16,6 +16,7 @@ using DocumentFlow.Code;
 using DocumentFlow.Code.Implementation;
 using DocumentFlow.Code.System;
 using DocumentFlow.Core;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Controls.Editor.Code
 {
