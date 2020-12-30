@@ -25,7 +25,7 @@ namespace DocumentFlow.Code.Implementation
             string password = words[1].Trim();
 
             UpdateDatabase("Разработка", user, password);
-            //UpdateDatabase("Production", user, password);
+            UpdateDatabase("Production", user, password);
 
             Console.ReadLine();
         }

@@ -8,7 +8,6 @@
 
 using System;
 using System.Globalization;
-
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.Input.Enums;
 

@@ -67,7 +67,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 po.doc_number, 
                 o.name as organization_name, 
                 case 
-                    when c.tax_payer then 20 
+                    when contract.tax_payer then 20 
                     else 0 
                 end as tax, 
                 coalesce(sum(pod.cost), 0::money) as cost, 
@@ -80,9 +80,10 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 join organization o on (o.id = po.organization_id) 
                 left join production_order_detail pod on (pod.owner_id = po.id) 
                 left join contractor c on (c.id = po.contractor_id) 
+                left join contract on (contract.id = po.contract_id)
                 left join cte on (cte.owner_id = po.id) 
             where {0}
-            group by po.id, po.status_id, ua.name, c.name, po.doc_date, po.doc_number, s.note, o.name, c.tax_payer, cte.complete_status";
+            group by po.id, po.status_id, ua.name, c.name, po.doc_date, po.doc_number, s.note, o.name, contract.tax_payer, cte.complete_status";
 
         void IBrowserCode.Initialize(IBrowser browser)
         {

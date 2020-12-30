@@ -73,15 +73,26 @@ namespace DocumentFlow
                 }
                 else
                 {
-                    var obj_x = property.GetValue(x);
-                    var obj_y = property.GetValue(y);
-                    if (obj_x is IComparable cmp_x && obj_y is IComparable cmp_y)
+                    if (x is IDocumentInfo && y is IDocumentInfo)
                     {
-                        res = cmp_x.CompareTo(cmp_y);
+                        var obj_x = property.GetValue(x);
+                        var obj_y = property.GetValue(y);
+                        if (obj_x is IComparable cmp_x && obj_y is IComparable cmp_y)
+                        {
+                            res = cmp_x.CompareTo(cmp_y);
+                        }
+                        else
+                        {
+                            res = obj_x.ToString().CompareTo(obj_y.ToString());
+                        }
+                    }
+                    else if (x is Group grp_x && y is Group grp_y)
+                    {
+                        res = grp_x.Key.ToString().CompareTo(grp_y.Key.ToString());
                     }
                     else
                     {
-                        res = obj_x.ToString().CompareTo(obj_y.ToString());
+                        res = x.ToString().CompareTo(y.ToString());
                     }
                 }
 

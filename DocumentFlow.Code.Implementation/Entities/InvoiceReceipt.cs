@@ -62,7 +62,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 pr.doc_number as purchase_number, 
                 pr.doc_date as purchase_date, 
                 case 
-                    when c.tax_payer then 20 
+                    when contract.tax_payer then 20 
                     else 0 
                 end as tax,     
                 coalesce(sum(cost), 0::money) as cost, 
@@ -77,7 +77,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 left join purchase_request pr on (pr.id = ir.owner_id) 
                 left join contract on (contract.id = ir.contract_id)
             where {0} 
-            group by ir.id, ir.status_id, ua.name, c.name, ir.doc_date, ir.doc_number, s.note, o.name, c.tax_payer, ir.invoice_date, ir.invoice_number, pr.doc_number, pr.doc_date, contract.name";
+            group by ir.id, ir.status_id, ua.name, c.name, ir.doc_date, ir.doc_number, s.note, o.name, contract.tax_payer, ir.invoice_date, ir.invoice_number, pr.doc_number, pr.doc_date, contract.name";
 
         void IBrowserCode.Initialize(IBrowser browser)
         {

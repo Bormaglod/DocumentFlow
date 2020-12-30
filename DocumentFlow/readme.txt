@@ -1,4 +1,6 @@
-﻿Версия 2.2.0 (29.12.2020)
+﻿Версия 2.2.1 (30.12.2020)
+    - Исправлена ошибка возникавшая при сортировке таблицы имеющей группы записей
+Версия 2.2.0 (29.12.2020)
     - Библиотека DocumentFlow.Data разделена на DocumentFlow.Data.Core и DocumentFlow.Data.Entities
     - Добавлена возможность в скриптах ссылаться на DocumentFlow.Data.Entities
     - часть интерфейсов связанных с БД перенесена из DocumentFlow.Code в DocumentFlow.Data.Entities (DocumentFlow.Data)

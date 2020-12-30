@@ -12,10 +12,7 @@ namespace DocumentFlow.Code.System
 {
     public class ValueChangedEventArgs : EventArgs
     {
-        public ValueChangedEventArgs(object value)
-        {
-            Value = value;
-        }
+        public ValueChangedEventArgs(object value) => Value = value;
 
         public object Value { get; }
     }

@@ -6,12 +6,6 @@
 // Time: 17:09
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace DocumentFlow.Code
 {
     public interface IControlVisible

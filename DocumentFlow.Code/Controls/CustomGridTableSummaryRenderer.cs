@@ -24,10 +24,7 @@ namespace DocumentFlow.Code.Controls
     {
         private readonly IEnumerable<IColumn> columns;
 
-        public CustomGridTableSummaryRenderer(IEnumerable<IColumn> dataColumns)
-        {
-            columns = dataColumns;
-        }
+        public CustomGridTableSummaryRenderer(IEnumerable<IColumn> dataColumns) => columns = dataColumns;
 
         protected override void OnRender(Graphics paint, Rectangle cellRect, string cellValue, CellStyleInfo style, DataColumnBase column, RowColumnIndex rowColumnIndex)
         {

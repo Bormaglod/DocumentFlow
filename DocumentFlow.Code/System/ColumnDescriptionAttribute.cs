@@ -12,10 +12,7 @@ namespace DocumentFlow.Code.System
 {
     public class ColumnDescriptionAttribute : Attribute
     {
-        public ColumnDescriptionAttribute(string title)
-        {
-            Title = title;
-        }
+        public ColumnDescriptionAttribute(string title) => Title = title;
 
         public string Title { get; }
     }

@@ -16,10 +16,7 @@ namespace DocumentFlow.Code.Implementation
         private readonly List<string> fields = new List<string>();
         private readonly SfDataGrid gridContent;
 
-        public StackedColumnData(SfDataGrid grid)
-        {
-            gridContent = grid;
-        }
+        public StackedColumnData(SfDataGrid grid) => gridContent = grid;
 
         IStackedColumn IStackedColumn.Add(string dataField)
         {
