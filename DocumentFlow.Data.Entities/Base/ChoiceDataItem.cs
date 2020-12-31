@@ -6,7 +6,7 @@
 // Time: 20:25
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Data
+namespace DocumentFlow.Data.Base
 {
     public class ChoiceDataItem : Entity<int>
     {

@@ -39,6 +39,8 @@
             this.menuCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.menuAddFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuDocuments = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.panelDirectory = new System.Windows.Forms.Panel();
             this.breadcrumb1 = new DocumentFlow.Controls.Breadcrumb();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -98,8 +100,6 @@
             this.contextGroupCaptionMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             this.menuGroupCaptionExpand = new System.Windows.Forms.ToolStripMenuItem();
             this.menuGroupCaptionCollapse = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuDocuments = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.contextRecordMenu.SuspendLayout();
             this.panelDirectory.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxSearchDirectory)).BeginInit();
@@ -150,7 +150,7 @@
             this.menuCopyClipboard.Name = "menuCopyClipboard";
             this.menuCopyClipboard.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.menuCopyClipboard.Size = new System.Drawing.Size(181, 22);
-            this.menuCopyClipboard.Tag = "copy-text";
+            this.menuCopyClipboard.Tag = "copy-text|text";
             this.menuCopyClipboard.Text = "Копировать";
             this.menuCopyClipboard.Click += new System.EventHandler(this.menuCopyClipboard_Click);
             // 
@@ -158,14 +158,14 @@
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(178, 6);
-            this.toolStripSeparator6.Tag = "";
+            this.toolStripSeparator6.Tag = "|edit";
             // 
             // menuCreate
             // 
             this.menuCreate.Image = global::DocumentFlow.Properties.Resources.icons8_file_add_16;
             this.menuCreate.Name = "menuCreate";
             this.menuCreate.Size = new System.Drawing.Size(181, 22);
-            this.menuCreate.Tag = "add-record";
+            this.menuCreate.Tag = "add-record|edit";
             this.menuCreate.Text = "Создать";
             this.menuCreate.Click += new System.EventHandler(this.buttonCreate_Click);
             // 
@@ -174,7 +174,7 @@
             this.menuEdit.Image = global::DocumentFlow.Properties.Resources.icons8_file_edit_16;
             this.menuEdit.Name = "menuEdit";
             this.menuEdit.Size = new System.Drawing.Size(181, 22);
-            this.menuEdit.Tag = "edit-record";
+            this.menuEdit.Tag = "edit-record|edit";
             this.menuEdit.Text = "Изменить";
             this.menuEdit.Click += new System.EventHandler(this.buttonEdit_Click);
             // 
@@ -183,7 +183,7 @@
             this.menuDelete.Image = global::DocumentFlow.Properties.Resources.icons8_file_delete_16;
             this.menuDelete.Name = "menuDelete";
             this.menuDelete.Size = new System.Drawing.Size(181, 22);
-            this.menuDelete.Tag = "delete-record";
+            this.menuDelete.Tag = "delete-record|edit";
             this.menuDelete.Text = "Удалить";
             this.menuDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
@@ -191,14 +191,14 @@
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(178, 6);
-            this.toolStripSeparator4.Tag = "";
+            this.toolStripSeparator4.Tag = "|other";
             // 
             // menuCopy
             // 
             this.menuCopy.Image = global::DocumentFlow.Properties.Resources.icons8_copy_edit_16;
             this.menuCopy.Name = "menuCopy";
             this.menuCopy.Size = new System.Drawing.Size(181, 22);
-            this.menuCopy.Tag = "copy-record";
+            this.menuCopy.Tag = "copy-record|other";
             this.menuCopy.Text = "Создать копию";
             this.menuCopy.Click += new System.EventHandler(this.buttonCopy_Click);
             // 
@@ -207,7 +207,7 @@
             this.menuAddFolder.Image = global::DocumentFlow.Properties.Resources.icons8_folder_add_16;
             this.menuAddFolder.Name = "menuAddFolder";
             this.menuAddFolder.Size = new System.Drawing.Size(181, 22);
-            this.menuAddFolder.Tag = "create-group";
+            this.menuAddFolder.Tag = "create-group|other";
             this.menuAddFolder.Text = "Группа";
             this.menuAddFolder.Click += new System.EventHandler(this.buttonAddFolder_Click);
             // 
@@ -215,6 +215,20 @@
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
             this.toolStripSeparator9.Size = new System.Drawing.Size(178, 6);
+            this.toolStripSeparator9.Tag = "|documents";
+            // 
+            // menuDocuments
+            // 
+            this.menuDocuments.Name = "menuDocuments";
+            this.menuDocuments.Size = new System.Drawing.Size(181, 22);
+            this.menuDocuments.Tag = "document-list|documents";
+            this.menuDocuments.Text = "Документы";
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(178, 6);
+            this.toolStripSeparator12.Tag = "|user-defined";
             // 
             // panelDirectory
             // 
@@ -575,7 +589,7 @@
             this.menuAddRecord.Image = global::DocumentFlow.Properties.Resources.icons8_file_add_16;
             this.menuAddRecord.Name = "menuAddRecord";
             this.menuAddRecord.Size = new System.Drawing.Size(117, 22);
-            this.menuAddRecord.Tag = "add-record";
+            this.menuAddRecord.Tag = "add-record|edit";
             this.menuAddRecord.Text = "Создать";
             this.menuAddRecord.Click += new System.EventHandler(this.buttonCreate_Click);
             // 
@@ -583,14 +597,14 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(114, 6);
-            this.toolStripSeparator1.Tag = "";
+            this.toolStripSeparator1.Tag = "|other";
             // 
             // menuAddGroup
             // 
             this.menuAddGroup.Image = global::DocumentFlow.Properties.Resources.icons8_folder_add_16;
             this.menuAddGroup.Name = "menuAddGroup";
             this.menuAddGroup.Size = new System.Drawing.Size(117, 22);
-            this.menuAddGroup.Tag = "create-group";
+            this.menuAddGroup.Tag = "create-group|other";
             this.menuAddGroup.Text = "Группа";
             this.menuAddGroup.Click += new System.EventHandler(this.buttonAddFolder_Click);
             // 
@@ -598,6 +612,7 @@
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
             this.toolStripSeparator11.Size = new System.Drawing.Size(114, 6);
+            this.toolStripSeparator11.Tag = "|user-defined";
             // 
             // panelCommandBar
             // 
@@ -616,7 +631,7 @@
             this.buttonHistory.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonHistory.Name = "buttonHistory";
             this.buttonHistory.Size = new System.Drawing.Size(58, 49);
-            this.buttonHistory.Tag = "history";
+            this.buttonHistory.Tag = "history|history";
             this.buttonHistory.Text = "История";
             this.buttonHistory.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonHistory.Click += new System.EventHandler(this.buttonHistory_Click);
@@ -625,7 +640,7 @@
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 52);
-            this.toolStripSeparator2.Tag = "";
+            this.toolStripSeparator2.Tag = "|edit";
             // 
             // buttonCreate
             // 
@@ -634,7 +649,7 @@
             this.buttonCreate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonCreate.Name = "buttonCreate";
             this.buttonCreate.Size = new System.Drawing.Size(54, 49);
-            this.buttonCreate.Tag = "add-record";
+            this.buttonCreate.Tag = "add-record|edit";
             this.buttonCreate.Text = "Создать";
             this.buttonCreate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonCreate.Click += new System.EventHandler(this.buttonCreate_Click);
@@ -646,7 +661,7 @@
             this.buttonEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonEdit.Name = "buttonEdit";
             this.buttonEdit.Size = new System.Drawing.Size(65, 49);
-            this.buttonEdit.Tag = "edit-record";
+            this.buttonEdit.Tag = "edit-record|edit";
             this.buttonEdit.Text = "Изменить";
             this.buttonEdit.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
@@ -658,7 +673,7 @@
             this.buttonDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(55, 49);
-            this.buttonDelete.Tag = "delete-record";
+            this.buttonDelete.Tag = "delete-record|edit";
             this.buttonDelete.Text = "Удалить";
             this.buttonDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
@@ -667,7 +682,7 @@
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 52);
-            this.toolStripSeparator3.Tag = "";
+            this.toolStripSeparator3.Tag = "|other";
             // 
             // buttonCopy
             // 
@@ -676,7 +691,7 @@
             this.buttonCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonCopy.Name = "buttonCopy";
             this.buttonCopy.Size = new System.Drawing.Size(45, 49);
-            this.buttonCopy.Tag = "copy-record";
+            this.buttonCopy.Tag = "copy-record|other";
             this.buttonCopy.Text = "Копия";
             this.buttonCopy.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonCopy.ToolTipText = "Создать копированием";
@@ -689,7 +704,7 @@
             this.buttonAddFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonAddFolder.Name = "buttonAddFolder";
             this.buttonAddFolder.Size = new System.Drawing.Size(50, 49);
-            this.buttonAddFolder.Tag = "create-group";
+            this.buttonAddFolder.Tag = "create-group|other";
             this.buttonAddFolder.Text = "Группа";
             this.buttonAddFolder.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonAddFolder.Click += new System.EventHandler(this.buttonAddFolder_Click);
@@ -702,7 +717,7 @@
             this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(65, 49);
-            this.buttonRefresh.Tag = "refresh";
+            this.buttonRefresh.Tag = "refresh|refresh";
             this.buttonRefresh.Text = "Обновить";
             this.buttonRefresh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonRefresh.Click += new System.EventHandler(this.RefreshEntities);
@@ -733,7 +748,7 @@
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             this.toolStripSeparator7.Size = new System.Drawing.Size(6, 52);
-            this.toolStripSeparator7.Tag = "";
+            this.toolStripSeparator7.Tag = "|settings";
             // 
             // buttonCustomization
             // 
@@ -742,7 +757,7 @@
             this.buttonCustomization.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonCustomization.Name = "buttonCustomization";
             this.buttonCustomization.Size = new System.Drawing.Size(79, 49);
-            this.buttonCustomization.Tag = "open-browser-code";
+            this.buttonCustomization.Tag = "open-browser-code|settings";
             this.buttonCustomization.Text = "Настройка...";
             this.buttonCustomization.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.buttonCustomization.Click += new System.EventHandler(this.buttonCustomization_Click);
@@ -751,7 +766,7 @@
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
             this.toolStripSeparator8.Size = new System.Drawing.Size(6, 52);
-            this.toolStripSeparator8.Tag = "";
+            this.toolStripSeparator8.Tag = "|user-defined";
             // 
             // timerDatabaseListen
             // 
@@ -827,13 +842,14 @@
             this.menuDeleteRow.Image = global::DocumentFlow.Properties.Resources.icons8_file_delete_16;
             this.menuDeleteRow.Name = "menuDeleteRow";
             this.menuDeleteRow.Size = new System.Drawing.Size(118, 22);
-            this.menuDeleteRow.Tag = "delete-record";
+            this.menuDeleteRow.Tag = "delete-record|edit";
             this.menuDeleteRow.Text = "Удалить";
             // 
             // toolStripSeparator10
             // 
             this.toolStripSeparator10.Name = "toolStripSeparator10";
             this.toolStripSeparator10.Size = new System.Drawing.Size(115, 6);
+            this.toolStripSeparator10.Tag = "|user-defined";
             // 
             // contextGroupMenu
             // 
@@ -938,17 +954,6 @@
             this.menuGroupCaptionCollapse.Size = new System.Drawing.Size(135, 22);
             this.menuGroupCaptionCollapse.Text = "Свернуть";
             this.menuGroupCaptionCollapse.Click += new System.EventHandler(this.menuGroupCaptionCollapse_Click);
-            // 
-            // menuDocuments
-            // 
-            this.menuDocuments.Name = "menuDocuments";
-            this.menuDocuments.Size = new System.Drawing.Size(181, 22);
-            this.menuDocuments.Text = "Документы";
-            // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(178, 6);
             // 
             // ViewerControl
             // 

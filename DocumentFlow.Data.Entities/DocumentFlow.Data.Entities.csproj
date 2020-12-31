@@ -43,7 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\ChoiceDataItem.cs" />
-    <Compile Include="Base\ComboBoxDataItem.cs" />
+    <Compile Include="Base\NameDataItem.cs" />
     <Compile Include="Base\Detail.cs" />
     <Compile Include="Base\GroupDataItem.cs" />
     <Compile Include="Catalog.cs" />

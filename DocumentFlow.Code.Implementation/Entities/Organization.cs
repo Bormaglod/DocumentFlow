@@ -6,6 +6,7 @@ using System.Linq;
 using Dapper;
 using DocumentFlow.Code.System;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.OrganizationImp
@@ -180,13 +181,13 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
 
-            IControl okopf = editor.CreateComboBox("okopf_id", "ОКОПФ", (conn) => { return conn.Query<ComboBoxDataItem>(okopfSelect); })
+            IControl okopf = editor.CreateComboBox("okopf_id", "ОКОПФ", (conn) => { return conn.Query<NameDataItem>(okopfSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(330);
 
             IControl account = editor.CreateComboBox("account_id", "Расчётный счёт", (e, c) => {
                     Organization org = e.Entity as Organization;
-                    return c.Query<ComboBoxDataItem>(accountSelect, new { org.id, org.account_id }); 
+                    return c.Query<NameDataItem>(accountSelect, new { org.id, org.account_id }); 
                 })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(330);

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.OperationImp
@@ -241,7 +242,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
                     .SetLabelWidth(labelWidth)
                     .SetControlWidth(380),
 
-                editor.CreateSelectBox("type_id", "Тип операции", (c) => { return c.Query<ComboBoxDataItem>(typeSelect); })
+                editor.CreateSelectBox("type_id", "Тип операции", (c) => { return c.Query<NameDataItem>(typeSelect); })
                     .SetLabelWidth(labelWidth)
                     .SetControlWidth(330),
 
@@ -249,7 +250,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
                     .SetLabelWidth(labelWidth)
                     .SetControlWidth(360),
 
-                editor.CreateComboBox("measurement_id", "Еденица измерения", (conn) => { return conn.Query<ComboBoxDataItem>(measurementSelect); })
+                editor.CreateComboBox("measurement_id", "Еденица измерения", (conn) => { return conn.Query<NameDataItem>(measurementSelect); })
                     .SetLabelWidth(labelWidth)
                     .SetControlWidth(250),
 

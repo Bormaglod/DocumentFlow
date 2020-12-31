@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.GoodsImp
@@ -256,7 +257,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
 
-            IControl measurement = editor.CreateComboBox("measurement_id", "Еденица измерения", (conn) => { return conn.Query<ComboBoxDataItem>(measurementSelect); })
+            IControl measurement = editor.CreateComboBox("measurement_id", "Еденица измерения", (conn) => { return conn.Query<NameDataItem>(measurementSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
 

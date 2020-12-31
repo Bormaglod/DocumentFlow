@@ -9,7 +9,7 @@
 using System;
 using DocumentFlow.Data.Core;
 
-namespace DocumentFlow.Data
+namespace DocumentFlow.Data.Base
 {
     public class GroupDataItem : Entity<Guid>, IParent
     {

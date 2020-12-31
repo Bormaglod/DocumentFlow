@@ -29,7 +29,11 @@ namespace DocumentFlow
             ToolStrip = toolStrip;
             commands = commandCollection;
 
-            var list = toolStrip.Items.OfType<ToolStripItem>().Where(x => x.Tag?.ToString() == "user-defined").ToList();
+            var list = toolStrip.Items
+                .OfType<ToolStripItem>()
+                .Where(x => GetCommandComponents(x.Tag?.ToString()).CommandName == "user-defined")
+                .ToList();
+
             foreach (var item in list)
             {
                 toolStrip.Items.Remove(item);
@@ -40,9 +44,10 @@ namespace DocumentFlow
                 if (item is ToolStripSeparator || item.Tag == null)
                     continue;
 
-                CommandItem ci = commands.Add(CommandMethod.Embedded, item.Tag.ToString());
+                CommandItem ci = commands.Add(CommandMethod.Embedded, GetCommandComponents(item.Tag.ToString()).CommandName);
                 if (ci != null)
                 {
+                    ci.PropertyChanged += Notify_PropertyChanged;
                     items.Add(ci, item);
                 }
             }
@@ -76,26 +81,48 @@ namespace DocumentFlow
 
         public void UpdateButtonVisibleStatus()
         {
-            int visibleCount = 0;
-            for (int i = 0; i < ToolStrip.Items.Count; i++)
+            var grp_items = new Dictionary<string, List<ToolStripItem>>();
+            foreach (ToolStripItem item in ToolStrip.Items)
             {
-                if (ToolStrip.Items[i] is ToolStripSeparator)
+                if (item.Tag == null)
                 {
-                    ToolStrip.Items[i].Visible = visibleCount > 0;
-                    visibleCount = 0;
+                    continue;
+                }
+
+                var (CommandName, GroupName) = GetCommandComponents(item.Tag.ToString());
+                if (grp_items.ContainsKey(GroupName))
+                {
+                    grp_items[GroupName].Add(item);
                 }
                 else
                 {
-                    if (ToolStrip.Items[i].Visible)
-                    {
-                        visibleCount++;
-                    }
+                    var list = new List<ToolStripItem> { item };
+                    grp_items.Add(GroupName, list);
                 }
             }
 
-            if (ToolStrip.Items[ToolStrip.Items.Count - 1] is ToolStripSeparator separator)
+            foreach (string group_name in grp_items.Keys)
             {
-                separator.Visible = false;
+                int visibles = 0;
+                foreach (ToolStripItem item in grp_items[group_name])
+                {
+                    if (item is ToolStripSeparator)
+                        continue;
+
+                    ICommand c = items.FirstOrDefault(x => x.Value == item).Key;
+                    if (c == null || c.Visible)
+                    {
+                        visibles++;
+                    }
+                }
+
+                if (visibles == 0)
+                {
+                    foreach (var separator in grp_items[group_name].OfType<ToolStripSeparator>())
+                    {
+                        separator.Visible = false;
+                    }
+                }
             }
         }
 
@@ -121,6 +148,23 @@ namespace DocumentFlow
             }
 
             return p;
+        }
+
+        private (string CommandName, string GroupName) GetCommandComponents(string fullCommand)
+        {
+            if (string.IsNullOrEmpty(fullCommand))
+                return (string.Empty, string.Empty);
+
+            string[] names = fullCommand.Split(new char[] { '|' }, 2);
+            switch (names.Length)
+            {
+                case 0:
+                    return (string.Empty, string.Empty);
+                case 1:
+                    return (names[0], string.Empty);
+                default:
+                    return (names[0], names[1]);
+            }
         }
 
         private ToolStripItem AddToolStripItem(ICommand command)

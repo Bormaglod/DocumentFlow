@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.CalcItemDeductionImp

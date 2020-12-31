@@ -8,6 +8,7 @@ using Dapper;
 using DocumentFlow.Code.System;
 using DocumentFlow.Core;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.ReadyGoodsImp

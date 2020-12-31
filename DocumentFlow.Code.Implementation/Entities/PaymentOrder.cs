@@ -7,6 +7,7 @@ using Dapper;
 using DocumentFlow.Core;
 using DocumentFlow.Code.System;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.PaymentOrderImp

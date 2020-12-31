@@ -67,7 +67,7 @@ namespace DocumentFlow
                 DisplayStyle = toolBar.ButtonStyle,
                 ImageScaling = ToolStripItemImageScaling.None,
                 TextImageRelation = TextImageRelation.ImageAboveText,
-                Tag = "user-defined"
+                Tag = "user-defined|user-defined"
             };
         }
 

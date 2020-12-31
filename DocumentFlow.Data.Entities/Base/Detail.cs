@@ -8,7 +8,7 @@
 
 using System;
 
-namespace DocumentFlow.Data
+namespace DocumentFlow.Data.Base
 {
     public class Detail : Entity<long>, IDetail
     {

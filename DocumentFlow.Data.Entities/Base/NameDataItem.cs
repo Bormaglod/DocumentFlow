@@ -8,9 +8,9 @@
 
 using System;
 
-namespace DocumentFlow.Data
+namespace DocumentFlow.Data.Base
 {
-    public class ComboBoxDataItem : Entity<Guid>
+    public class NameDataItem : Entity<Guid>
     {
         public string name { get; set; }
         public override string ToString() => name;

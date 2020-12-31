@@ -9,7 +9,7 @@
 using System;
 using System.ComponentModel;
 
-namespace DocumentFlow.Data
+namespace DocumentFlow.Data.Base
 {
     public abstract class Entity<T> : INotifyPropertyChanged, IIdentifier, IIdentifier<T> where T : IComparable<T>
     {

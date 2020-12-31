@@ -5,11 +5,11 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using DocumentFlow.Code.System;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Data.Base;
 
 namespace DocumentFlow.Code.Implementation.DiagramImp
 {
-    public class Diagram : Directory
+    public class Diagram : NameDataItem
     {
     }
 
@@ -22,12 +22,6 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
             browser.DataType = DataType.Directory;
             browser.CommandBarVisible = false;
             browser.DefineDoubleClickCommand("open-diagram");
-
-            string[] visible = new string[] { "refresh", "open-diagram" };
-            foreach (ICommand cmd in browser.Commands)
-            {
-                cmd.SetVisible(visible.Contains(cmd.Code));
-            }
 
             browser.CreateColumns((columns) =>
             {
@@ -47,6 +41,12 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
             open_diagram.Click += OpenDiagramClick;
 
             browser.ToolBar.AddCommand(open_diagram);
+
+            string[] visible = new string[] { "refresh", "open-diagram" };
+            foreach (ICommand cmd in browser.Commands)
+            {
+                cmd.SetVisible(visible.Contains(cmd.Code));
+            }
         }
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)

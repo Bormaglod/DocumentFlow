@@ -6,6 +6,8 @@
 // Time: 13:31
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Base;
+
 namespace DocumentFlow.Data.Entities
 {
     public class Email : Entity<long>

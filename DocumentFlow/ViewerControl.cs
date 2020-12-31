@@ -43,6 +43,7 @@ using DocumentFlow.Code.System;
 using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
 using DocumentFlow.Controls;
@@ -66,7 +67,6 @@ namespace DocumentFlow
             public int Compare(object x, object y)
             {
                 int res;
-
                 if (x is IParent parent_x && y is IParent parent_y && (parent_x.is_folder != parent_y.is_folder))
                 {
                     res = parent_x.is_folder ? -1 : 1;
@@ -83,7 +83,14 @@ namespace DocumentFlow
                         }
                         else
                         {
-                            res = obj_x.ToString().CompareTo(obj_y.ToString());
+                            if (obj_x == null && obj_y == null)
+                                res = 0;
+                            else if (obj_x == null)
+                                res = -1;
+                            else if (obj_y == null)
+                                res = 1;
+                            else
+                                res = obj_x.ToString().CompareTo(obj_y.ToString());
                         }
                     }
                     else if (x is Group grp_x && y is Group grp_y)
@@ -351,7 +358,7 @@ namespace DocumentFlow
                     OwnerId = OwnerId,
                     DateFrom = dateTimePickerFrom.Checked ? dateTimePickerFrom.Value.StartOfDay() : dateTimePickerFrom.Value.BeginningOfTime(),
                     DateTo = dateTimePickerTo.Checked ? dateTimePickerTo.Value.EndOfDay() : dateTimePickerTo.Value.EndOfTime(),
-                    OrganizationId = (comboOrg.SelectedItem as ComboBoxDataItem)?.id
+                    OrganizationId = (comboOrg.SelectedItem as NameDataItem)?.id
                 };
             }
         }
@@ -527,7 +534,7 @@ namespace DocumentFlow
 
             using (var conn = Db.OpenConnection())
             {
-                IEnumerable<ComboBoxDataItem> orgs = conn.Query<ComboBoxDataItem>("select id, name from organization");
+                IEnumerable<NameDataItem> orgs = conn.Query<NameDataItem>("select id, name from organization");
                 comboOrg.DataSource = orgs;
 
                 Guid def_org = conn.Query<Guid>("select id from organization where default_org").SingleOrDefault();
@@ -1154,8 +1161,7 @@ namespace DocumentFlow
             {
                 using (var conn = Db.OpenConnection())
                 {
-                    var kind_code = conn.QueryFirst<string>("select ek.code from document_info di join entity_kind ek on (ek.id = di.entity_kind_id) where di.id = :id", new { row.id });
-                    menuDocuments.Tag = kind_code;
+                    documentsKind = conn.QueryFirst<string>("select ek.code from document_info di join entity_kind ek on (ek.id = di.entity_kind_id) where di.id = :id", new { row.id });
 
                     var docs = conn.Query<DocumentRefs>("select * from document_refs where owner_id = :id", new { row.id });
                     foreach (var doc in docs)
@@ -1173,11 +1179,12 @@ namespace DocumentFlow
             }
         }
 
+        string documentsKind;
         private void DocumenuMenuItem_Click(object sender, EventArgs e)
         {
             if (sender is ToolStripMenuItem menuItem && menuItem.Tag is DocumentRefs doc)
             {
-                string ftpPath = Path.Combine(Settings.Default.FtpPath, menuDocuments.Tag.ToString(), doc.owner_id.ToString());
+                string ftpPath = Path.Combine(Settings.Default.FtpPath, documentsKind, doc.owner_id.ToString());
                 DocumentRefEditor refEditor = new DocumentRefEditor(ftpPath);
 
                 try

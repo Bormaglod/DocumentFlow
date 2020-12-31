@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.EmployeeImp
@@ -130,7 +131,7 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(200);
 
-            IControl post_id = editor.CreateComboBox("post_id", "Должность", (conn) => { return conn.Query<ComboBoxDataItem>(okpdtrSelect); })
+            IControl post_id = editor.CreateComboBox("post_id", "Должность", (conn) => { return conn.Query<NameDataItem>(okpdtrSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(300);
 

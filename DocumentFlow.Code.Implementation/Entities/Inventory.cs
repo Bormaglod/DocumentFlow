@@ -8,6 +8,7 @@ using Dapper;
 using DocumentFlow.Core;
 using DocumentFlow.Code.System;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.InventoryImp
@@ -148,7 +149,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
                 .SetWidth(210)
                 .SetDock(DockStyle.Left);
 
-            IControl organization_id = editor.CreateComboBox("organization_id", "Организация", (conn) => { return conn.Query<ComboBoxDataItem>(orgSelect); })
+            IControl organization_id = editor.CreateComboBox("organization_id", "Организация", (conn) => { return conn.Query<NameDataItem>(orgSelect); })
                 .SetLabelWidth(150)
                 .SetControlWidth(300)
                 .SetLabelTextAlignment(ContentAlignment.TopRight);

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code.System;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.AccountImp
@@ -114,7 +115,7 @@ namespace DocumentFlow.Code.Implementation.AccountImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(250);
 
-            IControl bank = editor.CreateComboBox("bank_id", "Банк", (conn) => { return conn.Query<ComboBoxDataItem>(bankSelect); })
+            IControl bank = editor.CreateComboBox("bank_id", "Банк", (conn) => { return conn.Query<NameDataItem>(bankSelect); })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(330);
 
