@@ -62,10 +62,7 @@ namespace DocumentFlow.Code.Implementation.PictureImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new PictureEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new PictureEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
@@ -129,8 +126,8 @@ namespace DocumentFlow.Code.Implementation.PictureImp
 
         object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            string sql = "insert into picture default values returning id";
-            return connection.QuerySingle<Guid>(sql, transaction: transaction);
+            string sql = "insert into picture (owner_id) values (:owner_id) returning id";
+            return connection.QuerySingle<Guid>(sql, new { owner_id = parameters.OwnerId }, transaction: transaction);
         }
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)

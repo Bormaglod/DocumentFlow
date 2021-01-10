@@ -6,13 +6,13 @@
 // Time: 21:46
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
+using System.Collections;
 
 namespace DocumentFlow
 {
     public interface ICommandExecutor
     {
         void Execute();
-        IDictionary<string, object> GetParameters();
+        Hashtable GetParameters();
     }
 }

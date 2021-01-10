@@ -57,10 +57,7 @@ namespace DocumentFlow.Code.Implementation.OkpdtrImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new OkpdtrEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new OkpdtrEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

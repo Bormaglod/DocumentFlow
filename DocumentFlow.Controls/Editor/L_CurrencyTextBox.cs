@@ -43,7 +43,7 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => currencyTextBox1.Width; set => currencyTextBox1.Width = value; }
 
-        object IEditControl.Value
+        object IValuable.Value
         {
             get
             {

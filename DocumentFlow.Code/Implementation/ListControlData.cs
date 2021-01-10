@@ -14,6 +14,26 @@ using DocumentFlow.Data;
 
 namespace DocumentFlow.Code.Implementation
 {
+    public class ListControlData<T> : BindingControlData
+    {
+        private readonly IValueEditor editor;
+        private readonly Action<IEnumerable<IIdentifier>> addItems;
+        private readonly СriterionChoiceItems<T> getItems;
+
+        public ListControlData(IValueEditor editor, Control control, СriterionChoiceItems<T> getItems, Action<IEnumerable<IIdentifier>> addItems) : base(control)
+        {
+            this.editor = editor;
+            this.getItems = getItems;
+            this.addItems = addItems;
+        }
+
+        public override void Populate(IDbConnection connection, object data)
+        {
+            addItems(getItems((T)editor.Entity, connection));
+            base.Populate(connection, data);
+        }
+    }
+
     public class ListControlData : BindingControlData
     {
         private readonly IEditor editor;

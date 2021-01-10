@@ -13,7 +13,7 @@ namespace DocumentFlow.Data
     /// <summary>
     /// Интерфейс определяющий свойства объекта для всех типов документов и справочников
     /// </summary>
-    public interface IDocumentInfo : IIdentifier, IIdentifier<Guid>
+    public interface IDocumentInfo : IIdentifier<Guid>
     {
         /// <summary>
         /// Возвращает идентификатор состояния документа

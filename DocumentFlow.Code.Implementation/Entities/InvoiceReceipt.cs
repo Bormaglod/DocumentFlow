@@ -192,7 +192,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<InvoiceReceipt>(string.Format(baseSelect, "(ir.doc_date between :from_date and :to_date and ir.organization_id = :organization_id) or (ir.status_id != 3000)"), new
+            return connection.Query<InvoiceReceipt>(string.Format(baseSelect, "(ir.doc_date between :from_date and :to_date and ir.organization_id = :organization_id) or ir.status_id not in (1011, 3000)"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
@@ -210,10 +210,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
             return connection.Execute("delete from invoice_receipt where id = :id", new { id }, transaction);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new InvoiceReceiptEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new InvoiceReceiptEditor();
     }
 
     public class InvoiceReceiptEditor : IEditorCode, IDataOperation, IControlEnabled, IChangingStatus
@@ -259,10 +256,9 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 organization_id
             });
 
-            IControl contractor_id = editor.CreateSelectBox("contractor_id", "Контрагент", (e, c) =>
+            IControl contractor_id = editor.CreateSelectBox<InvoiceReceipt>("contractor_id", "Контрагент", (e, c) =>
                 {
-                    InvoiceReceipt ir = e.Entity as InvoiceReceipt;
-                    return c.Query<GroupDataItem>(contractorSelect, new { ir.contractor_id });
+                    return c.Query<GroupDataItem>(contractorSelect, new { e.contractor_id });
                 })
                 .ValueChangedAction((s, e) =>
                 {
@@ -276,10 +272,9 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 .SetLabelWidth(100)
                 .SetControlWidth(580);
 
-            IControl contract_id = editor.CreateSelectBox("contract_id", "Договор", (e, c) =>
+            IControl contract_id = editor.CreateSelectBox<InvoiceReceipt>("contract_id", "Договор", (e, c) =>
                 {
-                    InvoiceReceipt ir = e.Entity as InvoiceReceipt;
-                    return c.Query<GroupDataItem>(contractSelect, new { ir.contractor_id });
+                    return c.Query<GroupDataItem>(contractSelect, new { e.contractor_id });
                 })
                 .ValueChangedAction((s, e) =>
                 {
@@ -299,10 +294,9 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 .SetLabelWidth(100)
                 .SetControlWidth(580);
 
-            IControl owner_id = editor.CreateSelectBox("owner_id", "Заказ", (e, c) =>
+            IControl owner_id = editor.CreateSelectBox<InvoiceReceipt>("owner_id", "Заказ", (e, c) =>
                 {
-                    InvoiceReceipt ir = e.Entity as InvoiceReceipt;
-                    return c.Query<GroupDataItem>(ownerSelect, new { ir.contractor_id, ir.owner_id });
+                    return c.Query<GroupDataItem>(ownerSelect, new { e.contractor_id, e.owner_id });
                 })
                 .ValueChangedAction((s, e) =>
                 {
@@ -313,7 +307,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                         editor.Data["contract_id"] = cc.contract_id;
 
                         InvoiceReceipt ir = editor.Entity as InvoiceReceipt;
-                        conn.Execute("select fill_invoice_details(:invoice_id, :purchase_id)", new { invoice_id = ir.id, purchase_id = e.Value });
+                        conn.Execute("select fill_invoice_details('purchase_request', :purchase_id, :invoice_id)", new { invoice_id = ir.id, purchase_id = e.Value });
                         editor.Populates["datagrid"].Populate(conn, editor.Entity);
                     }
                 })
@@ -453,18 +447,16 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
         bool IChangingStatus.CanChange(IDatabase database, object entity, string status_from, string status_to)
         {
-            InvoiceReceipt ir = entity as InvoiceReceipt;
-            if (ir.owner_id.HasValue && status_from == "withdrawal" && status_to == "close")
+            if (entity is InvoiceReceipt ir && ir.owner_id.HasValue && status_from == "withdrawal" && status_to == "close")
             {
                 DialogResult res = MessageBox.Show("Закрыть заявку на приобретение товаров/материалов?", "Вопрос", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (res == DialogResult.Cancel)
+                switch (res)
                 {
-                    return false;
-                }
-
-                if (res == DialogResult.Yes)
-                {
-                    database.ExecuteCommand("update purchase_request set status_id = 3000 where id = :owner_id", ir);
+                    case DialogResult.Cancel:
+                        return false;
+                    case DialogResult.Yes:
+                        database.ExecuteCommand("update purchase_request set status_id = 3000 where id = :owner_id", ir);
+                        break;
                 }
             }
 
@@ -473,29 +465,17 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
         private void OpenContractorClick(object sender, ExecuteEventArgs e)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            InvoiceReceipt ir = e.Editor.Entity as InvoiceReceipt;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (ir != null)
+            if (e.Editor.Entity is InvoiceReceipt ir && ir.contractor_id.HasValue)
             {
-                if (ir.contractor_id.HasValue)
-                {
-                    e.Editor.Commands.OpenDocument(ir.contractor_id.Value);
-                }
+                e.Editor.Commands.OpenDocument(ir.contractor_id.Value);
             }
         }
 
         private void OpenContractClick(object sender, ExecuteEventArgs e)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            InvoiceReceipt ir = e.Editor.Entity as InvoiceReceipt;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (ir != null)
+            if (e.Editor.Entity is InvoiceReceipt ir && ir.contractor_id.HasValue)
             {
-                if (ir.contractor_id.HasValue)
-                {
-                    e.Editor.Commands.OpenDocument(ir.contract_id.Value);
-                }
+                e.Editor.Commands.OpenDocument(ir.contract_id.Value);
             }
         }
     }

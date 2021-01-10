@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
@@ -164,29 +165,20 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
             return connection.Execute("delete from perform_operation where id = :id", new { id }, transaction);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new PerformOperationEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new PerformOperationEditor();
     }
 
-    public class PerformOperationEditor : IEditorCode, IDataOperation, IControlEnabled
+    public class PerformOperationEditor : IEditorCode, IDataOperation, IControlEnabled, IControlVisible, IActionStatus
     {
         void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 210;
-            const string orderSelect = "select po.id, po.status_id, '№' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where po.status_id = status_code('in production') or po.id = :order_id group by po.id, c.name order by po.doc_date, po.doc_number";
-            const string goodsSelect = "select g.id, g.status_id, g.name, g.parent_id from goods g left join production_order_detail pod on (pod.goods_id = g.id) where (pod.owner_id = :order_id and pod.complete_status < 100) or g.status_id = 500";
-            const string operationSelect = "select o.id, o.status_id, o.name, o.parent_id from operation o left join calc_item_operation cio on (cio.item_id = o.id) left join calculation c on (cio.owner_id = c.id) left join production_order_detail pod on (c.id = pod.calculation_id) where (pod.owner_id = :order_id and c.owner_id = :goods_id and (o.status_id = 1002 or o.id = :operation_id)) or o.status_id = 500 order by o.status_id, o.name";
-            const string usingGoodsSelect = "select gu.id, gu.status_id, gu.name, gu.parent_id from goods gp join production_order_detail pod on (pod.goods_id = gp.id) join calc_item_operation cio on (cio.owner_id = pod.calculation_id) join used_material um on (um.calc_item_operation_id = cio.id) join goods gu on (gu.id = um.goods_id) where (pod.owner_id = :order_id and cio.item_id = :operation_id and gp.id = :goods_id) or (gp.id = :using_goods_id) union select g.id, g.status_id, g.name, g.parent_id from goods g where g.status_id = 500 order by name";
-            const string replacingGoodsSelect = "select g.id, g.status_id, g.name, g.parent_id from goods g where g.status_id in (500, 1002) order by g.name";
-            const string empSelect = "select e.id, e.status_id, p.name from perform_operation po join organization org on (org.id = po.organization_id) join employee e on (e.owner_id = org.id) join person p on (p.id = e.person_id) where po.id = :id and (e.status_id = 1002 or e.id = :employee_id)";
 
-            IControl order_id = editor.CreateSelectBox("order_id", "Заказ", (e, c) =>
-                {
-                    PerformOperation po = e.Entity as PerformOperation;
-                    return c.Query<GroupDataItem>(orderSelect, new { po.order_id });
-                })
+            IControl doc_date = editor.CreateDateTimePicker("doc_date", "Дата/время")
+                .SetLabelWidth(labelWidth)
+                .SetControlWidth(170);
+
+            IControl order_id = editor.CreateSelectBox<PerformOperation>("order_id", "Заказ", GetOrders)
                 .ValueChangedAction((s, e) =>
                 {
                     using (var conn = database.CreateConnection())
@@ -197,11 +189,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(350);
 
-            IControl goods_id = editor.CreateSelectBox("goods_id", "Изделие", (e, c) =>
-                {
-                    PerformOperation po = e.Entity as PerformOperation;
-                    return c.Query<GroupDataItem>(goodsSelect, new { po.order_id });
-                })
+            IControl goods_id = editor.CreateSelectBox<PerformOperation>("goods_id", "Изделие", GetGoods)
                 .ValueChangedAction((s, e) =>
                 {
                     using (var conn = database.CreateConnection())
@@ -212,11 +200,7 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(350);
 
-            IControl operation_id = editor.CreateSelectBox("operation_id", "Операция", (e, c) =>
-                {
-                    PerformOperation po = e.Entity as PerformOperation;
-                    return c.Query<GroupDataItem>(operationSelect, new { po.order_id, po.goods_id, po.operation_id });
-                })
+            IControl operation_id = editor.CreateSelectBox<PerformOperation>("operation_id", "Операция", GetOperations)
                 .ValueChangedAction((s, e) =>
                 {
                     using (var conn = database.CreateConnection())
@@ -227,31 +211,33 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(350);
 
+            IControl using_goods_id = editor.CreateSelectBox<PerformOperation>("using_goods_id", "Материал (по спецификации)", GetUsingGoods)
+                .ValueChangedAction((s, e) => UpdateAmountCheckLabel(editor, database))
+                .SetLabelWidth(labelWidth)
+                .SetControlWidth(350);
+
+            IControl replacing_goods_id = editor.CreateSelectBox<PerformOperation>("replacing_goods_id", "Использованный материал", GetReplacingGoods)
+                .SetLabelWidth(labelWidth)
+                .SetControlWidth(350);
+
+            IContainer amount_panel = editor.CreateContainer(32);
+
             IControl amount = editor.CreateInteger("amount", "Количество")
                 .SetLabelWidth(labelWidth)
-                .SetControlWidth(150);
+                .SetControlWidth(150)
+                .SetDock(DockStyle.Left);
 
-            IControl doc_date = editor.CreateDateTimePicker("doc_date", "Дата/время")
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(170);
+            IControl label = editor.CreateLabel("amountCheckLabel", string.Empty)
+                .SetWidth(200)
+                .SetDock(DockStyle.Left);
 
-            IControl using_goods_id = editor.CreateSelectBox("using_goods_id", "Материал (по спецификации)", (e, c) =>
-                {
-                    PerformOperation po = e.Entity as PerformOperation;
-                    return c.Query<GroupDataItem>(usingGoodsSelect, new { po.order_id, po.goods_id, po.operation_id, po.using_goods_id });
-                })
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(350);
+            amount_panel.Add(new IControl[]
+            {
+                amount,
+                label
+            });
 
-            IControl replacing_goods_id = editor.CreateSelectBox("replacing_goods_id", "Использованный материал", (e, c) => { return c.Query<GroupDataItem>(replacingGoodsSelect); })
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(350);
-
-            IControl employee_id = editor.CreateSelectBox("employee_id", "Исполнитель", (e, c) => 
-                {
-                    PerformOperation po = e.Entity as PerformOperation;
-                    return c.Query<GroupDataItem>(empSelect, new { po.id, po.employee_id }); 
-                })
+            IControl employee_id = editor.CreateSelectBox<PerformOperation>("employee_id", "Исполнитель", GetEmployees)
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(350);
 
@@ -260,16 +246,18 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
                 .SetControlWidth(150);
 
             editor.Container.Add(new IControl[] {
+				doc_date,
                 order_id,
                 goods_id,
                 operation_id,
-                amount,
-                doc_date,
                 using_goods_id,
                 replacing_goods_id,
+				amount_panel.AsControl(),
                 employee_id,
                 salary
             });
+
+            UpdateAmountCheckLabel(editor, database);
         }
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
@@ -311,6 +299,64 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
         bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
         {
             return new string[] { "compiled", "is changing", "corrected" }.Contains(info.StatusCode);
+        }
+
+        bool IControlVisible.Ability(object entity, string dataName, IInformation info)
+        {
+            if (dataName == "amountCheckLabel")
+            {
+                return new string[] { "correct", "corrected" }.Contains(info.StatusCode);
+            }
+
+            return true;
+        }
+
+        void IActionStatus.StatusValueChanged(IValueEditor editor, IDatabase database, IInformation info)
+        {
+            UpdateAmountCheckLabel(editor, database);
+        }
+
+        private IEnumerable<IIdentifier> GetOrders(PerformOperation operation, IDbConnection connection)
+        {
+            const string orderSelect = "select po.id, po.status_id, '№' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where po.status_id = status_code('in production') or po.id = :order_id group by po.id, c.name order by po.doc_date, po.doc_number";
+            return connection.Query<GroupDataItem>(orderSelect, new { operation.order_id });
+        }
+
+        private IEnumerable<IIdentifier> GetGoods(PerformOperation operation, IDbConnection connection)
+        {
+            const string goodsSelect = "select g.id, g.status_id, g.name, g.parent_id from goods g left join production_order_detail pod on (pod.goods_id = g.id) where (pod.owner_id = :order_id and pod.complete_status < 100) or g.status_id = 500";
+            return connection.Query<GroupDataItem>(goodsSelect, new { operation.order_id });
+        }
+
+        private IEnumerable<IIdentifier> GetOperations(PerformOperation operation, IDbConnection connection)
+        {
+            const string operationSelect = "select o.id, o.status_id, o.name, o.parent_id from operation o left join calc_item_operation cio on (cio.item_id = o.id) left join calculation c on (cio.owner_id = c.id) left join production_order_detail pod on (c.id = pod.calculation_id) where (pod.owner_id = :order_id and c.owner_id = :goods_id and (o.status_id = 1002 or o.id = :operation_id)) or o.status_id = 500 order by o.status_id, o.name";
+            return connection.Query<GroupDataItem>(operationSelect, new { operation.order_id, operation.goods_id, operation.operation_id });
+        }
+
+        private IEnumerable<IIdentifier> GetUsingGoods(PerformOperation operation, IDbConnection connection)
+        {
+            const string usingGoodsSelect = "select gu.id, gu.status_id, gu.name, gu.parent_id from goods gp join production_order_detail pod on (pod.goods_id = gp.id) join calc_item_operation cio on (cio.owner_id = pod.calculation_id) join used_material um on (um.calc_item_operation_id = cio.id) join goods gu on (gu.id = um.goods_id) where (pod.owner_id = :order_id and cio.item_id = :operation_id and gp.id = :goods_id) or (gp.id = :using_goods_id) union select g.id, g.status_id, g.name, g.parent_id from goods g where g.status_id = 500 order by name";
+            return connection.Query<GroupDataItem>(usingGoodsSelect, new { operation.order_id, operation.goods_id, operation.operation_id, operation.using_goods_id });
+        }
+
+        private IEnumerable<IIdentifier> GetReplacingGoods(PerformOperation operation, IDbConnection connection)
+        {
+            const string replacingGoodsSelect = "select g.id, g.status_id, g.name, g.parent_id from goods g where g.status_id in (500, 1002) order by g.name";
+            return connection.Query<GroupDataItem>(replacingGoodsSelect);
+        }
+
+        private IEnumerable<IIdentifier> GetEmployees(PerformOperation operation, IDbConnection connection)
+        {
+            const string empSelect = "select e.id, e.status_id, p.name from perform_operation po join organization org on (org.id = po.organization_id) join employee e on (e.owner_id = org.id) join person p on (p.id = e.person_id) where po.id = :id and (e.status_id = 1002 or e.id = :employee_id)";
+            return connection.Query<GroupDataItem>(empSelect, new { operation.id, operation.employee_id });
+        }
+
+        private void UpdateAmountCheckLabel(IValueEditor editor, IDatabase database)
+        {
+            PerformOperation po = editor.Entity as PerformOperation;
+            var cnt = database.ExecuteSqlCommand<int>("select get_required_operations(:order_id, :goods_id, :operation_id, :using_goods_id)", po);
+            editor.Values["amountCheckLabel"].Value = string.Format("Максимальное значение: {0}", cnt);
         }
     }
 }

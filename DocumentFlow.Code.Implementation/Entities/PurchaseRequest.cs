@@ -39,10 +39,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         public int tax { get; set; }
         public decimal tax_value { get; set; }
         public decimal cost_with_tax { get; set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
+        object IIdentifier.oid => id;
     }
 
     public class PurchaseRequestBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -56,13 +53,12 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 ua.name as user_created, 
                 pr.contractor_id,
                 c.name as contractor_name,
-                pr.contract_id,
                 contract.name as contract_name,
                 pr.doc_date, 
                 pr.doc_number, 
                 o.name as organization_name, 
                 case 
-                    when c.tax_payer then 20 
+                    when contract.tax_payer then 20 
                     else 0 
                 end as tax, 
                 coalesce(sum(cost), 0::money) as cost, 
@@ -76,7 +72,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 left join purchase_request_detail prd on (prd.owner_id = pr.id) 
                 left join contractor c on (c.id = pr.contractor_id) 
             where {0}
-            group by pr.id, pr.status_id, ua.name, c.name, contract.name, pr.doc_date, pr.doc_number, s.note, o.name, c.tax_payer";
+            group by pr.id, pr.status_id, ua.name, c.name, contract.name, pr.doc_date, pr.doc_number, s.note, o.name, contract.tax_payer";
 
         void IBrowserCode.Initialize(IBrowser browser)
         {
@@ -174,10 +170,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
             return connection.Execute("delete from purchase_request where id = :id", new { id }, transaction);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new PurchaseRequestEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new PurchaseRequestEditor();
     }
 
     public class PurchaseRequestEditor : IEditorCode, IDataOperation, IControlEnabled
@@ -216,10 +209,9 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 organization_id
             });
 
-            IControl contractor_id = editor.CreateSelectBox("contractor_id", "Контрагент", (e, c) =>
+            IControl contractor_id = editor.CreateSelectBox<PurchaseRequest>("contractor_id", "Контрагент", (e, c) =>
                 {
-                    PurchaseRequest pr = e.Entity as PurchaseRequest;
-                    return c.Query<GroupDataItem>(contractorSelect, new { pr.contractor_id });
+                    return c.Query<GroupDataItem>(contractorSelect, new { e.contractor_id });
                 })
                 .ValueChangedAction((s, e) =>
                 {
@@ -232,10 +224,9 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 .SetLabelWidth(100)
                 .SetControlWidth(580);
 
-            IControl contract_id = editor.CreateSelectBox("contract_id", "Договор", (e, c) =>
+            IControl contract_id = editor.CreateSelectBox<PurchaseRequest>("contract_id", "Договор", (e, c) =>
                 {
-                    PurchaseRequest pr = e.Entity as PurchaseRequest;
-                    return c.Query<GroupDataItem>(contractSelect, new { pr.contractor_id });
+                    return c.Query<GroupDataItem>(contractSelect, new { e.contractor_id });
                 })
                 .SetLabelWidth(100)
                 .SetControlWidth(580);
@@ -346,10 +337,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 
         private void OpenContractorClick(object sender, ExecuteEventArgs e)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            PurchaseRequest pr = e.Editor.Entity as PurchaseRequest;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (pr != null)
+            if (e.Editor.Entity is PurchaseRequest pr)
             {
                 if (pr.contractor_id.HasValue)
                 {
@@ -360,10 +348,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 
         private void OpenContractClick(object sender, ExecuteEventArgs e)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            PurchaseRequest pr = e.Editor.Entity as PurchaseRequest;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (pr != null)
+            if (e.Editor.Entity is PurchaseRequest pr)
             {
                 if (pr.contract_id.HasValue)
                 {

@@ -29,7 +29,12 @@ namespace DocumentFlow
 
         protected override ToolStripItem CreateToolStripItem(ICommand command, Picture picture)
         {
-            return new ToolStripMenuItem(command.Title, picture?.GetImageSmall());
+            return new ToolStripMenuItem
+            {
+                Text = command.Title,
+                Image = picture?.GetImageSmall(),
+                Tag = $"{command.Code}|user-defined"
+            };
         }
 
         protected override void UpdateToolStripItem(ICommand command, Picture picture)

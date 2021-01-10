@@ -60,10 +60,7 @@ namespace DocumentFlow.Code.Implementation.OperationTypeImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new OperationTypeEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new OperationTypeEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

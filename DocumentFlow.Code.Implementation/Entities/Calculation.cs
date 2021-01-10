@@ -91,10 +91,7 @@ namespace DocumentFlow.Code.Implementation.CalculationImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new CalculationEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new CalculationEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

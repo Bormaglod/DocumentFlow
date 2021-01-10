@@ -132,10 +132,7 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
             return connection.Execute("delete from payment_order where id = :id", new { id }, transaction);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new PaymentOrderEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new PaymentOrderEditor();
     }
 
     public class PaymentOrderEditor : IEditorCode, IDataOperation, IControlEnabled, IControlVisible
@@ -151,10 +148,9 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
 
 			PaymentOrder order = editor.Entity as PaymentOrder;
 
-            IControl contractor_id = editor.CreateSelectBox("contractor_id", "Контрагент", (e, c) =>
+            IControl contractor_id = editor.CreateSelectBox<PaymentOrder>("contractor_id", "Контрагент", (e, c) =>
                 {
-                    PaymentOrder po = e.Entity as PaymentOrder;
-                    return c.Query<GroupDataItem>(contractorSelect, new { po.contractor_id });
+                    return c.Query<GroupDataItem>(contractorSelect, new { e.contractor_id });
                 })
                 .ValueChangedAction((s, e) =>
                 {
@@ -182,13 +178,12 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
             IControl amount_debited = editor.CreateCurrency("amount_debited", "Сумма")
                 .SetLabelWidth(labelWidth);
 
-            IControl purchase_id = editor.CreateSelectBox("purchase_id", "Заявка на расход", (e, c) =>
+            IControl purchase_id = editor.CreateSelectBox<PaymentOrder>("purchase_id", "Заявка на расход", (e, c) =>
                 {
-                    PaymentOrder po = e.Entity as PaymentOrder;
-                    if (po.contractor_id != null)
-                        return c.Query<GroupDataItem>(purchaseSelect1, new { po.contractor_id, po.purchase_id });
+                    if (e.contractor_id != null)
+                        return c.Query<GroupDataItem>(purchaseSelect1, new { e.contractor_id, e.purchase_id });
                     else
-                        return c.Query<GroupDataItem>(purchaseSelect2, new { po.purchase_id });
+                        return c.Query<GroupDataItem>(purchaseSelect2, new { e.purchase_id });
                 })
                 .ValueChangedAction((s, e) =>
                 {
@@ -203,13 +198,12 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                 .SetControlWidth(400)
 				.SetVisible(order.expense.HasValue);
 
-            IControl invoice_receipt_id = editor.CreateSelectBox("invoice_receipt_id", "Поступление товаров/материалов", (e, c) =>
+            IControl invoice_receipt_id = editor.CreateSelectBox<PaymentOrder>("invoice_receipt_id", "Поступление товаров/материалов", (e, c) =>
                 {
-                    PaymentOrder po = e.Entity as PaymentOrder;
-                    if (po.contractor_id != null)
-                        return c.Query<GroupDataItem>(invoiceSelect1, new { po.contractor_id, po.invoice_receipt_id });
+                    if (e.contractor_id != null)
+                        return c.Query<GroupDataItem>(invoiceSelect1, new { e.contractor_id, e.invoice_receipt_id });
                     else
-                        return c.Query<GroupDataItem>(invoiceSelect2, new { po.invoice_receipt_id });
+                        return c.Query<GroupDataItem>(invoiceSelect2, new { e.invoice_receipt_id });
                 })
                 .ValueChangedAction((s, e) =>
                 {

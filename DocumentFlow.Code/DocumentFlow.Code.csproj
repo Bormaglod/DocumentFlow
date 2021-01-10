@@ -34,6 +34,9 @@
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.2.0.78\lib\net461\Dapper.dll</HintPath>
     </Reference>
+    <Reference Include="Inflector, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Inflector.1.0.0.0\lib\net45\Inflector.dll</HintPath>
+    </Reference>
     <Reference Include="Syncfusion.Core.WinForms, Version=18.4460.0.32, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
       <HintPath>..\packages\Syncfusion.Core.WinForms.18.4.0.32\lib\net46\Syncfusion.Core.WinForms.dll</HintPath>
     </Reference>
@@ -78,6 +81,7 @@
     <Compile Include="Core\PopulateControlException.cs" />
     <Compile Include="Data\CodeContent.cs" />
     <Compile Include="Data\CommandExtension.cs" />
+    <Compile Include="IActionStatus.cs" />
     <Compile Include="IBrowserOperation.cs" />
     <Compile Include="IChangingStatus.cs" />
     <Compile Include="IContextMenu.cs" />
@@ -105,16 +109,21 @@
     <Compile Include="Implementation\GroupColumnCollection.cs" />
     <Compile Include="Implementation\Identifier.cs" />
     <Compile Include="Implementation\ListControlData.cs" />
-    <Compile Include="Implementation\PopulateCollection.cs" />
+    <Compile Include="Implementation\ControlCollection.cs" />
     <Compile Include="Implementation\SortedColumnsData.cs" />
     <Compile Include="Implementation\StackedColumnData.cs" />
     <Compile Include="Implementation\SummaryRowData.cs" />
+    <Compile Include="Implementation\ValueControlData.cs" />
     <Compile Include="INumericColumn.cs" />
     <Compile Include="IPopulate.cs" />
     <Compile Include="IGridDataControl.cs" />
-    <Compile Include="IPopulateCollection.cs" />
+    <Compile Include="IControlCollection.cs" />
     <Compile Include="IStackedColumn.cs" />
     <Compile Include="ITool.cs" />
+    <Compile Include="IValuable.cs" />
+    <Compile Include="IValueControl.cs" />
+    <Compile Include="IValueEditor.cs" />
+    <Compile Include="System\DatabaseScriptAttribute.cs" />
     <Compile Include="System\ValueChangedEventArgs.cs" />
     <Compile Include="System\ChangeParentEventArgs.cs" />
     <Compile Include="System\ColumnDescriptionAttribute.cs" />

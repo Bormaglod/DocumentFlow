@@ -62,10 +62,7 @@ namespace DocumentFlow.Code.Implementation.MeasurementImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new MeasurementEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new MeasurementEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

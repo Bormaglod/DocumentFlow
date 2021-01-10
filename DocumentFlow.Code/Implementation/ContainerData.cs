@@ -17,11 +17,11 @@ namespace DocumentFlow.Code.Implementation
 {
     public class ContainerData : ControlData, IContainer
     {
-        private IInformation info;
+        private Func<IInformation> getInfo;
         private readonly List<IControl> controls = new List<IControl>();
         private readonly List<string> locked = new List<string>();
 
-        public ContainerData(Control container, IInformation information = null) : base(container) => info = information;
+        public ContainerData(Control container, Func<IInformation> getInformation = null) : base(container) => getInfo = getInformation;
 
         IControl IContainer.this[string controlName] 
         { 
@@ -65,7 +65,7 @@ namespace DocumentFlow.Code.Implementation
 
             if (control is ContainerData containerData)
             {
-                containerData.Update(info);
+                containerData.getInfo = getInfo;
             }
         }
 
@@ -102,11 +102,11 @@ namespace DocumentFlow.Code.Implementation
                     if (string.IsNullOrEmpty(field))
                         continue;
 
-                    if (enabled != null && info != null)
-                        control.Enabled = enabled.Ability(entity, field, info);
+                    if (enabled != null && getInfo != null)
+                        control.Enabled = enabled.Ability(entity, field, getInfo());
 
-                    if (visible != null && info != null)
-                        control.Visible = visible.Ability(entity, field, info);
+                    if (visible != null && getInfo != null)
+                        control.Visible = visible.Ability(entity, field, getInfo());
                 }
                 catch (Exception e)
                 {
@@ -149,17 +149,6 @@ namespace DocumentFlow.Code.Implementation
         {
             controls.Clear();
             Owner.Controls.Clear();
-        }
-
-        public void Update(IInformation information)
-        {
-            info = information;
-
-            IContainer container = this;
-            foreach (var item in container.ControlsAll.OfType<ContainerData>())
-            {
-                item.Update(info);
-            }
         }
     }
 }

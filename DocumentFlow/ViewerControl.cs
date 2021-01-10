@@ -83,19 +83,12 @@ namespace DocumentFlow
                         }
                         else
                         {
-                            if (obj_x == null && obj_y == null)
-                                res = 0;
-                            else if (obj_x == null)
-                                res = -1;
-                            else if (obj_y == null)
-                                res = 1;
-                            else
-                                res = obj_x.ToString().CompareTo(obj_y.ToString());
+                            res = CompareString(obj_x, obj_y);
                         }
                     }
                     else if (x is Group grp_x && y is Group grp_y)
                     {
-                        res = grp_x.Key.ToString().CompareTo(grp_y.Key.ToString());
+                        res = CompareString(grp_x.Key, grp_y.Key);
                     }
                     else
                     {
@@ -107,6 +100,18 @@ namespace DocumentFlow
             }
 
             public ListSortDirection SortDirection { get; set; }
+
+            private int CompareString(object x, object y)
+            {
+                if (x == null && y == null)
+                    return 0;
+                else if (x == null)
+                    return -1;
+                else if (y == null)
+                    return 1;
+                else
+                    return x.ToString().CompareTo(y.ToString());
+            }
         }
 
 #if USE_SETTINGS
@@ -117,8 +122,9 @@ namespace DocumentFlow
         private DateRanges fromDate;
         private DateRanges toDate;
         private readonly GridColumnCollection columns;
-        private ToolBarData toolBarData;
-        private Dictionary<string, ContextMenuData> contextMenuData;
+        /*private ToolBarData toolBarData;
+        private Dictionary<string, ContextMenuData> contextMenuData;*/
+        private Dictionary<string, ToolStripData> toolStripData;
         private Guid? parentId;
         private CommandCollection commandCollection;
         private string doubleClickCommand;
@@ -175,7 +181,7 @@ namespace DocumentFlow
                             }
                     };
                     NotifyMessage message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload, options);
-                    if (message.EntityId == ExecutedCommand.EntityKind.id)
+                    if (message.EntityId == ExecutedCommand.EntityKind?.id)
                     {
                         if (message.Destination == MessageDestination.List && OwnerId != null && message.ObjectId != OwnerId)
                             return;
@@ -227,10 +233,10 @@ namespace DocumentFlow
 
         object IBrowser.CurrentRow => gridContent.SelectedItem;
 
-        IToolBar IBrowser.ToolBar => toolBarData;
-        IContextMenu IBrowser.ContextMenuRecord => contextMenuData["record"];
-        IContextMenu IBrowser.ContextMenuRow => contextMenuData["row"];
-        IContextMenu IBrowser.ContextMenuGrid => contextMenuData["grid"];
+        IToolBar IBrowser.ToolBar => (IToolBar)toolStripData["toolbar"];
+        IContextMenu IBrowser.ContextMenuRecord => (IContextMenu)toolStripData["record"];
+        IContextMenu IBrowser.ContextMenuRow => (IContextMenu)toolStripData["row"];
+        IContextMenu IBrowser.ContextMenuGrid => (IContextMenu)toolStripData["grid"];
 
         ICommandCollection IBrowser.Commands => commandCollection;
 
@@ -363,16 +369,7 @@ namespace DocumentFlow
             }
         }
 
-        public Guid InfoId
-        {
-            get
-            {
-                if (gridContent.SelectedItem is IIdentifier<Guid> row)
-                    return row.id;
-                else
-                    return Guid.Empty;
-            }
-        }
+        public Guid InfoId => gridContent.SelectedItem is IIdentifier<Guid> row ? row.id : Guid.Empty;
 
         public IContainerPage ContainerForm { get; set; }
         public ICommandFactory CommandFactory { get; set; }
@@ -431,9 +428,9 @@ namespace DocumentFlow
             parentId = null;
 
             commandCollection = new CommandCollection(this, CommandFactory);
-            toolBarData = new ToolBarData(toolStrip1, commandCollection);
-            contextMenuData = new Dictionary<string, ContextMenuData>()
+            toolStripData = new Dictionary<string, ToolStripData>()
             {
+                { "toolbar", new ToolBarData(toolStrip1, commandCollection) },
                 { "record", new ContextMenuData(contextRecordMenu, commandCollection) },
                 { "row", new ContextMenuData(contextRowMenu, commandCollection) },
                 { "grid", new ContextMenuData(contextGridMenu, commandCollection) }
@@ -455,23 +452,24 @@ namespace DocumentFlow
             {
                 case DataType.Directory:
                     panelDocument.Visible = false;
-                    breadcrumb1.Visible = ExecutedCommand.EntityKind.has_group;
+                    breadcrumb1.Visible = ExecutedCommand.EntityKind != null && ExecutedCommand.EntityKind.has_group;
                     break;
                 case DataType.Document:
                     InitializeDocumentViewer();
                     break;
                 case DataType.Report:
                     InitializeDocumentViewer();
-                    foreach (ToolStripItem item in toolStrip1.Items)
+
+                    IEnumerable<ICommand> all = null;
+                    CommandComparer commandComparer = new CommandComparer();
+                    foreach (ToolStripData item in toolStripData.Values)
                     {
-                        if (item != buttonRefresh)
-                            item.Visible = false;
+                        all = all == null ? item.Commands : all.Union(item.Commands, commandComparer);
                     }
 
-                    foreach (ToolStripItem item in contextRecordMenu.Items)
+                    foreach (ICommand item in all)
                     {
-                        if (item != menuCopyClipboard)
-                            item.Visible = false;
+                        item.SetVisible(item.Code == "refresh" || item.Code == "copy-text");
                     }
 
                     break;
@@ -481,26 +479,20 @@ namespace DocumentFlow
 
             RefreshCurrenView();
 
+            bool can_copy = false;
+            bool has_group = false;
             if (ExecutedCommand.EntityKind != null)
             {
-                buttonAddFolder.Visible = ExecutedCommand.EntityKind.has_group;
-                menuAddFolder.Visible = ExecutedCommand.EntityKind.has_group;
+                has_group = ExecutedCommand.EntityKind.has_group;
+                can_copy = ExecutedCommand.EntityKind.copy_ability;
             }
+
+            buttonAddFolder.Visible = has_group;
+            menuAddFolder.Visible = has_group;
+            buttonCopy.Enabled = can_copy;
+            menuCopy.Enabled = can_copy;
 
             gridContent.ColumnResizing += Grid_ColumnResizing;
-
-            using (var conn = Db.OpenConnection())
-            {
-                bool can_copy = false;
-                if (ExecutedCommand.EntityKind != null)
-                {
-                    Guid? id = conn.Query<Guid?>("select copy_entity(:kind_id, null)", new { kind_id = ExecutedCommand.EntityKind.id }).SingleOrDefault();
-                    can_copy = id.HasValue;
-                }
-
-                buttonCopy.Enabled = can_copy;
-                menuCopy.Enabled = can_copy;
-            }
 
             gridContent.CellRenderers.Remove("Image");
             gridContent.CellRenderers.Add("Image", new CustomGridImageCellRenderer(gridContent));
@@ -715,8 +707,6 @@ namespace DocumentFlow
 
         private void RefreshEntities(object sender, EventArgs e) => RefreshCurrenView();
 
-        private void Edit(Guid id) => CommandFactory.Execute("edit-record", this, id, ExecutedCommand, Parameters);
-
         private void breadcrumb1_CrumbClick(object sender, CrumbClickEventArgs e)
         {
             var oldParent = parentId ?? Guid.Empty;
@@ -793,16 +783,19 @@ namespace DocumentFlow
                     RefreshCurrenView();
                     return;
                 }
+            }
 
+            if (gridContent.SelectedItem is IIdentifier<Guid> data)
+            {
                 string code = string.IsNullOrEmpty(doubleClickCommand) ? "edit-record" : doubleClickCommand;
                 if (code == "edit-record")
-                    Edit(row.id);
+                    CommandFactory.OpenEditor(this, data, ExecutedCommand, Parameters);
                 else
-                    CommandFactory.Execute(code, row.id);
+                    CommandFactory.Execute(code, data);
             }
         }
 
-        private void buttonCreate_Click(object sender, EventArgs e) => CommandFactory.Execute("add-record", this, Guid.Empty, ExecutedCommand, Parameters);
+        private void buttonCreate_Click(object sender, EventArgs e) => CommandFactory.OpenEditor(this, Guid.Empty, ExecutedCommand, Parameters);
 
         private void buttonEdit_Click(object sender, EventArgs e)
         {
@@ -814,7 +807,7 @@ namespace DocumentFlow
                 }
                 else
                 {
-                    Edit(row.id);
+                    CommandFactory.OpenEditor(this, row, ExecutedCommand, Parameters);
                 }
             }
         }
@@ -871,11 +864,11 @@ namespace DocumentFlow
                     {
                         try
                         {
-                            Guid? id = conn.Query<Guid?>("select copy_entity(:kind_id, :copy_id)", new { kind_id = ExecutedCommand.EntityKind.id, copy_id = row.id }, transaction).FirstOrDefault();
+                            Guid id = conn.QueryFirst<Guid>("select copy_entity(:kind_id, :copy_id)", new { kind_id = ExecutedCommand.EntityKind.id, copy_id = row.id }, transaction);
                             transaction.Commit();
-                            if (id.HasValue && MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                            if (id != default && MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                             {
-                                Edit(id.Value);
+                                CommandFactory.OpenEditor(this, id, ExecutedCommand, Parameters);
                             }
                         }
                         catch (Exception ex)
@@ -1146,12 +1139,12 @@ namespace DocumentFlow
 
         private void buttonCustomization_Click(object sender, EventArgs e)
         {
-            CommandFactory.Execute("open-browser-code", ExecutedCommand);
+            CommandFactory.OpenCodeEditor(ExecutedCommand);
         }
 
         private void gridContent_VisibleChanged(object sender, EventArgs e)
         {
-            toolBarData.UpdateButtonVisibleStatus();
+            toolStripData["toolbar"].UpdateButtonVisibleStatus();
         }
 
         private void contextRecordMenu_Opening(object sender, CancelEventArgs e)
@@ -1175,7 +1168,15 @@ namespace DocumentFlow
                         menuItem.Click += DocumenuMenuItem_Click;
                         menuDocuments.DropDownItems.Add(menuItem);
                     }
+
+                    menuDocuments.Visible = docs.Any();
+                    toolStripSeparator9.Visible = docs.Any();
                 }
+            }
+            else
+            {
+                menuDocuments.Visible = false;
+                toolStripSeparator9.Visible = false;
             }
         }
 

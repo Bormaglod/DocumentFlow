@@ -17,12 +17,12 @@ namespace DocumentFlow.Data.Entities
         public string status_name { get; protected set; }
         public Guid? owner_id { get; set; }
         public Guid entity_kind_id { get; set; }
-        public Guid user_created_id { get; }
-        public DateTime date_created { get; }
-        public string user_created { get; }
-        public Guid user_updated_id { get; }
-        public DateTime date_updated { get; }
-        public string user_updated { get; }
+        public Guid user_created_id { get; protected set; }
+        public DateTime date_created { get; protected set; }
+        public string user_created { get; protected set; }
+        public Guid user_updated_id { get; protected set; }
+        public DateTime date_updated { get; protected set; }
+        public string user_updated { get; protected set; }
         public Guid? user_locked_id { get; set; }
         public DateTime? date_locked { get; set; }
     }

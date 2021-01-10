@@ -80,10 +80,7 @@ namespace DocumentFlow.Code.Implementation.ContractImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new ContractEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new ContractEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
@@ -144,9 +141,13 @@ namespace DocumentFlow.Code.Implementation.ContractImp
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            Contract contract = editor.Entity as Contract;
-            string sql = "update contract set name = :name, tax_payer = :tax_payer, contractor_type = '{0}'::contractor_type where id = :id";
-            return connection.Execute(string.Format(sql, contract.contractor_type_value == 1 ? "buyer" : "seller"), editor.Entity, transaction);
+            if (editor.Entity is Contract contract)
+            {
+                string sql = "update contract set name = :name, tax_payer = :tax_payer, contractor_type = '{0}'::contractor_type where id = :id";
+                return connection.Execute(string.Format(sql, contract.contractor_type_value == 1 ? "buyer" : "seller"), editor.Entity, transaction);
+            }
+
+            return default;
         }
 
         int IDataOperation.Delete(IDbConnection connection, IDbTransaction transaction, IIdentifier id)

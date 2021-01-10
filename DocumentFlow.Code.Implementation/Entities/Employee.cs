@@ -92,10 +92,7 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new EmployeeEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new EmployeeEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
@@ -144,11 +141,11 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
                 .SetControlWidth(250);
 
             IControl post_role = editor.CreateChoice("post_role", "Роль", new Dictionary<int, string>() {
-                { 0, "Не определена" },
-                { 1, "Руководитель" },
-                { 2, "Гл. бухгалтер" },
-                { 3, "Служащий" },
-                { 4, "Рабочий" } })
+                [0] = "Не определена",
+                [1] = "Руководитель",
+                [2] = "Гл. бухгалтер",
+                [3] = "Служащий",
+                [4] = "Рабочий" })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
 

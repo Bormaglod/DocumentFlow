@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using DocumentFlow.Code;
 using DocumentFlow.Code.System;
@@ -40,6 +40,8 @@ namespace DocumentFlow
         }
 
         public Command Command { get; }
+
+        public override string ToString() => Command.code;
 
         #region ICommand implementation
 
@@ -124,21 +126,31 @@ namespace DocumentFlow
 
         void ICommandExecutor.Execute()
         {
-            if (ownerControl is IBrowser browser)
-                Click?.Invoke(this, new ExecuteEventArgs(browser));
-            else if (ownerControl is IEditor editor)
-                Click?.Invoke(this, new ExecuteEventArgs(editor));
+            switch (ownerControl)
+            {
+                case IBrowser browser:
+                    Click?.Invoke(this, new ExecuteEventArgs(browser));
+                    break;
+                case IEditor editor:
+                    Click?.Invoke(this, new ExecuteEventArgs(editor));
+                    break;
+            }
         }
 
-        IDictionary<string, object> ICommandExecutor.GetParameters()
+        Hashtable ICommandExecutor.GetParameters()
         {
             if (GettingParameters != null)
             {
                 GettingParametersEventArgs args = null;
-                if (ownerControl is IBrowser browser)
-                    args = new GettingParametersEventArgs(browser);
-                else if (ownerControl is IEditor editor)
-                    args = new GettingParametersEventArgs(editor);
+                switch (ownerControl)
+                {
+                    case IBrowser browser:
+                        args = new GettingParametersEventArgs(browser);
+                        break;
+                    case IEditor editor:
+                        args = new GettingParametersEventArgs(editor);
+                        break;
+                }
 
                 if (args != null)
                 {

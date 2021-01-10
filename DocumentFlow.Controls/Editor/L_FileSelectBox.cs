@@ -39,7 +39,7 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => EditWidth; set => EditWidth = value; }
 
-        object IEditControl.Value
+        object IValuable.Value
         {
             get => Nullable ? selectedItem.NullIfEmpty() : selectedItem;
             set

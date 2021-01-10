@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 23.03.2020
@@ -8,6 +8,7 @@
 
 using System;
 using System.CodeDom.Compiler;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -84,7 +85,7 @@ namespace DocumentFlow
                     bool createViewer = false;
                     using (var conn = Db.OpenConnection())
                     {
-                        createViewer = conn.Query(sql, new { command.id }).SingleOrDefault() != null;
+                        createViewer = conn.QuerySingleOrDefault<Guid>(sql, new { command.id }) != default;
                     }
 
                     if (createViewer)
@@ -98,6 +99,7 @@ namespace DocumentFlow
 
         void ICommandFactory.Execute(string command, params object[] parameters)
         {
+            ICommandFactory factory = this;
             using (var conn = Db.OpenConnection())
             {
                 Command cmd = commands.SingleOrDefault(x => x.code == command);
@@ -110,16 +112,238 @@ namespace DocumentFlow
                     switch (command)
                     {
                         case "logout":
-                            container.Logout();
+                            factory.Logout();
                             break;
                         case "about":
-                            container.About();
+                            factory.About();
                             break;
                         default:
                             break;
                     }
                 }
             }
+        }
+
+        IPage ICommandFactory.OpenDiagram(Guid id)
+        {
+            IPage page = container.Get<DiagramViewer>(id);
+            if (page != null)
+            {
+                container.Selected = page;
+                return page;
+            }
+            else
+            {
+                DiagramViewer viewer = new DiagramViewer(container, id);
+                container.Add(viewer);
+                return viewer;
+            }
+        }
+
+        IPage ICommandFactory.OpenDiagram(IIdentifier<Guid> identifier)
+        {
+            ICommandFactory factory = this;
+            return factory.OpenDiagram(identifier.id);
+        }
+
+        IPage ICommandFactory.OpenDiagram(Hashtable parameters)
+        {
+            if (!parameters.ContainsKey("id"))
+            {
+                throw new ArgumentException("Ожидался параметр id", "id");
+            }
+
+            ICommandFactory factory = this;
+            if (parameters["id"] is Guid id)
+            {
+                return factory.OpenDiagram(id);
+            }
+            else
+            {
+                throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
+            }
+        }
+
+        IPage ICommandFactory.OpenDocument(Guid id)
+        {
+            IPage page = null;
+            if (id != Guid.Empty)
+            {
+                page = container.Get<ContentEditor>(id);
+            }
+
+            if (page != null)
+            {
+                container.Selected = page;
+                return page;
+            }
+            else
+            {
+                using (var conn = Db.OpenConnection())
+                {
+                    string sql = "select c.*, ek.* from command c join entity_kind ek on (ek.id = c.entity_kind_id) join document_info di on (ek.id = di.entity_kind_id and di.id = :id)";
+                    Command command = conn.Query<Command, EntityKind, Command>(sql, (cmd, entity_kind) =>
+                    {
+                        cmd.EntityKind = entity_kind;
+                        return cmd;
+                    }, new { id }).Single();
+
+                    string parent = conn.Query<string>("select get_root_parent(:table)", new { table = command.EntityKind.code }).Single();
+                    if (parent == "document")
+                    {
+                        sql = $"select owner_id, organization_id from {command.EntityKind.code} where id = :id";
+                    }
+                    else
+                    {
+                        sql = $"select owner_id, parent_id from {command.EntityKind.code} where id = :id";
+                    }
+
+                    var row = conn.QuerySingle(sql, new { id });
+
+                    BrowserParameters editorParams = new BrowserParameters()
+                    {
+                        ParentId = parent == "document" ? null : row.parent_id,
+                        OwnerId = row.owner_id,
+                        OrganizationId = parent == "directory" ? null : row.organization_id
+                    };
+
+                    try
+                    {
+                        ContentEditor e = new ContentEditor(container, null, this, id, command, editorParams);
+                        container.Add(e);
+                        return e;
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHelper.MesssageBox(e);
+                        return null;
+                    }
+                }
+            }
+        }
+
+        IPage ICommandFactory.OpenDocument(Hashtable parameters)
+        {
+            if (!parameters.ContainsKey("id"))
+            {
+                throw new ArgumentException("Ожидался параметр id", "id");
+            }
+
+            ICommandFactory factory = this;
+            if (parameters["id"] is Guid id)
+            {
+                return factory.OpenDocument(id);
+            }
+            else
+            {
+                throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
+            }
+        }
+
+        IPage ICommandFactory.OpenEditor(IBrowser browser, Guid id, Command command, IBrowserParameters editorParams)
+        {
+            ICommandFactory factory = this;
+            IPage page = null;
+            if (id != Guid.Empty)
+            {
+                page = container.GetAll<ContentEditor>()
+                    .OfType<IPage>()
+                    .Where(x => x.InfoId == id)
+                    .FirstOrDefault();
+            }
+
+            if (page != null)
+            {
+                container.Selected = page;
+                return page;
+            }
+            else
+            {
+                try
+                {
+                    ContentEditor e = new ContentEditor(container, browser, this, id, command, editorParams);
+                    container.Add(e);
+                    return e;
+                }
+                catch (MissingImpException)
+                {
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    if (MessageBox.Show($"{ExceptionHelper.Message(e)}\nОткрыть окно для создания кода?", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
+                    {
+                        factory.OpenCodeEditor(command);
+                    }
+
+                    return null;
+                }
+            }
+        }
+
+        IPage ICommandFactory.OpenEditor(IBrowser browser, IIdentifier<Guid> identifier, Command command, IBrowserParameters editorParams)
+        {
+            ICommandFactory factory = this;
+            return factory.OpenEditor(browser, identifier.id, command, editorParams);
+        }
+
+        IPage ICommandFactory.OpenCodeEditor(Command command, CompilerErrorCollection errors)
+        {
+            IPage page = container.Get<CodeEditor>(command.id);
+            if (page != null)
+            {
+                container.Selected = page;
+            }
+            else
+            {
+                page = new CodeEditor(container, command);
+                container.Add(page);
+            }
+
+            if (errors != null && page is CodeEditor codeEditor)
+            {
+                codeEditor.ShowErrors(errors);
+            }
+
+            return page;
+        }
+
+        IPage ICommandFactory.OpenCodeEditor(Guid id, CompilerErrorCollection errors)
+        {
+            ICommandFactory factory = this;
+            using (var conn = Db.OpenConnection())
+            {
+                Command command = conn.QuerySingle<Command>("select * from command where id = :id", new { id });
+                return factory.OpenCodeEditor(command, errors);
+            }
+        }
+
+        IPage ICommandFactory.OpenCodeEditor(Hashtable parameters, CompilerErrorCollection errors)
+        {
+            ICommandFactory factory = this;
+            if (!parameters.ContainsKey("id"))
+            {
+                throw new ArgumentException("Ожидался параметр id", "id");
+            }
+
+            if (parameters["id"] is Guid pid)
+            {
+                return factory.OpenCodeEditor(pid, errors);
+            }
+            else
+            {
+                throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
+            }
+        }
+
+        void ICommandFactory.Logout()
+        {
+            container.Logout();
+        }
+
+        void ICommandFactory.About()
+        {
+            container.About();
         }
 
         #endregion
@@ -175,229 +399,82 @@ namespace DocumentFlow
             }
         }
 
-        private void OpenDiagram(Guid id)
-        {
-            IPage page = container.Get<DiagramViewer>(id);
-            if (page != null)
-            {
-                container.Selected = page;
-            }
-            else
-            {
-                DiagramViewer viewer = new DiagramViewer(container, id);
-                container.Add(viewer);
-            }
-        }
-
-        private void OpenDiagram(params object[] parameters)
+        private IPage OpenDiagram(params object[] parameters)
         {
             if (parameters.Length != 1)
             {
-                return;
+                throw new ArgumentException($"Команда OpenDiagram должжна иметь 1 параметр, а передано {parameters.Length}");
             }
 
-            if (parameters[0] is Dictionary<string, object> parameterValues)
+            ICommandFactory factory = this;
+            switch (parameters[0])
             {
-                if (!parameterValues.ContainsKey("id"))
-                {
-                    throw new ArgumentException("Ожидался параметр id", "id");
-                }
-
-                if (parameterValues["id"] is Guid id)
-                {
-                    OpenDiagram(id);
-                }
-                else
+                case Hashtable hashtable: return factory.OpenDiagram(hashtable);
+                case Guid id: return factory.OpenDiagram(id);
+                case IIdentifier<Guid> identifier: return factory.OpenDiagram(identifier);
+                default:
                     throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
             }
-            else if (parameters[0] is Guid id)
-            {
-                OpenDiagram(id);
-            }
-            else
-                throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
         }
 
-        private void OpenDocument(Guid id)
-        {
-            IPage page = null;
-            if (id != Guid.Empty)
-            {
-                page = container.Get<ContentEditor>(id);
-            }
-
-            if (page != null)
-            {
-                container.Selected = page;
-            }
-            else
-            {
-                using (var conn = Db.OpenConnection())
-                {
-                    string sql = "select c.*, ek.* from command c join entity_kind ek on (ek.id = c.entity_kind_id) join document_info di on (ek.id = di.entity_kind_id and di.id = :id)";
-                    Command command = conn.Query<Command, EntityKind, Command>(sql, (cmd, entity_kind) =>
-                    {
-                        cmd.EntityKind = entity_kind;
-                        return cmd;
-                    }, new { id }).Single();
-
-                    string parent = conn.Query<string>("select get_root_parent(:table)", new { table = command.EntityKind.code }).Single();
-                    if (parent == "document")
-                    {
-                        sql = $"select owner_id, organization_id from {command.EntityKind.code} where id = :id";
-                    }
-                    else
-                    {
-                        sql = $"select owner_id, parent_id from {command.EntityKind.code} where id = :id";
-                    }
-
-                    var row = conn.QuerySingle(sql, new { id });
-
-                    BrowserParameters editorParams = new BrowserParameters()
-                    {
-                        ParentId = parent == "document" ? null : row.parent_id,
-                        OwnerId = row.owner_id,
-                        OrganizationId = parent == "directory" ? null : row.organization_id
-                    };
-
-                    try
-                    {
-                        ContentEditor e = new ContentEditor(container, null, this, id, command, editorParams);
-                        container.Add(e);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHelper.MesssageBox(e);
-                    }
-                }
-            }
-        }
-
-        private void OpenDocument(params object[] parameters)
+        private IPage OpenDocument(params object[] parameters)
         {
             if (parameters.Length != 1)
             {
-                return;
+                throw new ArgumentException($"Команда OpenDocument должжна иметь 1 параметр, а передано {parameters.Length}");
             }
 
-            if (parameters[0] is Dictionary<string, object> parameterValues)
+            ICommandFactory factory = this;
+            switch (parameters[0])
             {
-                if (!parameterValues.ContainsKey("id"))
-                {
-                    throw new ArgumentException("Ожидался параметр id", "id");
-                }
-
-                if (parameterValues["id"] is Guid id)
-                {
-                    OpenDocument(id);
-                }
-                else
+                case Hashtable hashtable: return factory.OpenDocument(hashtable);
+                case Guid id: return factory.OpenDocument(id);
+                default:
                     throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
             }
-            else if (parameters[0] is Guid id)
-            {
-                OpenDocument(id);
-            }
-            else
-                throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
         }
 
-        private void OpenEditor(params object[] parameters)
+        private IPage OpenEditor(params object[] parameters)
         {
             if (parameters.Length != 4)
             {
-                return;
+                throw new ArgumentException($"Команда OpenEditor должжна иметь 4 параметра, а передано {parameters.Length}");
             }
 
-            if (parameters[0] is IBrowser browser && parameters[1] is Guid id && parameters[2] is Command command && parameters[3] is IBrowserParameters editorParams)
+            ICommandFactory factory = this;
+            if (parameters[0] is IBrowser browser && parameters[2] is Command command && parameters[3] is IBrowserParameters editorParams)
             {
-                IPage page = null;
-                if (id != Guid.Empty)
+                switch (parameters[1])
                 {
-                    page = container.GetAll<ContentEditor>()
-                        .OfType<IPage>()
-                        .Where(x => x.InfoId == id)
-                        .FirstOrDefault();
-                }
-
-                if (page != null)
-                {
-                    container.Selected = page;
-                }
-                else
-                {
-                    try
-                    {
-                        ContentEditor e = new ContentEditor(container, browser, this, id, command, editorParams);
-                        container.Add(e);
-                    }
-                    catch (Exception e)
-                    {
-                        if (MessageBox.Show($"{ExceptionHelper.Message(e)}\nОткрыть окно для создания кода?", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
-                        {
-                            OpenCodeEditor(command);
-                        }
-                    }
+                    case Guid id: return factory.OpenEditor(browser, id, command, editorParams);
+                    case IIdentifier<Guid> identifier: return factory.OpenEditor(browser, identifier, command, editorParams);
                 }
             }
+
+            throw new ArgumentException("В команду OpenEditor переданы неверные тип(ы) параметра(ов).");
         }
 
-        private void OpenCodeEditor(params object[] parameters)
+        private IPage OpenCodeEditor(params object[] parameters)
         {
             if (parameters.Length == 0)
             {
-                return;
+                throw new ArgumentException("Вызов команды open-browser-code без параметров.");
             }
 
-            Command command = null;
-            if (parameters[0] is Command cmd)
+            CompilerErrorCollection errors = null;
+            if (parameters.Length > 1)
             {
-                command = cmd;
+                errors = parameters[1] as CompilerErrorCollection;
             }
-            else if (parameters[0] is Guid id)
-            {
-                using (var conn = Db.OpenConnection())
-                {
-                    command = conn.QuerySingle<Command>("select * from command where id = :id", new { id });
-                }
-            }
-            else if (parameters[0] is Dictionary<string, object> parameterValues)
-            {
-                if (!parameterValues.ContainsKey("id"))
-                {
-                    throw new ArgumentException("Ожидался параметр id", "id");
-                }
 
-                if (parameterValues["id"] is Guid pid)
-                {
-                    using (var conn = Db.OpenConnection())
-                    {
-                        command = conn.QuerySingle<Command>("select * from command where id = :id", new { id = pid });
-                    }
-                }
-                else
+            ICommandFactory factory = this;
+            switch (parameters[0])
+            {
+                case Command cmd: return factory.OpenCodeEditor(cmd, errors);
+                case Guid id: return factory.OpenCodeEditor(id, errors);
+                case Hashtable hashtable: return factory.OpenCodeEditor(hashtable, errors);
+                default: 
                     throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
-            }
-            else
-                throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
-
-            if (command != null)
-            {
-                IPage page = container.Get<CodeEditor>(command.id);
-                if (page != null)
-                {
-                    container.Selected = page;
-                }
-                else
-                {
-                    page = new CodeEditor(container, command);
-                    container.Add(page);
-                }
-
-                if (parameters.Length > 1 && parameters[1] is CompilerErrorCollection errors)
-                {
-                    (page as CodeEditor).ShowErrors(errors);
-                }
             }
         }
     }

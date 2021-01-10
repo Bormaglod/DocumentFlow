@@ -192,7 +192,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
         {
             if (mode == BrowserMode.Main)
             {
-                string sql = string.Format(baseSelectMain, "rg.doc_date between :from_date and :to_date and rg.organization_id = :organization_id");
+                string sql = string.Format(baseSelectMain, "(rg.doc_date between :from_date and :to_date and rg.organization_id = :organization_id) or (rg.status_id not in (1011, 3000))");
                 return connection.Query<ReadyGoods>(sql, new
                 {
                     from_date = parameters.DateFrom,
@@ -220,10 +220,7 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
             return connection.Execute("delete from ready_goods where id = :id", new { id }, transaction);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new ReadyGoodsEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new ReadyGoodsEditor();
     }
 
     public class ReadyGoodsEditor : IEditorCode, IDataOperation, IControlEnabled
@@ -241,10 +238,9 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
             IControl order_name;
             if (main)
             {
-                order_name = editor.CreateSelectBox("owner_id", "Заказ на изготовление", (c) =>
+                order_name = editor.CreateSelectBox<ReadyGoods>("owner_id", "Заказ на изготовление", (e, c) =>
                     {
-                        ReadyGoods rg = editor.Entity as ReadyGoods;
-                        return c.Query<GroupDataItem>(ownerSelect, new { rg.owner_id });
+                        return c.Query<GroupDataItem>(ownerSelect, new { e.owner_id });
                     })
                     .ValueChangedAction((s, e) => {
                         using (IDbConnection conn = database.CreateConnection())
@@ -267,10 +263,9 @@ namespace DocumentFlow.Code.Implementation.ReadyGoodsImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(170);
 
-            IControl goods_id = editor.CreateSelectBox("goods_id", "Изделие", (e, c) =>
+            IControl goods_id = editor.CreateSelectBox<ReadyGoods>("goods_id", "Изделие", (e, c) =>
                 {
-                    ReadyGoods rg = e.Entity as ReadyGoods;
-                    return c.Query<GroupDataItem>(goodsSelect, new { rg.owner_id });
+                    return c.Query<GroupDataItem>(goodsSelect, new { e.owner_id });
                 })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(300);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Data;
 using System.Drawing;
@@ -102,7 +102,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<Inventory>(string.Format(baseSelect, "i.doc_date between :from_date and :to_date and i.organization_id = :organization_id"), new
+            return connection.Query<Inventory>(string.Format(baseSelect, "(i.doc_date between :from_date and :to_date and i.organization_id = :organization_id) or (i.status_id not in (1011, 3000))"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
@@ -120,10 +120,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
             return connection.Execute("delete from inventory where id = :id", new { id }, transaction);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new InventoryEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new InventoryEditor();
     }
 
     public class InventoryEditor : IEditorCode, IDataOperation, IControlEnabled
@@ -161,11 +158,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
                 organization_id
             });
 
-            IControl employee_id = editor.CreateSelectBox("employee_id", "Исполнитель", (e, c) =>
-                {
-                    Inventory i = e.Entity as Inventory;
-                    return c.Query<GroupDataItem>(empSelect, new { i.id, i.employee_id });
-                })
+            IControl employee_id = editor.CreateSelectBox<Inventory>("employee_id", "Исполнитель", (e, c) => { return c.Query<GroupDataItem>(empSelect, new { e.id, e.employee_id }); })
                 .SetLabelWidth(120)
                 .SetControlWidth(350);
 
@@ -250,15 +243,19 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
         object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
             string sql = "insert into inventory_detail (owner_id, goods_id, amount) values (:owner_id, :goods_id, :amount) returning id";
-            InventoryDetail detail = editor.Entity as InventoryDetail;
-            return connection.QuerySingle<long>(sql,
-                new
-                {
-                    owner_id = parameters.OwnerId,
-                    detail.goods_id,
-                    detail.amount
-                },
-                transaction: transaction);
+            if (editor.Entity is InventoryDetail detail)
+            {
+                return connection.QuerySingle<long>(sql,
+                    new
+                    {
+                        owner_id = parameters.OwnerId,
+                        detail.goods_id,
+                        detail.amount
+                    },
+                    transaction: transaction);
+            }
+
+            return default;
         }
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)

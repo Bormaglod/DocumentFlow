@@ -121,10 +121,7 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
             browser.ToolBar.AddCommand(open_document);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new BalanceGoodsEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new BalanceGoodsEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
@@ -143,10 +140,7 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
 
         private void OpenDocumentClick(object sender, ExecuteEventArgs e)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            BalanceGoods balance = e.Browser.CurrentRow as BalanceGoods;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (balance != null)
+            if (e.Browser.CurrentRow is BalanceGoods balance)
             {
                 e.Browser.Commands.OpenDocument(balance.document_id);
             }
@@ -182,62 +176,58 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
 
         void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            BalanceGoods balance = editor.Entity as BalanceGoods;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (balance == null)
+            if (editor.Entity is BalanceGoods balance)
             {
-                throw new Exception("Ожидался объект типа BalanceGoods.");
+                IControl goods_name = editor.CreateTextBox("goods_name", "Материал")
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(400)
+                    .SetEnabled(false);
+
+                IControl document_name = editor.CreateTextBox("document_name", "Документ")
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(250)
+                    .SetEnabled(false)
+                    .SetVisible(new string[] { "current balance", "inventory" }.Contains(balance.status_code));
+
+                IControl document_number = editor.CreateTextBox("document_number", "Номер")
+                    .SetLabelWidth(labelWidth)
+                    .SetEnabled(false)
+                    .SetVisible(new string[] { "current balance", "inventory" }.Contains(balance.status_code));
+
+                IControl document_date = editor.CreateDateTimePicker("document_date", "Дата")
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(170);
+
+                string op_name;
+                string field;
+                if (new string[] { "initial balance", "compiled" }.Contains(balance.status_code))
+                {
+                    op_name = "Начальный остаток";
+                    field = "operation_summa";
+                }
+                else
+                {
+                    op_name = balance.operation_summa < 0 ? "Расход" : "Приход";
+                    field = balance.operation_summa < 0 ? "expense" : "income";
+                }
+
+                IControl operation_summa = editor.CreateCurrency(field, op_name)
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(150);
+
+                IControl amount = editor.CreateNumeric("amount", "Количество")
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(150);
+
+                editor.Container.Add(new IControl[] {
+                    goods_name,
+                    document_name,
+                    document_number,
+                    document_date,
+                    operation_summa,
+                    amount
+                });
             }
-
-            IControl goods_name = editor.CreateTextBox("goods_name", "Материал")
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(400)
-                .SetEnabled(false);
-
-            IControl document_name = editor.CreateTextBox("document_name", "Документ")
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(250)
-                .SetEnabled(false)
-                .SetVisible(new string[] { "current balance", "inventory" }.Contains(balance.status_code));
-
-            IControl document_number = editor.CreateTextBox("document_number", "Номер")
-                .SetLabelWidth(labelWidth)
-                .SetEnabled(false)
-                .SetVisible(new string[] { "current balance", "inventory" }.Contains(balance.status_code));
-
-            IControl document_date = editor.CreateDateTimePicker("document_date", "Дата")
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(170);
-
-            string op_name;
-            string field;
-            if (new string[] { "initial balance", "compiled" }.Contains(balance.status_code))
-            {
-                op_name = "Начальный остаток";
-                field = "operation_summa";
-            }
-            else
-            {
-                op_name = balance.operation_summa < 0 ? "Расход" : "Приход";
-                field = balance.operation_summa < 0 ? "expense" : "income";
-            }
-
-            IControl operation_summa = editor.CreateCurrency(field, op_name)
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(150);
-            IControl amount = editor.CreateNumeric("amount", "Количество")
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(150);
-
-            editor.Container.Add(new IControl[] {
-                goods_name,
-                document_name,
-                document_number,
-                document_date,
-                operation_summa,
-                amount
-            });
         }
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)

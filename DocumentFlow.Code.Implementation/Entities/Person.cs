@@ -79,10 +79,7 @@ namespace DocumentFlow.Code.Implementation.PersonImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new PersonEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new PersonEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

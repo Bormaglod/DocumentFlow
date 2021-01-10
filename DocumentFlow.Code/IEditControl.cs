@@ -10,12 +10,11 @@ using System;
 
 namespace DocumentFlow.Code
 {
-    public interface IEditControl
+    public interface IEditControl : IValuable
     {
         event EventHandler ValueChanged;
 
         int Width { get; set; }
-        object Value { get; set; }
         bool FitToSize { get; set; }
         bool Nullable { get; set; }
     }

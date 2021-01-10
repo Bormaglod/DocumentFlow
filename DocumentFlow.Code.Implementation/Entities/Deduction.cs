@@ -74,10 +74,7 @@ namespace DocumentFlow.Code.Implementation.DeductionImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new DeductionEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new DeductionEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

@@ -16,7 +16,7 @@ using DocumentFlow.Code.System;
 
 namespace DocumentFlow.Code.Implementation
 {
-    public class BindingControlData : ControlData, IBindingControl, IPopulate, IDataName
+    public class BindingControlData : ValueControlData, IBindingControl, IPopulate, IDataName
     {
         private bool populating;
         private object populateData;
@@ -145,25 +145,6 @@ namespace DocumentFlow.Code.Implementation
             }
         }
 
-        public object Value
-        {
-            get
-            {
-                if (Owner is IEditControl edit)
-                    return edit.Value;
-
-                throw new Exception("Объект не реализует интерфейс IEditControl. Присваивание значение не возможно.");
-            }
-
-            set
-            {
-                if (Owner is IEditControl edit)
-                    edit.Value = value;
-            }
-        }
-
-        public object DefaultValue { get; set; }
-
         internal IList<string> Locked { get; set; }
 
         public IPopulate AsPopulate() => this;
@@ -204,12 +185,6 @@ namespace DocumentFlow.Code.Implementation
             return this;
         }
 
-        public IBindingControl SetDefaultValue(object defaultValue)
-        {
-            DefaultValue = defaultValue;
-            return this;
-        }
-
         public IBindingControl ValueChangedAction(EventHandler<ValueChangedEventArgs> valueChanged)
         {
             ValueChanged = valueChanged;
@@ -243,6 +218,15 @@ namespace DocumentFlow.Code.Implementation
                     populating = false;
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            string name = base.ToString();
+            if (string.IsNullOrEmpty(name))
+                return FieldName;
+
+            return $"{FieldName} ({name})";
         }
 
         private void Edit_ValueChanged(object sender, EventArgs e)

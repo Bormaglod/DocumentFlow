@@ -33,8 +33,6 @@ namespace DocumentFlow
             this.commandFactory = commandFactory;
         }
 
-        ICommand ICommandCollection.Get(string name) => commands.FirstOrDefault(x => x.Code == name);
-
         ICommand ICommandCollection.Add(CommandMethod method, string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -53,9 +51,11 @@ namespace DocumentFlow
             return command;
         }
 
-        void ICommandCollection.OpenDocument(Guid id) => commandFactory.Execute("open-document", id);
+        void ICommandCollection.OpenDocument(Guid id) => commandFactory.OpenDocument(id);
 
-        void ICommandCollection.OpenDiagram(Guid id) => commandFactory.Execute("open-diagram", id);
+        void ICommandCollection.OpenDiagram(Guid id) => commandFactory.OpenDiagram(id);
+
+        public ICommand Get(string name) => commands.FirstOrDefault(x => x.Code == name);
 
         public CommandItem Add(CommandMethod method, string name)
         {

@@ -43,13 +43,13 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => maskedEditBox1.Width; set => maskedEditBox1.Width = value; }
 
-        object IEditControl.Value
+        object IValuable.Value
         {
             get
             {
                 T valueData = (T)Convert.ChangeType(maskedEditBox1.Text, typeof(T));
 
-                if (Nullable && valueData.CompareTo(default(T)) == 0)
+                if (Nullable && valueData.CompareTo(default) == 0)
                     return null;
 
                 return valueData;

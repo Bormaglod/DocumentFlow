@@ -9,9 +9,7 @@ using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Code.Implementation.OkopfImp
 {
-    public class Okopf : Directory
-    {
-    }
+    public class Okopf : Directory { }
 
     public class OkopfBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
@@ -72,10 +70,7 @@ namespace DocumentFlow.Code.Implementation.OkopfImp
             return connection.Execute("delete from okopf where id = :id", new { id }, transaction);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new OkopfEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new OkopfEditor();
     }
 
     public class OkopfEditor : IEditorCode, IDataOperation, IControlEnabled

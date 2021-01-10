@@ -43,7 +43,7 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => datePickerAdv.Width; set => datePickerAdv.Width = value; }
 
-        object IEditControl.Value
+        object IValuable.Value
         {
             get
             { 

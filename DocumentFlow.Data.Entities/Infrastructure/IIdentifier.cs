@@ -21,7 +21,7 @@ namespace DocumentFlow.Data
     /// <summary>
     /// Общий интерфейс для объектов имеющих первичный ключ id указанного типа
     /// </summary>
-    public interface IIdentifier<T> where T: IComparable<T>
+    public interface IIdentifier<T> : IIdentifier where T: IComparable<T>
     {
         T id { get; }
     }

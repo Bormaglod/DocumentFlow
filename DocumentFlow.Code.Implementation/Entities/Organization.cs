@@ -121,10 +121,7 @@ namespace DocumentFlow.Code.Implementation.OrganizationImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new OrganizationEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new OrganizationEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

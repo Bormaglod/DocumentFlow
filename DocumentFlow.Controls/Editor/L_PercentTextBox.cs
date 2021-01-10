@@ -43,7 +43,7 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => percentTextBox1.Width; set => percentTextBox1.Width = value; }
 
-        object IEditControl.Value
+        object IValuable.Value
         {
             get
             {

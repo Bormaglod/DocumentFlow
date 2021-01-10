@@ -9,9 +9,7 @@ using DocumentFlow.Data.Base;
 
 namespace DocumentFlow.Code.Implementation.DiagramImp
 {
-    public class Diagram : NameDataItem
-    {
-    }
+    public class Diagram : NameDataItem { }
 
     public class DiagramBrowser : IBrowserCode, IBrowserOperation
     {
@@ -66,10 +64,7 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
 
         private void OpenDiagramClick(object sender, ExecuteEventArgs e)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            Diagram diagram = e.Browser.CurrentRow as Diagram;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (diagram != null)
+            if (e.Browser.CurrentRow is Diagram diagram)
             {
                 e.Browser.Commands.OpenDiagram(diagram.id);
             }

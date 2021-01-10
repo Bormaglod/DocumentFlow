@@ -102,10 +102,7 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
             browser.ToolBar.AddCommand(open_document);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new BalanceContractorEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new BalanceContractorEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
@@ -124,10 +121,7 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
 
         private void OpenDocumentClick(object sender, ExecuteEventArgs e)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            BalanceContractor balance = e.Browser.CurrentRow as BalanceContractor;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (balance != null)
+            if (e.Browser.CurrentRow is BalanceContractor balance)
             {
                 e.Browser.Commands.OpenDocument(balance.document_id);
             }
@@ -162,58 +156,53 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
 
         void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            BalanceContractor balance = editor.Entity as BalanceContractor;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (balance == null)
+            if (editor.Entity is BalanceContractor balance)
             {
-                throw new Exception("Ожидался объект типа BalanceContractor.");
+                IControl contractor_name = editor.CreateTextBox("contractor_name", "Контрагент")
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(400)
+                    .SetEnabled(false);
+
+                IControl document_name = editor.CreateTextBox("document_name", "Документ")
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(250)
+                    .SetEnabled(false)
+                    .SetVisible(balance.status_code == "current balance");
+
+                IControl document_number = editor.CreateTextBox("document_number", "Номер")
+                    .SetLabelWidth(labelWidth)
+                    .SetEnabled(false)
+                    .SetVisible(balance.status_code == "current balance");
+
+                IControl document_date = editor.CreateDateTimePicker("document_date", "Дата")
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(170);
+
+                string op_name;
+                string field;
+                if (new string[] { "initial balance", "compiled" }.Contains(balance.status_code))
+                {
+                    op_name = "Начальный остаток";
+                    field = "operation_summa";
+                }
+                else
+                {
+                    op_name = balance.operation_summa < 0 ? "Расход" : "Приход";
+                    field = balance.operation_summa < 0 ? "expense" : "income";
+                }
+
+                IControl operation_summa = editor.CreateCurrency(field, op_name)
+                    .SetLabelWidth(labelWidth)
+                    .SetControlWidth(150);
+
+                editor.Container.Add(new IControl[] {
+                    contractor_name,
+                    document_name,
+                    document_number,
+                    document_date,
+                    operation_summa
+                });
             }
-
-            IControl contractor_name = editor.CreateTextBox("contractor_name", "Контрагент")
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(400)
-                .SetEnabled(false);
-
-            IControl document_name = editor.CreateTextBox("document_name", "Документ")
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(250)
-                .SetEnabled(false)
-                .SetVisible(balance.status_code == "current balance");
-
-            IControl document_number = editor.CreateTextBox("document_number", "Номер")
-                .SetLabelWidth(labelWidth)
-                .SetEnabled(false)
-                .SetVisible(balance.status_code == "current balance");
-
-            IControl document_date = editor.CreateDateTimePicker("document_date", "Дата")
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(170);
-
-            string op_name;
-            string field;
-            if (new string[] { "initial balance", "compiled" }.Contains(balance.status_code))
-            {
-                op_name = "Начальный остаток";
-                field = "operation_summa";
-            }
-            else
-            {
-                op_name = balance.operation_summa < 0 ? "Расход" : "Приход";
-                field = balance.operation_summa < 0 ? "expense" : "income";
-            }
-
-            IControl operation_summa = editor.CreateCurrency(field, op_name)
-                .SetLabelWidth(labelWidth)
-                .SetControlWidth(150);
-
-            editor.Container.Add(new IControl[] {
-                contractor_name,
-                document_name,
-                document_number,
-                document_date,
-                operation_summa
-            });
         }
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)

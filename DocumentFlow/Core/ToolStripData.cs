@@ -31,7 +31,11 @@ namespace DocumentFlow
 
             var list = toolStrip.Items
                 .OfType<ToolStripItem>()
-                .Where(x => GetCommandComponents(x.Tag?.ToString()).CommandName == "user-defined")
+                .Where(x =>
+                {
+                    var (CommandName, GroupName) = GetCommandComponents(x.Tag?.ToString());
+                    return (!string.IsNullOrEmpty(CommandName) && GroupName == "user-defined");
+                })
                 .ToList();
 
             foreach (var item in list)
@@ -44,7 +48,13 @@ namespace DocumentFlow
                 if (item is ToolStripSeparator || item.Tag == null)
                     continue;
 
-                CommandItem ci = commands.Add(CommandMethod.Embedded, GetCommandComponents(item.Tag.ToString()).CommandName);
+                var (CommandName, _) = GetCommandComponents(item.Tag.ToString());
+                var ci = commands.Get(CommandName) as CommandItem;
+                if (ci == null)
+                {
+                    ci = commands.Add(CommandMethod.Embedded, CommandName);
+                }
+
                 if (ci != null)
                 {
                     ci.PropertyChanged += Notify_PropertyChanged;
@@ -54,6 +64,8 @@ namespace DocumentFlow
 
             UpdateButtonVisibleStatus();
         }
+
+        public IEnumerable<ICommand> Commands => items.Keys;
 
         bool ITool.Contains(ICommand command) => items.ContainsKey(command);
 
@@ -116,17 +128,13 @@ namespace DocumentFlow
                     }
                 }
 
-                if (visibles == 0)
+                bool visible = visibles > 0;
+                foreach (var separator in grp_items[group_name].OfType<ToolStripSeparator>())
                 {
-                    foreach (var separator in grp_items[group_name].OfType<ToolStripSeparator>())
-                    {
-                        separator.Visible = false;
-                    }
+                    separator.Visible = visible;
                 }
             }
         }
-
-        protected IEnumerable<ICommand> GetCommands() => items.Keys;
 
         protected abstract ToolStripItem CreateToolStripItem(ICommand command, Picture picture);
 

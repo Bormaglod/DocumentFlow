@@ -44,7 +44,7 @@
             // 
             // decimalText
             // 
-            this.decimalText.BeforeTouchSize = new System.Drawing.Size(509, 25);
+            this.decimalText.BeforeTouchSize = new System.Drawing.Size(185, 25);
             this.decimalText.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(211)))), ((int)(((byte)(212)))));
             this.decimalText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.decimalText.DecimalValue = new decimal(new int[] {

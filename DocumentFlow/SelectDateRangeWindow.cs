@@ -87,15 +87,9 @@ namespace DocumentFlow
             }
         }
 
-        private void buttonPrevYear_Click(object sender, EventArgs e)
-        {
-            labelYear.Text = $"{--year} год";
-        }
+        private void buttonPrevYear_Click(object sender, EventArgs e) => labelYear.Text = $"{--year} год";
 
-        private void buttonNextYear_Click(object sender, EventArgs e)
-        {
-            labelYear.Text = $"{++year} год";
-        }
+        private void buttonNextYear_Click(object sender, EventArgs e) => labelYear.Text = $"{++year} год";
 
         private void SelectDateRangeWindow_KeyDown(object sender, KeyEventArgs e)
         {

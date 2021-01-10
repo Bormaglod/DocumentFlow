@@ -6,7 +6,12 @@
 // Time: 22:51
 //-----------------------------------------------------------------------
 
+using System;
+using System.CodeDom.Compiler;
+using System.Collections;
 using System.Collections.Generic;
+using DocumentFlow.Code;
+using DocumentFlow.Data;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow
@@ -17,5 +22,18 @@ namespace DocumentFlow
         IEnumerable<Command> Commands { get; }
         void Execute(Command command, params object[] parameters);
         void Execute(string command, params object[] parameters);
+
+        IPage OpenDiagram(Guid id);
+        IPage OpenDiagram(IIdentifier<Guid> identifier);
+        IPage OpenDiagram(Hashtable parameters);
+        IPage OpenDocument(Guid id);
+        IPage OpenDocument(Hashtable parameters);
+        IPage OpenEditor(IBrowser browser, Guid id, Command command, IBrowserParameters editorParams);
+        IPage OpenEditor(IBrowser browser, IIdentifier<Guid> identifier, Command command, IBrowserParameters editorParams);
+        IPage OpenCodeEditor(Command command, CompilerErrorCollection errors = null);
+        IPage OpenCodeEditor(Guid id, CompilerErrorCollection errors = null);
+        IPage OpenCodeEditor(Hashtable parameters, CompilerErrorCollection errors = null);
+        void About();
+        void Logout();
     }
 }

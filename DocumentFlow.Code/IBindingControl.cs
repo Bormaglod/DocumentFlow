@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 10.10.2020
@@ -15,7 +15,7 @@ namespace DocumentFlow.Code
     /// <summary>
     /// Интерфейс обеспечивающий управление элементом управления имеющим подпись и связанным с указанным полем таблицы БД.
     /// </summary>
-    public interface IBindingControl : IControl
+    public interface IBindingControl : IValueControl
     {
         event EventHandler<ValueChangedEventArgs> ValueChanged;
 
@@ -56,10 +56,6 @@ namespace DocumentFlow.Code
         /// <value>true, если данные могут иметь значение null. Значение по умолчанию - true - для ссылочных типов и false - для остальных.</value>
         bool Nullable { get; set; }
 
-        object Value { get; set; }
-
-        object DefaultValue { get; set; }
-
         IPopulate AsPopulate();
 
         /// <summary>
@@ -93,8 +89,6 @@ namespace DocumentFlow.Code
         IBindingControl AsNullable();
 
         IBindingControl AsRequired();
-
-        IBindingControl SetDefaultValue(object defaultValue);
 
         IBindingControl ValueChangedAction(EventHandler<ValueChangedEventArgs> valueChanged);
     }

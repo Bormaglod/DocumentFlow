@@ -18,7 +18,7 @@ namespace DocumentFlow.Code.Implementation
 
         public ControlData(Control control) => Owner = control;
 
-        string IControl.ControlName => controlName;
+        public string ControlName => controlName;
 
         int IControl.Left 
         {
@@ -198,5 +198,7 @@ namespace DocumentFlow.Code.Implementation
         }
 
         public Control Owner { get; }
+
+        public override string ToString() => controlName;
     }
 }

@@ -15,6 +15,7 @@ using Dapper;
 using Syncfusion.Windows.Forms.Tools;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Entities;
+using DocumentFlow.Data.Repositories;
 
 namespace DocumentFlow
 {
@@ -30,7 +31,7 @@ namespace DocumentFlow
 
             using (var conn = Db.OpenConnection())
             {
-                var pic_default = conn.Query<Picture>("select * from picture where code = :code", new { code = "file" }).SingleOrDefault();
+                var pic_default = Pictures.Default;
 
                 if (pic_default != null)
                 {

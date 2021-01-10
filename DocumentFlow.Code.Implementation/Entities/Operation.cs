@@ -29,6 +29,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
         public int left_sweep { get; set; }
         public decimal right_cleaning { get; set; }
         public int right_sweep { get; set; }
+		public bool operation_use { get; protected set; }
     }
 
     public class OperationBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -52,11 +53,13 @@ namespace DocumentFlow.Code.Implementation.OperationImp
                 o.left_cleaning,
                 o.left_sweep,
                 o.right_cleaning,
-                o.right_sweep
+                o.right_sweep,
+                cio.item_id is not null as operation_use
             from operation o 
                 join status s on (s.id = o.status_id) 
                 left join operation_type ot on (ot.id = o.type_id) 
                 left join measurement m on (m.id = o.measurement_id) 
+				left join (select distinct item_id from calc_item_operation where status_id = 1001) cio on (cio.item_id = o.id)
             where 
                 {0}";
 
@@ -163,6 +166,10 @@ namespace DocumentFlow.Code.Implementation.OperationImp
                     .SetVisible(false)
                     .SetVisibility(false);
 
+				columns.CreateBoolean("operation_use", "Используется")
+					.SetWidth(120)
+                    .SetVisibility(false);
+
                 columns.CreateSortedColumns()
                     .Add("code", ListSortDirection.Ascending);
             });
@@ -170,10 +177,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
             browser.ChangeParent += Browser_ChangeParent;
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new OperationEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new OperationEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
@@ -192,10 +196,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
 
         private void Browser_ChangeParent(object sender, ChangeParentEventArgs e)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            IBrowser browser = sender as IBrowser;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (browser != null)
+            if (sender is IBrowser browser)
             {
                 string root = string.Empty;
                 if (browser.Parameters.ParentId.HasValue)
@@ -212,7 +213,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
                     browser.Columns[column].Visibility = root == "Резка";
                 }
 
-                foreach (string column in new string[] { "code", "abbreviation", "produced", "prod_time", "production_rate", "operation_type_name", "salary" })
+                foreach (string column in new string[] { "code", "abbreviation", "produced", "prod_time", "production_rate", "operation_type_name", "salary", "operation_use" })
                 {
                     browser.Columns[column].Visibility = !string.IsNullOrEmpty(root);
                 }
@@ -296,7 +297,7 @@ namespace DocumentFlow.Code.Implementation.OperationImp
 
             editor.Container.Add(controls.ToArray());
 
-            dependentViewer.AddDependentViewers(new string[] { "view-archive-price" });
+            dependentViewer.AddDependentViewers(new string[] { "view-archive-price", "view-operation-use" });
         }
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)

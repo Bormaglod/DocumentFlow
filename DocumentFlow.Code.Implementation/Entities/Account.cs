@@ -74,10 +74,7 @@ namespace DocumentFlow.Code.Implementation.AccountImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new AccountEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new AccountEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
@@ -139,6 +136,7 @@ namespace DocumentFlow.Code.Implementation.AccountImp
                 from account a 
                     join company c on (c.id = a.owner_id) 
                 where a.id = :id";
+
             return connection.QuerySingleOrDefault<Account>(sql, new { id = id.oid });
         }
 

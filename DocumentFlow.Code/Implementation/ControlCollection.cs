@@ -10,12 +10,12 @@ using System.Linq;
 
 namespace DocumentFlow.Code.Implementation
 {
-    public class PopulateCollection : IPopulateCollection
+    public class ControlCollection<T> : IControlCollection<T>
     {
         private readonly IContainer container;
 
-        public PopulateCollection(IContainer container) => this.container = container;
+        public ControlCollection(IContainer container) => this.container = container;
 
-        IPopulate IPopulateCollection.this[string name] => container.ControlsAll.OfType<IDataName>().First(x => x.Name == name) as IPopulate;
+        T IControlCollection<T>.this[string name] => (T)container.ControlsAll.OfType<IDataName>().First(x => x.Name == name);
     }
 }

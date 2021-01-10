@@ -35,15 +35,8 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
         public decimal count_by_goods { get; set; }
         public decimal count_by_operation { get; set; }
 
-        Guid IDetail.owner_id
-        {
-            get { return calc_item_operation_id; }
-        }
-
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
+        Guid IDetail.owner_id => calc_item_operation_id;
+        object IIdentifier.oid => id;
     }
 
     public class CalcItemOperationBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -119,10 +112,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new CalcItemOperationEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new CalcItemOperationEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
@@ -188,15 +178,17 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
                 })
                 .SetEditor("Номенклатура", new UsedMaterialEditor(), (e) =>
                 {
-                    UsedMaterial material = e as UsedMaterial;
-                    if (material.count_by_goods <= 0)
-                        throw new Exception("Количество материала на изделие должно быть больше 0.");
+                    if (e is UsedMaterial material)
+                    {
+                        if (material.count_by_goods <= 0)
+                            throw new Exception("Количество материала на изделие должно быть больше 0.");
 
-                    if (material.count_by_operation <= 0)
-                        throw new Exception("Количество материала на операцию должно быть больше 0.");
+                        if (material.count_by_operation <= 0)
+                            throw new Exception("Количество материала на операцию должно быть больше 0.");
 
-                    if (material.goods_id == Guid.Empty)
-                        throw new Exception("Не указан материал");
+                        if (material.goods_id == Guid.Empty)
+                            throw new Exception("Не указан материал");
+                    }
                 })
                 .SetHeight(300);
 
@@ -279,18 +271,22 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
 
         object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            string sql = "insert into used_material (calc_item_operation_id, goods_id, count_by_goods, count_by_operation) values (:owner_id, :goods_id, :count_by_goods, :count_by_operation) returning id";
+            if (editor.Entity is UsedMaterial material)
+            {
+                string sql = "insert into used_material (calc_item_operation_id, goods_id, count_by_goods, count_by_operation) values (:owner_id, :goods_id, :count_by_goods, :count_by_operation) returning id";
 
-            UsedMaterial material = editor.Entity as UsedMaterial;
-            return connection.QuerySingle<long>(sql,
-                new
-                {
-                    owner_id = parameters.OwnerId,
-                    material.goods_id,
-                    material.count_by_goods,
-                    material.count_by_operation
-                },
-                transaction: transaction);
+                return connection.QuerySingle<long>(sql,
+                    new
+                    {
+                        owner_id = parameters.OwnerId,
+                        material.goods_id,
+                        material.count_by_goods,
+                        material.count_by_operation
+                    },
+                    transaction: transaction);
+            }
+
+            return default;
         }
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)

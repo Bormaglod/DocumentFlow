@@ -6,17 +6,17 @@
 // Time: 13:43
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
+using System.Collections;
 
 namespace DocumentFlow.Code.System
 {
     public class GettingParametersEventArgs : ExecuteEventArgs
     {
-        private Dictionary<string, object> parameters = new Dictionary<string, object>();
+        private readonly Hashtable parameters = new Hashtable();
 
         public GettingParametersEventArgs(IBrowser browser) : base(browser) { }
         public GettingParametersEventArgs(IEditor editor) : base(editor) { }
 
-        public IDictionary<string, object> Parameters => parameters;
+        public Hashtable Parameters => parameters;
     }
 }

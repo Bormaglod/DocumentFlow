@@ -18,6 +18,7 @@ namespace DocumentFlow.Data.Entities
         public string title { get; set; }
         public bool has_group { get; set; }
         public Guid transition_id { get; set; }
+        public bool copy_ability { get; set; }
         public override string ToString() => code;
     }
 }

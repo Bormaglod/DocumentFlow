@@ -35,7 +35,7 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => checkBoxAdv1.Width; set => checkBoxAdv1.Width = value; }
 
-        object IEditControl.Value
+        object IValuable.Value
         {
             get
             {
@@ -45,7 +45,7 @@ namespace DocumentFlow.Controls.Editor
                 return checkBoxAdv1.BoolValue;
             }
 
-            set => checkBoxAdv1.BoolValue = value == null ? default : Convert.ToBoolean(value);
+            set => checkBoxAdv1.BoolValue = value != null && Convert.ToBoolean(value);
         }
 
         bool IEditControl.FitToSize { get; set; }

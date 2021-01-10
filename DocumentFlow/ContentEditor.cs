@@ -88,7 +88,7 @@ namespace DocumentFlow
             ownerBrowser = browser;
             if (commandEditor.Editor() == null)
             {
-                throw new Exception($"В команде [{commandEditor.name}] не определен редактор.");
+                throw new MissingImpException($"В команде [{commandEditor.name}] не определен редактор.");
             }
 
             this.commandFactory = commandFactory;
@@ -163,7 +163,7 @@ namespace DocumentFlow
 
             List<TabSplitterPage> removedTabs = tabSplitterContainer1.SecondaryPages
                 .OfType<TabSplitterPage>()
-                .Where(x => x.Tag.ToString() != "system")
+                .Where(x => x.Tag != null && x.Tag.ToString() != "system")
                 .ToList();
             foreach (var tab in removedTabs)
             {
@@ -400,12 +400,13 @@ namespace DocumentFlow
             using (var conn = Db.OpenConnection())
             {
                 IControlVisible visible = null;
+                IControlEnabled enabled = null;
                 if (!creatingPage)
                 {
                     visible = command.Editor() as IControlVisible;
+                    enabled = command.Editor() as IControlEnabled;
                 }
 
-                IControlEnabled enabled = command.Editor() as IControlEnabled;
                 ((IContainer)controlContainer).Populate(conn, entity, enabled, visible);
             }
         }
@@ -532,6 +533,10 @@ namespace DocumentFlow
             }
 
             RefreshPage();
+            if (command.Editor() is IActionStatus action)
+            {
+                action.StatusValueChanged(editorData, new Database(), GetInformation());
+            }
         }
 
         private bool UpdateEntity()
@@ -666,7 +671,6 @@ namespace DocumentFlow
             try
             {
                 UpdateCurrentStatusInfo();
-                controlContainer.Update(GetInformation());
                 PopulateControls();
                 CreateActionButtons();
             }
@@ -688,10 +692,12 @@ namespace DocumentFlow
             try
             {
                 UpdateCurrentStatusInfo();
-                controlContainer = new ContainerData(tabSplitterMaster, GetInformation());
+                controlContainer = new ContainerData(tabSplitterMaster, GetInformation);
                 editorData = new EditorData(controlContainer, ownerBrowser, commandFactory, parameters, toolStripMain)
                 {
-                    Entity = entity as IIdentifier
+                    Entity = entity as IIdentifier,
+                    EditorCode = command.Editor(),
+                    GetInfo = GetInformation
                 };
 
                 command.Editor().Initialize(editorData, database, this);
@@ -824,7 +830,7 @@ namespace DocumentFlow
             }
         }
 
-        private void buttonCustomization_Click(object sender, EventArgs e) => commandFactory.Execute("open-browser-code", command);
+        private void buttonCustomization_Click(object sender, EventArgs e) => commandFactory.OpenCodeEditor(command);
 
         private void twain32_AcquireCompleted(object sender, EventArgs e)
         {

@@ -32,7 +32,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>2.2.0.0</ApplicationVersion>
+    <ApplicationVersion>2.3.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -244,6 +244,7 @@
       <DependentUpon>CatalogWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\CommandCollection.cs" />
+    <Compile Include="Core\CommandComparer.cs" />
     <Compile Include="Core\CommandFactory.cs" />
     <Compile Include="Core\CommandItem.cs" />
     <Compile Include="ContentEditor.cs">

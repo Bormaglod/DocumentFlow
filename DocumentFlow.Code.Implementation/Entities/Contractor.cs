@@ -114,10 +114,7 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
 			browser.ChangeParent += Browser_ChangeParent;
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new ContractorEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new ContractorEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
@@ -136,13 +133,10 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
 
 		private void Browser_ChangeParent(object sender, ChangeParentEventArgs e)
 		{
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            IBrowser browser = sender as IBrowser;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (browser != null)
+            if (sender is IBrowser browser)
             {
-				string root = string.Empty;
-				if (browser.Parameters.ParentId.HasValue)
+                string root = string.Empty;
+                if (browser.Parameters.ParentId.HasValue)
                 {
                     Contractor g = browser.ExecuteSqlCommand<Contractor>("select * from contractor where id = :id", new { id = browser.Parameters.ParentId });
                     if (g.parent_id.HasValue)
@@ -151,23 +145,24 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
                         root = g.code;
                 }
 
-				foreach (string column in new string[] { "short_name", "full_name", "inn" })
+                foreach (string column in new string[] { "short_name", "full_name", "inn" })
                 {
                     browser.Columns[column].Visibility = !string.IsNullOrEmpty(root);
                 }
 
-				foreach (string column in new string[] { "kpp", "okpo", "ogrn", "okopf_name" })
+                foreach (string column in new string[] { "kpp", "okpo", "ogrn", "okopf_name" })
                 {
                     browser.Columns[column].Visibility = root == "Юр";
                 }
 
-				if (!string.IsNullOrEmpty(root))
-				{
-					string format = root == "Юр" ? "0000 00000 0" : "0000 000000 00";
-					((INumericColumn)browser.Columns["inn"]).Format = format;
-				}
-			}
-		}
+                if (!string.IsNullOrEmpty(root))
+                {
+                    string format = root == "Юр" ? "0000 00000 0" : "0000 000000 00";
+                    if (browser.Columns["inn"] is INumericColumn numericColumn)
+                        numericColumn.Format = format;
+                }
+            }
+        }
     }
 
     public class ContractorEditor : IEditorCode, IDataOperation, IControlEnabled

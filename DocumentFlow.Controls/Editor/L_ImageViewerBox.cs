@@ -57,7 +57,7 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => panel3.Width; set => panel3.Width = value; }
 
-        object IEditControl.Value
+        object IValuable.Value
         {
             get => Nullable ? Base64Image.NullIfEmpty() : base64Image;
             set => Base64Image = value == null ? string.Empty : value.ToString();

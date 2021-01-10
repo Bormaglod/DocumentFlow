@@ -112,10 +112,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new CalcItemGoodsEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new CalcItemGoodsEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

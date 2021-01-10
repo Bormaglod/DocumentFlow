@@ -45,11 +45,11 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => integerTextBox1.Width; set => integerTextBox1.Width = value; }
 
-        object IEditControl.Value
+        object IValuable.Value
         {
             get
             {
-                if (Nullable && IntegerValue == default(long))
+                if (Nullable && IntegerValue == default)
                 {
                     return null;
                 }
@@ -63,9 +63,9 @@ namespace DocumentFlow.Controls.Editor
             set
             {
                 if (Length == IntegerLength.Int64)
-                    IntegerValue = value == null ? default(long) : Convert.ToInt64(value);
+                    IntegerValue = value == null ? default : Convert.ToInt64(value);
                 else
-                    IntegerValue = value == null ? default(int) : Convert.ToInt32(value);
+                    IntegerValue = value == null ? default : Convert.ToInt32(value);
             }
         }
 

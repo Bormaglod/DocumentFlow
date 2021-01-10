@@ -80,10 +80,7 @@ namespace DocumentFlow.Code.Implementation.ArchivePriceImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new ArchivePriceEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new ArchivePriceEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

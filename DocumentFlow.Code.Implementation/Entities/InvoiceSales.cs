@@ -18,6 +18,8 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
     {
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; set; }
+		public Guid? contract_id { get; set; }
+        public string contract_name { get; protected set; }
         public string organization_name { get; protected set; }
         public DateTime? invoice_date { get; set; }
         public string invoice_number { get; set; }
@@ -27,6 +29,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
         public decimal cost { get; protected set; }
         public decimal tax_value { get; protected set; }
         public decimal cost_with_tax { get; protected set; }
+        public bool tax_payer { get; protected set; }
     }
 
     public class InvoiceSalesDetail : Detail
@@ -57,8 +60,10 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 i_s.invoice_number, 
                 po.doc_number as order_number, 
                 po.doc_date as order_date, 
+				i_s.contract_id,
+				contract.name as contract_name,
                 case 
-                    when c.tax_payer then 20 
+                    when contract.tax_payer then 20 
                     else 0 
                 end as tax, 
                 coalesce(sum(isd.cost), 0::money) as cost, 
@@ -71,8 +76,9 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 left join invoice_sales_detail isd on (isd.owner_id = i_s.id) 
                 left join contractor c on (c.id = i_s.contractor_id) 
                 left join production_order po on (po.id = i_s.owner_id) 
+				left join contract on (contract.id = i_s.contract_id)
             where {0} 
-            group by i_s.id, i_s.status_id, ua.name, c.name, i_s.doc_date, i_s.doc_number, s.note, o.name, c.tax_payer, i_s.invoice_date, i_s.invoice_number, po.doc_number, po.doc_date";
+            group by i_s.id, i_s.status_id, ua.name, c.name, i_s.doc_date, i_s.doc_number, s.note, o.name, contract.tax_payer, i_s.invoice_date, i_s.invoice_number, po.doc_number, po.doc_date, contract.name";
 
         void IBrowserCode.Initialize(IBrowser browser)
         {
@@ -127,6 +133,11 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                     .SetAutoSizeColumnsMode(SizeColumnsMode.Fill)
                     .SetAllowGrouping(true);
 
+				columns.CreateText("contract_name", "Договор")
+                    .SetWidth(150)
+                    .SetVisible(false)
+                    .SetAllowGrouping(true);
+
                 columns.CreateDate("order_date", "Дата")
                     .SetWidth(150)
                     .SetHideable(false);
@@ -175,11 +186,13 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
 					.AddColumn("tax_value", RowSummaryType.DoubleAggregate, "{Sum:c}")
 					.AddColumn("cost_with_tax", RowSummaryType.DoubleAggregate, "{Sum:c}");
             });
+
+			browser.MoveToEnd();
         }
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<InvoiceSales>(string.Format(baseSelect, "i_s.doc_date between :from_date and :to_date and i_s.organization_id = :organization_id"), new
+            return connection.Query<InvoiceSales>(string.Format(baseSelect, "(i_s.doc_date between :from_date and :to_date and i_s.organization_id = :organization_id) or i_s.status_id not in (1011, 3000)"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
@@ -197,27 +210,31 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
             return connection.Execute("delete from invoice_sales where id = :id", new { id }, transaction);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new InvoiceSalesEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new InvoiceSalesEditor();
     }
 
-    public class InvoiceSalesEditor : IEditorCode, IDataOperation, IControlEnabled
+    public class InvoiceSalesEditor : IEditorCode, IDataOperation, IControlEnabled, IControlVisible
     {
+		private class ProductionOrderData
+        {
+            public Guid contractor_id { get; set; }
+            public Guid contract_id { get; set; }
+        }
+
         public void Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
-            const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and buyer) or (status_id = 500) or (id = :contractor_id) order by name";
+            const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'buyer'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
             const string ownerSelect = "select po.id, ek.name || ' №' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join entity_kind ek on (ek.id = po.entity_kind_id) join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where (po.status_id = 3100 or (po.id = :owner_id)) and (po.contractor_id = :contractor_id or :contractor_id is null) group by po.id, ek.name, po.doc_number, po.doc_date, c.name";
             const string gridSelect = "select isd.id, isd.owner_id, g.name as goods_name, isd.amount, isd.price, isd.cost, isd.tax, isd.tax_value, isd.cost_with_tax from invoice_sales_detail isd left join goods g on (g.id = isd.goods_id) where isd.owner_id = :oid";
+			const string contractSelect = "select id, status_id, name, parent_id from contract where owner_id = :contractor_id and contractor_type = 'buyer'::contractor_type";
 
             IContainer container = editor.CreateContainer(32);
 
             IControl doc_number = editor.CreateTextBox("doc_number", "Номер")
                 .SetControlWidth(110)
                 .SetLabelAutoSize(true)
-                .SetWidth(165)
+                .SetWidth(170)
                 .SetDock(DockStyle.Left);
 
             IControl doc_date = editor.CreateDateTimePicker("doc_date", "от")
@@ -228,8 +245,8 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 .SetDock(DockStyle.Left);
 
             IControl organization_id = editor.CreateComboBox("organization_id", "Организация", (conn) => { return conn.Query<NameDataItem>(orgSelect); })
-                .SetLabelWidth(150)
-                .SetControlWidth(300)
+                .SetLabelWidth(100)
+                .SetControlWidth(200)
                 .SetLabelTextAlignment(ContentAlignment.TopRight);
 
             container.Add(new IControl[]
@@ -239,20 +256,63 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 organization_id
             });
 
-            IControl contractor_id = editor.CreateSelectBox("contractor_id", "Контрагент", (e, c) =>
+            IControl contractor_id = editor.CreateSelectBox<InvoiceSales>("contractor_id", "Контрагент", (e, c) =>
                 {
-                    InvoiceSales ir = e.Entity as InvoiceSales;
-                    return c.Query<GroupDataItem>(contractorSelect, new { ir.contractor_id });
+                    return c.Query<GroupDataItem>(contractorSelect, new { e.contractor_id });
                 })
-                .SetLabelWidth(90)
-                .SetControlWidth(700);
+				.ValueChangedAction((s, e) =>
+                {
+                    using (var conn = database.CreateConnection())
+                    {
+                        editor.Populates["contract_id"].Populate(conn, editor.Entity);
+                        editor.Data["contract_id"] = database.ExecuteSqlCommand<Guid>("select id from contract where owner_id = :contractor_id and contract.contractor_type = 'buyer'::contractor_type and contract.is_default", new { contractor_id = editor.Data["contractor_id"] });
+                        editor.Populates["owner_id"].Populate(conn, editor.Entity);
+                    }
+                })
+                .SetLabelWidth(100)
+                .SetControlWidth(580);
 
-            IControl owner_id = editor.CreateSelectBox("owner_id", "Заказ", (e, c) =>
+			IControl contract_id = editor.CreateSelectBox<InvoiceSales>("contract_id", "Договор", (e, c) =>
                 {
-                    InvoiceSales ir = e.Entity as InvoiceSales;
-                    return c.Query<GroupDataItem>(ownerSelect, new { ir.contractor_id, ir.owner_id });
+                    return c.Query<GroupDataItem>(contractSelect, new { e.contractor_id });
                 })
-                .SetLabelWidth(90)
+                .ValueChangedAction((s, e) =>
+                {
+                    using (var conn = database.CreateConnection())
+                    {
+                        if (e.Value is Guid cid)
+                        {
+                            editor.Container["InvoicePanel"].Visible = conn.QuerySingle<bool>("select tax_payer from contract where id = :id", new { id = cid });
+                        }
+                        else
+                        {
+                            editor.Container["InvoicePanel"].Visible = false;
+                        }
+                    }
+                })
+                .SetLabelWidth(100)
+                .SetControlWidth(580);
+
+            IControl owner_id = editor.CreateSelectBox<InvoiceSales>("owner_id", "Заказ", (e, c) =>
+                {
+                    return c.Query<GroupDataItem>(ownerSelect, new { e.contractor_id, e.owner_id });
+                })
+				.ValueChangedAction((s, e) =>
+                {
+                    using (var conn = database.CreateConnection())
+                    {
+                        var cc = conn.QuerySingle<ProductionOrderData>("select contractor_id, contract_id from production_order where id = :id", new { id = e.Value });
+                        editor.Data["contractor_id"] = cc.contractor_id;
+                        editor.Data["contract_id"] = cc.contract_id;
+
+                        if (editor.Entity is InvoiceSales i_s)
+                        {
+                            conn.Execute("select fill_invoice_details('production_order', :purchase_id, :invoice_id)", new { invoice_id = i_s.id, purchase_id = e.Value });
+                            editor.Populates["datagrid"].Populate(conn, editor.Entity);
+                        }
+                    }
+                })
+                .SetLabelWidth(100)
                 .SetControlWidth(450);
 
             IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<InvoiceSalesDetail>(gridSelect, new { editor.Entity.oid }).AsList(); })
@@ -303,22 +363,33 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
 
             IContainer invoice_panel = editor.CreateContainer(42);
             invoice_panel.AsControl()
+				.SetControlName("InvoicePanel")
                 .SetPadding(top: 10);
 
+            InvoiceSales invoice = editor.Entity as InvoiceSales;
             IControl invoice_number = editor.CreateTextBox("invoice_number", "Счёт фактура №")
                 .SetLabelAutoSize(true)
                 .SetWidth(225)
-                .SetDock(DockStyle.Left);
+                .SetDock(DockStyle.Left)
+                .SetVisible(invoice.tax_payer);
 
             IControl invoice_date = editor.CreateDateTimePicker("invoice_date", "от", customFormat: "dd.MM.yyyy")
                 .SetLabelWidth(40)
                 .SetLabelTextAlignment(ContentAlignment.TopCenter)
                 .SetDock(DockStyle.Left)
-                .SetWidth(210);
+                .SetWidth(210)
+                .SetVisible(invoice.tax_payer);
+
+			invoice_panel.Add(new IControl[]
+            {
+                invoice_number,
+                invoice_date
+            });
 
             editor.Container.Add(new IControl[] {
                 container.AsControl(),
                 contractor_id,
+				contract_id,
                 owner_id,
                 datagrid,
                 invoice_panel.AsControl()
@@ -327,7 +398,23 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            string sql = "select id, '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, owner_id, contractor_id, doc_date, doc_number, organization_id, invoice_date, invoice_number from invoice_sales where id = :id";
+            string sql = @"
+                select 
+                    i.id, 
+                    '№' || i.doc_number || ' от ' || to_char(i.doc_date, 'DD.MM.YYYY') as document_name, 
+                    i.owner_id, 
+                    i.contractor_id, 
+                    i.contract_id, 
+                    i.doc_date, 
+                    i.doc_number, 
+                    i.organization_id, 
+                    i.invoice_date, 
+                    i.invoice_number,
+                    c.tax_payer
+                from 
+                    invoice_sales i
+                    left join contract c on (c.id = i.contract_id)
+                where i.id = :id";
             return connection.QuerySingleOrDefault<InvoiceSales>(sql, new { id = id.oid });
         }
 
@@ -339,7 +426,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            string sql = "update invoice_sales set contractor_id = :contractor_id, doc_date = :doc_date, doc_number = :doc_number, invoice_date = :invoice_date, invoice_number = :invoice_number, owner_id = :owner_id where id = :id";
+            string sql = "update invoice_sales set contractor_id = :contractor_id, contract_id = :contract_id, doc_date = :doc_date, doc_number = :doc_number, invoice_date = :invoice_date, invoice_number = :invoice_number, owner_id = :owner_id where id = :id";
             return connection.Execute(sql, editor.Entity, transaction);
         }
 
@@ -351,6 +438,15 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
         bool IControlEnabled.Ability(object entity, string dataName, IInformation info)
         {
             return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
+        }
+
+        bool IControlVisible.Ability(object entity, string dataName, IInformation info)
+        {
+            InvoiceSales i_s = entity as InvoiceSales;
+            if (new string[] { "invoice_number", "invoice_date" }.Contains(dataName))
+                return i_s.tax_payer;
+
+            return true;
         }
     }
 

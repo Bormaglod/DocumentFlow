@@ -16,15 +16,8 @@ namespace DocumentFlow.Code.Implementation.BankImp
         public decimal account { get; set; }
         public string bik_text 
         {
-            get
-			{
-				return bik.ToString("00 00 00 000");
-			}
-
-            set 
-			{
-				bik = Convert.ToDecimal(value);
-			}
+            get => bik.ToString("00 00 00 000");
+            set => bik = Convert.ToDecimal(value);
         }
     }
 
@@ -82,10 +75,7 @@ namespace DocumentFlow.Code.Implementation.BankImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new BankEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new BankEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

@@ -16,26 +16,28 @@ using DocumentFlow.Data;
 namespace DocumentFlow.Code
 {
     public delegate IEnumerable<IIdentifier> ChoiceItems(IDbConnection connection);
-    public delegate IEnumerable<IIdentifier> СriterionChoiceItems(IEditor editor, IDbConnection connection);
+    public delegate IEnumerable<IIdentifier> СriterionChoiceItems(IValueEditor editor, IDbConnection connection);
+    public delegate IEnumerable<IIdentifier> СriterionChoiceItems<T>(T value, IDbConnection connection);
 
-    public interface IEditor
+    public interface IEditor : IValueEditor
     {
         IContainer Container { get; }
         ICommandCollection Commands { get; }
         IBrowser Browser { get; }
         IToolBar ToolBar { get; }
         IBrowserParameters Parameters { get; }
-        IIdentifier Entity { get; }
         IControl this[string name] { get; }
         IDataCollection Data { get; }
-        IPopulateCollection Populates { get; }
         IContainer CreateContainer();
         IContainer CreateContainer(int height);
+        IValueControl CreateLabel(string name, string labelText);
         IBindingControl CreateTextBox(string fieldName, string label, bool multiline = false);
         IBindingControl CreateSelectBox(string fieldName, string label, ChoiceItems getItems, bool showOnlyFolder = false);
         IBindingControl CreateSelectBox(string fieldName, string label, СriterionChoiceItems getItems, bool showOnlyFolder = false);
+        IBindingControl CreateSelectBox<T>(string fieldName, string label, СriterionChoiceItems<T> getItems, bool showOnlyFolder = false);
         IBindingControl CreateComboBox(string fieldName, string label, ChoiceItems getItems);
         IBindingControl CreateComboBox(string fieldName, string label, СriterionChoiceItems getItems);
+        IBindingControl CreateComboBox<T>(string fieldName, string label, СriterionChoiceItems<T> getItems);
         IBindingControl CreateChoice(string fieldName, string label, IDictionary<int, string> keyValues);
         IBindingControl CreateChoice(string fieldName, string label, ChoiceItems getItems);
         IBindingControl CreateInteger(string fieldName, string label, IntegerLength length = IntegerLength.Int32);

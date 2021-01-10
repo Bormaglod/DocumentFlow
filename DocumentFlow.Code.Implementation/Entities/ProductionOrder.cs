@@ -18,6 +18,8 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
     {
         public Guid? contractor_id { get; set; }
         public string contractor_name { get; protected set; }
+        public Guid? contract_id { get; set; }
+        public string contract_name { get; protected set; }
         public string organization_name { get; protected set; }
         public int tax { get; protected set; }
         public decimal cost { get; protected set; }
@@ -41,10 +43,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         public int complete_status { get; set; }
         public Guid calculation_id { get; set; }
         public string calculation_code { get; protected set; }
-        object IIdentifier.oid
-        {
-            get { return id; }
-        }
+        object IIdentifier.oid => id;
     }
 
     public class ProductionOrderBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -64,6 +63,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 s.note as status_name, 
                 ua.name as user_created, 
                 c.name as contractor_name, 
+                contract.name as contract_name,
                 po.doc_date, 
                 po.doc_number, 
                 o.name as organization_name, 
@@ -84,7 +84,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 left join contract on (contract.id = po.contract_id)
                 left join cte on (cte.owner_id = po.id) 
             where {0}
-            group by po.id, po.status_id, ua.name, c.name, po.doc_date, po.doc_number, s.note, o.name, contract.tax_payer, cte.complete_status";
+            group by po.id, po.status_id, ua.name, c.name, po.doc_date, po.doc_number, s.note, o.name, contract.tax_payer, cte.complete_status, contract.name";
 
         void IBrowserCode.Initialize(IBrowser browser)
         {
@@ -160,7 +160,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<ProductionOrder>(string.Format(baseSelect, "po.doc_date between :from_date and :to_date and po.organization_id = :organization_id"), new
+            return connection.Query<ProductionOrder>(string.Format(baseSelect, "(po.doc_date between :from_date and :to_date and po.organization_id = :organization_id) or (po.status_id not in (1011, 3000))"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,
@@ -178,10 +178,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
             return connection.Execute("delete from production_order where id = :id", new { id }, transaction);
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new ProductionOrderEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new ProductionOrderEditor();
     }
 
     public class ProductionOrderEditor : IEditorCode, IDataOperation, IControlEnabled
@@ -189,15 +186,16 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
-            const string contractorSelect = "select id, status_id, name, parent_id from contractor where (status_id = 1002 and buyer) or (status_id = 500) or (id = :contractor_id) order by name";
+            const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'buyer'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
             const string gridSelect = "select pod.id, pod.owner_id, g.name as goods_name, pod.amount, pod.price, pod.cost, pod.tax, pod.tax_value, pod.cost_with_tax, pod.complete_status, c.code as calculation_code from production_order_detail pod join goods g on (g.id = pod.goods_id) join calculation c on (c.id = pod.calculation_id) where pod.owner_id = :oid";
+            const string contractSelect = "select id, status_id, name, parent_id from contract where owner_id = :contractor_id and contractor_type = 'buyer'::contractor_type";
 
             IContainer container = editor.CreateContainer(32);
 
             IControl doc_number = editor.CreateTextBox("doc_number", "Номер")
                 .SetControlWidth(110)
                 .SetLabelAutoSize(true)
-                .SetWidth(165)
+                .SetWidth(170)
                 .SetDock(DockStyle.Left);
 
             IControl doc_date = editor.CreateDateTimePicker("doc_date", "от")
@@ -219,13 +217,27 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 organization_id
             });
 
-            IControl contractor_id = editor.CreateSelectBox("contractor_id", "Контрагент", (e, c) =>
+            IControl contractor_id = editor.CreateSelectBox<ProductionOrder>("contractor_id", "Контрагент", (e, c) =>
                 {
-                    ProductionOrder pr = e.Entity as ProductionOrder;
-                    return c.Query<GroupDataItem>(contractorSelect, new { pr.contractor_id });
+                    return c.Query<GroupDataItem>(contractorSelect, new { e.contractor_id });
                 })
-                .SetLabelWidth(120)
-                .SetControlWidth(700);
+                .ValueChangedAction((s, e) =>
+                {
+                    using (var conn = database.CreateConnection())
+                    {
+                        editor.Populates["contract_id"].Populate(conn, editor.Entity);
+                        editor.Data["contract_id"] = database.ExecuteSqlCommand<Guid>("select id from contract where owner_id = :contractor_id and contract.contractor_type = 'buyer'::contractor_type and contract.is_default", new { contractor_id = editor.Data["contractor_id"] });
+                    }
+                })
+                .SetLabelWidth(100)
+                .SetControlWidth(730);
+
+            IControl contract_id = editor.CreateSelectBox<ProductionOrder>("contract_id", "Договор", (e, c) =>
+                {
+                    return c.Query<GroupDataItem>(contractSelect, new { e.contractor_id });
+                })
+                .SetLabelWidth(100)
+                .SetControlWidth(580);
 
             IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<ProductionOrderDetail>(gridSelect, new { editor.Entity.oid }).AsList(); })
                 .CreateColumns((columns) =>
@@ -284,6 +296,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
             editor.Container.Add(new IControl[] {
                 container.AsControl(),
                 contractor_id,
+                contract_id,
                 datagrid
             });
 
@@ -292,6 +305,12 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                 .SetTitle("Контрагент")
                 .AppendTo(editor.ToolBar)
                 .ExecuteAction(OpenContractorClick);
+
+            editor.Commands.Add(CommandMethod.UserDefined, "open-document")
+                .SetIcon("stack-books")
+                .SetTitle("Договор")
+                .AppendTo(editor.ToolBar)
+                .ExecuteAction(OpenContractClick);
 
             dependentViewer.AddDependentViewers(new string[] { "view-prod-oper", "view-ready-goods" });
         }
@@ -303,6 +322,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                     id, 
                     '№' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') as document_name, 
                     contractor_id, 
+                    contract_id,
                     doc_date, 
                     doc_number, 
                     organization_id
@@ -319,7 +339,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            string sql = "update production_order set contractor_id = :contractor_id, doc_date = :doc_date, doc_number = :doc_number where id = :id";
+            string sql = "update production_order set contractor_id = :contractor_id, doc_date = :doc_date, doc_number = :doc_number, contract_id = :contract_id where id = :id";
             return connection.Execute(sql, editor.Entity, transaction);
         }
 
@@ -335,12 +355,20 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 
 		private void OpenContractorClick(object sender, ExecuteEventArgs e)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            ProductionOrder po = e.Editor.Entity as ProductionOrder;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (po != null && po.contractor_id.HasValue)
+            if (e.Editor.Entity is ProductionOrder po && po.contractor_id.HasValue)
             {
                 e.Editor.Commands.OpenDocument(po.contractor_id.Value);
+            }
+        }
+
+        private void OpenContractClick(object sender, ExecuteEventArgs e)
+        {
+            if (e.Editor.Entity is ProductionOrder po)
+            {
+                if (po.contract_id.HasValue)
+                {
+                    e.Editor.Commands.OpenDocument(po.contract_id.Value);
+                }
             }
         }
     }

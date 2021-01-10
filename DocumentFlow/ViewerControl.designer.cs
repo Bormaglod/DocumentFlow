@@ -138,7 +138,7 @@
             this.toolStripSeparator12});
             this.contextRecordMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
             this.contextRecordMenu.Name = "contextGridMenu";
-            this.contextRecordMenu.Size = new System.Drawing.Size(182, 204);
+            this.contextRecordMenu.Size = new System.Drawing.Size(182, 182);
             this.contextRecordMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
             this.contextRecordMenu.Tag = "main-context-menu";
             this.contextRecordMenu.ThemeName = "Metro";
@@ -215,13 +215,11 @@
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
             this.toolStripSeparator9.Size = new System.Drawing.Size(178, 6);
-            this.toolStripSeparator9.Tag = "|documents";
             // 
             // menuDocuments
             // 
             this.menuDocuments.Name = "menuDocuments";
             this.menuDocuments.Size = new System.Drawing.Size(181, 22);
-            this.menuDocuments.Tag = "document-list|documents";
             this.menuDocuments.Text = "Документы";
             // 
             // toolStripSeparator12
@@ -407,6 +405,7 @@
             // label3
             // 
             this.label3.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label3.Location = new System.Drawing.Point(541, 3);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(35, 24);
@@ -479,6 +478,7 @@
             // label2
             // 
             this.label2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label2.Location = new System.Drawing.Point(355, 3);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 24);
@@ -532,6 +532,7 @@
             // label1
             // 
             this.label1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label1.Location = new System.Drawing.Point(3, 3);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 24);

@@ -43,7 +43,7 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => decimalText.Width; set => decimalText.Width = value; }
 
-        object IEditControl.Value
+        object IValuable.Value
         {
             get
             {

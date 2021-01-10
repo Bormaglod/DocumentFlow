@@ -48,7 +48,7 @@ namespace DocumentFlow
                 if (iconSize != value)
                 {
                     iconSize = value;
-                    foreach (var c in GetCommands())
+                    foreach (var c in Commands)
                     {
                         UpdateToolStripItem(c, GetCommandPicture(c));
                     }
@@ -60,14 +60,14 @@ namespace DocumentFlow
         {
             IToolBar toolBar = this;
 
-            return new ToolStripButton()
+            return new ToolStripButton
             {
                 Text = command.Title,
                 Image = toolBar.IconSize == ButtonIconSize.Small ? picture?.GetImageSmall() : picture?.GetImageLarge(),
                 DisplayStyle = toolBar.ButtonStyle,
                 ImageScaling = ToolStripItemImageScaling.None,
                 TextImageRelation = TextImageRelation.ImageAboveText,
-                Tag = "user-defined|user-defined"
+                Tag = $"{command.Code}|user-defined"
             };
         }
 

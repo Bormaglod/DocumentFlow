@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CSharp;
+using Inflector;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data.Entities;
 
@@ -41,8 +42,28 @@ namespace DocumentFlow.Code.Data
                     return codes[command];
                 }
 
-                var compiler = new CSharpCodeProvider();
-                var parameters = new CompilerParameters();
+                // Хак для запуска c# 8.0
+                // https://www.rsdn.org/forum/dotnet/7427760
+                //
+                var compiler = new CSharpCodeProvider(new Dictionary<string, string>
+                {
+                    ["CompilerDirectoryPath"] = @"c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Roslyn",
+                });
+
+                var parameters = new CompilerParameters
+                {
+                    GenerateInMemory = true,
+                    GenerateExecutable = false,
+#if DEBUG
+                    OutputAssembly = command.EntityKind == null ? command.code.Replace('-', '_').Pascalize() : command.EntityKind.code.Pascalize(),
+                    IncludeDebugInformation = true,
+#endif
+                    CompilerOptions = " -langversion:8.0 -optimize+ "
+                };
+
+#if DEBUG
+                parameters.CompilerOptions += $" -embed ";
+#endif
 
                 parameters.ReferencedAssemblies.AddRange(new string[] {
                     "System.dll",
@@ -55,10 +76,36 @@ namespace DocumentFlow.Code.Data
                     "DocumentFlow.Core.dll",
                     "DocumentFlow.Data.Entities.dll" });
 
-                parameters.GenerateInMemory = true;
-                parameters.GenerateExecutable = false;
+                var csprovider = new CSharpCodeProvider();
 
-                CompilerResults results = compiler.CompileAssemblyFromSource(parameters, command.script);
+                string code;
+                int ns_idx = command.script.IndexOf("namespace");
+                if (ns_idx > 0)
+                {
+                    StringBuilder builder = new StringBuilder();
+
+                    string using_text = command.script.Substring(0, ns_idx);
+
+
+                    builder.AppendLine(using_text);
+
+                    if (using_text.IndexOf("System.Reflection") == -1)
+                    {
+                        builder.AppendLine("using System.Reflection;");
+                    }
+
+                    builder.AppendLine("[assembly: DatabaseScript()]");
+                    builder.AppendLine("[assembly: AssemblyVersion(\"1.0.0.0\")]");
+
+                    builder.Append(command.script.Substring(ns_idx));
+                    code = builder.ToString();
+                }
+                else
+                {
+                    code = command.script;
+                }
+
+                CompilerResults results = compiler.CompileAssemblyFromSource(parameters, code);
                 if (results.Errors.HasErrors)
                 {
                     var sb = new StringBuilder();

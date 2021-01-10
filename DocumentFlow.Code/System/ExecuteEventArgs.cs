@@ -12,10 +12,35 @@ namespace DocumentFlow.Code.System
 {
     public class ExecuteEventArgs : EventArgs
     {
-        public ExecuteEventArgs(IBrowser browser) => Browser = browser;
-        public ExecuteEventArgs(IEditor editor) => Editor = editor;
+        private readonly IBrowser browser;
+        private readonly IEditor editor;
 
-        public IBrowser Browser { get; }
-        public IEditor Editor { get; }
+        public ExecuteEventArgs(IBrowser browser) => this.browser = browser;
+        public ExecuteEventArgs(IEditor editor) => this.editor = editor;
+
+        public IBrowser Browser 
+        { 
+            get
+            {
+                if (browser == null)
+                {
+                    throw new Exception("Значение Browser не определено. Возможно необходимо использовать свойство Editor.");
+                }
+
+                return browser;
+            }
+        }
+        public IEditor Editor 
+        { 
+            get
+            {
+                if (editor == null)
+                {
+                    throw new Exception("Значение Editor не определено. Возможно необходимо использовать свойство Browser.");
+                }
+
+                return editor;
+            }
+        }
     }
 }

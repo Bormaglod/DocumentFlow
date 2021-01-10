@@ -44,7 +44,7 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => textBoxExt.Width; set => textBoxExt.Width = value; }
 
-        object IEditControl.Value 
+        object IValuable.Value 
         {
             get => Nullable ? textBoxExt.Text.NullIfEmpty() : textBoxExt.Text;
             set => textBoxExt.Text = value == null ? string.Empty : value.ToString();

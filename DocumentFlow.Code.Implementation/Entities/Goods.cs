@@ -28,6 +28,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
         public decimal calc_price { get; set; }
         public DateTime? approved { get; set; }
 		public decimal? balance { get; set; }
+		public bool goods_use { get; protected set; }
     }
 
     public class GoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -61,15 +62,14 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                         order by history.changed desc
                         limit 1
                 ) as approved,
-                case 
-   				when goods_sum.balance = 0 then null
-   				else goods_sum.balance
-				end as balance
+				null_if_default(goods_sum.balance) as balance,
+				cig.item_id is not null as goods_use
             from goods g
                 join status s ON s.id = g.status_id
                 left join measurement m on g.measurement_id = m.id
                 left join goods_sum on (g.id = goods_sum.id)
                 left join calculation c on c.owner_id = g.id and c.status_id = 1002
+				left join (select distinct item_id from calc_item_goods where status_id = 1001) cig on (cig.item_id = g.id)
             where {0}";
 
         void IBrowserCode.Initialize(IBrowser browser)
@@ -172,6 +172,10 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                     .SetVisibility(false)
                     .SetHorizontalAlignment(HorizontalAlignment.Right);
 
+				columns.CreateBoolean("goods_use", "Используется")
+					.SetWidth(120)
+                    .SetVisibility(false);
+
                 columns.CreateSortedColumns()
                     .Add("code", ListSortDirection.Ascending);
             });
@@ -179,10 +183,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
             browser.ChangeParent += Browser_ChangeParent;
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new GoodsEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new GoodsEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
@@ -201,10 +202,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
 
         private void Browser_ChangeParent(object sender, ChangeParentEventArgs e)
         {
-#pragma warning disable IDE0019 // Используйте сопоставление шаблонов
-            IBrowser browser = sender as IBrowser;
-#pragma warning restore IDE0019 // Используйте сопоставление шаблонов
-            if (browser != null)
+            if (sender is IBrowser browser)
             {
                 string root = string.Empty;
                 if (browser.Parameters.ParentId.HasValue)
@@ -221,7 +219,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                     browser.Columns[column].Visibility = root == "Прд";
                 }
 
-                foreach (string column in new string[] { "code", "abbreviation", "price", "tax", "balance" })
+                foreach (string column in new string[] { "code", "abbreviation", "price", "tax", "balance", "goods_use" })
                 {
                     browser.Columns[column].Visibility = !string.IsNullOrEmpty(root);
                 }
@@ -265,7 +263,10 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
 
-            IControl tax = editor.CreateChoice("tax", "НДС", new Dictionary<int, string>() { { 0, "Без НДС" }, { 10, "10%" }, { 20, "20%" } })
+            IControl tax = editor.CreateChoice("tax", "НДС", new Dictionary<int, string>() { 
+                [0] = "Без НДС",
+                [10] = "10%",
+                [20] = "20%" })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
 

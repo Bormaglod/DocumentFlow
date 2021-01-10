@@ -101,10 +101,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemDeductionImp
             });
         }
 
-        IEditorCode IDataEditor.CreateEditor()
-        {
-            return new CalcItemDeductionEditor();
-        }
+        IEditorCode IDataEditor.CreateEditor() => new CalcItemDeductionEditor();
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {

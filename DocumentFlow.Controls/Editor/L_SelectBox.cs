@@ -50,7 +50,7 @@ namespace DocumentFlow.Controls.Editor
 
         int IEditControl.Width { get => panelEdit.Width; set => panelEdit.Width = value; }
 
-        object IEditControl.Value
+        object IValuable.Value
         {
             get
             {

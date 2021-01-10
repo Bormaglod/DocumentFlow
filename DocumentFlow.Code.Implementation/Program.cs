@@ -11,6 +11,7 @@ namespace DocumentFlow.Code.Implementation
 {
     class Cmd
     {
+        public Guid id { get; set; }
         public DateTime date_updated { get; set; }
         public string script { get; set; }
     }
@@ -59,8 +60,18 @@ namespace DocumentFlow.Code.Implementation
                             DateTime dtFile = File.GetLastWriteTime(file);
 
                             string code = Path.GetFileNameWithoutExtension(file).Underscore();
-                            Guid id = conn.QuerySingle<Guid>("select id from entity_kind where code = :code", new { code });
-                            Cmd cmd = conn.QuerySingle<Cmd>("select date_updated, script from command where entity_kind_id = :id", new { id });
+                            Guid id = conn.QuerySingleOrDefault<Guid>("select id from entity_kind where code = :code", new { code });
+
+                            Cmd cmd;
+                            if (id == default)
+                            {
+                                code = code.Replace('_', '-');
+                                cmd = conn.QuerySingle<Cmd>("select id, date_updated, script from command where code = :code", new { code });
+                            }
+                            else
+                            {
+                                cmd = conn.QuerySingle<Cmd>("select id, date_updated, script from command where entity_kind_id = :id", new { id });
+                            }
                             
                             if (DatetimeCompare(dtFile, cmd.date_updated) == 0)
                                 Console.WriteLine($"{code,-26} is EQUAL");
@@ -74,7 +85,9 @@ namespace DocumentFlow.Code.Implementation
                                 }
                                 else
                                 {
-                                    int cnt = conn.Execute("update command set script = :script, date_updated = :date_updated where entity_kind_id = :id", new { script = File.ReadAllText(file), date_updated = dtFile, id }, transaction);
+                                    cmd.script = File.ReadAllText(file);
+                                    cmd.date_updated = dtFile;
+                                    int cnt = conn.Execute("update command set script = :script, date_updated = :date_updated where id = :id", cmd, transaction);
 
                                     string res = cnt == 1 ? "OK" : "Fail";
                                     Console.WriteLine($"{code,-26} >> to DATABASE, {res}");
