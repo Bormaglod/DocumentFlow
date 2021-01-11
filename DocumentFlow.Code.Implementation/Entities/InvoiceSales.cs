@@ -307,7 +307,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
 
                         if (editor.Entity is InvoiceSales i_s)
                         {
-                            conn.Execute("select fill_invoice_details('production_order', :purchase_id, :invoice_id)", new { invoice_id = i_s.id, purchase_id = e.Value });
+                            conn.Execute("call fill_invoice_details('production_order', :purchase_id, :invoice_id)", new { invoice_id = i_s.id, purchase_id = e.Value });
                             editor.Populates["datagrid"].Populate(conn, editor.Entity);
                         }
                     }
@@ -492,7 +492,10 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
 
-            IControl tax = editor.CreateChoice("tax", "НДС%", new Dictionary<int, string>() { { 0, "Без НДС" }, { 10, "10%" }, { 20, "20%" } })
+            IControl tax = editor.CreateChoice("tax", "НДС%", new Dictionary<int, string>() {
+                [0] = "Без НДС",
+                [10] = "10%",
+                [20] = "20%" })
                 .ValueChangedAction((s, e) =>
                 {
                     int tax_percent = Convert.ToInt32(e.Value);

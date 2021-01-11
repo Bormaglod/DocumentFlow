@@ -306,8 +306,8 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
 
         object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            string sql = "insert into goods default values returning id";
-            return connection.QuerySingle<Guid>(sql, transaction: transaction);
+            string sql = "insert into goods (parent_id) values (:parent_id) returning id";
+            return connection.QuerySingle<Guid>(sql, new { parent_id = parameters.ParentId }, transaction: transaction);
         }
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)

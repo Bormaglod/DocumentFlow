@@ -305,13 +305,13 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
         {
             if (dataName == "amountCheckLabel")
             {
-                return new string[] { "correct", "corrected" }.Contains(info.StatusCode);
+                return new string[] { "compiled", "is changing", "corrected" }.Contains(info.StatusCode);
             }
 
             return true;
         }
 
-        void IActionStatus.StatusValueChanged(IValueEditor editor, IDatabase database, IInformation info)
+        void IActionStatus.ActionStatusChanged(IValueEditor editor, IDatabase database, IInformation info, ActionStatus actionStatus)
         {
             UpdateAmountCheckLabel(editor, database);
         }

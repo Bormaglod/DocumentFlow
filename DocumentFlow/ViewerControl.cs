@@ -122,8 +122,6 @@ namespace DocumentFlow
         private DateRanges fromDate;
         private DateRanges toDate;
         private readonly GridColumnCollection columns;
-        /*private ToolBarData toolBarData;
-        private Dictionary<string, ContextMenuData> contextMenuData;*/
         private Dictionary<string, ToolStripData> toolStripData;
         private Guid? parentId;
         private CommandCollection commandCollection;

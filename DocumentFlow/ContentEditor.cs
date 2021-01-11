@@ -533,10 +533,6 @@ namespace DocumentFlow
             }
 
             RefreshPage();
-            if (command.Editor() is IActionStatus action)
-            {
-                action.StatusValueChanged(editorData, new Database(), GetInformation());
-            }
         }
 
         private bool UpdateEntity()
@@ -673,6 +669,10 @@ namespace DocumentFlow
                 UpdateCurrentStatusInfo();
                 PopulateControls();
                 CreateActionButtons();
+                if (command.Editor() is IActionStatus action)
+                {
+                    action.ActionStatusChanged(editorData, database, GetInformation(), ActionStatus.Refresh);
+                }
             }
             finally
             {
@@ -703,6 +703,10 @@ namespace DocumentFlow
                 command.Editor().Initialize(editorData, database, this);
                 PopulateControls();
                 CreateActionButtons();
+                if (command.Editor() is IActionStatus action)
+                {
+                    action.ActionStatusChanged(editorData, database, GetInformation(), ActionStatus.Initialize);
+                }
             }
             finally
             {

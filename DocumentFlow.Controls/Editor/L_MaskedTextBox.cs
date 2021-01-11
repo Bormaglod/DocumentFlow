@@ -47,12 +47,21 @@ namespace DocumentFlow.Controls.Editor
         {
             get
             {
-                T valueData = (T)Convert.ChangeType(maskedEditBox1.Text, typeof(T));
+                try
+                {
+                    T valueData = (T)Convert.ChangeType(maskedEditBox1.Text, typeof(T));
+                    if (Nullable && valueData.CompareTo(default) == 0)
+                        return null;
 
-                if (Nullable && valueData.CompareTo(default) == 0)
-                    return null;
-
-                return valueData;
+                    return valueData;
+                }
+                catch (Exception)
+                {
+                    if (Nullable)
+                        return null;
+                    
+                    return default(T);
+                }
             }
 
             set => maskedEditBox1.Text = value == null ? string.Empty : value.ToString();
@@ -83,7 +92,7 @@ namespace DocumentFlow.Controls.Editor
             ValueChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private void DecimalText_DecimalValueChanged(object sender, EventArgs e)
+        private void maskedEditBox1_TextChanged(object sender, EventArgs e)
         {
             OnValueChanged();
         }

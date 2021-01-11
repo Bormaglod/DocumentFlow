@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
+
 using Dapper;
+
 using DocumentFlow.Code.System;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Entities;
@@ -102,7 +104,9 @@ namespace DocumentFlow.Code.Implementation.DeductionImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(400);
 
-            IControl accrual_base = editor.CreateChoice("accrual_base", "База для начисления", new Dictionary<int, string>() { { 1, "Материалы" }, { 2, "ФОТ" } })
+            IControl accrual_base = editor.CreateChoice("accrual_base", "База для начисления", new Dictionary<int, string>() {
+                [1] = "Материалы",
+                [2] = "ФОТ"})
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(180);
 

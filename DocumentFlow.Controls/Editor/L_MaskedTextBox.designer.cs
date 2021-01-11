@@ -54,6 +54,7 @@
             this.maskedEditBox1.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Metro;
             this.maskedEditBox1.TabIndex = 3;
             this.maskedEditBox1.ThemeName = "Metro";
+            this.maskedEditBox1.TextChanged += new System.EventHandler(this.maskedEditBox1_TextChanged);
             // 
             // L_MaskedTextBox
             // 

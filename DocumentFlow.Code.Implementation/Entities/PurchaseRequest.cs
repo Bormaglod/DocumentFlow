@@ -400,7 +400,10 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 .SetLabelWidth(labelWidth)
                 .SetFitToSize(true);
 
-            IControl tax = editor.CreateChoice("tax", "НДС%", new Dictionary<int, string>() { { 0, "Без НДС" }, { 10, "10%" }, { 20, "20%" } })
+            IControl tax = editor.CreateChoice("tax", "НДС%", new Dictionary<int, string>() {
+                [0] = "Без НДС",
+                [10] = "10%",
+                [20] = "20%" })
                 .ValueChangedAction((s, e) =>
                 {
                     int tax_percent = Convert.ToInt32(e.Value);

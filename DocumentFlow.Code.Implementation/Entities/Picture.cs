@@ -126,8 +126,8 @@ namespace DocumentFlow.Code.Implementation.PictureImp
 
         object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)
         {
-            string sql = "insert into picture (owner_id) values (:owner_id) returning id";
-            return connection.QuerySingle<Guid>(sql, new { owner_id = parameters.OwnerId }, transaction: transaction);
+            string sql = "insert into picture (parent_id) values (:parent_id) returning id";
+            return connection.QuerySingle<Guid>(sql, new { parent_id = parameters.ParentId }, transaction: transaction);
         }
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)

@@ -116,7 +116,9 @@ namespace DocumentFlow.Code.Implementation.ContractImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(250);
 
-            IControl contract_type = editor.CreateChoice("contractor_type_value", "Тип договора", new Dictionary<int, string>() { {1, "С продавцом" }, { 2, "С покупателем" } })
+            IControl contract_type = editor.CreateChoice("contractor_type_value", "Тип договора", new Dictionary<int, string>() { 
+                [1] = "С продавцом" , 
+                [2] = "С покупателем" })
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(330);
 

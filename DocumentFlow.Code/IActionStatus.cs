@@ -8,6 +8,8 @@
 
 namespace DocumentFlow.Code
 {
+    public enum ActionStatus { Initialize, Refresh }
+
     /// <summary>
     /// Интерфейс служит для определения действий возникающих после изменения статуса документа.
     /// </summary>
@@ -19,6 +21,7 @@ namespace DocumentFlow.Code
         /// <param name="editor"></param>
         /// <param name="database"></param>
         /// <param name="info"></param>
-        void StatusValueChanged(IValueEditor editor, IDatabase database, IInformation info);
+        /// <param name="actionStatus"></param>
+        void ActionStatusChanged(IValueEditor editor, IDatabase database, IInformation info, ActionStatus actionStatus);
     }
 }
