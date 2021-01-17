@@ -7,10 +7,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Base;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
 {
@@ -27,10 +25,8 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         public decimal cost_with_tax { get; protected set; }
     }
 
-    public class PurchaseRequestDetail : IDetail
+    public class PurchaseRequestDetail : DetailEntity
     {
-        public long id { get; protected set; }
-        public Guid owner_id { get; set; }
         public Guid goods_id { get; set; }
         public string goods_name { get; protected set; }
         public decimal amount { get; set; }
@@ -39,7 +35,6 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
         public int tax { get; set; }
         public decimal tax_value { get; set; }
         public decimal cost_with_tax { get; set; }
-        object IIdentifier.oid => id;
     }
 
     public class PurchaseRequestBrowser : IBrowserCode, IBrowserOperation, IDataEditor

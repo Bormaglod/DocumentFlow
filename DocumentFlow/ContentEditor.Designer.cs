@@ -499,6 +499,7 @@
             // 
             // textBoxUpdater
             // 
+            this.textBoxUpdater.BeforeTouchSize = new System.Drawing.Size(484, 25);
             this.textBoxUpdater.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(211)))), ((int)(((byte)(212)))));
             this.textBoxUpdater.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxUpdater.Enabled = false;
@@ -522,6 +523,7 @@
             // 
             // textBoxCreator
             // 
+            this.textBoxCreator.BeforeTouchSize = new System.Drawing.Size(484, 25);
             this.textBoxCreator.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(211)))), ((int)(((byte)(212)))));
             this.textBoxCreator.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxCreator.Enabled = false;
@@ -545,6 +547,7 @@
             // 
             // textBoxID
             // 
+            this.textBoxID.BeforeTouchSize = new System.Drawing.Size(484, 25);
             this.textBoxID.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(211)))), ((int)(((byte)(212)))));
             this.textBoxID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxID.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -594,8 +597,8 @@
             this.dateTimeCreate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeCreate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-159348, 0);
-            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(159523, 25);
+            this.dateTimeCreate.Calendar.NoneButton.Location = new System.Drawing.Point(-185935, 0);
+            this.dateTimeCreate.Calendar.NoneButton.Size = new System.Drawing.Size(186110, 25);
             this.dateTimeCreate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -606,7 +609,7 @@
             this.dateTimeCreate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeCreate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeCreate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-159348, 25);
+            this.dateTimeCreate.Calendar.TodayButton.Size = new System.Drawing.Size(-185935, 25);
             this.dateTimeCreate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeCreate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeCreate.CalendarSize = new System.Drawing.Size(189, 176);
@@ -677,8 +680,8 @@
             this.dateTimeUpdate.Calendar.NoneButton.AutoSize = true;
             this.dateTimeUpdate.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.NoneButton.ForeColor = System.Drawing.Color.White;
-            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-159348, 0);
-            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(159523, 25);
+            this.dateTimeUpdate.Calendar.NoneButton.Location = new System.Drawing.Point(-185935, 0);
+            this.dateTimeUpdate.Calendar.NoneButton.Size = new System.Drawing.Size(186110, 25);
             this.dateTimeUpdate.Calendar.NoneButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.NoneButton.UseVisualStyle = true;
             // 
@@ -689,7 +692,7 @@
             this.dateTimeUpdate.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
             this.dateTimeUpdate.Calendar.TodayButton.ForeColor = System.Drawing.Color.White;
             this.dateTimeUpdate.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-159348, 25);
+            this.dateTimeUpdate.Calendar.TodayButton.Size = new System.Drawing.Size(-185935, 25);
             this.dateTimeUpdate.Calendar.TodayButton.ThemeName = "Metro";
             this.dateTimeUpdate.Calendar.TodayButton.UseVisualStyle = true;
             this.dateTimeUpdate.CalendarSize = new System.Drawing.Size(189, 176);

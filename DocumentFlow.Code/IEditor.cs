@@ -10,8 +10,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code
 {

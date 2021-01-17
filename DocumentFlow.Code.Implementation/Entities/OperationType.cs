@@ -4,9 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.OperationTypeImp
 {

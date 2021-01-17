@@ -13,10 +13,10 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using DocumentFlow.Code;
+using DocumentFlow.Code.Core;
 using DocumentFlow.Code.Implementation;
-using DocumentFlow.Code.System;
 using DocumentFlow.Core;
-using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Controls.Editor.Code
 {

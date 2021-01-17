@@ -13,18 +13,19 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Code;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Entities;
+using DocumentFlow.Interfaces;
 
 namespace DocumentFlow
 {
     public abstract class ToolStripData : ITool
     {
-        private readonly Dictionary<ICommand, ToolStripItem> items = new Dictionary<ICommand, ToolStripItem>();
-        private readonly CommandCollection commands;
+        private readonly Dictionary<IUserAction, ToolStripItem> items = new Dictionary<IUserAction, ToolStripItem>();
+        private readonly UserActionCollection commands;
 
-        public ToolStripData(ToolStrip toolStrip, CommandCollection commandCollection)
+        public ToolStripData(ToolStrip toolStrip, UserActionCollection commandCollection)
         {
             ToolStrip = toolStrip;
             commands = commandCollection;
@@ -49,8 +50,7 @@ namespace DocumentFlow
                     continue;
 
                 var (CommandName, _) = GetCommandComponents(item.Tag.ToString());
-                var ci = commands.Get(CommandName) as CommandItem;
-                if (ci == null)
+                if (!(commands.Get(CommandName) is UserAction ci))
                 {
                     ci = commands.Add(CommandMethod.Embedded, CommandName);
                 }
@@ -65,11 +65,11 @@ namespace DocumentFlow
             UpdateButtonVisibleStatus();
         }
 
-        public IEnumerable<ICommand> Commands => items.Keys;
+        public IEnumerable<IUserAction> Commands => items.Keys;
 
-        bool ITool.Contains(ICommand command) => items.ContainsKey(command);
+        bool ITool.Contains(IUserAction command) => items.ContainsKey(command);
 
-        void ITool.AddCommand(ICommand command)
+        void ITool.AddCommand(IUserAction command)
         {
             var item = AddToolStripItem(command);
             switch (command.Method)
@@ -89,7 +89,7 @@ namespace DocumentFlow
 
         protected ToolStrip ToolStrip { get; }
 
-        protected ToolStripItem this[ICommand command] => items[command];
+        protected ToolStripItem this[IUserAction command] => items[command];
 
         public void UpdateButtonVisibleStatus()
         {
@@ -121,7 +121,7 @@ namespace DocumentFlow
                     if (item is ToolStripSeparator)
                         continue;
 
-                    ICommand c = items.FirstOrDefault(x => x.Value == item).Key;
+                    IUserAction c = items.FirstOrDefault(x => x.Value == item).Key;
                     if (c == null || c.Visible)
                     {
                         visibles++;
@@ -136,11 +136,11 @@ namespace DocumentFlow
             }
         }
 
-        protected abstract ToolStripItem CreateToolStripItem(ICommand command, Picture picture);
+        protected abstract ToolStripItem CreateToolStripItem(IUserAction command, Picture picture);
 
-        protected abstract void UpdateToolStripItem(ICommand command, Picture picture);
+        protected abstract void UpdateToolStripItem(IUserAction command, Picture picture);
 
-        protected Picture GetCommandPicture(ICommand command)
+        protected Picture GetCommandPicture(IUserAction command)
         {
             var c = commands.GetCommand(command);
             if (c == null)
@@ -175,7 +175,7 @@ namespace DocumentFlow
             }
         }
 
-        private ToolStripItem AddToolStripItem(ICommand command)
+        private ToolStripItem AddToolStripItem(IUserAction command)
         {
             
             var item = CreateToolStripItem(command, GetCommandPicture(command));
@@ -192,7 +192,7 @@ namespace DocumentFlow
 
         private void Notify_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (sender is ICommand command && items.ContainsKey(command))
+            if (sender is IUserAction command && items.ContainsKey(command))
             {
                 switch (e.PropertyName)
                 {
@@ -217,7 +217,7 @@ namespace DocumentFlow
             if (sender is ToolStripItem item)
             {
                 var command = items.FirstOrDefault(x => x.Value == item).Key;
-                if (command is ICommandExecutor executor)
+                if (command is IExecutor executor)
                 {
                     executor.Execute();
                 }
@@ -229,7 +229,7 @@ namespace DocumentFlow
             if (sender is ToolStripItem item)
             {
                 var command = items.FirstOrDefault(x => x.Value == item).Key;
-                if (command is ICommandExecutor executor)
+                if (command is IExecutor executor)
                 {
                     commands.Execute(command.Code, executor.GetParameters());
                 }

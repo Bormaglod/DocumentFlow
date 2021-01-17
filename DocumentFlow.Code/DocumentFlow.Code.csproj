@@ -34,35 +34,32 @@
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.2.0.78\lib\net461\Dapper.dll</HintPath>
     </Reference>
-    <Reference Include="Inflector, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Inflector.1.0.0.0\lib\net45\Inflector.dll</HintPath>
+    <Reference Include="Syncfusion.Core.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Core.WinForms.18.4.0.34\lib\net46\Syncfusion.Core.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.Core.WinForms, Version=18.4460.0.32, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Core.WinForms.18.4.0.32\lib\net46\Syncfusion.Core.WinForms.dll</HintPath>
+    <Reference Include="Syncfusion.Data.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Data.WinForms.18.4.0.34\lib\net46\Syncfusion.Data.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.Data.WinForms, Version=18.4460.0.32, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Data.WinForms.18.4.0.32\lib\net46\Syncfusion.Data.WinForms.dll</HintPath>
+    <Reference Include="Syncfusion.DataSource.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.DataSource.WinForms.18.4.0.34\lib\net46\Syncfusion.DataSource.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.DataSource.WinForms, Version=18.4460.0.32, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.DataSource.WinForms.18.4.0.32\lib\net46\Syncfusion.DataSource.WinForms.dll</HintPath>
+    <Reference Include="Syncfusion.GridCommon.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.GridCommon.WinForms.18.4.0.34\lib\net46\Syncfusion.GridCommon.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.GridCommon.WinForms, Version=18.4460.0.32, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.GridCommon.WinForms.18.4.0.32\lib\net46\Syncfusion.GridCommon.WinForms.dll</HintPath>
+    <Reference Include="Syncfusion.Licensing, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Licensing.18.4.0.34\lib\net46\Syncfusion.Licensing.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.Licensing, Version=18.4460.0.32, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Licensing.18.4.0.32\lib\net46\Syncfusion.Licensing.dll</HintPath>
+    <Reference Include="Syncfusion.SfDataGrid.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.SfDataGrid.WinForms.18.4.0.34\lib\net46\Syncfusion.SfDataGrid.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.SfDataGrid.WinForms, Version=18.4460.0.32, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfDataGrid.WinForms.18.4.0.32\lib\net46\Syncfusion.SfDataGrid.WinForms.dll</HintPath>
+    <Reference Include="Syncfusion.SfInput.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.SfInput.WinForms.18.4.0.34\lib\net46\Syncfusion.SfInput.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.SfInput.WinForms, Version=18.4460.0.32, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfInput.WinForms.18.4.0.32\lib\net46\Syncfusion.SfInput.WinForms.dll</HintPath>
+    <Reference Include="Syncfusion.SfListView.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.SfListView.WinForms.18.4.0.34\lib\net46\Syncfusion.SfListView.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.SfListView.WinForms, Version=18.4460.0.32, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfListView.WinForms.18.4.0.32\lib\net46\Syncfusion.SfListView.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Shared.Base, Version=18.4460.0.32, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Shared.Base.18.4.0.32\lib\net46\Syncfusion.Shared.Base.dll</HintPath>
+    <Reference Include="Syncfusion.Shared.Base, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Shared.Base.18.4.0.34\lib\net46\Syncfusion.Shared.Base.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,7 +67,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
@@ -78,9 +74,7 @@
   <ItemGroup>
     <Compile Include="Controls\CustomGridTableSummaryRenderer.cs" />
     <Compile Include="Controls\GridDecimalColumn.cs" />
-    <Compile Include="Core\PopulateControlException.cs" />
-    <Compile Include="Data\CodeContent.cs" />
-    <Compile Include="Data\CommandExtension.cs" />
+    <Compile Include="Exceptions\PopulateControlException.cs" />
     <Compile Include="IActionStatus.cs" />
     <Compile Include="IBrowserOperation.cs" />
     <Compile Include="IChangingStatus.cs" />
@@ -123,20 +117,19 @@
     <Compile Include="IValuable.cs" />
     <Compile Include="IValueControl.cs" />
     <Compile Include="IValueEditor.cs" />
-    <Compile Include="System\DatabaseScriptAttribute.cs" />
-    <Compile Include="System\ValueChangedEventArgs.cs" />
-    <Compile Include="System\ChangeParentEventArgs.cs" />
-    <Compile Include="System\ColumnDescriptionAttribute.cs" />
-    <Compile Include="System\Enums.cs" />
-    <Compile Include="System\ExecuteEventArgs.cs" />
-    <Compile Include="System\GettingParametersEventArgs.cs" />
+    <Compile Include="Core\DatabaseScriptAttribute.cs" />
+    <Compile Include="Core\ValueChangedEventArgs.cs" />
+    <Compile Include="Core\ChangeParentEventArgs.cs" />
+    <Compile Include="Core\Enums.cs" />
+    <Compile Include="Core\ExecuteEventArgs.cs" />
+    <Compile Include="Core\GettingParametersEventArgs.cs" />
     <Compile Include="IBindingControl.cs" />
     <Compile Include="IBrowser.cs" />
     <Compile Include="IBrowserParameters.cs" />
     <Compile Include="IBrowserCode.cs" />
     <Compile Include="IColumn.cs" />
     <Compile Include="IColumnCollection.cs" />
-    <Compile Include="ICommand.cs" />
+    <Compile Include="IUserAction.cs" />
     <Compile Include="ICommandCollection.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="IControl.cs" />
@@ -157,9 +150,9 @@
       <Project>{acca0ba9-e646-44f2-bcec-fe269a109983}</Project>
       <Name>DocumentFlow.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data.Entities\DocumentFlow.Data.Entities.csproj">
-      <Project>{b93432c6-6884-46d2-ba9d-7a33bf687374}</Project>
-      <Name>DocumentFlow.Data.Entities</Name>
+    <ProjectReference Include="..\DocumentFlow.Data.Core\DocumentFlow.Data.Core.csproj">
+      <Project>{9b748542-b33a-40c9-a589-e2c2d9644dd0}</Project>
+      <Name>DocumentFlow.Data.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

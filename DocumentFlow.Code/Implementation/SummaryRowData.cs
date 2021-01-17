@@ -8,7 +8,7 @@
 
 using Syncfusion.Data;
 using Syncfusion.WinForms.DataGrid;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 using DocumentFlow.Core;
 
 namespace DocumentFlow.Code.Implementation

@@ -10,6 +10,7 @@ namespace DocumentFlow
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Data;
     using System.IO;
     using System.Linq;
@@ -25,7 +26,8 @@ namespace DocumentFlow
 
     public partial class SelectEmailWindow : MetroForm
     {
-        private IEnumerable<string> attachments = null;
+        private readonly BindingList<string> attachments = new BindingList<string>();
+
         private class EmailAddress
         {
             public string Name { get; set; }
@@ -58,7 +60,9 @@ namespace DocumentFlow
             textSubject.Text = title;
             string attachment = title.Replace('/', '-').Replace('\\', '-') + ".pdf";
             if (File.Exists(Path.GetTempPath() + attachment))
-                attachments = new string[] { attachment };
+            {
+                attachments.Add(attachment);
+            }
 
             listFiles.DataSource = attachments;
             
@@ -106,7 +110,7 @@ namespace DocumentFlow
                     builder.HtmlBody = string.Format("<br/>{0}", email.signature_html);
                 }
 
-                if (attachments != null &&  attachments.Any())
+                if (attachments.Any())
                 {
                     foreach (string fileName in attachments)
                     {
@@ -152,6 +156,25 @@ namespace DocumentFlow
                 }
 
                 SendEmailAsync(email, from, to, textSubject.Text, attachments).GetAwaiter();
+            }
+        }
+
+        private void buttonAdd_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                foreach (string file in openFileDialog1.FileNames)
+                {
+                    attachments.Add(file);
+                }
+            }
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            if (listFiles.SelectedItem is string file)
+            {
+                attachments.Remove(file);
             }
         }
     }

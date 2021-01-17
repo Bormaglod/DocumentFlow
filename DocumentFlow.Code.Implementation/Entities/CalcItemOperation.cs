@@ -4,10 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Base;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
 {
@@ -26,17 +24,14 @@ namespace DocumentFlow.Code.Implementation.CalcItemOperationImp
         public decimal produced_time { get; set; }
     }
 
-    public class UsedMaterial : IDetail
+    public class UsedMaterial : DetailEntity
     {
-        public long id { get; protected set; }
         public Guid calc_item_operation_id { get; set; }
         public Guid goods_id { get; set; }
         public string goods_name { get; protected set; }
         public decimal count_by_goods { get; set; }
         public decimal count_by_operation { get; set; }
-
-        Guid IDetail.owner_id => calc_item_operation_id;
-        object IIdentifier.oid => id;
+        new public Guid owner_id => calc_item_operation_id;
     }
 
     public class CalcItemOperationBrowser : IBrowserCode, IBrowserOperation, IDataEditor

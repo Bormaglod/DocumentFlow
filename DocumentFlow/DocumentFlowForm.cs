@@ -13,8 +13,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using DocumentFlow.Authorization;
-using DocumentFlow.Code.Data;
+using DocumentFlow.Core;
 using DocumentFlow.Data;
+using DocumentFlow.Interfaces;
 using DocumentFlow.Properties;
 
 namespace DocumentFlow

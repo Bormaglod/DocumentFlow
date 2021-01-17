@@ -7,10 +7,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Base;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 {
@@ -31,7 +29,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         public decimal cost_with_tax { get; protected set; }
     }
 
-    public class InvoiceReceiptDetail : Detail
+    public class InvoiceReceiptDetail : DetailEntity
     {
         public Guid goods_id { get; set; }
         public string goods_name { get; protected set; }

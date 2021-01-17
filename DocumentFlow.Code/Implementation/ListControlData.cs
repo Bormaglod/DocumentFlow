@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
-using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation
 {

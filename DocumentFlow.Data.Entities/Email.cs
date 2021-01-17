@@ -6,7 +6,7 @@
 // Time: 13:31
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Base;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Data.Entities
 {

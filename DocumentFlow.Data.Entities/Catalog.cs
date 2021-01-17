@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using DocumentFlow.Data.Base;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Data.Entities
 {

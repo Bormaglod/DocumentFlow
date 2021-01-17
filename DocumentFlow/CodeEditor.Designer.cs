@@ -30,15 +30,15 @@
         {
             Syncfusion.Windows.Forms.Edit.Implementation.Config.Config config1 = new Syncfusion.Windows.Forms.Edit.Implementation.Config.Config();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.tabSplitterContainer1 = new Syncfusion.Windows.Forms.Tools.TabSplitterContainer();
+            this.buttonSave = new System.Windows.Forms.ToolStripButton();
+            this.buttonSaveAndClose = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.buttonCompile = new System.Windows.Forms.ToolStripButton();
+            this.tabSplitterContainer1 = new Syncfusion.Windows.Forms.Tools.TabSplitterContainer();
             this.tabSplitterPage1 = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
             this.editControl = new Syncfusion.Windows.Forms.Edit.EditControl();
             this.tabSplitterPage2 = new Syncfusion.Windows.Forms.Tools.TabSplitterPage();
             this.gridErrors = new Syncfusion.WinForms.DataGrid.SfDataGrid();
-            this.buttonSave = new System.Windows.Forms.ToolStripButton();
-            this.buttonSaveAndClose = new System.Windows.Forms.ToolStripButton();
-            this.buttonCompile = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.tabSplitterContainer1.SuspendLayout();
             this.tabSplitterPage1.SuspendLayout();
@@ -60,6 +60,44 @@
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
+            // buttonSave
+            // 
+            this.buttonSave.Image = global::DocumentFlow.Properties.Resources.icons8_save_30;
+            this.buttonSave.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.buttonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(70, 49);
+            this.buttonSave.Text = "Сохранить";
+            this.buttonSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
+            // buttonSaveAndClose
+            // 
+            this.buttonSaveAndClose.Image = global::DocumentFlow.Properties.Resources.icons8_save_close_30;
+            this.buttonSaveAndClose.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.buttonSaveAndClose.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonSaveAndClose.Name = "buttonSaveAndClose";
+            this.buttonSaveAndClose.Size = new System.Drawing.Size(127, 49);
+            this.buttonSaveAndClose.Text = "Сохранить и закрыть";
+            this.buttonSaveAndClose.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.buttonSaveAndClose.Click += new System.EventHandler(this.buttonSaveAndClose_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 52);
+            // 
+            // buttonCompile
+            // 
+            this.buttonCompile.Image = global::DocumentFlow.Properties.Resources.icons8_assembly_line_30;
+            this.buttonCompile.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.buttonCompile.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonCompile.Name = "buttonCompile";
+            this.buttonCompile.Size = new System.Drawing.Size(81, 49);
+            this.buttonCompile.Text = "Компиляция";
+            this.buttonCompile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.buttonCompile.Click += new System.EventHandler(this.buttonCompile_Click);
+            // 
             // tabSplitterContainer1
             // 
             this.tabSplitterContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -74,11 +112,6 @@
             this.tabSplitterContainer1.SplitterBackColor = System.Drawing.SystemColors.Control;
             this.tabSplitterContainer1.SplitterPosition = 242;
             this.tabSplitterContainer1.TabIndex = 2;
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 52);
             // 
             // tabSplitterPage1
             // 
@@ -108,7 +141,7 @@
             this.editControl.GraphicsSmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             this.editControl.GraphicsTextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
             this.editControl.IndicatorMarginBackColor = System.Drawing.Color.Empty;
-            this.editControl.LineNumbersColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.editControl.LineNumbersColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(212)))));
             this.editControl.LineNumbersFont = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.editControl.Location = new System.Drawing.Point(0, 0);
             this.editControl.Name = "editControl";
@@ -136,6 +169,7 @@
             this.editControl.TabSize = 4;
             this.editControl.Text = "";
             this.editControl.ThemeName = "Office2016Colorful";
+            this.editControl.ThemeStyle.LineNumberFont = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.editControl.UseXPStyle = false;
             this.editControl.UseXPStyleBorder = true;
             this.editControl.VisualColumn = 1;
@@ -168,39 +202,7 @@
             this.gridErrors.Size = new System.Drawing.Size(1136, 179);
             this.gridErrors.TabIndex = 1;
             this.gridErrors.Text = "sfDataGrid1";
-            // 
-            // buttonSave
-            // 
-            this.buttonSave.Image = global::DocumentFlow.Properties.Resources.icons8_save_30;
-            this.buttonSave.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.buttonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(70, 49);
-            this.buttonSave.Text = "Сохранить";
-            this.buttonSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
-            // 
-            // buttonSaveAndClose
-            // 
-            this.buttonSaveAndClose.Image = global::DocumentFlow.Properties.Resources.icons8_save_close_30;
-            this.buttonSaveAndClose.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.buttonSaveAndClose.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonSaveAndClose.Name = "buttonSaveAndClose";
-            this.buttonSaveAndClose.Size = new System.Drawing.Size(127, 49);
-            this.buttonSaveAndClose.Text = "Сохранить и закрыть";
-            this.buttonSaveAndClose.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.buttonSaveAndClose.Click += new System.EventHandler(this.buttonSaveAndClose_Click);
-            // 
-            // buttonCompile
-            // 
-            this.buttonCompile.Image = global::DocumentFlow.Properties.Resources.icons8_assembly_line_30;
-            this.buttonCompile.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.buttonCompile.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonCompile.Name = "buttonCompile";
-            this.buttonCompile.Size = new System.Drawing.Size(81, 49);
-            this.buttonCompile.Text = "Компиляция";
-            this.buttonCompile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.buttonCompile.Click += new System.EventHandler(this.buttonCompile_Click);
+            this.gridErrors.CellDoubleClick += new Syncfusion.WinForms.DataGrid.Events.CellClickEventHandler(this.gridErrors_CellDoubleClick);
             // 
             // CodeEditor
             // 

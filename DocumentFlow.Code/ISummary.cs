@@ -6,7 +6,7 @@
 // Time: 19:02
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 
 namespace DocumentFlow.Code
 {

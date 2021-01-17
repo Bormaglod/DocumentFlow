@@ -6,12 +6,14 @@
 // Time: 21:07
 //-----------------------------------------------------------------------
 
+using System;
+using System.Data;
 using Dapper;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow.Data.Repositories
 {
-    public class Pictures
+    public static class Pictures
     {
         public static Picture Default
         {
@@ -22,6 +24,19 @@ namespace DocumentFlow.Data.Repositories
                     return conn.QuerySingleOrDefault<Picture>("select * from picture where code = :code", new { code = "file" });
                 }
             }
+        }
+
+        public static Picture Get(Guid id)
+        {
+            using (var conn = Db.OpenConnection())
+            {
+                return Get(conn, id);
+            }
+        }
+
+        public static Picture Get(IDbConnection connection, Guid id)
+        {
+            return connection.QuerySingle<Picture>("select * from picture where id = :id", new { id });
         }
     }
 }

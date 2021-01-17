@@ -9,18 +9,19 @@
 using System.Windows.Forms;
 using DocumentFlow.Code;
 using DocumentFlow.Controls.Editor.Code;
+using DocumentFlow.Interfaces;
 
 namespace DocumentFlow
 {
     public class EditorData : ModalEditorData
     {
         private readonly IBrowser ownerBrowser;
-        private readonly CommandCollection commandCollection;
+        private readonly UserActionCollection commandCollection;
         private readonly ToolBarData toolBar;
 
         public EditorData(IContainer container, IBrowser browser, ICommandFactory commandFactory, IBrowserParameters browserParameters, ToolStrip toolStrip) : base(container, browserParameters)
         {
-            commandCollection = new CommandCollection(this, commandFactory);
+            commandCollection = new UserActionCollection(this, commandFactory);
             toolBar = new ToolBarData(toolStrip, commandCollection);
             ownerBrowser = browser;
         }

@@ -14,7 +14,7 @@ namespace DocumentFlow
 {
     public class ContextMenuData : ToolStripData, IContextMenu
     {
-        public ContextMenuData(ToolStrip toolStrip, CommandCollection commandCollection) : base(toolStrip, commandCollection) 
+        public ContextMenuData(ToolStrip toolStrip, UserActionCollection commandCollection) : base(toolStrip, commandCollection) 
         { 
             if (toolStrip is ContextMenuStrip menu)
             {
@@ -27,7 +27,7 @@ namespace DocumentFlow
             UpdateButtonVisibleStatus();
         }
 
-        protected override ToolStripItem CreateToolStripItem(ICommand command, Picture picture)
+        protected override ToolStripItem CreateToolStripItem(IUserAction command, Picture picture)
         {
             return new ToolStripMenuItem
             {
@@ -37,7 +37,7 @@ namespace DocumentFlow
             };
         }
 
-        protected override void UpdateToolStripItem(ICommand command, Picture picture)
+        protected override void UpdateToolStripItem(IUserAction command, Picture picture)
         {
             this[command].Image = picture?.GetImageSmall();
         }

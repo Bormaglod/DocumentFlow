@@ -12,7 +12,7 @@ using System.Data;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 
 namespace DocumentFlow.Code.Implementation
 {

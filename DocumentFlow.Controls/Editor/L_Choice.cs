@@ -13,8 +13,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Syncfusion.Windows.Forms.Tools;
 using DocumentFlow.Code;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Base;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Controls.Editor
 {

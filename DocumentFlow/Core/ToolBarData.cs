@@ -8,7 +8,7 @@
 
 using System.Windows.Forms;
 using DocumentFlow.Code;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 using DocumentFlow.Data.Entities;
 
 namespace DocumentFlow
@@ -18,7 +18,7 @@ namespace DocumentFlow
         private ToolStripItemDisplayStyle buttonStyle;
         private ButtonIconSize iconSize;
 
-        public ToolBarData(ToolStrip toolStrip, CommandCollection commandCollection) : base(toolStrip, commandCollection) 
+        public ToolBarData(ToolStrip toolStrip, UserActionCollection commandCollection) : base(toolStrip, commandCollection) 
         {
             buttonStyle = ToolStripItemDisplayStyle.ImageAndText;
             iconSize = ButtonIconSize.Large;
@@ -56,7 +56,7 @@ namespace DocumentFlow
             }
         }
 
-        protected override ToolStripItem CreateToolStripItem(ICommand command, Picture picture)
+        protected override ToolStripItem CreateToolStripItem(IUserAction command, Picture picture)
         {
             IToolBar toolBar = this;
 
@@ -71,7 +71,7 @@ namespace DocumentFlow
             };
         }
 
-        protected override void UpdateToolStripItem(ICommand command, Picture picture)
+        protected override void UpdateToolStripItem(IUserAction command, Picture picture)
         {
             IToolBar toolBar = this;
             if (this[command] is ToolStripButton button)

@@ -3,9 +3,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using Dapper;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.MeasurementImp
 {

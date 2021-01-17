@@ -9,6 +9,7 @@
 using System;
 using System.ComponentModel;
 using DocumentFlow.Data.Entities;
+using DocumentFlow.Interfaces;
 
 namespace DocumentFlow
 {

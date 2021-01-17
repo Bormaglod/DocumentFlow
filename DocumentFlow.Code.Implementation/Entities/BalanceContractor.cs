@@ -4,9 +4,8 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.BalanceContractorImp
 {
@@ -96,7 +95,7 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
                     .SetHorizontalAlignment(HorizontalAlignment.Right);
             });
 
-            ICommand open_document = browser.Commands.Add(CommandMethod.UserDefined, "open-document");
+            IUserAction open_document = browser.Commands.Add(CommandMethod.UserDefined, "open-document");
             open_document.Click += OpenDocumentClick;
 
             browser.ToolBar.AddCommand(open_document);

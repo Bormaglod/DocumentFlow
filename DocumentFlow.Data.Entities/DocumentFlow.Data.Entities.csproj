@@ -45,33 +45,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\ChoiceDataItem.cs" />
-    <Compile Include="Base\NameDataItem.cs" />
-    <Compile Include="Base\Detail.cs" />
-    <Compile Include="Base\GroupDataItem.cs" />
     <Compile Include="Catalog.cs" />
     <Compile Include="ChangingStatus.cs" />
     <Compile Include="Command.cs" />
-    <Compile Include="Core\ColumnDescriptionAttribute.cs" />
-    <Compile Include="Directory.cs" />
-    <Compile Include="Document.cs" />
-    <Compile Include="DocumentInfo.cs" />
     <Compile Include="DocumentRefs.cs" />
     <Compile Include="Email.cs" />
-    <Compile Include="Base\Entity.cs" />
     <Compile Include="EntityKind.cs" />
     <Compile Include="History.cs" />
-    <Compile Include="Infrastructure\IDetail.cs" />
-    <Compile Include="Infrastructure\IDirectory.cs" />
-    <Compile Include="Infrastructure\IDocument.cs" />
-    <Compile Include="Infrastructure\IDocumentInfo.cs" />
-    <Compile Include="Infrastructure\IIdentifier.cs" />
-    <Compile Include="Infrastructure\IParent.cs" />
     <Compile Include="Picture.cs" />
     <Compile Include="PrintForm.cs" />
     <Compile Include="PrintKindForm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\ChangingStatuses.cs" />
+    <Compile Include="Repositories\DocumentReferences.cs" />
+    <Compile Include="Repositories\Documents.cs" />
+    <Compile Include="Repositories\EntityKinds.cs" />
+    <Compile Include="Repositories\Histories.cs" />
     <Compile Include="Repositories\Pictures.cs" />
+    <Compile Include="Repositories\Reports.cs" />
+    <Compile Include="Repositories\Statuses.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="Transition.cs" />
     <Compile Include="UserAlias.cs" />
@@ -80,6 +72,10 @@
     <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
       <Project>{acca0ba9-e646-44f2-bcec-fe269a109983}</Project>
       <Name>DocumentFlow.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Data.Core\DocumentFlow.Data.Core.csproj">
+      <Project>{9b748542-b33a-40c9-a589-e2c2d9644dd0}</Project>
+      <Name>DocumentFlow.Data.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
       <Project>{860413cf-8d35-4cc6-80ca-a4b54ca9e778}</Project>

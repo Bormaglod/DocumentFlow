@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System.Windows.Forms;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 
 namespace DocumentFlow.Code
 {

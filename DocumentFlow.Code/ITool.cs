@@ -10,7 +10,7 @@ namespace DocumentFlow.Code
 {
     public interface ITool
     {
-        bool Contains(ICommand command);
-        void AddCommand(ICommand command);
+        bool Contains(IUserAction command);
+        void AddCommand(IUserAction command);
     }
 }

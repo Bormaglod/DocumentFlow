@@ -6,11 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 using DocumentFlow.Core;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Base;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 {
@@ -28,10 +26,8 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         public int complete_status { get; protected set; }
     }
 
-    public class ProductionOrderDetail : IDetail
+    public class ProductionOrderDetail : DetailEntity
     {
-        public long id { get; protected set; }
-        public Guid owner_id { get; set; }
         public Guid goods_id { get; set; }
         public string goods_name { get; protected set; }
         public decimal amount { get; set; }
@@ -43,7 +39,6 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         public int complete_status { get; set; }
         public Guid calculation_id { get; set; }
         public string calculation_code { get; protected set; }
-        object IIdentifier.oid => id;
     }
 
     public class ProductionOrderBrowser : IBrowserCode, IBrowserOperation, IDataEditor

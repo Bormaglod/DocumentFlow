@@ -12,7 +12,7 @@ namespace DocumentFlow.Controls
 {
     public class SplitButtonItemsCollection : CollectionBase
     {
-        private SplitButton Owner;
+        private readonly SplitButton Owner;
 
         public ToolSplitItem this[int index] => (ToolSplitItem)List[index];
 

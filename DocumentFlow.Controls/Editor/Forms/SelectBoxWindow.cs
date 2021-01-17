@@ -14,8 +14,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Syncfusion.Drawing;
 using Syncfusion.Windows.Forms.Tools.MultiColumnTreeView;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Controls.Editor.Forms
 {

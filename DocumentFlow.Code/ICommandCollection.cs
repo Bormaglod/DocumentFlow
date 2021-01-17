@@ -9,14 +9,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 
 namespace DocumentFlow.Code
 {
-    public interface ICommandCollection : IEnumerable, IEnumerable<ICommand>
+    public interface ICommandCollection : IEnumerable, IEnumerable<IUserAction>
     {
-        ICommand Get(string name);
-        ICommand Add(CommandMethod method, string name);
+        IUserAction Get(string name);
+        IUserAction Add(CommandMethod method, string name);
         void OpenDocument(Guid id);
         void OpenDiagram(Guid id);
     }

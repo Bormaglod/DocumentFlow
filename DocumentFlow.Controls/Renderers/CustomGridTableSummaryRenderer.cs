@@ -43,8 +43,10 @@ namespace DocumentFlow.Controls.Renderers
                     cellValue = Convert.ToDouble(double.Parse(cellValue, NumberStyles.Number)).ToString("N", format);
                 }
 
-                StringFormat stringFormat = new StringFormat();
-                stringFormat.LineAlignment = StringAlignment.Center;
+                StringFormat stringFormat = new StringFormat
+                {
+                    LineAlignment = StringAlignment.Center
+                };
 
                 switch (numericColumn.CellStyle.HorizontalAlignment)
                 {

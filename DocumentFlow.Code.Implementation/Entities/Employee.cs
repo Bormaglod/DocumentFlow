@@ -6,10 +6,8 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Base;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.EmployeeImp
 {
@@ -46,7 +44,7 @@ namespace DocumentFlow.Code.Implementation.EmployeeImp
                 end as post_role_text
             from employee e 
                 join status s on (s.id = e.status_id) 
-                join person p on (p.id = e.person_id) 
+                left join person p on (p.id = e.person_id) 
                 left join okpdtr on (okpdtr.id = e.post_id) 
             where {0}";
 

@@ -44,6 +44,10 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.buttonCancel = new Syncfusion.WinForms.Controls.SfButton();
             this.buttonSend = new Syncfusion.WinForms.Controls.SfButton();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.buttonAdd = new Syncfusion.WinForms.Controls.SfButton();
+            this.buttonDelete = new Syncfusion.WinForms.Controls.SfButton();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -53,6 +57,7 @@
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.comboFrom)).BeginInit();
             this.panel2.SuspendLayout();
+            this.panel7.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -72,6 +77,7 @@
             // panel6
             // 
             this.panel6.Controls.Add(this.listFiles);
+            this.panel6.Controls.Add(this.panel7);
             this.panel6.Controls.Add(this.label4);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel6.Location = new System.Drawing.Point(8, 110);
@@ -85,7 +91,7 @@
             this.listFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listFiles.Location = new System.Drawing.Point(74, 0);
             this.listFiles.Name = "listFiles";
-            this.listFiles.Size = new System.Drawing.Size(550, 128);
+            this.listFiles.Size = new System.Drawing.Size(442, 128);
             this.listFiles.Style.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(171)))), ((int)(((byte)(171)))));
             this.listFiles.TabIndex = 10;
             this.listFiles.Text = "sfListView1";
@@ -229,7 +235,7 @@
             this.buttonCancel.AccessibleName = "Button";
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F);
+            this.buttonCancel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.buttonCancel.Location = new System.Drawing.Point(532, 7);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 28);
@@ -241,13 +247,51 @@
             this.buttonSend.AccessibleName = "Button";
             this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSend.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonSend.Font = new System.Drawing.Font("Segoe UI Semibold", 9F);
+            this.buttonSend.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.buttonSend.Location = new System.Drawing.Point(430, 7);
             this.buttonSend.Name = "buttonSend";
             this.buttonSend.Size = new System.Drawing.Size(96, 28);
             this.buttonSend.TabIndex = 0;
             this.buttonSend.Text = "Отправить";
             this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
+            // 
+            // panel7
+            // 
+            this.panel7.Controls.Add(this.buttonDelete);
+            this.panel7.Controls.Add(this.buttonAdd);
+            this.panel7.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel7.Location = new System.Drawing.Point(516, 0);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(108, 128);
+            this.panel7.TabIndex = 11;
+            // 
+            // buttonAdd
+            // 
+            this.buttonAdd.AccessibleName = "Button";
+            this.buttonAdd.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonAdd.Location = new System.Drawing.Point(6, 6);
+            this.buttonAdd.Name = "buttonAdd";
+            this.buttonAdd.Size = new System.Drawing.Size(96, 28);
+            this.buttonAdd.TabIndex = 0;
+            this.buttonAdd.Text = "Добавить";
+            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
+            // 
+            // buttonDelete
+            // 
+            this.buttonDelete.AccessibleName = "Button";
+            this.buttonDelete.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonDelete.Location = new System.Drawing.Point(6, 40);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(96, 28);
+            this.buttonDelete.TabIndex = 1;
+            this.buttonDelete.Text = "Удалить";
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Multiselect = true;
+            this.openFileDialog1.Title = "Выберите файл";
             // 
             // SelectEmailWindow
             // 
@@ -276,6 +320,7 @@
             this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.comboFrom)).EndInit();
             this.panel2.ResumeLayout(false);
+            this.panel7.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -298,5 +343,9 @@
         private System.Windows.Forms.Panel panel3;
         private Syncfusion.WinForms.ListView.SfComboBox comboFrom;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel panel7;
+        private Syncfusion.WinForms.Controls.SfButton buttonDelete;
+        private Syncfusion.WinForms.Controls.SfButton buttonAdd;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }

@@ -114,8 +114,7 @@ namespace DocumentFlow.Controls
         private void Crumb_Click(object sender, EventArgs e)
         {
             Guid id = ((SplitButton)sender).Identifier;
-            Guid d = Guid.Empty;
-
+            Guid d;
             do
             {
                 d = Peek();

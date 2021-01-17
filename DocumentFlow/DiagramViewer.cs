@@ -19,8 +19,9 @@ using Syncfusion.Windows.Forms.Diagram;
 using Syncfusion.Windows.Forms.Diagram.Controls;
 using Syncfusion.Windows.Forms.Edit.Enums;
 using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
+using DocumentFlow.Data.Repositories;
+using DocumentFlow.Interfaces;
 
 namespace DocumentFlow
 {
@@ -159,7 +160,7 @@ namespace DocumentFlow
                 {
                     line.LineStyle.LineColor = Color.FromArgb(0, 120, 212);
                     line.HeadDecorator.DecoratorShape = DecoratorShape.Filled45Arrow;
-                    
+
                     line.HeadDecorator.FillStyle.Color = Color.MidnightBlue;
                     line.HeadDecorator.LineStyle.LineColor = Color.FromArgb(0, 120, 212);
                     line.HeadDecorator.Size = new SizeF(6, 6);
@@ -273,29 +274,18 @@ namespace DocumentFlow
             diagram1.BeginUpdate();
 
             Dictionary<int, RoundRect> nodes = new Dictionary<int, RoundRect>();
-            using (var conn = Db.OpenConnection())
+            int x = 40;
+            int y = 20;
+
+            foreach (var cs in ChangingStatuses.Get(transition))
             {
-                int x = 40;
-                int y = 20;
-
-                string sql = "select * from changing_status cs join status s_f on (s_f.id = cs.from_status_id) join status s_t on (s_t.id = cs.to_status_id) where transition_id = :id order by order_index";
-                var list = conn.Query<ChangingStatus, Status, Status, ChangingStatus>(sql, (changing_status, status_from, status_to) =>
-                {
-                    changing_status.FromStatus = status_from;
-                    changing_status.ToStatus = status_to;
-                    return changing_status;
-                }, new { transition.id });
-
-                foreach (var cs in list)
-                {
-                    RoundRect left = CreateRoundRect(nodes, cs.FromStatus, ref x, ref y);
-                    RoundRect right = CreateRoundRect(nodes, cs.ToStatus, ref x, ref y);
-                    CreateConnector(left, right, cs.name);
-                }
-
-                CreateExtremeShape(nodes, transition.starting_id, 20, 20, false);
-                CreateExtremeShape(nodes, transition.finishing_id, x, y, true);
+                RoundRect left = CreateRoundRect(nodes, cs.FromStatus, ref x, ref y);
+                RoundRect right = CreateRoundRect(nodes, cs.ToStatus, ref x, ref y);
+                CreateConnector(left, right, cs.name);
             }
+
+            CreateExtremeShape(nodes, transition.starting_id, 20, 20, false);
+            CreateExtremeShape(nodes, transition.finishing_id, x, y, true);
 
             diagram1.EndUpdate();
         }
@@ -318,7 +308,7 @@ namespace DocumentFlow
             paletteGroupBar1.BorderColor = ColorTranslator.FromHtml("#626262");
             foreach (Syncfusion.Windows.Forms.Tools.GroupBarItem item in paletteGroupBar1.GroupBarItems)
             {
-                 if (item.Client is PaletteGroupView)
+                if (item.Client is PaletteGroupView)
                 {
                     PaletteGroupView view = item.Client as PaletteGroupView;
                     view.Font = new Font("Segoe UI", 9, System.Drawing.FontStyle.Regular);
@@ -353,10 +343,10 @@ namespace DocumentFlow
         private void buttonFill_Click(object sender, EventArgs e)
         {
             diagram1.Model.Clear();
-            
+
             Model model = new Model();
             PrepareModelDiagram(model);
-            
+
             diagram1.Model = model;
             CreateDiagram();
         }

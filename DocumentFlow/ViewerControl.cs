@@ -37,19 +37,17 @@ using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.DataGrid.Events;
 using Syncfusion.WinForms.DataGrid.Interactivity;
 using DocumentFlow.Code;
-using DocumentFlow.Code.Data;
 using DocumentFlow.Code.Implementation;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Controls;
+using DocumentFlow.Controls.Renderers;
 using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
-using DocumentFlow.Data.Base;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
-using DocumentFlow.Controls;
-using DocumentFlow.Controls.Renderers;
+using DocumentFlow.Interfaces;
 using DocumentFlow.Properties;
-
 
 namespace DocumentFlow
 {
@@ -124,7 +122,7 @@ namespace DocumentFlow
         private readonly GridColumnCollection columns;
         private Dictionary<string, ToolStripData> toolStripData;
         private Guid? parentId;
-        private CommandCollection commandCollection;
+        private UserActionCollection commandCollection;
         private string doubleClickCommand;
         private readonly BrowserMode mode;
 #if TURN_MOVETOEND
@@ -425,7 +423,7 @@ namespace DocumentFlow
 
             parentId = null;
 
-            commandCollection = new CommandCollection(this, CommandFactory);
+            commandCollection = new UserActionCollection(this, CommandFactory);
             toolStripData = new Dictionary<string, ToolStripData>()
             {
                 { "toolbar", new ToolBarData(toolStrip1, commandCollection) },
@@ -458,14 +456,14 @@ namespace DocumentFlow
                 case DataType.Report:
                     InitializeDocumentViewer();
 
-                    IEnumerable<ICommand> all = null;
-                    CommandComparer commandComparer = new CommandComparer();
+                    IEnumerable<IUserAction> all = null;
+                    UserActionComparer commandComparer = new UserActionComparer();
                     foreach (ToolStripData item in toolStripData.Values)
                     {
                         all = all == null ? item.Commands : all.Union(item.Commands, commandComparer);
                     }
 
-                    foreach (ICommand item in all)
+                    foreach (IUserAction item in all)
                     {
                         item.SetVisible(item.Code == "refresh" || item.Code == "copy-text");
                     }

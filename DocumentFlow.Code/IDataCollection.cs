@@ -6,8 +6,6 @@
 // Time: 23:10
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
-
 namespace DocumentFlow.Code
 {
     public interface IDataCollection

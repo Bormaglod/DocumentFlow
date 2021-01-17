@@ -16,7 +16,7 @@ namespace DocumentFlow.Controls
         /// <summary>
         /// DecimalTextBox
         /// </summary>
-        private DecimalTextBox m_DecimalTextBox;
+        private readonly DecimalTextBox m_DecimalTextBox;
 
         /// <summary>
         /// Bounds of the Control

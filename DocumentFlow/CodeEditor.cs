@@ -7,19 +7,20 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Dapper;
+using Syncfusion.WinForms.DataGrid.Events;
 using Syncfusion.Windows.Forms.Edit;
 using Syncfusion.Windows.Forms.Edit.Enums;
-using DocumentFlow.Code.Data;
+using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
+using DocumentFlow.Interfaces;
 
 namespace DocumentFlow
 {
@@ -27,22 +28,27 @@ namespace DocumentFlow
     {
         private readonly IContainerPage containerPage;
         private readonly Command command;
-        private readonly BindingList<ErrorData> errorList = new BindingList<ErrorData>();
 
         private class ErrorData
         {
-            private readonly CompilerError error;
+            private readonly Diagnostic failure;
 
-            public ErrorData(CompilerError error) => this.error = error;
+            public ErrorData(Diagnostic failure)
+            {
+                this.failure = failure;
+            }
 
             [Display(Name = "Код")]
-            public string Code => error.ErrorNumber;
+            public string Code => failure.Id;
 
             [Display(Name = "Строка")]
-            public int Line => error.Line;
+            public int Line => failure.Location.GetLineSpan().StartLinePosition.Line + 1;
+
+            [Display(Name = "Позиция")]
+            public int Position => failure.Location.GetLineSpan().StartLinePosition.Character + 1;
 
             [Display(Name = "Описание")]
-            public string Description => error.ErrorText;
+            public string Description => failure.GetMessage();
         }
 
         public CodeEditor(IContainerPage container, Command cmd)
@@ -55,10 +61,13 @@ namespace DocumentFlow
             editControl.ApplyConfiguration(KnownLanguages.CSharp);
             editControl.Text = command.script;
             editControl.FlushChanges();
-            editControl.CurrentPosition = new System.Drawing.Point(1, 1);
+            editControl.CurrentPosition = new Point(1, 1);
 
             tabSplitterContainer1.SplitterPosition = tabSplitterContainer1.Height - 200;
             tabSplitterContainer1.Collapsed = true;
+
+            editControl.HighlightCurrentLine = true;
+            editControl.CurrentLineHighlightColor = Color.Orange;
 
             Text = $"Настройка: {cmd.name}";
         }
@@ -71,15 +80,12 @@ namespace DocumentFlow
 
         void IPage.Rebuild() { }
 
-        public void ShowErrors(CompilerErrorCollection errors)
+        public void ShowErrors(IEnumerable<Diagnostic> failures)
         {
-            errorList.Clear();
-            foreach (CompilerError error in errors)
-            {
-                errorList.Add(new ErrorData(error));
-            }
-
-            gridErrors.DataSource = errorList;
+            gridErrors.DataSource = failures
+                .Select(x => new ErrorData(x))
+                .OrderBy(x => x.Line)
+                .ThenBy(x => x.Position);
             tabSplitterContainer1.Collapsed = false;
         }
 
@@ -104,7 +110,7 @@ namespace DocumentFlow
             }
             catch (CompilerException e)
             {
-                ShowErrors(e.Errors);
+                ShowErrors(e.Failures);
             }
             catch (Exception e)
             {
@@ -152,6 +158,15 @@ namespace DocumentFlow
         {
             Save();
             Compile();
+        }
+
+        private void gridErrors_CellDoubleClick(object sender, CellClickEventArgs e)
+        {
+            if (e.DataRow.RowData is ErrorData error)
+            {
+                editControl.CurrentPosition = new Point(error.Position, error.Line);
+                editControl.Focus();
+            }
         }
     }
 }

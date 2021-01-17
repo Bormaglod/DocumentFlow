@@ -23,9 +23,9 @@ namespace DocumentFlow.Controls
         private Color borderColor = Color.FromArgb(217, 217, 217);
         private Color borderHoveredColor = Color.FromArgb(204, 232, 235);
         private Color borderClickedColor = Color.FromArgb(153, 209, 255);
-        private int splitWidth = 16;
-        private int borderWidth = 1;
-        private ContextMenuStrip buttonDropDown;
+        private readonly int splitWidth = 16;
+        private readonly int borderWidth = 1;
+        private readonly ContextMenuStrip buttonDropDown;
         private Guid identifier;
 
         public SplitButton()
@@ -175,10 +175,12 @@ namespace DocumentFlow.Controls
 
             DrawArrow(e.Graphics, r);
 
-            StringFormat stringFormat = new StringFormat();
-            stringFormat.Trimming = StringTrimming.EllipsisCharacter;
-            stringFormat.LineAlignment = StringAlignment.Center;
-            stringFormat.Alignment = StringAlignment.Center;
+            StringFormat stringFormat = new StringFormat
+            {
+                Trimming = StringTrimming.EllipsisCharacter,
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            };
 
             r = new Rectangle(1, 1, Width - splitWidth - borderWidth * 2, Height - borderWidth * 2);
             e.Graphics.DrawString(Text, Font, ForeColor.Brush(), r, stringFormat);

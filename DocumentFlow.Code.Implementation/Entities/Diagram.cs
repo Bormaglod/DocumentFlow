@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using Dapper;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data.Base;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.DiagramImp
 {
@@ -35,13 +35,13 @@ namespace DocumentFlow.Code.Implementation.DiagramImp
                     .Add("name", ListSortDirection.Ascending);
             });
 
-            ICommand open_diagram = browser.Commands.Add(CommandMethod.UserDefined, "open-diagram");
+            IUserAction open_diagram = browser.Commands.Add(CommandMethod.UserDefined, "open-diagram");
             open_diagram.Click += OpenDiagramClick;
 
             browser.ToolBar.AddCommand(open_diagram);
 
             string[] visible = new string[] { "refresh", "open-diagram" };
-            foreach (ICommand cmd in browser.Commands)
+            foreach (IUserAction cmd in browser.Commands)
             {
                 cmd.SetVisible(visible.Contains(cmd.Code));
             }

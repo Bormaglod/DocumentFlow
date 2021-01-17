@@ -17,6 +17,7 @@ using DocumentFlow.Authorization;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Entities;
+using DocumentFlow.Data.Repositories;
 using DocumentFlow.Properties;
 
 namespace DocumentFlow
@@ -242,7 +243,7 @@ namespace DocumentFlow
                 {
                     try
                     {
-                        conn.Query("delete from document_refs where id = :id", new { refs.id }, transaction);
+                        refs.Delete(transaction);
                         transaction.Commit();
                     }
                     catch (Exception)

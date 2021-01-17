@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation
 {

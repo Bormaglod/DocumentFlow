@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.Input.Enums;
 using DocumentFlow.Code.Controls;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 using DocumentFlow.Core;
 
 namespace DocumentFlow.Code.Implementation

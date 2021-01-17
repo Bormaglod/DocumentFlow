@@ -3,12 +3,19 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using Dapper;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.PictureImp
 {
+    public class Picture : Directory
+    {
+        public string size_small { get; set; }
+        public string size_large { get; set; }
+        public string img_name { get; set; }
+        public string note { get; set; }
+    }
+
     public class PictureBrowser : IBrowserCode, IBrowserOperation, IDataEditor
     {
         private const string baseSelect = @"

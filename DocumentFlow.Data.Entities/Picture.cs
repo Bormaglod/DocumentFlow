@@ -8,8 +8,8 @@
 
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using DocumentFlow.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Data.Entities
 {
@@ -31,7 +31,7 @@ namespace DocumentFlow.Data.Entities
             if (image == null)
                 return null;
 
-            var ms = new MemoryStream();
+            var ms = new System.IO.MemoryStream();
             image.Save(ms, ImageFormat.Png);
             return ms.ToArray();
         }

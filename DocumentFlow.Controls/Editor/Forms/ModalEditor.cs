@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using DocumentFlow.Code;
 using DocumentFlow.Code.Implementation;
 using DocumentFlow.Controls.Editor.Code;
+using DocumentFlow.Core;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 

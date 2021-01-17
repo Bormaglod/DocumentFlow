@@ -1,4 +1,18 @@
-﻿Версия 2.3.1 (11.01.2021)
+﻿Версия 2.4.0 (17.01.2021)
+    - Для компиляции теперь используется Microsoft.CodeAnalysis.CSharp
+    - ICommand переименован в IUserAction
+    - Интерфейсы из DocumentFlow переехали в DocumentFlow.Interfaces
+    - Добавлен модуль DocumentFlow.Data.Core на который могут ссылатся скрипты из БД, а DocumentFlow.Data.Entity соответсвенно
+      выведен из доступа для скриптов.
+    - CommandItem переименован в UserAction
+    - ICommandExecutor переименован в IExecutor
+    - CommandComparer переименован в UserActionComparer
+    - CommandCollection переименован в UserActionCollection
+    - Syncfusion обновлён до 18.4.0.34
+    - System.Text.Encoding.CodePages обновлён до 5.0.0
+    - System.Text.Json обновлён до 5.0.1
+    - MailKit обновлён до 2.10.1
+Версия 2.3.1 (11.01.2021)
     - StatusValueChanged переименована в ActionStatusChanged
     - Вызов ActionStatusChanged из интерфейса IActionStatus вызывается теперь из RefreshPage, что обеспечивает вызов
       после любого обновления страницы и из CreatePageControls при первом отображении страницы.

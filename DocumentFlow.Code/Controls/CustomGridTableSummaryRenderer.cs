@@ -16,7 +16,7 @@ using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Renderers;
 using Syncfusion.WinForms.DataGrid.Styles;
 using Syncfusion.WinForms.GridCommon.ScrollAxis;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 
 namespace DocumentFlow.Code.Controls
 {

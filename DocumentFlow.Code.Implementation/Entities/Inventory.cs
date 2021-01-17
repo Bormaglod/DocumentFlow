@@ -6,10 +6,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Dapper;
 using DocumentFlow.Core;
-using DocumentFlow.Code.System;
-using DocumentFlow.Data;
-using DocumentFlow.Data.Base;
-using DocumentFlow.Data.Entities;
+using DocumentFlow.Code.Core;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Code.Implementation.InventoryImp
 {
@@ -20,7 +18,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
         public string organization_name { get; protected set; }
     }
 
-    public class InventoryDetail : Detail
+    public class InventoryDetail : DetailEntity
     {
         public Guid goods_id { get; set; }
         public string goods_name { get; protected set; }

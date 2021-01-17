@@ -23,7 +23,6 @@ using System.Windows.Forms;
     using Npgsql;
 #endif
 using Dapper;
-using FluentFTP;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
 using Syncfusion.Windows.Forms.Tools;
@@ -33,12 +32,13 @@ using DocumentFlow.Controls.Editor.Code;
 using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Code;
-using DocumentFlow.Code.Data;
-using DocumentFlow.Code.System;
+using DocumentFlow.Code.Core;
 using DocumentFlow.Code.Implementation;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
+using DocumentFlow.Data.Repositories;
+using DocumentFlow.Interfaces;
 using DocumentFlow.Printing;
 using DocumentFlow.Properties;
 
@@ -113,13 +113,7 @@ namespace DocumentFlow
 
             using (var conn = Db.OpenConnection())
             {
-                string sql = "select * from print_kind_form pkf join print_form pf on (pf.id = pkf.print_form_id) where entity_kind_id = :id";
-                var forms = conn.Query<PrintKindForm, PrintForm, PrintKindForm>(sql, (kind, form) =>
-                {
-                    kind.PrintForm = form;
-                    return kind;
-                }, new { id = command.entity_kind_id });
-
+                var forms = Reports.Get(conn, command);
                 if (forms.Any())
                 {
                     foreach (var f in forms)
@@ -127,11 +121,12 @@ namespace DocumentFlow
                         Image image = null;
                         if (f.PrintForm.picture_id.HasValue)
                         {
-                            Picture p = conn.QuerySingle<Picture>("select * from picture where id = :id", new { id = f.PrintForm.picture_id });
-                            image = p.GetImageSmall();
+                            image = Pictures.Get(conn, f.PrintForm.picture_id.Value).GetImageSmall();
                         }
                         else
+                        {
                             image = Resources.icons8_preview_16;
+                        }
 
                         var item = new ToolStripMenuItem(f.PrintForm.name, image, buttonPrint_ButtonClick)
                         {
@@ -428,15 +423,11 @@ namespace DocumentFlow
 
             using (var conn = Db.OpenConnection())
             {
-                var info = conn.Query<DocumentInfo>($"select di.status_id, di.date_created, di.date_updated, uc.name as user_created, uu.name as user_updated from {command.EntityKind.code} di join user_alias uc on uc.id  = di.user_created_id join user_alias uu on uu.id  = di.user_updated_id where di.id = :id", new { id = current }).SingleOrDefault();
+                var info = command.EntityKind.Get(conn, current);
                 if (info == null)
                     throw new RecordNotFoundException(current);
 
-                status = conn.Query<Status, Picture, Status>("select * from status s left join picture p on (p.id = s.picture_id) where s.id = :id", (status, picture) =>
-                {
-                    status.Picture = picture;
-                    return status;
-                }, new { id = info.status_id }).SingleOrDefault();
+                status = Statuses.Get(conn, info.status_id);
 
                 buttonStatus.Image = status.Picture.GetImageLarge();
                 buttonStatus.Text = status.note;
@@ -456,28 +447,11 @@ namespace DocumentFlow
             panelItemActions.Items.Clear();
             using (var conn = Db.OpenConnection())
             {
-                string sql = @"
-                    select * 
-                        from changing_status cs 
-                            join status s_from on (s_from.id = cs.from_status_id)
-                            join status s_to on (s_to.id = cs.to_status_id)
-                            left join picture p on (cs.picture_id = p.id) 
-                        where 
-                            cs.transition_id = :transition_id and 
-                            cs.from_status_id = :status_id and 
-                            not cs.is_system";
-                var list = conn.Query<ChangingStatus, Status, Status, Picture, ChangingStatus>(sql, (cs, status_from, status_to, picture) =>
-                {
-                    cs.FromStatus = status_from;
-                    cs.ToStatus = status_to;
-                    cs.Picture = picture;
-                    return cs;
-                }, new { command.EntityKind.transition_id, status_id = status.id }).ToList().OrderBy(x => x.order_index);
+                var list = ChangingStatuses.Get(conn, command.EntityKind, status);
 
                 foreach (var cs in list)
                 {
-                    bool access = conn.QuerySingle<bool>("select access_changing_status(:id, :changing_status_id)", new { id = current, changing_status_id = cs.id });
-                    if (!access)
+                    if (!ChangingStatuses.AccessAllowed(conn, current, cs))
                     {
                         continue;
                     }
@@ -596,7 +570,7 @@ namespace DocumentFlow
                     {
                         try
                         {
-                            conn.Query("update document_refs set file_name = :file_name, note = :note, crc = :crc, length = :length where id = :id", refs, transaction);
+                            refs.Update(transaction);
                             transaction.Commit();
                         }
                         catch (Exception e)
@@ -619,7 +593,7 @@ namespace DocumentFlow
                 {
                     try
                     {
-                        conn.Query("insert into document_refs (owner_id, file_name, note, crc, length) values (:owner_id, :file_name, :note, :crc, :length)", refs, transaction);
+                        refs.Insert(transaction);
                         transaction.Commit();
 
                         documents.Add(refs);
@@ -638,7 +612,7 @@ namespace DocumentFlow
             if (pdf == null)
                 return;
 
-            string source = Path.GetTempPath() + "scan_" + DateTime.Today.Year.ToString() + DateTime.Today.Month.ToString() + DateTime.Today.Day.ToString() + ".pdf";
+            string source = Path.Combine(Path.GetTempPath(), $"scan_{DateTime.Now:s}.pdf");
             pdf.SaveToFile(source);
 
             DocumentRefs refs = refEditor.Create(current, source);
@@ -650,14 +624,8 @@ namespace DocumentFlow
 
         private void CreateChildDataGrids()
         {
-            using (var conn = Db.OpenConnection())
-            {
-                documents = new System.ComponentModel.BindingList<DocumentRefs>(
-                    conn.Query<DocumentRefs>("select * from document_refs where owner_id = :owner_id", new { owner_id = current }).ToList()
-                    );
-
-                gridDocuments.DataSource = documents;
-            }
+            documents = DocumentReferences.Get(current);
+            gridDocuments.DataSource = documents;
         }
 
         private void RefreshPage()

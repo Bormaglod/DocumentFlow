@@ -7,18 +7,19 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Microsoft.CodeAnalysis;
 using Dapper;
+using DocumentFlow.Code;
+using DocumentFlow.Code.Implementation;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
-using DocumentFlow.Code;
-using DocumentFlow.Code.Implementation;
+using DocumentFlow.Interfaces;
 
 namespace DocumentFlow
 {
@@ -287,7 +288,7 @@ namespace DocumentFlow
             return factory.OpenEditor(browser, identifier.id, command, editorParams);
         }
 
-        IPage ICommandFactory.OpenCodeEditor(Command command, CompilerErrorCollection errors)
+        IPage ICommandFactory.OpenCodeEditor(Command command, IEnumerable<Diagnostic> failures)
         {
             IPage page = container.Get<CodeEditor>(command.id);
             if (page != null)
@@ -300,25 +301,25 @@ namespace DocumentFlow
                 container.Add(page);
             }
 
-            if (errors != null && page is CodeEditor codeEditor)
+            if (failures != null && page is CodeEditor codeEditor)
             {
-                codeEditor.ShowErrors(errors);
+                codeEditor.ShowErrors(failures);
             }
 
             return page;
         }
 
-        IPage ICommandFactory.OpenCodeEditor(Guid id, CompilerErrorCollection errors)
+        IPage ICommandFactory.OpenCodeEditor(Guid id, IEnumerable<Diagnostic> failures)
         {
             ICommandFactory factory = this;
             using (var conn = Db.OpenConnection())
             {
                 Command command = conn.QuerySingle<Command>("select * from command where id = :id", new { id });
-                return factory.OpenCodeEditor(command, errors);
+                return factory.OpenCodeEditor(command, failures);
             }
         }
 
-        IPage ICommandFactory.OpenCodeEditor(Hashtable parameters, CompilerErrorCollection errors)
+        IPage ICommandFactory.OpenCodeEditor(Hashtable parameters, IEnumerable<Diagnostic> failures)
         {
             ICommandFactory factory = this;
             if (!parameters.ContainsKey("id"))
@@ -328,7 +329,7 @@ namespace DocumentFlow
 
             if (parameters["id"] is Guid pid)
             {
-                return factory.OpenCodeEditor(pid, errors);
+                return factory.OpenCodeEditor(pid, failures);
             }
             else
             {
@@ -370,15 +371,15 @@ namespace DocumentFlow
                         {
                             if (MessageBox.Show("Код содержащий описание окна содержит ошибки, поэтому окно не может быть создано. Вы хотите исправить ошибки?", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
                             {
-                                OpenCodeEditor(command, xe.Errors);
+                                OpenCodeEditor(command, xe.Failures);
                             }
 
                             return true;
                         }
 
-                        if (x is EmptyCodeException xc)
+                        if (x is EmptyCodeException || x is MissingImpException)
                         {
-                            if (MessageBox.Show($"{xc.Message}\nОткрыть окно для создания кода?", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
+                            if (MessageBox.Show($"{x.Message}\nОткрыть окно для создания кода?", "Ошибка", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
                             {
                                 OpenCodeEditor(command);
                             }
@@ -461,18 +462,18 @@ namespace DocumentFlow
                 throw new ArgumentException("Вызов команды open-browser-code без параметров.");
             }
 
-            CompilerErrorCollection errors = null;
+            IEnumerable<Diagnostic> failures = null;
             if (parameters.Length > 1)
             {
-                errors = parameters[1] as CompilerErrorCollection;
+                failures = parameters[1] as IEnumerable<Diagnostic>;
             }
 
             ICommandFactory factory = this;
             switch (parameters[0])
             {
-                case Command cmd: return factory.OpenCodeEditor(cmd, errors);
-                case Guid id: return factory.OpenCodeEditor(id, errors);
-                case Hashtable hashtable: return factory.OpenCodeEditor(hashtable, errors);
+                case Command cmd: return factory.OpenCodeEditor(cmd, failures);
+                case Guid id: return factory.OpenCodeEditor(id, failures);
+                case Hashtable hashtable: return factory.OpenCodeEditor(hashtable, failures);
                 default: 
                     throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
             }

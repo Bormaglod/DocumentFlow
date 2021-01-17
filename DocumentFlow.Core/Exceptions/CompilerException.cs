@@ -7,14 +7,14 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 
 namespace DocumentFlow.Core.Exceptions
 {
     public class CompilerException : Exception
     {
-        public CompilerException(string message, CompilerErrorCollection errors) : base(message) => Errors = errors;
-
-        public CompilerErrorCollection Errors { get; }
+        public CompilerException(IEnumerable<Diagnostic> failures) : base() => Failures = failures;
+        public IEnumerable<Diagnostic> Failures { get; }
     }
 }
