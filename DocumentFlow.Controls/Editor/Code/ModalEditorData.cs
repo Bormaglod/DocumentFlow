@@ -59,7 +59,7 @@ namespace DocumentFlow.Controls.Editor.Code
 
         IContainer IEditor.Container => controlContainer;
 
-        ICommandCollection IEditor.Commands => GetCommandCollection();
+        IUserActionCollection IEditor.Commands => GetCommandCollection();
 
         IBrowser IEditor.Browser => GetBrowser();
 
@@ -465,7 +465,7 @@ namespace DocumentFlow.Controls.Editor.Code
 
         protected virtual IToolBar GetToolBar() => null;
 
-        protected virtual ICommandCollection GetCommandCollection() => null;
+        protected virtual IUserActionCollection GetCommandCollection() => null;
 
         protected virtual IBrowser GetBrowser() => null;
     }

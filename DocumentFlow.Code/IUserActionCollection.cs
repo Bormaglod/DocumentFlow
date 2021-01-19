@@ -13,7 +13,7 @@ using DocumentFlow.Code.Core;
 
 namespace DocumentFlow.Code
 {
-    public interface ICommandCollection : IEnumerable, IEnumerable<IUserAction>
+    public interface IUserActionCollection : IEnumerable, IEnumerable<IUserAction>
     {
         IUserAction Get(string name);
         IUserAction Add(CommandMethod method, string name);

@@ -47,7 +47,11 @@ namespace DocumentFlow.Core
                 string dll = command.EntityKind == null ? command.code.Replace('-', '_').Pascalize() : command.EntityKind.code.Pascalize();
 
                 CSharpCompilationOptions options = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+#if DEBUG
                     .WithOptimizationLevel(OptimizationLevel.Debug);
+#else
+                    .WithOptimizationLevel(OptimizationLevel.Release);
+#endif
 
                 string binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 MetadataReference[] references = new MetadataReference[]
@@ -55,179 +59,91 @@ namespace DocumentFlow.Core
                     MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(System.ComponentModel.INotifyPropertyChanged).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(System.Data.IDbConnection).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Form).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(System.Drawing.Color).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(Path.Combine(binPath, "Dapper.dll")),
                     MetadataReference.CreateFromFile(Path.Combine(binPath, "DocumentFlow.Core.dll")),
                     MetadataReference.CreateFromFile(Path.Combine(binPath, "DocumentFlow.Data.Core.dll")),
                     MetadataReference.CreateFromFile(Path.Combine(binPath, "DocumentFlow.Code.dll"))
                 };
 
+                string assemblyInfo = @"
+                    using System.Reflection;
+                    [assembly: AssemblyVersion(""2.4.0.0"")]
+                ";
+
                 CSharpCompilation compilation = CSharpCompilation.Create(dll, references: references)
                     .WithOptions(options)
-                    .AddSyntaxTrees(CSharpSyntaxTree.ParseText(command.script));
+                    .AddSyntaxTrees(
+                        CSharpSyntaxTree.ParseText(assemblyInfo),
+                        CSharpSyntaxTree.ParseText(command.script)
+                        );
 
                 using (var ms = new MemoryStream())
                 {
-                    EmitResult emitResult = compilation.Emit(ms);
-                    if (emitResult.Success)
-                    {
-                        ms.Seek(0, SeekOrigin.Begin);
-                        Assembly assembly = Assembly.Load(ms.ToArray());
-
-                        try
-                        {
-                            Type[] types = assembly.GetTypes();
-                            Type type = types.Where(x => x.GetInterface(nameof(IBrowserCode)) != null).SingleOrDefault();
-
-                            if (type == null)
-                            {
-                                throw new MissingImpException($"Не найдена реализация интерфейса {nameof(IBrowserCode)}");
-                            }
-
-                            IBrowserCode browser = Activator.CreateInstance(type) as IBrowserCode;
-                            IEditorCode editor = null;
-                            if (browser is IDataEditor dataEditor)
-                            {
-                                editor = dataEditor.CreateEditor();
-                            }
-
-                            if (codes.ContainsKey(command))
-                            {
-                                codes[command] = (browser, editor);
-                            }
-                            else
-                            {
-                                codes.Add(command, (browser, editor));
-                                command.PropertyChanged += Command_PropertyChanged;
-                            }
-                        }
-                        catch (InvalidOperationException e)
-                        {
-                            throw new InvalidOperationException($"Код отвечающий за создание окна просмотра имеет более одного класса реализующего {nameof(IBrowserCode)} или {nameof(IEditorCode)}.", e);
-                        }
-
-                        return codes[command];
-                    }
-                    else
-                    {
-                        // some errors
-                        IEnumerable<Diagnostic> failures = emitResult.Diagnostics.Where(diagnostic =>
-                            diagnostic.IsWarningAsError ||
-                            diagnostic.Severity == DiagnosticSeverity.Error);
-
-                        throw new CompilerException(failures);
-                    }
-                }
-
-                /*// Хак для запуска c# 8.0
-                // https://www.rsdn.org/forum/dotnet/7427760
-                //
-                var compiler = new CSharpCodeProvider(new Dictionary<string, string>
-                {
-                    ["CompilerDirectoryPath"] = @"c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Roslyn",
-                });
-
-                var parameters = new CompilerParameters
-                {
-                    GenerateInMemory = true,
-                    GenerateExecutable = false,
 #if DEBUG
-                    OutputAssembly = command.EntityKind == null ? command.code.Replace('-', '_').Pascalize() : command.EntityKind.code.Pascalize(),
-                    IncludeDebugInformation = true,
+                    using (var pdb = new MemoryStream())
+                    {
+                        EmitResult emitResult = compilation.Emit(ms, pdb);
+#else
+                        EmitResult emitResult = compilation.Emit(ms);
 #endif
-                    CompilerOptions = " -langversion:8.0 -optimize+ "
-                };
-
+                        if (emitResult.Success)
+                        {
+                            ms.Seek(0, SeekOrigin.Begin);
 #if DEBUG
-                parameters.CompilerOptions += $" -embed ";
+                            Assembly assembly = Assembly.Load(ms.ToArray(), pdb.ToArray());
+#else
+                            Assembly assembly = Assembly.Load(ms.ToArray());
 #endif
+                            try
+                            {
+                                Type[] types = assembly.GetTypes();
+                                Type type = types.Where(x => x.GetInterface(nameof(IBrowserCode)) != null).SingleOrDefault();
 
-                parameters.ReferencedAssemblies.AddRange(new string[] {
-                    "System.dll",
-                    "System.Core.dll",
-                    "System.Data.dll",
-                    "System.Drawing.dll",
-                    "System.Windows.Forms.dll",
-                    "Dapper.dll",
-                    "DocumentFlow.Code.dll",
-                    "DocumentFlow.Core.dll",
-                    "DocumentFlow.Data.Entities.dll" });
+                                if (type == null)
+                                {
+                                    throw new MissingImpException($"Не найдена реализация интерфейса {nameof(IBrowserCode)}");
+                                }
 
-                var csprovider = new CSharpCodeProvider();
+                                IBrowserCode browser = Activator.CreateInstance(type) as IBrowserCode;
+                                IEditorCode editor = null;
+                                if (browser is IDataEditor dataEditor)
+                                {
+                                    editor = dataEditor.CreateEditor();
+                                }
 
-                string code;
-                int ns_idx = command.script.IndexOf("namespace");
-                if (ns_idx > 0)
-                {
-                    StringBuilder builder = new StringBuilder();
+                                if (codes.ContainsKey(command))
+                                {
+                                    codes[command] = (browser, editor);
+                                }
+                                else
+                                {
+                                    codes.Add(command, (browser, editor));
+                                    command.PropertyChanged += Command_PropertyChanged;
+                                }
+                            }
+                            catch (InvalidOperationException e)
+                            {
+                                throw new InvalidOperationException($"Код отвечающий за создание окна просмотра имеет более одного класса реализующего {nameof(IBrowserCode)} или {nameof(IEditorCode)}.", e);
+                            }
 
-                    string using_text = command.script.Substring(0, ns_idx);
+                            return codes[command];
+                        }
+                        else
+                        {
+                            // some errors
+                            IEnumerable<Diagnostic> failures = emitResult.Diagnostics.Where(diagnostic =>
+                                diagnostic.IsWarningAsError ||
+                                diagnostic.Severity == DiagnosticSeverity.Error);
 
-
-                    builder.AppendLine(using_text);
-
-                    if (using_text.IndexOf("System.Reflection") == -1)
-                    {
-                        builder.AppendLine("using System.Reflection;");
+                            throw new CompilerException(failures);
+                        }
+#if DEBUG
                     }
-
-                    builder.AppendLine("[assembly: DatabaseScript()]");
-                    builder.AppendLine("[assembly: AssemblyVersion(\"1.0.0.0\")]");
-
-                    builder.Append(command.script.Substring(ns_idx));
-                    code = builder.ToString();
+#endif
                 }
-                else
-                {
-                    code = command.script;
-                }
-
-                CompilerResults results = compiler.CompileAssemblyFromSource(parameters, code);
-                if (results.Errors.HasErrors)
-                {
-                    var sb = new StringBuilder();
-
-                    foreach (CompilerError error in results.Errors)
-                    {
-                        sb.AppendLine($"Error ({error.ErrorNumber}) at line {error.Line}: {error.ErrorText}");
-                    }
-
-                    throw new CompilerException(sb.ToString(), results.Errors);
-                }
-
-                Assembly assembly = results.CompiledAssembly;
-                try
-                {
-                    Type[] types = assembly.GetTypes();
-                    Type type = types.Where(x => x.GetInterface(nameof(IBrowserCode)) != null).SingleOrDefault();
-
-                    if (type == null)
-                    {
-                        throw new MissingImpException($"Не найдена реализация интерфейса {nameof(IBrowserCode)}");
-                    }
-
-                    IBrowserCode browser = Activator.CreateInstance(type) as IBrowserCode;
-                    IEditorCode editor = null;
-                    if (browser is IDataEditor dataEditor)
-                    {
-                        editor = dataEditor.CreateEditor();
-                    }
-
-                    if (codes.ContainsKey(command))
-                    {
-                        codes[command] = (browser, editor);
-                    }
-                    else
-                    {
-                        codes.Add(command, (browser, editor));
-                        command.PropertyChanged += Command_PropertyChanged;
-                    }
-                }
-                catch (InvalidOperationException e)
-                {
-                    throw new InvalidOperationException($"Код отвечающий за создание окна просмотра имеет более одного класса реализующего {nameof(IBrowserCode)} или {nameof(IEditorCode)}.", e);
-                }
-
-                return codes[command];*/
             }
         }
 

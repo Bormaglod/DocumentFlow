@@ -27,6 +27,8 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
         public DateTime? approved { get; set; }
 		public decimal? balance { get; set; }
 		public bool goods_use { get; protected set; }
+        public Guid? cross_id { get; set; }
+		public string cross_code { get; set; }
     }
 
     public class GoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -61,13 +63,15 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                         limit 1
                 ) as approved,
 				null_if_default(goods_sum.balance) as balance,
-				cig.item_id is not null as goods_use
+				cig.item_id is not null as goods_use,
+                cr.code as cross_code
             from goods g
                 join status s ON s.id = g.status_id
                 left join measurement m on g.measurement_id = m.id
                 left join goods_sum on (g.id = goods_sum.id)
                 left join calculation c on c.owner_id = g.id and c.status_id = 1002
 				left join (select distinct item_id from calc_item_goods where status_id = 1001) cig on (cig.item_id = g.id)
+                left join goods cr on (cr.id = g.cross_id)
             where {0}";
 
         void IBrowserCode.Initialize(IBrowser browser)
@@ -103,6 +107,11 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                     .SetAutoSizeColumnsMode(SizeColumnsMode.Fill);
 
                 columns.CreateText("ext_article", "Доп. артикул")
+                    .SetWidth(120)
+                    .SetVisible(false)
+                    .SetVisibility(false);
+
+                columns.CreateText("cross_code", "Кросс-артикул")
                     .SetWidth(120)
                     .SetVisible(false)
                     .SetVisibility(false);
@@ -217,7 +226,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                     browser.Columns[column].Visibility = root == "Прд";
                 }
 
-                foreach (string column in new string[] { "code", "abbreviation", "price", "tax", "balance", "goods_use" })
+                foreach (string column in new string[] { "code", "abbreviation", "price", "tax", "balance", "goods_use", "cross_code" })
                 {
                     browser.Columns[column].Visibility = !string.IsNullOrEmpty(root);
                 }
@@ -228,12 +237,13 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
         }
     }
 
-    public class GoodsEditor : IEditorCode, IDataOperation, IControlEnabled
+    public class GoodsEditor : IEditorCode, IDataOperation, IControlEnabled, IActionStatus
     {
         private const int labelWidth = 190;
 
         public void Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
+            const string crossSelect = "select id, parent_id, name, status_id from goods where status_id in (500, 1002)";
             const string folderSelect = "select id, parent_id, name, status_id from goods where status_id = 500 order by name";
             const string measurementSelect = "select id, name from measurement where status_id = 1001 order by name";
 
@@ -250,6 +260,11 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 .SetControlWidth(360);
 
             IControl ext_article = editor.CreateTextBox("ext_article", "Доп. артикул")
+                .SetLabelWidth(labelWidth)
+                .SetControlWidth(450);
+
+            IControl cross = editor.CreateSelectBox("cross_id", "Кросс-артикул", (c) => { return c.Query<GroupDataItem>(crossSelect); })
+                .ValueChangedAction((c, e) => UpdateCrossArt(editor, e.Value))
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
 
@@ -280,6 +295,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 name,
                 parent,
                 ext_article,
+				cross,
                 measurement,
                 price,
                 tax,
@@ -293,12 +309,26 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 dependentViewer.AddDependentViewer("view-calculation");
             }
 
+            editor.Commands.Add(CommandMethod.UserDefined, "open-document")
+                .SetIcon("товар")
+                .SetTitle("Кросс")
+                .AppendTo(editor.ToolBar)
+                .ExecuteAction(OpenCrossClick);
+
             dependentViewer.AddDependentViewers(new string[] { "view-balance-goods", "view-archive-price" });
+        }
+
+        void IActionStatus.ActionStatusChanged(IValueEditor editor, IDatabase database, IInformation info, ActionStatus actionStatus)
+        {
+            if (editor is IEditor e)
+            {
+                UpdateCrossArt(e, editor.Values["cross_id"].Value);
+            }
         }
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            string sql = "select id, parent_id, code, name, ext_article, measurement_id, price, tax, min_order, is_service from goods where id = :id";
+            string sql = "select id, parent_id, code, name, ext_article, cross_id, measurement_id, price, tax, min_order, is_service from goods where id = :id";
             return connection.QuerySingleOrDefault<Goods>(sql, new { id = id.oid });
         }
 
@@ -310,7 +340,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            string sql = "update goods set code = :code, name = :name, parent_id = :parent_id, ext_article = :ext_article, measurement_id = :measurement_id, price = :price, tax = :tax, min_order = :min_order, is_service = :is_service where id = :id";
+            string sql = "update goods set code = :code, name = :name, parent_id = :parent_id, ext_article = :ext_article, cross_id = :cross_id, measurement_id = :measurement_id, price = :price, tax = :tax, min_order = :min_order, is_service = :is_service where id = :id";
             return connection.Execute(sql, editor.Entity, transaction);
         }
 
@@ -324,5 +354,17 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
             return new string[] { "compiled", "is changing" }.Contains(info.StatusCode);
         }
 
+        private void OpenCrossClick(object sender, ExecuteEventArgs e)
+        {
+            if (e.Editor.Entity is Goods ir && ir.cross_id.HasValue)
+            {
+                e.Editor.Commands.OpenDocument(ir.cross_id.Value);
+            }
+        }
+
+        private void UpdateCrossArt(IEditor editor, object value)
+        {
+            editor.Commands.Get("open-document").SetEnabled(value != null);
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace DocumentFlow.Code
     public interface IEditor : IValueEditor
     {
         IContainer Container { get; }
-        ICommandCollection Commands { get; }
+        IUserActionCollection Commands { get; }
         IBrowser Browser { get; }
         IToolBar ToolBar { get; }
         IBrowserParameters Parameters { get; }

@@ -234,7 +234,7 @@ namespace DocumentFlow
         IContextMenu IBrowser.ContextMenuRow => (IContextMenu)toolStripData["row"];
         IContextMenu IBrowser.ContextMenuGrid => (IContextMenu)toolStripData["grid"];
 
-        ICommandCollection IBrowser.Commands => commandCollection;
+        IUserActionCollection IBrowser.Commands => commandCollection;
 
         bool IBrowser.AllowGrouping
         {

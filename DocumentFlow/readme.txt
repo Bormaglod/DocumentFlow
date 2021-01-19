@@ -1,4 +1,7 @@
-﻿Версия 2.4.0 (17.01.2021)
+﻿Версия 2.4.1 (19.01.2021)
+    - Добавлены пропущенные библиотеки System.Linq, System.Drawing, System.Windows.Forms для компиляции скриптов БД
+    - ICommandCollection переименован в IUserActionCollection
+Версия 2.4.0 (17.01.2021)
     - Для компиляции теперь используется Microsoft.CodeAnalysis.CSharp
     - ICommand переименован в IUserAction
     - Интерфейсы из DocumentFlow переехали в DocumentFlow.Interfaces

@@ -18,7 +18,7 @@ using DocumentFlow.Interfaces;
 
 namespace DocumentFlow
 {
-    public class UserActionCollection : ICommandCollection
+    public class UserActionCollection : IUserActionCollection
     {
         private readonly List<IUserAction> commands = new List<IUserAction>();
         private readonly object owner;
@@ -34,7 +34,7 @@ namespace DocumentFlow
             this.commandFactory = commandFactory;
         }
 
-        IUserAction ICommandCollection.Add(CommandMethod method, string name)
+        IUserAction IUserActionCollection.Add(CommandMethod method, string name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -52,9 +52,9 @@ namespace DocumentFlow
             return command;
         }
 
-        void ICommandCollection.OpenDocument(Guid id) => commandFactory.OpenDocument(id);
+        void IUserActionCollection.OpenDocument(Guid id) => commandFactory.OpenDocument(id);
 
-        void ICommandCollection.OpenDiagram(Guid id) => commandFactory.OpenDiagram(id);
+        void IUserActionCollection.OpenDiagram(Guid id) => commandFactory.OpenDiagram(id);
 
         public IUserAction Get(string name) => commands.FirstOrDefault(x => x.Code == name);
 

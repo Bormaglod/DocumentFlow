@@ -123,7 +123,7 @@ namespace DocumentFlow
 
         #endregion
 
-        #region ICommandExecutor implementation
+        #region IExecutor implementation
 
         void IExecutor.Execute()
         {

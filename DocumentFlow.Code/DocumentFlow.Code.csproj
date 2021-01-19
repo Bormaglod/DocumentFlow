@@ -130,7 +130,7 @@
     <Compile Include="IColumn.cs" />
     <Compile Include="IColumnCollection.cs" />
     <Compile Include="IUserAction.cs" />
-    <Compile Include="ICommandCollection.cs" />
+    <Compile Include="IUserActionCollection.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="IControl.cs" />
     <Compile Include="IDependentViewer.cs" />

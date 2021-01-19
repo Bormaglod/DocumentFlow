@@ -37,7 +37,7 @@ namespace DocumentFlow.Code
         /// <summary>
         /// Возвращает ссылку на нтерфейс содержащий список доступных команд и определяющий работу с ними.
         /// </summary>
-        ICommandCollection Commands { get; }
+        IUserActionCollection Commands { get; }
 
         /// <summary>
         /// Возвращает или задает значение, указывающее, может ли пользователь перетаскивать столбец в область группировки.

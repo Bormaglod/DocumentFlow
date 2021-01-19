@@ -27,7 +27,7 @@ namespace DocumentFlow
         }
 
         protected override IToolBar GetToolBar() => toolBar;
-        protected override ICommandCollection GetCommandCollection() => commandCollection;
+        protected override IUserActionCollection GetCommandCollection() => commandCollection;
         protected override IBrowser GetBrowser() => ownerBrowser;
     }
 }

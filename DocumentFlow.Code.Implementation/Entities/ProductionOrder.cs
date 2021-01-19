@@ -181,7 +181,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
         void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
-            const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'buyer'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
+            const string contractorSelect = "select distinct c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'buyer'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
             const string gridSelect = "select pod.id, pod.owner_id, g.name as goods_name, pod.amount, pod.price, pod.cost, pod.tax, pod.tax_value, pod.cost_with_tax, pod.complete_status, c.code as calculation_code from production_order_detail pod join goods g on (g.id = pod.goods_id) join calculation c on (c.id = pod.calculation_id) where pod.owner_id = :oid";
             const string contractSelect = "select id, status_id, name, parent_id from contract where owner_id = :contractor_id and contractor_type = 'buyer'::contractor_type";
 
