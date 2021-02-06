@@ -23,8 +23,9 @@ using System.Windows.Forms;
     using Npgsql;
 #endif
 using Dapper;
-using Spire.Pdf;
-using Spire.Pdf.Graphics;
+using Syncfusion.Pdf;
+using Syncfusion.Pdf.Graphics;
+using Syncfusion.Pdf.Parsing;
 using Syncfusion.Windows.Forms.Tools;
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Events;
@@ -39,8 +40,8 @@ using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
 using DocumentFlow.Data.Repositories;
 using DocumentFlow.Interfaces;
-using DocumentFlow.Printing;
 using DocumentFlow.Properties;
+using DocumentFlow.Reports;
 
 namespace DocumentFlow
 {
@@ -110,37 +111,6 @@ namespace DocumentFlow
 
             ftpPath = Path.Combine(Settings.Default.FtpPath, command.EntityKind.code, current.ToString());
             refEditor = new DocumentRefEditor(ftpPath);
-
-            using (var conn = Db.OpenConnection())
-            {
-                var forms = Reports.Get(conn, command);
-                if (forms.Any())
-                {
-                    foreach (var f in forms)
-                    {
-                        Image image = null;
-                        if (f.PrintForm.picture_id.HasValue)
-                        {
-                            image = Pictures.Get(conn, f.PrintForm.picture_id.Value).GetImageSmall();
-                        }
-                        else
-                        {
-                            image = Resources.icons8_preview_16;
-                        }
-
-                        var item = new ToolStripMenuItem(f.PrintForm.name, image, buttonPrint_ButtonClick)
-                        {
-                            Tag = f.PrintForm
-                        };
-
-                        buttonPrint.DropDownItems.Add(item);
-                    }
-
-                    buttonPrint.Tag = forms.FirstOrDefault(x => x.default_form)?.PrintForm;
-                }
-                else
-                    buttonPrint.Enabled = false;
-            }
         }
 
         #region IPage implementation
@@ -613,7 +583,7 @@ namespace DocumentFlow
                 return;
 
             string source = Path.Combine(Path.GetTempPath(), $"scan_{DateTime.Now:s}.pdf");
-            pdf.SaveToFile(source);
+            pdf.Save(source);
 
             DocumentRefs refs = refEditor.Create(current, source);
             if (refs != null)
@@ -651,6 +621,49 @@ namespace DocumentFlow
             CreateChildDataGrids();
         }
 
+        private void CreatePrintedForms()
+        {
+            using (var conn = Db.OpenConnection())
+            {
+                IReportCollection forms = ((IEditor)editorData).Reports;
+                if (forms.Forms.Any())
+                {
+                    foreach (IReportForm f in forms.Forms)
+                    {
+                        var form = PrintedForms.Get(conn, f.Name);
+                        if (form == null)
+                        {
+                            continue;
+                        }
+
+                        Image image = null;
+                        if (form.Picture != null)
+                        {
+                            image = form.Picture.GetImageSmall();
+                        }
+                        else
+                        {
+                            image = Resources.icons8_preview_16;
+                        }
+
+                        var item = new ToolStripMenuItem(form.name, image, buttonPrint_ButtonClick)
+                        {
+                            Tag = new Tuple<IReportForm, PrintedForm>(f, form)
+                        };
+
+                        buttonPrint.DropDownItems.Add(item);
+
+                        if (f == forms.Default)
+                        {
+                            buttonPrint.Tag = new Tuple<IReportForm, PrintedForm>(f, form);
+                        }
+                    }
+                }
+                else
+                    buttonPrint.Enabled = false;
+            }
+        }
+
         private void CreatePageControls()
         {
             ReadDataEntity();
@@ -671,6 +684,7 @@ namespace DocumentFlow
                 command.Editor().Initialize(editorData, database, this);
                 PopulateControls();
                 CreateActionButtons();
+                CreatePrintedForms();
                 if (command.Editor() is IActionStatus action)
                 {
                     action.ActionStatusChanged(editorData, database, GetInformation(), ActionStatus.Initialize);
@@ -796,9 +810,25 @@ namespace DocumentFlow
 
         private void buttonPrint_ButtonClick(object sender, EventArgs e)
         {
-            if (sender is ToolStripItem item && item.Tag is PrintForm form)
+            if (sender is ToolStripItem item && item.Tag is Tuple<IReportForm, PrintedForm> forms)
             {
-                Printer.Preview(form, entity);
+                using (Report report = Report.FromText(forms.Item2.schema_form))
+                {
+                    foreach (var cmd in report.ReportDictionary.Parameters)
+                    {
+                        cmd.Value = forms.Item1.GetParameter(cmd.Name);
+                    }
+
+                    PdfDocument doc = report.GeneratePdf(forms.Item2.name);
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        doc.Save(stream);
+                        using (PdfLoadedDocument loadedDocument = new PdfLoadedDocument(stream))
+                        {
+                            PreviewWindow.PreviewPdf(loadedDocument, forms.Item2.name, doc.DocumentInformation.Title);
+                        }
+                    }
+                }
             }
         }
 
@@ -810,20 +840,22 @@ namespace DocumentFlow
             {
                 if (twain32.ImageCount > 0)
                 {
-                    var pdf = new PdfDocument();
-                    for (int i = 0; i < twain32.ImageCount; i++)
+                    using (var pdf = new PdfDocument())
                     {
-                        var image = twain32.GetImage(i);
+                        pdf.PageSettings.Margins.All = 0;
 
-                        var sizeImage = new SizeF(image.Width / image.HorizontalResolution, image.Height / image.VerticalResolution);
-                        var pageSize = UnitConverter.Convert(sizeImage, Core.GraphicsUnit.Inch, Core.GraphicsUnit.Point);
+                        for (int i = 0; i < twain32.ImageCount; i++)
+                        {
+                            var image = twain32.GetImage(i);
 
-                        var page = pdf.Pages.Add(pageSize, new PdfMargins(0f));
+                            PdfPage page = pdf.Pages.Add();
+                            PdfGraphics graphics = page.Graphics;
+                            PdfBitmap pdfImage = new PdfBitmap(image);
+                            graphics.DrawImage(pdfImage, 0, 0);
+                        }
 
-                        page.Canvas.DrawImage(PdfImage.FromImage(image), new PointF(0, 0));
+                        SaveDocument(pdf);
                     }
-
-                    SaveDocument(pdf);
                 }
             }
             catch (Exception ex)

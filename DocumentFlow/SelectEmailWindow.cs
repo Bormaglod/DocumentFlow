@@ -43,7 +43,7 @@ namespace DocumentFlow
             comboTo.DropDownControl.ShowButtons = true;
         }
 
-        public bool ShowWindow(string title)
+        public bool ShowWindow(string title, string file)
         {
             using (var conn = Db.OpenConnection())
             {
@@ -58,11 +58,12 @@ namespace DocumentFlow
             }
 
             textSubject.Text = title;
-            string attachment = title.Replace('/', '-').Replace('\\', '-') + ".pdf";
+            /*string attachment = title.Replace('/', '-').Replace('\\', '-') + ".pdf";
             if (File.Exists(Path.GetTempPath() + attachment))
             {
                 attachments.Add(attachment);
-            }
+            }*/
+            attachments.Add(file);
 
             listFiles.DataSource = attachments;
             
@@ -92,6 +93,7 @@ namespace DocumentFlow
 
                 MimeMessage message = new MimeMessage();
                 message.From.Add(new MailboxAddress(emailFrom.Name, emailFrom.Email));
+                message.Bcc.Add(new MailboxAddress(emailFrom.Name, emailFrom.Email));
                 foreach (EmailAddress e in emailTo)
                 {
                     message.To.Add(new MailboxAddress(e.Name, e.Email));

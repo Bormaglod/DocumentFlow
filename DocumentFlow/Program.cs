@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,10 +17,10 @@ namespace DocumentFlow
         {
             //Register Syncfusion license
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(File.ReadLines("license.txt").First());
-
 #if DEBUG
             Npgsql.Logging.NpgsqlLogManager.Provider = new Core.NLogLoggingProvider();
 #endif
+            Inflector.Inflector.SetDefaultCultureFunc = () => new CultureInfo("en");
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

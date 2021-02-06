@@ -22,6 +22,21 @@ namespace DocumentFlow.Controls.Editor.Code
 {
     public class ModalEditorData : IEditor
     {
+        private class PrintedFormCollection : IReportCollection
+        {
+            private readonly List<IReportForm> forms = new List<IReportForm>();
+
+            IEnumerable<IReportForm> IReportCollection.Forms => forms;
+
+            IReportForm IReportCollection.Default => forms.FirstOrDefault(f => f.IsDefault);
+
+            IReportCollection IReportCollection.Add(IReportForm form)
+            {
+                forms.Add(form);
+                return this;
+            }
+        }
+
         private readonly IContainer controlContainer;
         private readonly IBrowserParameters parameters;
         private readonly IDataCollection dataCollection;
@@ -30,6 +45,7 @@ namespace DocumentFlow.Controls.Editor.Code
         private IEditorCode editorCode;
         private IControlEnabled enabled;
         private IControlVisible visible;
+        private readonly PrintedFormCollection printedForms;
 
         public ModalEditorData(IContainer container, IBrowserParameters browserParameters)
         {
@@ -38,6 +54,7 @@ namespace DocumentFlow.Controls.Editor.Code
             dataCollection = new DataCollection(container);
             populateCollection = new ControlCollection<IPopulate>(container);
             valueCollection = new ControlCollection<IValueControl>(container);
+            printedForms = new PrintedFormCollection();
         }
 
         public IIdentifier Entity { get; set; }
@@ -68,6 +85,8 @@ namespace DocumentFlow.Controls.Editor.Code
         IControl IEditor.this[string name] => controlContainer.ControlsAll.OfType<IDataName>().First(x => x.Name == name) as IControl;
 
         IDataCollection IEditor.Data => dataCollection;
+
+        IReportCollection IEditor.Reports => printedForms;
 
         IControlCollection<IPopulate> IValueEditor.Populates => populateCollection;
 

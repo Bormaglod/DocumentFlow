@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6B2498A8-0161-4C4B-8813-AF5EF79600FB}</ProjectGuid>
+    <ProjectGuid>{BE46DDC2-9739-4C55-AD7F-9B47A9886841}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DocumentFlow.Controls</RootNamespace>
     <AssemblyName>DocumentFlow.Controls</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <Deterministic>false</Deterministic>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,54 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dapper.2.0.78\lib\net461\Dapper.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Core.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Core.WinForms.18.4.0.34\lib\net46\Syncfusion.Core.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Data.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Data.WinForms.18.4.0.34\lib\net46\Syncfusion.Data.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.DataSource.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.DataSource.WinForms.18.4.0.34\lib\net46\Syncfusion.DataSource.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Grid.Base, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Grid.Base.18.4.0.34\lib\net46\Syncfusion.Grid.Base.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Grid.Windows, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Grid.Windows.18.4.0.34\lib\net46\Syncfusion.Grid.Windows.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.GridCommon.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.GridCommon.WinForms.18.4.0.34\lib\net46\Syncfusion.GridCommon.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Licensing, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Licensing.18.4.0.34\lib\net46\Syncfusion.Licensing.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfDataGrid.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfDataGrid.WinForms.18.4.0.34\lib\net46\Syncfusion.SfDataGrid.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfInput.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfInput.WinForms.18.4.0.34\lib\net46\Syncfusion.SfInput.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfListView.WinForms, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfListView.WinForms.18.4.0.34\lib\net46\Syncfusion.SfListView.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Shared.Base, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Shared.Base.18.4.0.34\lib\net46\Syncfusion.Shared.Base.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Shared.Windows, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Shared.Windows.18.4.0.34\lib\net46\Syncfusion.Shared.Windows.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SpellChecker.Base, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SpellChecker.Base.18.4.0.34\lib\net46\Syncfusion.SpellChecker.Base.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Tools.Base, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Tools.Base.18.4.0.34\lib\net46\Syncfusion.Tools.Base.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Tools.Windows, Version=18.4460.0.34, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Tools.Windows.18.4.0.34\lib\net46\Syncfusion.Tools.Windows.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -155,16 +107,28 @@
     <Compile Include="Editor\L_DateTimePicker.designer.cs">
       <DependentUpon>L_DateTimePicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="Editor\L_FileSelectBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\L_FileSelectBox.designer.cs">
+      <DependentUpon>L_FileSelectBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editor\L_ImageViewerBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Editor\L_ImageViewerBox.designer.cs">
       <DependentUpon>L_ImageViewerBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Editor\L_IntegerTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\L_IntegerTextBox.designer.cs">
+      <DependentUpon>L_IntegerTextBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editor\L_Label.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Editor\L_Label.Designer.cs">
+    <Compile Include="Editor\L_Label.designer.cs">
       <DependentUpon>L_Label.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\L_MaskedTextBox.cs">
@@ -185,12 +149,6 @@
     <Compile Include="Editor\L_PercentTextBox.designer.cs">
       <DependentUpon>L_PercentTextBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editor\L_FileSelectBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editor\L_FileSelectBox.designer.cs">
-      <DependentUpon>L_FileSelectBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="Editor\L_SelectBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -202,12 +160,6 @@
     </Compile>
     <Compile Include="Editor\L_TextBox.designer.cs">
       <DependentUpon>L_TextBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editor\L_IntegerTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editor\L_IntegerTextBox.designer.cs">
-      <DependentUpon>L_IntegerTextBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -228,9 +180,6 @@
     <Compile Include="ToolSplitItem.cs">
       <SubType>Component</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Breadcrumb.resx">
@@ -260,8 +209,14 @@
     <EmbeddedResource Include="Editor\L_DateTimePicker.resx">
       <DependentUpon>L_DateTimePicker.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Editor\L_FileSelectBox.resx">
+      <DependentUpon>L_FileSelectBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Editor\L_ImageViewerBox.resx">
       <DependentUpon>L_ImageViewerBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\L_IntegerTextBox.resx">
+      <DependentUpon>L_IntegerTextBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\L_Label.resx">
       <DependentUpon>L_Label.cs</DependentUpon>
@@ -275,17 +230,11 @@
     <EmbeddedResource Include="Editor\L_PercentTextBox.resx">
       <DependentUpon>L_PercentTextBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editor\L_FileSelectBox.resx">
-      <DependentUpon>L_FileSelectBox.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Editor\L_SelectBox.resx">
       <DependentUpon>L_SelectBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\L_TextBox.resx">
       <DependentUpon>L_TextBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\L_IntegerTextBox.resx">
-      <DependentUpon>L_IntegerTextBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -293,29 +242,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DocumentFlow.Code\DocumentFlow.Code.csproj">
-      <Project>{1e6ad92b-9bcb-4cdf-a646-af0ce209f0f4}</Project>
-      <Name>DocumentFlow.Code</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
-      <Project>{acca0ba9-e646-44f2-bcec-fe269a109983}</Project>
-      <Name>DocumentFlow.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data.Core\DocumentFlow.Data.Core.csproj">
-      <Project>{9b748542-b33a-40c9-a589-e2c2d9644dd0}</Project>
-      <Name>DocumentFlow.Data.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data.Entities\DocumentFlow.Data.Entities.csproj">
-      <Project>{b93432c6-6884-46d2-ba9d-7a33bf687374}</Project>
-      <Name>DocumentFlow.Data.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
-      <Project>{860413cf-8d35-4cc6-80ca-a4b54ca9e778}</Project>
-      <Name>DocumentFlow.Data</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Resources\down_16.png" />
   </ItemGroup>
   <ItemGroup>
@@ -357,5 +283,39 @@
   <ItemGroup>
     <None Include="Resources\up_16.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DocumentFlow.Code\DocumentFlow.Code.csproj">
+      <Project>{6d6d7557-4044-461e-914a-4860fc353002}</Project>
+      <Name>DocumentFlow.Code</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
+      <Project>{11f75d3d-0eb9-4269-b96b-47177506a3a6}</Project>
+      <Name>DocumentFlow.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Data.Core\DocumentFlow.Data.Core.csproj">
+      <Project>{f299e21b-0c61-41e0-9028-90df2820bfda}</Project>
+      <Name>DocumentFlow.Data.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Data.Entities\DocumentFlow.Data.Entities.csproj">
+      <Project>{37596464-e8f1-4a56-91f6-1c0ca67b5612}</Project>
+      <Name>DocumentFlow.Data.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
+      <Project>{705e1438-3e6f-4f52-8bb1-5484096b56a2}</Project>
+      <Name>DocumentFlow.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper">
+      <Version>2.0.78</Version>
+    </PackageReference>
+    <PackageReference Include="Syncfusion.SfDataGrid.WinForms">
+      <Version>18.4.0.35</Version>
+    </PackageReference>
+    <PackageReference Include="Syncfusion.Tools.Windows">
+      <Version>18.4.0.35</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -31,6 +31,9 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel6 = new System.Windows.Forms.Panel();
             this.listFiles = new Syncfusion.WinForms.ListView.SfListView();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.buttonDelete = new Syncfusion.WinForms.Controls.SfButton();
+            this.buttonAdd = new Syncfusion.WinForms.Controls.SfButton();
             this.label4 = new System.Windows.Forms.Label();
             this.panel5 = new System.Windows.Forms.Panel();
             this.textSubject = new Syncfusion.Windows.Forms.Tools.TextBoxExt();
@@ -44,12 +47,14 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.buttonCancel = new Syncfusion.WinForms.Controls.SfButton();
             this.buttonSend = new Syncfusion.WinForms.Controls.SfButton();
-            this.panel7 = new System.Windows.Forms.Panel();
-            this.buttonAdd = new Syncfusion.WinForms.Controls.SfButton();
-            this.buttonDelete = new Syncfusion.WinForms.Controls.SfButton();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.panel8 = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBoxExt1 = new Syncfusion.Windows.Forms.Tools.TextBoxExt();
+            this.panel9 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
+            this.panel7.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textSubject)).BeginInit();
             this.panel4.SuspendLayout();
@@ -57,12 +62,15 @@
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.comboFrom)).BeginInit();
             this.panel2.SuspendLayout();
-            this.panel7.SuspendLayout();
+            this.panel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textBoxExt1)).BeginInit();
+            this.panel9.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.Window;
+            this.panel1.Controls.Add(this.panel8);
             this.panel1.Controls.Add(this.panel6);
             this.panel1.Controls.Add(this.panel5);
             this.panel1.Controls.Add(this.panel4);
@@ -71,37 +79,69 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(8);
-            this.panel1.Size = new System.Drawing.Size(640, 246);
+            this.panel1.Size = new System.Drawing.Size(640, 369);
             this.panel1.TabIndex = 0;
             // 
             // panel6
             // 
-            this.panel6.Controls.Add(this.listFiles);
+            this.panel6.Controls.Add(this.panel9);
             this.panel6.Controls.Add(this.panel7);
             this.panel6.Controls.Add(this.label4);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(8, 110);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(624, 128);
+            this.panel6.Size = new System.Drawing.Size(624, 100);
             this.panel6.TabIndex = 14;
             // 
             // listFiles
             // 
             this.listFiles.AccessibleName = "ScrollControl";
             this.listFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listFiles.Location = new System.Drawing.Point(74, 0);
+            this.listFiles.Location = new System.Drawing.Point(0, 0);
             this.listFiles.Name = "listFiles";
-            this.listFiles.Size = new System.Drawing.Size(442, 128);
+            this.listFiles.Size = new System.Drawing.Size(442, 94);
             this.listFiles.Style.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(171)))), ((int)(((byte)(171)))));
             this.listFiles.TabIndex = 10;
             this.listFiles.Text = "sfListView1";
+            // 
+            // panel7
+            // 
+            this.panel7.Controls.Add(this.buttonDelete);
+            this.panel7.Controls.Add(this.buttonAdd);
+            this.panel7.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel7.Location = new System.Drawing.Point(516, 0);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(108, 100);
+            this.panel7.TabIndex = 11;
+            // 
+            // buttonDelete
+            // 
+            this.buttonDelete.AccessibleName = "Button";
+            this.buttonDelete.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonDelete.Location = new System.Drawing.Point(6, 40);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(96, 28);
+            this.buttonDelete.TabIndex = 1;
+            this.buttonDelete.Text = "Удалить";
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+            // 
+            // buttonAdd
+            // 
+            this.buttonAdd.AccessibleName = "Button";
+            this.buttonAdd.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonAdd.Location = new System.Drawing.Point(6, 6);
+            this.buttonAdd.Name = "buttonAdd";
+            this.buttonAdd.Size = new System.Drawing.Size(96, 28);
+            this.buttonAdd.TabIndex = 0;
+            this.buttonAdd.Text = "Добавить";
+            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
             // 
             // label4
             // 
             this.label4.Dock = System.Windows.Forms.DockStyle.Left;
             this.label4.Location = new System.Drawing.Point(0, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(74, 128);
+            this.label4.Size = new System.Drawing.Size(74, 100);
             this.label4.TabIndex = 6;
             this.label4.Text = "Вложения:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -119,7 +159,7 @@
             // 
             // textSubject
             // 
-            this.textSubject.BeforeTouchSize = new System.Drawing.Size(550, 28);
+            this.textSubject.BeforeTouchSize = new System.Drawing.Size(550, 151);
             this.textSubject.Dock = System.Windows.Forms.DockStyle.Top;
             this.textSubject.Location = new System.Drawing.Point(74, 0);
             this.textSubject.Multiline = true;
@@ -225,7 +265,7 @@
             this.panel2.Controls.Add(this.buttonCancel);
             this.panel2.Controls.Add(this.buttonSend);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 246);
+            this.panel2.Location = new System.Drawing.Point(0, 369);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(640, 45);
             this.panel2.TabIndex = 1;
@@ -255,43 +295,55 @@
             this.buttonSend.Text = "Отправить";
             this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
             // 
-            // panel7
-            // 
-            this.panel7.Controls.Add(this.buttonDelete);
-            this.panel7.Controls.Add(this.buttonAdd);
-            this.panel7.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel7.Location = new System.Drawing.Point(516, 0);
-            this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(108, 128);
-            this.panel7.TabIndex = 11;
-            // 
-            // buttonAdd
-            // 
-            this.buttonAdd.AccessibleName = "Button";
-            this.buttonAdd.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonAdd.Location = new System.Drawing.Point(6, 6);
-            this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(96, 28);
-            this.buttonAdd.TabIndex = 0;
-            this.buttonAdd.Text = "Добавить";
-            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
-            // 
-            // buttonDelete
-            // 
-            this.buttonDelete.AccessibleName = "Button";
-            this.buttonDelete.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonDelete.Location = new System.Drawing.Point(6, 40);
-            this.buttonDelete.Name = "buttonDelete";
-            this.buttonDelete.Size = new System.Drawing.Size(96, 28);
-            this.buttonDelete.TabIndex = 1;
-            this.buttonDelete.Text = "Удалить";
-            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Multiselect = true;
             this.openFileDialog1.Title = "Выберите файл";
+            // 
+            // panel8
+            // 
+            this.panel8.Controls.Add(this.textBoxExt1);
+            this.panel8.Controls.Add(this.label5);
+            this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel8.Location = new System.Drawing.Point(8, 210);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(624, 151);
+            this.panel8.TabIndex = 15;
+            // 
+            // label5
+            // 
+            this.label5.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label5.Location = new System.Drawing.Point(0, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(74, 151);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Текст:";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // textBoxExt1
+            // 
+            this.textBoxExt1.BeforeTouchSize = new System.Drawing.Size(550, 151);
+            this.textBoxExt1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(211)))), ((int)(((byte)(212)))));
+            this.textBoxExt1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxExt1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxExt1.Location = new System.Drawing.Point(74, 0);
+            this.textBoxExt1.Multiline = true;
+            this.textBoxExt1.Name = "textBoxExt1";
+            this.textBoxExt1.Size = new System.Drawing.Size(550, 151);
+            this.textBoxExt1.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Metro;
+            this.textBoxExt1.TabIndex = 1;
+            this.textBoxExt1.ThemeName = "Metro";
+            // 
+            // panel9
+            // 
+            this.panel9.Controls.Add(this.listFiles);
+            this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel9.Location = new System.Drawing.Point(74, 0);
+            this.panel9.Name = "panel9";
+            this.panel9.Padding = new System.Windows.Forms.Padding(0, 0, 0, 6);
+            this.panel9.Size = new System.Drawing.Size(442, 100);
+            this.panel9.TabIndex = 12;
             // 
             // SelectEmailWindow
             // 
@@ -299,7 +351,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(640, 291);
+            this.ClientSize = new System.Drawing.Size(640, 414);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.DoubleBuffered = true;
@@ -312,6 +364,7 @@
             this.Text = "Выбор адреса эл. почты";
             this.panel1.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
+            this.panel7.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textSubject)).EndInit();
@@ -320,7 +373,10 @@
             this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.comboFrom)).EndInit();
             this.panel2.ResumeLayout(false);
-            this.panel7.ResumeLayout(false);
+            this.panel8.ResumeLayout(false);
+            this.panel8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textBoxExt1)).EndInit();
+            this.panel9.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -347,5 +403,9 @@
         private Syncfusion.WinForms.Controls.SfButton buttonDelete;
         private Syncfusion.WinForms.Controls.SfButton buttonAdd;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Panel panel8;
+        private Syncfusion.Windows.Forms.Tools.TextBoxExt textBoxExt1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Panel panel9;
     }
 }

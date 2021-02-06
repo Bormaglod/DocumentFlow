@@ -28,6 +28,7 @@ namespace DocumentFlow.Code
         IBrowserParameters Parameters { get; }
         IControl this[string name] { get; }
         IDataCollection Data { get; }
+        IReportCollection Reports { get; }
         IContainer CreateContainer();
         IContainer CreateContainer(int height);
         IValueControl CreateLabel(string name, string labelText);

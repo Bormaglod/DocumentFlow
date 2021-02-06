@@ -1,0 +1,648 @@
+{
+   "$schema": "http://json-schema.org/draft-07/schema",
+   "$id": "http://example.com/example.json",
+   "type": "object",
+   "required": [
+      "$id",
+      "Created",
+      "Modified",
+      "ReportPage",
+      "ReportDictionary"
+   ],
+   "definitions": {
+      "datetime": {
+         "type": "string",
+         "pattern": "^[0-9]{4}-[01]{1}[0-9]{1}-[0123]{1}[0-9]{1}T[0-9]{2}:[0-9]{2}:[0-9]{2}[+][0-9]{2}:[0-9]{2}$"
+      },
+      "band": {
+         "type": "object",
+         "title": "The ReportTitleBand schema",
+         "required": [
+            "$id",
+            "Font",
+            "Name",
+            "Page"
+         ],
+         "properties": {
+            "$id": {
+               "type": "string"
+            },
+            "Font": {
+               "$ref": "#/definitions/font"
+            },
+            "Name": {
+               "type": "string",
+               "title": "The Name schema"
+            },
+            "Page": {
+               "type": "object",
+               "title": "The Page schema",
+               "required": [
+                  "$ref"
+               ],
+               "properties": {
+                  "$ref": {
+                     "type": "string"
+                  }
+               },
+               "additionalProperties": false
+            },
+            "Height": {
+               "type": "number",
+               "title": "The Height schema",
+               "default": 1.0
+            },
+            "TextObjects": {
+               "type": "object",
+               "title": "The TextObjects schema",
+               "required": [
+                  "$id",
+                  "$values"
+               ],
+               "properties": {
+                  "$id": {
+                     "type": "string"
+                  },
+                  "$values": {
+                     "type": "array",
+                     "additionalItems": false,
+                     "items": {
+                        "anyOf": [
+                           {
+                              "type": "object",
+                              "required": [
+                                 "$id",
+                                 "Band",
+                                 "Name"
+                              ],
+                              "properties": {
+                                 "$id": {
+                                    "type": "string"
+                                 },
+                                 "Top": {
+                                    "type": "number",
+                                    "title": "The Top schema",
+                                    "default": 0.0
+                                 },
+                                 "Band": {
+                                    "type": "object",
+                                    "title": "The Band schema",
+                                    "required": [
+                                       "$ref"
+                                    ],
+                                    "properties": {
+                                       "$ref": {
+                                          "type": "string"
+                                       }
+                                    },
+                                    "additionalProperties": false
+                                 },
+                                 "Font": {
+                                    "$ref": "#/definitions/font"
+                                 },
+                                 "Left": {
+                                    "type": "number",
+                                    "title": "The Left schema",
+                                    "default": 0.0
+                                 },
+                                 "Name": {
+                                    "type": "string",
+                                    "title": "The Name schema"
+                                 },
+                                 "Text": {
+                                    "type": "string",
+                                    "title": "The Text schema"
+                                 },
+                                 "Width": {
+                                    "type": "number",
+                                    "title": "The Width schema",
+                                    "default": 50.0
+                                 },
+                                 "Height": {
+                                    "type": "number",
+                                    "title": "The Height schema",
+                                    "default": 5.0
+                                 },
+                                 "VerticalAlignment": {
+                                    "type": "string",
+                                    "title": "The VerticalAlignment schema",
+                                    "enum": [
+                                       "Top",
+                                       "Middle",
+                                       "Bottom"
+                                    ],
+                                    "default": "Top"
+                                 },
+                                 "HorizontalAlignment": {
+                                    "type": "string",
+                                    "title": "The HorizontalAlignment schema",
+                                    "enum": [
+                                       "Left",
+                                       "Center",
+                                       "Right",
+                                       "Justify"
+                                    ],
+                                    "default": "Left"
+                                 },
+                                 "Borders": {
+                                    "type": "object",
+                                    "title": "The Borders schema",
+                                    "required": [
+                                       "$id"
+                                    ],
+                                    "properties": {
+                                       "$id": {
+                                          "type": "string"
+                                       },
+                                       "Left": {
+                                          "type": "boolean",
+                                          "default": false
+                                       },
+                                       "Top": {
+                                          "type": "boolean",
+                                          "default": false
+                                       },
+                                       "Right": {
+                                          "type": "boolean",
+                                          "default": false
+                                       },
+                                       "Bottom": {
+                                          "type": "boolean",
+                                          "default": false
+                                       },
+                                       "All": {
+                                          "type": "boolean",
+                                          "default": false
+                                       },
+                                       "ColorName": {
+                                          "type": "string",
+                                          "default": "Black"
+                                       },
+                                       "Width": {
+                                          "type": "number",
+                                          "default": 0.1
+                                       }
+                                    },
+                                    "additionalProperties": false
+                                 },
+                                 "Fill": {
+                                    "type": "object",
+                                    "required": [
+                                       "$id"
+                                    ],
+                                    "properties": {
+                                       "$id": {
+                                          "type": "string"
+                                       },
+                                       "ColorName": {
+                                          "type": "string",
+                                          "default": "White"
+                                       }
+                                    },
+                                    "additionalProperties": false
+                                 }
+                              },
+                              "additionalProperties": false
+                           }
+                        ]
+                     }
+                  }
+               },
+               "additionalProperties": false
+            }
+         },
+         "additionalProperties": false
+      },
+      "databand": {
+         "allOf": [
+            {
+               "$ref": "#/definitions/band"
+            },
+            {
+               "properties": {
+                  "DataSource": {
+                     "type": "string"
+                  }
+               },
+               "required": [
+                  "DataSource"
+               ]
+            }
+         ]
+      },
+      "font": {
+         "type": "object",
+         "required": [
+            "$id",
+            "Name"
+         ],
+         "properties": {
+            "$id": {
+               "type": "string"
+            },
+            "Name": {
+               "type": "string",
+               "title": "The Name schema"
+            },
+            "Size": {
+               "type": "number",
+               "default": 10.0
+            },
+            "Style": {
+               "type": "string",
+               "enum": [
+                  "Regular",
+                  "Bold",
+                  "Italic",
+                  "Underline",
+                  "Strikeout"
+               ]
+            }
+         },
+         "additionalProperties": false
+      }
+   },
+   "properties": {
+      "$id": {
+         "type": "string"
+      },
+      "Created": {
+         "$ref": "#/definitions/datetime",
+         "title": "Дата создания"
+      },
+      "Modified": {
+         "$ref": "#/definitions/datetime",
+         "title": "Дата изменения"
+      },
+      "ReportPage": {
+         "type": "object",
+         "title": "The ReportPage schema",
+         "required": [
+            "$id",
+            "Title",
+            "Report"
+         ],
+         "properties": {
+            "$id": {
+               "type": "string"
+            },
+            "Title": {
+               "type": "string",
+               "title": "The Title schema"
+            },
+            "Report": {
+               "type": "object",
+               "required": [
+                  "$ref"
+               ],
+               "properties": {
+                  "$ref": {
+                     "type": "string"
+                  }
+               },
+               "additionalProperties": false
+            },
+            "PageSize": {
+               "type": "object",
+               "properties": {
+                  "Width": {
+                     "type": "number",
+                     "default": 210.0
+                  },
+                  "Height": {
+                     "type": "number",
+                     "default": 297.0
+                  }
+               }
+            },
+            "MarginSize": {
+               "type": "object",
+               "properties": {
+                  "Left": {
+                     "type": "number",
+                     "default": 10.0
+                  },
+                  "Top": {
+                     "type": "number",
+                     "default": 10.0
+                  },
+                  "Right": {
+                     "type": "number",
+                     "default": 10.0
+                  },
+                  "Bottom": {
+                     "type": "number",
+                     "default": 10.0
+                  }
+               }
+            },
+            "DataBands": {
+               "type": "object",
+               "title": "The DataBands schema",
+               "required": [
+                  "$id",
+                  "$values"
+               ],
+               "properties": {
+                  "$id": {
+                     "type": "string"
+                  },
+                  "$values": {
+                     "type": "array",
+                     "additionalItems": true,
+                     "items": {
+                        "anyOf": [
+                           {
+                              "type": "object",
+                              "properties": {
+                                 "Footer": {
+                                    "$ref": "#/definitions/band"
+                                 },
+                                 "Header": {
+                                    "$ref": "#/definitions/band"
+                                 },
+                                 "DataBand": {
+                                    "$ref": "#/definitions/databand"
+                                 },
+                                 "additionalProperties": false
+                              }
+                           }
+                        ]
+                     }
+                  }
+               },
+               "additionalProperties": false
+            },
+            "ReportTitleBand": {
+               "$ref": "#/definitions/band"
+            },
+            "PageHeaderBand": {
+               "$ref": "#/definitions/band"
+            },
+            "PageFooterBand": {
+               "$ref": "#/definitions/band"
+            }
+         },
+         "additionalProperties": false
+      },
+      "ReportDictionary": {
+         "type": "object",
+         "title": "The ReportDictionary schema",
+         "required": [
+            "Connections"
+         ],
+         "properties": {
+            "Parameters": {
+               "type": "object",
+               "title": "The Parameters schema",
+               "required": [
+                  "$id",
+                  "$values"
+               ],
+               "properties": {
+                  "$id": {
+                     "type": "string"
+                  },
+                  "$values": {
+                     "type": "array",
+                     "additionalItems": true,
+                     "items": {
+                        "anyOf": [
+                           {
+                              "type": "object",
+                              "required": [
+                                 "$id",
+                                 "Name",
+                                 "DataType"
+                              ],
+                              "properties": {
+                                 "$id": {
+                                    "type": "string",
+                                    "title": "Идентификатор параметра"
+                                 },
+                                 "Name": {
+                                    "type": "string",
+                                    "title": "Наименование параметра"
+                                 },
+                                 "DataType": {
+                                    "type": "string",
+                                    "title": "тип параметра",
+                                    "enum": [
+                                       "Byte",
+                                       "Boolean",
+                                       "Currency",
+                                       "DateTime",
+                                       "Decimal",
+                                       "Double",
+                                       "Guid",
+                                       "Int16",
+                                       "Int32",
+                                       "Int64",
+                                       "SByte",
+                                       "Single",
+                                       "String",
+                                       "UInt16",
+                                       "UInt32",
+                                       "UInt64"
+                                    ]
+                                 },
+                                 "DefaultValue": {
+                                    "type": "string",
+                                    "title": "Значение по умолчанию"
+                                 }
+                              },
+                              "additionalProperties": false
+                           }
+                        ]
+                     }
+                  }
+               },
+               "additionalProperties": false
+            },
+            "Connections": {
+               "type": "object",
+               "title": "The Connections schema",
+               "required": [
+                  "$id",
+                  "$values"
+               ],
+               "properties": {
+                  "$id": {
+                     "type": "string"
+                  },
+                  "$values": {
+                     "type": "array",
+                     "additionalItems": false,
+                     "items": {
+                        "anyOf": [
+                           {
+                              "type": "object",
+                              "required": [
+                                 "$id",
+                                 "Name",
+                                 "Sources",
+                                 "ConnectionStringType"
+                              ],
+                              "properties": {
+                                 "$id": {
+                                    "type": "string"
+                                 },
+                                 "Name": {
+                                    "type": "string",
+                                    "title": "Наименование соединения"
+                                 },
+                                 "Sources": {
+                                    "type": "object",
+                                    "title": "The Sources schema",
+                                    "required": [
+                                       "$id",
+                                       "$values"
+                                    ],
+                                    "properties": {
+                                       "$id": {
+                                          "type": "string"
+                                       },
+                                       "$values": {
+                                          "type": "array",
+                                          "additionalItems": true,
+                                          "items": {
+                                             "anyOf": [
+                                                {
+                                                   "type": "object",
+                                                   "required": [
+                                                      "$id",
+                                                      "Name",
+                                                      "Columns",
+                                                      "SelectCommand"
+                                                   ],
+                                                   "properties": {
+                                                      "$id": {
+                                                         "type": "string"
+                                                      },
+                                                      "Name": {
+                                                         "type": "string",
+                                                         "title": "Наименование источника данных"
+                                                      },
+                                                      "Columns": {
+                                                         "type": "object",
+                                                         "title": "Список колонок",
+                                                         "required": [
+                                                            "$id",
+                                                            "$values"
+                                                         ],
+                                                         "properties": {
+                                                            "$id": {
+                                                               "type": "string"
+                                                            },
+                                                            "$values": {
+                                                               "type": "array",
+                                                               "additionalItems": true,
+                                                               "items": {
+                                                                  "anyOf": [
+                                                                     {
+                                                                        "type": "object",
+                                                                        "required": [
+                                                                           "$id",
+                                                                           "Name",
+                                                                           "DataType"
+                                                                        ],
+                                                                        "properties": {
+                                                                           "$id": {
+                                                                              "type": "string"
+                                                                           },
+                                                                           "Name": {
+                                                                              "type": "string",
+                                                                              "title": "Наименование колонки"
+                                                                           },
+                                                                           "DataType": {
+                                                                              "type": "string",
+                                                                              "enum": [
+                                                                                 "string",
+                                                                                 "byte",
+                                                                                 "bool",
+                                                                                 "decimal",
+                                                                                 "DateTime",
+                                                                                 "double",
+                                                                                 "Guid",
+                                                                                 "short",
+                                                                                 "int",
+                                                                                 "long",
+                                                                                 "sbyte",
+                                                                                 "float",
+                                                                                 "ushort",
+                                                                                 "uint",
+                                                                                 "ulong"
+                                                                              ],
+                                                                              "title": "Тип колонки"
+                                                                           }
+                                                                        },
+                                                                        "additionalProperties": false
+                                                                     }
+                                                                  ]
+                                                               }
+                                                            }
+                                                         },
+                                                         "additionalProperties": false
+                                                      },
+                                                      "Parameters": {
+                                                         "type": "object",
+                                                         "title": "The Parameters schema",
+                                                         "required": [
+                                                            "$id",
+                                                            "$values"
+                                                         ],
+                                                         "properties": {
+                                                            "$id": {
+                                                               "type": "string"
+                                                            },
+                                                            "$values": {
+                                                               "type": "array",
+                                                               "additionalItems": false,
+                                                               "items": {
+                                                                  "anyOf": [
+                                                                     {
+                                                                        "type": "string"
+                                                                     }
+                                                                  ]
+                                                               }
+                                                            }
+                                                         },
+                                                         "additionalProperties": false
+                                                      },
+                                                      "SelectCommand": {
+                                                         "type": "string",
+                                                         "title": "Команда SQL позволяющая получить набор данных для отчёта"
+                                                      }
+                                                   },
+                                                   "additionalProperties": false
+                                                }
+                                             ]
+                                          }
+                                       }
+                                    },
+                                    "additionalProperties": false
+                                 },
+                                 "ConnectionStringType": {
+                                    "type": "string",
+                                    "enum": [
+                                       "Current",
+                                       "Embeded",
+                                       "Specified"
+                                    ],
+                                    "title": "Тип соединения"
+                                 }
+                              },
+                              "additionalProperties": false
+                           }
+                        ]
+                     }
+                  }
+               },
+               "additionalProperties": false
+            }
+         },
+         "additionalProperties": false
+      }
+   },
+   "additionalProperties": false
+}

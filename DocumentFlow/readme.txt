@@ -1,4 +1,12 @@
-﻿Версия 2.4.1 (19.01.2021)
+﻿Версия 2.5.0 (07.02.2021)
+    - Syncfusion обновлён до 18.4.0.39
+    - Npgsql обновлён до 5.0.3
+    - NLog обновлён до 4.7.7
+    - System.Threading.Channels обновлён до 5.0.0
+    - Добавлен класс IPrintedFormCollection и свойство PrintedForms в интерфейс IEditor
+    - FreeSpire.PDF заменен на Syncfusion.PdfViewer.Windows
+    - Добавлен модуль DocumentFlow.Reports который теперь используется для печати отчётов
+Версия 2.4.1 (19.01.2021)
     - Добавлены пропущенные библиотеки System.Linq, System.Drawing, System.Windows.Forms для компиляции скриптов БД
     - ICommandCollection переименован в IUserActionCollection
 Версия 2.4.0 (17.01.2021)
