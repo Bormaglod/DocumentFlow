@@ -564,7 +564,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
             string sql = "select id, owner_id, goods_id, amount, price, cost, tax, tax_value, cost_with_tax from invoice_receipt_detail where id = :id";
-            return connection.QuerySingleOrDefault<InvoiceReceipt>(sql, new { id = id.oid });
+            return connection.QuerySingleOrDefault<InvoiceReceiptDetail>(sql, new { id = id.oid });
         }
 
         object IDataOperation.Insert(IDbConnection connection, IDbTransaction transaction, IBrowserParameters parameters, IEditor editor)

@@ -292,7 +292,7 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 .ExecuteAction(OpenContractClick);
 
             editor.Reports.Add(
-                ReportForm.Create("specification", true)
+                ReportForm.Create("purchase-request", true)
                     .Parameter("OrderId", editor.Entity.oid)
                 );
         }

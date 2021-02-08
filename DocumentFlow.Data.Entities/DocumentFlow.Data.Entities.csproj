@@ -46,6 +46,7 @@
     <Compile Include="ChangingStatus.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="DocumentRefs.cs" />
+    <Compile Include="EmailLog.cs" />
     <Compile Include="Email.cs" />
     <Compile Include="EntityKind.cs" />
     <Compile Include="History.cs" />

@@ -20,6 +20,7 @@ namespace DocumentFlow
         private bool canZoom;
         private PdfLoadedDocument document;
         private string documentName;
+        private Guid documentId;
 
         private PreviewWindow(PdfLoadedDocument doc)
         {
@@ -28,13 +29,14 @@ namespace DocumentFlow
             document = doc;
         }
 
-        public static void PreviewPdf(PdfLoadedDocument doc, string title, string docName)
+        public static void PreviewPdf(Guid documentId, PdfLoadedDocument doc, string title, string docName)
         {
             PreviewWindow window = new PreviewWindow(doc);
 
             window.Text = title;
             window.documentName = docName;
             window.pdfDocumentView1.Load(doc);
+            window.documentId = documentId;
             window.ShowDialog();
         }
 
@@ -211,12 +213,10 @@ namespace DocumentFlow
 
         private void buttonSend_Click(object sender, EventArgs e)
         {
-            var win = new SelectEmailWindow();
-
             string file = Path.Combine(Path.GetTempPath(), documentName + ".pdf");
             document.Save(file);
 
-            win.ShowWindow(documentName, file);
+            SelectEmailWindow.ShowWindow(documentId, documentName, file);
         }
     }
 }

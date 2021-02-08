@@ -26,7 +26,15 @@ namespace DocumentFlow
 
     public partial class SelectEmailWindow : MetroForm
     {
-        private readonly BindingList<string> attachments = new BindingList<string>();
+        private struct Attachment
+        {
+            public string FileName { get; set; }
+
+            public override string ToString()
+            {
+                return Path.GetFileName(FileName);
+            }
+        }
 
         private class EmailAddress
         {
@@ -35,39 +43,42 @@ namespace DocumentFlow
             public override string ToString() => $"{Name} <{Email}>";
         }
 
-        public SelectEmailWindow()
+        private readonly BindingList<Attachment> attachments = new BindingList<Attachment>();
+        private Guid id;
+
+        private SelectEmailWindow(Guid documentId, IEnumerable<EmailAddress> from, IEnumerable<EmailAddress> to, string subject, string file)
         {
             InitializeComponent();
 
             comboFrom.DropDownControl.ShowButtons = true;
             comboTo.DropDownControl.ShowButtons = true;
+
+            comboFrom.DataSource = from;
+            comboTo.DataSource = to;
+            textSubject.Text = subject;
+
+            attachments.Add(new Attachment { FileName = file });
+            listFiles.DataSource = attachments;
+            
+            id = documentId;
         }
 
-        public bool ShowWindow(string title, string file)
+        public static bool ShowWindow(Guid documentId, string title, string file)
         {
+            IEnumerable<EmailAddress> from;
+            IEnumerable<EmailAddress> to;
             using (var conn = Db.OpenConnection())
             {
                 var orgs = conn.Query<EmailAddress>("select name, email from organization");
                 var emps = conn.Query<EmailAddress>("select p.name, e.email from employee e join organization o on (o.id = e.owner_id) join person p on (p.id = e.person_id) where e.email is not null");
 
-                comboFrom.DataSource = orgs.Concat(emps);
+                from = orgs.Concat(emps);
 
-                var contractors = conn.Query<EmailAddress>("select p.name || ' (' || c.short_name || ')' as name, e.email from employee e join contractor c on (e.owner_id = c.id) join person p on (e.person_id = p.id) where e.email is not null");
-
-                comboTo.DataSource = contractors;
+                to = conn.Query<EmailAddress>("select p.name || ' (' || c.short_name || ')' as name, e.email from employee e join contractor c on (e.owner_id = c.id) join person p on (e.person_id = p.id) where e.email is not null");
             }
 
-            textSubject.Text = title;
-            /*string attachment = title.Replace('/', '-').Replace('\\', '-') + ".pdf";
-            if (File.Exists(Path.GetTempPath() + attachment))
-            {
-                attachments.Add(attachment);
-            }*/
-            attachments.Add(file);
-
-            listFiles.DataSource = attachments;
-            
-            return ShowDialog() == DialogResult.OK;
+            SelectEmailWindow window = new SelectEmailWindow(documentId, from, to, title, file);
+            return window.ShowDialog() == DialogResult.OK;
         }
 
         private void ControlSizeChanged(object sender, EventArgs e)
@@ -79,17 +90,24 @@ namespace DocumentFlow
             }
         }
 
-        private static async Task SendEmailAsync(Email email, EmailAddress emailFrom, IEnumerable<EmailAddress> emailTo, string subject, IEnumerable<string> attachments)
+        private async Task SendEmailAsync(Email email, EmailAddress emailFrom, IEnumerable<EmailAddress> emailTo)
         {
             using (var client = new SmtpClient())
             {
+                EmailLog log = new EmailLog
+                {
+                    email_id = email.id,
+                    to_address = string.Join(";", emailTo.Select(x => x.Email)),
+                    document_id = id
+                };
+
                 // SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection
                 // https://stackoverflow.com/questions/59026301/sslhandshakeexception-an-error-occurred-while-attempting-to-establish-an-ssl-or
                 //
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-                client.Connect(email.host, email.port, SecureSocketOptions.Auto);
-                client.Authenticate(email.address, email.password);
+                await client.ConnectAsync(email.host, email.port, SecureSocketOptions.Auto);
+                await client.AuthenticateAsync(email.address, email.password);
 
                 MimeMessage message = new MimeMessage();
                 message.From.Add(new MailboxAddress(emailFrom.Name, emailFrom.Email));
@@ -99,7 +117,7 @@ namespace DocumentFlow
                     message.To.Add(new MailboxAddress(e.Name, e.Email));
                 }
 
-                message.Subject = subject;
+                message.Subject = textSubject.Text;
 
                 BodyBuilder builder = new BodyBuilder();
                 if (!string.IsNullOrEmpty(email.signature_plain))
@@ -114,17 +132,27 @@ namespace DocumentFlow
 
                 if (attachments.Any())
                 {
-                    foreach (string fileName in attachments)
+                    foreach (Attachment attachment in attachments)
                     {
-                        builder.Attachments.Add(Path.GetTempPath() + fileName);
+                        builder.Attachments.Add(attachment.FileName);
                     }
                 }
 
                 message.Body = builder.ToMessageBody();
 
                 await client.SendAsync(message);
+                log.date_time_sending = DateTime.Now;
 
                 client.Disconnect(true);
+
+                using (var conn = Db.OpenConnection())
+                {
+                    using (var transaction = conn.BeginTransaction())
+                    {
+                        await conn.ExecuteAsync("insert into email_log (email_id, start_time_sending, end_time_sending, to_address, document_id) values (:email_id, :start_time_sending, :end_time_sending, :to_address, :document_id)", log, transaction);
+                        transaction.Commit();
+                    }
+                }
             }
         }
 
@@ -157,7 +185,7 @@ namespace DocumentFlow
                     return;
                 }
 
-                SendEmailAsync(email, from, to, textSubject.Text, attachments).GetAwaiter();
+                SendEmailAsync(email, from, to).GetAwaiter();
             }
         }
 
@@ -167,14 +195,14 @@ namespace DocumentFlow
             {
                 foreach (string file in openFileDialog1.FileNames)
                 {
-                    attachments.Add(file);
+                    attachments.Add(new Attachment { FileName = file });
                 }
             }
         }
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            if (listFiles.SelectedItem is string file)
+            if (listFiles.SelectedItem is Attachment file)
             {
                 attachments.Remove(file);
             }

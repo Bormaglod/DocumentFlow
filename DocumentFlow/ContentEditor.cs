@@ -825,7 +825,7 @@ namespace DocumentFlow
                         doc.Save(stream);
                         using (PdfLoadedDocument loadedDocument = new PdfLoadedDocument(stream))
                         {
-                            PreviewWindow.PreviewPdf(loadedDocument, forms.Item2.name, doc.DocumentInformation.Title);
+                            PreviewWindow.PreviewPdf(current, loadedDocument, forms.Item2.name, doc.DocumentInformation.Title);
                         }
                     }
                 }
