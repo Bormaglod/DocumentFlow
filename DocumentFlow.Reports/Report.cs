@@ -102,6 +102,7 @@ namespace DocumentFlow.Reports
                 document.DocumentInformation.Author = "ООО \"Автоком\"";
                 document.DocumentInformation.Title = TextObject.Parse(ReportPage.Title, (source, field) => storage.Get(source, field).ToString());
                 document.DocumentInformation.Subject = name;
+                document.PageSettings.Orientation = ReportPage.PageSize.Orientation;
                 document.PageSettings.Size = ReportPage.PageSize.Size;
                 document.PageSettings.SetMargins(
                     Length.FromMillimeter(ReportPage.MarginSize.Left).ToPoint(),

@@ -36,7 +36,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
         private const string baseSelect = @"
             with goods_sum as
             (
-	            select reference_id as id, sum(amount * sign(operation_summa::numeric)) as balance from balance_goods group by reference_id
+	            select reference_id as id, sum(amount * iif(operation_summa = 0::money, 1::numeric, sign(operation_summa::numeric))) as balance from balance_goods group by reference_id
             )
             select 
                 g.id,

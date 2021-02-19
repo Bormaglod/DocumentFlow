@@ -222,7 +222,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
         public void Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
-            const string contractorSelect = "select c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'buyer'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
+            const string contractorSelect = "select distinct c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'buyer'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
             const string ownerSelect = "select po.id, ek.name || ' №' || po.doc_number || ' от ' || to_char(po.doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(pod.cost_with_tax) || ' (' || c.name || ')' as name from production_order po join entity_kind ek on (ek.id = po.entity_kind_id) join production_order_detail pod on (pod.owner_id = po.id) join contractor c on (c.id = po.contractor_id) where (po.status_id = 3100 or (po.id = :owner_id)) and (po.contractor_id = :contractor_id or :contractor_id is null) group by po.id, ek.name, po.doc_number, po.doc_date, c.name";
             const string gridSelect = "select isd.id, isd.owner_id, g.name as goods_name, isd.amount, isd.price, isd.cost, isd.tax, isd.tax_value, isd.cost_with_tax from invoice_sales_detail isd left join goods g on (g.id = isd.goods_id) where isd.owner_id = :oid";
 			const string contractSelect = "select id, status_id, name, parent_id from contract where owner_id = :contractor_id and contractor_type = 'buyer'::contractor_type";
@@ -392,6 +392,11 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 datagrid,
                 invoice_panel.AsControl()
             });
+
+            editor.Reports.Add(
+                ReportForm.Create("invoice-sales", true)
+                    .Parameter("InvoiceId", editor.Entity.oid)
+                );
         }
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)

@@ -17,12 +17,19 @@ namespace DocumentFlow.Reports
 
     public class TextObject : ReportObject
     {
-        public string Text { get; set; }
+        private string outputText;
+        private PdfFont font;
+
+        public string Text { get; set; } = string.Empty;
         public ReportFont Font { get; set; }
         public PdfTextAlignment HorizontalAlignment { get; set; } = PdfTextAlignment.Left;
         public PdfVerticalAlignment VerticalAlignment { get; set; } = PdfVerticalAlignment.Top;
         public Padding Padding { get; set; } = new Padding();
         public string ColorName { get; set; } = "Black";
+        public bool CanGrow { get; set; } = false;
+        public bool CanShrink { get; set; } = false;
+        public bool GrowToBottom { get; set; } = false;
+        public PdfWordWrapType WordWrap { get; set; } = PdfWordWrapType.None;
 
         public static string Parse(string text, Func<string, string, string> getValue)
         {
@@ -46,13 +53,40 @@ namespace DocumentFlow.Reports
             return out_str;
         }
 
+        public void CalculateBounds()
+        {
+            outputText = Parse(Text, (source, field) => Band.Get(source, field).ToString());
+            font = new PdfTrueTypeFont((Font ?? Band.Font).Instance, true);
+
+            if (CanGrow || CanShrink)
+            {
+                float paddingWidth = Length.FromMillimeter(Padding.Width).ToPoint();
+                float paddingHeight = Length.FromMillimeter(Padding.Height).ToPoint();
+                float widthText = Bounds.Width - paddingWidth;
+
+                PdfStringFormat stringFormat = new PdfStringFormat
+                {
+                    Alignment = HorizontalAlignment,
+                    LineAlignment = VerticalAlignment,
+                    WordWrap = WordWrap
+                };
+
+                SizeF rectText = font.MeasureString(outputText, widthText, stringFormat);
+                rectText.Height += paddingHeight;
+
+                Height = Length.FromPoint(rectText.Height).ToMillimeter();
+            }
+        }
+
         public override void GeneratePdf(PdfGraphics g)
         {
+            if (GrowToBottom && Height < Band.Height)
+            {
+                Height = Band.Height;
+            }
+
             base.GeneratePdf(g);
 
-            string out_str = Parse(Text, (source, field) => Band.Get(source, field).ToString());
-
-            PdfFont font = new PdfTrueTypeFont((Font ?? Band.Font).Instance, true);
             PdfBrush brush = new PdfSolidBrush(Color.FromName(ColorName));
 
             RectangleF rect = Bounds;
@@ -66,10 +100,11 @@ namespace DocumentFlow.Reports
             PdfStringFormat stringFormat = new PdfStringFormat
             {
                 Alignment = HorizontalAlignment,
-                LineAlignment = VerticalAlignment
+                LineAlignment = VerticalAlignment,
+                WordWrap = WordWrap
             };
 
-            g.DrawString(out_str, font, brush, rect, stringFormat);
+            g.DrawString(outputText, font, brush, rect, stringFormat);
         }
     }
 }

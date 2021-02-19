@@ -27,6 +27,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
         public decimal cost { get; protected set; }
         public decimal tax_value { get; protected set; }
         public decimal cost_with_tax { get; protected set; }
+        public bool is_tolling { get; set; }
     }
 
     public class InvoiceReceiptDetail : DetailEntity
@@ -58,6 +59,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 ir.invoice_date, 
                 ir.invoice_number, 
                 ir.receipt_date,
+                ir.is_tolling,
                 pr.doc_number as purchase_number, 
                 pr.doc_date as purchase_date, 
                 case 
@@ -219,11 +221,13 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
             public Guid contract_id { get; set; }
         }
 
+		private const int labelWidth = 150;
+
         void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const string orgSelect = "select id, name from organization where status_id = 1002";
             const string contractorSelect = "select distinct c.id, c.status_id, c.name, c.parent_id from contractor c left join contract on (contract.owner_id = c.id) where (c.status_id = 1002 and contract.contractor_type = 'seller'::contractor_type) or (c.status_id = 500) or (c.id = :contractor_id) order by c.name";
-            const string ownerSelect = "select pr.id, ek.name || ' №' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) || ' (' || c.name || ')' as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) join contractor c on (c.id = pr.contractor_id) where (pr.status_id in (1001, 3001, 3002, 3003) or (pr.id = :owner_id)) and (pr.contractor_id = :contractor_id or :contractor_id is null) group by pr.id, ek.name, doc_number, doc_date, c.name";
+            const string ownerSelect = "select pr.id, ek.name || ' №' || doc_number || ' от ' || to_char(doc_date, 'DD.MM.YYYY') || ' на сумму ' || sum(prd.cost_with_tax) || ' (' || c.name || ')' as name from purchase_request pr join entity_kind ek on (ek.id = pr.entity_kind_id) join purchase_request_detail prd on (prd.owner_id = pr.id) join contractor c on (c.id = pr.contractor_id) where (pr.status_id in (1001, 3001, 3002, 3003, 3005) or (pr.id = :owner_id)) and (pr.contractor_id = :contractor_id or :contractor_id is null) group by pr.id, ek.name, doc_number, doc_date, c.name";
             const string gridSelect = "select ird.id, ird.owner_id, g.name as goods_name, ird.amount, ird.price, ird.cost, ird.tax, ird.tax_value, ird.cost_with_tax from invoice_receipt_detail ird join goods g on (g.id = ird.goods_id) where ird.owner_id = :oid";
             const string contractSelect = "select id, status_id, name, parent_id from contract where owner_id = :contractor_id and contractor_type = 'seller'::contractor_type";
 
@@ -267,7 +271,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                         editor.Populates["owner_id"].Populate(conn, editor.Entity);
                     }
                 })
-                .SetLabelWidth(100)
+                .SetLabelWidth(labelWidth)
                 .SetControlWidth(580);
 
             IControl contract_id = editor.CreateSelectBox<InvoiceReceipt>("contract_id", "Договор", (e, c) =>
@@ -289,7 +293,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                         }
                     }
                 })
-                .SetLabelWidth(100)
+                .SetLabelWidth(labelWidth)
                 .SetControlWidth(580);
 
             IControl owner_id = editor.CreateSelectBox<InvoiceReceipt>("owner_id", "Заказ", (e, c) =>
@@ -309,8 +313,11 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                         editor.Populates["datagrid"].Populate(conn, editor.Entity);
                     }
                 })
-                .SetLabelWidth(100)
+                .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
+
+            IControl is_tolling = editor.CreateCheckBox("is_tolling", "Давальческий материал")
+                .SetLabelWidth(labelWidth);
 
             IControl datagrid = editor.CreateDataGrid("datagrid", (c) => { return c.Query<InvoiceReceiptDetail>(gridSelect, new { editor.Entity.oid }).AsList(); })
                 .CreateColumns((columns) =>
@@ -385,6 +392,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                 contractor_id,
                 contract_id,
                 owner_id,
+                is_tolling,
                 datagrid,
                 invoice_panel.AsControl()
             });
@@ -415,7 +423,8 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     doc_number, 
                     organization_id, 
                     invoice_date, 
-                    invoice_number 
+                    invoice_number,
+                    is_tolling
                 from invoice_receipt 
                 where id = :id";
             return connection.QuerySingleOrDefault<InvoiceReceipt>(sql, new { id = id.oid });
@@ -429,7 +438,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            string sql = "update invoice_receipt set contractor_id = :contractor_id, contract_id = :contract_id, doc_date = :doc_date, doc_number = :doc_number, invoice_date = :invoice_date, invoice_number = :invoice_number, owner_id = :owner_id where id = :id";
+            string sql = "update invoice_receipt set contractor_id = :contractor_id, contract_id = :contract_id, doc_date = :doc_date, doc_number = :doc_number, invoice_date = :invoice_date, invoice_number = :invoice_number, owner_id = :owner_id, is_tolling = :is_tolling where id = :id";
             return connection.Execute(sql, editor.Entity, transaction);
         }
 

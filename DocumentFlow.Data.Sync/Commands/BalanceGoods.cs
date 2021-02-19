@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Data;
 using System.Linq;
@@ -39,16 +39,17 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
                 bg.document_number, 
                 bg.operation_summa, 
                 case 
-                    when bg.operation_summa > 0::money then bg.operation_summa 
+                    when bg.amount > 0 then bg.amount 
                     else null 
                 end as income, 
                 case 
-                    when bg.operation_summa < 0::money then (@bg.operation_summa::numeric)::money 
+                    when bg.amount < 0 then @amount 
                     else null 
                 end as expense, 
-                bg.amount, 
+                bg.amount,
                 g.name as goods_name, 
-                sum(bg.amount * sign(bg.operation_summa::numeric)) over (order by document_date, document_number) as remainder, 
+				sum(bg.amount) over (order by document_date, document_number) as remainder, 
+                --sum(bg.amount * iif(bg.operation_summa = 0::money, 1::numeric, sign(bg.operation_summa::numeric))) over (order by document_date, document_number) as remainder, 
                 bg.doc_date, 
                 bg.doc_number
             from balance_goods bg 
@@ -94,16 +95,17 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
                 columns.CreateText("document_number", "Номер")
                     .SetWidth(100);
 
-                columns.CreateNumeric("income", "Приход", NumberFormatMode.Currency)
+				columns.CreateNumeric("operation_summa", "Сумма", NumberFormatMode.Currency)                    
                     .SetWidth(100)
                     .SetHorizontalAlignment(HorizontalAlignment.Right);
 
-                columns.CreateNumeric("expense", "Расход", NumberFormatMode.Currency)
-                    .SetWidth(100)
-                    .SetHorizontalAlignment(HorizontalAlignment.Right);
+                columns.CreateNumeric("income", "Приход")
+					.SetDecimalDigits(3)
+                    .SetWidth(130)
+				                    .SetHorizontalAlignment(HorizontalAlignment.Right);
 
-                columns.CreateNumeric("amount", "Количество")
-                    .SetDecimalDigits(3)
+                columns.CreateNumeric("expense", "Расход")
+					.SetDecimalDigits(3)
                     .SetWidth(130)
                     .SetHorizontalAlignment(HorizontalAlignment.Right);
 

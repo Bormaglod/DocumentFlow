@@ -20,41 +20,45 @@ namespace DocumentFlow.Core
 
         public Length(float value, GraphicsUnit unit) => (this.value, this.unit) = (value, unit);
 
-        public Length ToInch() => new Length(Convert(value, unit, GraphicsUnit.Inch), GraphicsUnit.Inch);
+        public Length ToInch() => new Length(Convert(this, GraphicsUnit.Inch), GraphicsUnit.Inch);
 
-        public Length ToPoint() => new Length(Convert(value, unit, GraphicsUnit.Point), GraphicsUnit.Point);
+        public Length ToPoint() => new Length(Convert(this, GraphicsUnit.Point), GraphicsUnit.Point);
 
-        public Length ToDpi200() => new Length(Convert(value, unit, GraphicsUnit.Dpi200), GraphicsUnit.Dpi200);
+        public Length ToDpi200() => new Length(Convert(this, GraphicsUnit.Dpi200), GraphicsUnit.Dpi200);
+
+        public Length ToMillimeter() => new Length(Convert(this, GraphicsUnit.Millimeter), GraphicsUnit.Millimeter);
 
         public static Length FromInch(float value) => new Length(value, GraphicsUnit.Inch);
         
         public static Length FromMillimeter(float value) => new Length(value, GraphicsUnit.Millimeter);
 
+        public static Length FromPoint(float value) => new Length(value, GraphicsUnit.Point);
+
         public static implicit operator float(Length length) => length.value;
 
-        private static float Convert(float metricValue, GraphicsUnit from, GraphicsUnit to)
+        private static float Convert(Length length, GraphicsUnit to)
         {
-            switch (from)
+            switch (length.unit)
             {
                 case GraphicsUnit.Inch:
-                    return ConvertFromInch(metricValue, to);
+                    return ConvertFromInch(length.value, to);
                 case GraphicsUnit.Centimeter:
-                    return ConvertFromCentimeter(metricValue, to);
+                    return ConvertFromCentimeter(length.value, to);
                 case GraphicsUnit.Display:
-                    return ConvertFromDisplay(metricValue, to);
+                    return ConvertFromDisplay(length.value, to);
                 case GraphicsUnit.Point:
-                    return ConvertFromPoint(metricValue, to);
+                    return ConvertFromPoint(length.value, to);
                 case GraphicsUnit.Millimeter:
-                    return ConvertFromMillimeter(metricValue, to);
+                    return ConvertFromMillimeter(length.value, to);
                 case GraphicsUnit.Dpi100:
-                    return ConvertFromDpi100(metricValue, to);
+                    return ConvertFromDpi100(length.value, to);
                 case GraphicsUnit.Dpi200:
-                    return ConvertFromDpi200(metricValue, to);
+                    return ConvertFromDpi200(length.value, to);
                 case GraphicsUnit.Dpi300:
-                    return ConvertFromDpi300(metricValue, to);
+                    return ConvertFromDpi300(length.value, to);
             }
 
-            return metricValue;
+            return length.value;
         }
 
         private static float ConvertFromInch(float metricValue, GraphicsUnit to)

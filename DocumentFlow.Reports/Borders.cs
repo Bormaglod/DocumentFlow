@@ -18,7 +18,7 @@ namespace DocumentFlow.Reports
         public bool Bottom { get; set; } = false;
         public bool All { get; set; } = false;
         public string ColorName { get; set; } = "Black";
-        public float Width { get; set; } = 0.1f;
+        public float Width { get; set; } = 0.5f;
         public Color Color => Color.FromName(ColorName);
     }
 }

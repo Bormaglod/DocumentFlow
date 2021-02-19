@@ -59,6 +59,7 @@ namespace DocumentFlow.Reports
         public Band PageHeaderBand { get; set; }
         public List<DataBandComplex> DataBands { get; set; }
         public Band PageFooterBand { get; set; }
+        public Band ReportSummary { get; set; }
         public int Current => current;
         public float CurrentBandTop => currentBandTop;
 
@@ -72,13 +73,16 @@ namespace DocumentFlow.Reports
                     throw new Exception($"Раздел {DataBands[i].Header.Name} не умещается на страницу.");
                 }
 
-                if (DataBands[i].DataBand != null && DataBands[i].DataBand.Height > maxHeight)
+                if (DataBands[i].DataBand != null)
                 {
-                    throw new Exception($"Раздел {DataBands[i].DataBand.Name} не умещается на страницу.");
-                }
-                else
-                {
-                    DataBands[i].DataBand.Reset();
+                    if (DataBands[i].DataBand.Height > maxHeight)
+                    {
+                        throw new Exception($"Раздел {DataBands[i].DataBand.Name} не умещается на страницу.");
+                    }
+                    else
+                    {
+                        DataBands[i].DataBand.Reset();
+                    }
                 }
 
                 if (DataBands[i].Footer != null && DataBands[i].Footer.Height > maxHeight)
@@ -105,6 +109,8 @@ namespace DocumentFlow.Reports
 
                 DrawDataBand(doc, DataBands[i].Footer);
             }
+
+            DrawDataBand(doc, ReportSummary);
         }
 
         private void CreatePdfPage(PdfDocument doc)
@@ -132,7 +138,7 @@ namespace DocumentFlow.Reports
                 PageFooterBand.GeneratePdf(graphics);
             }
 
-            currentBandTop = MarginSize.Top + (ReportTitleBand?.Height ?? 0) + (PageHeaderBand?.Height ?? 0);
+            currentBandTop = (ReportTitleBand?.Height ?? 0) + (PageHeaderBand?.Height ?? 0);
         }
 
         private float GetMaxDataBandHeight(int page)

@@ -103,7 +103,6 @@ namespace DocumentFlow
             // 
             // savePdfDialog
             // 
-            this.savePdfDialog.CheckFileExists = true;
             this.savePdfDialog.DefaultExt = "pdf";
             this.savePdfDialog.Filter = "PDF файлы|*.pdf";
             // 

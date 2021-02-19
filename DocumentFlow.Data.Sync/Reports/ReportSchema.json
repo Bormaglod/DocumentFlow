@@ -380,7 +380,10 @@
                "$ref": "#/definitions/band"
             },
             "PageFooterBand": {
-               "$ref": "#/definitions/band"
+                "$ref": "#/definitions/band"
+            },
+            "ReportSummary": {
+                "$ref": "#/definitions/band"
             }
          },
          "additionalProperties": false

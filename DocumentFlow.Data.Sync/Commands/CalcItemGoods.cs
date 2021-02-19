@@ -22,12 +22,12 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
         /// <summary>
         /// Цена за единицу материала
         /// </summary>
-        public decimal price { get; set; }
+		public decimal price { get; set; }
 
         /// <summary>
         /// Сумма
         /// </summary>
-        public decimal cost { get; set; }
+		public decimal cost { get; set; }
 
         /// <summary>
         /// Количество материала
@@ -38,6 +38,11 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
         /// Процент использования в операциях
         /// </summary>
         public int percent_uses { get; set; }
+
+		/// <summary>
+        /// Давальческий материал
+        /// </summary>
+		public bool is_tolling { get; set; }
     }
 
     public class CalcItemGoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -49,8 +54,9 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
                 s.note as status_name, 
                 g.name, 
                 cg.cost, 
-                cg.price, 
+                cg.price,
                 cg.amount, 
+				cg.is_tolling,
                 (case when coalesce(cg.amount, 0) = 0 then 0 else coalesce(cg.uses, 0) * 100 / coalesce(cg.amount, 0) end)::integer as percent_uses 
             from calc_item_goods cg 
                 join status s on (s.id = cg.status_id)
@@ -96,6 +102,8 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
                 columns.CreateNumeric("cost", "Стоимость", NumberFormatMode.Currency)
                     .SetWidth(150)
                     .SetHorizontalAlignment(HorizontalAlignment.Right);
+
+				columns.CreateBoolean("is_tolling", "Давальческий");
 
                 columns.CreateProgress("percent_uses", "Использовано, %")
                     .SetWidth(150);
@@ -157,18 +165,22 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(200);
 
+			IControl is_tolling = editor.CreateCheckBox("is_tolling", "Давальческий материал")
+				.SetLabelWidth(labelWidth);
+
             editor.Container.Add(new IControl[] {
                 calculation_name,
                 item_id,
                 amount,
                 price,
-                cost
+                cost,
+				is_tolling
             });
         }
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            string sql = "select cg.id, c.name as calculation_name, cg.item_id, cg.amount, cg.price, cg.cost from calc_item_goods cg join calculation c on (c.id = cg.owner_id) where cg.id = :id";
+            string sql = "select cg.id, c.name as calculation_name, cg.item_id, cg.amount, cg.price, cg.cost, cg.is_tolling from calc_item_goods cg join calculation c on (c.id = cg.owner_id) where cg.id = :id";
             return connection.QuerySingleOrDefault<CalcItemGoods>(sql, new { id = id.oid });
         }
 
@@ -180,7 +192,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            string sql = "update calc_item_goods set item_id = :item_id, amount = :amount, price = :price, cost = :cost where id = :id";
+            string sql = "update calc_item_goods set item_id = :item_id, amount = :amount, price = :price, cost = :cost, is_tolling = :is_tolling where id = :id";
             return connection.Execute(sql, editor.Entity, transaction);
         }
 

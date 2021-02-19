@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 using System.Windows.Forms;
+
 using Dapper;
 using Inflector;
+using Json.Schema;
 using Syncfusion.Windows.Forms.Tools;
-using DocumentFlow.Data;
 
 namespace DocumentFlow.Data.Sync
 {
@@ -121,6 +118,10 @@ namespace DocumentFlow.Data.Sync
                     {
                         string[] files = Directory.GetFiles(@"..\..\Reports");
 
+                        /*string js = File.ReadAllText(@".\Reports\ReportSchema.json");
+                        //var schema = JsonSchema.FromFile(@".\Reports\ReportSchema.json");
+                        var schema = JsonSchema.FromText(js);*/
+
                         foreach (string file in files)
                         {
                             DateTime dtFile = File.GetLastWriteTime(file);
@@ -148,10 +149,27 @@ namespace DocumentFlow.Data.Sync
                                 {
                                     pf.schema_form = File.ReadAllText(file);
                                     pf.date_updated = dtFile;
-                                    int cnt = conn.Execute("update printed_form set schema_form = :schema_form::jsonb, date_updated = :date_updated where id = :id", pf, transaction);
 
-                                    string res = cnt == 1 ? "OK" : "Fail";
-                                    textConsole.AppendLine($"{code,-26} >> to DATABASE, {res}");
+                                    /*var json = JsonDocument.Parse(pf.schema_form).RootElement;
+
+                                    ValidationOptions options = new ValidationOptions
+                                    {
+                                        OutputFormat = OutputFormat.Basic
+                                    };
+
+                                    var validation = schema.Validate(json);
+                                    if (validation.IsValid)*/
+                                    {
+                                        int cnt = conn.Execute("update printed_form set schema_form = :schema_form::jsonb, date_updated = :date_updated where id = :id", pf, transaction);
+
+                                        string res = cnt == 1 ? "OK" : "Fail";
+                                        textConsole.AppendLine($"{code,-26} >> to DATABASE, {res}");
+                                    }
+                                    /*else
+                                    {
+                                        textConsole.AppendLine($"{code,-26} >> to DATABASE, Invalid schema");
+                                        textConsole.AppendLine($"***** {validation.Message}");
+                                    }*/
                                 }
                             }
 
