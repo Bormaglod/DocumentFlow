@@ -107,6 +107,23 @@ namespace DocumentFlow.Controls.Editor.Code
             return container;
         }
 
+        IContainer IEditor.CreateContainer(string name) => ((IEditor)this).CreateContainer(name, 100);
+
+        IContainer IEditor.CreateContainer(string name, int height)
+        {
+            var panel = new Panel
+            {
+                Padding = new Padding(1),
+                Height = height,
+                Dock = DockStyle.Top,
+                Enabled = enabled?.Ability(Entity, name, GetInfo()) ?? true,
+                Visible = visible?.Ability(Entity, name, GetInfo()) ?? true
+            };
+
+            ContainerData container = new ContainerData(panel, name);
+            return container;
+        }
+
         IValueControl IEditor.CreateLabel(string name, string labelText)
         {
             var label = new L_Label

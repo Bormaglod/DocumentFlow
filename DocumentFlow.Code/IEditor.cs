@@ -31,6 +31,8 @@ namespace DocumentFlow.Code
         IReportCollection Reports { get; }
         IContainer CreateContainer();
         IContainer CreateContainer(int height);
+        IContainer CreateContainer(string name);
+        IContainer CreateContainer(string name, int height);
         IValueControl CreateLabel(string name, string labelText);
         IBindingControl CreateTextBox(string fieldName, string label, bool multiline = false);
         IBindingControl CreateSelectBox(string fieldName, string label, ChoiceItems getItems, bool showOnlyFolder = false);

@@ -14,11 +14,9 @@ namespace DocumentFlow.Code.Implementation
 {
     public class ControlData : IControl
     {
-        private string controlName = string.Empty;
-
         public ControlData(Control control) => Owner = control;
 
-        public string ControlName => controlName;
+        public string ControlName { get; protected set; } = string.Empty;
 
         int IControl.Left 
         {
@@ -97,7 +95,7 @@ namespace DocumentFlow.Code.Implementation
 
         IControl IControl.SetControlName(string name)
         {
-            controlName = name; ;
+            ControlName = name;
             return this;
         }
 
@@ -199,6 +197,6 @@ namespace DocumentFlow.Code.Implementation
 
         public Control Owner { get; }
 
-        public override string ToString() => controlName;
+        public override string ToString() => ControlName;
     }
 }

@@ -359,24 +359,21 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                 .SetEditor("Номенклатура", new InvoiceSalesDetailEditor())
                 .SetHeight(350);
 
-            IContainer invoice_panel = editor.CreateContainer(42);
+            IContainer invoice_panel = editor.CreateContainer("InvoicePanel", 42);
             invoice_panel.AsControl()
-				.SetControlName("InvoicePanel")
                 .SetPadding(top: 10);
 
             InvoiceSales invoice = editor.Entity as InvoiceSales;
             IControl invoice_number = editor.CreateTextBox("invoice_number", "Счёт фактура №")
                 .SetLabelAutoSize(true)
                 .SetWidth(225)
-                .SetDock(DockStyle.Left)
-                .SetVisible(invoice.tax_payer);
+                .SetDock(DockStyle.Left);
 
             IControl invoice_date = editor.CreateDateTimePicker("invoice_date", "от", customFormat: "dd.MM.yyyy")
                 .SetLabelWidth(40)
                 .SetLabelTextAlignment(ContentAlignment.TopCenter)
                 .SetDock(DockStyle.Left)
-                .SetWidth(210)
-                .SetVisible(invoice.tax_payer);
+                .SetWidth(210);
 
 			invoice_panel.Add(new IControl[]
             {
@@ -446,7 +443,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
         bool IControlVisible.Ability(object entity, string dataName, IInformation info)
         {
             InvoiceSales i_s = entity as InvoiceSales;
-            if (new string[] { "invoice_number", "invoice_date" }.Contains(dataName))
+            if (dataName == "InvoicePanel")
                 return i_s.tax_payer;
 
             return true;

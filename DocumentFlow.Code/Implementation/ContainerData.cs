@@ -23,6 +23,11 @@ namespace DocumentFlow.Code.Implementation
 
         public ContainerData(Control container, Func<IInformation> getInformation = null) : base(container) => getInfo = getInformation;
 
+        public ContainerData(Control container, string name, Func<IInformation> getInformation = null) : this(container, getInformation)
+        {
+            ControlName = name;
+        }
+
         IControl IContainer.this[string controlName] 
         { 
             get

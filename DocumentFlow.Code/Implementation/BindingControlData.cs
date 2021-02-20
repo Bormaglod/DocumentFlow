@@ -20,6 +20,7 @@ namespace DocumentFlow.Code.Implementation
     {
         private bool populating;
         private object populateData;
+        private string fieldName;
 
         public BindingControlData(Control control) : base(control)
         {
@@ -58,7 +59,18 @@ namespace DocumentFlow.Code.Implementation
             }
         }
 
-        public string FieldName { get; set; }
+        public string FieldName
+        {
+            get => fieldName;
+            set
+            {
+                fieldName = value;
+                if (string.IsNullOrEmpty(ControlName))
+                {
+                    ControlName = fieldName;
+                }
+            }
+        }
 
         public bool LabelAutoSize
         {
