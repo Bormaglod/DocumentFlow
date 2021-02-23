@@ -50,15 +50,19 @@ namespace DocumentFlow
                     continue;
 
                 var (CommandName, _) = GetCommandComponents(item.Tag.ToString());
-                if (!(commands.Get(CommandName) is UserAction ci))
+                if (commands is IUserActionCollection userActions)
                 {
-                    ci = commands.Add(CommandMethod.Embedded, CommandName);
-                }
+                    UserAction ci = userActions.Get(CommandName) as UserAction;
+                    if (ci == null)
+                    {
+                        ci = userActions.Add(CommandMethod.Embedded, CommandName, true) as UserAction;
+                    }
 
-                if (ci != null)
-                {
-                    ci.PropertyChanged += Notify_PropertyChanged;
-                    items.Add(ci, item);
+                    if (ci != null)
+                    {
+                        ci.PropertyChanged += Notify_PropertyChanged;
+                        items.Add(ci, item);
+                    }
                 }
             }
 

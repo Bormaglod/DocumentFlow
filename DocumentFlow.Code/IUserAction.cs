@@ -17,6 +17,7 @@ namespace DocumentFlow.Code
         event EventHandler<GettingParametersEventArgs> GettingParameters;
 
         string Code { get; }
+        string Alias { get; }
         string Name { get; }
         string Icon { get; }
         string Title { get; }

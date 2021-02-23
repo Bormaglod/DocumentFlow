@@ -615,9 +615,9 @@ namespace DocumentFlow
             {
                 if (gridContent.RowCount > 0)
                 {
-                    gridContent.SelectedIndex = gridContent.RowCount - 1;
+                    gridContent.SelectedIndex = gridContent.RowCount - 2;
 
-                    gridContent.TableControl.ScrollRows.ScrollInView(gridContent.RowCount - 1);
+                    gridContent.TableControl.ScrollRows.ScrollInView(gridContent.RowCount - 2);
                     gridContent.TableControl.ScrollRows.UpdateScrollBar();
                 }
             }

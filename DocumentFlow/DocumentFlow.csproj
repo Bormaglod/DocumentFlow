@@ -30,7 +30,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>2.5.3.0</ApplicationVersion>
+    <ApplicationVersion>2.5.4.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -41,7 +41,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -50,7 +50,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;USE_LISTENER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -546,13 +546,13 @@
       <Version>1.0.30.695</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Diagram.Windows">
-      <Version>18.4.0.35</Version>
+      <Version>18.4.0.44</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Edit.Windows">
-      <Version>18.4.0.35</Version>
+      <Version>18.4.0.44</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.PdfViewer.Windows">
-      <Version>18.4.0.35</Version>
+      <Version>18.4.0.44</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

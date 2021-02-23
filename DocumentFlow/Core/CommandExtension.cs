@@ -24,7 +24,7 @@ namespace DocumentFlow.Core
 {
     public static class CommandExtension
     {
-        private static Dictionary<Command, CodeContent> codes = null;
+        private static Dictionary<Command, CodeContent> codes = new Dictionary<Command, CodeContent>();
 
         public static IBrowserCode Browser(this Command command) => Task.Run(() => command.Compile()).Result.Browser;
 
@@ -32,11 +32,6 @@ namespace DocumentFlow.Core
 
         public static CodeContent Compile(this Command command)
         {
-            if (codes == null)
-            {
-                codes = new Dictionary<Command, CodeContent>();
-            }
-
             lock (command.Locker)
             {
                 if (string.IsNullOrEmpty(command.script))
@@ -154,11 +149,6 @@ namespace DocumentFlow.Core
 
         private static void Command_PropertyChanged(object sender, global::System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (codes == null)
-            {
-                return;
-            }
-
             if (e.PropertyName == "script" && sender is Command command && codes.ContainsKey(command))
             {
                 codes[command].Reset();

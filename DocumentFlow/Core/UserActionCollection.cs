@@ -34,7 +34,13 @@ namespace DocumentFlow
             this.commandFactory = commandFactory;
         }
 
-        IUserAction IUserActionCollection.Add(CommandMethod method, string name)
+        IUserAction IUserActionCollection.Add(CommandMethod method, string name, bool skipNotFound)
+        {
+            IUserActionCollection userActions = this;
+            return userActions.Add(method, name, string.Empty, skipNotFound);
+        }
+
+        IUserAction IUserActionCollection.Add(CommandMethod method, string name, string alias, bool skipNotFound)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -44,10 +50,23 @@ namespace DocumentFlow
             Command cmd = commandFactory.Commands.FirstOrDefault(x => x.code == name);
             if (cmd == null)
             {
+                if (skipNotFound)
+                {
+                    return null;
+                }
+
                 throw new CommandNotFoundException($"Команда {name} не существует.");
             }
 
-            var command = new UserAction(owner, cmd, method);
+            IUserActionCollection userActions = this;
+            if (userActions.Get(name, string.IsNullOrEmpty(alias)) != null)
+            {
+                throw new ArgumentException($"{nameof(name)} уже есть в наборе команд.");
+            }
+
+            var command = string.IsNullOrEmpty(alias) ? 
+                new UserAction(owner, cmd, method) : 
+                new UserAction(owner, cmd, method, alias);
             commands.Add(command);
             return command;
         }
@@ -56,21 +75,7 @@ namespace DocumentFlow
 
         void IUserActionCollection.OpenDiagram(Guid id) => commandFactory.OpenDiagram(id);
 
-        public IUserAction Get(string name) => commands.FirstOrDefault(x => x.Code == name);
-
-        public UserAction Add(CommandMethod method, string name)
-        {
-            var cmd = commandFactory.Commands.FirstOrDefault(x => x.code == name);
-            if (cmd != null)
-            {
-                var command = new UserAction(owner, cmd, method);
-                commands.Add(command);
-
-                return command;
-            }
-
-            return null;
-        }
+        IUserAction IUserActionCollection.Get(string name, bool withoutAlias) => commands.FirstOrDefault(x => withoutAlias ? x.Code == name : x.Alias == name);
 
         public Command GetCommand(IUserAction command) => commandFactory[command.Code];
 

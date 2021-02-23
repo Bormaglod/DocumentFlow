@@ -310,10 +310,10 @@
       <Version>2.0.78</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfDataGrid.WinForms">
-      <Version>18.4.0.35</Version>
+      <Version>18.4.0.44</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Tools.Windows">
-      <Version>18.4.0.35</Version>
+      <Version>18.4.0.44</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup />

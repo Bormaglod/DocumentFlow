@@ -24,6 +24,7 @@ namespace DocumentFlow
         private string title;
         private readonly CommandMethod commandMethod;
         private readonly object ownerControl;
+        private string alias;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<ExecuteEventArgs> Click;
@@ -38,7 +39,10 @@ namespace DocumentFlow
             commandMethod = method;
             ownerControl = owner;
             title = command.name;
+            alias = command.code;
         }
+
+        public UserAction(object owner, Command command, CommandMethod method, string alias) : this(owner, command, method) => this.alias = alias;
 
         public Command Command { get; }
 
@@ -48,7 +52,10 @@ namespace DocumentFlow
 
         string IUserAction.Code => Command.code;
 
+        string IUserAction.Alias => alias;
+
         string IUserAction.Name => Command.name;
+
         string IUserAction.Title => title;
 
         string IUserAction.Icon => icon;
