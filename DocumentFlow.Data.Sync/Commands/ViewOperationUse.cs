@@ -88,14 +88,14 @@ namespace DocumentFlow.Code.Implementation.ViewOperationUseImp
             browser.Commands.Get("copy-record").SetVisible(false);
             browser.Commands.Get("create-group").SetVisible(false);
 
-            browser.Commands.Add(CommandMethod.UserDefined, "open-document")
+            browser.Commands.Add(CommandMethod.UserDefined, "open-document", "open-goods")
                 .SetIcon("товар")
                 .SetTitle("Изделие")
                 .AppendTo(browser.ToolBar)
                 .AppendTo(browser.ContextMenuRecord)
                 .ExecuteAction(OpenGoodsClick);
 
-            browser.Commands.Add(CommandMethod.UserDefined, "open-document")
+            browser.Commands.Add(CommandMethod.UserDefined, "open-document", "open-calculation")
                 .SetIcon("гроссбух")
                 .SetTitle("Калькуляция")
                 .AppendTo(browser.ToolBar)

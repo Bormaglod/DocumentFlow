@@ -162,7 +162,7 @@ namespace DocumentFlow.Reports
                                 Enum.TryParse(parameter.DataType, out DbType type);
                                 NpgsqlParameter npgsqlParameter = new NpgsqlParameter(parameter.Name, type);
 
-                                if (parameter.Setted)
+                                if (parameter.HasValue)
                                 {
                                     npgsqlParameter.Value = parameter.Value;
                                 }

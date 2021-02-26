@@ -2,6 +2,572 @@
   "$id": "report",
   "Created": "2021-02-12T23:05:22+04:00",
   "Modified": "2021-02-12T23:05:00+04:00",
+  "ReportPage": {
+    "$id": "rp",
+    "Title": "[Title.doc_name]",
+    "Report": {
+      "$ref": "report"
+    },
+    "PageSize": {
+      "Name": "A4",
+      "Orientation": "Portrait"
+    },
+    "DataBands": {
+      "$id": "dbs",
+      "$values": [
+        {
+          "Footer": {
+            "$id": "dbf",
+            "Font": {
+              "$id": "dbf_font",
+              "Name": "Times New Roman",
+              "Style": "Bold"
+            },
+            "Name": "Footer1",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 7.5,
+            "TextObjects": {
+              "$id": "dbfto",
+              "$values": [
+                {
+                  "$id": "dbfto_1",
+                  "Band": {
+                    "$ref": "dbf"
+                  },
+                  "Name": "Text_DBF_1",
+                  "Text": "Итого",
+                  "Width": 160,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbf_1_borders",
+                    "Top": true,
+                    "Right": true,
+                    "Bottom": true,
+                    "ColorName": "Silver"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "$id": "dbаto_2",
+                  "Band": {
+                    "$ref": "dbf"
+                  },
+                  "Left": 160,
+                  "Name": "Text_DBF_2",
+                  "Text": "[Header.summary]",
+                  "Width": 30,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbf_2_borders",
+                    "Top": true,
+                    "Left": true,
+                    "Bottom": true,
+                    "ColorName": "Silver"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Right"
+                }
+              ]
+            }
+          },
+          "Header": {
+            "$id": "dbh",
+            "Font": {
+              "$id": "dbh_font",
+              "Name": "Times New Roman",
+              "Style": "Bold"
+            },
+            "Name": "Header1",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 7.5,
+            "TextObjects": {
+              "$id": "dbhto",
+              "$values": [
+                {
+                  "$id": "dbhto_1",
+                  "Band": {
+                    "$ref": "dbh"
+                  },
+                  "Name": "Text_DBH_1",
+                  "Text": "№ п/п",
+                  "Width": 12.5,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbhto_1_borders",
+                    "Top": true,
+                    "Right": true,
+                    "Bottom": true,
+                    "ColorName": "Silver"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "$id": "dbhto_2",
+                  "Band": {
+                    "$ref": "dbh"
+                  },
+                  "Left": 12.5,
+                  "Name": "Text_DBH_2",
+                  "Text": "Наименование товара",
+                  "Width": 77.5,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbhto_2_borders",
+                    "All": true,
+                    "ColorName": "Silver"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "$id": "dbhto_3",
+                  "Band": {
+                    "$ref": "dbh"
+                  },
+                  "Left": 90,
+                  "Name": "Text_DBH_3",
+                  "Text": "Ед. изм.",
+                  "Width": 17.5,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbhto_3_borders",
+                    "All": true,
+                    "ColorName": "Silver"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "$id": "dbhto_4",
+                  "Band": {
+                    "$ref": "dbh"
+                  },
+                  "Left": 107.5,
+                  "Name": "Text_DBH_4",
+                  "Text": "Количество",
+                  "Width": 25,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbhto_4_borders",
+                    "All": true,
+                    "ColorName": "Silver"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "$id": "dbhto_5",
+                  "Band": {
+                    "$ref": "dbh"
+                  },
+                  "Left": 132.5,
+                  "Name": "Text_DBH_5",
+                  "Text": "Цена",
+                  "Width": 27.5,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbhto_5_borders",
+                    "All": true,
+                    "ColorName": "Silver"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "$id": "dbhto_6",
+                  "Band": {
+                    "$ref": "dbh"
+                  },
+                  "Left": 160,
+                  "Name": "Text_DBH_6",
+                  "Text": "Сумма",
+                  "Width": 30,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbhto_6_borders",
+                    "Top": true,
+                    "Left": true,
+                    "Bottom": true,
+                    "ColorName": "Silver"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          },
+          "DataBand": {
+            "$id": "db",
+            "Font": {
+              "$id": "db_font",
+              "Name": "Times New Roman"
+            },
+            "Name": "Data1",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 7.5,
+            "CanGrow": true,
+            "DataSource": "Details",
+            "TextObjects": {
+              "$id": "dbto",
+              "$values": [
+                {
+                  "$id": "dbto_1",
+                  "Band": {
+                    "$ref": "db"
+                  },
+                  "Name": "Text_DB_1",
+                  "Text": "[Details.row_number]",
+                  "Width": 12.5,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbto_1_borders",
+                    "Top": true,
+                    "Right": true,
+                    "Bottom": true,
+                    "ColorName": "Silver"
+                  },
+                  "Padding": {
+                    "Left": 2,
+                    "Top": 1,
+                    "Right": 2,
+                    "Bottom": 1
+                  },
+                  "GrowToBottom": true,
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "$id": "dbto_2",
+                  "Band": {
+                    "$ref": "db"
+                  },
+                  "Left": 12.5,
+                  "Name": "Text_DB_2",
+                  "Text": "[Details.name]",
+                  "Width": 77.5,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbto_2_borders",
+                    "All": true,
+                    "ColorName": "Silver"
+                  },
+                  "Padding": {
+                    "Left": 2,
+                    "Top": 1,
+                    "Right": 2,
+                    "Bottom": 1
+                  },
+                  "CanGrow": true,
+                  "WordWrap": "Word",
+                  "GrowToBottom": true,
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "$id": "dbto_3",
+                  "Band": {
+                    "$ref": "db"
+                  },
+                  "Left": 90,
+                  "Name": "Text_DB_3",
+                  "Text": "[Details.abbreviation]",
+                  "Width": 17.5,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbto_3_borders",
+                    "All": true,
+                    "ColorName": "Silver"
+                  },
+                  "Padding": {
+                    "Left": 2,
+                    "Top": 1,
+                    "Right": 2,
+                    "Bottom": 1
+                  },
+                  "GrowToBottom": true,
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "$id": "dbto_4",
+                  "Band": {
+                    "$ref": "db"
+                  },
+                  "Left": 107.5,
+                  "Name": "Text_DB_4",
+                  "Text": "[Details.amount]",
+                  "Width": 25,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbto_4_borders",
+                    "All": true,
+                    "ColorName": "Silver"
+                  },
+                  "Padding": {
+                    "Left": 2,
+                    "Top": 1,
+                    "Right": 2,
+                    "Bottom": 1
+                  },
+                  "GrowToBottom": true,
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Right"
+                },
+                {
+                  "$id": "dbto_5",
+                  "Band": {
+                    "$ref": "db"
+                  },
+                  "Left": 132.5,
+                  "Name": "Text_DB_5",
+                  "Text": "[Details.goods_price]",
+                  "Width": 27.5,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbto_5_borders",
+                    "All": true,
+                    "ColorName": "Silver"
+                  },
+                  "Padding": {
+                    "Left": 2,
+                    "Top": 1,
+                    "Right": 2,
+                    "Bottom": 1
+                  },
+                  "GrowToBottom": true,
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Right"
+                },
+                {
+                  "$id": "dbto_6",
+                  "Band": {
+                    "$ref": "db"
+                  },
+                  "Left": 160,
+                  "Name": "Text_DB_6",
+                  "Text": "[Details.cost_with_tax]",
+                  "Width": 30,
+                  "Height": 7.5,
+                  "Borders": {
+                    "$id": "dbto_6_borders",
+                    "Top": true,
+                    "Left": true,
+                    "Bottom": true,
+                    "ColorName": "Silver"
+                  },
+                  "Padding": {
+                    "Left": 2,
+                    "Top": 1,
+                    "Right": 2,
+                    "Bottom": 1
+                  },
+                  "GrowToBottom": true,
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Right"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "ReportSummary": {
+      "$id": "rs",
+      "Font": {
+        "$id": "rs_font",
+        "Name": "Times New Roman"
+      },
+      "Name": "ReportSummary1",
+      "Page": {
+        "$ref": "rp"
+      },
+      "Height": 15,
+      "TextObjects": {
+        "$id": "rsto",
+        "$values": [
+          {
+            "$id": "rsto_1",
+            "Top": 10,
+            "Band": {
+              "$ref": "rs"
+            },
+            "Name": "Text_RS_1",
+            "Text": "Сдал",
+            "Width": 12.5,
+            "Height": 5,
+            "VerticalAlignment": "Middle"
+          },
+          {
+            "$id": "rsto_2",
+            "Top": 10,
+            "Band": {
+              "$ref": "rs"
+            },
+            "Left": 12.5,
+            "Name": "Text_RS_2",
+            "Width": 40,
+            "Height": 5,
+            "Borders": {
+              "$id": "rsto_2_borders",
+              "Bottom": true
+            }
+          },
+          {
+            "$id": "rsto_3",
+            "Top": 10,
+            "Band": {
+              "$ref": "rs"
+            },
+            "Left": 90,
+            "Name": "Text_RS_3",
+            "Text": "Принял",
+            "Width": 17.5,
+            "Height": 5,
+            "VerticalAlignment": "Middle"
+          },
+          {
+            "$id": "rsto_4",
+            "Top": 10,
+            "Band": {
+              "$ref": "rs"
+            },
+            "Left": 107.5,
+            "Name": "Text_RS_4",
+            "Width": 40,
+            "Height": 5,
+            "Borders": {
+              "$id": "rsto_4_borders",
+              "Bottom": true
+            }
+          }
+        ]
+      }
+    },
+    "ReportTitleBand": {
+      "$id": "rtb",
+      "Font": {
+        "$id": "rtb_font",
+        "Name": "Times New Roman"
+      },
+      "Name": "ReportTitle1",
+      "Page": {
+        "$ref": "rp"
+      },
+      "Height": 37.5,
+      "TextObjects": {
+        "$id": "rtbto",
+        "$values": [
+          {
+            "$id": "rtbto_1",
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Name": "Text_RTB_1",
+            "Text": "Организация",
+            "Width": 22.5,
+            "Height": 5,
+            "VerticalAlignment": "Middle"
+          },
+          {
+            "$id": "rtbto_2",
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Left": 22.5,
+            "Name": "Text_RTB_2",
+            "Text": "[Header.org_name]",
+            "Width": 132.5,
+            "Height": 5,
+            "Borders": {
+              "$id": "rtbto_2_borders",
+              "Bottom": true
+            },
+            "VerticalAlignment": "Middle"
+          },
+          {
+            "$id": "rtbto_3",
+            "Top": 10,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Font": {
+              "$id": "rtbto_3_font",
+              "Name": "Times New Roman",
+              "Size": 12,
+              "Style": "Bold"
+            },
+            "Name": "Text_RTB_3",
+            "Text": "Накладная № [Header.doc_number] от [Header.doc_date]",
+            "Width": 190,
+            "Height": 5,
+            "VerticalAlignment": "Middle"
+          },
+          {
+            "$id": "rtbto_7",
+            "Top": 20,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Name": "Text_RTB_7",
+            "Text": "От кого",
+            "Width": 17.5,
+            "Height": 5,
+            "VerticalAlignment": "Middle"
+          },
+          {
+            "$id": "rtbto_8",
+            "Top": 20,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Left": 17.5,
+            "Name": "Text_RTB_8",
+            "Text": "[Header.org_name]",
+            "Width": 85,
+            "Height": 5,
+            "Borders": {
+              "$id": "rtbto_8_borders",
+              "Bottom": true
+            },
+            "VerticalAlignment": "Middle"
+          },
+          {
+            "$id": "rtbto_9",
+            "Top": 27.5,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Name": "Text_RTB_9",
+            "Text": "Кому",
+            "Width": 12.5,
+            "Height": 5,
+            "VerticalAlignment": "Middle"
+          },
+          {
+            "$id": "rtbto_10",
+            "Top": 27.5,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Left": 12.5,
+            "Name": "Text_RTB_10",
+            "Text": "[Header.contractor_name]",
+            "Width": 90,
+            "Height": 5,
+            "Borders": {
+              "$id": "rtbto_10_borders",
+              "Bottom": true
+            },
+            "VerticalAlignment": "Middle"
+          }
+        ]
+      }
+    }
+  },
   "ReportDictionary": {
     "Parameters": {
       "$id": "rd_p_1",
@@ -61,7 +627,7 @@
                     "InvoiceId"
                   ]
                 },
-                "SelectCommand": "select i.doc_number, to_char(i.doc_date, 'DD.MM.YYYY'), o.short_name as org_name, c.short_name as contractor_name, sum(isd.cost_with_tax) as summary from invoice_sales i join organization o on (o.id = i.organization_id) left join contractor c on (c.id = i.contractor_id) join invoice_sales_detail isd on (isd.owner_id = i.id) where i.id = :InvoiceId group by i.doc_number, i.doc_date, o.short_name, c.short_name"
+                "SelectCommand": "select i.doc_number, to_char(i.doc_date, 'DD.MM.YYYY') as doc_date, o.short_name as org_name, c.short_name as contractor_name, sum(isd.cost_with_tax) as summary from invoice_sales i join organization o on (o.id = i.organization_id) left join contractor c on (c.id = i.contractor_id) join invoice_sales_detail isd on (isd.owner_id = i.id) where i.id = :InvoiceId group by i.doc_number, i.doc_date, o.short_name, c.short_name"
               },
               {
                 "$id": "rd_c_12",
@@ -140,535 +706,6 @@
           "ConnectionStringType": "Current"
         }
       ]
-    }
-  },
-  "ReportPage": {
-    "$id": "rp",
-    "Title": "[Title.doc_name]",
-    "PageSize": {
-      "Name": "A4",
-      "Orientation": "Portrait"
-    },
-    "Report": {
-      "$ref": "report"
-    },
-    "ReportTitleBand": {
-      "$id": "rtb",
-      "Name": "ReportTitle1",
-      "Page": {
-        "$ref": "rp"
-      },
-      "Font": {
-        "$id": "rtb_font",
-        "Name": "Times New Roman"
-      },
-      "Height": 37.5,
-      "TextObjects": {
-        "$id": "rtbto",
-        "$values": [
-          {
-            "$id": "rtbto_1",
-            "Band": {
-              "$ref": "rtb"
-            },
-            "Name": "Text_RTB_1",
-            "Text": "Организация",
-            "Width": 22.5,
-            "Height": 5,
-            "VerticalAlignment": "Middle"
-          },
-          {
-            "$id": "rtbto_2",
-            "Band": {
-              "$ref": "rtb"
-            },
-            "Left": 22.5,
-            "Name": "Text_RTB_2",
-            "Text": "[Header.org_name]",
-            "Width": 132.5,
-            "Height": 5,
-            "VerticalAlignment": "Middle",
-            "Borders": {
-              "$id": "rtbto_2_borders",
-              "Bottom": true
-            }
-          },
-          {
-            "$id": "rtbto_3",
-            "Top": 10,
-            "Band": {
-              "$ref": "rtb"
-            },
-            "Font": {
-              "$id": "rtbto_3_font",
-              "Name": "Times New Roman",
-              "Size": 12,
-              "Style": "Bold"
-            },
-            "Name": "Text_RTB_3",
-            "Text": "Накладная № [Header.doc_number] от [Header.doc_date]",
-            "Width": 190,
-            "Height": 5,
-            "VerticalAlignment": "Middle"
-          },
-          {
-            "$id": "rtbto_7",
-            "Top": 20,
-            "Band": {
-              "$ref": "rtb"
-            },
-            "Name": "Text_RTB_7",
-            "Text": "От кого",
-            "Width": 17.5,
-            "Height": 5,
-            "VerticalAlignment": "Middle"
-          },
-          {
-            "$id": "rtbto_8",
-            "Top": 20,
-            "Band": {
-              "$ref": "rtb"
-            },
-            "Left": 17.5,
-            "Name": "Text_RTB_8",
-            "Text": "[Header.org_name]",
-            "Width": 85,
-            "Height": 5,
-            "VerticalAlignment": "Middle",
-            "Borders": {
-              "$id": "rtbto_8_borders",
-              "Bottom": true
-            }
-          },
-          {
-            "$id": "rtbto_9",
-            "Top": 27.5,
-            "Band": {
-              "$ref": "rtb"
-            },
-            "Name": "Text_RTB_9",
-            "Text": "Кому",
-            "Width": 12.5,
-            "Height": 5,
-            "VerticalAlignment": "Middle"
-          },
-          {
-            "$id": "rtbto_10",
-            "Top": 27.5,
-            "Band": {
-              "$ref": "rtb"
-            },
-            "Left": 12.5,
-            "Name": "Text_RTB_10",
-            "Text": "[Header.contractor_name]",
-            "Width": 90,
-            "Height": 5,
-            "VerticalAlignment": "Middle",
-            "Borders": {
-              "$id": "rtbto_10_borders",
-              "Bottom": true
-            }
-          }
-        ]
-      }
-    },
-    "DataBands": {
-      "$id": "dbs",
-      "$values": [
-        {
-          "Header": {
-            "$id": "dbh",
-            "Font": {
-              "$id": "dbh_font",
-              "Style": "Bold",
-              "Name": "Times New Roman"
-            },
-            "Name": "Header1",
-            "Page": {
-              "$ref": "rp"
-            },
-            "Height": 7.5,
-            "TextObjects": {
-              "$id": "dbhto",
-              "$values": [
-                {
-                  "$id": "dbhto_1",
-                  "Band": {
-                    "$ref": "dbh"
-                  },
-                  "Name": "Text_DBH_1",
-                  "Text": "№ п/п",
-                  "Width": 12.5,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbhto_1_borders",
-                    "Top": true,
-                    "Bottom": true,
-                    "Right": true,
-                    "ColorName": "Silver"
-                  },
-                  "HorizontalAlignment": "Center",
-                  "VerticalAlignment": "Middle"
-                },
-                {
-                  "$id": "dbhto_2",
-                  "Band": {
-                    "$ref": "dbh"
-                  },
-                  "Left": 12.5,
-                  "Name": "Text_DBH_2",
-                  "Text": "Наименование товара",
-                  "Width": 77.5,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbhto_2_borders",
-                    "All": true,
-                    "ColorName": "Silver"
-                  },
-                  "VerticalAlignment": "Middle"
-                },
-                {
-                  "$id": "dbhto_3",
-                  "Band": {
-                    "$ref": "dbh"
-                  },
-                  "Left": 90,
-                  "Name": "Text_DBH_3",
-                  "Text": "Ед. изм.",
-                  "Width": 17.5,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbhto_3_borders",
-                    "All": true,
-                    "ColorName": "Silver"
-                  },
-                  "HorizontalAlignment": "Center",
-                  "VerticalAlignment": "Middle"
-                },
-                {
-                  "$id": "dbhto_4",
-                  "Band": {
-                    "$ref": "dbh"
-                  },
-                  "Left": 107.5,
-                  "Name": "Text_DBH_4",
-                  "Text": "Количество",
-                  "Width": 25,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbhto_4_borders",
-                    "All": true,
-                    "ColorName": "Silver"
-                  },
-                  "HorizontalAlignment": "Center",
-                  "VerticalAlignment": "Middle"
-                },
-                {
-                  "$id": "dbhto_5",
-                  "Band": {
-                    "$ref": "dbh"
-                  },
-                  "Left": 132.5,
-                  "Name": "Text_DBH_5",
-                  "Text": "Цена",
-                  "Width": 27.5,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbhto_5_borders",
-                    "All": true,
-                    "ColorName": "Silver"
-                  },
-                  "HorizontalAlignment": "Center",
-                  "VerticalAlignment": "Middle"
-                },
-                {
-                  "$id": "dbhto_6",
-                  "Band": {
-                    "$ref": "dbh"
-                  },
-                  "Left": 160,
-                  "Name": "Text_DBH_6",
-                  "Text": "Сумма",
-                  "Width": 30,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbhto_6_borders",
-                    "Left": true,
-                    "Top": true,
-                    "Bottom": true,
-                    "ColorName": "Silver"
-                  },
-                  "HorizontalAlignment": "Center",
-                  "VerticalAlignment": "Middle"
-                }
-              ]
-            }
-          },
-          "DataBand": {
-            "$id": "db",
-            "Name": "Data1",
-            "Page": {
-              "$ref": "rp"
-            },
-            "Height": 7.5,
-            "Font": {
-              "$id": "db_font",
-              "Name": "Times New Roman"
-            },
-            "CanGrow": true,
-            "DataSource": "Details",
-            "TextObjects": {
-              "$id": "dbto",
-              "$values": [
-                {
-                  "$id": "dbto_1",
-                  "Band": {
-                    "$ref": "db"
-                  },
-                  "Name": "Text_DB_1",
-                  "Text": "[Details.row_number]",
-                  "Width": 12.5,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbto_1_borders",
-                    "Top": true,
-                    "Bottom": true,
-                    "Right": true,
-                    "ColorName": "Silver"
-                  },
-                  "VerticalAlignment": "Middle",
-                  "HorizontalAlignment": "Center",
-                  "GrowToBottom": true
-                },
-                {
-                  "$id": "dbto_2",
-                  "Band": {
-                    "$ref": "db"
-                  },
-                  "Left": 12.5,
-                  "Name": "Text_DB_2",
-                  "Text": "[Details.name]",
-                  "Width": 77.5,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbto_2_borders",
-                    "All": true,
-                    "ColorName": "Silver"
-                  },
-                  "VerticalAlignment": "Middle",
-                  "CanGrow": true,
-                  "WordWrap": "Word"
-                },
-                {
-                  "$id": "dbto_3",
-                  "Band": {
-                    "$ref": "db"
-                  },
-                  "Left": 90,
-                  "Name": "Text_DB_3",
-                  "Text": "[Details.abbreviation]",
-                  "Width": 17.5,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbto_3_borders",
-                    "All": true,
-                    "ColorName": "Silver"
-                  },
-                  "VerticalAlignment": "Middle",
-                  "GrowToBottom": true
-                },
-                {
-                  "$id": "dbto_4",
-                  "Band": {
-                    "$ref": "db"
-                  },
-                  "Left": 107.5,
-                  "Name": "Text_DB_4",
-                  "Text": "[Details.amount]",
-                  "Width": 25,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbto_4_borders",
-                    "All": true,
-                    "ColorName": "Silver"
-                  },
-                  "VerticalAlignment": "Middle",
-                  "HorizontalAlignment": "Right",
-                  "GrowToBottom": true
-                },
-                {
-                  "$id": "dbto_5",
-                  "Band": {
-                    "$ref": "db"
-                  },
-                  "Left": 132.5,
-                  "Name": "Text_DB_5",
-                  "Text": "[Details.goods_price]",
-                  "Width": 27.5,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbto_5_borders",
-                    "All": true,
-                    "ColorName": "Silver"
-                  },
-                  "VerticalAlignment": "Middle",
-                  "HorizontalAlignment": "Right",
-                  "GrowToBottom": true
-                },
-                {
-                  "$id": "dbto_6",
-                  "Band": {
-                    "$ref": "db"
-                  },
-                  "Left": 160,
-                  "Name": "Text_DB_6",
-                  "Text": "[Details.cost_with_tax]",
-                  "Width": 30,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbto_6_borders",
-                    "Left": true,
-                    "Top": true,
-                    "Bottom": true,
-                    "ColorName": "Silver"
-                  },
-                  "VerticalAlignment": "Middle",
-                  "HorizontalAlignment": "Right",
-                  "GrowToBottom": true
-                }
-              ]
-            }
-          },
-          "Footer": {
-            "$id": "dbf",
-            "Font": {
-              "$id": "dbf_font",
-              "Style": "Bold",
-              "Name": "Times New Roman"
-            },
-            "Name": "Footer1",
-            "Page": {
-              "$ref": "rp"
-            },
-            "Height": 7.5,
-            "TextObjects": {
-              "$id": "dbfto",
-              "$values": [
-                {
-                  "$id": "dbfto_1",
-                  "Band": {
-                    "$ref": "dbf"
-                  },
-                  "Name": "Text_DBF_1",
-                  "Text": "Итого",
-                  "Width": 160,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbf_1_borders",
-                    "Top": true,
-                    "Bottom": true,
-                    "Right": true,
-                    "ColorName": "Silver"
-                  },
-                  "VerticalAlignment": "Middle"
-                },
-                {
-                  "$id": "dbаto_2",
-                  "Band": {
-                    "$ref": "dbf"
-                  },
-                  "Left": 160,
-                  "Name": "Text_DBF_2",
-                  "Text": "[Header.summary]",
-                  "Width": 30,
-                  "Height": 7.5,
-                  "Borders": {
-                    "$id": "dbf_2_borders",
-                    "Left": true,
-                    "Top": true,
-                    "Bottom": true,
-                    "ColorName": "Silver"
-                  },
-                  "HorizontalAlignment": "Right",
-                  "VerticalAlignment": "Middle"
-                }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    "ReportSummary": {
-      "$id": "rs",
-      "Name": "ReportSummary1",
-      "Page": {
-        "$ref": "rp"
-      },
-      "Font": {
-        "$id": "rs_font",
-        "Name": "Times New Roman"
-      },
-      "Height": 15,
-      "TextObjects": {
-        "$id": "rsto",
-        "$values": [
-          {
-            "$id": "rsto_1",
-            "Band": {
-              "$ref": "rs"
-            },
-            "Name": "Text_RS_1",
-            "Text": "Сдал",
-            "Top": 10,
-            "Width": 12.5,
-            "Height": 5,
-            "VerticalAlignment": "Middle"
-          },
-          {
-            "$id": "rsto_2",
-            "Band": {
-              "$ref": "rs"
-            },
-            "Name": "Text_RS_2",
-            "Left": 12.5,
-            "Top": 10,
-            "Width": 40,
-            "Height": 5,
-            "Borders": {
-              "$id": "rsto_2_borders",
-              "Bottom": true
-            }
-          },
-          {
-            "$id": "rsto_3",
-            "Band": {
-              "$ref": "rs"
-            },
-            "Name": "Text_RS_3",
-            "Text": "Принял",
-            "Left": 90,
-            "Top": 10,
-            "Width": 17.5,
-            "Height": 5,
-            "VerticalAlignment": "Middle"
-          },
-          {
-            "$id": "rsto_4",
-            "Band": {
-              "$ref": "rs"
-            },
-            "Name": "Text_RS_4",
-            "Left": 107.5,
-            "Top": 10,
-            "Width": 40,
-            "Height": 5,
-            "Borders": {
-              "$id": "rsto_4_borders",
-              "Bottom": true
-            }
-          }
-        ]
-      }
     }
   }
 }

@@ -279,13 +279,13 @@ namespace DocumentFlow.Code.Implementation.PurchaseRequestImp
                 datagrid
             });
 
-            editor.Commands.Add(CommandMethod.UserDefined, "open-document")
+            editor.Commands.Add(CommandMethod.UserDefined, "open-document", "open-contractor")
                 .SetIcon("organization")
                 .SetTitle("Контрагент")
                 .AppendTo(editor.ToolBar)
                 .ExecuteAction(OpenContractorClick);
 
-            editor.Commands.Add(CommandMethod.UserDefined, "open-document")
+            editor.Commands.Add(CommandMethod.UserDefined, "open-document", "open-contract")
                 .SetIcon("stack-books")
                 .SetTitle("Договор")
                 .AppendTo(editor.ToolBar)

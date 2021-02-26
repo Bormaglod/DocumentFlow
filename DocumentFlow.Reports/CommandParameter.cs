@@ -13,7 +13,7 @@ namespace DocumentFlow.Reports
 {
     public class CommandParameter
     {
-        private bool setted = false;
+        private bool hasValue = false;
         private object parameterValue;
 
         public string Name { get; set; }
@@ -34,11 +34,11 @@ namespace DocumentFlow.Reports
                     }
                 }
 
-                setted = true;
+                hasValue = true;
                 parameterValue = value;
             }
         }
 
-        public bool Setted => setted;
+        public bool HasValue => hasValue;
     }
 }
