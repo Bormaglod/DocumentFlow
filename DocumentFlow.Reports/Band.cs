@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
 using DocumentFlow.Core;
 
@@ -43,7 +44,7 @@ namespace DocumentFlow.Reports
 
         public RectangleF Bounds => new RectangleF(0, Length.FromMillimeter(Page.CurrentBandTop).ToPoint(), Page.PageSize.Size.Width, Length.FromMillimeter(Height).ToPoint());
 
-        public void GeneratePdf(PdfGraphics g)
+        public void GeneratePdf(PdfPage page)
         {
             height = originalHeight;
             foreach (TextObject text in TextObjects)
@@ -62,7 +63,7 @@ namespace DocumentFlow.Reports
 
             foreach (TextObject text in TextObjects)
             {
-                text.GeneratePdf(g);
+                text.GeneratePdf(page);
             }
         }
 

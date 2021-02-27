@@ -116,26 +116,25 @@ namespace DocumentFlow.Reports
         private void CreatePdfPage(PdfDocument doc)
         {
             currentPage = doc.Pages.Add();
-            PdfGraphics graphics = currentPage.Graphics;
 
             current = doc.Pages.Count;
 
             if (current == 1 && ReportTitleBand != null)
             {
                 currentBandTop = 0;
-                ReportTitleBand.GeneratePdf(graphics);
+                ReportTitleBand.GeneratePdf(currentPage);
             }
 
             if (PageHeaderBand != null)
             {
                 currentBandTop = ReportTitleBand?.Height ?? 0;
-                PageHeaderBand.GeneratePdf(graphics);
+                PageHeaderBand.GeneratePdf(currentPage);
             }
 
             if (PageFooterBand != null)
             {
                 currentBandTop = PageSize.Height - MarginSize.Bottom;
-                PageFooterBand.GeneratePdf(graphics);
+                PageFooterBand.GeneratePdf(currentPage);
             }
 
             currentBandTop = (ReportTitleBand?.Height ?? 0) + (PageHeaderBand?.Height ?? 0);
@@ -161,7 +160,7 @@ namespace DocumentFlow.Reports
                     CreatePdfPage(doc);
                 }
 
-                band.GeneratePdf(currentPage.Graphics);
+                band.GeneratePdf(currentPage);
                 currentBandTop += band.Height;
             }
         }

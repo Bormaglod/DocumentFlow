@@ -19,8 +19,7 @@
           "Footer": {
             "$id": "dbf",
             "Font": {
-              "$id": "dbf_font",
-              "Name": "Times New Roman",
+              "Name": "Calibri",
               "Style": "Bold"
             },
             "Name": "Footer1",
@@ -32,7 +31,6 @@
               "$id": "dbfto",
               "$values": [
                 {
-                  "$id": "dbfto_1",
                   "Band": {
                     "$ref": "dbf"
                   },
@@ -41,7 +39,6 @@
                   "Width": 160,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbf_1_borders",
                     "Top": true,
                     "Right": true,
                     "Bottom": true,
@@ -50,7 +47,6 @@
                   "VerticalAlignment": "Middle"
                 },
                 {
-                  "$id": "dbаto_2",
                   "Band": {
                     "$ref": "dbf"
                   },
@@ -60,7 +56,6 @@
                   "Width": 30,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbf_2_borders",
                     "Top": true,
                     "Left": true,
                     "Bottom": true,
@@ -75,8 +70,7 @@
           "Header": {
             "$id": "dbh",
             "Font": {
-              "$id": "dbh_font",
-              "Name": "Times New Roman",
+              "Name": "Calibri",
               "Style": "Bold"
             },
             "Name": "Header1",
@@ -88,7 +82,6 @@
               "$id": "dbhto",
               "$values": [
                 {
-                  "$id": "dbhto_1",
                   "Band": {
                     "$ref": "dbh"
                   },
@@ -97,7 +90,6 @@
                   "Width": 12.5,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbhto_1_borders",
                     "Top": true,
                     "Right": true,
                     "Bottom": true,
@@ -107,7 +99,6 @@
                   "HorizontalAlignment": "Center"
                 },
                 {
-                  "$id": "dbhto_2",
                   "Band": {
                     "$ref": "dbh"
                   },
@@ -117,14 +108,12 @@
                   "Width": 77.5,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbhto_2_borders",
                     "All": true,
                     "ColorName": "Silver"
                   },
                   "VerticalAlignment": "Middle"
                 },
                 {
-                  "$id": "dbhto_3",
                   "Band": {
                     "$ref": "dbh"
                   },
@@ -134,7 +123,6 @@
                   "Width": 17.5,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbhto_3_borders",
                     "All": true,
                     "ColorName": "Silver"
                   },
@@ -142,7 +130,6 @@
                   "HorizontalAlignment": "Center"
                 },
                 {
-                  "$id": "dbhto_4",
                   "Band": {
                     "$ref": "dbh"
                   },
@@ -152,7 +139,6 @@
                   "Width": 25,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbhto_4_borders",
                     "All": true,
                     "ColorName": "Silver"
                   },
@@ -160,7 +146,6 @@
                   "HorizontalAlignment": "Center"
                 },
                 {
-                  "$id": "dbhto_5",
                   "Band": {
                     "$ref": "dbh"
                   },
@@ -170,7 +155,6 @@
                   "Width": 27.5,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbhto_5_borders",
                     "All": true,
                     "ColorName": "Silver"
                   },
@@ -178,7 +162,6 @@
                   "HorizontalAlignment": "Center"
                 },
                 {
-                  "$id": "dbhto_6",
                   "Band": {
                     "$ref": "dbh"
                   },
@@ -188,7 +171,6 @@
                   "Width": 30,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbhto_6_borders",
                     "Top": true,
                     "Left": true,
                     "Bottom": true,
@@ -203,8 +185,7 @@
           "DataBand": {
             "$id": "db",
             "Font": {
-              "$id": "db_font",
-              "Name": "Times New Roman"
+              "Name": "Calibri"
             },
             "Name": "Data1",
             "Page": {
@@ -217,7 +198,6 @@
               "$id": "dbto",
               "$values": [
                 {
-                  "$id": "dbto_1",
                   "Band": {
                     "$ref": "db"
                   },
@@ -226,7 +206,6 @@
                   "Width": 12.5,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbto_1_borders",
                     "Top": true,
                     "Right": true,
                     "Bottom": true,
@@ -243,7 +222,6 @@
                   "HorizontalAlignment": "Center"
                 },
                 {
-                  "$id": "dbto_2",
                   "Band": {
                     "$ref": "db"
                   },
@@ -253,7 +231,6 @@
                   "Width": 77.5,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbto_2_borders",
                     "All": true,
                     "ColorName": "Silver"
                   },
@@ -269,7 +246,6 @@
                   "VerticalAlignment": "Middle"
                 },
                 {
-                  "$id": "dbto_3",
                   "Band": {
                     "$ref": "db"
                   },
@@ -279,7 +255,6 @@
                   "Width": 17.5,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbto_3_borders",
                     "All": true,
                     "ColorName": "Silver"
                   },
@@ -290,10 +265,10 @@
                     "Bottom": 1
                   },
                   "GrowToBottom": true,
-                  "VerticalAlignment": "Middle"
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
                 },
                 {
-                  "$id": "dbto_4",
                   "Band": {
                     "$ref": "db"
                   },
@@ -303,7 +278,6 @@
                   "Width": 25,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbto_4_borders",
                     "All": true,
                     "ColorName": "Silver"
                   },
@@ -318,7 +292,6 @@
                   "HorizontalAlignment": "Right"
                 },
                 {
-                  "$id": "dbto_5",
                   "Band": {
                     "$ref": "db"
                   },
@@ -328,7 +301,6 @@
                   "Width": 27.5,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbto_5_borders",
                     "All": true,
                     "ColorName": "Silver"
                   },
@@ -343,7 +315,6 @@
                   "HorizontalAlignment": "Right"
                 },
                 {
-                  "$id": "dbto_6",
                   "Band": {
                     "$ref": "db"
                   },
@@ -353,7 +324,6 @@
                   "Width": 30,
                   "Height": 7.5,
                   "Borders": {
-                    "$id": "dbto_6_borders",
                     "Top": true,
                     "Left": true,
                     "Bottom": true,
@@ -378,8 +348,7 @@
     "ReportSummary": {
       "$id": "rs",
       "Font": {
-        "$id": "rs_font",
-        "Name": "Times New Roman"
+        "Name": "Calibri"
       },
       "Name": "ReportSummary1",
       "Page": {
@@ -390,7 +359,6 @@
         "$id": "rsto",
         "$values": [
           {
-            "$id": "rsto_1",
             "Top": 10,
             "Band": {
               "$ref": "rs"
@@ -402,7 +370,6 @@
             "VerticalAlignment": "Middle"
           },
           {
-            "$id": "rsto_2",
             "Top": 10,
             "Band": {
               "$ref": "rs"
@@ -412,12 +379,10 @@
             "Width": 40,
             "Height": 5,
             "Borders": {
-              "$id": "rsto_2_borders",
               "Bottom": true
             }
           },
           {
-            "$id": "rsto_3",
             "Top": 10,
             "Band": {
               "$ref": "rs"
@@ -430,7 +395,6 @@
             "VerticalAlignment": "Middle"
           },
           {
-            "$id": "rsto_4",
             "Top": 10,
             "Band": {
               "$ref": "rs"
@@ -440,7 +404,6 @@
             "Width": 40,
             "Height": 5,
             "Borders": {
-              "$id": "rsto_4_borders",
               "Bottom": true
             }
           }
@@ -450,8 +413,7 @@
     "ReportTitleBand": {
       "$id": "rtb",
       "Font": {
-        "$id": "rtb_font",
-        "Name": "Times New Roman"
+        "Name": "Calibri"
       },
       "Name": "ReportTitle1",
       "Page": {
@@ -462,7 +424,6 @@
         "$id": "rtbto",
         "$values": [
           {
-            "$id": "rtbto_1",
             "Band": {
               "$ref": "rtb"
             },
@@ -473,7 +434,6 @@
             "VerticalAlignment": "Middle"
           },
           {
-            "$id": "rtbto_2",
             "Band": {
               "$ref": "rtb"
             },
@@ -483,31 +443,27 @@
             "Width": 132.5,
             "Height": 5,
             "Borders": {
-              "$id": "rtbto_2_borders",
               "Bottom": true
             },
             "VerticalAlignment": "Middle"
           },
           {
-            "$id": "rtbto_3",
             "Top": 10,
             "Band": {
               "$ref": "rtb"
             },
             "Font": {
-              "$id": "rtbto_3_font",
-              "Name": "Times New Roman",
+              "Name": "Calibri",
               "Size": 12,
               "Style": "Bold"
             },
             "Name": "Text_RTB_3",
             "Text": "Накладная № [Header.doc_number] от [Header.doc_date]",
             "Width": 190,
-            "Height": 5,
+            "Height": 5.5,
             "VerticalAlignment": "Middle"
           },
           {
-            "$id": "rtbto_7",
             "Top": 20,
             "Band": {
               "$ref": "rtb"
@@ -519,7 +475,6 @@
             "VerticalAlignment": "Middle"
           },
           {
-            "$id": "rtbto_8",
             "Top": 20,
             "Band": {
               "$ref": "rtb"
@@ -530,13 +485,11 @@
             "Width": 85,
             "Height": 5,
             "Borders": {
-              "$id": "rtbto_8_borders",
               "Bottom": true
             },
             "VerticalAlignment": "Middle"
           },
           {
-            "$id": "rtbto_9",
             "Top": 27.5,
             "Band": {
               "$ref": "rtb"
@@ -548,7 +501,6 @@
             "VerticalAlignment": "Middle"
           },
           {
-            "$id": "rtbto_10",
             "Top": 27.5,
             "Band": {
               "$ref": "rtb"
@@ -559,7 +511,6 @@
             "Width": 90,
             "Height": 5,
             "Borders": {
-              "$id": "rtbto_10_borders",
               "Bottom": true
             },
             "VerticalAlignment": "Middle"
@@ -570,59 +521,51 @@
   },
   "ReportDictionary": {
     "Parameters": {
-      "$id": "rd_p_1",
+      "$id": "rdp",
       "$values": [
         {
-          "$id": "rd_p_2",
           "Name": "InvoiceId",
           "DataType": "Guid"
         }
       ]
     },
     "Connections": {
-      "$id": "rd_c_1",
+      "$id": "rdc",
       "$values": [
         {
-          "$id": "rd_c_2",
           "Name": "Connection",
           "Sources": {
-            "$id": "rd_c_3",
+            "$id": "rdc_sources",
             "$values": [
               {
-                "$id": "rd_c_4",
                 "Name": "Header",
                 "Columns": {
-                  "$id": "rd_c_5",
+                  "$id": "rdc_sources_header",
                   "$values": [
                     {
-                      "$id": "rd_c_6",
                       "Name": "doc_number",
                       "DataType": "string"
                     },
                     {
-                      "$id": "rd_c_7",
                       "Name": "doc_date",
                       "DataType": "DateTime"
                     },
                     {
-                      "$id": "rd_c_8",
                       "Name": "org_name",
                       "DataType": "string"
                     },
                     {
-                      "$id": "rd_c_9",
                       "Name": "contractor_name",
                       "DataType": "string"
                     },
                     {
-                      "$id": "rd_c_10",
                       "Name": "summary",
                       "DataType": "decimal"
                     }
                   ]
                 },
                 "Parameters": {
-                  "$id": "rd_c_11",
+                  "$id": "rdc_sources_header_params",
                   "$values": [
                     "InvoiceId"
                   ]
@@ -630,50 +573,42 @@
                 "SelectCommand": "select i.doc_number, to_char(i.doc_date, 'DD.MM.YYYY') as doc_date, o.short_name as org_name, c.short_name as contractor_name, sum(isd.cost_with_tax) as summary from invoice_sales i join organization o on (o.id = i.organization_id) left join contractor c on (c.id = i.contractor_id) join invoice_sales_detail isd on (isd.owner_id = i.id) where i.id = :InvoiceId group by i.doc_number, i.doc_date, o.short_name, c.short_name"
               },
               {
-                "$id": "rd_c_12",
                 "Name": "Details",
                 "Columns": {
-                  "$id": "rd_c_13",
+                  "$id": "rdc_sources_details",
                   "$values": [
                     {
-                      "$id": "rd_c_14",
                       "Name": "row_number",
                       "DataType": "long"
                     },
                     {
-                      "$id": "rd_c_15",
                       "Name": "code",
                       "DataType": "string"
                     },
                     {
-                      "$id": "rd_c_16",
                       "Name": "name",
                       "DataType": "string"
                     },
                     {
-                      "$id": "rd_c_17",
                       "Name": "abbreviation",
                       "DataType": "string"
                     },
                     {
-                      "$id": "rd_c_18",
                       "Name": "amount",
                       "DataType": "decimal"
                     },
                     {
-                      "$id": "rd_c_19",
                       "Name": "goods_price",
                       "DataType": "decimal"
                     },
                     {
-                      "$id": "rd_c_20",
                       "Name": "cost_with_tax",
                       "DataType": "decimal"
                     }
                   ]
                 },
                 "Parameters": {
-                  "$id": "rd_c_21",
+                  "$id": "rdc_sources_details_params",
                   "$values": [
                     "InvoiceId"
                   ]
@@ -681,20 +616,18 @@
                 "SelectCommand": "select row_number() over(), g.code, g.name, m.abbreviation, isd.amount, isd.cost_with_tax / isd.amount as goods_price, isd.cost_with_tax from invoice_sales_detail isd join goods g on (g.id = isd.goods_id) left join measurement m on (m.id = g.measurement_id) where isd.owner_id = :InvoiceId"
               },
               {
-                "$id": "rd_c_22",
                 "Name": "Title",
                 "Columns": {
-                  "$id": "rd_c_23",
+                  "$id": "rdc_sources_title",
                   "$values": [
                     {
-                      "$id": "rd_c_24",
                       "Name": "doc_name",
                       "DataType": "string"
                     }
                   ]
                 },
                 "Parameters": {
-                  "$id": "rd_c_25",
+                  "$id": "rdc_sources_title_params",
                   "$values": [
                     "InvoiceId"
                   ]

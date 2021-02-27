@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 
 using System.Drawing;
+using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
 using DocumentFlow.Core;
 
@@ -52,8 +53,9 @@ namespace DocumentFlow.Reports
             Length.FromMillimeter(Left + Width).ToPoint(),
             Length.FromMillimeter(Top + (Band?.Page?.CurrentBandTop ?? 0) + Height).ToPoint());
 
-        public virtual void GeneratePdf(PdfGraphics g)
+        public virtual void GeneratePdf(PdfPage page)
         {
+            PdfGraphics g = page.Graphics;
             PdfPen pen = new PdfPen(Borders.Color, Borders.Width);
             PdfBrush brush = new PdfSolidBrush(Fill.Color);
             if (Borders.All)

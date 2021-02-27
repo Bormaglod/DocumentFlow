@@ -8,8 +8,12 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
+using Syncfusion.Pdf.Interactive;
 using DocumentFlow.Core;
 
 namespace DocumentFlow.Reports
@@ -30,6 +34,13 @@ namespace DocumentFlow.Reports
         public bool CanShrink { get; set; } = false;
         public bool GrowToBottom { get; set; } = false;
         public PdfWordWrapType WordWrap { get; set; } = PdfWordWrapType.None;
+        public bool IsHyperlink { get; set; } = false;
+        public string Hyperlink { get; set; }
+        public bool AutoWidth { get; set; } = false;
+        public string Attach { get; set; }
+
+        [JsonIgnore]
+        public bool AutoHeight => CanGrow || CanShrink || GrowToBottom;
 
         public static string Parse(string text, Func<string, string, string> getValue)
         {
@@ -58,38 +69,59 @@ namespace DocumentFlow.Reports
             outputText = Parse(Text, (source, field) => Band.Get(source, field).ToString());
             font = new PdfTrueTypeFont((Font ?? Band.Font).Instance, true);
 
+            float paddingWidth = Length.FromMillimeter(Padding.Width).ToPoint();
+            float paddingHeight = Length.FromMillimeter(Padding.Height).ToPoint();
+            float widthText = Bounds.Width - paddingWidth;
+
+            PdfStringFormat stringFormat = new PdfStringFormat
+            {
+                Alignment = HorizontalAlignment,
+                LineAlignment = VerticalAlignment,
+                WordWrap = WordWrap
+            };
+
+            SizeF rectText = font.MeasureString(outputText, widthText, stringFormat);
             if (CanGrow || CanShrink)
             {
-                float paddingWidth = Length.FromMillimeter(Padding.Width).ToPoint();
-                float paddingHeight = Length.FromMillimeter(Padding.Height).ToPoint();
-                float widthText = Bounds.Width - paddingWidth;
-
-                PdfStringFormat stringFormat = new PdfStringFormat
-                {
-                    Alignment = HorizontalAlignment,
-                    LineAlignment = VerticalAlignment,
-                    WordWrap = WordWrap
-                };
-
-                SizeF rectText = font.MeasureString(outputText, widthText, stringFormat);
                 rectText.Height += paddingHeight;
-
                 Height = Length.FromPoint(rectText.Height).ToMillimeter();
+            }
+
+            if (!AutoHeight && AutoWidth)
+            {
+                Width = Length.FromPoint(rectText.Width + paddingWidth).ToMillimeter();
             }
         }
 
-        public override void GeneratePdf(PdfGraphics g)
+        public override void GeneratePdf(PdfPage page)
         {
             if (GrowToBottom && Height < Band.Height)
             {
                 Height = Band.Height;
             }
 
-            base.GeneratePdf(g);
+            if (!string.IsNullOrEmpty(Attach))
+            {
+                TextObject attach = Band.TextObjects.FirstOrDefault(x => x.Name == Attach);
+                if (attach != null)
+                {
+                    float x = attach.Left + attach.Width;
+                    float dx = Left - x;
+
+                    Height = attach.Height;
+                    Width += dx;
+                    Left = x;
+                    Top = attach.Top;
+                }
+            }
+
+            base.GeneratePdf(page);
 
             PdfBrush brush = new PdfSolidBrush(Color.FromName(ColorName));
+            PdfGraphics g = page.Graphics;
 
             RectangleF rect = Bounds;
+
             rect.Offset(
                 Length.FromMillimeter(Padding.Left).ToPoint(), 
                 Length.FromMillimeter(Padding.Top).ToPoint());
@@ -104,7 +136,37 @@ namespace DocumentFlow.Reports
                 WordWrap = WordWrap
             };
 
-            g.DrawString(outputText, font, brush, rect, stringFormat);
+            if (IsHyperlink)
+            {
+                PdfTextWebLink textLink = new PdfTextWebLink
+                {
+                    Url = Hyperlink,
+                    Text = outputText,
+                    Brush = brush
+                };
+
+                textLink.Font = font;
+
+                PointF loc = rect.Location;
+                SizeF textSize = font.MeasureString(outputText);
+                float dy = textSize.Height > rect.Height ? 0 : rect.Height - textSize.Height;
+                switch (VerticalAlignment)
+                {
+                    case PdfVerticalAlignment.Middle:
+                        loc = new PointF(rect.X, rect.Y + dy / 2);
+                        break;
+                    case PdfVerticalAlignment.Bottom:
+                        loc = new PointF(rect.X, rect.Y + dy);
+                        break;
+                }
+
+                textLink.DrawTextWebLink(g, loc);
+            }
+            else
+            {
+                SizeF textSize = font.MeasureString(outputText);
+                g.DrawString(outputText, font, brush, rect, stringFormat);
+            }
         }
     }
 }
