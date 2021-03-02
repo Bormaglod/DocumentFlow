@@ -35,7 +35,7 @@ namespace DocumentFlow.Reports
 
         public string Title { get; set; }
 
-        public PageSize PageSize 
+        public PageSize PageSize
         {
             get => pageSize;
             set
@@ -45,7 +45,7 @@ namespace DocumentFlow.Reports
             }
         }
 
-        public Margin MarginSize 
+        public Margin MarginSize
         {
             get => marginSize;
             set
@@ -66,7 +66,7 @@ namespace DocumentFlow.Reports
         public void GeneratePdf(PdfDocument doc)
         {
             float maxHeight = GetMaxDataBandHeight(2);
-            for (int i = 0; i < DataBands.Count; i++)
+            for (int i = 0; i < (DataBands?.Count ?? 0); i++)
             {
                 if (DataBands[i].Header != null && DataBands[i].Header.Height > maxHeight)
                 {
@@ -93,12 +93,15 @@ namespace DocumentFlow.Reports
 
             CreatePdfPage(doc);
 
-            for (int i = 0; i < DataBands.Count; i++)
+            for (int i = 0; i < (DataBands?.Count ?? 0); i++)
             {
                 if (DataBands[i].DataBand == null)
                 {
                     continue;
                 }
+
+                if (DataBands[i].DataBand.EOL())
+                    continue;
 
                 DrawDataBand(doc, DataBands[i].Header);
                 do
@@ -143,10 +146,10 @@ namespace DocumentFlow.Reports
         private float GetMaxDataBandHeight(int page)
         {
             float max_height = MarginSize.Height - (PageHeaderBand?.Height ?? 0) - (PageFooterBand?.Height ?? 0);
-            if (page == 1 && ReportTitleBand != null)
+            /*if (page == 1 && ReportTitleBand != null)
             {
                 max_height -= ReportTitleBand.Height;
-            }
+            }*/
 
             return max_height;
         }

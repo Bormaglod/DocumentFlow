@@ -100,7 +100,8 @@
     <Compile Include="Implementation\ValueControlData.cs" />
     <Compile Include="INumericColumn.cs" />
     <Compile Include="IPopulate.cs" />
-    <Compile Include="IPrintedFormCollection.cs" />
+    <Compile Include="IReportCollection.cs" />
+    <Compile Include="IReportForm.cs" />
     <Compile Include="ISorted.cs" />
     <Compile Include="IStackedColumn.cs" />
     <Compile Include="ISummary.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="IValueControl.cs" />
     <Compile Include="IValueEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Implementation\ReportForm.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapper">

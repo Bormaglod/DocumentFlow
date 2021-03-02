@@ -162,6 +162,11 @@ namespace DocumentFlow.Code.Implementation.CalculationImp
                 "view-item-oper",
                 "view-item-deduction"
             });
+
+            editor.Reports.Add(
+                ReportForm.Create("specification", true)
+                    .Parameter("CalculationId", editor.Entity.oid)
+                );
         }
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)

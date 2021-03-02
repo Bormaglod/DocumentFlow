@@ -1,0 +1,1314 @@
+﻿{
+  "$id": "report",
+  "Created": "2021-02-28T10:44:00+04:00",
+  "Modified": "2021-02-28T10:44:00+04:00",
+  "ReportDictionary": {
+    "Parameters": {
+      "$id": "rdp",
+      "$values": [
+        {
+          "Name": "CalculationId",
+          "DataType": "Guid"
+        }
+      ]
+    },
+    "Connections": {
+      "$id": "rdc",
+      "$values": [
+        {
+          "Name": "Connection",
+          "Sources": {
+            "$id": "rdc_sources",
+            "$values": [
+              {
+                "Name": "org",
+                "Columns": {
+                  "$id": "rdc_sources_org",
+                  "$values": [
+                    {
+                      "Name": "name",
+                      "DataType": "string"
+                    },
+                    {
+                      "Name": "inn",
+                      "DataType": "decimal"
+                    },
+                    {
+                      "Name": "kpp",
+                      "DataType": "decimal"
+                    },
+                    {
+                      "Name": "ogrn",
+                      "DataType": "decimal"
+                    },
+                    {
+                      "Name": "address",
+                      "DataType": "string"
+                    },
+                    {
+                      "Name": "phone",
+                      "DataType": "string"
+                    },
+                    {
+                      "Name": "email",
+                      "DataType": "string"
+                    }
+                  ]
+                },
+                "SelectCommand": "select full_name as name, inn, kpp, ogrn, address, phone, email from organization where default_org"
+              },
+              {
+                "Name": "context",
+                "Columns": {
+                  "$id": "rdc_sources_context",
+                  "$values": [
+                    {
+                      "Name": "code",
+                      "DataType": "string"
+                    },
+                    {
+                      "Name": "name",
+                      "DataType": "string"
+                    },
+                    {
+                      "Name": "approved_date",
+                      "DataType": "string"
+                    }
+                  ]
+                },
+                "Parameters": {
+                  "$id": "rdc_sources_context_params",
+                  "$values": [
+                    "CalculationId"
+                  ]
+                },
+                "SelectCommand": "select code, name, case status_id when 1002 then (select to_char(changed, 'DD.MM.YYYY') from history where reference_id = :CalculationId order by changed desc limit 1) else 'АРХИВ' end as approved_date from calculation where id = :CalculationId"
+              },
+              {
+                "Name": "terminals",
+                "Columns": {
+                  "$id": "rdc_sources_terminals",
+                  "$values": [
+                    {
+                      "Name": "name",
+                      "DataType": "string"
+                    },
+                    {
+                      "Name": "amount",
+                      "DataType": "decimal"
+                    }
+                  ]
+                },
+                "Parameters": {
+                  "$id": "rdc_sources_terminals_params",
+                  "$values": [
+                    "CalculationId"
+                  ]
+                },
+                "SelectCommand": "with recursive tree_goods as (select id, parent_id, name from goods where parent_id = '17f8df70-2ad6-4d97-95db-6425cf3249f0' union all select g.id, g.parent_id, g.name from goods g join tree_goods on (tree_goods.id = g.parent_id)) select g.name, cig.amount from calc_item_goods cig join tree_goods g on (g.id = cig.item_id) where cig.owner_id = :CalculationId order by g.name"
+              },
+              {
+                "Name": "blocks",
+                "Columns": {
+                  "$id": "rdc_sources_blocks",
+                  "$values": [
+                    {
+                      "Name": "name",
+                      "DataType": "string"
+                    },
+                    {
+                      "Name": "amount",
+                      "DataType": "decimal"
+                    }
+                  ]
+                },
+                "Parameters": {
+                  "$id": "rdc_sources_blocks_params",
+                  "$values": [
+                    "CalculationId"
+                  ]
+                },
+                "SelectCommand": "with recursive tree_goods as (select id, parent_id, name from goods where parent_id = '2d34202e-159d-467b-9e97-5a0bb5494fa4' union all select g.id, g.parent_id, g.name from goods g join tree_goods on (tree_goods.id = g.parent_id)) select g.name, cig.amount from calc_item_goods cig join tree_goods g on (g.id = cig.item_id) where cig.owner_id = :CalculationId order by g.name"
+              },
+              {
+                "Name": "tube",
+                "Columns": {
+                  "$id": "rdc_sources_tube",
+                  "$values": [
+                    {
+                      "Name": "name",
+                      "DataType": "string"
+                    },
+                    {
+                      "Name": "length",
+                      "DataType": "decimal"
+                    },
+                    {
+                      "Name": "amount",
+                      "DataType": "decimal"
+                    }
+                  ]
+                },
+                "Parameters": {
+                  "$id": "rdc_sources_tube_params",
+                  "$values": [
+                    "CalculationId"
+                  ]
+                },
+                "SelectCommand": "with recursive tree_goods as (select id, parent_id, name from goods where parent_id = '1e1ff796-a0a6-4958-8b8a-dd94ea322cfd' union all select g.id, g.parent_id, g.name from goods g join tree_goods on (tree_goods.id = g.parent_id)) select g.name, um.count_by_operation as length, round(sum(um.count_by_goods / um.count_by_operation)) as amount from calc_item_operation cio join used_material um on (um.calc_item_operation_id = cio.id) join tree_goods g on (g.id = um.goods_id) where cio.owner_id = :CalculationId group by g.name, um.count_by_goods, um.count_by_operation order by g.name"
+              },
+              {
+                "Name": "wire",
+                "Columns": {
+                  "$id": "rdc_sources_wire",
+                  "$values": [
+                    {
+                      "Name": "name",
+                      "DataType": "string"
+                    },
+                    {
+                      "Name": "length",
+                      "DataType": "decimal"
+                    },
+                    {
+                      "Name": "amount",
+                      "DataType": "decimal"
+                    },
+                    {
+                      "Name": "program",
+                      "DataType": "int"
+                    },
+                    {
+                      "Name": "left_cleaning",
+                      "DataType": "decimal"
+                    },
+                    {
+                      "Name": "left_sweep",
+                      "DataType": "int"
+                    },
+                    {
+                      "Name": "right_cleaning",
+                      "DataType": "decimal"
+                    },
+                    {
+                      "Name": "right_sweep",
+                      "DataType": "int"
+                    }
+                  ]
+                },
+                "Parameters": {
+                  "$id": "rdc_sources_wire_params",
+                  "$values": [
+                    "CalculationId"
+                  ]
+                },
+                "SelectCommand": "with recursive tree_goods as (select id, parent_id, name from goods where parent_id = '0525748e-e98c-4296-bd0e-dcacee7224f3' union all select g.id, g.parent_id, g.name from goods g join tree_goods on (tree_goods.id = g.parent_id)) select g.name, um.count_by_operation as length, round(sum(um.count_by_goods / um.count_by_operation)) as amount, o.program, o.left_cleaning, o.left_sweep, o.right_cleaning, o.right_sweep from calc_item_operation cio join used_material um on (um.calc_item_operation_id = cio.id) join tree_goods g on (g.id = um.goods_id) join operation o on (o.id = cio.item_id) where cio.owner_id = :CalculationId group by g.name, um.count_by_goods, um.count_by_operation, o.program, o.left_cleaning, o.left_sweep, o.right_cleaning, o.right_sweep order by g.name"
+              },
+              {
+                "Name": "other",
+                "Columns": {
+                  "$id": "rdc_sources_other",
+                  "$values": [
+                    {
+                      "Name": "name",
+                      "DataType": "string"
+                    },
+                    {
+                      "Name": "amount",
+                      "DataType": "decimal"
+                    }
+                  ]
+                },
+                "Parameters": {
+                  "$id": "rdc_sources_other_params",
+                  "$values": [
+                    "CalculationId"
+                  ]
+                },
+                "SelectCommand": "with recursive tree_goods as (select id, parent_id, name from goods where parent_id = '18802774-8266-4b66-878e-4c43befe8d1e' union all select g.id, g.parent_id, g.name from goods g join tree_goods on (tree_goods.id = g.parent_id)) select g.name, cig.amount from calc_item_goods cig join tree_goods g on (g.id = cig.item_id) where cig.owner_id = :CalculationId order by g.name"
+              },
+              {
+                "Name": "title",
+                "Columns": {
+                  "$id": "rdc_sources_title",
+                  "$values": [
+                    {
+                      "Name": "title",
+                      "DataType": "string"
+                    }
+                  ]
+                },
+                "Parameters": {
+                  "$id": "rdc_sources_title_params",
+                  "$values": [
+                    "CalculationId"
+                  ]
+                },
+                "SelectCommand": "select code || '. ' || name as title from calculation where id = :CalculationId"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "ReportPage": {
+    "$id": "rp",
+    "Title": "[title.title]",
+    "Report": {
+      "$ref": "report"
+    },
+    "PageSize": {
+      "Name": "A4",
+      "Orientation": "Portrait"
+    },
+    "MarginSize": {
+      "Left": 20,
+      "Top": 10,
+      "Right": 10,
+      "Bottom": 10
+    },
+    "ReportTitleBand": {
+      "$id": "rtb",
+      "Font": {
+        "Name": "Calibri"
+      },
+      "Name": "ReportTitle1",
+      "Page": {
+        "$ref": "rp"
+      },
+      "Height": 80,
+      "TextObjects": {
+        "$id": "rtbto",
+        "$values": [
+          {
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Font": {
+              "Name": "Calibri",
+              "Style": "Bold"
+            },
+            "Name": "Text10",
+            "Text": "[org.name]",
+            "Width": 90,
+            "Height": 10,
+            "VerticalAlignment": "Middle",
+            "HorizontalAlignment": "Center",
+            "WordWrap": "Word"
+          },
+          {
+            "Top": 10,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Name": "Text11",
+            "Text": "ИНН: [org.inn], КПП: [org.kpp]",
+            "Width": 90,
+            "Height": 5,
+            "VerticalAlignment": "Middle",
+            "HorizontalAlignment": "Center"
+          },
+          {
+            "Top": 15,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Name": "Text12",
+            "Text": "ОГРН: [org.ogrn]",
+            "Width": 90,
+            "Height": 5,
+            "VerticalAlignment": "Middle",
+            "HorizontalAlignment": "Center"
+          },
+          {
+            "Top": 20,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Name": "Text13",
+            "Text": "[org.address]",
+            "Width": 90,
+            "Height": 10,
+            "VerticalAlignment": "Middle",
+            "HorizontalAlignment": "Center",
+            "WordWrap": "Word"
+          },
+          {
+            "Top": 30,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Name": "Text16",
+            "Text": "Тел.: [org.phone]",
+            "Width": 90,
+            "Height": 5,
+            "VerticalAlignment": "Middle",
+            "HorizontalAlignment": "Center"
+          },
+          {
+            "Top": 35,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Left": 0,
+            "Name": "Text14",
+            "Text": "Эл. почта: [org.email]",
+            "Width": 90,
+            "Height": 5,
+            "VerticalAlignment": "Middle",
+            "HorizontalAlignment": "Center"
+          },
+          {
+            "Top": 45,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Left": 5,
+            "Name": "Text18",
+            "Text": "[context.approved_date]",
+            "Width": 35,
+            "Height": 5,
+            "Borders": {
+              "Bottom": true
+            },
+            "VerticalAlignment": "Middle",
+            "HorizontalAlignment": "Center"
+          },
+          {
+            "Top": 45,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Left": 40,
+            "Name": "Text19",
+            "Text": "№",
+            "Width": 8.5,
+            "Height": 5,
+            "VerticalAlignment": "Middle",
+            "HorizontalAlignment": "Center"
+          },
+          {
+            "Top": 45,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Left": 48.5,
+            "Name": "Text17",
+            "Text": "[context.code]",
+            "Width": 37.5,
+            "Height": 5,
+            "Borders": {
+              "Bottom": true
+            },
+            "VerticalAlignment": "Middle",
+            "HorizontalAlignment": "Center"
+          },
+          {
+            "Top": 50,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Font": {
+              "Name": "Calibri",
+              "Size": 12
+            },
+            "Name": "Text20",
+            "Text": "СПЕЦИФИКАЦИЯ",
+            "AutoWidth": true,
+            "Height": 15,
+            "VerticalAlignment": "Middle"
+          },
+          {
+            "Top": 65,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Font": {
+              "Name": "Calibri",
+              "Size": 12
+            },
+            "Name": "Text21",
+            "Text": "Наименование: [context.name]",
+            "AutoWidth": true,
+            "Height": 7.5
+          },
+          {
+            "Top": 72.5,
+            "Band": {
+              "$ref": "rtb"
+            },
+            "Font": {
+              "Name": "Calibri",
+              "Size": 12
+            },
+            "Name": "Text22",
+            "Text": "Артикул: [context.code]",
+            "AutoWidth": true,
+            "Height": 7.5
+          }
+        ]
+      }
+    },
+    "DataBands": {
+      "$id": "dbs",
+      "$values": [
+        {
+          "Header": {
+            "$id": "dbh_terminals",
+            "Font": {
+              "Name": "Calibri",
+              "Size": 10,
+              "Style": "Bold"
+            },
+            "Name": "HeaderTerminals",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 16,
+            "TextObjects": {
+              "$id": "dbhto_terminals",
+              "$values": [
+                {
+                  "Band": {
+                    "$ref": "dbh_terminals"
+                  },
+                  "Font": {
+                    "Name": "Calibri",
+                    "Size": 10
+                  },
+                  "Name": "Text9",
+                  "Text": "Наконечники и контакты",
+                  "AutoWidth": true,
+                  "Height": 10,
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_terminals"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Name": "Text2",
+                  "Text": "Наименование",
+                  "Width": 140,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_terminals"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 140,
+                  "Name": "Text3",
+                  "Text": "Количество, шт.",
+                  "Width": 40,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          },
+          "DataBand": {
+            "$id": "db_terminals",
+            "Font": {
+              "Name": "Calibri",
+              "Size": 10
+            },
+            "Name": "DataTerminals",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 6,
+            "DataSource": "terminals",
+            "TextObjects": {
+              "$id": "dbto_terminals",
+              "$values": [
+                {
+                  "Band": {
+                    "$ref": "db_terminals"
+                  },
+                  "Name": "TextDataTerminals1",
+                  "Text": "[terminals.name]",
+                  "Width": 140,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_terminals"
+                  },
+                  "Name": "TextDataTerminals2",
+                  "Text": "[terminals.amount]",
+                  "Left": 140,
+                  "Width": 40,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "Header": {
+            "$id": "dbh_blocks",
+            "Font": {
+              "Name": "Calibri",
+              "Size": 10,
+              "Style": "Bold"
+            },
+            "Name": "HeaderBlocks",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 16,
+            "TextObjects": {
+              "$id": "dbhto_blocks",
+              "$values": [
+                {
+                  "Top": 1,
+                  "Band": {
+                    "$ref": "dbh_blocks"
+                  },
+                  "Font": {
+                    "Name": "Calibri",
+                    "Size": 10
+                  },
+                  "Name": "Text9",
+                  "Text": "Колодки",
+                  "AutoWidth": true,
+                  "Height": 9,
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_blocks"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Name": "TextHeaderBlocks1",
+                  "Text": "Наименование",
+                  "Width": 140,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_blocks"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 140,
+                  "Name": "TextHeaderBlocks2",
+                  "Text": "Количество, шт.",
+                  "Width": 40,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          },
+          "DataBand": {
+            "$id": "db_blocks",
+            "Font": {
+              "Name": "Calibri",
+              "Size": 10
+            },
+            "Name": "DataBlocks",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 6,
+            "DataSource": "blocks",
+            "TextObjects": {
+              "$id": "dbto_blocks",
+              "$values": [
+                {
+                  "Band": {
+                    "$ref": "db_blocks"
+                  },
+                  "Name": "TextDataBlocks1",
+                  "Text": "[blocks.name]",
+                  "Width": 140,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_blocks"
+                  },
+                  "Name": "TextDataBlockss2",
+                  "Text": "[blocks.amount]",
+                  "Left": 140,
+                  "Width": 40,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "Header": {
+            "$id": "dbh_tube",
+            "Font": {
+              "Name": "Calibri",
+              "Size": 10,
+              "Style": "Bold"
+            },
+            "Name": "HeaderTube",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 16,
+            "TextObjects": {
+              "$id": "dbhto_tube",
+              "$values": [
+                {
+                  "Top": 1,
+                  "Band": {
+                    "$ref": "dbh_tube"
+                  },
+                  "Font": {
+                    "Name": "Calibri",
+                    "Size": 10
+                  },
+                  "Name": "TextHeaderTube1",
+                  "Text": "Трубка",
+                  "AutoWidth": true,
+                  "Height": 9,
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_tube"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Name": "TextHeaderTube2",
+                  "Text": "Наименование",
+                  "Width": 100,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_tube"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 100,
+                  "Name": "TextHeaderTube3",
+                  "Text": "Длина, м",
+                  "Width": 40,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_tube"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 140,
+                  "Name": "TextHeaderTube4",
+                  "Text": "Количество, шт.",
+                  "Width": 40,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          },
+          "DataBand": {
+            "$id": "db_tube",
+            "Font": {
+              "Name": "Calibri",
+              "Size": 10
+            },
+            "Name": "DataTube",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 6,
+            "DataSource": "tube",
+            "TextObjects": {
+              "$id": "dbto_tube",
+              "$values": [
+                {
+                  "Band": {
+                    "$ref": "db_tube"
+                  },
+                  "Name": "TextDataTube1",
+                  "Text": "[tube.name]",
+                  "Width": 100,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_tube"
+                  },
+                  "Name": "TextDataTube2",
+                  "Text": "[tube.length]",
+                  "Left": 100,
+                  "Width": 40,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_tube"
+                  },
+                  "Name": "TextDataTube3",
+                  "Text": "[tube.amount]",
+                  "Left": 140,
+                  "Width": 40,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "Header": {
+            "$id": "dbh_wire",
+            "Font": {
+              "Name": "Calibri",
+              "Size": 10,
+              "Style": "Bold"
+            },
+            "Name": "HeaderWire",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 16,
+            "TextObjects": {
+              "$id": "dbhto_wire",
+              "$values": [
+                {
+                  "Top": 1,
+                  "Band": {
+                    "$ref": "dbh_wire"
+                  },
+                  "Font": {
+                    "Name": "Calibri",
+                    "Size": 10
+                  },
+                  "Name": "TextHeaderWire1",
+                  "Text": "Провод",
+                  "AutoWidth": true,
+                  "Height": 9,
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_wire"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Name": "TextHeaderWire2",
+                  "Text": "Наименование",
+                  "Width": 65,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_wire"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 65,
+                  "Name": "TextHeaderWire3",
+                  "Text": "Длина, м",
+                  "Width": 25,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_wire"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 90,
+                  "Name": "TextHeaderWire4",
+                  "Text": "Кол-во, шт.",
+                  "Width": 25,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_wire"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 115,
+                  "Name": "TextHeaderWire5",
+                  "Text": "Программа",
+                  "Width": 25,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_wire"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 140,
+                  "Name": "TextHeaderWire6",
+                  "Text": "A-C",
+                  "Width": 10,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_wire"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 150,
+                  "Name": "TextHeaderWire7",
+                  "Text": "A-S",
+                  "Width": 10,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_wire"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 160,
+                  "Name": "TextHeaderWire8",
+                  "Text": "B-C",
+                  "Width": 10,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_wire"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 170,
+                  "Name": "TextHeaderWire9",
+                  "Text": "B-S",
+                  "Width": 10,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          },
+          "DataBand": {
+            "$id": "db_wire",
+            "Font": {
+              "Name": "Calibri",
+              "Size": 10
+            },
+            "Name": "DataWire",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 6,
+            "DataSource": "wire",
+            "TextObjects": {
+              "$id": "dbto_wire",
+              "$values": [
+                {
+                  "Band": {
+                    "$ref": "db_wire"
+                  },
+                  "Name": "TextDataWire1",
+                  "Text": "[wire.name]",
+                  "Width": 65,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_wire"
+                  },
+                  "Name": "TextDataWire2",
+                  "Text": "[wire.length]",
+                  "Left": 65,
+                  "Width": 25,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_wire"
+                  },
+                  "Name": "TextDataWire3",
+                  "Text": "[wire.amount]",
+                  "Left": 90,
+                  "Width": 25,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_wire"
+                  },
+                  "Name": "TextDataWire4",
+                  "Text": "[wire.program]",
+                  "Left": 115,
+                  "Width": 25,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_wire"
+                  },
+                  "Name": "TextDataWire5",
+                  "Text": "[wire.left_cleaning]",
+                  "Left": 140,
+                  "Width": 10,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_wire"
+                  },
+                  "Name": "TextDataWire6",
+                  "Text": "[wire.left_sweep]",
+                  "Left": 150,
+                  "Width": 10,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_wire"
+                  },
+                  "Name": "TextDataWire7",
+                  "Text": "[wire.right_cleaning]",
+                  "Left": 160,
+                  "Width": 10,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_wire"
+                  },
+                  "Name": "TextDataWire8",
+                  "Text": "[wire.right_sweep]",
+                  "Left": 170,
+                  "Width": 10,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "Header": {
+            "$id": "dbh_other",
+            "Font": {
+              "Name": "Calibri",
+              "Size": 10,
+              "Style": "Bold"
+            },
+            "Name": "HeaderOther",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 16,
+            "TextObjects": {
+              "$id": "dbhto_other",
+              "$values": [
+                {
+                  "Band": {
+                    "$ref": "dbh_other"
+                  },
+                  "Font": {
+                    "Name": "Calibri",
+                    "Size": 10
+                  },
+                  "Name": "TextHeaderOther1",
+                  "Text": "Разное",
+                  "AutoWidth": true,
+                  "Height": 10,
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_other"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Name": "TextHeaderOther2",
+                  "Text": "Наименование",
+                  "Width": 140,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Top": 10,
+                  "Band": {
+                    "$ref": "dbh_other"
+                  },
+                  "Fill": {
+                    "ColorName": "LightGray"
+                  },
+                  "Left": 140,
+                  "Name": "TextHeaderOther3",
+                  "Text": "Количество, шт.",
+                  "Width": 40,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          },
+          "DataBand": {
+            "$id": "db_other",
+            "Font": {
+              "Name": "Calibri",
+              "Size": 10
+            },
+            "Name": "DataTerminals",
+            "Page": {
+              "$ref": "rp"
+            },
+            "Height": 6,
+            "DataSource": "other",
+            "TextObjects": {
+              "$id": "dbto_other",
+              "$values": [
+                {
+                  "Band": {
+                    "$ref": "db_other"
+                  },
+                  "Name": "TextDataOther1",
+                  "Text": "[other.name]",
+                  "Width": 140,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle"
+                },
+                {
+                  "Band": {
+                    "$ref": "db_other"
+                  },
+                  "Name": "TextDataOther2",
+                  "Text": "[other.amount]",
+                  "Left": 140,
+                  "Width": 40,
+                  "Height": 6,
+                  "Borders": {
+                    "All": true,
+                    "ColorName": "DarkGray"
+                  },
+                  "VerticalAlignment": "Middle",
+                  "HorizontalAlignment": "Center"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

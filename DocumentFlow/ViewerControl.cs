@@ -8,8 +8,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections;
 #if USE_LISTENER
-    using System.Collections;
     using System.Collections.Concurrent;
 #endif
 using System.ComponentModel;
@@ -835,9 +835,10 @@ namespace DocumentFlow
                             {
                                 operation.Delete(conn, transaction, row.id);
                                 transaction.Commit();
-#if !USE_LISTENER
-                                RefreshCurrenView();
-#endif
+                                if (gridContent.DataSource is IList list)
+                                {
+                                    list.Remove(row);
+                                }
                             }
                             catch (Exception ex)
                             {

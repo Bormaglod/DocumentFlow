@@ -8,16 +8,8 @@
 
 using System.Collections.Generic;
 
-namespace DocumentFlow.Code
+namespace DocumentFlow.Code.Implementation
 {
-    public interface IReportForm
-    {
-        string Name { get; }
-        bool IsDefault { get; }
-        IReportForm Parameter(string name, object value);
-        object GetParameter(string name);
-    }
-
     public class ReportForm : IReportForm
     {
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
@@ -46,12 +38,5 @@ namespace DocumentFlow.Code
 
             return form;
         }
-    }
-
-    public interface IReportCollection
-    {
-        IEnumerable<IReportForm> Forms { get; }
-        IReportForm Default { get; }
-        IReportCollection Add(IReportForm form);
     }
 }

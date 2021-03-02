@@ -80,15 +80,16 @@ namespace DocumentFlow.Reports
                 WordWrap = WordWrap
             };
 
-            SizeF rectText = font.MeasureString(outputText, widthText, stringFormat);
             if (CanGrow || CanShrink)
             {
+                SizeF rectText = font.MeasureString(outputText, widthText, stringFormat);
                 rectText.Height += paddingHeight;
                 Height = Length.FromPoint(rectText.Height).ToMillimeter();
             }
 
             if (!AutoHeight && AutoWidth)
             {
+                SizeF rectText = font.MeasureString(outputText);
                 Width = Length.FromPoint(rectText.Width + paddingWidth).ToMillimeter();
             }
         }
