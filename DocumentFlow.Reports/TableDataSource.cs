@@ -14,7 +14,7 @@ namespace DocumentFlow.Reports
     {
         public string Name { get; set; }
         public string SelectCommand { get; set; }
-        public List<string> Parameters { get; set; } = new List<string>();
-        public List<Column> Columns { get; set; } = new List<Column>();
+        public List<string> Parameters { get; set; } = new();
+        public List<Column> Columns { get; set; } = new();
     }
 }

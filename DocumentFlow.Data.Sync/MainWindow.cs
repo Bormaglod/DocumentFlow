@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Windows.Forms;
-
 using Dapper;
 using Inflector;
-using Json.Schema;
 using Syncfusion.Windows.Forms.Tools;
 
 namespace DocumentFlow.Data.Sync
 {
     public partial class MainWindow : Form
     {
-        private string user;
-        private string password;
+        private readonly string user;
+        private readonly string password;
 
         public MainWindow()
         {
@@ -28,12 +25,12 @@ namespace DocumentFlow.Data.Sync
             password = words[1].Trim();
         }
 
-        private int DateTimeCompare(DateTime dt1, DateTime dt2)
+        private static int DateTimeCompare(DateTime dt1, DateTime dt2)
         {
             if (dt1.Date == dt2.Date)
             {
-                TimeSpan ts1 = new TimeSpan(0, dt1.Hour, dt1.Minute, dt1.Second, dt1.Millisecond);
-                TimeSpan ts2 = new TimeSpan(0, dt2.Hour, dt2.Minute, dt2.Second, dt2.Millisecond);
+                TimeSpan ts1 = new(0, dt1.Hour, dt1.Minute, dt1.Second, dt1.Millisecond);
+                TimeSpan ts2 = new(0, dt2.Hour, dt2.Minute, dt2.Second, dt2.Millisecond);
                 return TimeSpan.Compare(ts1, ts2);
             }
             else
@@ -45,146 +42,118 @@ namespace DocumentFlow.Data.Sync
         private void UpdateCommandDatabase(string connectionName)
         {
             textConsole.AppendLine($"****** {connectionName} : COMMANDS ******");
-            using (var conn = Db.OpenConnection(connectionName, user, password))
+            using IDbConnection conn = Db.OpenConnection(connectionName, user, password);
+            using IDbTransaction transaction = conn.BeginTransaction();
+            try
             {
-                using (var transaction = conn.BeginTransaction())
+                string[] files = Directory.GetFiles(@"..\..\..\..\Commands");
+
+                foreach (string file in files)
                 {
-                    try
-                    {
-                        string[] files = Directory.GetFiles(@"..\..\Commands");
+                    DateTime dtFile = File.GetLastWriteTime(file);
 
-                        foreach (string file in files)
+                    string code = Path.GetFileNameWithoutExtension(file).Underscore();
+                    Guid id = conn.QuerySingleOrDefault<Guid>("select id from entity_kind where code = :code", new { code });
+
+                    Command cmd;
+                    if (id == default)
+                    {
+                        code = code.Replace('_', '-');
+                        cmd = conn.QuerySingle<Command>("select id, date_updated, script from command where code = :code", new { code });
+                    }
+                    else
+                    {
+                        cmd = conn.QuerySingle<Command>("select id, date_updated, script from command where entity_kind_id = :id", new { id });
+                    }
+
+                    if (DateTimeCompare(dtFile, cmd.date_updated) == 0)
+                        textConsole.AppendLine($"{code,-26} is EQUAL");
+                    else
+                    {
+                        if (DateTimeCompare(dtFile, cmd.date_updated) < 0)
                         {
-                            DateTime dtFile = File.GetLastWriteTime(file);
-
-                            string code = Path.GetFileNameWithoutExtension(file).Underscore();
-                            Guid id = conn.QuerySingleOrDefault<Guid>("select id from entity_kind where code = :code", new { code });
-
-                            Command cmd;
-                            if (id == default)
-                            {
-                                code = code.Replace('_', '-');
-                                cmd = conn.QuerySingle<Command>("select id, date_updated, script from command where code = :code", new { code });
-                            }
-                            else
-                            {
-                                cmd = conn.QuerySingle<Command>("select id, date_updated, script from command where entity_kind_id = :id", new { id });
-                            }
-
-                            if (DateTimeCompare(dtFile, cmd.date_updated) == 0)
-                                textConsole.AppendLine($"{code,-26} is EQUAL");
-                            else
-                            {
-                                if (DateTimeCompare(dtFile, cmd.date_updated) < 0)
-                                {
-                                    File.WriteAllText(file, cmd.script);
-                                    File.SetLastWriteTime(file, cmd.date_updated);
-                                    textConsole.AppendLine($"{code,-26} << to FILE");
-                                }
-                                else
-                                {
-                                    cmd.script = File.ReadAllText(file);
-                                    cmd.date_updated = dtFile;
-                                    int cnt = conn.Execute("update command set script = :script, date_updated = :date_updated where id = :id", cmd, transaction);
-
-                                    string res = cnt == 1 ? "OK" : "Fail";
-                                    textConsole.AppendLine($"{code,-26} >> to DATABASE, {res}");
-                                }
-                            }
-
-                            Application.DoEvents();
+                            File.WriteAllText(file, cmd.script);
+                            File.SetLastWriteTime(file, cmd.date_updated);
+                            textConsole.AppendLine($"{code,-26} << to FILE");
                         }
+                        else
+                        {
+                            cmd.script = File.ReadAllText(file);
+                            cmd.date_updated = dtFile;
+                            int cnt = conn.Execute("update command set script = :script, date_updated = :date_updated where id = :id", cmd, transaction);
 
-                        transaction.Commit();
+                            string res = cnt == 1 ? "OK" : "Fail";
+                            textConsole.AppendLine($"{code,-26} >> to DATABASE, {res}");
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        textConsole.AppendLine(e.Message);
-                        return;
-                    }
+
+                    Application.DoEvents();
                 }
+
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                textConsole.AppendLine(e.Message);
+                return;
             }
         }
 
         private void UpdateReportDatabase(string connectionName)
         {
             textConsole.AppendLine($"****** {connectionName} : REPORTS ******");
-            using (var conn = Db.OpenConnection(connectionName, user, password))
+            using IDbConnection conn = Db.OpenConnection(connectionName, user, password);
+            using IDbTransaction transaction = conn.BeginTransaction();
+            try
             {
-                using (var transaction = conn.BeginTransaction())
+                string[] files = Directory.GetFiles(@"..\..\..\..\Reports");
+
+                foreach (string file in files)
                 {
-                    try
+                    DateTime dtFile = File.GetLastWriteTime(file);
+
+                    string code = Path.GetFileNameWithoutExtension(file).Underscore();
+
+                    code = code.Replace('_', '-');
+                    PrintedForm pf = conn.QuerySingleOrDefault<PrintedForm>("select id, date_updated, schema_form from printed_form where code = :code", new { code });
+                    if (pf == default)
                     {
-                        string[] files = Directory.GetFiles(@"..\..\Reports");
+                        continue;
+                    }
 
-                        /*string js = File.ReadAllText(@".\Reports\ReportSchema.json");
-                        //var schema = JsonSchema.FromFile(@".\Reports\ReportSchema.json");
-                        var schema = JsonSchema.FromText(js);*/
-
-                        foreach (string file in files)
+                    if (DateTimeCompare(dtFile, pf.date_updated) == 0)
+                        textConsole.AppendLine($"{code,-26} is EQUAL");
+                    else
+                    {
+                        if (DateTimeCompare(dtFile, pf.date_updated) < 0)
                         {
-                            DateTime dtFile = File.GetLastWriteTime(file);
-
-                            string code = Path.GetFileNameWithoutExtension(file).Underscore();
-
-                            code = code.Replace('_', '-');
-                            PrintedForm pf = conn.QuerySingleOrDefault<PrintedForm>("select id, date_updated, schema_form from printed_form where code = :code", new { code });
-                            if (pf == default)
-                            {
-                                continue;
-                            }
-
-                            if (DateTimeCompare(dtFile, pf.date_updated) == 0)
-                                textConsole.AppendLine($"{code,-26} is EQUAL");
-                            else
-                            {
-                                if (DateTimeCompare(dtFile, pf.date_updated) < 0)
-                                {
-                                    File.WriteAllText(file, pf.schema_form);
-                                    File.SetLastWriteTime(file, pf.date_updated);
-                                    textConsole.AppendLine($"{code,-26} << to FILE");
-                                }
-                                else
-                                {
-                                    pf.schema_form = File.ReadAllText(file);
-                                    pf.date_updated = dtFile;
-
-                                    /*var json = JsonDocument.Parse(pf.schema_form).RootElement;
-
-                                    ValidationOptions options = new ValidationOptions
-                                    {
-                                        OutputFormat = OutputFormat.Basic
-                                    };
-
-                                    var validation = schema.Validate(json);
-                                    if (validation.IsValid)*/
-                                    {
-                                        int cnt = conn.Execute("update printed_form set schema_form = :schema_form::jsonb, date_updated = :date_updated where id = :id", pf, transaction);
-
-                                        string res = cnt == 1 ? "OK" : "Fail";
-                                        textConsole.AppendLine($"{code,-26} >> to DATABASE, {res}");
-                                    }
-                                    /*else
-                                    {
-                                        textConsole.AppendLine($"{code,-26} >> to DATABASE, Invalid schema");
-                                        textConsole.AppendLine($"***** {validation.Message}");
-                                    }*/
-                                }
-                            }
-
-                            Application.DoEvents();
+                            File.WriteAllText(file, pf.schema_form);
+                            File.SetLastWriteTime(file, pf.date_updated);
+                            textConsole.AppendLine($"{code,-26} << to FILE");
                         }
+                        else
+                        {
+                            pf.schema_form = File.ReadAllText(file);
+                            pf.date_updated = dtFile;
 
-                        transaction.Commit();
+                            int cnt = conn.Execute("update printed_form set schema_form = :schema_form::jsonb, date_updated = :date_updated where id = :id", pf, transaction);
+
+                            string res = cnt == 1 ? "OK" : "Fail";
+                            textConsole.AppendLine($"{code,-26} >> to DATABASE, {res}");
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        textConsole.AppendLine(e.Message);
-                        return;
-                    }
+
+                    Application.DoEvents();
                 }
+
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                textConsole.AppendLine(e.Message);
+                return;
             }
         }
 

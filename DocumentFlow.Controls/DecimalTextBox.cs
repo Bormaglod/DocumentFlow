@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 22.03.2019
@@ -273,7 +273,7 @@ namespace DocumentFlow.Controls
         protected override string GetNumberValue(string formattedText, int startPosition)
         {
             decimal num = 0.0m;
-            string empty = startPosition >= formattedText.Length ? formattedText : formattedText.Substring(0, startPosition) + formattedText.Substring(startPosition);
+            string empty = startPosition >= formattedText.Length ? formattedText : formattedText.Substring(0, startPosition) + formattedText[startPosition..];
             try
             {
                 string empty2 = RemoveFormatting(empty);

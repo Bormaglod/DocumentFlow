@@ -18,10 +18,8 @@ namespace DocumentFlow.Data.Repositories
     {
         public static IEnumerable<History> Get(Guid doc_id)
         {
-            using (var conn = Db.OpenConnection())
-            {
-                return Get(conn, doc_id);
-            }
+            using var conn = Db.OpenConnection();
+            return Get(conn, doc_id);
         }
 
         public static IEnumerable<History> Get(IDbConnection connection, Guid doc_id)

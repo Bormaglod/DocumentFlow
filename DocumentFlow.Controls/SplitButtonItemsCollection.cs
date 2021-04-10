@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 10.06.2018
@@ -12,11 +12,9 @@ namespace DocumentFlow.Controls
 {
     public class SplitButtonItemsCollection : CollectionBase
     {
-        private readonly SplitButton Owner;
-
         public ToolSplitItem this[int index] => (ToolSplitItem)List[index];
 
-        public SplitButtonItemsCollection(SplitButton sender) => Owner = sender;
+        public SplitButtonItemsCollection(SplitButton _) { }
 
         public bool Contains(ToolSplitItem itemType) => List.Contains(itemType);
 

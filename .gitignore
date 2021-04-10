@@ -265,6 +265,6 @@ packages
 /DocumentFlow.RestAPI/*.lock
 
 
-/Test1C
-/TestCSharpCompilation
 /DocumentFlow.Code.Updates
+/ConsoleApp1
+/WinFormsApp1

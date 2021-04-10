@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.11.2020
@@ -24,7 +24,7 @@ namespace DocumentFlow.Controls.Editor.Code
     {
         private class PrintedFormCollection : IReportCollection
         {
-            private readonly List<IReportForm> forms = new List<IReportForm>();
+            private readonly List<IReportForm> forms = new();
 
             IEnumerable<IReportForm> IReportCollection.Forms => forms;
 
@@ -103,7 +103,7 @@ namespace DocumentFlow.Controls.Editor.Code
                 Dock = DockStyle.Top
             };
 
-            ContainerData container = new ContainerData(panel);
+            ContainerData container = new(panel);
             return container;
         }
 
@@ -120,7 +120,7 @@ namespace DocumentFlow.Controls.Editor.Code
                 Visible = visible?.Ability(Entity, name, GetInfo()) ?? true
             };
 
-            ContainerData container = new ContainerData(panel, name);
+            ContainerData container = new(panel, name);
             return container;
         }
 

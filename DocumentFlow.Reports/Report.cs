@@ -71,7 +71,11 @@ namespace DocumentFlow.Reports
 
         public ReportPage ReportPage { get; set; }
 
-        public void Dispose() => Dispose(true);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         public static Report FromFile(string file)
         {
@@ -116,7 +120,7 @@ namespace DocumentFlow.Reports
                 return document;
             }
 
-            throw new ArgumentNullException("Не определен ReportPage");
+            throw new ArgumentNullException(nameof(ReportPage), "Не определен ReportPage");
         }
 
         public void Prepare()
@@ -143,59 +147,57 @@ namespace DocumentFlow.Reports
                     return;
                 }
 
-                using (NpgsqlConnection npgsqlConnection = new NpgsqlConnection(connectionString))
+                using NpgsqlConnection npgsqlConnection = new(connectionString);
+                npgsqlConnection.Open();
+                foreach (TableDataSource table in connection.Sources)
                 {
-                    npgsqlConnection.Open();
-                    foreach (TableDataSource table in connection.Sources)
+                    storage.AddSource(table.Name);
+                    using NpgsqlCommand command = new(table.SelectCommand, npgsqlConnection);
+                    foreach (string paramName in table.Parameters)
                     {
-                        storage.AddSource(table.Name);
-                        using (NpgsqlCommand command = new NpgsqlCommand(table.SelectCommand, npgsqlConnection))
+                        CommandParameter parameter = ReportDictionary.Parameters.FirstOrDefault(x => x.Name == paramName);
+                        if (parameter == null)
                         {
-                            foreach (string paramName in table.Parameters)
+                            continue;
+                        }
+
+                        if (!Enum.TryParse(parameter.DataType, out DbType type))
+                        {
+                            throw new Exception($"Значение {parameter.DataType} не найдено среди допустимых типов данных.");
+                        }
+
+                        NpgsqlParameter npgsqlParameter = new(parameter.Name, type);
+
+                        if (parameter.HasValue)
+                        {
+                            npgsqlParameter.Value = parameter.Value;
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(parameter.DefaultValue))
                             {
-                                CommandParameter parameter = ReportDictionary.Parameters.FirstOrDefault(x => x.Name == paramName);
-                                if (parameter == null)
-                                {
-                                    continue;
-                                }
-
-                                Enum.TryParse(parameter.DataType, out DbType type);
-                                NpgsqlParameter npgsqlParameter = new NpgsqlParameter(parameter.Name, type);
-
-                                if (parameter.HasValue)
-                                {
-                                    npgsqlParameter.Value = parameter.Value;
-                                }
+                                if (typeMap[type] == typeof(Guid))
+                                    npgsqlParameter.Value = new Guid(parameter.DefaultValue);
                                 else
-                                {
-                                    if (!string.IsNullOrEmpty(parameter.DefaultValue))
-                                    {
-                                        if (typeMap[type] == typeof(Guid))
-                                            npgsqlParameter.Value = new Guid(parameter.DefaultValue);
-                                        else
-                                            npgsqlParameter.Value = Convert.ChangeType(parameter.DefaultValue, typeMap[type]);
-                                    }
-                                }
-
-                                command.Parameters.Add(npgsqlParameter);
+                                    npgsqlParameter.Value = Convert.ChangeType(parameter.DefaultValue, typeMap[type]);
                             }
+                        }
 
-                            using (NpgsqlDataReader reader = command.ExecuteReader())
+                        command.Parameters.Add(npgsqlParameter);
+                    }
+
+                    using NpgsqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> row = new();
+                            foreach (Column column in table.Columns)
                             {
-                                if (reader.HasRows)
-                                {
-                                    while (reader.Read())
-                                    {
-                                        Dictionary<string, object> row = new Dictionary<string, object>();
-                                        foreach (Column column in table.Columns)
-                                        {
-                                            row.Add(column.Name, reader[column.Name]);
-                                        }
-
-                                        storage.AddRow(table.Name, row);
-                                    }
-                                }
+                                row.Add(column.Name, reader[column.Name]);
                             }
+
+                            storage.AddRow(table.Name, row);
                         }
                     }
                 }

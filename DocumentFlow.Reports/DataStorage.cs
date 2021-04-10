@@ -14,10 +14,7 @@ namespace DocumentFlow.Reports
     {
         private readonly Dictionary<string, List<Dictionary<string, object>>> values;
 
-        public DataStorage()
-        {
-            values = new Dictionary<string, List<Dictionary<string, object>>>();
-        }
+        public DataStorage() => values = new Dictionary<string, List<Dictionary<string, object>>>();
 
         int IDataStorage.Count(string source) => values[source].Count;
 

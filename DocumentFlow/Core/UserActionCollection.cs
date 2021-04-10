@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 14.12.2020
@@ -20,7 +20,7 @@ namespace DocumentFlow
 {
     public class UserActionCollection : IUserActionCollection
     {
-        private readonly List<IUserAction> commands = new List<IUserAction>();
+        private readonly List<IUserAction> commands = new();
         private readonly object owner;
         private readonly ICommandFactory commandFactory;
 

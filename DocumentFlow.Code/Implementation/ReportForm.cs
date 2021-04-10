@@ -12,7 +12,7 @@ namespace DocumentFlow.Code.Implementation
 {
     public class ReportForm : IReportForm
     {
-        private readonly Dictionary<string, object> values = new Dictionary<string, object>();
+        private readonly Dictionary<string, object> values = new();
 
         private ReportForm() { }
 
@@ -30,7 +30,7 @@ namespace DocumentFlow.Code.Implementation
 
         public static IReportForm Create(string name, bool isDefault = false)
         {
-            ReportForm form = new ReportForm()
+            ReportForm form = new()
             {
                 Name = name,
                 IsDefault = isDefault

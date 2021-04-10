@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.10.2020
@@ -12,7 +12,7 @@ namespace DocumentFlow.Code.Core
 {
     public class GettingParametersEventArgs : ExecuteEventArgs
     {
-        private readonly Hashtable parameters = new Hashtable();
+        private readonly Hashtable parameters = new();
 
         public GettingParametersEventArgs(IBrowser browser) : base(browser) { }
         public GettingParametersEventArgs(IEditor editor) : base(editor) { }

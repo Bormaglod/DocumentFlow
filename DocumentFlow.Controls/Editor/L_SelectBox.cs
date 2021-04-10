@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 21.04.2019
@@ -19,7 +19,7 @@ namespace DocumentFlow.Controls.Editor
 {
     public partial class L_SelectBox : UserControl, ILabelControl, IEditControl
     {
-        private readonly List<IIdentifier> items = new List<IIdentifier>();
+        private readonly List<IIdentifier> items = new();
         private IIdentifier selectedItem;
 
         public L_SelectBox()
@@ -120,7 +120,7 @@ namespace DocumentFlow.Controls.Editor
 
         private void ButtonSelect_Click(object sender, EventArgs e)
         {
-            SelectBoxWindow window = new SelectBoxWindow(ShowOnlyFolder);
+            SelectBoxWindow window = new(ShowOnlyFolder);
             window.AddItems(items);
             window.SelectedItem = selectedItem;
             if (window.ShowDialog() == DialogResult.OK)

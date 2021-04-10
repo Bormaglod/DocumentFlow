@@ -49,7 +49,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(158)))), ((int)(((byte)(218)))));
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
@@ -115,13 +115,14 @@
             this.listLibs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listLibs.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.listLibs.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.listLibs.Location = new System.Drawing.Point(10, 102);
             this.listLibs.Name = "listLibs";
             this.listLibs.Size = new System.Drawing.Size(775, 170);
             this.listLibs.TabIndex = 4;
             this.listLibs.Text = "sfListView1";
             this.listLibs.SelectionChanging += new System.EventHandler<Syncfusion.WinForms.ListView.Events.ItemSelectionChangingEventArgs>(this.listLibs_SelectionChanging);
+            this.listLibs.SelectionChanged += new System.EventHandler<Syncfusion.WinForms.ListView.Events.ItemSelectionChangedEventArgs>(this.listLibs_SelectionChanged);
             // 
             // label4
             // 
@@ -176,7 +177,7 @@
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonOk.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonOk.Font = new System.Drawing.Font("Segoe UI Semibold", 9F);
+            this.buttonOk.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.buttonOk.Location = new System.Drawing.Point(692, 5);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(96, 28);
@@ -187,13 +188,12 @@
             // AboutForm
             // 
             this.AcceptButton = this.buttonOk;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.buttonOk;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label1);
-            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;

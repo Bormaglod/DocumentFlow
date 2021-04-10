@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Data;
 using System.Linq;
@@ -19,6 +19,7 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
         public decimal? income { get; protected set; }
         public decimal? expense { get; protected set; }
         public string contractor_name { get; protected set; }
+        public decimal remainder { get; protected set; }
     }
 
     public class BalanceContractorBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -36,14 +37,15 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
                 bc.document_date, 
                 bc.document_number, 
                 case 
-                    when bc.operation_summa > 0::money then bc.operation_summa 
+                    when bc.operation_summa > 0 then bc.operation_summa 
                     else null 
                 end as income, 
                 case 
-                    when bc.operation_summa < 0::money then (@bc.operation_summa::numeric)::money 
+                    when bc.operation_summa < 0 then (@bc.operation_summa) 
                     else null 
                 end as expense, 
-                c.name as contractor_name 
+                c.name as contractor_name,
+                sum(bc.operation_summa) over (order by document_date, document_number) as remainder
             from balance_contractor bc 
                 join status s on (s.id = bc.status_id) 
                 left join contractor c on (c.id = bc.reference_id) 
@@ -93,6 +95,12 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
                 columns.CreateNumeric("expense", "Расход", NumberFormatMode.Currency)
                     .SetWidth(100)
                     .SetHorizontalAlignment(HorizontalAlignment.Right);
+
+                columns.CreateNumeric("remainder", "Остаток")
+                    .SetDecimalDigits(3)
+                    .SetWidth(130)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right)
+                    .SetBackgroundColor("#DAE5F5");
             });
 
             IUserAction open_document = browser.Commands.Add(CommandMethod.UserDefined, "open-document");
@@ -140,11 +148,11 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
                 bc.document_name, 
                 bc.document_number,
                 case 
-                    when bc.operation_summa > 0::money then bc.operation_summa 
+                    when bc.operation_summa > 0 then bc.operation_summa 
                     else null 
                 end as income, 
                 case 
-                    when bc.operation_summa < 0::money then (@bc.operation_summa::numeric)::money 
+                    when bc.operation_summa < 0 then (@bc.operation_summa) 
                     else null 
                 end as expense
             from balance_contractor bc 

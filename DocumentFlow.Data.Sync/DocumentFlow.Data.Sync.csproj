@@ -1,167 +1,35 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EFB4F206-3D32-4F6C-AD26-D810DF8958D8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>DocumentFlow.Data.Sync</RootNamespace>
-    <AssemblyName>DocumentFlow.Data.Sync</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="Inflector.NetStandard" Version="1.2.2" />
+    <PackageReference Include="Syncfusion.Tools.Windows" Version="19.1.0.55" />
+      <PackageReference Include="Syncfusion.Core.WinForms" Version="19.1.0.55" />
+</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DocumentFlow.Code\DocumentFlow.Code.csproj" />
+    <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="PrintedForm.cs" />
-    <Compile Include="Command.cs" />
-    <Compile Include="Commands\Account.cs" />
-    <Compile Include="Commands\ArchivePrice.cs" />
-    <Compile Include="Commands\BalanceContractor.cs" />
-    <Compile Include="Commands\BalanceGoods.cs" />
-    <Compile Include="Commands\Bank.cs" />
-    <Compile Include="Commands\CalcItemDeduction.cs" />
-    <Compile Include="Commands\CalcItemGoods.cs" />
-    <Compile Include="Commands\CalcItemOperation.cs" />
-    <Compile Include="Commands\Calculation.cs" />
-    <Compile Include="Commands\Contract.cs" />
-    <Compile Include="Commands\Contractor.cs" />
-    <Compile Include="Commands\Deduction.cs" />
-    <Compile Include="Commands\Diagram.cs" />
-    <Compile Include="Commands\Employee.cs" />
-    <Compile Include="Commands\Goods.cs" />
-    <Compile Include="Commands\Inventory.cs" />
-    <Compile Include="Commands\InvoiceReceipt.cs" />
-    <Compile Include="Commands\InvoiceSales.cs" />
-    <Compile Include="Commands\Measurement.cs" />
-    <Compile Include="Commands\Okopf.cs" />
-    <Compile Include="Commands\Okpdtr.cs" />
-    <Compile Include="Commands\Operation.cs" />
-    <Compile Include="Commands\OperationType.cs" />
-    <Compile Include="Commands\Organization.cs" />
-    <Compile Include="Commands\PaymentOrder.cs" />
-    <Compile Include="Commands\PerformOperation.cs" />
-    <Compile Include="Commands\Person.cs" />
-    <Compile Include="Commands\Picture.cs" />
-    <Compile Include="Commands\ProductionOperation.cs" />
-    <Compile Include="Commands\ProductionOrder.cs" />
-    <Compile Include="Commands\PurchaseRequest.cs" />
-    <Compile Include="Commands\ReadyGoods.cs" />
-    <Compile Include="Commands\ReportBalanceGoods.cs" />
-    <Compile Include="Commands\ViewOperationUse.cs" />
-    <Compile Include="MainWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WinFormsExtensions.cs" />
-    <EmbeddedResource Include="MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <None Include="Reports\InvoiceSales.json" />
-    <None Include="Reports\PurchaseRequest.json" />
-    <None Include="Reports\ReportSchema.json">
+    <None Update="license.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Reports\Specification.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Dapper">
-      <Version>2.0.78</Version>
-    </PackageReference>
-    <PackageReference Include="Inflector.NetStandard">
-      <Version>1.2.2</Version>
-    </PackageReference>
-    <PackageReference Include="JsonSchema.Net">
-      <Version>1.8.0</Version>
-    </PackageReference>
-    <PackageReference Include="Syncfusion.Tools.Windows">
-      <Version>18.4.0.44</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DocumentFlow.Code\DocumentFlow.Code.csproj">
-      <Project>{6d6d7557-4044-461e-914a-4860fc353002}</Project>
-      <Name>DocumentFlow.Code</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
-      <Project>{11f75d3d-0eb9-4269-b96b-47177506a3a6}</Project>
-      <Name>DocumentFlow.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data.Core\DocumentFlow.Data.Core.csproj">
-      <Project>{f299e21b-0c61-41e0-9028-90df2820bfda}</Project>
-      <Name>DocumentFlow.Data.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
-      <Project>{705e1438-3e6f-4f52-8bb1-5484096b56a2}</Project>
-      <Name>DocumentFlow.Data</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="license.txt">
+    <None Update="passwords.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="passwords.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

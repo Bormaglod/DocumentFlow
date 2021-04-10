@@ -66,9 +66,9 @@ namespace DocumentFlow.Code.Implementation.InvoiceReceiptImp
                     when contract.tax_payer then 20 
                     else 0 
                 end as tax,     
-                coalesce(sum(cost), 0::money) as cost, 
-                coalesce(sum(tax_value), 0::money) as tax_value, 
-                coalesce(sum(cost_with_tax), 0::money) as cost_with_tax 
+                coalesce(sum(cost), 0) as cost, 
+                coalesce(sum(tax_value), 0) as tax_value, 
+                coalesce(sum(cost_with_tax), 0) as cost_with_tax 
             from invoice_receipt ir 
                 join status s on (s.id = ir.status_id) 
                 join user_alias ua on (ua.id = ir.user_created_id) 

@@ -19,17 +19,15 @@ namespace DocumentFlow.Data.Repositories
     {
         public static IEnumerable<ChangingStatus> Get(Transition transition)
         {
-            using (var conn = Db.OpenConnection())
-            {
-                return Get(conn, transition);
-            }
+            using var conn = Db.OpenConnection();
+            return Get(conn, transition);
         }
 
         public static IEnumerable<ChangingStatus> Get(IDbConnection connection, Transition transition)
         {
             if (transition == null)
             {
-                return new ChangingStatus[] { };
+                return Array.Empty<ChangingStatus>();
             }
 
             string sql = @"
@@ -53,7 +51,7 @@ namespace DocumentFlow.Data.Repositories
         {
             if (entityKind == null)
             {
-                return new ChangingStatus[] { };
+                return Array.Empty<ChangingStatus>();
             }
 
             string sql = @"

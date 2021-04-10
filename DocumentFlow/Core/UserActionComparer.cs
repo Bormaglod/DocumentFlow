@@ -24,9 +24,6 @@ namespace DocumentFlow
             return x.Code == y.Code;
         }
 
-        int IEqualityComparer<IUserAction>.GetHashCode(IUserAction obj)
-        {
-            return obj.Code.GetHashCode();
-        }
+        int IEqualityComparer<IUserAction>.GetHashCode(IUserAction obj) => obj.Code.GetHashCode();
     }
 }

@@ -29,6 +29,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
 		public bool goods_use { get; protected set; }
         public Guid? cross_id { get; set; }
 		public string cross_code { get; set; }
+        public decimal weight { get; set; }
     }
 
     public class GoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -36,7 +37,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
         private const string baseSelect = @"
             with goods_sum as
             (
-	            select reference_id as id, sum(amount * iif(operation_summa = 0::money, 1::numeric, sign(operation_summa::numeric))) as balance from balance_goods group by reference_id
+	            select reference_id as id, sum(amount * iif(operation_summa = 0, 1, sign(operation_summa))) as balance from balance_goods group by reference_id
             )
             select 
                 g.id,
@@ -47,6 +48,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 g.ext_article,
                 g.name,
                 m.abbreviation,
+                g.weight,
                 g.price,
                 g.tax,
                 g.min_order,
@@ -122,6 +124,11 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                     .SetHorizontalAlignment(HorizontalAlignment.Center)
                     .SetVisibility(false);
 
+                columns.CreateNumeric("weight", "Вес, г")
+                    .SetDecimalDigits(3)
+                    .SetWidth(100)
+                    .SetVisibility(false);
+
                 columns.CreateNumeric("price", "Цена", NumberFormatMode.Currency)
                     .SetWidth(100)
                     .SetAllowGrouping(true)
@@ -171,6 +178,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
 
                 columns.CreateDate("approved", "Дата утв.")
                     .SetWidth(120)
+                    .SetVisible(false)
                     .SetVisibility(false);
 
                 columns.CreateNumeric("balance", "Тек. остаток")
@@ -221,12 +229,20 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                         root = g.code;
                 }
 
+                // Поля видимые только в группе "Продукция"
                 foreach (string column in new string[] { "is_service", "cost", "profit_percent", "profit_value", "calc_price", "approved" })
                 {
                     browser.Columns[column].Visibility = root == "Прд";
                 }
 
-                foreach (string column in new string[] { "code", "abbreviation", "price", "tax", "balance", "goods_use", "cross_code" })
+                // Поля видимые только в группе "Материалы"
+                foreach (string column in new string[] { "goods_use" })
+                {
+                    browser.Columns[column].Visibility = root == "Мат";
+                }
+
+                // Поля видимые во всех группах кроме корневой
+                foreach (string column in new string[] { "code", "abbreviation", "price", "tax", "balance", "cross_code", "weight" })
                 {
                     browser.Columns[column].Visibility = !string.IsNullOrEmpty(root);
                 }
@@ -272,6 +288,10 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(450);
 
+            IControl weight = editor.CreateNumeric("weight", "Вес, г")
+                .SetLabelWidth(labelWidth)
+                .SetControlWidth(100);
+
             IControl price = editor.CreateCurrency("price", "Цена без НДС")
                 .SetLabelWidth(labelWidth)
                 .SetControlWidth(150);
@@ -297,6 +317,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 ext_article,
 				cross,
                 measurement,
+                weight,
                 price,
                 tax,
                 min_order,
@@ -328,7 +349,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)
         {
-            string sql = "select id, parent_id, code, name, ext_article, cross_id, measurement_id, price, tax, min_order, is_service from goods where id = :id";
+            string sql = "select id, parent_id, code, name, ext_article, cross_id, measurement_id, price, tax, min_order, is_service, weight from goods where id = :id";
             return connection.QuerySingleOrDefault<Goods>(sql, new { id = id.oid });
         }
 
@@ -340,7 +361,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
 
         int IDataOperation.Update(IDbConnection connection, IDbTransaction transaction, IEditor editor)
         {
-            string sql = "update goods set code = :code, name = :name, parent_id = :parent_id, ext_article = :ext_article, cross_id = :cross_id, measurement_id = :measurement_id, price = :price, tax = :tax, min_order = :min_order, is_service = :is_service where id = :id";
+            string sql = "update goods set code = :code, name = :name, parent_id = :parent_id, ext_article = :ext_article, cross_id = :cross_id, measurement_id = :measurement_id, price = :price, tax = :tax, min_order = :min_order, is_service = :is_service, weight = :weight where id = :id";
             return connection.Execute(sql, editor.Entity, transaction);
         }
 

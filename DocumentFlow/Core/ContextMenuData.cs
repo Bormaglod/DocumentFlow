@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 14.12.2020
@@ -22,10 +22,7 @@ namespace DocumentFlow
             }
         }
 
-        private void Menu_Opened(object sender, System.EventArgs e)
-        {
-            UpdateButtonVisibleStatus();
-        }
+        private void Menu_Opened(object sender, System.EventArgs e) => UpdateButtonVisibleStatus();
 
         protected override ToolStripItem CreateToolStripItem(IUserAction command, Picture picture)
         {

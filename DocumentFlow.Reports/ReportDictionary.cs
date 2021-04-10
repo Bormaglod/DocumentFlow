@@ -13,8 +13,8 @@ namespace DocumentFlow.Reports
 {
     public class ReportDictionary
     {
-        public List<Connection> Connections { get; set; } = new List<Connection>();
-        public List<CommandParameter> Parameters { get; set; } = new List<CommandParameter>();
+        public List<Connection> Connections { get; set; } = new();
+        public List<CommandParameter> Parameters { get; set; } = new();
         public Connection GetConnection(string source)
         {
             foreach (Connection connection in Connections)

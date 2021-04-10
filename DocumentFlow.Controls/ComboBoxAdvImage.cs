@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.06.2018
@@ -21,10 +21,7 @@ namespace DocumentFlow.Controls
         [DefaultValue(null)]
         public Image NearImage
         {
-            get
-            {
-                return imageNear;
-            }
+            get => imageNear;
             set
             {
                 if (imageNear != value)
@@ -64,7 +61,9 @@ namespace DocumentFlow.Controls
                 textBoxBounds = ((!IsMirrored) ? new Rectangle(rect.X + num2, rect.Y, rect.Width - num2, rect.Height) : new Rectangle(rect.X, rect.Y, rect.Width - num2, rect.Height));
             }
             else
+            {
                 textBoxBounds = rect;
+            }
 
             base.SetTextBoxBounds(textBoxBounds);
         }

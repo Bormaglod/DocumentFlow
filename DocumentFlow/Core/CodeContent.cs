@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 09.12.2020
@@ -31,13 +31,7 @@ namespace DocumentFlow.Core
                    EqualityComparer<IEditorCode>.Default.Equals(Editor, other.Editor);
         }
 
-        public override int GetHashCode()
-        {
-            int hashCode = 480819551;
-            hashCode = hashCode * -1521134295 + EqualityComparer<IBrowserCode>.Default.GetHashCode(Browser);
-            hashCode = hashCode * -1521134295 + EqualityComparer<IEditorCode>.Default.GetHashCode(Editor);
-            return hashCode;
-        }
+        public override int GetHashCode() => System.HashCode.Combine(Browser, Editor);
 
         public void Deconstruct(out IBrowserCode browser, out IEditorCode editor, out bool compiled)
         {

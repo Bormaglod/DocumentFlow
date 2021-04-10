@@ -1,140 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6D6D7557-4044-461E-914A-4860FC353002}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DocumentFlow.Code</RootNamespace>
-    <AssemblyName>DocumentFlow.Code</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Version>2.6.0</Version>
+    <Company>ООО Автоком</Company>
+    <Copyright>Copyright © ООО Автоком (Autokom Company), 2021</Copyright>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Syncfusion.SfDataGrid.WinForms" Version="19.1.0.55" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Controls\CustomGridTableSummaryRenderer.cs" />
-    <Compile Include="Controls\GridDecimalColumn.cs" />
-    <Compile Include="Core\ChangeParentEventArgs.cs" />
-    <Compile Include="Core\DatabaseScriptAttribute.cs" />
-    <Compile Include="Core\Enums.cs" />
-    <Compile Include="Core\ExecuteEventArgs.cs" />
-    <Compile Include="Core\GettingParametersEventArgs.cs" />
-    <Compile Include="Core\ValueChangedEventArgs.cs" />
-    <Compile Include="Exceptions\PopulateControlException.cs" />
-    <Compile Include="IActionStatus.cs" />
-    <Compile Include="IBindingControl.cs" />
-    <Compile Include="IBrowser.cs" />
-    <Compile Include="IBrowserCode.cs" />
-    <Compile Include="IBrowserOperation.cs" />
-    <Compile Include="IBrowserParameters.cs" />
-    <Compile Include="IChangingStatus.cs" />
-    <Compile Include="IColumn.cs" />
-    <Compile Include="IColumnCollection.cs" />
-    <Compile Include="IContainer.cs" />
-    <Compile Include="IContextMenu.cs" />
-    <Compile Include="IControl.cs" />
-    <Compile Include="IControlCollection.cs" />
-    <Compile Include="IControlEnabled.cs" />
-    <Compile Include="IControlVisible.cs" />
-    <Compile Include="IDatabase.cs" />
-    <Compile Include="IDataCollection.cs" />
-    <Compile Include="IDataEditor.cs" />
-    <Compile Include="IDataGrid.cs" />
-    <Compile Include="IDataName.cs" />
-    <Compile Include="IDataOperation.cs" />
-    <Compile Include="IDependentViewer.cs" />
-    <Compile Include="IEditControl.cs" />
-    <Compile Include="IEditor.cs" />
-    <Compile Include="IEditorCode.cs" />
-    <Compile Include="IGridDataControl.cs" />
-    <Compile Include="IGroupColumnCollection.cs" />
-    <Compile Include="IInformation.cs" />
-    <Compile Include="ILabelControl.cs" />
-    <Compile Include="Implementation\BindingControlData.cs" />
-    <Compile Include="Implementation\BrowserParameters.cs" />
-    <Compile Include="Implementation\ContainerData.cs" />
-    <Compile Include="Implementation\ControlCollection.cs" />
-    <Compile Include="Implementation\ControlData.cs" />
-    <Compile Include="Implementation\DataCollection.cs" />
-    <Compile Include="Implementation\GridColumnCollection.cs" />
-    <Compile Include="Implementation\GridColumnData.cs" />
-    <Compile Include="Implementation\GridControlData.cs" />
-    <Compile Include="Implementation\GridNumericColumnData.cs" />
-    <Compile Include="Implementation\GroupColumnCollection.cs" />
-    <Compile Include="Implementation\Identifier.cs" />
-    <Compile Include="Implementation\ListControlData.cs" />
-    <Compile Include="Implementation\SortedColumnsData.cs" />
-    <Compile Include="Implementation\StackedColumnData.cs" />
-    <Compile Include="Implementation\SummaryRowData.cs" />
-    <Compile Include="Implementation\ValueControlData.cs" />
-    <Compile Include="INumericColumn.cs" />
-    <Compile Include="IPopulate.cs" />
-    <Compile Include="IReportCollection.cs" />
-    <Compile Include="IReportForm.cs" />
-    <Compile Include="ISorted.cs" />
-    <Compile Include="IStackedColumn.cs" />
-    <Compile Include="ISummary.cs" />
-    <Compile Include="ITool.cs" />
-    <Compile Include="IToolBar.cs" />
-    <Compile Include="IUserAction.cs" />
-    <Compile Include="IUserActionCollection.cs" />
-    <Compile Include="IValuable.cs" />
-    <Compile Include="IValueControl.cs" />
-    <Compile Include="IValueEditor.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Implementation\ReportForm.cs" />
+    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj" />
+    <ProjectReference Include="..\DocumentFlow.Data.Core\DocumentFlow.Data.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Dapper">
-      <Version>2.0.78</Version>
-    </PackageReference>
-    <PackageReference Include="Inflector.NetStandard">
-      <Version>1.2.2</Version>
-    </PackageReference>
-    <PackageReference Include="Syncfusion.SfDataGrid.WinForms">
-      <Version>18.4.0.44</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
-      <Project>{11f75d3d-0eb9-4269-b96b-47177506a3a6}</Project>
-      <Name>DocumentFlow.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data.Core\DocumentFlow.Data.Core.csproj">
-      <Project>{f299e21b-0c61-41e0-9028-90df2820bfda}</Project>
-      <Name>DocumentFlow.Data.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

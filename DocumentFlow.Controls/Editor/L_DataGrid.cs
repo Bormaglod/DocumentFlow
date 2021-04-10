@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 20.06.2018
@@ -45,46 +45,37 @@ namespace DocumentFlow.Controls.Editor
 
         public void RefreshData()
         {
-            using (var conn = Db.OpenConnection())
-            {
-                IList list = getItemsFunc(conn);
-                entityType = list.GetType().GetGenericArguments().First();
-                gridMain.DataSource = list;
-            }
+            using var conn = Db.OpenConnection();
+            IList list = getItemsFunc(conn);
+            entityType = list.GetType().GetGenericArguments().First();
+            gridMain.DataSource = list;
         }
 
         private void Edit()
         {
-            ModalEditor editorForm = new ModalEditor(owner, HeaderText, CheckValues);
+            ModalEditor editorForm = new(owner, HeaderText, CheckValues);
             if (gridMain.SelectedItem is IDetailEntity detail && editorForm.Edit(Editor, detail))
             {
                 RefreshData();
             }
         }
 
-        private void ExecuteDoubleClickCommand(object sender, CellClickEventArgs e)
-        {
-            Edit();
-        }
+        private void ExecuteDoubleClickCommand(object sender, CellClickEventArgs e) => Edit();
 
         private void BttonCreate_Click(object sender, EventArgs e)
         {
-            ModalEditor editorForm = new ModalEditor(owner, HeaderText, CheckValues);
+            ModalEditor editorForm = new(owner, HeaderText, CheckValues);
             if (editorForm.Create(Editor, entityType))
             {
                 RefreshData();
             }
         }
 
-        private void ButtonEdit_Click(object sender, EventArgs e)
-        {
-            Edit();
-        }
+        private void ButtonEdit_Click(object sender, EventArgs e) => Edit();
 
         private void ButtonDelete_Click(object sender, EventArgs e)
         {
-            ModalEditor editorForm = new ModalEditor(owner, HeaderText, CheckValues);
-            if (gridMain.SelectedItem is IDetailEntity detail && editorForm.Delete(Editor, detail))
+            if (gridMain.SelectedItem is IDetailEntity detail && ModalEditor.Delete(Editor, detail))
             {
                 RefreshData();
             }

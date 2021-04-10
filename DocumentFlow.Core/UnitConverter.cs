@@ -1,93 +1,88 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 27.05.2015
 // Time: 10:15
 //-----------------------------------------------------------------------
 
-using System;
-using System.Drawing;
-
 namespace DocumentFlow.Core
 {
-    public enum GraphicsUnit { Inch, Centimeter, Millimeter, Display, Point, Dpi100, Dpi200, Dpi300 }
+    public enum GraphicsUnit { Inch, Centimeter, Millimeter, Display, Point, Dpi }
 
     public class Length
     {
-        private float value;
-        private GraphicsUnit unit;
+        private const float DefaultDPI = 200;
 
-        public Length(float value, GraphicsUnit unit) => (this.value, this.unit) = (value, unit);
+        private readonly float value;
+        private readonly GraphicsUnit unit;
+        private readonly float dpi = DefaultDPI;
 
-        public Length ToInch() => new Length(Convert(this, GraphicsUnit.Inch), GraphicsUnit.Inch);
+        private Length(float value, GraphicsUnit unit) => (this.value, this.unit) = (value, unit);
 
-        public Length ToPoint() => new Length(Convert(this, GraphicsUnit.Point), GraphicsUnit.Point);
+        private Length(float value, float dpi) => (this.value, this.unit, this.dpi) = (value, GraphicsUnit.Dpi, dpi);
 
-        public Length ToDpi200() => new Length(Convert(this, GraphicsUnit.Dpi200), GraphicsUnit.Dpi200);
+        public Length ToInch() => new(Convert(this, GraphicsUnit.Inch), GraphicsUnit.Inch);
 
-        public Length ToMillimeter() => new Length(Convert(this, GraphicsUnit.Millimeter), GraphicsUnit.Millimeter);
+        public Length ToPoint() => new(Convert(this, GraphicsUnit.Point), GraphicsUnit.Point);
 
-        public static Length FromInch(float value) => new Length(value, GraphicsUnit.Inch);
+        public Length ToDpi(int dpi) => new(Convert(this, GraphicsUnit.Dpi), dpi);
+
+        public Length ToMillimeter() => new(Convert(this, GraphicsUnit.Millimeter), GraphicsUnit.Millimeter);
+
+        public static Length FromInch(float value) => new(value, GraphicsUnit.Inch);
         
-        public static Length FromMillimeter(float value) => new Length(value, GraphicsUnit.Millimeter);
+        public static Length FromMillimeter(float value) => new(value, GraphicsUnit.Millimeter);
 
-        public static Length FromPoint(float value) => new Length(value, GraphicsUnit.Point);
+        public static Length FromPoint(float value) => new(value, GraphicsUnit.Point);
+
+        public static Length FromDpi(float value, float dpi) => new(value, dpi);
 
         public static implicit operator float(Length length) => length.value;
 
-        private static float Convert(Length length, GraphicsUnit to)
+        private static float Convert(Length length, GraphicsUnit to, float dpi = DefaultDPI)
         {
-            switch (length.unit)
+            return length.unit switch
             {
-                case GraphicsUnit.Inch:
-                    return ConvertFromInch(length.value, to);
-                case GraphicsUnit.Centimeter:
-                    return ConvertFromCentimeter(length.value, to);
-                case GraphicsUnit.Display:
-                    return ConvertFromDisplay(length.value, to);
-                case GraphicsUnit.Point:
-                    return ConvertFromPoint(length.value, to);
-                case GraphicsUnit.Millimeter:
-                    return ConvertFromMillimeter(length.value, to);
-                case GraphicsUnit.Dpi100:
-                    return ConvertFromDpi100(length.value, to);
-                case GraphicsUnit.Dpi200:
-                    return ConvertFromDpi200(length.value, to);
-                case GraphicsUnit.Dpi300:
-                    return ConvertFromDpi300(length.value, to);
-            }
-
-            return length.value;
+                GraphicsUnit.Inch => ConvertFromInch(length.value, to, dpi),
+                GraphicsUnit.Centimeter => ConvertFromCentimeter(length.value, to, dpi),
+                GraphicsUnit.Display => ConvertFromDisplay(length.value, to, dpi),
+                GraphicsUnit.Point => ConvertFromPoint(length.value, to, dpi),
+                GraphicsUnit.Millimeter => ConvertFromMillimeter(length.value, to, dpi),
+                GraphicsUnit.Dpi => ConvertFromDpi(length.value, length.dpi, to, dpi),
+                _ => length.value,
+            };
         }
 
-        private static float ConvertFromInch(float metricValue, GraphicsUnit to)
+        /// <summary>
+        /// Функция преобразует значение metricValue указанное в дюймах в величину определяемую параметром to.
+        /// </summary>
+        /// <param name="metricValue"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        private static float ConvertFromInch(float metricValue, GraphicsUnit to, float dpi)
         {
-            float[] metrics = { 1, 2.54f, 25.4f, 96, 72, 100, 200, 300 };
+            float[] metrics = { 1, 2.54f, 25.4f, 96, 72, dpi };
             return metricValue * metrics[(int)to];
         }
 
-        private static float ConvertFromCentimeter(float metricValue, GraphicsUnit to) => ConvertFromInch(metricValue, to) / 2.54f;
+        private static float ConvertFromCentimeter(float metricValue, GraphicsUnit to, float dpi) => ConvertFromInch(metricValue, to, dpi) / 2.54f;
 
-        private static float ConvertFromDisplay(float metricValue, GraphicsUnit to) => ConvertFromInch(metricValue, to) / 96;
+        private static float ConvertFromDisplay(float metricValue, GraphicsUnit to, float dpi) => ConvertFromInch(metricValue, to, dpi) / 96;
 
-        private static float ConvertFromPoint(float metricValue, GraphicsUnit to) => ConvertFromInch(metricValue, to) / 72;
+        private static float ConvertFromPoint(float metricValue, GraphicsUnit to, float dpi) => ConvertFromInch(metricValue, to, dpi) / 72;
 
-        private static float ConvertFromMillimeter(float metricValue, GraphicsUnit to) => ConvertFromInch(metricValue, to) / 25.4f;
+        private static float ConvertFromMillimeter(float metricValue, GraphicsUnit to, float dpi) => ConvertFromInch(metricValue, to, dpi) / 25.4f;
 
-        private static float ConvertFromDpi100(float metricValue, GraphicsUnit to) => ConvertFromInch(metricValue, to) / 100f;
-
-        private static float ConvertFromDpi200(float metricValue, GraphicsUnit to) => ConvertFromInch(metricValue, to) / 200f;
-
-        private static float ConvertFromDpi300(float metricValue, GraphicsUnit to) => ConvertFromInch(metricValue, to) / 300f;
+        private static float ConvertFromDpi(float metricValue, float fromDPI, GraphicsUnit to, float toDPI) => ConvertFromInch(metricValue, to, toDPI) / fromDPI;
     }
 
-    public static class LengthExt
+   /* public static class LengthExt
     {
-        public static Length AsInch(this float value) => new Length(value, GraphicsUnit.Inch);
+        public static Length AsInch(this float value) => new(value, GraphicsUnit.Inch);
 
-        public static Length AsMillimeter(this float value) => new Length(value, GraphicsUnit.Millimeter);
+        public static Length AsMillimeter(this float value) => new(value, GraphicsUnit.Millimeter);
 
         public static int ToInt(this float value) => Convert.ToInt32(value);
-    }
+    }*/
 }

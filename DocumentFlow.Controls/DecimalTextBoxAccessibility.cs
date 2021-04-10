@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 22.03.2019
@@ -39,7 +39,7 @@ namespace DocumentFlow.Controls
         /// Gets the description of the RibbonControlAdvAccessibility
         /// </summary>
         /// <returns> A string describing the RibbonControlAdvAccessibility.</returns>
-        public override string Description => "DecimalTextBox," + m_DecimalTextBox.Style.ToString() + "," + m_DecimalTextBox.Text.ToString() + "," + m_DecimalTextBox.Bounds.X.ToString() + "," + m_DecimalTextBox.Bounds.Y.ToString() + "," + m_DecimalTextBox.Bounds.Width.ToString() + "," + m_DecimalTextBox.Bounds.Height.ToString() + "," + m_DecimalTextBox.Name.ToString() + "," + m_DecimalTextBox.ContainsFocus.ToString() + "," + m_DecimalTextBox.Enabled.ToString();
+        public override string Description => $"DecimalTextBox,{m_DecimalTextBox.Style},{m_DecimalTextBox.Text},{m_DecimalTextBox.Bounds.X},{m_DecimalTextBox.Bounds.Y},{m_DecimalTextBox.Bounds.Width},{m_DecimalTextBox.Bounds.Height},{m_DecimalTextBox.Name},{m_DecimalTextBox.ContainsFocus},{m_DecimalTextBox.Enabled}";
 
         /// <summary>
         /// Constructor

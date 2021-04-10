@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 21.04.2019
@@ -34,7 +34,6 @@ namespace DocumentFlow.Controls.Editor.Forms
             set
             {
                 treeSelect.SelectedNode = GetNode(treeSelect.Nodes, value);
-                
             }
         }
 
@@ -46,7 +45,7 @@ namespace DocumentFlow.Controls.Editor.Forms
                 return;
             }
 
-            Dictionary<PropertyInfo, string> columns = new Dictionary<PropertyInfo, string>();
+            Dictionary<PropertyInfo, string> columns = new();
             Type type = obj.GetType();
             foreach (PropertyInfo prop in type.GetProperties())
             {
@@ -61,7 +60,7 @@ namespace DocumentFlow.Controls.Editor.Forms
             {
                 foreach (PropertyInfo prop in columns.Keys)
                 {
-                    TreeColumnAdv column = new TreeColumnAdv()
+                    TreeColumnAdv column = new()
                     {
                         Text = columns[prop],
                         Highlighted = false,
@@ -99,7 +98,7 @@ namespace DocumentFlow.Controls.Editor.Forms
 
         private TreeNodeAdv AddItem(TreeNodeAdv node, bool isFolder, IIdentifier<Guid> data)
         {
-            TreeNodeAdv n = new TreeNodeAdv
+            TreeNodeAdv n = new()
             {
                 Text = data.ToString(),
                 Tag = data,
@@ -113,7 +112,7 @@ namespace DocumentFlow.Controls.Editor.Forms
                     PropertyInfo prop = (PropertyInfo)item.Tag;
                     string subItemText = prop.GetValue(data).ToString();
 
-                    TreeNodeAdvSubItem subItem = new TreeNodeAdvSubItem(subItemText);
+                    TreeNodeAdvSubItem subItem = new(subItemText);
                     n.SubItems.Add(subItem);
                 }
             }

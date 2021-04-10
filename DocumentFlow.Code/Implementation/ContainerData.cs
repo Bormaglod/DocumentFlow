@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 10.10.2020
@@ -18,8 +18,8 @@ namespace DocumentFlow.Code.Implementation
     public class ContainerData : ControlData, IContainer
     {
         private Func<IInformation> getInfo;
-        private readonly List<IControl> controls = new List<IControl>();
-        private readonly List<string> locked = new List<string>();
+        private readonly List<IControl> controls = new();
+        private readonly List<string> locked = new();
 
         public ContainerData(Control container, Func<IInformation> getInformation = null) : base(container) => getInfo = getInformation;
 

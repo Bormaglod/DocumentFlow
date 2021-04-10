@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 24.03.2018
@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using Dapper;
 using Syncfusion.Data;
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Renderers;
@@ -20,6 +19,7 @@ using Syncfusion.WinForms.GridCommon.ScrollAxis;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
+using DocumentFlow.Data.Repositories;
 
 namespace DocumentFlow.Controls.Renderers
 {
@@ -84,18 +84,14 @@ namespace DocumentFlow.Controls.Renderers
         {
             stateImages.Clear();
 
-            using (var conn = Db.OpenConnection())
+            using var conn = Db.OpenConnection();
+            // список иконок находящихся в группе state (Состояния документов)
+            foreach (Picture image in Pictures.GetChilds(conn, new Guid("8d491ef2-a8de-418b-8b88-64238e550663")))
             {
-                // список иконок находящихся в группе state (Состояния документов)
-                IEnumerable<Picture> pictures = conn.Query<Picture>("select * from picture where parent_id = :parent", new { parent = new Guid("8d491ef2-a8de-418b-8b88-64238e550663") });
-
-                foreach (Picture image in pictures)
-                {
-                    stateImages.Add(image.id, image.GetImageSmall());
-                }
-
-                states = conn.Query<Status>("select * from status");
+                stateImages.Add(image.id, image.GetImageSmall());
             }
+
+            states = Statuses.GetAll(conn);
         }
     }
 }

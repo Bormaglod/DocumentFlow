@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 14.12.2020
@@ -22,7 +22,7 @@ namespace DocumentFlow
 {
     public abstract class ToolStripData : ITool
     {
-        private readonly Dictionary<IUserAction, ToolStripItem> items = new Dictionary<IUserAction, ToolStripItem>();
+        private readonly Dictionary<IUserAction, ToolStripItem> items = new();
         private readonly UserActionCollection commands;
 
         public ToolStripData(ToolStrip toolStrip, UserActionCollection commandCollection)
@@ -52,8 +52,7 @@ namespace DocumentFlow
                 var (CommandName, _) = GetCommandComponents(item.Tag.ToString());
                 if (commands is IUserActionCollection userActions)
                 {
-                    UserAction ci = userActions.Get(CommandName) as UserAction;
-                    if (ci == null)
+                    if (userActions.Get(CommandName) is not UserAction ci)
                     {
                         ci = userActions.Add(CommandMethod.Embedded, CommandName, true) as UserAction;
                     }
@@ -153,30 +152,25 @@ namespace DocumentFlow
             var p = c.Picture;
             if (command.Icon != c.Picture.code)
             {
-                using (var conn = Db.OpenConnection())
-                {
-                    p = conn.QueryFirstOrDefault<Picture>("select * from picture where code = :code", new { code = command.Icon });
-                }
+                using var conn = Db.OpenConnection();
+                p = conn.QueryFirstOrDefault<Picture>("select * from picture where code = :code", new { code = command.Icon });
             }
 
             return p;
         }
 
-        private (string CommandName, string GroupName) GetCommandComponents(string fullCommand)
+        private static (string CommandName, string GroupName) GetCommandComponents(string fullCommand)
         {
             if (string.IsNullOrEmpty(fullCommand))
                 return (string.Empty, string.Empty);
 
             string[] names = fullCommand.Split(new char[] { '|' }, 2);
-            switch (names.Length)
+            return names.Length switch
             {
-                case 0:
-                    return (string.Empty, string.Empty);
-                case 1:
-                    return (names[0], string.Empty);
-                default:
-                    return (names[0], names[1]);
-            }
+                0 => (string.Empty, string.Empty),
+                1 => (names[0], string.Empty),
+                _ => (names[0], names[1]),
+            };
         }
 
         private ToolStripItem AddToolStripItem(IUserAction command)

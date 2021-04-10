@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 27.09.2020
@@ -38,23 +38,16 @@ namespace DocumentFlow.Core
 
         static LogLevel ToNLogLogLevel(NpgsqlLogLevel level)
         {
-            switch (level)
+            return level switch
             {
-                case NpgsqlLogLevel.Trace:
-                    return LogLevel.Trace;
-                case NpgsqlLogLevel.Debug:
-                    return LogLevel.Debug;
-                case NpgsqlLogLevel.Info:
-                    return LogLevel.Info;
-                case NpgsqlLogLevel.Warn:
-                    return LogLevel.Warn;
-                case NpgsqlLogLevel.Error:
-                    return LogLevel.Error;
-                case NpgsqlLogLevel.Fatal:
-                    return LogLevel.Fatal;
-                default:
-                    throw new ArgumentOutOfRangeException("level");
-            }
+                NpgsqlLogLevel.Trace => LogLevel.Trace,
+                NpgsqlLogLevel.Debug => LogLevel.Debug,
+                NpgsqlLogLevel.Info => LogLevel.Info,
+                NpgsqlLogLevel.Warn => LogLevel.Warn,
+                NpgsqlLogLevel.Error => LogLevel.Error,
+                NpgsqlLogLevel.Fatal => LogLevel.Fatal,
+                _ => throw new ArgumentOutOfRangeException(nameof(level)),
+            };
         }
     }
 }

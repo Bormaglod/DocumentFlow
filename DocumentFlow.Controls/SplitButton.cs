@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 10.06.2018
@@ -31,9 +31,9 @@ namespace DocumentFlow.Controls
         public SplitButton()
         {
             SetStyle(ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
-            DropDownItems = new SplitButtonItemsCollection(this);
+            DropDownItems = new(this);
             BackColor = Color.White;
-            buttonDropDown = new ContextMenuStrip();
+            buttonDropDown = new();
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -148,7 +148,7 @@ namespace DocumentFlow.Controls
         {
             base.OnPaint(e);
             
-            Rectangle r = new Rectangle(e.ClipRectangle.Location, e.ClipRectangle.Size.Resize(-1));
+            Rectangle r = new(e.ClipRectangle.Location, e.ClipRectangle.Size.Resize(-1));
 
             if (Enabled)
             {
@@ -175,14 +175,14 @@ namespace DocumentFlow.Controls
 
             DrawArrow(e.Graphics, r);
 
-            StringFormat stringFormat = new StringFormat
+            StringFormat stringFormat = new()
             {
                 Trimming = StringTrimming.EllipsisCharacter,
                 LineAlignment = StringAlignment.Center,
                 Alignment = StringAlignment.Center
             };
 
-            r = new Rectangle(1, 1, Width - splitWidth - borderWidth * 2, Height - borderWidth * 2);
+            r = new(1, 1, Width - splitWidth - borderWidth * 2, Height - borderWidth * 2);
             e.Graphics.DrawString(Text, Font, ForeColor.Brush(), r, stringFormat);
         }
 

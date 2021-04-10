@@ -64,9 +64,9 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
                     when contract.tax_payer then 20 
                     else 0 
                 end as tax, 
-                coalesce(sum(isd.cost), 0::money) as cost, 
-                coalesce(sum(isd.tax_value), 0::money) as tax_value, 
-                coalesce(sum(isd.cost_with_tax), 0::money) as cost_with_tax 
+                coalesce(sum(isd.cost), 0) as cost, 
+                coalesce(sum(isd.tax_value), 0) as tax_value, 
+                coalesce(sum(isd.cost_with_tax), 0) as cost_with_tax 
             from invoice_sales i_s 
                 join status s on (s.id  = i_s.status_id) 
                 join user_alias ua on (ua.id = i_s.user_created_id) 
@@ -190,7 +190,7 @@ namespace DocumentFlow.Code.Implementation.InvoiceSalesImp
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<InvoiceSales>(string.Format(baseSelect, "(i_s.doc_date between :from_date and :to_date and i_s.organization_id = :organization_id) or i_s.status_id not in (1011, 3000)"), new
+            return connection.Query<InvoiceSales>(string.Format(baseSelect, "(i_s.doc_date <= :to_date and (i_s.status_id not in (1011, 3000) or i_s.doc_date >= :from_date) and i_s.organization_id = :organization_id)"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,

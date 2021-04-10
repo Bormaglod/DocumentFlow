@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 09.12.2020
@@ -24,7 +24,7 @@ namespace DocumentFlow.Core
 {
     public static class CommandExtension
     {
-        private static Dictionary<Command, CodeContent> codes = new Dictionary<Command, CodeContent>();
+        private static readonly Dictionary<Command, CodeContent> codes = new();
 
         public static IBrowserCode Browser(this Command command) => Task.Run(() => command.Compile()).Result.Browser;
 
@@ -54,14 +54,19 @@ namespace DocumentFlow.Core
 #endif
 
                 string binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string corePath = Path.GetDirectoryName(typeof(object).GetTypeInfo().Assembly.Location);
                 MetadataReference[] references = new MetadataReference[]
                 {
+                    MetadataReference.CreateFromFile(Path.Combine(corePath, "System.Runtime.dll")),
                     MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(System.ComponentModel.INotifyPropertyChanged).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(System.Data.IDbConnection).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Form).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(System.ComponentModel.ListSortDescription).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(Path.Combine(corePath, "System.Collections.dll")),
                     MetadataReference.CreateFromFile(typeof(System.Drawing.Color).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(System.Drawing.ContentAlignment).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(Path.Combine(binPath, "Dapper.dll")),
                     MetadataReference.CreateFromFile(Path.Combine(binPath, "DocumentFlow.Core.dll")),
                     MetadataReference.CreateFromFile(Path.Combine(binPath, "DocumentFlow.Data.Core.dll")),
@@ -70,7 +75,7 @@ namespace DocumentFlow.Core
 
                 string assemblyInfo = @"
                     using System.Reflection;
-                    [assembly: AssemblyVersion(""2.4.0.0"")]
+                    [assembly: AssemblyVersion(""3.0.0.0"")]
                 ";
 
                 CSharpCompilation compilation = CSharpCompilation.Create(dll, references: references)
@@ -80,69 +85,63 @@ namespace DocumentFlow.Core
                         CSharpSyntaxTree.ParseText(command.script)
                         );
 
-                using (var ms = new MemoryStream())
+                using var ms = new MemoryStream();
+#if DEBUG
+                using var pdb = new MemoryStream();
+                EmitResult emitResult = compilation.Emit(ms, pdb);
+#else
+                EmitResult emitResult = compilation.Emit(ms);
+#endif
+                if (emitResult.Success)
                 {
+                    ms.Seek(0, SeekOrigin.Begin);
 #if DEBUG
-                    using (var pdb = new MemoryStream())
+                    Assembly assembly = Assembly.Load(ms.ToArray(), pdb.ToArray());
+#else
+                    Assembly assembly = Assembly.Load(ms.ToArray());
+#endif
+                    try
                     {
-                        EmitResult emitResult = compilation.Emit(ms, pdb);
-#else
-                        EmitResult emitResult = compilation.Emit(ms);
-#endif
-                        if (emitResult.Success)
+                        Type[] types = assembly.GetTypes();
+                        Type type = types.Where(x => x.GetInterface(nameof(IBrowserCode)) != null).SingleOrDefault();
+
+                        if (type == null)
                         {
-                            ms.Seek(0, SeekOrigin.Begin);
-#if DEBUG
-                            Assembly assembly = Assembly.Load(ms.ToArray(), pdb.ToArray());
-#else
-                            Assembly assembly = Assembly.Load(ms.ToArray());
-#endif
-                            try
-                            {
-                                Type[] types = assembly.GetTypes();
-                                Type type = types.Where(x => x.GetInterface(nameof(IBrowserCode)) != null).SingleOrDefault();
+                            throw new MissingImpException($"Не найдена реализация интерфейса {nameof(IBrowserCode)}");
+                        }
 
-                                if (type == null)
-                                {
-                                    throw new MissingImpException($"Не найдена реализация интерфейса {nameof(IBrowserCode)}");
-                                }
+                        IBrowserCode browser = Activator.CreateInstance(type) as IBrowserCode;
+                        IEditorCode editor = null;
+                        if (browser is IDataEditor dataEditor)
+                        {
+                            editor = dataEditor.CreateEditor();
+                        }
 
-                                IBrowserCode browser = Activator.CreateInstance(type) as IBrowserCode;
-                                IEditorCode editor = null;
-                                if (browser is IDataEditor dataEditor)
-                                {
-                                    editor = dataEditor.CreateEditor();
-                                }
-
-                                if (codes.ContainsKey(command))
-                                {
-                                    codes[command] = (browser, editor);
-                                }
-                                else
-                                {
-                                    codes.Add(command, (browser, editor));
-                                    command.PropertyChanged += Command_PropertyChanged;
-                                }
-                            }
-                            catch (InvalidOperationException e)
-                            {
-                                throw new InvalidOperationException($"Код отвечающий за создание окна просмотра имеет более одного класса реализующего {nameof(IBrowserCode)} или {nameof(IEditorCode)}.", e);
-                            }
-
-                            return codes[command];
+                        if (codes.ContainsKey(command))
+                        {
+                            codes[command] = (browser, editor);
                         }
                         else
                         {
-                            // some errors
-                            IEnumerable<Diagnostic> failures = emitResult.Diagnostics.Where(diagnostic =>
-                                diagnostic.IsWarningAsError ||
-                                diagnostic.Severity == DiagnosticSeverity.Error);
-
-                            throw new CompilerException(failures);
+                            codes.Add(command, (browser, editor));
+                            command.PropertyChanged += Command_PropertyChanged;
                         }
-#if DEBUG
                     }
-#endif
+                    catch (InvalidOperationException e)
+                    {
+                        throw new InvalidOperationException($"Код отвечающий за создание окна просмотра имеет более одного класса реализующего {nameof(IBrowserCode)} или {nameof(IEditorCode)}.", e);
+                    }
+
+                    return codes[command];
+                }
+                else
+                {
+                    // some errors
+                    IEnumerable<Diagnostic> failures = emitResult.Diagnostics.Where(diagnostic =>
+                        diagnostic.IsWarningAsError ||
+                        diagnostic.Severity == DiagnosticSeverity.Error);
+
+                    throw new CompilerException(failures);
                 }
             }
         }

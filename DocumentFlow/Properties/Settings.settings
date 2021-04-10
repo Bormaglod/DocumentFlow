@@ -32,5 +32,8 @@
     <Setting Name="FtpHost" Type="System.String" Scope="User">
       <Value Profile="(Default)">109.68.215.41</Value>
     </Setting>
+    <Setting Name="TwainDataSource" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

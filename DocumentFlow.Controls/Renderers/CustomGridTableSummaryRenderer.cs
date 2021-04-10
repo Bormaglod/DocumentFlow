@@ -1,4 +1,12 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Contacts: <sergio.teplyashin@gmail.com>
+// License: https://opensource.org/licenses/GPL-3.0
+// Date: 28.04.2020
+// Time: 23:38
+//-----------------------------------------------------------------------
+
+using System;
 using System.Drawing;
 using System.Globalization;
 using Syncfusion.WinForms.DataGrid;
@@ -29,7 +37,7 @@ namespace DocumentFlow.Controls.Renderers
             if (c == null)
                 return;
 
-            NumberFormatInfo format = new NumberFormatInfo();
+            NumberFormatInfo format = new();
 
             if (column.GridColumn is GridNumericColumn numericColumn)
             {
@@ -43,7 +51,7 @@ namespace DocumentFlow.Controls.Renderers
                     cellValue = Convert.ToDouble(double.Parse(cellValue, NumberStyles.Number)).ToString("N", format);
                 }
 
-                StringFormat stringFormat = new StringFormat
+                StringFormat stringFormat = new()
                 {
                     LineAlignment = StringAlignment.Center
                 };

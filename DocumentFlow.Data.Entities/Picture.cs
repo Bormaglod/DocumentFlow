@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 03.06.2018
@@ -26,7 +26,7 @@ namespace DocumentFlow.Data.Entities
 
         public byte[] ImageSmall => GetImage(GetImageSmall());
 
-        byte[] GetImage(Image image)
+        static private byte[] GetImage(Image image)
         {
             if (image == null)
                 return null;

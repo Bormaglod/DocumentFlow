@@ -142,5 +142,17 @@ namespace DocumentFlow.Properties {
                 this["FtpHost"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TwainDataSource {
+            get {
+                return ((string)(this["TwainDataSource"]));
+            }
+            set {
+                this["TwainDataSource"] = value;
+            }
+        }
     }
 }

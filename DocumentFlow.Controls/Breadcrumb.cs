@@ -1,26 +1,9 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Breadcrumb.cs" company="Sergey Teplyashin">
-//     Copyright (c) 2010-2018 Sergey Teplyashin. All rights reserved.
-// </copyright>
-// <author>Тепляшин Сергей Васильевич</author>
-// <email>sergey-teplyashin@yandex.ru</email>
-// <license>
-//     This program is free software; you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation; either version 3 of the License, or
-//     (at your option) any later version.
-//
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-//
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// </license>
-// <date>08.06.2018</date>
-// <time>22:51</time>
-// <summary>Defines the Breadcrumb class.</summary>
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Contacts: <sergio.teplyashin@gmail.com>
+// License: https://opensource.org/licenses/GPL-3.0
+// Date: 08.06.2018
+// Time: 22:51
 //-----------------------------------------------------------------------
 
 using System;
@@ -36,7 +19,7 @@ namespace DocumentFlow.Controls
 
     public partial class Breadcrumb : UserControl
     {
-        private readonly Stack<(Guid id, SplitButton button)> dirs = new Stack<(Guid, SplitButton)>();
+        private readonly Stack<(Guid id, SplitButton button)> dirs = new();
 
         public Breadcrumb()
         {
@@ -58,7 +41,7 @@ namespace DocumentFlow.Controls
 
         public void Push(Guid id, string name)
         {
-            SplitButton crumb = new SplitButton()
+            SplitButton crumb = new()
             {
                 Text = name,
                 BorderColor = Color.White,
@@ -106,10 +89,7 @@ namespace DocumentFlow.Controls
             UpdateButtons();
         }
 
-        private void UpdateButtons()
-        {
-            buttonUp.Enabled = Count > 0;
-        }
+        private void UpdateButtons() => buttonUp.Enabled = Count > 0;
 
         private void Crumb_Click(object sender, EventArgs e)
         {

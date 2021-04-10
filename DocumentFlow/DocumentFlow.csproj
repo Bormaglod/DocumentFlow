@@ -1,592 +1,111 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{111A7A46-8AEB-425C-B97C-B32436FADA64}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>DocumentFlow</RootNamespace>
-    <AssemblyName>DocumentFlow</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>ftp://109.68.215.41/apps/</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://109.68.215.41/apps/</InstallUrl>
-    <TargetCulture>ru</TargetCulture>
-    <ProductName>DocumentFlow</ProductName>
-    <PublisherName>Автоком</PublisherName>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
-    <WebPage>index.html</WebPage>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>2.5.7.0</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;USE_LISTENER</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>EB38AD95CB900F496BD961A265B035620E342BBE</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>DocumentFlow_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>true</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>workflow-enterprise.ico</ApplicationIcon>
+    <Version>2.6.0</Version>
+    <Company>ООО Автоком</Company>
+    <Copyright>Copyright © ООО Автоком (Autokom Company), 2021</Copyright>
+    <Platforms>AnyCPU;x86</Platforms>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;USE_LISTENER</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <DefineConstants>TRACE;USE_LISTENER</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <None Remove="NLog.config" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AboutForm.designer.cs">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CatalogWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CatalogWindow.designer.cs">
-      <DependentUpon>CatalogWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CodeEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CodeEditor.designer.cs">
-      <DependentUpon>CodeEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ContentEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ContentEditor.designer.cs">
-      <DependentUpon>ContentEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ContentViewer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ContentViewer.designer.cs">
-      <DependentUpon>ContentViewer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Core\CodeContent.cs" />
-    <Compile Include="Core\CommandExtension.cs" />
-    <Compile Include="Core\CommandFactory.cs" />
-    <Compile Include="Core\ContextMenuData.cs" />
-    <Compile Include="Core\EditorData.cs" />
-    <Compile Include="Core\Information.cs" />
-    <Compile Include="Core\ToolBarData.cs" />
-    <Compile Include="Core\ToolStripData.cs" />
-    <Compile Include="Core\UserAction.cs" />
-    <Compile Include="Core\UserActionCollection.cs" />
-    <Compile Include="Core\UserActionComparer.cs" />
-    <Compile Include="DiagramViewer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DiagramViewer.designer.cs">
-      <DependentUpon>DiagramViewer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DocumentFlowForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DocumentFlowForm.designer.cs">
-      <DependentUpon>DocumentFlowForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DocumentRefEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DocumentRefEditor.designer.cs">
-      <DependentUpon>DocumentRefEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GroupEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GroupEditor.designer.cs">
-      <DependentUpon>GroupEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="HistoryWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="HistoryWindow.designer.cs">
-      <DependentUpon>HistoryWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Interfaces\ICommandFactory.cs" />
-    <Compile Include="Interfaces\IContainerPage.cs" />
-    <Compile Include="Interfaces\IExecutor.cs" />
-    <Compile Include="Interfaces\IPage.cs" />
-    <Compile Include="Interfaces\ISettings.cs" />
-    <Compile Include="PreviewWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PreviewWindow.Designer.cs">
-      <DependentUpon>PreviewWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScanningWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ScanningWindow.designer.cs">
-      <DependentUpon>ScanningWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SelectDateRangeWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SelectDateRangeWindow.designer.cs">
-      <DependentUpon>SelectDateRangeWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SelectDayValueWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SelectDayValueWindow.designer.cs">
-      <DependentUpon>SelectDayValueWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SelectEmailWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SelectEmailWindow.designer.cs">
-      <DependentUpon>SelectEmailWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ToolWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ViewerControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ViewerControl.designer.cs">
-      <DependentUpon>ViewerControl.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="AboutForm.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CatalogWindow.resx">
-      <DependentUpon>CatalogWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CodeEditor.resx">
-      <DependentUpon>CodeEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ContentEditor.resx">
-      <DependentUpon>ContentEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ContentViewer.resx">
-      <DependentUpon>ContentViewer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DiagramViewer.resx">
-      <DependentUpon>DiagramViewer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DocumentFlowForm.resx">
-      <DependentUpon>DocumentFlowForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DocumentRefEditor.resx">
-      <DependentUpon>DocumentRefEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GroupEditor.resx">
-      <DependentUpon>GroupEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HistoryWindow.resx">
-      <DependentUpon>HistoryWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PreviewWindow.resx">
-      <DependentUpon>PreviewWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Crc32.NET" Version="1.2.0" />
+    <PackageReference Include="DockPanelSuite" Version="3.1.0-beta7" />
+    <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0-beta7" />
+    <PackageReference Include="FluentFTP" Version="33.1.5" />
+    <PackageReference Include="Inflector.NetStandard" Version="1.2.2" />
+    <PackageReference Include="MailKit" Version="2.11.1" />
+    <PackageReference Include="Npgsql" Version="5.0.4" />
+    <PackageReference Include="NTwain" Version="3.7.0" />
+    <PackageReference Include="Syncfusion.Diagram.Windows" Version="19.1.0.55" />
+    <PackageReference Include="Syncfusion.Edit.Windows" Version="19.1.0.55" />
+    <PackageReference Include="Syncfusion.PdfViewer.Windows" Version="19.1.0.55" />
+    <PackageReference Include="Syncfusion.Tools.Windows" Version="19.1.0.55" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DocumentFlow.Authorization\DocumentFlow.Authorization.csproj" />
+    <ProjectReference Include="..\DocumentFlow.Code\DocumentFlow.Code.csproj" />
+    <ProjectReference Include="..\DocumentFlow.Controls\DocumentFlow.Controls.csproj" />
+    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj" />
+    <ProjectReference Include="..\DocumentFlow.Data.Core\DocumentFlow.Data.Core.csproj" />
+    <ProjectReference Include="..\DocumentFlow.Data.Entities\DocumentFlow.Data.Entities.csproj" />
+    <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj" />
+    <ProjectReference Include="..\DocumentFlow.Reports\DocumentFlow.Reports.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="ScanningWindow.resx">
-      <DependentUpon>ScanningWindow.cs</DependentUpon>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="SelectDateRangeWindow.resx">
-      <DependentUpon>SelectDateRangeWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SelectDayValueWindow.resx">
-      <DependentUpon>SelectDayValueWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SelectEmailWindow.resx">
-      <DependentUpon>SelectEmailWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ViewerControl.resx">
-      <DependentUpon>ViewerControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="..\.editorconfig">
-      <Link>.editorconfig</Link>
-    </None>
-    <None Include="Diagram Palette\Basic Shapes.edp">
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
+    <None Update="password.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Diagram Palette\Flowchart Symbols.edp">
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Diagram Palette\Basic Shapes.edp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Diagram Palette\SwimLane Symbols.edp">
+    <None Update="Diagram Palette\Flowchart Symbols.edp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DocumentFlow_TemporaryKey.pfx" />
-    <None Include="NLog.config">
+    <None Update="Diagram Palette\SwimLane Symbols.edp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="NLog.xsd">
-      <SubType>Designer</SubType>
+    <None Update="license.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Properties\Settings.settings">
+    <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-assembly-line-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-assembly-line-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-cancel-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-cancel-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-close-window-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-close-window-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-columns-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-columns-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-copy-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-copy-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-copy-edit-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-copy-edit-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-create-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-create-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-cut-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-cut-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-documents-11.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-edit-prop-11.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-elapsed-time-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-elapsed-time-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-file-add-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-file-add-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-file-delete-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-file-delete-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-file-edit-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-file-edit-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-find-filled-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-folder-add-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-folder-add-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-info-11.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-manufacture-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-mind-map-12x11.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-open-document-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-open-document-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-open-folder-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-open-folder-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-paste-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-paste-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-preview-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-preview-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-print-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-print-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-redo-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-redo-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-renew-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-renew-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-rescan-document-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-rescan-document-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-restart-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-restart-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-save-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-save-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-save-close-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-save-close-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-sort-by-asc-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-sort-by-desc-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-source-14x10.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-source-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-source-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-undo-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icons8-undo-30.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\system-close.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\system-max.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\system-menu.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\system-min.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\system-restore.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DocumentFlow.Authorization\DocumentFlow.Authorization.csproj">
-      <Project>{d9a17948-82e9-4709-ae78-4426829870e8}</Project>
-      <Name>DocumentFlow.Authorization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Code\DocumentFlow.Code.csproj">
-      <Project>{6d6d7557-4044-461e-914a-4860fc353002}</Project>
-      <Name>DocumentFlow.Code</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Controls\DocumentFlow.Controls.csproj">
-      <Project>{be46ddc2-9739-4c55-ad7f-9b47a9886841}</Project>
-      <Name>DocumentFlow.Controls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj">
-      <Project>{11f75d3d-0eb9-4269-b96b-47177506a3a6}</Project>
-      <Name>DocumentFlow.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data.Core\DocumentFlow.Data.Core.csproj">
-      <Project>{f299e21b-0c61-41e0-9028-90df2820bfda}</Project>
-      <Name>DocumentFlow.Data.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data.Entities\DocumentFlow.Data.Entities.csproj">
-      <Project>{37596464-e8f1-4a56-91f6-1c0ca67b5612}</Project>
-      <Name>DocumentFlow.Data.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj">
-      <Project>{705e1438-3e6f-4f52-8bb1-5484096b56a2}</Project>
-      <Name>DocumentFlow.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DocumentFlow.Reports\DocumentFlow.Reports.csproj">
-      <Project>{dd93fb31-8165-4bb2-b935-0585f94e78e7}</Project>
-      <Name>DocumentFlow.Reports</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Crc32C.NET">
-      <Version>1.0.5</Version>
-    </PackageReference>
-    <PackageReference Include="DockPanelSuite">
-      <Version>3.0.6</Version>
-    </PackageReference>
-    <PackageReference Include="DockPanelSuite.ThemeVS2015">
-      <Version>3.0.6</Version>
-    </PackageReference>
-    <PackageReference Include="FluentFTP">
-      <Version>33.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="Inflector.NetStandard">
-      <Version>1.2.2</Version>
-    </PackageReference>
-    <PackageReference Include="MailKit">
-      <Version>2.10.1</Version>
-    </PackageReference>
-    <PackageReference Include="Saraff.Twain">
-      <Version>1.0.30.695</Version>
-    </PackageReference>
-    <PackageReference Include="Syncfusion.Diagram.Windows">
-      <Version>18.4.0.44</Version>
-    </PackageReference>
-    <PackageReference Include="Syncfusion.Edit.Windows">
-      <Version>18.4.0.44</Version>
-    </PackageReference>
-    <PackageReference Include="Syncfusion.PdfViewer.Windows">
-      <Version>18.4.0.44</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="license.txt">
+    <None Update="readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="password.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="readme.txt" />
-    <Content Include="workflow-enterprise.ico" />
-    <None Include="Resources\icons8-send-16.png" />
-    <None Include="Resources\icons8-select-text-16.png" />
-    <None Include="Resources\icons8-hand-16.png" />
-    <None Include="Resources\icons8-fit-page-16.png" />
-    <None Include="Resources\icons8-fill-window-16.png" />
-    <None Include="Resources\icons8-zoom-out-16.png" />
-    <None Include="Resources\icons8-zoom-in-16.png" />
-    <None Include="Resources\icons8-right-16.png" />
-    <None Include="Resources\icons8-end-16.png" />
-    <None Include="Resources\icons8-start-16.png" />
-    <None Include="Resources\icons8-left-16.png" />
+    </None>
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.8 %28x86 и x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

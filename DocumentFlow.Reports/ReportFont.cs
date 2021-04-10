@@ -15,6 +15,6 @@ namespace DocumentFlow.Reports
         public string Name { get; set; } = "Microsoft Sans Serif";
         public float Size { get; set; } = 10;
         public FontStyle Style { get; set; } = FontStyle.Regular;
-        public Font Instance => new Font(Name, Size, Style);
+        public Font Instance => new(Name, Size, Style);
     }
 }

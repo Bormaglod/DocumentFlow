@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 26.04.2020
@@ -37,7 +37,7 @@ namespace DocumentFlow.Code.Controls
 
             if (c is INumericColumn numericColumn)
             {
-                NumberFormatInfo format = new NumberFormatInfo
+                NumberFormatInfo format = new()
                 {
                     NumberDecimalDigits = numericColumn.DecimalDigits
                 };
@@ -48,17 +48,18 @@ namespace DocumentFlow.Code.Controls
                 }
             }
 
-            StringFormat stringFormat = new StringFormat
+            StringFormat stringFormat = new()
             {
                 LineAlignment = StringAlignment.Center
             };
 
-            if (c.HorizontalAlignment == HorizontalAlignment.Left)
-                stringFormat.Alignment = StringAlignment.Near;
-            else if (c.HorizontalAlignment == HorizontalAlignment.Center)
-                stringFormat.Alignment = StringAlignment.Center;
-            else if (c.HorizontalAlignment == HorizontalAlignment.Right)
-                stringFormat.Alignment = StringAlignment.Far;
+            stringFormat.Alignment = c.HorizontalAlignment switch
+            {
+                HorizontalAlignment.Left => StringAlignment.Near,
+                HorizontalAlignment.Center => StringAlignment.Center,
+                HorizontalAlignment.Right => StringAlignment.Far,
+                _ => throw new NotImplementedException()
+            };
             paint.DrawString(cellValue, style.Font.GetFont(), Brushes.Black, new RectangleF(cellRect.Left + 3, cellRect.Top, cellRect.Width - 6, cellRect.Height), stringFormat);
         }
     }

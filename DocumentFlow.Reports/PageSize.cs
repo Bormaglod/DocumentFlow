@@ -28,31 +28,18 @@ namespace DocumentFlow.Reports
             set
             {
                 name = value;
-                switch (name)
+                (Width, Height) = name switch
                 {
-                    case PageSizeName.A0:
-                        (Width, Height) = (841, 1189);
-                        break;
-                    case PageSizeName.A1:
-                        (Width, Height) = (594, 841);
-                        break;
-                    case PageSizeName.A2:
-                        (Width, Height) = (420, 594);
-                        break;
-                    case PageSizeName.A3:
-                        (Width, Height) = (297, 420);
-                        break;
-                    case PageSizeName.A4:
-                        (Width, Height) = (210, 297);
-                        break;
-                    case PageSizeName.A5:
-                        (Width, Height) = (148, 210);
-                        break;
-                    default:
-                        break;
-                }
+                    PageSizeName.A0 => (841, 1189),
+                    PageSizeName.A1 => (594, 841),
+                    PageSizeName.A2 => (420, 594),
+                    PageSizeName.A3 => (297, 420),
+                    PageSizeName.A4 => (210, 297),
+                    PageSizeName.A5 => (148, 210),
+                    _ => throw new System.NotImplementedException()
+                };
             }
         }
-        public SizeF Size => new SizeF(Length.FromMillimeter(Width).ToPoint(), Length.FromMillimeter(Height).ToPoint());
+        public SizeF Size => new(Length.FromMillimeter(Width).ToPoint(), Length.FromMillimeter(Height).ToPoint());
     }
 }

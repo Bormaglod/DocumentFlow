@@ -65,19 +65,19 @@ namespace DocumentFlow.Reports
 
         public void GeneratePdf(PdfDocument doc)
         {
-            float maxHeight = GetMaxDataBandHeight(2);
+            float maxHeight = GetMaxDataBandHeight();
             for (int i = 0; i < (DataBands?.Count ?? 0); i++)
             {
                 if (DataBands[i].Header != null && DataBands[i].Header.Height > maxHeight)
                 {
-                    throw new Exception($"Раздел {DataBands[i].Header.Name} не умещается на страницу.");
+                    throw new($"Раздел {DataBands[i].Header.Name} не умещается на страницу.");
                 }
 
                 if (DataBands[i].DataBand != null)
                 {
                     if (DataBands[i].DataBand.Height > maxHeight)
                     {
-                        throw new Exception($"Раздел {DataBands[i].DataBand.Name} не умещается на страницу.");
+                        throw new($"Раздел {DataBands[i].DataBand.Name} не умещается на страницу.");
                     }
                     else
                     {
@@ -87,7 +87,7 @@ namespace DocumentFlow.Reports
 
                 if (DataBands[i].Footer != null && DataBands[i].Footer.Height > maxHeight)
                 {
-                    throw new Exception($"Раздел {DataBands[i].Footer.Name} не умещается на страницу.");
+                    throw new($"Раздел {DataBands[i].Footer.Name} не умещается на страницу.");
                 }
             }
 
@@ -143,14 +143,9 @@ namespace DocumentFlow.Reports
             currentBandTop = (ReportTitleBand?.Height ?? 0) + (PageHeaderBand?.Height ?? 0);
         }
 
-        private float GetMaxDataBandHeight(int page)
+        private float GetMaxDataBandHeight()
         {
             float max_height = MarginSize.Height - (PageHeaderBand?.Height ?? 0) - (PageFooterBand?.Height ?? 0);
-            /*if (page == 1 && ReportTitleBand != null)
-            {
-                max_height -= ReportTitleBand.Height;
-            }*/
-
             return max_height;
         }
 
@@ -158,7 +153,7 @@ namespace DocumentFlow.Reports
         {
             if (band != null)
             {
-                if (currentBandTop + band.Height > GetMaxDataBandHeight(Current))
+                if (currentBandTop + band.Height > GetMaxDataBandHeight())
                 {
                     CreatePdfPage(doc);
                 }

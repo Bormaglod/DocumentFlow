@@ -28,7 +28,7 @@ namespace DocumentFlow.Reports
         public ReportFont Font { get; set; }
         public PdfTextAlignment HorizontalAlignment { get; set; } = PdfTextAlignment.Left;
         public PdfVerticalAlignment VerticalAlignment { get; set; } = PdfVerticalAlignment.Top;
-        public Padding Padding { get; set; } = new Padding();
+        public Padding Padding { get; set; } = new();
         public string ColorName { get; set; } = "Black";
         public bool CanGrow { get; set; } = false;
         public bool CanShrink { get; set; } = false;
@@ -73,7 +73,7 @@ namespace DocumentFlow.Reports
             float paddingHeight = Length.FromMillimeter(Padding.Height).ToPoint();
             float widthText = Bounds.Width - paddingWidth;
 
-            PdfStringFormat stringFormat = new PdfStringFormat
+            PdfStringFormat stringFormat = new()
             {
                 Alignment = HorizontalAlignment,
                 LineAlignment = VerticalAlignment,
@@ -130,7 +130,7 @@ namespace DocumentFlow.Reports
                 rect.Width - Length.FromMillimeter(Padding.Width).ToPoint(), 
                 rect.Height - Length.FromMillimeter(Padding.Height).ToPoint());
 
-            PdfStringFormat stringFormat = new PdfStringFormat
+            PdfStringFormat stringFormat = new()
             {
                 Alignment = HorizontalAlignment,
                 LineAlignment = VerticalAlignment,
@@ -139,7 +139,7 @@ namespace DocumentFlow.Reports
 
             if (IsHyperlink)
             {
-                PdfTextWebLink textLink = new PdfTextWebLink
+                PdfTextWebLink textLink = new()
                 {
                     Url = Hyperlink,
                     Text = outputText,

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 09.06.2018
@@ -95,7 +95,7 @@ namespace DocumentFlow.Controls
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            Rectangle r = new Rectangle(e.ClipRectangle.Location, e.ClipRectangle.Size.Resize(-1));
+            Rectangle r = new(e.ClipRectangle.Location, e.ClipRectangle.Size.Resize(-1));
 
             if (Enabled)
             {
@@ -119,41 +119,25 @@ namespace DocumentFlow.Controls
             int x = (Width - 18) / 2 + 1;
             int y = (Height - 18) / 2 + 1;
 
-            Bitmap bitmap = null;
-            switch (Kind)
+            Bitmap bitmap = kind switch
             {
-                case ToolButtonKind.Back:
-                    bitmap = Properties.Resources.left_16;
-                    break;
-                case ToolButtonKind.Forward:
-                    bitmap = Properties.Resources.right_16;
-                    break;
-                case ToolButtonKind.Up:
-                    bitmap = Properties.Resources.up_16;
-                    break;
-                case ToolButtonKind.Refresh:
-                    bitmap = Properties.Resources.refresh_16;
-                    break;
-                case ToolButtonKind.Home:
-                    bitmap = Properties.Resources.icons8_home_16;
-                    break;
-                case ToolButtonKind.Delete:
-                    bitmap = Properties.Resources.icons8_delete_16;
-                    break;
-                case ToolButtonKind.Select:
-                    bitmap = Properties.Resources.icons8_select_16;
-                    break;
-                case ToolButtonKind.Down:
-                    bitmap = Properties.Resources.down_16;
-                    break;
-            }
+                ToolButtonKind.Back => Properties.Resources.left_16,
+                ToolButtonKind.Forward => Properties.Resources.right_16,
+                ToolButtonKind.Up => Properties.Resources.up_16,
+                ToolButtonKind.Refresh => Properties.Resources.refresh_16,
+                ToolButtonKind.Home => Properties.Resources.icons8_home_16,
+                ToolButtonKind.Delete => Properties.Resources.icons8_delete_16,
+                ToolButtonKind.Select => Properties.Resources.icons8_select_16,
+                ToolButtonKind.Down => Properties.Resources.down_16,
+                _ => null
+            };
 
             if (bitmap != null)
             {
-                if (!Enabled)
-                    ControlPaint.DrawImageDisabled(e.Graphics, bitmap, x, y, BackColor);
-                else
+                if (Enabled)
                     e.Graphics.DrawImage(bitmap, x, y);
+                else
+                    ControlPaint.DrawImageDisabled(e.Graphics, bitmap, x, y, BackColor);
             }
         }
 

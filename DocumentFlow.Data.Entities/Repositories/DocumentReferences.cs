@@ -19,10 +19,8 @@ namespace DocumentFlow.Data.Repositories
     {
         public static BindingList<DocumentRefs> Get(Guid doc_id)
         {
-            using (var conn = Db.OpenConnection())
-            {
-                return Get(conn, doc_id);
-            }
+            using var conn = Db.OpenConnection();
+            return Get(conn, doc_id);
         }
 
         public static BindingList<DocumentRefs> Get(IDbConnection connection, Guid doc_id)
@@ -32,9 +30,11 @@ namespace DocumentFlow.Data.Repositories
                 );
         }
 
-        public static int Insert(this DocumentRefs refs, IDbTransaction transaction)
+        public static long Insert(this DocumentRefs refs, IDbTransaction transaction)
         {
-            return Insert(transaction, refs);
+            long id = Insert(transaction, refs);
+            refs.id = id;
+            return id;
         }
 
         public static int Update(this DocumentRefs refs, IDbTransaction transaction)
@@ -47,9 +47,9 @@ namespace DocumentFlow.Data.Repositories
             return Delete(transaction, refs);
         }
 
-        private static int Insert(IDbTransaction transaction, DocumentRefs refs)
+        private static long Insert(IDbTransaction transaction, DocumentRefs refs)
         {
-            return transaction.Connection.Execute("insert into document_refs (owner_id, file_name, note, crc, length) values (:owner_id, :file_name, :note, :crc, :length)", refs, transaction);
+            return transaction.Connection.QuerySingle<long>("insert into document_refs (owner_id, file_name, note, crc, length) values (:owner_id, :file_name, :note, :crc, :length) returning id", refs, transaction);
         }
 
         private static int Update(IDbTransaction transaction, DocumentRefs refs)

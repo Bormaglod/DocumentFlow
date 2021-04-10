@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 08.03.2019
@@ -36,10 +36,10 @@ namespace DocumentFlow.Data.Core
             int res = sec_current.CompareTo(sec_other);
             if (res == 0)
             {
-                Regex regex_current = new Regex(@"^\D*(\d+)");
+                Regex regex_current = new(@"^\D*(\d+)");
                 MatchCollection matches_current = regex_current.Matches(doc_number);
 
-                Regex regex_other = new Regex(@"^\D*(\d+)");
+                Regex regex_other = new(@"^\D*(\d+)");
                 MatchCollection matches_other = regex_other.Matches(other.doc_number);
 
                 if (matches_current.Count == 0 || matches_other.Count == 0)

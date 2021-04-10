@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 21.06.2018
@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using DocumentFlow.Code;
 using DocumentFlow.Code.Implementation;
 using DocumentFlow.Controls.Editor.Code;
-using DocumentFlow.Core;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 
@@ -50,27 +49,22 @@ namespace DocumentFlow.Controls.Forms
             {
                 editor.Initialize(editorData, new Database());
                 CalculateHeightForm();
-                using (var conn = Db.OpenConnection())
+                using var conn = Db.OpenConnection();
+                container.Populate(conn, editorData.Entity);
+
+                if (ShowDialog() == DialogResult.OK)
                 {
-                    container.Populate(conn, editorData.Entity);
-
-                    if (ShowDialog() == DialogResult.OK)
+                    using var transaction = conn.BeginTransaction();
+                    try
                     {
-                        using (var transaction = conn.BeginTransaction())
-                        {
-                            try
-                            {
-                                operation.Insert(conn, transaction, parameters, editorData);
-                                transaction.Commit();
-                                return true;
-                            }
-                            catch (Exception e)
-                            {
-                                transaction.Rollback();
-                                ExceptionHelper.MesssageBox(e);
-                            }
-
-                        }
+                        operation.Insert(conn, transaction, parameters, editorData);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        ExceptionHelper.MesssageBox(e);
                     }
                 }
             }
@@ -82,33 +76,29 @@ namespace DocumentFlow.Controls.Forms
         {
             if (editor is IDataOperation operation)
             {
-                using (var conn = Db.OpenConnection())
+                using var conn = Db.OpenConnection();
+                editorData = new ModalEditorData(container, parameters)
                 {
-                    editorData = new ModalEditorData(container, parameters)
-                    {
-                        Entity = operation.Select(conn, id, parameters) as IIdentifier
-                    };
-                    editor.Initialize(editorData, new Database());
-                    CalculateHeightForm();
+                    Entity = operation.Select(conn, id, parameters) as IIdentifier
+                };
+                editor.Initialize(editorData, new Database());
+                CalculateHeightForm();
 
-                    container.Populate(conn, editorData.Entity);
+                container.Populate(conn, editorData.Entity);
 
-                    if (ShowDialog() == DialogResult.OK)
+                if (ShowDialog() == DialogResult.OK)
+                {
+                    using var transaction = conn.BeginTransaction();
+                    try
                     {
-                        using (var transaction = conn.BeginTransaction())
-                        {
-                            try
-                            {
-                                operation.Update(conn, transaction, editorData);
-                                transaction.Commit();
-                                return true;
-                            }
-                            catch (Exception e)
-                            {
-                                transaction.Rollback();
-                                ExceptionHelper.MesssageBox(e);
-                            }
-                        }
+                        operation.Update(conn, transaction, editorData);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        ExceptionHelper.MesssageBox(e);
                     }
                 }
             }
@@ -116,26 +106,22 @@ namespace DocumentFlow.Controls.Forms
             return false;
         }
 
-        public bool Delete(IEditorCode editor, IIdentifier id)
+        public static bool Delete(IEditorCode editor, IIdentifier id)
         {
             if (editor is IDataOperation operation)
             {
-                using (var conn = Db.OpenConnection())
+                using var conn = Db.OpenConnection();
+                using var transaction = conn.BeginTransaction();
+                try
                 {
-                    using (var transaction = conn.BeginTransaction())
-                    {
-                        try
-                        {
-                            operation.Delete(conn, transaction, id);
-                            transaction.Commit();
-                            return true;
-                        }
-                        catch (Exception e)
-                        {
-                            transaction.Rollback();
-                            ExceptionHelper.MesssageBox(e);
-                        }
-                    }
+                    operation.Delete(conn, transaction, id);
+                    transaction.Commit();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    ExceptionHelper.MesssageBox(e);
                 }
             }
 

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.06.2018
@@ -75,10 +75,8 @@ namespace DocumentFlow.Authorization
             {
                 try
                 {
-                    using (var connection = Db.OpenConnection(comboDatabase.SelectedItem.ToString(), userName, textPassword.Text))
-                    {
-                        connection.Execute("login", commandType: CommandType.StoredProcedure);
-                    }
+                    using var connection = Db.OpenConnection(comboDatabase.SelectedItem.ToString(), userName, textPassword.Text);
+                    connection.Execute("login", commandType: CommandType.StoredProcedure);
                 }
                 catch (PostgresException ex)
                 {
@@ -114,25 +112,23 @@ namespace DocumentFlow.Authorization
             if (comboDatabase.SelectedItem == null)
                 return;
 
-            using (var connection = Db.OpenGuestConnection(comboDatabase.SelectedItem.ToString()))
-            {
-                List<UserAlias> users;
+            using var connection = Db.OpenGuestConnection(comboDatabase.SelectedItem.ToString());
+            List<UserAlias> users;
 #if DEBUG
-                string sql = "select * from user_alias where not is_system or pg_name = 'postgres' order by name";
+            string sql = "select * from user_alias where not is_system or pg_name = 'postgres' order by name";
 #else
-                string sql = "select* from user_alias where not is_system order by name";
+            string sql = "select* from user_alias where not is_system order by name";
 #endif
 
-                users = connection.Query<UserAlias>(sql).ToList();
-                comboUsers.DataSource = users;
+            users = connection.Query<UserAlias>(sql).ToList();
+            comboUsers.DataSource = users;
 
 #if DEBUG
-                comboUsers.SelectedItem = users.FirstOrDefault(u => u.pg_name == "postgres");
-                textPassword.Text = File.ReadLines("password.txt").First();
+            comboUsers.SelectedItem = users.FirstOrDefault(u => u.pg_name == "postgres");
+            textPassword.Text = File.ReadLines("password.txt").First();
 #else
-                comboUsers.SelectedItem = users.FirstOrDefault(u => u.pg_name == Settings.Default.PreviousUser);
+            comboUsers.SelectedItem = users.FirstOrDefault(u => u.pg_name == Settings.Default.PreviousUser);
 #endif
-            }
         }
     }
 }

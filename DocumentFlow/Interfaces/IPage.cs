@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 23.03.2020
@@ -13,14 +13,16 @@ namespace DocumentFlow.Interfaces
     public interface IPage
     {
         /// <summary>
-        /// Идентификатор окна: идентификатор команды для списка, идентификатор записи - для редактора
+        /// Идентификатор окна
+        /// </summary>
+        string Code { get; }
+
+        /// <summary>
+        /// Иднтификатор текущей записи (окна содержащего таблицу) или идентификатор команды - для окна редактора
         /// </summary>
         Guid Id { get; }
 
-        /// <summary>
-        /// Дополнительный иднтификатор окна содержащий идентификатор текущей записи (окна содержащего таблицу) или идентификатор коианды - для окна редактора
-        /// </summary>
-        Guid InfoId { get; }
+        string Header { get; }
 
         IContainerPage Container { get; }
 

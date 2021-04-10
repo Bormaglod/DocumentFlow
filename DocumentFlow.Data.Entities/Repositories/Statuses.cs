@@ -6,6 +6,7 @@
 // Time: 18:51
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Dapper;
@@ -15,6 +16,11 @@ namespace DocumentFlow.Data.Repositories
 {
     public static class Statuses
     {
+        public static IEnumerable<Status> GetAll(IDbConnection connection)
+        {
+            return connection.Query<Status>("select * from status");
+        }
+
         public static Status Get(IDbConnection connection, int id)
         {
             return connection.Query<Status, Picture, Status>("select * from status s left join picture p on (p.id = s.picture_id) where s.id = :id", (status, picture) =>

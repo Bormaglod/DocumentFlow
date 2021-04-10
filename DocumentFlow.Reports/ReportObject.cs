@@ -27,36 +27,36 @@ namespace DocumentFlow.Reports
 
         public float Height { get; set; } = 5;
 
-        public Borders Borders { get; set; } = new Borders();
+        public Borders Borders { get; set; } = new();
 
-        public Fill Fill { get; set; } = new Fill();
+        public Fill Fill { get; set; } = new();
         
-        public RectangleF Bounds => new RectangleF(
+        public RectangleF Bounds => new(
             Length.FromMillimeter(Left).ToPoint(),
             Length.FromMillimeter(Top + (Band?.Page?.CurrentBandTop ?? 0)).ToPoint(),
             Length.FromMillimeter(Width).ToPoint(),
             Length.FromMillimeter(Height).ToPoint());
 
-        public PointF TopLeft => new PointF(
+        public PointF TopLeft => new(
             Length.FromMillimeter(Left).ToPoint(),
             Length.FromMillimeter(Top + (Band?.Page?.CurrentBandTop ?? 0)).ToPoint());
 
-        public PointF TopRight => new PointF(
+        public PointF TopRight => new(
             Length.FromMillimeter(Left + Width).ToPoint(),
             Length.FromMillimeter(Top + (Band?.Page?.CurrentBandTop ?? 0)).ToPoint());
 
-        public PointF BottomLeft => new PointF(
+        public PointF BottomLeft => new(
             Length.FromMillimeter(Left).ToPoint(),
             Length.FromMillimeter(Top + (Band?.Page?.CurrentBandTop ?? 0) + Height).ToPoint());
 
-        public PointF BottomRight => new PointF(
+        public PointF BottomRight => new(
             Length.FromMillimeter(Left + Width).ToPoint(),
             Length.FromMillimeter(Top + (Band?.Page?.CurrentBandTop ?? 0) + Height).ToPoint());
 
         public virtual void GeneratePdf(PdfPage page)
         {
             PdfGraphics g = page.Graphics;
-            PdfPen pen = new PdfPen(Borders.Color, Borders.Width);
+            PdfPen pen = new(Borders.Color, Borders.Width);
             PdfBrush brush = new PdfSolidBrush(Fill.Color);
             if (Borders.All)
             {

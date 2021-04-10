@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Syncfusion.Pdf;
-using Syncfusion.Pdf.Graphics;
 using DocumentFlow.Core;
 
 namespace DocumentFlow.Reports
@@ -42,7 +41,7 @@ namespace DocumentFlow.Reports
 
         public bool CanShrink { get; set; } = false;
 
-        public RectangleF Bounds => new RectangleF(0, Length.FromMillimeter(Page.CurrentBandTop).ToPoint(), Page.PageSize.Size.Width, Length.FromMillimeter(Height).ToPoint());
+        public RectangleF Bounds => new(0, Length.FromMillimeter(Page.CurrentBandTop).ToPoint(), Page.PageSize.Size.Width, Length.FromMillimeter(Height).ToPoint());
 
         public void GeneratePdf(PdfPage page)
         {

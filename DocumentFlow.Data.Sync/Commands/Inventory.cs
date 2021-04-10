@@ -216,7 +216,7 @@ namespace DocumentFlow.Code.Implementation.InventoryImp
         void IEditorCode.Initialize(IEditor editor, IDatabase database, IDependentViewer dependentViewer)
         {
             const int labelWidth = 100;
-            const string goodsSelect = "with recursive r as (select id, status_id, name, parent_id from goods where code = 'Мат' union all select g.id, g.status_id, g.name, g.parent_id from goods g join r on (g.parent_id = r.id)) select id, status_id, name, parent_id from r where status_id in (500, 1002) or id = :goods_id order by name";
+            const string goodsSelect = "with recursive r as (select id, status_id, name, parent_id, measurement_id from goods where code = 'Мат' union all select g.id, g.status_id, g.name, g.parent_id, g.measurement_id from goods g join r on (g.parent_id = r.id)) select r.id, r.status_id, r.name || ', ' || m.abbreviation as name, r.parent_id from r left join measurement m on (m.id = r.measurement_id) where r.status_id in (500, 1002) or r.id = :goods_id order by r.name";
 
             IControl goods_id = editor.CreateSelectBox("goods_id", "Материал", (c) => { return c.Query<GroupDataItem>(goodsSelect, new { goods_id = editor.Data["goods_id"] }); })
                 .SetLabelWidth(labelWidth)

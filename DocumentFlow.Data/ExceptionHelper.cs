@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2019 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.03.2019
@@ -23,7 +23,7 @@ namespace DocumentFlow.Data
 
         public static string Message(Exception exception)
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
             CreateMessage(stringBuilder, exception);
             return stringBuilder.ToString();
         }
@@ -38,14 +38,12 @@ namespace DocumentFlow.Data
                 }
                 else if (pgException.SqlState == "23514")
                 {
-                    using (var conn = Db.OpenConnection())
-                    {
-                        string msg = conn.QuerySingleOrDefault<string>($"select d.description from pg_catalog.pg_constraint c join pg_catalog.pg_description d on (d.objoid = c.oid) where conname = '{pgException.ConstraintName}'");
-                        if (string.IsNullOrEmpty(msg))
-                            strings.AppendLine(DefaultMessage(pgException));
-                        else
-                            strings.AppendLine(msg);
-                    }
+                    using var conn = Db.OpenConnection();
+                    string msg = conn.QuerySingleOrDefault<string>($"select d.description from pg_catalog.pg_constraint c join pg_catalog.pg_description d on (d.objoid = c.oid) where conname = '{pgException.ConstraintName}'");
+                    if (string.IsNullOrEmpty(msg))
+                        strings.AppendLine(DefaultMessage(pgException));
+                    else
+                        strings.AppendLine(msg);
                 }
                 else
                 {

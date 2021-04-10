@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.06.2020
@@ -32,7 +32,7 @@ namespace DocumentFlow
             public override string ToString() => $"{Name} - {Version}";
         }
 
-        private readonly List<Lib> libs = new List<Lib>();
+        private readonly List<Lib> libs = new();
 
         private AboutForm()
         {
@@ -48,7 +48,7 @@ namespace DocumentFlow
                 if (name.Version == new Version(0, 0, 0, 0))
                     continue;
 
-                Lib lib = new Lib(name);
+                Lib lib = new(name);
                 if (lib.Name.Contains("Anonymously") || lib.Name.Contains("Proxy"))
                     continue;
 
@@ -66,6 +66,11 @@ namespace DocumentFlow
         }
 
         private void listLibs_SelectionChanging(object sender, ItemSelectionChangingEventArgs e)
+        {
+            
+        }
+
+        private void listLibs_SelectionChanged(object sender, ItemSelectionChangedEventArgs e)
         {
             if (listLibs.SelectedItem is Lib lib)
             {

@@ -19,6 +19,7 @@ using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Entities;
+using DocumentFlow.Data.Repositories;
 using DocumentFlow.Interfaces;
 
 namespace DocumentFlow
@@ -32,16 +33,7 @@ namespace DocumentFlow
         {
             this.container = container;
 
-            using (var conn = Db.OpenConnection())
-            {
-                string sql = "select * from command c left join picture p on (p.id = c.picture_id) left join entity_kind ek on (ek.id = c.entity_kind_id)";
-                commands = conn.Query<Command, Picture, EntityKind, Command>(sql, (command, picture, entity) =>
-                {
-                    command.Picture = picture;
-                    command.EntityKind = entity;
-                    return command;
-                });
-            }
+            commands = Commands.GetAll();
         }
 
         #region ICommandFactory implementation
@@ -101,33 +93,31 @@ namespace DocumentFlow
         void ICommandFactory.Execute(string command, params object[] parameters)
         {
             ICommandFactory factory = this;
-            using (var conn = Db.OpenConnection())
+            
+            Command cmd = commands.SingleOrDefault(x => x.code == command);
+            if (cmd != null)
             {
-                Command cmd = commands.SingleOrDefault(x => x.code == command);
-                if (cmd != null)
+                ((ICommandFactory)this).Execute(cmd, parameters);
+            }
+            else
+            {
+                switch (command)
                 {
-                    ((ICommandFactory)this).Execute(cmd, parameters);
-                }
-                else
-                {
-                    switch (command)
-                    {
-                        case "logout":
-                            factory.Logout();
-                            break;
-                        case "about":
-                            factory.About();
-                            break;
-                        default:
-                            break;
-                    }
+                    case "logout":
+                        factory.Logout();
+                        break;
+                    case "about":
+                        factory.About();
+                        break;
+                    default:
+                        break;
                 }
             }
         }
 
         IPage ICommandFactory.OpenDiagram(Guid id)
         {
-            IPage page = container.Get<DiagramViewer>(id);
+            IPage page = container.Get(DiagramDockControl.Code(id));
             if (page != null)
             {
                 container.Selected = page;
@@ -135,7 +125,7 @@ namespace DocumentFlow
             }
             else
             {
-                DiagramViewer viewer = new DiagramViewer(container, id);
+                DiagramDockControl viewer = new(container, id);
                 container.Add(viewer);
                 return viewer;
             }
@@ -147,6 +137,7 @@ namespace DocumentFlow
             return factory.OpenDiagram(identifier.id);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Правильно создавайте экземпляры исключений аргументов", Justification = "<Ожидание>")]
         IPage ICommandFactory.OpenDiagram(Hashtable parameters)
         {
             if (!parameters.ContainsKey("id"))
@@ -170,7 +161,7 @@ namespace DocumentFlow
             IPage page = null;
             if (id != Guid.Empty)
             {
-                page = container.Get<ContentEditor>(id);
+                page = container.Get(EditorDockControl.Code(id));
             }
 
             if (page != null)
@@ -180,49 +171,48 @@ namespace DocumentFlow
             }
             else
             {
-                using (var conn = Db.OpenConnection())
+                using var conn = Db.OpenConnection();
+                string sql = "select c.*, ek.* from command c join entity_kind ek on (ek.id = c.entity_kind_id) join document_info di on (ek.id = di.entity_kind_id and di.id = :id)";
+                Command command = conn.Query<Command, EntityKind, Command>(sql, (cmd, entity_kind) =>
                 {
-                    string sql = "select c.*, ek.* from command c join entity_kind ek on (ek.id = c.entity_kind_id) join document_info di on (ek.id = di.entity_kind_id and di.id = :id)";
-                    Command command = conn.Query<Command, EntityKind, Command>(sql, (cmd, entity_kind) =>
-                    {
-                        cmd.EntityKind = entity_kind;
-                        return cmd;
-                    }, new { id }).Single();
+                    cmd.EntityKind = entity_kind;
+                    return cmd;
+                }, new { id }).Single();
 
-                    string parent = conn.Query<string>("select get_root_parent(:table)", new { table = command.EntityKind.code }).Single();
-                    if (parent == "document")
-                    {
-                        sql = $"select owner_id, organization_id from {command.EntityKind.code} where id = :id";
-                    }
-                    else
-                    {
-                        sql = $"select owner_id, parent_id from {command.EntityKind.code} where id = :id";
-                    }
+                string parent = conn.Query<string>("select get_root_parent(:table)", new { table = command.EntityKind.code }).Single();
+                if (parent == "document")
+                {
+                    sql = $"select owner_id, organization_id from {command.EntityKind.code} where id = :id";
+                }
+                else
+                {
+                    sql = $"select owner_id, parent_id from {command.EntityKind.code} where id = :id";
+                }
 
-                    var row = conn.QuerySingle(sql, new { id });
+                var row = conn.QuerySingle(sql, new { id });
 
-                    BrowserParameters editorParams = new BrowserParameters()
-                    {
-                        ParentId = parent == "document" ? null : row.parent_id,
-                        OwnerId = row.owner_id,
-                        OrganizationId = parent == "directory" ? null : row.organization_id
-                    };
+                BrowserParameters editorParams = new()
+                {
+                    ParentId = parent == "document" ? null : row.parent_id,
+                    OwnerId = row.owner_id,
+                    OrganizationId = parent == "directory" ? null : row.organization_id
+                };
 
-                    try
-                    {
-                        ContentEditor e = new ContentEditor(container, null, this, id, command, editorParams);
-                        container.Add(e);
-                        return e;
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHelper.MesssageBox(e);
-                        return null;
-                    }
+                try
+                {
+                    EditorDockControl e = new(container, null, this, id, command, editorParams);
+                    container.Add(e);
+                    return e;
+                }
+                catch (Exception e)
+                {
+                    ExceptionHelper.MesssageBox(e);
+                    return null;
                 }
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Правильно создавайте экземпляры исключений аргументов", Justification = "<Ожидание>")]
         IPage ICommandFactory.OpenDocument(Hashtable parameters)
         {
             if (!parameters.ContainsKey("id"))
@@ -247,10 +237,7 @@ namespace DocumentFlow
             IPage page = null;
             if (id != Guid.Empty)
             {
-                page = container.GetAll<ContentEditor>()
-                    .OfType<IPage>()
-                    .Where(x => x.InfoId == id)
-                    .FirstOrDefault();
+                page = container.Get(EditorDockControl.Code(id));
             }
 
             if (page != null)
@@ -262,7 +249,7 @@ namespace DocumentFlow
             {
                 try
                 {
-                    ContentEditor e = new ContentEditor(container, browser, this, id, command, editorParams);
+                    EditorDockControl e = new(container, browser, this, id, command, editorParams);
                     container.Add(e);
                     return e;
                 }
@@ -290,18 +277,18 @@ namespace DocumentFlow
 
         IPage ICommandFactory.OpenCodeEditor(Command command, IEnumerable<Diagnostic> failures)
         {
-            IPage page = container.Get<CodeEditor>(command.id);
+            IPage page = container.Get(CodeDockControl.Code(command.id));
             if (page != null)
             {
                 container.Selected = page;
             }
             else
             {
-                page = new CodeEditor(container, command);
+                page = new CodeDockControl(container, command);
                 container.Add(page);
             }
 
-            if (failures != null && page is CodeEditor codeEditor)
+            if (failures != null && page is CodeDockControl codeEditor)
             {
                 codeEditor.ShowErrors(failures);
             }
@@ -312,13 +299,10 @@ namespace DocumentFlow
         IPage ICommandFactory.OpenCodeEditor(Guid id, IEnumerable<Diagnostic> failures)
         {
             ICommandFactory factory = this;
-            using (var conn = Db.OpenConnection())
-            {
-                Command command = conn.QuerySingle<Command>("select * from command where id = :id", new { id });
-                return factory.OpenCodeEditor(command, failures);
-            }
+            return factory.OpenCodeEditor(Commands.Get(id), failures);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Правильно создавайте экземпляры исключений аргументов", Justification = "<Ожидание>")]
         IPage ICommandFactory.OpenCodeEditor(Hashtable parameters, IEnumerable<Diagnostic> failures)
         {
             ICommandFactory factory = this;
@@ -351,7 +335,7 @@ namespace DocumentFlow
 
         private void OpenDataViewer(Command command)
         {
-            IPage page = container.Get<ContentViewer>(command.id);
+            IPage page = container.Get(ViewerDockContol.Code(command.id));
             if (page != null)
             {
                 container.Selected = page;
@@ -360,7 +344,7 @@ namespace DocumentFlow
             {
                 try
                 {
-                    ContentViewer viewer = new ContentViewer(container, this, command);
+                    ViewerDockContol viewer = new(container, this, command);
                     container.Add(viewer);
                 }
                 catch (AggregateException e)
@@ -400,6 +384,7 @@ namespace DocumentFlow
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Правильно создавайте экземпляры исключений аргументов", Justification = "<Ожидание>")]
         private IPage OpenDiagram(params object[] parameters)
         {
             if (parameters.Length != 1)
@@ -408,16 +393,16 @@ namespace DocumentFlow
             }
 
             ICommandFactory factory = this;
-            switch (parameters[0])
+            return parameters[0] switch
             {
-                case Hashtable hashtable: return factory.OpenDiagram(hashtable);
-                case Guid id: return factory.OpenDiagram(id);
-                case IIdentifier<Guid> identifier: return factory.OpenDiagram(identifier);
-                default:
-                    throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
-            }
+                Hashtable hashtable => factory.OpenDiagram(hashtable),
+                Guid id => factory.OpenDiagram(id),
+                IIdentifier<Guid> identifier => factory.OpenDiagram(identifier),
+                _ => throw new ArgumentException("Аргумент id должен быть типа Guid", "id"),
+            };
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Правильно создавайте экземпляры исключений аргументов", Justification = "<Ожидание>")]
         private IPage OpenDocument(params object[] parameters)
         {
             if (parameters.Length != 1)
@@ -426,13 +411,12 @@ namespace DocumentFlow
             }
 
             ICommandFactory factory = this;
-            switch (parameters[0])
+            return parameters[0] switch
             {
-                case Hashtable hashtable: return factory.OpenDocument(hashtable);
-                case Guid id: return factory.OpenDocument(id);
-                default:
-                    throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
-            }
+                Hashtable hashtable => factory.OpenDocument(hashtable),
+                Guid id => factory.OpenDocument(id),
+                _ => throw new ArgumentException("Аргумент id должен быть типа Guid", "id"),
+            };
         }
 
         private IPage OpenEditor(params object[] parameters)
@@ -455,6 +439,7 @@ namespace DocumentFlow
             throw new ArgumentException("В команду OpenEditor переданы неверные тип(ы) параметра(ов).");
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Правильно создавайте экземпляры исключений аргументов", Justification = "<Ожидание>")]
         private IPage OpenCodeEditor(params object[] parameters)
         {
             if (parameters.Length == 0)
@@ -469,14 +454,13 @@ namespace DocumentFlow
             }
 
             ICommandFactory factory = this;
-            switch (parameters[0])
+            return parameters[0] switch
             {
-                case Command cmd: return factory.OpenCodeEditor(cmd, failures);
-                case Guid id: return factory.OpenCodeEditor(id, failures);
-                case Hashtable hashtable: return factory.OpenCodeEditor(hashtable, failures);
-                default: 
-                    throw new ArgumentException("Аргумент id должен быть типа Guid", "id");
-            }
+                Command cmd => factory.OpenCodeEditor(cmd, failures),
+                Guid id => factory.OpenCodeEditor(id, failures),
+                Hashtable hashtable => factory.OpenCodeEditor(hashtable, failures),
+                _ => throw new ArgumentException("Аргумент id должен быть типа Guid", "id"),
+            };
         }
     }
 }

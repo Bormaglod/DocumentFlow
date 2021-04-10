@@ -66,9 +66,9 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
                     when contract.tax_payer then 20 
                     else 0 
                 end as tax, 
-                coalesce(sum(pod.cost), 0::money) as cost, 
-                coalesce(sum(pod.tax_value), 0::money) as tax_value, 
-                coalesce(sum(pod.cost_with_tax), 0::money) as cost_with_tax, 
+                coalesce(sum(pod.cost), 0) as cost, 
+                coalesce(sum(pod.tax_value), 0) as tax_value, 
+                coalesce(sum(pod.cost_with_tax), 0) as cost_with_tax, 
                 coalesce(cte.complete_status, 0) as complete_status 
             from production_order po 
                 join status s on (s.id  = po.status_id) 
@@ -155,7 +155,7 @@ namespace DocumentFlow.Code.Implementation.ProductionOrderImp
 
         IList IBrowserOperation.Select(IDbConnection connection, IBrowserParameters parameters)
         {
-            return connection.Query<ProductionOrder>(string.Format(baseSelect, "(po.doc_date between :from_date and :to_date and po.organization_id = :organization_id) or (po.status_id not in (1011, 3000))"), new
+            return connection.Query<ProductionOrder>(string.Format(baseSelect, "(po.doc_date <= :to_date and (po.status_id not in (1011, 3000) or po.doc_date >= :from_date) and po.organization_id = :organization_id)"), new
             {
                 from_date = parameters.DateFrom,
                 to_date = parameters.DateTo,

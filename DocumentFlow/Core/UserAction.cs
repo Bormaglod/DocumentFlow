@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2020 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 14.12.2020
@@ -24,7 +24,7 @@ namespace DocumentFlow
         private string title;
         private readonly CommandMethod commandMethod;
         private readonly object ownerControl;
-        private string alias;
+        private readonly string alias;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<ExecuteEventArgs> Click;

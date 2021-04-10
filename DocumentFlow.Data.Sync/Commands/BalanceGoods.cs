@@ -48,8 +48,7 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
                 end as expense, 
                 bg.amount,
                 g.name as goods_name, 
-				sum(bg.amount) over (order by document_date, document_number) as remainder, 
-                --sum(bg.amount * iif(bg.operation_summa = 0::money, 1::numeric, sign(bg.operation_summa::numeric))) over (order by document_date, document_number) as remainder, 
+		        sum(bg.amount) over (order by document_date, document_number) as remainder, 
                 bg.doc_date, 
                 bg.doc_number
             from balance_goods bg 
@@ -162,11 +161,11 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
                 bg.document_name, 
                 bg.document_number, 
                 case 
-                    when bg.operation_summa > 0::money then bg.operation_summa 
+                    when bg.operation_summa > 0 then bg.operation_summa 
                     else null 
                 end as income, 
                 case 
-                    when bg.operation_summa < 0::money then (@bg.operation_summa::numeric)::money 
+                    when bg.operation_summa < 0 then (@bg.operation_summa)
                     else null 
                 end as expense 
             from balance_goods bg 

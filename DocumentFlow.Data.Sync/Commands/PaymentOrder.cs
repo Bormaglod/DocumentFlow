@@ -240,8 +240,8 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                     amount_debited, 
                     purchase_id, 
                     invoice_receipt_id,
-					iif(direction = 'expense'::document_direction, amount_debited, NULL::money) AS expense,
-    				iif(direction = 'income'::document_direction, amount_debited, NULL::money) AS income
+					iif(direction = 'expense'::document_direction, amount_debited, NULL) AS expense,
+    				iif(direction = 'income'::document_direction, amount_debited, NULL) AS income
                 from payment_order
                 where id = :id";
             return connection.QuerySingleOrDefault<PaymentOrder>(sql, new { id = id.oid });
