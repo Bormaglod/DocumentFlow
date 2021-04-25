@@ -334,13 +334,33 @@ namespace DocumentFlow.Code.Implementation.PerformOperationImp
 
         private IEnumerable<IIdentifier> GetUsingGoods(PerformOperation operation, IDbConnection connection)
         {
-            const string usingGoodsSelect = "select gu.id, gu.status_id, gu.name || ', ' || m.abbreviation as name, gu.parent_id from goods gp join production_order_detail pod on (pod.goods_id = gp.id) join calc_item_operation cio on (cio.owner_id = pod.calculation_id) join used_material um on (um.calc_item_operation_id = cio.id) join goods gu on (gu.id = um.goods_id) JOIN measurement m on (gu.measurement_id = m.id) where (pod.owner_id = :order_id and cio.item_id = :operation_id and gp.id = :goods_id) or (gp.id = :using_goods_id) union select g.id, g.status_id, g.name, g.parent_id from goods g where g.status_id = 500 order by name";
+            const string usingGoodsSelect = @"
+				select 
+					gu.id, 
+					gu.status_id, 
+					gu.name || coalesce(', ' || m.abbreviation, '') as name,
+					gu.parent_id 
+				from goods gp 
+					join production_order_detail pod on (pod.goods_id = gp.id) 
+					join calc_item_operation cio on (cio.owner_id = pod.calculation_id) 
+					join used_material um on (um.calc_item_operation_id = cio.id) 
+					join goods gu on (gu.id = um.goods_id) 
+					left join measurement m on (gu.measurement_id = m.id) 
+				where (pod.owner_id = :order_id and cio.item_id = :operation_id and gp.id = :goods_id) or (gp.id = :using_goods_id) union select g.id, g.status_id, g.name, g.parent_id from goods g where g.status_id = 500 order by name";
             return connection.Query<GroupDataItem>(usingGoodsSelect, new { operation.order_id, operation.goods_id, operation.operation_id, operation.using_goods_id });
         }
 
         private IEnumerable<IIdentifier> GetReplacingGoods(PerformOperation operation, IDbConnection connection)
         {
-            const string replacingGoodsSelect = "select g.id, g.status_id, g.name || ', ' || m.abbreviation as name, g.parent_id from goods g left join measurement m on (g.measurement_id = m.id) where g.status_id in (500, 1002) order by g.name";
+            const string replacingGoodsSelect = @"
+				select 
+					g.id, 
+					g.status_id, 
+					g.name || coalesce(', ' || m.abbreviation, '') as name,
+					g.parent_id 
+				from goods g 
+					left join measurement m on (g.measurement_id = m.id) 
+				where g.status_id in (500, 1002) order by g.name";
             return connection.Query<GroupDataItem>(replacingGoodsSelect);
         }
 

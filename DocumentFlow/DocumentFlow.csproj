@@ -5,11 +5,13 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>workflow-enterprise.ico</ApplicationIcon>
-    <Version>2.6.0</Version>
+    <Version>2.6.2</Version>
     <Company>ООО Автоком</Company>
     <Copyright>Copyright © ООО Автоком (Autokom Company), 2021</Copyright>
     <Platforms>AnyCPU;x86</Platforms>
     <SignAssembly>false</SignAssembly>
+    <AssemblyVersion>2.6.2.0</AssemblyVersion>
+    <FileVersion>2.6.2.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -38,15 +40,15 @@
     <PackageReference Include="Crc32.NET" Version="1.2.0" />
     <PackageReference Include="DockPanelSuite" Version="3.1.0-beta7" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0-beta7" />
-    <PackageReference Include="FluentFTP" Version="33.1.5" />
+    <PackageReference Include="FluentFTP" Version="33.1.7" />
     <PackageReference Include="Inflector.NetStandard" Version="1.2.2" />
     <PackageReference Include="MailKit" Version="2.11.1" />
     <PackageReference Include="Npgsql" Version="5.0.4" />
     <PackageReference Include="NTwain" Version="3.7.0" />
-    <PackageReference Include="Syncfusion.Diagram.Windows" Version="19.1.0.55" />
-    <PackageReference Include="Syncfusion.Edit.Windows" Version="19.1.0.55" />
-    <PackageReference Include="Syncfusion.PdfViewer.Windows" Version="19.1.0.55" />
-    <PackageReference Include="Syncfusion.Tools.Windows" Version="19.1.0.55" />
+    <PackageReference Include="Syncfusion.Diagram.Windows" Version="19.1.0.57" />
+    <PackageReference Include="Syncfusion.Edit.Windows" Version="19.1.0.57" />
+    <PackageReference Include="Syncfusion.PdfViewer.Windows" Version="19.1.0.57" />
+    <PackageReference Include="Syncfusion.Tools.Windows" Version="19.1.0.57" />
   </ItemGroup>
 
   <ItemGroup>

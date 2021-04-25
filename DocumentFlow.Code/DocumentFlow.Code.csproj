@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Syncfusion.SfDataGrid.WinForms" Version="19.1.0.55" />
+    <PackageReference Include="Syncfusion.SfDataGrid.WinForms" Version="19.1.0.57" />
   </ItemGroup>
 
   <ItemGroup>

@@ -336,7 +336,7 @@ namespace DocumentFlow.Code.Implementation.GoodsImp
                 .AppendTo(editor.ToolBar)
                 .ExecuteAction(OpenCrossClick);
 
-            dependentViewer.AddDependentViewers(new string[] { "view-balance-goods", "view-archive-price" });
+            dependentViewer.AddDependentViewers(new string[] { "view-balance-goods", "view-balance-tolling", "view-archive-price" });
         }
 
         void IActionStatus.ActionStatusChanged(IValueEditor editor, IDatabase database, IInformation info, ActionStatus actionStatus)

@@ -255,7 +255,7 @@ namespace DocumentFlow.Code.Implementation.ContractorImp
             	});
 			}
 
-            dependentViewer.AddDependentViewers(new string[] { "view-contract", "view-account", "view-employee", "view-balance-contr" });
+            dependentViewer.AddDependentViewers(new string[] { "view-contract", "view-account", "view-employee", "view-balance-contr", "view-balance-tolling" });
         }
 
         object IDataOperation.Select(IDbConnection connection, IIdentifier id, IBrowserParameters parameters)

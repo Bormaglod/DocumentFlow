@@ -59,9 +59,10 @@ namespace DocumentFlow
             }
 
             IUserActionCollection userActions = this;
-            if (userActions.Get(name, string.IsNullOrEmpty(alias)) != null)
+            string code = string.IsNullOrEmpty(alias) ? name : alias;
+            if (userActions.Get(code, string.IsNullOrEmpty(alias)) != null)
             {
-                throw new ArgumentException($"{name} уже есть в наборе команд.");
+                throw new ArgumentException($"{code} уже есть в наборе команд.");
             }
 
             var command = string.IsNullOrEmpty(alias) ? 

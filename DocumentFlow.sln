@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentFlow.Data.Sync", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormsApp1", "WinFormsApp1\WinFormsApp1.csproj", "{3E255011-558E-4906-93E7-C44584DEE114}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "DocumentFlowSetup", "DocumentFlowSetup\DocumentFlowSetup.wixproj", "{B25ED81B-40AE-46AC-AAE3-A74E26D4A3D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +138,12 @@ Global
 		{3E255011-558E-4906-93E7-C44584DEE114}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E255011-558E-4906-93E7-C44584DEE114}.Release|x86.ActiveCfg = Release|Any CPU
 		{3E255011-558E-4906-93E7-C44584DEE114}.Release|x86.Build.0 = Release|Any CPU
+		{B25ED81B-40AE-46AC-AAE3-A74E26D4A3D7}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B25ED81B-40AE-46AC-AAE3-A74E26D4A3D7}.Debug|x86.ActiveCfg = Debug|x86
+		{B25ED81B-40AE-46AC-AAE3-A74E26D4A3D7}.Debug|x86.Build.0 = Debug|x86
+		{B25ED81B-40AE-46AC-AAE3-A74E26D4A3D7}.Release|Any CPU.ActiveCfg = Release|x86
+		{B25ED81B-40AE-46AC-AAE3-A74E26D4A3D7}.Release|x86.ActiveCfg = Release|x86
+		{B25ED81B-40AE-46AC-AAE3-A74E26D4A3D7}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

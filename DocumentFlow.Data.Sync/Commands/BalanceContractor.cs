@@ -31,8 +31,8 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
                 s.note as status_name, 
                 bc.owner_id as document_id, 
                 case 
-                    when bc.owner_id is null then 'Начальный остаток' 
-                    else bc.document_name 
+                    when bc.status_id = 1110 then 'Начальный остаток' 
+                    else ek.name 
                 end as document_name, 
                 bc.document_date, 
                 bc.document_number, 
@@ -49,6 +49,7 @@ namespace DocumentFlow.Code.Implementation.BalanceContractorImp
             from balance_contractor bc 
                 join status s on (s.id = bc.status_id) 
                 left join contractor c on (c.id = bc.reference_id) 
+                left join entity_kind ek on (ek.id = bc.document_kind)
             where {0} 
             order by bc.document_date desc";
 

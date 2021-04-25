@@ -7,10 +7,12 @@
     <Company>ООО Автоком</Company>
     <Copyright>Copyright © ООО Автоком (Autokom Company), 2021</Copyright>
     <Platforms>AnyCPU;x86</Platforms>
+    <AssemblyVersion>2.6.1.0</AssemblyVersion>
+    <FileVersion>2.6.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Syncfusion.Pdf.WinForms" Version="19.1.0.55" />
+    <PackageReference Include="Syncfusion.Pdf.WinForms" Version="19.1.0.57" />
   </ItemGroup>
 
   <ItemGroup>

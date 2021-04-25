@@ -43,6 +43,11 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
         /// Давальческий материал
         /// </summary>
 		public bool is_tolling { get; set; }
+
+        /// <summary>
+        /// Вес материала использованного в изделии
+        /// </summary>
+        public decimal weight { get; set; }
     }
 
     public class CalcItemGoodsBrowser : IBrowserCode, IBrowserOperation, IDataEditor
@@ -57,6 +62,7 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
                 cg.price,
                 cg.amount, 
 				cg.is_tolling,
+                round(g.weight * cg.amount, 3) as weight,
                 (case when coalesce(cg.amount, 0) = 0 then 0 else coalesce(cg.uses, 0) * 100 / coalesce(cg.amount, 0) end)::integer as percent_uses 
             from calc_item_goods cg 
                 join status s on (s.id = cg.status_id)
@@ -103,7 +109,12 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
                     .SetWidth(150)
                     .SetHorizontalAlignment(HorizontalAlignment.Right);
 
-				columns.CreateBoolean("is_tolling", "Давальческий");
+                columns.CreateNumeric("weight", "Вес, г")
+                    .SetDecimalDigits(3)
+                    .SetWidth(100)
+                    .SetHorizontalAlignment(HorizontalAlignment.Right);
+
+                columns.CreateBoolean("is_tolling", "Давальческий");
 
                 columns.CreateProgress("percent_uses", "Использовано, %")
                     .SetWidth(150);
@@ -111,7 +122,8 @@ namespace DocumentFlow.Code.Implementation.CalcItemGoodsImp
                 columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
                     .AddColumn("name", RowSummaryType.CountAggregate, "Всего наименований: {Count}")
                     .AddColumn("amount", RowSummaryType.DoubleAggregate, "{Sum}")
-                    .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}");
+                    .AddColumn("cost", RowSummaryType.DoubleAggregate, "{Sum:c}")
+                    .AddColumn("weight", RowSummaryType.DoubleAggregate, "{Sum}");
 
                 columns.CreateSortedColumns()
                     .Add("name", ListSortDirection.Ascending);

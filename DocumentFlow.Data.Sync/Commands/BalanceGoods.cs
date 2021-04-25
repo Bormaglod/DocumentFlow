@@ -32,8 +32,8 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
                 s.note as status_name, 
                 bg.owner_id as document_id, 
                 case 
-                    when bg.owner_id is null then 'Начальный остаток' 
-                    else bg.document_name 
+                    when bg.status_id = 1110 then 'Начальный остаток' 
+                    else ek.name 
                 end as document_name, 
                 bg.document_date, 
                 bg.document_number, 
@@ -54,6 +54,7 @@ namespace DocumentFlow.Code.Implementation.BalanceGoodsImp
             from balance_goods bg 
                 join status s on (s.id = bg.status_id) 
                 left join goods g on (g.id = bg.reference_id) 
+                left join entity_kind ek on (ek.id = bg.document_kind)
             where 
                 {0} 
             order by bg.document_date desc";

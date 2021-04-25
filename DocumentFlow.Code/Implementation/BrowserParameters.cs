@@ -17,6 +17,5 @@ namespace DocumentFlow.Code.Implementation
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }
         public Guid? OrganizationId { get; set; }
-        public Guid GetParentId() => ParentId ?? Guid.Empty;
     }
 }

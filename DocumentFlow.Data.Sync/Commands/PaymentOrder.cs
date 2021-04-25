@@ -103,6 +103,14 @@ namespace DocumentFlow.Code.Implementation.PaymentOrderImp
                     .Add("expense")
                     .Header("Сумма операции");
 
+                columns.CreateTableSummaryRow(GroupVerticalPosition.Bottom)
+                    .AddColumn("income", RowSummaryType.DoubleAggregate, "{Sum:c}")
+                    .AddColumn("expense", RowSummaryType.DoubleAggregate, "{Sum:c}");
+
+                columns.CreateGroupSummaryRow()
+                    .AddColumn("income", RowSummaryType.DoubleAggregate, "{Sum:c}")
+                    .AddColumn("expense", RowSummaryType.DoubleAggregate, "{Sum:c}");
+
                 columns.CreateSortedColumns()
                     .Add("doc_date");
             });

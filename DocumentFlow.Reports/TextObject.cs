@@ -84,7 +84,7 @@ namespace DocumentFlow.Reports
             {
                 SizeF rectText = font.MeasureString(outputText, widthText, stringFormat);
                 rectText.Height += paddingHeight;
-                Height = Length.FromPoint(rectText.Height).ToMillimeter();
+                Height = Length.FromPoint(rectText.Height).ToMillimeter() + 1;
             }
 
             if (!AutoHeight && AutoWidth)
