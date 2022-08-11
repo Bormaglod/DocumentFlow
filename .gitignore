@@ -260,11 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 packages
-/DocumentFlow.RestAPI/logs
-/DocumentFlow.RestAPI/vendor
-/DocumentFlow.RestAPI/*.lock
-
-
-/DocumentFlow.Code.Updates
-/ConsoleApp1
-/WinFormsApp1
+/Database
+/DocumentFlow/Properties/PublishProfiles
+/DocumentFlow/password.txt

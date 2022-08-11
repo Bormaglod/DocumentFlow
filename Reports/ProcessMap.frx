@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Карта технолодического процесса" ReportInfo.Version="2022.07.24" ReportInfo.Created="06/20/2022 19:54:32" ReportInfo.Modified="07/24/2022 12:15:01" ReportInfo.CreatorVersion="2022.2.0.0">
+  <Dictionary>
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75Srm7Ru3dHV6yycOBImZKy0=">
+      <TableDataSource Name="public_calculation_operation" Alias="calculation_operation" DataType="System.Int32" Enabled="true" TableName="public.&quot;calculation_operation&quot;" SelectCommand="SELECT &#13;&#10;	co.code, &#13;&#10;	case co.tableoid::regclass::varchar&#13;&#10;		when 'calculation_cutting' then 'Резка провода'&#13;&#10;		else co.item_name&#13;&#10;	end as operation_name,&#13;&#10;	m.item_name as material_name, &#13;&#10;	m2.code as measurement_code,&#13;&#10;	case m2.code&#13;&#10;		when '6' then 'мм'&#13;&#10;		else m2.abbreviation&#13;&#10;	end as measurement_name,&#13;&#10;	case m2.code&#13;&#10;		when '6' then co.material_amount * 1000&#13;&#10;		else co.material_amount&#13;&#10;	end as material_amount,&#13;&#10;	e.item_name as equipment_name, &#13;&#10;	t.item_name as tools_name, &#13;&#10;	co.repeats,&#13;&#10;	round(60.0 / o.production_rate, 3) as norm_time,&#13;&#10;	c.program_number,&#13;&#10;	co.note,&#13;&#10;	e.serial_number as equipment_serial,&#13;&#10;	t.serial_number as tools_serial,&#13;&#10;	(select string_agg(p.title || ' ' || cop.property_value, '\r\n') from calculation_operation_property cop join property p on p.id = cop.property_id where cop.operation_id = co.id) as additional_info&#13;&#10;FROM &#13;&#10;	calculation_operation co &#13;&#10;	LEFT JOIN material m ON co.material_id = m.id &#13;&#10;	left join measurement m2 on m2.id = m.measurement_id&#13;&#10;	LEFT JOIN equipment e ON co.equipment_id = e.id &#13;&#10;	LEFT JOIN equipment t ON co.tools_id = t.id &#13;&#10;	JOIN operation o ON co.item_id = o.id &#13;&#10;	LEFT JOIN cutting c ON co.item_id = c.id&#13;&#10;where co.owner_id = :calc_id&#13;&#10;order by co.code ">
+        <Column Name="code" DataType="System.String"/>
+        <Column Name="material_amount" DataType="System.Decimal"/>
+        <Column Name="repeats" DataType="System.Int32"/>
+        <Column Name="program_number" DataType="System.Int32"/>
+        <Column Name="operation_name" DataType="System.String"/>
+        <Column Name="material_name" DataType="System.String"/>
+        <Column Name="equipment_name" DataType="System.String"/>
+        <Column Name="tools_name" DataType="System.String"/>
+        <Column Name="norm_time" DataType="System.Decimal"/>
+        <Column Name="note" DataType="System.String"/>
+        <Column Name="equipment_serial" DataType="System.String"/>
+        <Column Name="tools_serial" DataType="System.String"/>
+        <Column Name="measurement_name" DataType="System.String"/>
+        <Column Name="measurement_code" DataType="System.String"/>
+        <Column Name="additional_info" DataType="System.String"/>
+        <CommandParameter Name="calc_id" DataType="40" Expression="[id]" DefaultValue="1b719f59-85f9-4c47-b3f0-cdaf58229412"/>
+      </TableDataSource>
+      <TableDataSource Name="public_calculation" Alias="calculation" DataType="System.Int32" Enabled="true" TableName="public.&quot;calculation&quot;" SelectCommand="SELECT p.code, p1.item_name,p.date_approval&#13;&#10;FROM public.&quot;calculation&quot; P INNER JOIN public.&quot;goods&quot; p1 ON P.owner_id = p1.id &#13;&#10;where p.id=:calc_id">
+        <Column Name="code" DataType="System.String"/>
+        <Column Name="item_name" DataType="System.String"/>
+        <Column Name="date_approval" DataType="System.DateTime"/>
+        <CommandParameter Name="calc_id" DataType="40" Expression="[id]" DefaultValue="3cdec992-a2a3-464b-b199-98b50b6dd617"/>
+      </TableDataSource>
+    </PostgresDataConnection>
+    <Parameter Name="id" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1" Landscape="true" PaperWidth="297" PaperHeight="210" RawPaperSize="9" TopMargin="20" FirstPageSource="15" OtherPagesSource="15" LastPageSource="15" Watermark.Font="Arial, 60pt">
+    <PageHeaderBand Name="PageHeader1" Width="1047.06" Height="37.8">
+      <TextObject Name="Text3" Width="274.05" Height="37.8" Border.Lines="All" Text="Карта технологического процесса" Padding="2, 2, 2, 2" Font="ГОСТ тип А, 11pt"/>
+      <TextObject Name="Text2" Left="274.05" Width="75.6" Height="37.8" Border.Lines="All" Text="Изделие" Padding="2, 2, 2, 2" Font="ГОСТ тип А, 11pt"/>
+      <TextObject Name="Text4" Left="349.65" Width="330.75" Height="37.8" Border.Lines="All" Text="[calculation.item_name]" Padding="2, 2, 2, 2" Font="ГОСТ тип А, 11pt"/>
+      <TextObject Name="Text5" Left="680.4" Width="94.5" Height="18.9" Border.Lines="All" Text="Артикул" Padding="2, 2, 2, 2" Font="ГОСТ тип А, 11pt"/>
+      <TextObject Name="Text6" Left="774.9" Width="226.8" Height="18.9" Border.Lines="All" Text="[calculation.code]" Padding="2, 2, 2, 2" Font="ГОСТ тип А, 11pt"/>
+      <TextObject Name="Text7" Left="1001.7" Width="47.25" Height="37.8" Border.Lines="All" Text="Лист&#13;&#10;[Page]" Padding="2, 2, 2, 2" HorzAlign="Center" Font="ГОСТ тип А, 11pt"/>
+      <TextObject Name="Text34" Left="680.4" Top="18.9" Width="94.5" Height="18.9" Border.Lines="All" Text="Дата утв." Padding="2, 2, 2, 2" Font="ГОСТ тип А, 11pt"/>
+      <TextObject Name="Text35" Left="774.9" Top="18.9" Width="226.8" Height="18.9" Border.Lines="All" Text="[calculation.date_approval]" Padding="2, 2, 2, 2" Format="Date" Format.Format="d" Font="ГОСТ тип А, 11pt"/>
+    </PageHeaderBand>
+    <ColumnHeaderBand Name="ColumnHeader1" Top="41.8" Width="1047.06" Height="103.95">
+      <TextObject Name="Text8" Width="47.25" Height="103.95" Border.Lines="All" Text="№ опер." HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text9" Left="47.25" Width="255.15" Height="103.95" Border.Lines="All" Text="Наименование и содержание операций" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text11" Left="302.4" Width="28.35" Height="103.95" Border.Lines="All" Text="Повторить" HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text12" Left="330.75" Width="236.25" Height="47.25" Border.Lines="All" Text="Использование материала на 1 ед. опер." HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text13" Left="330.75" Top="47.25" Width="151.2" Height="56.7" Border.Lines="All" Text="Наименование" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text14" Left="519.75" Top="47.25" Width="47.25" Height="56.7" Border.Lines="All" Text="Кол-во" HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text15" Left="567" Width="189" Height="103.95" Border.Lines="All" Text="Оборудование" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text16" Left="756" Width="141.75" Height="103.95" Border.Lines="All" Text="Иинструмент" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text17" Left="897.75" Width="37.8" Height="103.95" Border.Lines="All" Text="№ прогр." HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text18" Left="935.55" Top="37.8" Width="37.8" Height="66.15" Border.Lines="All" Text="Вспом. на уст." HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text19" Left="973.35" Top="37.8" Width="37.8" Height="66.15" Border.Lines="All" Text="Подгот. заключ." HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text20" Left="1011.15" Top="37.8" Width="37.8" Height="66.15" Border.Lines="All" Text="Штучное" HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text21" Left="935.55" Width="113.4" Height="37.8" Border.Lines="All" Text="Норма времени, мин" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text32" Left="481.95" Top="47.25" Width="37.8" Height="56.7" Border.Lines="All" Text="Ед. изм." HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
+    </ColumnHeaderBand>
+    <DataBand Name="Data1" Top="149.75" Width="1047.06" Height="18.9" CanGrow="true" DataSource="public_calculation_operation">
+      <TextObject Name="Text10" Width="47.25" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[calculation_operation.code]" Padding="2, 2, 2, 2" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text22" Left="47.25" Width="255.15" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[calculation_operation.operation_name][IIf([calculation_operation.additional_info]==&quot;&quot;,&quot;&quot;,&quot;\r\n&quot;)][calculation_operation.additional_info][IIf([calculation_operation.note]==&quot;&quot;,&quot;&quot;,&quot;\r\n&quot;)][calculation_operation.note]" Padding="2, 2, 2, 2" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text23" Left="302.4" Width="28.35" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[calculation_operation.repeats]" Padding="2, 2, 2, 2" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text24" Left="330.75" Width="151.2" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[calculation_operation.material_name]" Padding="2, 2, 2, 2" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text25" Left="519.75" Width="47.25" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[IIf([calculation_operation.measurement_code]==&quot;6&quot; || [calculation_operation.measurement_code]==&quot;796&quot;,FormatNumber([calculation_operation.material_amount],0),[calculation_operation.material_amount])]" Padding="2, 2, 2, 2" HideZeros="true" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text26" Left="567" Width="189" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[calculation_operation.equipment_name][IIf([calculation_operation.equipment_serial] == &quot;&quot;,&quot;&quot;,&quot;\r\nзав. №: &quot; + [calculation_operation.equipment_serial])]&#13;&#10;" Padding="2, 2, 2, 2" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text27" Left="756" Width="141.75" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[calculation_operation.tools_name][IIf([calculation_operation.tools_serial] == &quot;&quot;,&quot;&quot;,&quot;\r\nзав. №: &quot; + [calculation_operation.tools_serial])]" Padding="2, 2, 2, 2" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text28" Left="897.75" Width="37.8" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[IIf([calculation_operation.program_number]==0,&quot;&quot;,[calculation_operation.program_number])]" Padding="2, 2, 2, 2" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text29" Left="935.55" Width="37.8" Height="18.9" Border.Lines="All" GrowToBottom="true" Padding="2, 2, 2, 2" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text30" Left="973.35" Width="37.8" Height="18.9" Border.Lines="All" GrowToBottom="true" Padding="2, 2, 2, 2" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text31" Left="1011.15" Width="37.8" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[calculation_operation.norm_time]" Padding="2, 2, 2, 2" Format="Number" Format.UseLocale="true" Format.DecimalDigits="3" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text33" Left="481.95" Width="37.8" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[calculation_operation.measurement_name]" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+    </DataBand>
+  </ReportPage>
+</Report>

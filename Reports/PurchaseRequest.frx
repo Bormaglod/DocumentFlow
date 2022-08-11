@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Заявка на приобретение материалов" ReportInfo.Version="1.0" ReportInfo.Created="06/26/2022 13:49:45" ReportInfo.Modified="07/06/2022 19:25:43" ReportInfo.CreatorVersion="2022.2.0.0">
+  <Dictionary>
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75erJoSNfHonE0a+XIWlErQM=">
+      <TableDataSource Name="Table1" Alias="purchase_detail" DataType="System.Int32" Enabled="true" SelectCommand="select &#13;&#10;	m.item_name as material_name,&#13;&#10;	prp.amount,&#13;&#10;	ms.abbreviation &#13;&#10;from purchase_request_price prp &#13;&#10;	join material m on m.id = prp.reference_id&#13;&#10;	join measurement ms on ms.id = m.measurement_id&#13;&#10;where prp.owner_id = :doc_id">
+        <Column Name="material_name" DataType="System.String"/>
+        <Column Name="amount" DataType="System.Decimal"/>
+        <Column Name="abbreviation" DataType="System.String"/>
+        <CommandParameter Name="doc_id" DataType="40" Expression="[id]" DefaultValue="758e7564-0963-4dec-bef4-bc0d0f583531"/>
+      </TableDataSource>
+      <TableDataSource Name="Table" Alias="purchase_header" DataType="System.Int32" Enabled="true" SelectCommand="select&#13;&#10;	o.full_name as org_name,&#13;&#10;	o.inn,&#13;&#10;	o.kpp,&#13;&#10;	o.ogrn,&#13;&#10;	o.address,&#13;&#10;	o.email,&#13;&#10;	o.phone,&#13;&#10;	c.full_name as contractor_name,&#13;&#10;	pr.document_date,&#13;&#10;	pr.document_number,&#13;&#10;	pr.note,&#13;&#10;	oe.item_name as director_name,&#13;&#10;	oe.phone as director_phone,&#13;&#10;	okpdtr.signatory_name as director_post&#13;&#10;from purchase_request pr &#13;&#10;	join organization o on o.id = pr.organization_id&#13;&#10;	join our_employee oe on oe.owner_id = o.id and oe.j_role = 'director'::job_role&#13;&#10;	join okpdtr on okpdtr.id = oe.post_id&#13;&#10;	left join contractor c on c.id = pr.contractor_id&#13;&#10;where pr.id = :doc_id">
+        <Column Name="org_name" DataType="System.String"/>
+        <Column Name="inn" DataType="System.Decimal"/>
+        <Column Name="kpp" DataType="System.Decimal"/>
+        <Column Name="ogrn" DataType="System.Decimal"/>
+        <Column Name="address" DataType="System.String"/>
+        <Column Name="email" DataType="System.String"/>
+        <Column Name="phone" DataType="System.String"/>
+        <Column Name="contractor_name" DataType="System.String"/>
+        <Column Name="document_date" DataType="System.DateTime"/>
+        <Column Name="document_number" DataType="System.Int32"/>
+        <Column Name="director_name" DataType="System.String"/>
+        <Column Name="director_phone" DataType="System.String"/>
+        <Column Name="director_post" DataType="System.String"/>
+        <Column Name="note" DataType="System.String"/>
+        <CommandParameter Name="doc_id" DataType="40" Expression="[id]" DefaultValue="758e7564-0963-4dec-bef4-bc0d0f583531"/>
+      </TableDataSource>
+    </PostgresDataConnection>
+    <Parameter Name="id" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="20" FirstPageSource="15" OtherPagesSource="15" LastPageSource="15" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="680.4" Height="292.95" CanGrow="true">
+      <TextObject Name="Text1" Width="302.4" Height="18.9" CanGrow="true" Text="[purchase_header.org_name]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt, style=Bold"/>
+      <TextObject Name="Text2" Top="18.9" Width="302.4" Height="18.9" Text="ИНН: [purchase_header.inn], КПП: [purchase_header.kpp]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text3" Top="37.8" Width="302.4" Height="18.9" Text="ОГРН: [purchase_header.ogrn]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text4" Top="56.7" Width="302.4" Height="18.9" CanGrow="true" Text="[purchase_header.address]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text5" Top="75.6" Width="302.4" Height="18.9" Text="Тел.: [purchase_header.phone]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text6" Top="94.5" Width="302.4" Height="18.9" Text="Эл. почта: [purchase_header.email]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text7" Top="132.3" Width="132.3" Height="18.9" Border.Lines="Bottom" Text="[purchase_header.document_date]" Format="Date" Format.Format="d" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text8" Left="132.3" Top="132.3" Width="28.35" Height="18.9" Text="№" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text9" Left="160.65" Top="132.3" Width="141.75" Height="18.9" Border.Lines="Bottom" Text="[purchase_header.document_number]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="0" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text10" Top="160.65" Width="47.25" Height="18.9" Text="На №" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text11" Left="47.25" Top="160.65" Width="103.95" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text12" Left="151.2" Top="160.65" Width="28.35" Height="18.9" Text="от" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text13" Left="179.55" Top="160.65" Width="122.85" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text27" Left="378" Width="302.4" Height="18.9" CanGrow="true" Text="[purchase_header.contractor_name]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt, style=Bold"/>
+    </ReportTitleBand>
+    <DataBand Name="Data1" Top="319.85" Width="680.4" Height="18.9" CanGrow="true" DataSource="Table1">
+      <TextObject Name="Text18" Width="66.15" Height="18.9" Border.Lines="All" CanGrow="true" Text="[Row#]" Padding="2, 2, 2, 2" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text19" Left="66.15" Width="434.7" Height="18.9" Border.Lines="All" CanGrow="true" Text="[purchase_detail.material_name]" Padding="2, 2, 2, 2" VertAlign="Center" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text20" Left="576.45" Width="103.95" Height="18.9" Border.Lines="All" CanGrow="true" Text="[purchase_detail.amount]" Padding="2, 2, 2, 2" Format="Number" Format.UseLocale="true" Format.DecimalDigits="3" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Times New Roman, 12pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text21" Left="500.85" Width="75.6" Height="18.9" Border.Lines="All" CanGrow="true" Text="[purchase_detail.abbreviation]" Padding="2, 2, 2, 2" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 12pt"/>
+      <DataHeaderBand Name="DataHeader1" Top="296.95" Width="680.4" Height="18.9" CanGrow="true">
+        <TextObject Name="Text14" Width="66.15" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" CanGrow="true" Text="№ п/п" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 12pt, style=Bold"/>
+        <TextObject Name="Text15" Left="66.15" Width="434.7" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" CanGrow="true" Text="Наименование" VertAlign="Center" Font="Times New Roman, 12pt, style=Bold"/>
+        <TextObject Name="Text16" Left="500.85" Width="75.6" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" CanGrow="true" Text="Ед. изм." HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 12pt, style=Bold"/>
+        <TextObject Name="Text17" Left="576.45" Width="103.95" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" CanGrow="true" Text="Количество" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 12pt, style=Bold"/>
+      </DataHeaderBand>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="342.75" Width="680.4" Height="141.75">
+      <TextObject Name="Text22" Top="28.35" Width="718.2" Height="18.9" Hyperlink.Expression="[purchase_header.email]" Hyperlink.OpenLinkInNewTab="true" IsIntersectedWithOtherObject="true" CanGrow="true" Text="Счёт для оплаты прошу выставить по эл. почте: [purchase_header.email]." HorzAlign="Justify" VertAlign="Center" Font="Times New Roman, 12pt">
+        <Formats>
+          <PercentFormat/>
+          <TimeFormat/>
+        </Formats>
+      </TextObject>
+      <TextObject Name="Text23" Top="103.95" Width="170.1" Height="18.9" Text="[purchase_header.director_post]" VertAlign="Center" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text24" Top="122.85" Width="170.1" Height="18.9" Text="[purchase_header.director_phone]" VertAlign="Center" Font="Times New Roman, 8pt"/>
+      <TextObject Name="Text25" Left="510.3" Top="103.95" Width="170.1" Height="18.9" Text="[purchase_header.director_name]" HorzAlign="Right" VertAlign="Center" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text26" Top="9.45" Width="680.4" Height="18.9" CanGrow="true" CanShrink="true" Text="[purchase_header.note]" VertAlign="Center" Font="Times New Roman, 12pt"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>
