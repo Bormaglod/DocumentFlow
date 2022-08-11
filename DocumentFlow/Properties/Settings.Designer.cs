@@ -12,7 +12,7 @@ namespace DocumentFlow.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.2.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -25,13 +25,13 @@ namespace DocumentFlow.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Maximized")]
-        public global::System.Windows.Forms.FormWindowState WindowState {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PreviousUser {
             get {
-                return ((global::System.Windows.Forms.FormWindowState)(this["WindowState"]));
+                return ((string)(this["PreviousUser"]));
             }
             set {
-                this["WindowState"] = value;
+                this["PreviousUser"] = value;
             }
         }
         
@@ -56,6 +56,30 @@ namespace DocumentFlow.Properties {
             }
             set {
                 this["Size"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastConnectedDatabase {
+            get {
+                return ((string)(this["LastConnectedDatabase"]));
+            }
+            set {
+                this["LastConnectedDatabase"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Maximized")]
+        public global::System.Windows.Forms.FormWindowState WindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["WindowState"]));
+            }
+            set {
+                this["WindowState"] = value;
             }
         }
         
@@ -95,15 +119,21 @@ namespace DocumentFlow.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("/apps/DocumentFlow Files")]
+        [global::System.Configuration.DefaultSettingValueAttribute("109.68.215.41")]
+        public string FtpHost {
+            get {
+                return ((string)(this["FtpHost"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("/document-flow/data")]
         public string FtpPath {
             get {
                 return ((string)(this["FtpPath"]));
-            }
-            set {
-                this["FtpPath"] = value;
             }
         }
         
@@ -133,25 +163,25 @@ namespace DocumentFlow.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("109.68.215.41")]
-        public string FtpHost {
+        [global::System.Configuration.DefaultSettingValueAttribute("150")]
+        public int ReportResolution {
             get {
-                return ((string)(this["FtpHost"]));
+                return ((int)(this["ReportResolution"]));
             }
             set {
-                this["FtpHost"] = value;
+                this["ReportResolution"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string TwainDataSource {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseDataNotification {
             get {
-                return ((string)(this["TwainDataSource"]));
+                return ((bool)(this["UseDataNotification"]));
             }
             set {
-                this["TwainDataSource"] = value;
+                this["UseDataNotification"] = value;
             }
         }
     }

@@ -1,0 +1,17 @@
+﻿//-----------------------------------------------------------------------
+// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Contacts: <sergio.teplyashin@yandex.ru>
+// License: https://opensource.org/licenses/GPL-3.0
+// Date: 02.07.2022
+//-----------------------------------------------------------------------
+
+using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Entities.Productions.Order;
+using DocumentFlow.Entities.Productions.Returns;
+
+namespace DocumentFlow.Entities.Productions.Processing;
+
+public interface IWaybillProcessingRepository : IDocumentRepository<WaybillProcessing>
+{
+    IReadOnlyList<ReturnMaterialsRows> GetReturnMaterials(ProductionOrder order);
+}

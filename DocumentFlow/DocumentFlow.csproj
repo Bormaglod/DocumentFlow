@@ -1,113 +1,305 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>workflow-enterprise.ico</ApplicationIcon>
-    <Version>2.6.2</Version>
-    <Company>ООО Автоком</Company>
-    <Copyright>Copyright © ООО Автоком (Autokom Company), 2021</Copyright>
-    <Platforms>AnyCPU;x86</Platforms>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyVersion>2.6.2.0</AssemblyVersion>
-    <FileVersion>2.6.2.0</FileVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Version>2022.8.7</Version>
+		<Company>Автоком</Company>
+		<Copyright>Copyright © ООО Автоком (Autokom Company), 2021</Copyright>
+		<Platforms>x64</Platforms>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<ApplicationIcon>workflow-enterprise.ico</ApplicationIcon>
+		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;USE_LISTENER</DefineConstants>
-  </PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Entities\Companies\ContractApplication\Reports\**" />
+	  <EmbeddedResource Remove="Entities\Companies\ContractApplication\Reports\**" />
+	  <None Remove="Entities\Companies\ContractApplication\Reports\**" />
+	</ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <DefineConstants>TRACE;USE_LISTENER</DefineConstants>
-  </PropertyGroup>
+	<ItemGroup>
+		<Using Remove="System.IO" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="NLog.config" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
+	  <DefineConstants>$(DefineConstants);USE_LISTENER</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+	  <DefineConstants>$(DefineConstants);USE_LISTENER</DefineConstants>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+	  <Content Include="workflow-enterprise.ico" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Dapper" Version="2.0.123" />
+		<PackageReference Include="FluentDateTime" Version="2.1.0" />
+		<PackageReference Include="Humanizer.Core" Version="2.14.1" />
+		<PackageReference Include="itext7" Version="7.2.3" />
+		<PackageReference Include="MailKit" Version="3.3.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="NLog" Version="5.0.1" />
+		<PackageReference Include="Npgsql" Version="6.0.6" />
+		<PackageReference Include="Scrutor" Version="4.2.0" />
+		<PackageReference Include="SqlKata" Version="2.3.7" />
+		<PackageReference Include="SqlKata.Execution" Version="2.3.7" />
+		<PackageReference Include="Syncfusion.PdfViewer.Windows" Version="20.2.0.40" />
+		<PackageReference Include="Syncfusion.PivotTable.WinForms" Version="20.2.0.40" />
+		<PackageReference Include="Syncfusion.SfDataGrid.WinForms" Version="20.2.0.40" />
+		<PackageReference Include="Syncfusion.Tools.Windows" Version="20.2.0.40" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Crc32.NET" Version="1.2.0" />
-    <PackageReference Include="DockPanelSuite" Version="3.1.0-beta7" />
-    <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0-beta7" />
-    <PackageReference Include="FluentFTP" Version="33.1.7" />
-    <PackageReference Include="Inflector.NetStandard" Version="1.2.2" />
-    <PackageReference Include="MailKit" Version="2.11.1" />
-    <PackageReference Include="Npgsql" Version="5.0.4" />
-    <PackageReference Include="NTwain" Version="3.7.0" />
-    <PackageReference Include="Syncfusion.Diagram.Windows" Version="19.1.0.57" />
-    <PackageReference Include="Syncfusion.Edit.Windows" Version="19.1.0.57" />
-    <PackageReference Include="Syncfusion.PdfViewer.Windows" Version="19.1.0.57" />
-    <PackageReference Include="Syncfusion.Tools.Windows" Version="19.1.0.57" />
-  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\FastReport\Extras\Core\FastReport.Data\FastReport.Data.Postgres\FastReport.OpenSource.Data.Postgres.csproj" />
+	  <ProjectReference Include="..\..\FastReport\FastReport.OpenSource\FastReport.OpenSource.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DocumentFlow.Authorization\DocumentFlow.Authorization.csproj" />
-    <ProjectReference Include="..\DocumentFlow.Code\DocumentFlow.Code.csproj" />
-    <ProjectReference Include="..\DocumentFlow.Controls\DocumentFlow.Controls.csproj" />
-    <ProjectReference Include="..\DocumentFlow.Core\DocumentFlow.Core.csproj" />
-    <ProjectReference Include="..\DocumentFlow.Data.Core\DocumentFlow.Data.Core.csproj" />
-    <ProjectReference Include="..\DocumentFlow.Data.Entities\DocumentFlow.Data.Entities.csproj" />
-    <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj" />
-    <ProjectReference Include="..\DocumentFlow.Reports\DocumentFlow.Reports.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Controls\Breadcrumb.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Controls\ComboBoxAdvImage.cs" />
+	  <Compile Update="Controls\Core\SelectBox.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Controls\PageContents\Browser.cs" />
+	  <Compile Update="Controls\SplitButton.cs">
+	    <SubType>Component</SubType>
+	  </Compile>
+	  <Compile Update="Controls\ToolButton.cs">
+	    <SubType>Component</SubType>
+	  </Compile>
+	  <Compile Update="Controls\ToolSplitItem.cs">
+	    <SubType>Component</SubType>
+	  </Compile>
+	  <Compile Update="Entities\AccountLib\Contractors\AccountBrowser.cs" />
+	  <Compile Update="Entities\AccountLib\Contractors\AccountEditor.cs" />
+	  <Compile Update="Entities\Balances\BalanceBrowser.cs" />
+	  <Compile Update="Entities\Balances\Employee\BalanceEmployeeBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Balances\Initial\Contractor\InitialBalanceContractorBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Balances\Initial\Contractor\InitialBalanceContractorEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Balances\Initial\Employee\InitialBalanceEmployeeEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Balances\Initial\Employee\InitialBalanceEmployeeBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Balances\Initial\Goods\InitialBalanceGoodsBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Balances\Initial\Goods\InitialBalanceGoodsEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Balances\Initial\Material\InitialBalanceMaterialBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Balances\Initial\Material\InitialBalanceMaterialEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Balances\Processing\BalanceProcessingBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Banks\BankBrowser.cs" />
+	  <Compile Update="Entities\Banks\BankEditor.cs" />
+	  <Compile Update="Entities\Calculations\CalculationBrowser.cs" />
+	  <Compile Update="Entities\Calculations\CalculationEditor.cs" />
+	  <Compile Update="Entities\Calculations\Items\BaseCalculationOperationEditor.cs" />
+	  <Compile Update="Entities\Calculations\Items\Cutting\CalculationCuttingBrowser.cs" />
+	  <Compile Update="Entities\Calculations\Items\Cutting\CalculationCuttingEditor.cs" />
+	  <Compile Update="Entities\Calculations\Items\Deduction\CalculationDeductionEditor.cs" />
+	  <Compile Update="Entities\Calculations\Items\Deduction\CalculationDeductionBrowser.cs" />
+	  <Compile Update="Entities\Calculations\Items\Material\CalculationMaterialBrowser.cs" />
+	  <Compile Update="Entities\Calculations\Items\Operation\CalculationOperationEditor.cs" />
+	  <Compile Update="Entities\Calculations\Items\Operation\CalculationOperationBrowser.cs" />
+	  <Compile Update="Entities\Companies\ContractApplication\ContractApplicationBrowser.cs" />
+	  <Compile Update="Entities\Companies\ContractApplication\ContractApplicationEditor.cs" />
+	  <Compile Update="Entities\Companies\Contractor\ContractorBrowser.cs" />
+	  <Compile Update="Entities\Companies\Contractor\ContractorEditor.cs" />
+	  <Compile Update="Entities\Companies\Contract\ContractBrowser.cs" />
+	  <Compile Update="Entities\Companies\Contract\ContractEditor.cs" />
+	  <Compile Update="Entities\Companies\Organization\OrganizationEditor.cs" />
+	  <Compile Update="Entities\Companies\Organization\OrganizationBrowser.cs" />
+	  <Compile Update="Entities\Deductions\DeductionBrowser.cs" />
+	  <Compile Update="Entities\Deductions\DeductionEditor.cs" />
+	  <Compile Update="Entities\EmployeeLib\BaseEmployeeEditor.cs" />
+	  <Compile Update="Entities\EmployeeLib\OrgEmployee\OrgEmployeeEditor.cs" />
+	  <Compile Update="Entities\EmployeeLib\OrgEmployee\OrgEmployeeBrowser.cs" />
+	  <Compile Update="Entities\EmployeeLib\OurEmployee\OurEmployeeEditor.cs" />
+	  <Compile Update="Entities\EmployeeLib\OurEmployee\OurEmployeeBrowser.cs" />
+	  <Compile Update="Entities\EmployeeLib\Employee\EmployeeEditor.cs" />
+	  <Compile Update="Entities\Equipments\EquipmentBrowser.cs" />
+	  <Compile Update="Entities\Equipments\EquipmentEditor.cs" />
+	  <Compile Update="Entities\Measurements\MeasurementBrowser.cs" />
+	  <Compile Update="Entities\OkopfLib\OkopfEditor.cs" />
+	  <Compile Update="Entities\OkopfLib\OkopfBrowser.cs" />
+	  <Compile Update="Entities\OkpdtrLib\OkpdtrEditor.cs" />
+	  <Compile Update="Entities\OkpdtrLib\OkpdtrBrowser.cs" />
+	  <Compile Update="Entities\Operations\CuttingEditor.cs" />
+	  <Compile Update="Entities\Operations\OperationEditor.cs" />
+	  <Compile Update="Entities\Operations\OperationUsage\OperationUsageBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\OperationTypes\OperationTypeBrowser.cs" />
+	  <Compile Update="Entities\Operations\CuttingBrowser.cs" />
+	  <Compile Update="Entities\Operations\OperationBrowser.cs" />
+	  <Compile Update="Entities\OperationTypes\OperationTypeEditor.cs" />
+	  <Compile Update="Entities\PaymentOrderLib\Documents\DocumentPaymentBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\PaymentOrderLib\PaymentOrderBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\PaymentOrderLib\PaymentOrderEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\PaymentOrderLib\Posting\PostingPaymentsEditor.cs" />
+	  <Compile Update="Entities\PaymentOrderLib\Posting\PostingPaymentsBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Wages\Dialogs\FormEmployeePayroll.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Wages\BasePayrollEditor.cs" />
+	  <Compile Update="Entities\Wages\GrossPayrols\GrossPayrollEditor.cs" />
+	  <Compile Update="Entities\Wages\BasePayrollBrowser.cs" />
+	  <Compile Update="Entities\Wages\ReportCards\ReportCardEditor.cs" />
+	  <Compile Update="Entities\Wages\ReportCards\ReportCardBrowser.cs" />
+	  <Compile Update="Entities\Wages\Wages1c\Wage1cEditor.cs" />
+	  <Compile Update="Entities\Wages\Wages1c\Wage1cBrowser.cs" />
+	  <Compile Update="Entities\Wages\GrossPayrols\GrossPayrollBrowser.cs" />
+	  <Compile Update="Entities\Persons\PersonEditor.cs" />
+	  <Compile Update="Entities\Persons\PersonBrowser.cs" />
+	  <Compile Update="Dialogs\FtpLoginForm.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="Entities\ProductionLib\Dialogs\FormMaterialQuantity.cs" />
+	  <Compile Update="Entities\ProductionLib\Lot\ProductionLotBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\ProductionLib\Lot\ProductionLotEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\ProductionLib\Order\ProductionOrderBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\ProductionLib\Order\ProductionOrderEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\ProductionLib\Performed\OperationsPerformedBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\ProductionLib\Performed\OperationsPerformedEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\ProductionLib\Returns\ReturnMaterialsBrowser.cs" />
+	  <Compile Update="Entities\ProductionLib\Returns\ReturnMaterialsEditor.cs" />
+	  <Compile Update="Entities\Productions\Finished\BaseFinishedGoodsBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Productions\Finished\FinishedGoodsBrowser.cs" />
+	  <Compile Update="Entities\Productions\Finished\FinishedGoodsNestedBrowser.cs" />
+	  <Compile Update="Entities\Productions\Finished\BaseFinishedGoodsEditor.cs" />
+	  <Compile Update="Entities\Productions\Finished\FinishedGoodsNestedEditor.cs" />
+	  <Compile Update="Entities\Warehouse\BalanceSheet\BalanceSheetBrowser.cs" />
+	  <Compile Update="Entities\Products\Contractors\CustomerBrowser.cs" />
+	  <Compile Update="Entities\Products\Goods\GoodsEditor.cs" />
+	  <Compile Update="Entities\Products\MaterialUsage\MaterialUsageBrowser.cs" />
+	  <Compile Update="Entities\Products\ProductBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Products\Material\MaterialBrowser.cs" />
+	  <Compile Update="Entities\Products\Goods\GoodsBrowser.cs" />
+	  <Compile Update="Entities\Products\Material\MaterialEditor.cs" />
+	  <Compile Update="Entities\Products\Wire\WireEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Products\Wire\WireBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\PurchaseRequest\PurchaseRequestBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\PurchaseRequest\PurchaseRequestEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\ProductionLib\Processing\WaybillProcessingBrowser.cs" />
+	  <Compile Update="Entities\ProductionLib\Processing\WaybillProcessingEditor.cs" />
+	  <Compile Update="Entities\Warehouse\AdjustingBalancesBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Warehouse\AdjustingBalancesEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\WaybillLib\Sale\WaybillSaleEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\WaybillLib\WaybillEditor.cs" />
+	  <Compile Update="Entities\WaybillLib\Receipt\WaybillReceiptBrowser.cs" />
+	  <Compile Update="Entities\WaybillLib\Sale\WaybillSaleBrowser.cs" />
+	  <Compile Update="Entities\WaybillLib\WaybillBrowser.cs" />
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="MainForm.resx">
+	    <Generator></Generator>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
-    <None Update="password.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Diagram Palette\Basic Shapes.edp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Diagram Palette\Flowchart Symbols.edp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Diagram Palette\SwimLane Symbols.edp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="license.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Update="readme.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="license.txt">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="MainForm.Designer.tt">
+		  <Generator>TextTemplatingFileGenerator</Generator>
+		  <DependentUpon>MainForm.resx</DependentUpon>
+		</None>
+		<None Update="NLog.config">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="password.txt" Condition="'$(Configuration)'=='Debug'">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Properties\Settings.settings">
+		  <Generator>SettingsSingleFileGenerator</Generator>
+		  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+		<None Update="Reports\ProcessMap.frx">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\ContractApplication.frx">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\PurchaseRequest.frx">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\Specification.frx">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

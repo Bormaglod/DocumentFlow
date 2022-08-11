@@ -2,14 +2,20 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DocumentFlow.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="WindowState" Type="System.Windows.Forms.FormWindowState" Scope="User">
-      <Value Profile="(Default)">Maximized</Value>
+    <Setting Name="PreviousUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Location" Type="System.Drawing.Point" Scope="User">
       <Value Profile="(Default)">0, 0</Value>
     </Setting>
     <Setting Name="Size" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">0, 0</Value>
+    </Setting>
+    <Setting Name="LastConnectedDatabase" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="WindowState" Type="System.Windows.Forms.FormWindowState" Scope="User">
+      <Value Profile="(Default)">Maximized</Value>
     </Setting>
     <Setting Name="PanelMenuWidth" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">350</Value>
@@ -20,8 +26,11 @@
     <Setting Name="ShowSortNumbers" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="FtpPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">/apps/DocumentFlow Files</Value>
+    <Setting Name="FtpHost" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">109.68.215.41</Value>
+    </Setting>
+    <Setting Name="FtpPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">/document-flow/data</Value>
     </Setting>
     <Setting Name="FtpUser" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -29,11 +38,11 @@
     <Setting Name="FtpPassword" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="FtpHost" Type="System.String" Scope="User">
-      <Value Profile="(Default)">109.68.215.41</Value>
+    <Setting Name="ReportResolution" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">150</Value>
     </Setting>
-    <Setting Name="TwainDataSource" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="UseDataNotification" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

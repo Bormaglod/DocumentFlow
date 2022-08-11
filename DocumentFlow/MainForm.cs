@@ -1,185 +1,321 @@
-Ôªø//-----------------------------------------------------------------------
-// Copyright ¬© 2010-2021 –¢–µ–ø–ª—è—à–∏–Ω –°–µ—Ä–≥–µ–π –í–∞—Å–∏–ª—å–µ–≤–∏—á. 
-// Contacts: <sergio.teplyashin@gmail.com>
+//-----------------------------------------------------------------------
+// Copyright © 2010-2021 “ÂÔÎˇ¯ËÌ —Â„ÂÈ ¬‡ÒËÎ¸Â‚Ë˜. 
+// Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 09.03.2020
-// Time: 13:00
+// Date: 27.12.2021
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using NTwain;
-using NTwain.Data;
-using WeifenLuo.WinFormsUI.Docking;
-using DocumentFlow.Authorization;
 using DocumentFlow.Core;
+using DocumentFlow.Controls.Core;
+using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Data;
-using DocumentFlow.Interfaces;
-using DocumentFlow.Properties;
+using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Infrastructure;
+
+using Npgsql;
+using Microsoft.Extensions.DependencyInjection;
+using Syncfusion.Windows.Forms.Tools;
+
+using System.Collections.Concurrent;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace DocumentFlow
 {
-    public partial class MainForm : Form, IContainerPage
+    public partial class MainForm : Form, IHostApp, ITabPages
     {
-        private readonly LoginForm loginForm;
-        private readonly ICommandFactory commandFactory;
-        private Twain twain;
+#if USE_LISTENER
+        private Task? listenerTask;
+        private readonly ConcurrentQueue<NotifyMessage> notifies = new();
+#endif
 
         public MainForm()
         {
             InitializeComponent();
 
-            commandFactory = new CommandFactory(this);
-            var catalogWindow = new CatalogDockControl(commandFactory);
-            catalogWindow.ShowPanel(dockPanel1, DockState.DockLeft);
+            tabControlAdv1.TabPages.Clear();
 
-            _ = CreateCompilerTask();
+            CreateMenu();
 
-            Text += $" - {Db.ConnectionName}";
-        }
-
-        public MainForm(LoginForm loginForm) : this() => this.loginForm = loginForm;
-
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
-            twain = new(Handle);
-        }
-
-        private async Task CreateCompilerTask()
-        {
-            foreach (var command in commandFactory.Commands)
+#if USE_LISTENER
+            if (Properties.Settings.Default.UseDataNotification)
             {
-                try
-                {
-                    statusBarAdv1.Panels[0].Text = $"Compile: {command.name}";
-                    await Task.Run(() => command.Compile());
-                }
-                catch (Exception)
-                {
-                }
+                timerDatabaseListen.Start();
+
+                listenerTask = CreateListener();
             }
-
-            statusBarAdv1.Panels[0].Text = string.Empty;
+#endif
         }
 
-        #region IContainerPage implementation
+        public event EventHandler<NotifyEventArgs>? OnAppNotify;
 
-        ITwain IContainerPage.Twain => twain;
+        #region ITabPages implemented
 
-        IPage IContainerPage.Selected
-        {
-            get => dockPanel1.ActiveContent as IPage;
-            set
-            {
-                if (value is DockContent content)
-                {
-                    content.ShowPanel(dockPanel1, DockState.Document);
-                }
-            }
-        }
+        TabPageAdv ITabPages.Selected { get => tabControlAdv1.SelectedTab; set => tabControlAdv1.SelectedTab = value; }
 
-        void IContainerPage.Add(IPage page)
-        {
-            if (page is DockContent content)
-            {
-                content.ShowPanel(dockPanel1, DockState.Document);
-            }
-        }
+        void ITabPages.Add(TabPageAdv page) => tabControlAdv1.TabPages.Add(page);
 
-        IPage IContainerPage.Get(string code)
-        {
-            return dockPanel1.Contents
-                .OfType<IPage>()
-                .FirstOrDefault(page => page.Code == code);
-        }
-
-        IEnumerable<IContentPage> IContainerPage.GetContentPages()
-        {
-            return dockPanel1.Contents
-                .OfType<IContentPage>();
-        }
-
-        void IContainerPage.Logout()
-        {
-            Hide();
-            loginForm.Show();
-        }
-
-        void IContainerPage.About() => AboutForm.ShowWindow();
+        void ITabPages.Remove(TabPageAdv page) => tabControlAdv1.TabPages.Remove(page);
 
         #endregion
 
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        public void SendNotify(string entityName, IDocumentInfo document, MessageAction action)
         {
-            if (loginForm != null)
+            OnAppNotify?.Invoke(this, new NotifyEventArgs(entityName, document, action));
+        }
+
+        public void SendNotify(MessageDestination destination, string? entityName, Guid objectId, MessageAction action)
+        {
+            if (string.IsNullOrEmpty(entityName))
             {
-                loginForm.Close();
+                return;
             }
+
+            NotifyEventArgs? args = null;
+            switch (destination)
+            {
+                case MessageDestination.Object:
+                    args = new(entityName, objectId, action);
+                    break;
+                case MessageDestination.List:
+                    if (objectId == Guid.Empty)
+                    {
+                        args = new(entityName);
+                    }
+                    else
+                    {
+                        args = new(entityName, objectId);
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+
+            if (args != null)
+            {
+                OnAppNotify?.Invoke(this, args);
+            }
+        }
+
+        private void CreateMenu()
+        {
+            Type browserType = typeof(IBrowser<>);
+
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(p => p.IsInterface)
+                .Where(p => p.GetInterfaces().Any(i => i.IsGenericType && browserType == i.GetGenericTypeDefinition()));
+
+            Dictionary<MenuAttribute, Type> browsers = new();
+            foreach (var type in types)
+            {
+                var attr = type.GetCustomAttribute<MenuAttribute>();
+                if (attr != null)
+                {
+                    browsers.Add(attr, type);
+                }
+            }
+
+            Dictionary<string, TreeMenuItem> menus = new();
+            foreach (var item in browsers.Keys.OfType<MenuAttribute>().OrderBy(m => m.Order))
+            {
+                TreeMenuItem treeMenu = item.Destination switch
+                {
+                    MenuDestination.Directory => treeMenuDictionary,
+                    MenuDestination.Document => treeMenuDocument,
+                    _ => throw new NotImplementedException()
+                };
+
+                if (!string.IsNullOrEmpty(item.Path))
+                {
+                    if (menus.ContainsKey(item.Path))
+                    {
+                        treeMenu = menus[item.Path];
+                    }
+                    else
+                    {
+                        treeMenu = AddMenu(treeMenu, item.Path);
+                        menus.Add(item.Path, treeMenu);
+                    }
+                }
+
+                AddMenu(treeMenu, item.Name, browsers[item]);
+            }
+        }
+
+#if USE_LISTENER
+        private void Listener()
+        {
+
+            using var conn = new NpgsqlConnection(Database.ConnectionString);
+            conn.Open();
+            conn.Notification += (o, e) =>
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters =
+                        {
+                                new JsonStringEnumConverter()
+                        }
+                };
+                NotifyMessage? message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload, options);
+                if (message != null)
+                {
+                    notifies.Enqueue(message);
+                }
+            };
+
+            using (var cmd = new NpgsqlCommand("LISTEN db_notification", conn))
+            {
+                cmd.ExecuteNonQuery();
+            }
+
+            while (true)
+            {
+                conn.Wait();
+            }
+        }
+
+        private async Task CreateListener()
+        {
+            try
+            {
+                await Task.Run(() => Listener());
+            }
+            catch (Exception)
+            {
+            }
+        }
+#endif
+
+        private TreeMenuItem AddMenu(TreeMenuItem parent, string text, Type? browserType = null)
+        {
+            TreeMenuItem item = new()
+            {
+                Text = text,
+                Tag = browserType,
+                BackColor = parent.BackColor,
+                ForeColor = parent.ForeColor,
+                ItemBackColor = parent.ItemBackColor,
+                ItemHoverColor = parent.ItemHoverColor,
+                SelectedColor = parent.SelectedColor,
+                SelectedItemForeColor = parent.SelectedItemForeColor
+            };
+
+            if (browserType != null)
+            {
+                item.Click += AddonItem_Click;
+            }
+
+            parent.Items.Add(item);
+
+            return item;
+        }
+
+        private void AddonItem_Click(object? sender, EventArgs e)
+        {
+            var pages = Services.Provider.GetService<IPageManager>();
+            if (sender is TreeMenuItem menu && menu.Tag is Type type && pages != null)
+            {
+                pages.ShowBrowser(type);
+            }
+        }
+
+        private void TreeMenuLogout_Click(object sender, EventArgs e)
+        {
+            CurrentApplicationContext.Context.ShowLoginForm();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (twain != null)
+            var settings = Properties.Settings.Default;
+
+            settings.WindowState = WindowState;
+            settings.Location = Location;
+            settings.Size = Size;
+            settings.PanelMenuWidth = splitContainer1.SplitterDistance;
+            settings.Save();
+
+            Services.Provider.GetService<IPageManager>()?.OnPageClosing();
+
+#if USE_LISTENER
+            if (settings.UseDataNotification)
             {
-                if (e.CloseReason == CloseReason.UserClosing && twain.State > 4)
-                {
-                    e.Cancel = true;
-                }
-                else
-                {
-                    twain.Cleanup();
-                }
+                timerDatabaseListen.Stop();
+                timerCheckListener.Stop();
             }
-
-            /*var catalog = dockingManager1.ControlsArray.OfType<CatalogDockControl>().FirstOrDefault();
-            if (catalog != null)
-            {
-                Settings.Default.PanelMenuWidth = catalog.Width;
-            }*/
-
-            Settings.Default.WindowState = WindowState;
-            Settings.Default.Location = Location;
-            Settings.Default.Size = Size;
-            Settings.Default.Save();
+#endif
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            if (Settings.Default.Size.Width == 0 || Settings.Default.Size.Height == 0)
-                Settings.Default.Upgrade();
+            var settings = Properties.Settings.Default;
 
-            if (Settings.Default.Size.Width == 0 || Settings.Default.Size.Height == 0)
+            if (settings.Size.Width == 0 || settings.Size.Height == 0)
+                settings.Upgrade();
+
+            if (settings.Size.Width == 0 || settings.Size.Height == 0)
             {
                 StartPosition = FormStartPosition.WindowsDefaultLocation;
                 WindowState = FormWindowState.Normal;
             }
             else
             {
-                WindowState = Settings.Default.WindowState;
-                if (Settings.Default.WindowState == FormWindowState.Minimized)
+                WindowState = settings.WindowState;
+                if (settings.WindowState == FormWindowState.Minimized)
                 {
                     WindowState = FormWindowState.Normal;
                 }
 
-                if (Settings.Default.WindowState == FormWindowState.Normal)
+                if (settings.WindowState == FormWindowState.Normal)
                 {
-                    Location = Settings.Default.Location;
-                    Size = Settings.Default.Size;
+                    Location = settings.Location;
+                    Size = settings.Size;
                 }
             }
 
-            /*var catalog = dockingManager1.ControlsArray.OfType<CatalogDockControl>().FirstOrDefault();
-            if (catalog != null)
+            splitContainer1.SplitterDistance = settings.PanelMenuWidth;
+
+            Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{Database.ConnectionName}>";
+
+#if USE_LISTENER
+            if (settings.UseDataNotification)
             {
-                catalog.Width = Settings.Default.PanelMenuWidth;
-            }*/
+                timerCheckListener.Start();
+                timerDatabaseListen.Start();
+            }
+#endif
+        }
+
+        private void TimerDatabaseListen_Tick(object sender, EventArgs e)
+        {
+#if USE_LISTENER
+            if (Properties.Settings.Default.UseDataNotification && notifies.TryDequeue(out NotifyMessage? message))
+            {
+                SendNotify(message.Destination, message.EntityName, message.ObjectId, message.Action);
+            }
+#endif
+        }
+
+        private void TimerCheckListener_Tick(object sender, EventArgs e)
+        {
+#if USE_LISTENER
+            if (listenerTask != null && listenerTask.Status != TaskStatus.WaitingForActivation)
+            {
+                listenerTask = CreateListener();
+            }
+#endif
+        }
+
+        private void TabControlAdv1_SelectedIndexChanging(object sender, SelectedIndexChangingEventArgs args)
+        {
+            if (args.NewSelectedIndex != -1)
+            {
+                Services.Provider.GetService<IPageManager>()?.AddToHistory(tabControlAdv1.TabPages[args.NewSelectedIndex]);
+            }
         }
     }
 }

@@ -1,30 +1,35 @@
-using System;
-using System.Globalization;
+using Npgsql.Logging;
 using System.IO;
-using System.Linq;
-using System.Windows.Forms;
-using DocumentFlow.Authorization;
 
-namespace DocumentFlow
+namespace DocumentFlow;
+
+internal static class Program
 {
-    static class Program
+    /// <summary>
+    ///  The main entry point for the application.
+    /// </summary>
+    [STAThread]
+    static void Main()
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        try
         {
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(File.ReadLines("license.txt").First());
-#if DEBUG
-            Npgsql.Logging.NpgsqlLogManager.Provider = new Core.NLogLoggingProvider();
-#endif
-            Inflector.Inflector.SetDefaultCultureFunc = () => new CultureInfo("en");
-
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LoginForm(typeof(MainForm)));
         }
+        catch (FileNotFoundException e)
+        {
+            MessageBox.Show($"не найден файл {e.FileName}. Выполнение программы невозможно.");
+            return;
+        }
+        
+        NpgsqlLogManager.Provider = new Core.NLogLoggingProvider();
+
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+        Dapper.SqlMapper.AddTypeHandler(new Data.Core.DapperSqlDateOnlyTypeHandler());
+
+        FastReport.Utils.RegisteredObjects.AddConnection(typeof(FastReport.Data.PostgresDataConnection));
+
+        ApplicationConfiguration.Initialize();
+        Application.Run(new CurrentApplicationContext());
     }
 }
