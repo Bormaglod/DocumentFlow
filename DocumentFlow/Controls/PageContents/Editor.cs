@@ -153,6 +153,8 @@ public partial class Editor<T> : UserControl, IEditorPage
         }
     }
 
+    public bool Save() => Save(true);
+
     protected Panel CreatePanel(Control[] controls)
     {
         var panel = new Panel()
@@ -176,6 +178,11 @@ public partial class Editor<T> : UserControl, IEditorPage
             container.Panel1.Controls.Add(controls[i]);
 
             controls[i].BringToFront();
+
+            if (controls[i] is BaseControl control)
+            {
+                control.EditorPage = this;
+            }
         }
 
         ResumeLayout(false);

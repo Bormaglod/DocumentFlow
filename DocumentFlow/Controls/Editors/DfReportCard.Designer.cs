@@ -120,9 +120,14 @@
             this.gridContent.Style.HyperlinkStyle.DefaultLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
             this.gridContent.TabIndex = 1;
             this.gridContent.Text = "sfDataGrid1";
+            this.gridContent.QueryCellStyle += new Syncfusion.WinForms.DataGrid.Events.QueryCellStyleEventHandler(this.GridContent_QueryCellStyle);
+            this.gridContent.QueryRowHeight += new Syncfusion.WinForms.DataGrid.Events.QueryRowHeightEventHandler(this.GridContent_QueryRowHeight);
+            this.gridContent.CurrentCellEndEdit += new Syncfusion.WinForms.DataGrid.Events.CurrentCellEndEditEventHandler(this.GridContent_CurrentCellEndEdit);
+            this.gridContent.CurrentCellValidated += new Syncfusion.WinForms.DataGrid.Events.CurrentCellValidatedEventHandler(this.GridContent_CurrentCellValidated);
             // 
             // contextMenuStripEx1
             // 
+            this.contextMenuStripEx1.DropShadowEnabled = false;
             this.contextMenuStripEx1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuAdd,
             this.menuEdit,
@@ -132,8 +137,8 @@
             this.contextMenuStripEx1.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
             this.contextMenuStripEx1.Name = "contextMenuStripEx1";
             this.contextMenuStripEx1.Size = new System.Drawing.Size(134, 98);
-            this.contextMenuStripEx1.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Default;
-            this.contextMenuStripEx1.ThemeName = "Default";
+            this.contextMenuStripEx1.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Office2016Colorful;
+            this.contextMenuStripEx1.ThemeName = "Office2016Colorful";
             // 
             // menuAdd
             // 

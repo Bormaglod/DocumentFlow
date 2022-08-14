@@ -2,15 +2,15 @@
 // Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 02.08.2022
+// Date: 12.08.2022
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
 
 namespace DocumentFlow.Entities.Wages;
 
-public interface IGrossPayrollRepository : IDocumentRepository<GrossPayroll>
+public interface IReportCardEmployeeRepository : IOwnedRepository<long, ReportCardEmployee>
 {
-    void CalculateEmployeeWages(Guid gross_id);
-    void CalculateEmployeeWages(GrossPayroll grossPayroll);
+    void PopulateReportCard(Guid reportCardId);
+    void PopulateReportCard(ReportCard reportCard);
 }

@@ -7,12 +7,11 @@
 
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Employees;
-using DocumentFlow.Entities.Productions.Lot;
 
 namespace DocumentFlow.Entities.Productions.Performed;
 
 public interface IOperationsPerformedRepository : IDocumentRepository<OperationsPerformed>
 {
-    IReadOnlyList<Employee> GetWorkedEmployes(Guid? lot_id);
+    IReadOnlyList<OurEmployee> GetWorkedEmployes(Guid? lot_id);
     IReadOnlyList<OperationsPerformed> GetSummary(Guid lot_id);
 }

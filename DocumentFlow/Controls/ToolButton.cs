@@ -27,6 +27,8 @@ public class ToolButton : Control
     {
         ResizeRedraw = DoubleBuffered = true;
         BackColor = Color.White;
+        TabStop = false;
+        ResizeRedraw = true;
     }
 
     public Color BorderColor
@@ -92,7 +94,7 @@ public class ToolButton : Control
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
-        Rectangle r = new(e.ClipRectangle.Location, e.ClipRectangle.Size.Resize(-1));
+        Rectangle r = new(ClientRectangle.Location, ClientRectangle.Size.Resize(-1));
 
         if (Enabled)
         {

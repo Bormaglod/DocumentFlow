@@ -73,7 +73,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         var using_material = new DfTextBox("material_name", "Материал (по спецификации)", headerWidth, 350) { ReadOnly = true };
         var replacing_material = new DfDirectorySelectBox<Material>("replacing_material_id", "Использованный материал", headerWidth, 350);
         var quantity = new DfIntegerTextBox<long>("quantity", "Количество", headerWidth, 150);
-        var employee = new DfDirectorySelectBox<Employee>("employee_id", "Исполнитель", headerWidth, 350);
+        var employee = new DfDirectorySelectBox<OurEmployee>("employee_id", "Исполнитель", headerWidth, 350);
         var salary = new DfCurrencyTextBox("salary", "Зарплата", headerWidth, 150);
 
         lot.SetDataSource(() =>
@@ -145,7 +145,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
             }
         };
 
-        replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials(), true);
+        replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials()/*, true*/);
 
         operations.SetDataSource(() => IsCreating ? null : GetCalculationOperation(Document.calculation_id));
 
@@ -155,11 +155,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
             replacing_material.Enabled = e.NewValue?.material_id != null;
         };
 
-        employee.SetDataSource(() =>
-        {
-            var repo = Services.Provider.GetService<IOurEmployeeRepository>();
-            return repo != null ? repo.GetAllValid() : (IEnumerable<Employee>?)null;
-        });
+        employee.SetDataSource(() => Services.Provider.GetService<IOurEmployeeRepository>()?.GetAllValid());
 
         AddControls(new Control[]
         {
@@ -176,7 +172,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         });
     }
 
-    private IEnumerable<CalculationOperation>? GetCalculationOperation(Guid calculationId)
+    private static IEnumerable<CalculationOperation>? GetCalculationOperation(Guid calculationId)
     {
         var repo = Services.Provider.GetService<ICalculationOperationRepository>();
         if (repo != null)

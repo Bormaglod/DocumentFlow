@@ -41,6 +41,12 @@ public partial class SelectDirectoryForm<T> : Form
         set => treeSelect.SelectedNode = GetNode(treeSelect.Nodes, value);
     }
 
+    public Guid? SelectedValue
+    {
+        get => SelectedItem?.id;
+        set => treeSelect.SelectedNode = value == null ? null : GetNode(treeSelect.Nodes, value.Value);
+    }
+
     public void AddItems(IEnumerable<T> items)
     {
         T? obj = items.FirstOrDefault();
@@ -154,6 +160,25 @@ public partial class SelectDirectoryForm<T> : Form
             }
 
             TreeNodeAdv? childNode = GetNode(node.Nodes, data);
+            if (childNode != null)
+            {
+                return childNode;
+            }
+        }
+
+        return null;
+    }
+
+    private TreeNodeAdv? GetNode(TreeNodeAdvCollection nodes, Guid id)
+    {
+        foreach (TreeNodeAdv node in nodes)
+        {
+            if (node.Tag is T t && t.id == id)
+            {
+                return node;
+            }
+
+            TreeNodeAdv? childNode = GetNode(node.Nodes, id);
             if (childNode != null)
             {
                 return childNode;

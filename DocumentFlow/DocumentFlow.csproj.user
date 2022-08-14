@@ -118,6 +118,9 @@
     <Compile Update="Dialogs\MessageChoiceForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Dialogs\OperationsPerformedForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Dialogs\PreviewReportForm.cs">
       <SubType>Form</SubType>
     </Compile>

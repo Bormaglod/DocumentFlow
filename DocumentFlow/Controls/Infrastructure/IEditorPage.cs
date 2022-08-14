@@ -10,5 +10,6 @@ namespace DocumentFlow.Controls.Infrastructure;
 public interface IEditorPage : IPage
 {
     Guid? Id { get; }
+    bool Save();
     void SetEntityParameters(Guid? id, Guid? owner_id, Guid? parent_id, bool readOnly);
 }

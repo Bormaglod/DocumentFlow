@@ -14,7 +14,6 @@ public class OperationsPerformed : AccountingDocument
 {
     private long _quantity;
 
-    public DateOnly date => document_date != null ? DateOnly.FromDateTime(document_date.Value) : DateOnly.FromDateTime(DateTime.Today);
     public Guid employee_id { get; set; }
     public Guid operation_id { get; set; }
     public Guid? replacing_material_id { get; set; }

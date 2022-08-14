@@ -42,7 +42,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(17, 15);
+            this.label2.Location = new System.Drawing.Point(16, 16);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(90, 15);
             this.label2.TabIndex = 11;
@@ -52,7 +52,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(17, 44);
+            this.label1.Location = new System.Drawing.Point(16, 44);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(60, 15);
             this.label1.TabIndex = 9;
@@ -68,7 +68,7 @@
             this.textValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textValue.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.textValue.Location = new System.Drawing.Point(113, 44);
+            this.textValue.Location = new System.Drawing.Point(112, 44);
             this.textValue.Name = "textValue";
             this.textValue.Size = new System.Drawing.Size(336, 23);
             this.textValue.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Office2016Colorful;
@@ -81,7 +81,7 @@
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.buttonCancel.Location = new System.Drawing.Point(337, 82);
+            this.buttonCancel.Location = new System.Drawing.Point(336, 78);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(112, 28);
             this.buttonCancel.TabIndex = 10;
@@ -93,7 +93,7 @@
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonOk.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.buttonOk.Location = new System.Drawing.Point(218, 82);
+            this.buttonOk.Location = new System.Drawing.Point(218, 78);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(112, 28);
             this.buttonOk.TabIndex = 8;
@@ -103,12 +103,12 @@
             // comboName
             // 
             this.comboName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.comboName.BeforeTouchSize = new System.Drawing.Size(336, 23);
+            this.comboName.BeforeTouchSize = new System.Drawing.Size(336, 21);
             this.comboName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.comboName.Location = new System.Drawing.Point(113, 12);
+            this.comboName.Location = new System.Drawing.Point(112, 16);
             this.comboName.Name = "comboName";
-            this.comboName.Size = new System.Drawing.Size(336, 23);
+            this.comboName.Size = new System.Drawing.Size(336, 21);
             this.comboName.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
             this.comboName.TabIndex = 12;
             this.comboName.ThemeName = "Office2016Colorful";
@@ -120,7 +120,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(466, 125);
+            this.ClientSize = new System.Drawing.Size(466, 118);
             this.Controls.Add(this.comboName);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);

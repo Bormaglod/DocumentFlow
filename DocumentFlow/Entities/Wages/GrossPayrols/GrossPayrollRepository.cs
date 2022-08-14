@@ -22,15 +22,15 @@ public class GrossPayrollRepository : DocumentRepository<GrossPayroll>, IGrossPa
         ExcludeField(x => x.owner_id);
     }
 
-    public void CalculateEmployeeWages(Guid gross_id, int year, short month)
+    public void CalculateEmployeeWages(Guid gross_id)
     {
         using var conn = Database.OpenConnection();
         using var transaction = conn.BeginTransaction();
 
         try
         {
-            conn.Execute("call calculate_employee_wages(:gross_id, :year, :month)",
-                     new { gross_id, year, month },
+            conn.Execute("call calculate_employee_wages(:gross_id)",
+                     new { gross_id },
                      transaction);
             transaction.Commit();
         }
@@ -41,7 +41,7 @@ public class GrossPayrollRepository : DocumentRepository<GrossPayroll>, IGrossPa
         }
     }
 
-    public void CalculateEmployeeWages(GrossPayroll grossPayroll) => CalculateEmployeeWages(grossPayroll.id, grossPayroll.billing_year, grossPayroll.billing_month);
+    public void CalculateEmployeeWages(GrossPayroll grossPayroll) => CalculateEmployeeWages(grossPayroll.id);
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
     {

@@ -8,9 +8,11 @@
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.Renderers;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Productions.Lot;
 using DocumentFlow.Entities.Productions.Performed;
+using DocumentFlow.Dialogs;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,14 +34,14 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 {
     private class EmpInfo
     {
-        public EmpInfo(Employee employee)
+        public EmpInfo(OurEmployee employee)
         {
             Employee = employee;
             Quantity = 0;
             Salary = 0;
         }
 
-        public Employee Employee { get; }
+        public OurEmployee Employee { get; }
         public long Quantity { get; set; }
         public decimal Salary { get; set; }
 
@@ -48,7 +50,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 
     private class OperationInfo
     {
-        public OperationInfo(ProductionLotOperation operation, IReadOnlyList<Employee> employees)
+        public OperationInfo(ProductionLotOperation operation, IReadOnlyList<OurEmployee> employees)
         {
             Operation = operation;
             Employees = new List<EmpInfo>(employees.Count);
@@ -284,6 +286,62 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 
     #endregion
 
+    private void AddCompleteOperations()
+    {
+        if (owner_id != null)
+        {
+            OurEmployee? emp = null;
+            OperationInfo? oper = gridContent.SelectedItem as OperationInfo;
+
+            if (oper != null)
+            {
+                var cell = gridContent.CurrentCell;
+                Match m = Regex.Match(cell.Column.MappingName, @"^Employees\[(\d+)\].+$");
+                if (m.Success)
+                {
+                    if (int.TryParse(m.Groups[1].Value, out int empIndex))
+                    {
+                        emp = oper.Employees[empIndex].Employee;
+                    }
+                }
+            }
+
+            OperationsPerformedForm form = new(owner_id.Value)
+            {
+                Operation = oper?.Operation,
+                Employee = emp
+            };
+
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                var op = new OperationsPerformed()
+                {
+                    owner_id = owner_id,
+                    employee_id = form.Employee!.id,
+                    operation_id = form.Operation!.id,
+                    replacing_material_id = form.ReplacingMaterial?.id,
+                    quantity = form.Quantity
+                };
+
+                var repo = Services.Provider.GetService<IOperationsPerformedRepository>();
+                if (repo != null)
+                {
+                    try
+                    {
+                        op = repo.Add(op);
+                        repo.Accept(op);
+
+                        CurrentApplicationContext.Context.App.SendNotify("operations_performed", op, Data.MessageAction.Add);
+                    }
+                    catch (RepositoryException e)
+                    {
+                        MessageBox.Show(e.Message, "Ощибка", MessageBoxButtons.OK);
+                    }
+                }
+            }
+        }
+    }
+
     private static NumberFormatInfo GetNumberFormatInfo(int decimalDigits = 0)
     {
         NumberFormatInfo numberFormat = (NumberFormatInfo)Application.CurrentCulture.NumberFormat.Clone();
@@ -333,4 +391,8 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
             }
         }
     }
+
+    private void GridContent_CellDoubleClick(object sender, CellClickEventArgs e) => AddCompleteOperations();
+
+    private void MenuCreateOperation_Click(object sender, EventArgs e) => AddCompleteOperations();
 }

@@ -5,6 +5,8 @@
 // Date: 04.11.2021
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Infrastructure;
+
 namespace DocumentFlow.Controls.Core;
 
 public partial class BaseControl : UserControl
@@ -24,6 +26,8 @@ public partial class BaseControl : UserControl
     public string PropertyName { get; set; }
 
     public bool DefaultAsNull { get; set; }
+
+    public IEditorPage? EditorPage { get; set; }
 
     protected override void SetVisibleCore(bool value)
     {

@@ -263,3 +263,8 @@ packages
 /Database
 /DocumentFlow/Properties/PublishProfiles
 /DocumentFlow/password.txt
+/DocumentFlow.Export
+/DocumentFlow.ReportExport
+/DocumentFlow.Setup/DocumentFlow.Setup-cache
+/DocumentFlow.Setup/DocumentFlow.Setup-SetupFiles
+/DocumentFlow.Setup/DocumentFlow.Setup.back.aip

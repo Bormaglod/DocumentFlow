@@ -9,7 +9,6 @@ using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Employees;
-using DocumentFlow.Entities.Productions.Lot;
 
 using SqlKata;
 using SqlKata.Execution;
@@ -22,7 +21,7 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
     {
     }
 
-    public IReadOnlyList<Employee> GetWorkedEmployes(Guid? lot_id)
+    public IReadOnlyList<OurEmployee> GetWorkedEmployes(Guid? lot_id)
     {
         if (lot_id == null)
         {
@@ -33,9 +32,9 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
         var query = GetBaseQuery(conn)
             .Distinct()
             .Select("e.id", "e.item_name")
-            .Join("employee as e", "e.id", "operations_performed.employee_id")
+            .Join("our_employee as e", "e.id", "operations_performed.employee_id")
             .Where("operations_performed.owner_id", lot_id);
-        return query.Get<Employee>().ToList();
+        return query.Get<OurEmployee>().ToList();
     }
 
     public IReadOnlyList<OperationsPerformed> GetSummary(Guid lot_id)
@@ -49,7 +48,7 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
             .Select("e.item_name AS employee_name")
             .SelectRaw("sum(operations_performed.quantity) as quantity")
             .SelectRaw("sum(operations_performed.salary) as salary")
-            .Join("employee as e", "e.id", "operations_performed.employee_id")
+            .Join("our_employee as e", "e.id", "operations_performed.employee_id")
             .Join("calculation_operation as co", "co.id", "operations_performed.operation_id")
             .Join("operation as op", "op.id", "co.item_id")
             .Where("operations_performed.owner_id", lot_id)
@@ -76,7 +75,7 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
             .Join("production_order as po", "po.id", "pl.owner_id")
             .Join("calculation as c", "c.id", "pl.calculation_id")
             .Join("goods as g", "g.id", "c.owner_id")
-            .Join("employee as e", "e.id", "operations_performed.employee_id")
+            .Join("our_employee as e", "e.id", "operations_performed.employee_id")
             .Join("calculation_operation as co", "co.id", "operations_performed.operation_id")
             .Join("operation as op", "op.id", "co.item_id")
             .LeftJoin("material as um", "um.id", "co.material_id")

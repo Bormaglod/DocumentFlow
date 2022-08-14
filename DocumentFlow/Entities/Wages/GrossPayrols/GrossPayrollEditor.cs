@@ -22,9 +22,18 @@ public class GrossPayrollEditor : BasePayrollEditor<GrossPayroll, GrossPayrollEm
                 return;
             }
 
-            if (Document.id == default)
+            string question1 = "Документ не записан, для заполнения таблицы документ должен быть записан. Записать?";
+            string question2 = "Для заполнения таблицы документ должен быть записан. Записать?";
+
+            string question = Document.id == default ?
+                question1 :
+                (Document.billing_year != BillingYear || Document.billing_month != BilingMonth ? 
+                    question2 : 
+                    string.Empty);
+
+            if (!string.IsNullOrEmpty(question))
             {
-                if (MessageBox.Show("Документ не записан, для заполнения таблицы документ должен быть записан. Записать?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                if (MessageBox.Show(question, "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                 {
                     return;
                 }
@@ -36,7 +45,7 @@ public class GrossPayrollEditor : BasePayrollEditor<GrossPayroll, GrossPayrollEm
             }
 
             var repo = Services.Provider.GetService<IGrossPayrollRepository>();
-            repo!.CalculateEmployeeWages(Document.id, BillingYear, BilingMonth);
+            repo!.CalculateEmployeeWages(Document.id);
 
             EmployeeRows.RefreshDataSource();
         });
