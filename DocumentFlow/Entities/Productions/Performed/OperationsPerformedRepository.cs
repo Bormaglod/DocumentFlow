@@ -8,10 +8,13 @@
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Employees;
 
 using SqlKata;
 using SqlKata.Execution;
+
+using System.Data;
 
 namespace DocumentFlow.Entities.Productions.Performed;
 
@@ -33,28 +36,24 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
             .Distinct()
             .Select("e.id", "e.item_name")
             .Join("our_employee as e", "e.id", "operations_performed.employee_id")
-            .Where("operations_performed.owner_id", lot_id);
+            .Where("operations_performed.owner_id", lot_id)
+            .WhereTrue("operations_performed.carried_out");
         return query.Get<OurEmployee>().ToList();
     }
 
     public IReadOnlyList<OperationsPerformed> GetSummary(Guid lot_id)
     {
         using var conn = Database.OpenConnection();
-        var query = GetBaseQuery(conn)
-            .Select("operations_performed.operation_id")
-            .Select("co.code as operation_code")
-            .SelectRaw("case when co.item_name is null then op.item_name else co.item_name end AS operation_name")
-            .Select("operations_performed.employee_id")
-            .Select("e.item_name AS employee_name")
-            .SelectRaw("sum(operations_performed.quantity) as quantity")
-            .SelectRaw("sum(operations_performed.salary) as salary")
-            .Join("our_employee as e", "e.id", "operations_performed.employee_id")
-            .Join("calculation_operation as co", "co.id", "operations_performed.operation_id")
-            .Join("operation as op", "op.id", "co.item_id")
-            .Where("operations_performed.owner_id", lot_id)
-            .WhereTrue("operations_performed.carried_out")
-            .GroupBy("operation_id", "co.code", "operation_name", "employee_id", "employee_name");
-        return query.Get<OperationsPerformed>().ToList();
+        return QuerySummary(conn, lot_id).Get<OperationsPerformed>().ToList();
+    }
+
+    public OperationsPerformed? GetSummary(Guid lot_id, CalculationOperation operation, OurEmployee employee)
+    {
+        using var conn = Database.OpenConnection();
+        return QuerySummary(conn, lot_id)
+            .Where("operations_performed.operation_id", operation.id)
+            .Where("operations_performed.employee_id", employee.id)
+            .FirstOrDefault<OperationsPerformed>();
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
@@ -80,5 +79,23 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
             .Join("operation as op", "op.id", "co.item_id")
             .LeftJoin("material as um", "um.id", "co.material_id")
             .LeftJoin("material as rm", "rm.id", "operations_performed.replacing_material_id");
+    }
+
+    private Query QuerySummary(IDbConnection conn, Guid lot_id)
+    {
+        return GetBaseQuery(conn)
+            .Select("operations_performed.operation_id")
+            .Select("co.code as operation_code")
+            .SelectRaw("case when co.item_name is null then op.item_name else co.item_name end AS operation_name")
+            .Select("operations_performed.employee_id")
+            .Select("e.item_name AS employee_name")
+            .SelectRaw("sum(operations_performed.quantity) as quantity")
+            .SelectRaw("sum(operations_performed.salary) as salary")
+            .Join("our_employee as e", "e.id", "operations_performed.employee_id")
+            .Join("calculation_operation as co", "co.id", "operations_performed.operation_id")
+            .Join("operation as op", "op.id", "co.item_id")
+            .Where("operations_performed.owner_id", lot_id)
+            .WhereTrue("operations_performed.carried_out")
+            .GroupBy("operation_id", "co.code", "operation_name", "employee_id", "employee_name");
     }
 }

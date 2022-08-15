@@ -12,8 +12,7 @@ namespace DocumentFlow.Data.Infrastructure;
 public interface IDocumentRepository<T> : IOwnedRepository<Guid, T>
     where T : IIdentifier<Guid>
 {
-    void Accept(Guid id);
-    void Accept(Guid id, IDbTransaction transaction);
+    T AddAndAccept(T entity);
     void Accept(T entity);
     void Accept(T entity, IDbTransaction transaction);
     void CancelAcceptance(Guid id);

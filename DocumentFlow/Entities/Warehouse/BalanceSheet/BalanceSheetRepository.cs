@@ -36,10 +36,10 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
 
             var range_balance = new Query($"balance_{name}")
                 .Select("reference_id as id")
-                .SelectRaw("sum(iif(operation_summa > 0, amount, 0::numeric)) as income_amount")
-                .SelectRaw("sum(iif(operation_summa > 0, operation_summa, 0::numeric)) as income_summa")
-                .SelectRaw("sum(iif(operation_summa < 0, amount, 0::numeric)) as expense_amount")
-                .SelectRaw("sum(iif(operation_summa < 0, abs(operation_summa), 0::numeric)) as expense_summa")
+                .SelectRaw("sum(iif(amount > 0, amount, 0::numeric)) as income_amount")
+                .SelectRaw("sum(iif(amount > 0, operation_summa, 0::numeric)) as income_summa")
+                .SelectRaw("sum(iif(amount < 0, abs(amount), 0::numeric)) as expense_amount")
+                .SelectRaw("sum(iif(amount < 0, operation_summa, 0::numeric)) as expense_summa")
                 .WhereBetween("document_date", f.DateFrom, f.DateTo)
                 .GroupBy("reference_id");
 

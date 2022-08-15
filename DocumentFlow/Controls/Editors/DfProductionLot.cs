@@ -9,10 +9,10 @@ using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.Renderers;
 using DocumentFlow.Data.Core;
+using DocumentFlow.Dialogs;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Productions.Lot;
 using DocumentFlow.Entities.Productions.Performed;
-using DocumentFlow.Dialogs;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,68 +23,110 @@ using Syncfusion.WinForms.DataGrid.Events;
 using Syncfusion.WinForms.Input.Enums;
 
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace DocumentFlow.Controls.Editors;
 
 public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSourceControl
 {
-    private class EmpInfo
+    private class BaseEmpInfo : INotifyPropertyChanged
     {
-        public EmpInfo(OurEmployee employee)
+        private long quantity;
+        private decimal salary;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public BaseEmpInfo(long quantity, decimal salary)
+        {
+            this.quantity = quantity;
+            this.salary = salary;
+        }
+
+        public long Quantity
+        {
+            get => quantity;
+            set
+            {
+                quantity = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public decimal Salary
+        {
+            get => salary;
+
+            set
+            {
+                salary = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private class EmpInfo : BaseEmpInfo
+    {
+        public EmpInfo(OurEmployee employee) : base(0, 0)
         {
             Employee = employee;
-            Quantity = 0;
-            Salary = 0;
         }
 
         public OurEmployee Employee { get; }
-        public long Quantity { get; set; }
-        public decimal Salary { get; set; }
-
         public override string ToString() => Employee?.item_name ?? string.Empty;
     }
 
-    private class OperationInfo
+    private class OperationInfo : BaseEmpInfo
     {
-        public OperationInfo(ProductionLotOperation operation, IReadOnlyList<OurEmployee> employees)
+        public OperationInfo(ProductionLotOperation operation, IReadOnlyList<OurEmployee> employees) : base(0, 0)
         {
             Operation = operation;
-            Employees = new List<EmpInfo>(employees.Count);
+            Employees = new List<EmpInfo>();
+
             foreach (var item in employees)
             {
-                Employees.Add(new EmpInfo(item));
+                AddEmployee(item);
             }
         }
 
         public ProductionLotOperation Operation { get; }
         public IList<EmpInfo> Employees { get; }
-        public long Quantity { get; set; }
-        public decimal Salary { get; set; }
+
+        public void AddEmployee(OurEmployee emp) => Employees.Add(new EmpInfo(emp));
 
         public void SetEmployeeData(OperationsPerformed operation)
         {
-            var emp = Employees.FirstOrDefault(x => x.Employee.id == operation.employee_id);
-            if (emp != null)
+            for (int i = 0; i < Employees.Count; i++)
             {
-                emp.Quantity = operation.quantity;
-                emp.Salary = operation.salary;
+                if (Employees[i].Employee.id == operation.employee_id)
+                {
+                    Employees[i].Quantity = operation.quantity;
+                    Employees[i].Salary = operation.salary;
+                    NotifyPropertyChanged($"Employees[{i}].Quantity");
+                    break;
+                }
             }
         }
 
         public void UpdateSummaryValues()
         {
-            Quantity = 0;
-            Salary = 0;
+            long quantity = 0;
+            decimal salary = 0;
 
             foreach (var emp in Employees)
             {
-                Quantity += emp.Quantity;
-                Salary += emp.Salary;
+                quantity += emp.Quantity;
+                salary += emp.Salary;
             }
+
+            Quantity = quantity;
+            Salary = salary;
         }
     }
 
@@ -110,6 +152,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 
 
     private Guid? owner_id;
+    private List<OurEmployee> employees = new();
 
     public DfProductionLot() : base(string.Empty)
     {
@@ -142,17 +185,17 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                 return;
             }
 
-            var operations = new List<OperationInfo>();
+            var operations = new ObservableCollection<OperationInfo>();
 
             // Список занятых в изготовлении партии
-            var emps = repoPerf.GetWorkedEmployes(owner_id);
+            employees = new List<OurEmployee>(repoPerf.GetWorkedEmployes(owner_id));
 
             // Список всех операций необходимых для изготовления изделия из партии
             var ops = repoLot.GetOperations(owner_id.Value);
 
-            foreach (var item in ops)
+            foreach (var item in ops.OrderBy(x => x.code))
             {
-                var opInfo = new OperationInfo(item, emps);
+                var opInfo = new OperationInfo(item, employees);
                 operations.Add(opInfo);
             }
 
@@ -190,45 +233,9 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 
             gridContent.TableSummaryRows.Add(tableSummaryRow);
 
-            for (int i = 0; i < emps.Count; i++)
+            for (int i = 0; i < employees.Count; i++)
             {
-                var qColName = $"Employees[{i}].Quantity";
-                var sColName = $"Employees[{i}].Salary";
-
-                gridContent.Columns.Add(new GridNumericColumn()
-                {
-                    MappingName = qColName,
-                    HeaderText = "Кол-во",
-                    NumberFormatInfo = GetNumberFormatInfo()
-                });
-
-                var sColumn = new GridNumericColumn()
-                {
-                    MappingName = sColName,
-                    HeaderText = "Зарплата",
-                    FormatMode = FormatMode.Currency
-                };
-
-                sColumn.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
-
-                gridContent.Columns.Add(sColumn);
-
-                srow.StackedColumns.Add(new StackedColumn()
-                {
-                    ChildColumns = $"{qColName},{sColName}",
-                    HeaderText = emps[i].ToString()
-                });
-
-                var empSummaryColumn = new GridSummaryColumn
-                {
-                    SummaryType = SummaryType.Custom,
-                    Format = "{ComplexSum:c}",
-                    MappingName = sColName,
-                    Name = sColName,
-                    CustomAggregate = new ComplexSummaryAggregate()
-                };
-
-                tableSummaryRow.SummaryColumns.Add(empSummaryColumn);
+                CreateColumnEmployee(i, srow, tableSummaryRow);
             }
 
             gridContent.Columns.Add(new GridNumericColumn()
@@ -269,7 +276,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 
             tableSummaryRow.SummaryColumns.Add(summaryColumn);
 
-            gridContent.DataSource = operations.Count > 0 ? operations.OrderBy(x => x.Operation.code) : (object?)null;
+            gridContent.DataSource = operations.Count > 0 ? operations : (object?)null;
         }
     }
 
@@ -312,13 +319,13 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                 Employee = emp
             };
 
-            if (form.ShowDialog() == DialogResult.OK)
+            if (form.ShowDialog() == DialogResult.OK && form.Employee != null && form.Operation != null)
             {
                 var op = new OperationsPerformed()
                 {
                     owner_id = owner_id,
-                    employee_id = form.Employee!.id,
-                    operation_id = form.Operation!.id,
+                    employee_id = form.Employee.id,
+                    operation_id = form.Operation.id,
                     replacing_material_id = form.ReplacingMaterial?.id,
                     quantity = form.Quantity
                 };
@@ -328,10 +335,40 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                 {
                     try
                     {
-                        op = repo.Add(op);
-                        repo.Accept(op);
+                        // добавим и проведем выполнение операции сотрудником
+                        op = repo.AddAndAccept(op);
 
                         CurrentApplicationContext.Context.App.SendNotify("operations_performed", op, Data.MessageAction.Add);
+
+                        // поучим сводную информацию - количество выполненных операций указанным сотрудником
+                        var summary = repo.GetSummary(owner_id.Value, form.Operation, form.Employee);
+                        if (summary != null && gridContent.DataSource is IList<OperationInfo> list)
+                        {
+                            // если сотрудник ещё ны был задействован для выполнения данной операции,
+                            // то его добавляем в список работников, добавляем его во все записи операций и
+                            // добавляем колонку с сотрудником в таблицу
+                            if (employees.FirstOrDefault(x => x.id == op.employee_id) == null)
+                            {
+                                employees.Add(form.Employee);
+                                foreach (var item in list)
+                                {
+                                    item.AddEmployee(form.Employee);
+                                }
+
+                                CreateColumnEmployee(employees.Count - 1, insertToEnd: true);
+                            }
+
+                            // обновим информацию о сотруднике
+                            var o = list.FirstOrDefault(x => x.Operation.id == summary.operation_id);
+                            if (o != null)
+                            {
+                                o.SetEmployeeData(summary);
+                                o.UpdateSummaryValues();
+
+                                // для обновления итоговой строки, необходимо сделать это...
+                                gridContent.View.Refresh();
+                            }
+                        }
                     }
                     catch (RepositoryException e)
                     {
@@ -340,6 +377,66 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                 }
             }
         }
+    }
+
+    private void CreateColumnEmployee(int indexEmployee, StackedHeaderRow? srow = null, GridTableSummaryRow? tableSummaryRow = null, bool insertToEnd = false)
+    {
+        var qColName = $"Employees[{indexEmployee}].Quantity";
+        var sColName = $"Employees[{indexEmployee}].Salary";
+
+        var qColumn = new GridNumericColumn()
+        {
+            MappingName = qColName,
+            HeaderText = "Кол-во",
+            NumberFormatInfo = GetNumberFormatInfo()
+        };
+
+        var sColumn = new GridNumericColumn()
+        {
+            MappingName = sColName,
+            HeaderText = "Зарплата",
+            FormatMode = FormatMode.Currency
+        };
+
+        sColumn.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
+
+        if (insertToEnd)
+        {
+            gridContent.Columns.Insert((indexEmployee + 1) * 2, qColumn);
+            gridContent.Columns.Insert((indexEmployee + 1) * 2 + 1, sColumn);
+        }
+        else
+        {
+            gridContent.Columns.Add(qColumn);
+            gridContent.Columns.Add(sColumn);
+        }
+
+        if (srow == null)
+        {
+            srow = gridContent.StackedHeaderRows[0];
+        }
+
+        srow.StackedColumns.Add(new StackedColumn()
+        {
+            ChildColumns = $"{qColName},{sColName}",
+            HeaderText = employees[indexEmployee].ToString()
+        });
+
+        var empSummaryColumn = new GridSummaryColumn
+        {
+            SummaryType = SummaryType.Custom,
+            Format = "{ComplexSum:c}",
+            MappingName = sColName,
+            Name = sColName,
+            CustomAggregate = new ComplexSummaryAggregate()
+        };
+
+        if (tableSummaryRow == null)
+        {
+            tableSummaryRow = gridContent.TableSummaryRows[0];
+        }
+
+        tableSummaryRow.SummaryColumns.Add(empSummaryColumn);
     }
 
     private static NumberFormatInfo GetNumberFormatInfo(int decimalDigits = 0)

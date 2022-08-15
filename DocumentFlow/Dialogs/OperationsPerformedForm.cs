@@ -89,7 +89,7 @@ public partial class OperationsPerformedForm : Form
         quantity.Select();
     }
 
-    public CalculationItem? Operation
+    public CalculationOperation? Operation
     {
         get => operations.SelectedItem;
         set => operations.Value = value?.id;

@@ -16,23 +16,12 @@ public abstract class DocumentRepository<T> : OwnedRepository<Guid, T>, IDocumen
 {
     protected DocumentRepository(IDatabase database) : base(database) { }
 
-    public void Accept(Guid id)
+    public T AddAndAccept(T entity)
     {
-        using var conn = Database.OpenConnection();
-        using var transaction = conn.BeginTransaction();
-        try
-        {
-            Accept(id, transaction);
-            transaction.Commit();
-        }
-        catch (Exception e)
-        {
-            transaction.Rollback();
-            throw new RepositoryException(ExceptionHelper.Message(e), e);
-        }
+        var id = Create(entity);
+        Accept(id);
+        return GetById(id);
     }
-
-    public void Accept(Guid id, IDbTransaction transaction) => ExecuteSystemOperation(id, SystemOperation.Accept, true, transaction);
 
     public void Accept(T entity) => Accept(entity.id);
 
@@ -59,4 +48,22 @@ public abstract class DocumentRepository<T> : OwnedRepository<Guid, T>, IDocumen
     public void CancelAcceptance(T entity) => CancelAcceptance(entity.id);
 
     public void CancelAcceptance(T entity, IDbTransaction transaction) => CancelAcceptance(entity.id, transaction);
+
+    private void Accept(Guid id)
+    {
+        using var conn = Database.OpenConnection();
+        using var transaction = conn.BeginTransaction();
+        try
+        {
+            Accept(id, transaction);
+            transaction.Commit();
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            throw new RepositoryException(ExceptionHelper.Message(e), e);
+        }
+    }
+
+    private void Accept(Guid id, IDbTransaction transaction) => ExecuteSystemOperation(id, SystemOperation.Accept, true, transaction);
 }

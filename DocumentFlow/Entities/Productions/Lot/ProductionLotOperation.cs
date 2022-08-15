@@ -9,7 +9,7 @@ using DocumentFlow.Entities.Calculations;
 
 namespace DocumentFlow.Entities.Productions.Lot;
 
-public class ProductionLotOperation : CalculationItem
+public class ProductionLotOperation : CalculationOperation
 {
     public decimal quantity_by_lot { get; protected set; }
 }

@@ -182,13 +182,11 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
     public T Add(T entity, IDbTransaction transaction)
     {
-        var sql = $"insert into {GetTableName(entity, Function.Other)} ({GetOperationFields(DataOperation.Add)}) values ({GetOperationValues(DataOperation.Add)}) returning id";
+        var id = Create(entity, transaction);
 
         var conn = transaction.Connection;
         if (conn != null)
         {
-            Key id = conn.QuerySingle<Key>(sql, entity, transaction: transaction);
-
             var query = GetDefaultQuery(GetBaseQuery(conn));
             query = query.Where($"{GetTableName(query, entity, Function.Get)}.id", id);
 
@@ -505,6 +503,35 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
         }
 
         return query.Get<T>().ToList();
+    }
+
+    protected Key Create(T entity)
+    {
+        using var conn = Database.OpenConnection();
+        using var transaction = conn.BeginTransaction();
+        try
+        {
+            Key id = Create(entity, transaction);
+            transaction.Commit();
+            return id;
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            throw new RepositoryException(ExceptionHelper.Message(e), e);
+        }
+    }
+
+    protected Key Create(T entity, IDbTransaction transaction)
+    {
+        var sql = $"insert into {GetTableName(entity, Function.Other)} ({GetOperationFields(DataOperation.Add)}) values ({GetOperationValues(DataOperation.Add)}) returning id";
+        var conn = transaction.Connection;
+        if (conn != null)
+        {
+            return conn.QuerySingle<Key>(sql, entity, transaction: transaction);
+        }
+
+        throw new NullReferenceException(nameof(conn));
     }
 
     private string GetTableName(Query? query, T? entity, Function func)

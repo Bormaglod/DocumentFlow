@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Employees;
 
 namespace DocumentFlow.Entities.Productions.Performed;
@@ -14,4 +15,5 @@ public interface IOperationsPerformedRepository : IDocumentRepository<Operations
 {
     IReadOnlyList<OurEmployee> GetWorkedEmployes(Guid? lot_id);
     IReadOnlyList<OperationsPerformed> GetSummary(Guid lot_id);
+    OperationsPerformed? GetSummary(Guid lot_id, CalculationOperation operation, OurEmployee employee);
 }
