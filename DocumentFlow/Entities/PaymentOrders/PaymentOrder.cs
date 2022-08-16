@@ -19,13 +19,13 @@ public class PaymentOrder : AccountingDocument
     public Guid? contractor_id { get; set; }
     public string? contractor_name { get; protected set; }
     public string? payment_number { get; set; }
-    public DateTime date_operation { get; set; }
+    public DateTime date_operation { get; set; } = DateTime.Now;
     public decimal transaction_amount { get; set; }
     public decimal? expense { get; protected set; }
     public decimal? income { get; protected set; }
 
     [EnumType("payment_direction")]
-    public string? direction { get; set; }
+    public string direction { get; set; } = "Expense";
 
     public PaymentDirection PaymentDirection
     {
@@ -33,7 +33,7 @@ public class PaymentOrder : AccountingDocument
         protected set { direction = value.ToString().Underscore(); }
     }
 
-    public static Dictionary<PaymentDirection, string> Directions = new()
+    public readonly static Dictionary<PaymentDirection, string> Directions = new()
     {
         [PaymentDirection.Income] = "Приход",
         [PaymentDirection.Expense] = "Расход"

@@ -23,7 +23,7 @@ public class BalanceContractorRepository : OwnedRepository<Guid, BalanceContract
             .Select("balance_contractor.*")
             .SelectRaw("case when [amount] > 0 then [operation_summa] else null end as [contractor_debt]")
             .SelectRaw("case when [amount] < 0 then [operation_summa] else null end as [organization_debt]")
-            .SelectRaw("sum([operation_summa] * abs([amount])) over (order by [document_date], [document_number]) as [debt]")
+            .SelectRaw("sum([operation_summa] * sign([amount])) over (order by [document_date], [document_number]) as [debt]")
             .Select("dt.code as document_type_code")
             .Select("dt.document_name as document_type_name")
             .Join("document_type as dt", "dt.id", "document_type_id");

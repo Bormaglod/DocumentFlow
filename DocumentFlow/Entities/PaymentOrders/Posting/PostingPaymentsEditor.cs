@@ -25,7 +25,12 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
 
     public PostingPaymentsEditor(IPostingPaymentsRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        document = new DfDocumentSelectBox<DebtDocument>("document_id", "Документ", 150, 400) { Required = true };
+        document = new DfDocumentSelectBox<DebtDocument>("document_id", "Документ", 150, 400)
+        {
+            Required = true,
+            OpenAction = (t) => pageManager.ShowEditor(t.EditorType, t.id)
+        };
+
         var contractor = new DfTextBox("contractor_name", "Контрагент", 150, 400) { Enabled = false };
         var amount = new DfCurrencyTextBox("transaction_amount", "Сумма операции", 150, 200) { DefaultAsNull = false };
 
@@ -45,7 +50,7 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
                         .WhereTrue("purchase_request.carried_out")
                         .WhereFalse("purchase_request.deleted")
                         .Where("contractor_id", p.contractor_id))
-                        .Select(d => new DebtDocument(d, "purchase", "Заявка на расход") 
+                        .Select(d => new DebtDocument(d, "purchase", "Заявка на расход", typeof(IPurchaseRequestEditor)) 
                         {
                             contractor_name = d.contractor_name,
                             full_cost = d.full_cost,
@@ -57,7 +62,7 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
                         .WhereTrue("waybill_receipt.carried_out")
                         .WhereFalse("waybill_receipt.deleted")
                         .Where("contractor_id", p.contractor_id))
-                        .Select(d => new DebtDocument(d, "receipt", "Поступление")
+                        .Select(d => new DebtDocument(d, "receipt", "Поступление", typeof(IWaybillReceiptEditor))
                         {
                             contractor_name = d.contractor_name,
                             full_cost = d.full_cost,

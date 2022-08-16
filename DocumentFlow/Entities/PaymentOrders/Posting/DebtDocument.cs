@@ -11,11 +11,12 @@ namespace DocumentFlow.Entities.PaymentOrders.Posting;
 
 public class DebtDocument : IAccountingDocument
 {
-    public DebtDocument(IAccountingDocument document, string tableName, string documentName) => (Document, TableName, DocumentName) = (document, tableName, documentName);
+    public DebtDocument(IAccountingDocument document, string tableName, string documentName, Type editorType) => (Document, TableName, DocumentName, EditorType) = (document, tableName, documentName, editorType);
 
     public IAccountingDocument Document { get; }
     public string TableName { get; }
     public string DocumentName { get; }
+    public Type EditorType { get; }
     public Guid organization_id => Document.organization_id;
     public string? organization_name => Document.organization_name;
     public DateTime? document_date { get => Document.document_date; set => Document.document_date = value; }

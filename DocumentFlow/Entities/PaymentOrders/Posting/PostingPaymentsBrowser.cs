@@ -33,7 +33,7 @@ public class PostingPaymentsBrowser : Browser<PostingPayments>, IPostingPayments
             .AsSummary(transaction_amount, SummaryColumnFormat.Currency);
 
         contractor.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
-        document_name.AutoSizeColumnsMode = AutoSizeColumnsMode.AllCellsExceptHeader;
+        document_name.AutoSizeColumnsMode = AutoSizeColumnsMode.AllCells;
 
         AddColumns(new GridColumn[] { id, date, number, contractor, document_name, transaction_amount });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
