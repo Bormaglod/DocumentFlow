@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.01.2022
+//
+// Версия 2022.8.17
+//  - исправлена процедура ContractValueChanged для корректного скрытия
+//    или отображения полей содержащих данные документов 1с
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -86,7 +91,8 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
             Header = "Докуметы 1С",
             Height = 144,
             Dock = DockStyle.Bottom,
-            Padding = new Padding(0, 10, 0, 0)
+            Padding = new Padding(0, 10, 0, 0),
+            Visible = false
         };
 
         doc1c.AddControls(new Control[] { waybill_panel, invoice_panel, upd_panel });
@@ -140,6 +146,9 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
                     break;
                 case "product_name":
                     args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
+                    break;
+                case "code":
+                    args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.AllCells;
                     break;
                 case "amount":
                     args.Column.Width = 100;
@@ -222,8 +231,7 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
         bool taxPayer = false;
         if (contract.SelectedItem == null)
         {
-            upd_panel.Visible = false;
-            invoice_panel.Visible = false;
+            doc1c.Visible = false;
         }
         else
         {
@@ -237,19 +245,21 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
             {
                 invoice_panel.Visible = false;
             }
-        }
 
-        int height = 80;
-        if (taxPayer)
-        {
-            height += 32;
-            if (!upd.ToggleValue)
+            int height = 80;
+            if (taxPayer)
             {
                 height += 32;
+                if (!upd.ToggleValue)
+                {
+                    height += 32;
+                }
             }
-        }
 
-        doc1c.Height = height;
+            doc1c.Height = height;
+
+            doc1c.Visible = taxPayer || contract.SelectedItem.ContractorType == ContractorType.Seller;
+        }
     }
 
     private void UpdValueChanged(object? sender, EventArgs e)

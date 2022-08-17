@@ -3,6 +3,9 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.07.2022
+//
+// Версия 2022.8.17
+//  - рефакторинг
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -20,11 +23,7 @@ public class CurrentApplicationContext : ApplicationContext
     {
         get
         {
-            if (context == null)
-            {
-                context = new();
-            }
-
+            context ??= new();
             return context;
         }
     }
@@ -58,8 +57,5 @@ public class CurrentApplicationContext : ApplicationContext
         mainForm.Show();
     }
 
-    private void FormClosed(object? sender, FormClosedEventArgs e)
-    {
-        ExitThread();
-    }
+    private void FormClosed(object? sender, FormClosedEventArgs e) => ExitThread();
 }

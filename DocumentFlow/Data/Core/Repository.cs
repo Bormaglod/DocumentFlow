@@ -3,6 +3,15 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 26.12.2021
+//
+// Версия 2022.08.17
+//  - удалено перечисление Function
+//  - если объект реализует интерфейс IDiscriminator, то имя таблицы 
+//    будет составляться с учётом данных этого интерфейса (только для
+//    операций добавления и создания копии).
+//  - операции обновления, удаления игнорируют интерфейс IDiscriminator
+//    у объектов
+//
 //-----------------------------------------------------------------------
 
 using Dapper;
@@ -33,8 +42,6 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     private readonly List<string> update = new();
     private readonly List<string> copy = new();
     private readonly Dictionary<string, string> enums = new();
-
-    private enum Function { Get, Other }
 
     protected Repository(IDatabase database)
     {
@@ -119,13 +126,13 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     public IReadOnlyList<T> GetAll(Func<Query, Query>? callback = null)
     {
         using var conn = Database.OpenConnection();
-        return Repository<Key, T>.Get(GetBaseQuery(conn), callback);
+        return Get(GetBaseQuery(conn), callback);
     }
 
     public IReadOnlyList<T> GetAllDefault(IFilter? filter = null, Func<Query, Query>? callback = null)
     {
         using var conn = Database.OpenConnection();
-        return Repository<Key, T>.Get(GetQueryFilters(GetDefaultQuery(conn, filter), filter), callback);
+        return Get(GetDefaultQuery(conn, filter), callback);
     }
 
     public IReadOnlyList<T> GetAllValid(Func<Query, Query>? callback = null)
@@ -134,7 +141,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
         var query = GetBaseQuery(conn);
 
-        return Repository<Key, T>.Get(query.WhereFalse($"{GetTableName(query)}.deleted"), callback);
+        return Get(query.WhereFalse($"{GetTableName(query)}.deleted"), callback);
     }
 
     public T Add()
@@ -156,7 +163,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
     public T Add(IDbTransaction transaction)
     {
-        var sql = $"insert into {Repository<Key, T>.GetTableName()} default values returning id";
+        var sql = $"insert into {GetTableName()} default values returning id";
 
         var conn = transaction.Connection;
         Key id = conn.QuerySingle<Key>(sql, transaction: transaction);
@@ -187,12 +194,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
         var conn = transaction.Connection;
         if (conn != null)
         {
-            var query = GetDefaultQuery(GetBaseQuery(conn));
-            query = query.Where($"{GetTableName(query, entity, Function.Get)}.id", id);
-
-            var factory = new QueryFactory(conn, new PostgresCompiler());
-            var result = factory.Compiler.Compile(query);
-            return conn.QuerySingle<T>(result.ToString(), transaction: transaction);
+            return GetById(id, conn);
         }
 
         throw new NullReferenceException(nameof(conn));
@@ -217,19 +219,13 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
     public T CopyFrom(T original, IDbTransaction transaction)
     {
-        var sql = $"insert into {GetTableName(original, Function.Other)} ({GetOperationFields(DataOperation.Copy)}) values ({GetOperationValues(DataOperation.Copy)}) returning id";
+        var sql = $"insert into {GetTableName(original)} ({GetOperationFields(DataOperation.Copy)}) values ({GetOperationValues(DataOperation.Copy)}) returning id";
 
         var conn = transaction.Connection;
         if (conn != null)
         {
             Key id = conn.QuerySingle<Key>(sql, original, transaction: transaction);
-
-            var query = GetDefaultQuery(GetBaseQuery(conn));
-            query = query.Where($"{GetTableName(query, original, Function.Get)}.id", id);
-
-            var factory = new QueryFactory(conn, new PostgresCompiler());
-            var result = factory.Compiler.Compile(query);
-            T copy = conn.QuerySingle<T>(result.ToString(), transaction: transaction);
+            T copy = GetById(id, conn);
 
             CopyChilds(original, copy, transaction);
 
@@ -257,7 +253,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
     public void Update(T entity, IDbTransaction transaction)
     {
-        var sql = $"update {GetTableName(entity, Function.Other)} set {GetOperationValues(DataOperation.Update)} where id = :id";
+        var sql = $"update {GetTableName()} set {GetOperationValues(DataOperation.Update)} where id = :id";
 
         var conn = transaction.Connection;
         conn.Execute(sql, entity, transaction: transaction);
@@ -282,7 +278,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     public void Delete(Key id, IDbTransaction transaction)
     {
         var conn = transaction.Connection;
-        conn.Execute($"update {Repository<Key, T>.GetTableName()} set deleted = true where id = :id", new { id }, transaction);
+        conn.Execute($"update {GetTableName()} set deleted = true where id = :id", new { id }, transaction);
     }
 
     public void Delete(T entity) => Delete(entity.id);
@@ -308,7 +304,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     public void Undelete(Key id, IDbTransaction transaction)
     {
         var conn = transaction.Connection;
-        conn.Execute($"update {Repository<Key, T>.GetTableName()} set deleted = false where id = :id", new { id }, transaction);
+        conn.Execute($"update {GetTableName()} set deleted = false where id = :id", new { id }, transaction);
     }
 
     public void Undelete(T entity) => Undelete(entity.id);
@@ -334,7 +330,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     public void Wipe(Key id, IDbTransaction transaction)
     {
         var conn = transaction.Connection;
-        conn.Execute($"delete from {Repository<Key, T>.GetTableName()} where id = :id", new { id }, transaction);
+        conn.Execute($"delete from {GetTableName()} where id = :id", new { id }, transaction);
     }
 
     public void Wipe(T entity) => Wipe(entity.id);
@@ -360,7 +356,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     public void WipeAll(IDbTransaction transaction)
     {
         var conn = transaction.Connection;
-        conn.Execute($"delete from {Repository<Key, T>.GetTableName()} where deleted", null, transaction: transaction);
+        conn.Execute($"delete from {GetTableName()} where deleted", null, transaction: transaction);
     }
 
     public void WipeAll(Guid? owner)
@@ -388,11 +384,11 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
         }
         else
         {
-            conn.Execute($"delete from {Repository<Key, T>.GetTableName()} where owner_id = :owner_id and deleted", new { owner_id = owner }, transaction: transaction);
+            conn.Execute($"delete from {GetTableName()} where owner_id = :owner_id and deleted", new { owner_id = owner }, transaction: transaction);
         }
     }
 
-    public bool HasPrivilege(params Privilege[] privilege) => HasPrivilege(Repository<Key, T>.GetTableName(), privilege);
+    public bool HasPrivilege(params Privilege[] privilege) => HasPrivilege(GetTableName(), privilege);
 
     public bool HasPrivilege(string table, params Privilege[] privilege)
     {
@@ -485,7 +481,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     protected Query GetBaseQuery(IDbConnection conn, string? alias = null)
     {
         var factory = new QueryFactory(conn, new PostgresCompiler());
-        return factory.Query(Repository<Key, T>.GetTableName() + (alias == null ?
+        return factory.Query(GetTableName() + (alias == null ?
             string.Empty :
             $" as {alias}"));
     }
@@ -493,7 +489,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     protected Query GetDefaultQuery(IDbConnection conn, IFilter? filter = null) =>
         GetQueryFilters(GetDefaultQuery(GetBaseQuery(conn), filter), filter);
 
-    protected string GetTableName(Query query) => query.Clauses.OfType<FromClause>().FirstOrDefault()?.Alias ?? Repository<Key, T>.GetTableName();
+    protected string GetTableName(Query query) => query.Clauses.OfType<FromClause>().FirstOrDefault()?.Alias ?? GetTableName();
 
     protected static IReadOnlyList<T> Get(Query query, Func<Query, Query>? callback = null)
     {
@@ -524,7 +520,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
     protected Key Create(T entity, IDbTransaction transaction)
     {
-        var sql = $"insert into {GetTableName(entity, Function.Other)} ({GetOperationFields(DataOperation.Add)}) values ({GetOperationValues(DataOperation.Add)}) returning id";
+        var sql = $"insert into {GetTableName(entity)} ({GetOperationFields(DataOperation.Add)}) values ({GetOperationValues(DataOperation.Add)}) returning id";
         var conn = transaction.Connection;
         if (conn != null)
         {
@@ -534,28 +530,16 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
         throw new NullReferenceException(nameof(conn));
     }
 
-    private string GetTableName(Query? query, T? entity, Function func)
+    private static string GetTableName(T? entity)
     {
-        var table = query == null ? Repository<Key, T>.GetTableName() : GetTableName(query);
+        var table = GetTableName();
         if (entity is IDiscriminator discriminator)
         {
-            if (entity == null)
-            {
-                throw new RepositoryException($"Таблица {table} является родительской для других таблиц и в неё нельзя добавить новую запись.");
-            }
-            else
-            {
-                if (discriminator.UseGetId || func != Function.Get)
-                {
-                    return $"{table}_{discriminator.TableName}";
-                }
-            }
+            return $"{table}_{discriminator.TableName}";
         }
 
         return table;
     }
-
-    private string GetTableName(T? entity, Function func) => GetTableName(null, entity, func);
 
     private static string GetTableName() => typeof(T).Name.Underscore();
 

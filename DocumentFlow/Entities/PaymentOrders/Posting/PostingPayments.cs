@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 05.02.2022
+//
+// Версия 2022.08.17
+//  - удалено свойство UseGetId
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
@@ -13,8 +17,6 @@ namespace DocumentFlow.Entities.PaymentOrders.Posting;
 [Description("Платёж")]
 public class PostingPayments : AccountingDocument, IDiscriminator
 {
-    bool IDiscriminator.UseGetId => false;
-
     string IDiscriminator.TableName { get => table_name; set => table_name = value; }
 
     public decimal transaction_amount { get; set; }

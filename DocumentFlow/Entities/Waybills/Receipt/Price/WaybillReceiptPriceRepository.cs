@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.02.2022
+//
+// Версия 2022.8.17
+//  - в выборку добавлено поле m.code
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -24,6 +28,7 @@ public class WaybillReceiptPriceRepository : OwnedRepository<long, WaybillReceip
         return query
             .Select("waybill_receipt_price.*")
             .Select("m.item_name as product_name")
+            .Select("m.code as code")
             .Join("material as m", "m.id", "waybill_receipt_price.reference_id");
     }
 }

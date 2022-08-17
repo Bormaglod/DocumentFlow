@@ -3,6 +3,12 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.11.2021
+//
+// Версия 2022.8.17
+//  - из-за изменения видимости методов set для полей product_name и code
+//    класса ProductPrice произведена замена инициализации этих полей
+//    с помощью метода SetProductInfo
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -220,13 +226,13 @@ public partial class FormProductPrice<P> : Form
     private void SaveControlData(P dest)
     {
         dest.reference_id = product.SelectedItem?.id ?? Guid.Empty;
-        dest.product_name = product.ValueText;
         dest.amount = amount.NumericValue.GetValueOrDefault();
         dest.price = price.NumericValue.GetValueOrDefault();
         dest.product_cost = cost.NumericValue.GetValueOrDefault();
         dest.tax = tax.ChoiceValue.GetValueOrDefault();
         dest.tax_value = tax_value.NumericValue.GetValueOrDefault();
         dest.full_cost = full_cost.NumericValue.GetValueOrDefault();
+        dest.SetProductInfo(product.SelectedItem);
         if (dest is IDiscriminator discriminator && product.SelectedItem != null)
         {
             discriminator.TableName = product.SelectedItem.GetType().Name.Underscore();

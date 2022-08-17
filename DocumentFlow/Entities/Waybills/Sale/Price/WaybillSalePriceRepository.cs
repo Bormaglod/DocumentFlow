@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.02.2022
+//
+// Версия 2022.8.17
+//  - в выборку добавлено поле m.code
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -24,6 +28,7 @@ public class WaybillSalePriceRepository : OwnedRepository<long, WaybillSalePrice
         return query
             .Select("waybill_sale_price.*")
             .Select("p.item_name as product_name")
+            .Select("p.code as code")
             .SelectRaw("p.tableoid::regclass::varchar as [table_name]")
             .Join("product as p", "p.id", "waybill_sale_price.reference_id");
     }

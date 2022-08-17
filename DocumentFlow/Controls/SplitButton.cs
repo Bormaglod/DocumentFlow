@@ -3,6 +3,9 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 10.06.2018
+//
+// Версия 2022.8.17
+//  - исправлена ошибка рисования
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Core;
@@ -146,7 +149,7 @@ public class SplitButton : Control
     {
         base.OnPaint(e);
 
-        Rectangle r = new(e.ClipRectangle.Location, e.ClipRectangle.Size.Resize(-1));
+        Rectangle r = new(ClientRectangle.Location, ClientRectangle.Size.Resize(-1));
 
         if (Enabled)
         {
@@ -200,9 +203,13 @@ public class SplitButton : Control
         int y = (rectangle.Height - bitmap.Height) / 2 + 1;
 
         if (Enabled)
+        {
             graphics.DrawImage(bitmap, x, y);
+        }
         else
+        {
             ControlPaint.DrawImageDisabled(graphics, bitmap, x, y, BackColor);
+        }
     }
 
     private void ResizeWidth()
