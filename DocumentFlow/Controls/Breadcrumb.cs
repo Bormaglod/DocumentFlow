@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 08.06.2018
+//
+// Версия 2022.8.18
+//  - Нажатие на кнопку "Домой" в строке выбора приводит к ошибке.
+//    Исправлено.
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -88,10 +92,9 @@ public partial class Breadcrumb : UserControl, IBreadcrumb
 
     public void Clear()
     {
-        SplitButton b;
-        while ((b = dirs.Pop()) != null)
+        while (dirs.Count > 0)
         {
-            panelCrumbs.Controls.Remove(b);
+            panelCrumbs.Controls.Remove(dirs.Pop());
         }
 
         UpdateButtons();

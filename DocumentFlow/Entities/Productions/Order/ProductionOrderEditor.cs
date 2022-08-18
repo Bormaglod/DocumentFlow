@@ -3,6 +3,12 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 25.03.2022
+//
+// Весрия 2022.8.12
+//  - из-за появления в классе ProductPrice поля code, содержащего
+//    артикул, внесено изменение для подавления вывода этого столбца
+//    поскольку оно частично дублируется полем calculation_name
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -70,6 +76,7 @@ public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductio
             switch (args.Column.MappingName)
             {
                 case "id":
+                case "code":
                     args.Cancel = true;
                     break;
                 case "product_name":

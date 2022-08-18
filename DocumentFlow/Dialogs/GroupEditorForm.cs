@@ -3,6 +3,14 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.03.2019
+//
+// Версия 2022.8.18
+//  - не удалось создать группу в таблице "Продукция" (и в других,
+//    допускающих создание групп). Окно для создания закрывается, ни
+//    ошибок, ни сообщений не выдается. Данная проблема возникает только
+//    в корневом каталоге. Исправлено.
+//  - если попытаться изменить группу, открывается окно поля которого
+//    должны быть заполнены значениями группы, но они пустые. Исправлено.
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -14,9 +22,8 @@ namespace DocumentFlow.Dialogs
         where T : IIdentifier<Guid>
     {
         private readonly IDirectoryRepository<T> repository;
-        private readonly T? editableDir;
+        private T? editableDir;
         private readonly Guid? parent_id;
-        private Guid newId;
 
         protected GroupEditorForm(IDirectoryRepository<T> repository)
         {
@@ -27,6 +34,12 @@ namespace DocumentFlow.Dialogs
         public GroupEditorForm(IDirectoryRepository<T> repository, T editableDir) : this(repository)
         {
             this.editableDir = editableDir;
+
+            if (editableDir is IDirectory dir)
+            {
+                textCode.Text = dir.code;
+                textName.Text = dir.item_name;
+            }
         }
 
         public GroupEditorForm(IDirectoryRepository<T> repository, Guid? parent_id) : this(repository)
@@ -38,14 +51,7 @@ namespace DocumentFlow.Dialogs
         {
             if (ShowDialog() == DialogResult.OK)
             {
-                if (parent_id == null)
-                {
-                    return editableDir;
-                }
-                else
-                {
-                    return repository.GetById(newId);
-                }
+                return editableDir;
             }
 
             return default;
@@ -60,13 +66,11 @@ namespace DocumentFlow.Dialogs
                     dir.code = textCode.Text;
                     dir.item_name = textName.Text;
                     repository.Update(editableDir);
-                    return;
                 }
-
-                if (parent_id != null)
+                else
                 {
-                    newId = repository.AddFolder(parent_id, textCode.Text, textName.Text);
-                    return;
+                    var newId = repository.AddFolder(parent_id, textCode.Text, textName.Text);
+                    editableDir = repository.GetById(newId);
                 }
             }
             catch (Exception e)
