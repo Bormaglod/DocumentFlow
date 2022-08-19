@@ -3,14 +3,21 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 16.01.2022
+//
+// Версия 2022.8.19
+//  - добавлен метод GetCurrents
+//
 //-----------------------------------------------------------------------
+
+using Dapper;
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
 
 using SqlKata;
-using Dapper;
+using SqlKata.Execution;
+
 using System.Data;
 
 namespace DocumentFlow.Entities.Companies;
@@ -19,6 +26,19 @@ public class ContractApplicationRepository : OwnedRepository<Guid, ContractAppli
 {
     public ContractApplicationRepository(IDatabase database) : base(database)
     {
+    }
+
+    public IReadOnlyList<ContractApplication> GetCurrents(Contract contract)
+    {
+        using var conn = Database.OpenConnection();
+        var query = GetDefaultQuery(conn)
+            .Where("c.id", contract.id)
+            .WhereDate("contract_application.date_start", "<=", DateTime.Now)
+            .Where(q => q
+                .WhereNull("contract_application.date_end")
+                .Or()
+                .WhereDate("contract_application.date_end", ">=", DateTime.Now));
+        return query.Get<ContractApplication>().ToList();
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)

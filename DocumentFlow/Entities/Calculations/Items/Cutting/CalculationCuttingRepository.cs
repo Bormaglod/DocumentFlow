@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.01.2022
+//
+// Версия 2022.8.19
+//  - calculation_name теперь ссылается не на item_name, а на code
+//
 //-----------------------------------------------------------------------
 
 using Dapper;
@@ -35,7 +39,7 @@ public class CalculationCuttingRepository : CalculationItemRepository<Calculatio
             .Select("calculation_cutting.*")
             .Select("calculation_cutting.material_amount as total_material")
             .Select("o.item_name as operation_name")
-            .Select("c.item_name as calculation_name")
+            .Select("c.code as calculation_name")
             .Select("e.item_name as equipment_name")
             .Select("t.item_name as tools_name")
             .Select("m.code as material_name")

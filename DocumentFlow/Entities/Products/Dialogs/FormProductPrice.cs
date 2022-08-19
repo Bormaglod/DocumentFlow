@@ -4,12 +4,15 @@
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.11.2021
 //
-// Версия 2022.8.18
-//  - диалоговое окно "Изделие" видно в панели задач #49. Исправлено.
 // Версия 2022.8.17
 //  - из-за изменения видимости методов set для полей product_name и code
 //    класса ProductPrice произведена замена инициализации этих полей
 //    с помощью метода SetProductInfo
+// Версия 2022.8.18
+//  - диалоговое окно "Изделие" видно в панели задач #49. Исправлено.
+// Версия 2022.8.19
+//  - выбор изделий дополнен столбцом с артикулом
+//  - добавлена возможность выбора цены из договора
 //
 //-----------------------------------------------------------------------
 
@@ -40,9 +43,13 @@ public partial class FormProductPrice<P> : Form
     private readonly DfCurrencyTextBox tax_value;
     private readonly DfCurrencyTextBox full_cost;
 
-    protected FormProductPrice(bool calculationSelect)
+    private Contract? contract;
+
+    protected FormProductPrice(Contract? contract, bool calculationSelect)
     {
         InitializeComponent();
+
+        this.contract = contract;
 
         var attr = typeof(P).GetCustomAttribute<ProductContentAttribute>();
         if (attr == null)
@@ -58,7 +65,17 @@ public partial class FormProductPrice<P> : Form
             _ => throw new NotImplementedException()
         };
 
-        product = new("reference_id", productHeader, 120) { Required = true };
+        product = new("reference_id", productHeader, 120) 
+        { 
+            Required = true,
+            NameColumn = "code",
+            Columns = new Dictionary<string, string> 
+            {
+                ["code"] = "Артикул",
+                ["item_name"] = "Наименование"
+            }
+        };
+
         amount = new("amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3 };
         price = new("price", "Цена", 120) { DefaultAsNull = false };
         cost = new("product_cost", "Сумма", 120) { DefaultAsNull = false };
@@ -126,17 +143,7 @@ public partial class FormProductPrice<P> : Form
 
             if (materials == null)
             {
-                return goods!.GetAllValid(callback: query =>
-                {
-                    query
-                        .Select("goods.id")
-                        .Select("goods.code")
-                        .SelectRaw("goods.code || ', ' || goods.item_name as item_name")
-                        .Select("goods.price")
-                        .OrderBy("goods.code");
-
-                    return query;
-                });
+                return goods!.GetAllValid(callback: query => query.OrderByDesc("is_folder").OrderBy("code"));
             }
             else if (goods == null)
             {
@@ -144,7 +151,7 @@ public partial class FormProductPrice<P> : Form
             }
             else
             {
-                return materials!.GetAllMaterials().OfType<Product>().Union(goods!.GetAll());
+                return materials!.GetAllMaterials().OfType<Product>().Union(goods!.GetAllValid());
             }
         }, true);
 
@@ -160,16 +167,26 @@ public partial class FormProductPrice<P> : Form
                     avgPrice = repo.GetAveragePrice(material);
                 }
             }
-            else if (product.SelectedItem is Goods goods)
+            else if (product.SelectedItem is Goods goods && contract != null)
             {
-                var repo = Services.Provider.GetService<IGoodsRepository>();
-                if (repo != null)
+                var repo = Services.Provider.GetService<IContractApplicationRepository>();
+                var priceRepo = Services.Provider.GetService<IPriceApprovalRepository>();
+                if (repo != null && priceRepo != null)
                 {
-                    avgPrice = repo.GetAveragePrice(goods);
+                    var apps = repo.GetCurrents(contract);
+                    foreach (var app in apps)
+                    {
+                        var p = priceRepo.GetPrice(app, goods);
+                        if (p != null)
+                        {
+                            avgPrice = p.price;
+                            break;
+                        }
+                    }
                 }
             }
 
-            price.Value = avgPrice == 0 ? (product.SelectedItem?.price ?? 0) : 0;
+            price.Value = avgPrice == 0 ? (product.SelectedItem?.price ?? 0) : avgPrice;
 
             if (calc != null)
             {
@@ -190,8 +207,8 @@ public partial class FormProductPrice<P> : Form
 
     public static DialogResult Create(P productPrice, Contract? contract, bool calculationSelect = false)
     {
-        FormProductPrice<P> form = new(calculationSelect);
-        form.UpdateControls(contract);
+        FormProductPrice<P> form = new(contract, calculationSelect);
+        form.UpdateControls();
         if (form.ShowDialog() == DialogResult.OK)
         {
             form.SaveControlData(productPrice);
@@ -203,8 +220,8 @@ public partial class FormProductPrice<P> : Form
 
     public static DialogResult Edit(P productPrice, Contract? contract, bool calculationSelect = false)
     {
-        FormProductPrice<P> form = new(calculationSelect);
-        form.UpdateControls(contract);
+        FormProductPrice<P> form = new(contract, calculationSelect);
+        form.UpdateControls();
         form.product.Value = productPrice.reference_id;
         form.amount.Value = productPrice.amount;
         form.price.Value = productPrice.price;
@@ -246,7 +263,7 @@ public partial class FormProductPrice<P> : Form
         }
     }
 
-    private void UpdateControls(Contract? contract)
+    private void UpdateControls()
     {
         bool isTaxPayer = contract != null && contract.tax_payer;
         tax.Enabled = isTaxPayer;
