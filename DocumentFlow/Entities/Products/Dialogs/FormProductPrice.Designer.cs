@@ -41,7 +41,7 @@
             this.buttonCancel.Location = new System.Drawing.Point(370, 246);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
-            this.buttonCancel.TabIndex = 3;
+            this.buttonCancel.TabIndex = 1001;
             this.buttonCancel.Text = "Отменить";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
@@ -56,7 +56,7 @@
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(96, 32);
             this.buttonOk.Style.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.buttonOk.TabIndex = 2;
+            this.buttonOk.TabIndex = 1000;
             this.buttonOk.Text = "Сохранить";
             this.buttonOk.UseVisualStyleBackColor = false;
             this.buttonOk.Click += new System.EventHandler(this.ButtonOk_Click);

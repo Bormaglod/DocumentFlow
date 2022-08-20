@@ -41,7 +41,7 @@
             this.buttonCancel.Location = new System.Drawing.Point(333, 84);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
-            this.buttonCancel.TabIndex = 5;
+            this.buttonCancel.TabIndex = 1001;
             this.buttonCancel.Text = "Отменить";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
@@ -56,7 +56,7 @@
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(96, 32);
             this.buttonOk.Style.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.buttonOk.TabIndex = 4;
+            this.buttonOk.TabIndex = 1000;
             this.buttonOk.Text = "Сохранить";
             this.buttonOk.UseVisualStyleBackColor = false;
             this.buttonOk.Click += new System.EventHandler(this.ButtonOk_Click);
@@ -72,8 +72,12 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormPriceApproval";
             this.Padding = new System.Windows.Forms.Padding(10);
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Материал / Изделие";
             this.ResumeLayout(false);

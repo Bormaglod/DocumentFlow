@@ -13,6 +13,8 @@
 // Версия 2022.8.19
 //  - выбор изделий дополнен столбцом с артикулом
 //  - добавлена возможность выбора цены из договора
+// Версия 2022.8.20
+//  - скорректирован порядок обхода элементов управления
 //
 //-----------------------------------------------------------------------
 
@@ -73,15 +75,16 @@ public partial class FormProductPrice<P> : Form
             {
                 ["code"] = "Артикул",
                 ["item_name"] = "Наименование"
-            }
+            },
+            TabIndex = 1
         };
 
-        amount = new("amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3 };
-        price = new("price", "Цена", 120) { DefaultAsNull = false };
-        cost = new("product_cost", "Сумма", 120) { DefaultAsNull = false };
-        tax = new("tax", "НДС%", 120);
-        tax_value = new("tax_value", "НДС", 120) { DefaultAsNull = false };
-        full_cost = new("full_cost", "Всего с НДС", 120) { DefaultAsNull = false };
+        amount = new("amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3, TabIndex = 2 };
+        price = new("price", "Цена", 120) { DefaultAsNull = false, TabIndex = 2 };
+        cost = new("product_cost", "Сумма", 120) { DefaultAsNull = false, TabIndex = 3 };
+        tax = new("tax", "НДС%", 120) { TabIndex = 4 };
+        tax_value = new("tax_value", "НДС", 120) { DefaultAsNull = false, TabIndex = 5 };
+        full_cost = new("full_cost", "Всего с НДС", 120) { DefaultAsNull = false, TabIndex = 6 };
 
         var controls = new List<Control>() 
         { 
@@ -96,7 +99,7 @@ public partial class FormProductPrice<P> : Form
 
         if (calculationSelect)
         {
-            calc = new DfDirectorySelectBox<Calculation>("calculation_id", "Калькуляция", 120) { Required = true };
+            calc = new DfDirectorySelectBox<Calculation>("calculation_id", "Калькуляция", 120) { Required = true, TabIndex = 7 };
             calc.SetDataSource(() =>
             {
                 if (product.SelectedItem != null)

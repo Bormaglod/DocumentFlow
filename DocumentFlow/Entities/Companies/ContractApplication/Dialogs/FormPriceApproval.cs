@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 18.01.2022
+//
+// Версия 2022.8.20
+//  - скорректирован порядок обхода элементов управления
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -21,8 +25,8 @@ public partial class FormPriceApproval : Form
     {
         InitializeComponent();
 
-        product = new("reference_id", "Материал / Изделие", 150);
-        price = new("price", "Цена", 150) { DefaultAsNull = false };
+        product = new("reference_id", "Материал / Изделие", 150) { TabIndex = 1 };
+        price = new("price", "Цена", 150) { DefaultAsNull = false, TabIndex = 2 };
 
         product.SetDataSource(() =>
         {
