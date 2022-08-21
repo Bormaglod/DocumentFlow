@@ -428,7 +428,7 @@
             this.menuDocuments});
             this.contextRecordMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
             this.contextRecordMenu.Name = "contextGridMenu";
-            this.contextRecordMenu.Size = new System.Drawing.Size(355, 276);
+            this.contextRecordMenu.Size = new System.Drawing.Size(355, 254);
             this.contextRecordMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
             this.contextRecordMenu.ThemeName = "Metro";
             this.contextRecordMenu.Opening += new System.ComponentModel.CancelEventHandler(this.ContextRecordMenu_Opening);
@@ -659,6 +659,7 @@
             this.Controls.Add(this.toolStrip1);
             this.Name = "Browser";
             this.Size = new System.Drawing.Size(1067, 556);
+            this.Load += new System.EventHandler(this.Browser_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridContent)).EndInit();

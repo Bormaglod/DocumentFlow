@@ -8,6 +8,10 @@
 //  - добавлен метод SetColumns
 //  - исправлена процедура заполнения AddItem
 //
+// Версия 2022.8.21
+//  - группы теперь отображаются по имени (без указания кода группы)
+//  - добавлен метод GetPropertyValue
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
@@ -144,6 +148,23 @@ public partial class SelectDirectoryForm<T> : Form
         }
     }
 
+    private static string GetPropertyValue(T data, TreeColumnAdv column)
+    {
+        if (column.Tag is PropertyInfo prop)
+        {
+            return prop.Name switch
+            {
+                "code" => data.code,
+                "item_name" => data.item_name ?? string.Empty,
+                _ => prop.GetValue(data)?.ToString() ?? string.Empty
+            };
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
     private TreeNodeAdv AddItem(TreeNodeAdv? node, bool isFolder, T data)
     {
         TreeNodeAdv n = new()
@@ -153,7 +174,7 @@ public partial class SelectDirectoryForm<T> : Form
             LeftImageIndices = new int[] { isFolder ? 0 : 1 }
         };
 
-        if (treeSelect.Columns.Count > 0)
+        if (!data.is_folder && treeSelect.Columns.Count > 0)
         {
             bool first = true;
             foreach (TreeColumnAdv item in treeSelect.Columns)
@@ -163,7 +184,7 @@ public partial class SelectDirectoryForm<T> : Form
                     continue;
                 }
 
-                string text = prop.GetValue(data)?.ToString() ?? string.Empty;
+                string text = GetPropertyValue(data, item);
 
                 if (first)
                 {

@@ -3,10 +3,14 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.12.2021
+//
+// Версия 2022.8.21
+//  - поскольку свойство code не допускает значения null, присвивание
+//    этому поля данного значения в не имеет смысла
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Calculations;
 
@@ -73,7 +77,6 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository
             }
 
             var calc = calcRepo.GetById(from.calculation_id.Value, transaction.Connection, false);
-            calc.code = null;
             calc.owner_id = to.id;
             calc.CalculationState = CalculationState.Prepare;
 

@@ -4,6 +4,13 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 28.12.2021
+//
+// Версия 2022.8.21
+//  - для решения проблемы невостановления сохраненных настроек таблицы:
+//      - удален метод OnLoad
+//      - добавлен метод Browser_Load 
+//      - вызов LoadBrowserSettings перенесен из RefreshPage в Browser_Load
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -279,7 +286,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     public void RefreshPage()
     {
-        LoadBrowserSettings();
         RefreshView();
         ConfigureCommands();
     }
@@ -365,16 +371,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         }
     }
 
-    protected override void OnLoad(EventArgs e)
-    {
-        base.OnLoad(e);
-        if (AllowColumnsConfigure())
-        {
-            RefreshSettingsHiddenColumns();
-            CustomizeColumns();
-        }
-    }
-
     protected virtual void SaveSettings() { }
 
     protected virtual BrowserSettings CreateBrowserSettings() => new();
@@ -437,6 +433,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             }
         }
     }
+
     protected GridTextColumn CreateText(Expression<Func<T, object?>> memberExpression, string headerText, int width = 0, bool visible = true, bool hidden = true)
     {
         var member = ReflectionHelper.GetMember(memberExpression);
@@ -1751,6 +1748,16 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         {
             Clipboard.SetText(rec.id.ToString());
             MessageBox.Show($"Идентификатор записи {{{rec.id}}} скопирован в буфер обмена.", "Идентификатор скопирован", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+    }
+
+    private void Browser_Load(object sender, EventArgs e)
+    {
+        LoadBrowserSettings();
+        if (AllowColumnsConfigure())
+        {
+            RefreshSettingsHiddenColumns();
+            CustomizeColumns();
         }
     }
 }
