@@ -11,6 +11,8 @@
 //    операций добавления и создания копии).
 //  - операции обновления, удаления игнорируют интерфейс IDiscriminator
 //    у объектов
+// Версия 2022.8.25
+//  - процедура CopyChilds заменена на процедуру CopyNestedRows
 //
 //-----------------------------------------------------------------------
 
@@ -227,7 +229,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
             Key id = conn.QuerySingle<Key>(sql, original, transaction: transaction);
             T copy = GetById(id, conn);
 
-            CopyChilds(original, copy, transaction);
+            CopyNestedRows(original, copy, transaction);
 
             return copy;
         }
@@ -408,7 +410,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
         });
     }
 
-    protected virtual void CopyChilds(T from, T to, IDbTransaction transaction) { }
+    protected virtual void CopyNestedRows(T from, T to, IDbTransaction transaction) { }
 
     protected string GetOperationFields(DataOperation operation)
     {

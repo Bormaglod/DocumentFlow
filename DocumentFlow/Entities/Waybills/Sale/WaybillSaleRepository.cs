@@ -3,13 +3,21 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.01.2022
+//
+// Версия 2022.8.25
+//  - добавлен метод CopyNestedRows
+//
 //-----------------------------------------------------------------------
+
+using Dapper;
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
 
 using SqlKata;
+
+using System.Data;
 
 namespace DocumentFlow.Entities.Waybills;
 
@@ -43,5 +51,18 @@ public class WaybillSaleRepository : DocumentRepository<WaybillSale>, IWaybillSa
             .Join("contractor as c", "c.id", "waybill_sale.contractor_id")
             .LeftJoin("contract", "contract.id", "waybill_sale.contract_id")
             .LeftJoin(q.As("d"), j => j.On("d.owner_id", "waybill_sale.id"));
+    }
+
+    protected override void CopyNestedRows(WaybillSale from, WaybillSale to, IDbTransaction transaction)
+    {
+        base.CopyNestedRows(from, to, transaction);
+
+        string[] tables = new string[] { "goods", "material" };
+
+        foreach (var table in tables)
+        {
+            var sql = $"insert into waybill_sale_price_{table} (owner_id, reference_id, amount, price, product_cost, tax, tax_value, full_cost) select :id_to, reference_id, amount, price, product_cost, tax, tax_value, full_cost from waybill_sale_price_{table} where owner_id = :id_from";
+            transaction.Connection?.Execute(sql, new { id_to = to.id, id_from = from.id }, transaction: transaction);
+        }
     }
 }

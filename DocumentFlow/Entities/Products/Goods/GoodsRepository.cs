@@ -7,6 +7,8 @@
 // Версия 2022.8.21
 //  - поскольку свойство code не допускает значения null, присвивание
 //    этому поля данного значения в не имеет смысла
+// Версия 2022.8.25
+//  - процедура CopyChilds заменена на процедуру CopyNestedRows
 //
 //-----------------------------------------------------------------------
 
@@ -59,9 +61,9 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository
         return query;
     }
 
-    protected override void CopyChilds(Goods from, Goods to, IDbTransaction transaction)
+    protected override void CopyNestedRows(Goods from, Goods to, IDbTransaction transaction)
     {
-        base.CopyChilds(from, to, transaction);
+        base.CopyNestedRows(from, to, transaction);
 
         if (transaction.Connection == null)
         {

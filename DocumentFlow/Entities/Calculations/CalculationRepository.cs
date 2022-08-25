@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 11.01.2022
+//
+// Версия 2022.8.25
+//  - процедура CopyChilds заменена на процедуру CopyNestedRows
+//
 //-----------------------------------------------------------------------
 
 using Dapper;
@@ -64,11 +68,15 @@ public class CalculationRepository : OwnedRepository<Guid, Calculation>, ICalcul
             .ToList();
     }
 
-    protected override void CopyChilds(Calculation from, Calculation to, IDbTransaction transaction)
+    protected override void CopyNestedRows(Calculation from, Calculation to, IDbTransaction transaction)
     {
-        base.CopyChilds(from, to, transaction);
+        base.CopyNestedRows(from, to, transaction);
         
         var conn = transaction.Connection;
+        if (conn == null)
+        {
+            return;
+        }
 
         var sql = "insert into calculation_operation (owner_id, code, item_name, item_id, equipment_id, tools_id, material_id, material_amount, repeats, previous_operation, note) select :id_to, code, item_name, item_id, equipment_id, tools_id, material_id, material_amount, repeats, previous_operation, note from only calculation_operation where owner_id = :id_from";
         conn.Execute(sql, new { id_to = to.id, id_from = from.id }, transaction: transaction);

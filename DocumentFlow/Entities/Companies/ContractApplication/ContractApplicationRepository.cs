@@ -6,6 +6,8 @@
 //
 // Версия 2022.8.19
 //  - добавлен метод GetCurrents
+// Версия 2022.8.25
+//  - процедура CopyChilds заменена на процедуру CopyNestedRows
 //
 //-----------------------------------------------------------------------
 
@@ -49,13 +51,12 @@ public class ContractApplicationRepository : OwnedRepository<Guid, ContractAppli
             .LeftJoin("contract as c", "c.id", "contract_application.owner_id");
     }
 
-    protected override void CopyChilds(ContractApplication from, ContractApplication to, IDbTransaction transaction)
+    protected override void CopyNestedRows(ContractApplication from, ContractApplication to, IDbTransaction transaction)
     {
-        base.CopyChilds(from, to, transaction);
+        base.CopyNestedRows(from, to, transaction);
         
         var sql = "insert into price_approval (owner_id, product_id, price) select :id_to, product_id, price from price_approval where owner_id = :id_from";
 
-        var conn = transaction.Connection;
-        conn.Execute(sql, new { id_to = to.id, id_from = from.id }, transaction: transaction);
+        transaction.Connection?.Execute(sql, new { id_to = to.id, id_from = from.id }, transaction: transaction);
     }
 }
