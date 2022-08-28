@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.09.2021
+//
+// Версия 2022.8.28
+//  - добавлен метод RefreshPage()
+//  - рефакторинг
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -154,6 +159,8 @@ public partial class Editor<T> : UserControl, IEditorPage
     }
 
     public bool Save() => Save(true);
+
+    public void RefreshPage() => RefreshData(document?.id);
 
     protected Panel CreatePanel(Control[] controls)
     {
@@ -353,7 +360,7 @@ public partial class Editor<T> : UserControl, IEditorPage
         UpdateDocument(controls, doc);
     }
 
-    private void UpdateDocument(Control[] controls, T doc)
+    private static void UpdateDocument(Control[] controls, T doc)
     {
         foreach (var item in controls.OfType<IBindingControl>().Where(x => x.AllowSaving))
         {
@@ -427,11 +434,7 @@ public partial class Editor<T> : UserControl, IEditorPage
         }
         else
         {
-            if (document == null)
-            {
-                document = CreateDocument();
-            }
-
+            document ??= CreateDocument();
             UpdateText();
         }
 

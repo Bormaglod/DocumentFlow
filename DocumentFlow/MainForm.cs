@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 27.12.2021
+//
+// Версия 2022.8.28
+//  - добавлена реакция на нажатие клавиши F5
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Core;
@@ -315,6 +319,19 @@ namespace DocumentFlow
             if (args.NewSelectedIndex != -1)
             {
                 Services.Provider.GetService<IPageManager>()?.AddToHistory(tabControlAdv1.TabPages[args.NewSelectedIndex]);
+            }
+        }
+
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5 && tabControlAdv1.SelectedTab != null)
+            {
+                var manager = Services.Provider.GetService<IPageManager>();
+                if (manager != null)
+                {
+                    var page = manager.Get(tabControlAdv1.SelectedTab);
+                    page?.RefreshPage();
+                }
             }
         }
     }

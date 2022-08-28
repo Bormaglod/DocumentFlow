@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.01.2022
+//
+// Версия 2022.8.28
+//  - процедура ExecuteSql заменена на Call
+//
 //-----------------------------------------------------------------------
 
 using Dapper;
@@ -18,9 +22,9 @@ public class CalculationMaterialRepository : CalculationItemRepository<Calculati
 {
     public CalculationMaterialRepository(IDatabase database) : base(database) { }
 
-    public void RecalculateCount(Guid calculate_id) => ExecuteSql("call recalculate_amount_material(:calculate_id)", new { calculate_id });
+    public void RecalculateCount(Guid calculate_id) => Call("recalculate_amount_material", calculate_id);
 
-    public void RecalculatePrices(Guid calculate_id) => ExecuteSql("call make_prices_materials_relevant(:calculate_id)", new { calculate_id });
+    public void RecalculatePrices(Guid calculate_id) => Call("make_prices_materials_relevant", calculate_id);
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
     {
@@ -33,9 +37,20 @@ public class CalculationMaterialRepository : CalculationItemRepository<Calculati
             .LeftJoin("material as m", "m.id", "calculation_material.item_id");
     }
 
-    private void ExecuteSql(string sql, object? param = null)
+    private void Call(string proc_name, Guid calculate_id)
     {
         using var conn = Database.OpenConnection();
-        conn.Execute(sql, param);
+        using var transaction = conn.BeginTransaction();
+
+        try
+        {
+            conn.Execute($"call {proc_name}(:calculate_id)", new { calculate_id }, transaction);
+            transaction.Commit();
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            ExceptionHelper.Message(e);
+        }
     }
 }

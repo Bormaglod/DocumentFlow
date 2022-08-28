@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.01.2022
+//
+// Версия 2022.8.28
+//  - из-за изменений в ConextMenu доавлен параметр в вызов Add
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -76,7 +80,7 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
             }
         });
 
-        ContextMenu.Add("Давальческий/собственный материал", Resources.icons8_sell_16, () =>
+        ContextMenu.Add("Давальческий/собственный материал", Resources.icons8_sell_16, (t) =>
         {
             if (CurrentDocument != null)
             {

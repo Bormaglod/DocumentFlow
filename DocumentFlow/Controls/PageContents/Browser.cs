@@ -10,6 +10,8 @@
 //      - удален метод OnLoad
 //      - добавлен метод Browser_Load 
 //      - вызов LoadBrowserSettings перенесен из RefreshPage в Browser_Load
+// Версия 2022.8.28
+//  - добавлен метод RefreshGrid
 //
 //-----------------------------------------------------------------------
 
@@ -716,6 +718,8 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         gridContent.PreviewRowHeightMode = mode;
         gridContent.PreviewRowHeight = height;
     }
+
+    protected void RefreshGrid() => gridContent.Refresh();
 
     protected virtual bool OnDrawPreviewRow(Graphics graphics, T row, Rectangle bounds, PreviewRowStyleInfo style) => false;
 

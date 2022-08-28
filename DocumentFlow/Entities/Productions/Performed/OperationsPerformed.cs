@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.04.2022
+//
+// Версия 2022.8.28
+//  - вызов NotifyPropertyChanged упрощен (параметр передается по
+//    умолчанию - имя свойства подставляется автоматически)
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
@@ -24,7 +29,7 @@ public class OperationsPerformed : AccountingDocument
         set
         {
             _quantity = value;
-            NotifyPropertyChanged(nameof(quantity));
+            NotifyPropertyChanged();
         }
     }
 

@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.11.2014
+//
+// Версия 2022.8.28
+//  - Параметр propertyName в процедуре NotifyPropertyChanged отмечен
+//    атрибутом CallerMemberName
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
@@ -10,6 +15,7 @@ using DocumentFlow.Data.Infrastructure;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace DocumentFlow.Data.Core;
 
@@ -22,7 +28,7 @@ public abstract class Identifier<T> : INotifyPropertyChanged, IIdentifier<T>
     [Display(AutoGenerateField = false)]
     public T id { get; set; }
 
-    protected void NotifyPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     protected byte[] ImageToByteArray(Image imageIn)
     {

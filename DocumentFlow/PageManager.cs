@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.07.2022
+//
+// Версия 2022.8.28
+//  - добавлен метод Get(TabPageAdv)
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -49,6 +53,8 @@ public class PageManager : IPageManager
             }
         }
     }
+
+    public IPage? Get(TabPageAdv page) => pages.ContainsKey(page) ? pages[page] : null;
 
     public void AddToHistory(TabPageAdv page) => historyPages.Push(page);
 

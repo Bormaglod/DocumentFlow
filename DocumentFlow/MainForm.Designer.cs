@@ -52,7 +52,6 @@
             // treeNavigator1
             // 
             this.treeNavigator1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
-            this.treeNavigator1.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.treeNavigator1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeNavigator1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.treeNavigator1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
@@ -149,7 +148,6 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Cursor = System.Windows.Forms.Cursors.VSplit;
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
@@ -171,7 +169,6 @@
             this.tabControlAdv1.BeforeTouchSize = new System.Drawing.Size(904, 582);
             this.tabControlAdv1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tabControlAdv1.Controls.Add(this.tabPageAdv1);
-            this.tabControlAdv1.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.tabControlAdv1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlAdv1.FocusOnTabClick = false;
             this.tabControlAdv1.HotTrack = true;
@@ -219,10 +216,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1106, 582);
             this.Controls.Add(this.splitContainer1);
+            this.KeyPreview = true;
             this.Name = "MainForm";
             this.Text = "DocumentFlow (ООО \"Автоком\")";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

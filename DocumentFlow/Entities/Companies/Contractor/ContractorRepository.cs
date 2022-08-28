@@ -3,11 +3,17 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.12.2021
+//
+// Версия 2022.8.28
+//  - параметр в процедуре GetContractorByType заменен на тип ContractorType
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
+
+using Humanizer;
 
 using SqlKata;
 using SqlKata.Execution;
@@ -21,11 +27,11 @@ public class ContractorRepository : DirectoryRepository<Contractor>, IContractor
         ExcludeField(x => x.owner_id);
     }
 
-    public IReadOnlyList<Contractor> GetSuppliers() => GetContractorByType("'seller'::contractor_type");
+    public IReadOnlyList<Contractor> GetSuppliers() => GetContractorByType(ContractorType.Seller);
 
-    public IReadOnlyList<Contractor> GetCustomers() => GetContractorByType("'buyer'::contractor_type");
+    public IReadOnlyList<Contractor> GetCustomers() => GetContractorByType(ContractorType.Buyer);
 
-    private IReadOnlyList<Contractor> GetContractorByType(string type)
+    private IReadOnlyList<Contractor> GetContractorByType(ContractorType type)
     {
         using var conn = Database.OpenConnection();
         return GetDefaultQuery(conn)
@@ -34,7 +40,7 @@ public class ContractorRepository : DirectoryRepository<Contractor>, IContractor
             .WhereFalse("contractor.deleted")
             .Where(q => q
                 .WhereTrue("contractor.is_folder")
-                .OrWhereRaw($"c.c_type = {type}")
+                .OrWhereRaw($"c.c_type = '{type.ToString().Underscore()}'::contractor_type")
             )
             .Get<Contractor>()
             .ToList();

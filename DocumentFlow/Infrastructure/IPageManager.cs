@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.07.2022
+//
+// Версия 2022.8.28
+//  - добавлен метод Get(TabPageAdv)
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -14,6 +18,7 @@ namespace DocumentFlow.Infrastructure;
 
 public interface IPageManager
 {
+    IPage? Get(TabPageAdv page);
     void AddToHistory(TabPageAdv page);
     void ClosePage(IPage page);
     void OnPageClosing();

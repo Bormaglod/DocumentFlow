@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.01.2022
+//
+// Версия 2022.8.28
+//  - время выработки заменено с мин на сек
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -26,7 +30,7 @@ public class OperationBrowser : Browser<Operation>, IOperationBrowser
         var code = CreateText(x => x.code, "Код", width: 150);
         var name = CreateText(x => x.item_name, "Наименование", hidden: false);
         var produced = CreateNumeric(x => x.produced, "Выработка", width: 100);
-        var prod_time = CreateNumeric(x => x.prod_time, "Время выработки, мин.", width: 100);
+        var prod_time = CreateNumeric(x => x.prod_time, "Время выработки, сек.", width: 100);
         var production_rate = CreateNumeric(x => x.production_rate, "Норма выработки, ед./час", width: 100);
         var type_name = CreateText(x => x.type_name, "Тип операции", width: 250);
         var salary = CreateNumeric(x => x.salary, "Зар. плата, руб.", width: 100, decimalDigits: 4);
