@@ -15,6 +15,9 @@
 //  - добавлена возможность выбора цены из договора
 // Версия 2022.8.20
 //  - скорректирован порядок обхода элементов управления
+// Версия 2022.8.29
+//  - скорректирован порядок обхода элементов управления
+//  - рефакторинг
 //
 //-----------------------------------------------------------------------
 
@@ -45,7 +48,7 @@ public partial class FormProductPrice<P> : Form
     private readonly DfCurrencyTextBox tax_value;
     private readonly DfCurrencyTextBox full_cost;
 
-    private Contract? contract;
+    private readonly Contract? contract;
 
     protected FormProductPrice(Contract? contract, bool calculationSelect)
     {
@@ -79,12 +82,12 @@ public partial class FormProductPrice<P> : Form
             TabIndex = 1
         };
 
-        amount = new("amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3, TabIndex = 2 };
-        price = new("price", "Цена", 120) { DefaultAsNull = false, TabIndex = 2 };
-        cost = new("product_cost", "Сумма", 120) { DefaultAsNull = false, TabIndex = 3 };
-        tax = new("tax", "НДС%", 120) { TabIndex = 4 };
-        tax_value = new("tax_value", "НДС", 120) { DefaultAsNull = false, TabIndex = 5 };
-        full_cost = new("full_cost", "Всего с НДС", 120) { DefaultAsNull = false, TabIndex = 6 };
+        amount = new("amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3, TabIndex = 3 };
+        price = new("price", "Цена", 120) { DefaultAsNull = false, TabIndex = 4 };
+        cost = new("product_cost", "Сумма", 120) { DefaultAsNull = false, TabIndex = 5 };
+        tax = new("tax", "НДС%", 120) { TabIndex = 6 };
+        tax_value = new("tax_value", "НДС", 120) { DefaultAsNull = false, TabIndex = 7 };
+        full_cost = new("full_cost", "Всего с НДС", 120) { DefaultAsNull = false, TabIndex = 8 };
 
         var controls = new List<Control>() 
         { 
@@ -99,7 +102,7 @@ public partial class FormProductPrice<P> : Form
 
         if (calculationSelect)
         {
-            calc = new DfDirectorySelectBox<Calculation>("calculation_id", "Калькуляция", 120) { Required = true, TabIndex = 7 };
+            calc = new DfDirectorySelectBox<Calculation>("calculation_id", "Калькуляция", 120) { Required = true, TabIndex = 2 };
             calc.SetDataSource(() =>
             {
                 if (product.SelectedItem != null)

@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 20.01.2022
+//
+// Версия 2022.8.29
+//  - расширены возможности полей person и post (добавлены кнопки для
+//    редактирования выбранных значений)
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -24,8 +29,16 @@ public class BaseEmployeeEditor<T> : Editor<T>
     public BaseEmployeeEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         var org = new DfTextBox("owner_name", "Организация", headerWidth, 400) { Enabled = false };
-        var person = new DfDirectorySelectBox<Person>("person_id", "Сотрудник", headerWidth, 300);
-        var post = new DfDirectorySelectBox<Okpdtr>("post_id", "Должность", headerWidth, 300);
+        var person = new DfDirectorySelectBox<Person>("person_id", "Сотрудник", headerWidth, 300)
+        {
+            OpenAction = (p) => pageManager.ShowEditor<IPersonEditor, Person>(p)
+        };
+
+        var post = new DfDirectorySelectBox<Okpdtr>("post_id", "Должность", headerWidth, 300)
+        {
+            OpenAction = (p) => pageManager.ShowEditor<IOkpdtrEditor, Okpdtr>(p)
+        };
+
         var phone = new DfTextBox("phone", "Телефон", headerWidth, 200);
         var email = new DfTextBox("email", "Эл. почта", headerWidth, 200);
         var role = new DfChoice<JobRole>("JobRole", "Роль", headerWidth, 150);

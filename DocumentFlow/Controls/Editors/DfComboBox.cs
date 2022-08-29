@@ -3,6 +3,14 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 19.12.2019
+//
+// Версия 2022.8.29
+//  - добавлена кнопка для открытия нового окна
+//  - добавлено свойство OpenAction
+//  - свойство SelectedItem типа Guid? переименовано в SelectedValue
+//  - добавлено свойство SelecredItem типа T?
+//  - удалён метод SetSelectedItem
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -18,6 +26,7 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
 {
     private bool requird = false;
     private bool lockManual = false;
+    private Action<T>? open;
 
     public DfComboBox(string property, string header, int headerWidth, int editorWidth = default) : base(property)
     {
@@ -33,6 +42,9 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
         {
             EditorWidth = editorWidth;
         }
+
+        buttonOpen.Visible = false;
+        panelSeparator3.Visible = false;
     }
 
     public event EventHandler<SelectedValueChanged<T>>? ValueChanged;
@@ -78,7 +90,36 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
         }
     }
 
-    public Guid? SelectedItem => (Guid?)Value;
+    public Guid? SelectedValue => (Guid?)Value;
+
+    public T? SelectedItem
+    {
+        get => comboBoxAdv1.SelectedItem as T;
+
+        private set
+        {
+            lockManual = true;
+            try
+            {
+                comboBoxAdv1.SelectedItem = value;
+            }
+            finally
+            {
+                lockManual = false;
+            }
+        }
+    }
+
+    public Action<T>? OpenAction
+    {
+        get => open;
+        set
+        {
+            open = value;
+            buttonOpen.Visible = open != null;
+            panelSeparator3.Visible = open != null;
+        }
+    }
 
     #region IBindingControl interface
 
@@ -104,7 +145,7 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
             if (value is Guid id)
             {
                 T? identifier = comboBoxAdv1.Items.OfType<T>().FirstOrDefault(x => x.id.CompareTo(id) == 0);
-                SetSelectedItem(identifier);
+                SelectedItem = identifier;
                 return;
             }
 
@@ -114,24 +155,11 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
 
     #endregion
 
-    public void ClearValue() => SetSelectedItem(null);
+    public void ClearValue() => SelectedItem = null;
 
     protected override void ClearItems() => comboBoxAdv1.Items.Clear();
 
     protected override void DoRefreshDataSource(IEnumerable<T> data) => comboBoxAdv1.Items.AddRange(data.ToArray());
-
-    private void SetSelectedItem(T? item)
-    {
-        lockManual = true;
-        try
-        {
-            comboBoxAdv1.SelectedItem = item;
-        }
-        finally
-        {
-            lockManual = false;
-        }
-    }
 
     private void OnValueChanged(T? value)
     {
@@ -163,4 +191,12 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
     }
 
     private void ButtonDelete_Click(object sender, EventArgs e) => ClearValue();
+
+    private void ButtonOpen_Click(object sender, EventArgs e)
+    {
+        if (open != null && SelectedItem != null)
+        {
+            open(SelectedItem);
+        }
+    }
 }

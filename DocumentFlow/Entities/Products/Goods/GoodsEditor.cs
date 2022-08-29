@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 10.01.2022
+//
+// Версия 2022.8.29
+//  - расширены возможности полей measurement и calculation (добавлены
+//    кнопки для редактирования выбранных значений)
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -29,7 +34,11 @@ public class GoodsEditor : Editor<Goods>, IGoodsEditor
         var code = new DfTextBox("code", "Код", headerWidth, 180) { DefaultAsNull = false };
         var name = new DfTextBox("item_name", "Наименование", headerWidth, 600);
         var parent = new DfDirectorySelectBox<Goods>("parent_id", "Группа", headerWidth, 400) { ShowOnlyFolder = true };
-        var measurement = new DfComboBox<Measurement>("measurement_id", "Единица измерения", headerWidth, 250);
+        var measurement = new DfComboBox<Measurement>("measurement_id", "Единица измерения", headerWidth, 250)
+        {
+            OpenAction = (p) => pageManager.ShowEditor<IMeasurementEditor, Measurement>(p)
+        };
+
         var weight = new DfNumericTextBox("weight", "Вес, г", headerWidth, 100) { NumberDecimalDigits = 3 };
         var price = new DfCurrencyTextBox("price", "Цена без НДС", headerWidth, 150) { DefaultAsNull = false };
         var vat = new DfChoice<int>("vat", "НДС", headerWidth, 150);
@@ -50,7 +59,11 @@ public class GoodsEditor : Editor<Goods>, IGoodsEditor
 
         if (repository.HasPrivilege(Privilege.Update))
         {
-            var calculation = new DfComboBox<Calculation>("calculation_id", "Калькуляция", headerWidth, 400);
+            var calculation = new DfComboBox<Calculation>("calculation_id", "Калькуляция", headerWidth, 400)
+            {
+                OpenAction = (p) => pageManager.ShowEditor<ICalculationEditor, Calculation>(p)
+            };
+
             calculation.SetDataSource(() => Services.Provider.GetService<ICalculationRepository>()!.GetApproved(Document));
 
             controls.Insert(7, calculation);

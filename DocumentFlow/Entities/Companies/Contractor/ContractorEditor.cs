@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.01.2022
+//
+// Версия 2022.8.29
+//  - расширены возможности полей okopf и account (добавлены кнопки для
+//    редактирования выбранных значений)
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -41,8 +46,15 @@ public class ContractorEditor : Editor<Contractor>, IContractorEditor
         kpp = new DfMaskedTextBox<decimal>("kpp", "КПП", headerWidth, 200, mask: "#### ## ###");
         ogrn = new DfMaskedTextBox<decimal>("ogrn", "ОГРН", headerWidth, 200, mask: "# ## ## ## ##### #");
         okpo = new DfMaskedTextBox<decimal>("okpo", "ОКПО", headerWidth, 200, mask: "## ##### #");
-        okopf = new DfComboBox<Okopf>("okopf_id", "ОКОПФ", headerWidth, 450);
-        account = new DfComboBox<Account>("account_id", "Расчётный счёт", headerWidth, 450);
+        okopf = new DfComboBox<Okopf>("okopf_id", "ОКОПФ", headerWidth, 450)
+        {
+            OpenAction = (p) => pageManager.ShowEditor<IOkopfEditor, Okopf>(p)
+        };
+
+        account = new DfComboBox<Account>("account_id", "Расчётный счёт", headerWidth, 450)
+        {
+            OpenAction = (p) => pageManager.ShowEditor<IAccountEditor, Account>(p)
+        };
 
         parent_id.SetDataSource(() => contractorRepository.GetOnlyFolders());
         parent_id.ValueChanged += Parent_id_ValueChanged;

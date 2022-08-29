@@ -34,6 +34,8 @@
             this.panelSeparator1 = new System.Windows.Forms.Panel();
             this.buttonDelete = new DocumentFlow.Controls.ToolButton();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.panelSeparator3 = new System.Windows.Forms.Panel();
+            this.buttonOpen = new DocumentFlow.Controls.ToolButton();
             ((System.ComponentModel.ISupportInitialize)(this.comboBoxAdv1)).BeginInit();
             this.panelEdit.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -52,14 +54,14 @@
             // comboBoxAdv1
             // 
             this.comboBoxAdv1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.comboBoxAdv1.BeforeTouchSize = new System.Drawing.Size(172, 23);
+            this.comboBoxAdv1.BeforeTouchSize = new System.Drawing.Size(143, 23);
             this.comboBoxAdv1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxAdv1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxAdv1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
             this.comboBoxAdv1.Location = new System.Drawing.Point(0, 0);
             this.comboBoxAdv1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.comboBoxAdv1.Name = "comboBoxAdv1";
-            this.comboBoxAdv1.Size = new System.Drawing.Size(172, 23);
+            this.comboBoxAdv1.Size = new System.Drawing.Size(143, 23);
             this.comboBoxAdv1.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
             this.comboBoxAdv1.TabIndex = 2;
             this.comboBoxAdv1.ThemeName = "Office2016Colorful";
@@ -70,16 +72,18 @@
             this.panelEdit.Controls.Add(this.comboBoxAdv1);
             this.panelEdit.Controls.Add(this.panelSeparator1);
             this.panelEdit.Controls.Add(this.buttonDelete);
+            this.panelEdit.Controls.Add(this.panelSeparator3);
+            this.panelEdit.Controls.Add(this.buttonOpen);
             this.panelEdit.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelEdit.Location = new System.Drawing.Point(100, 0);
             this.panelEdit.Name = "panelEdit";
-            this.panelEdit.Size = new System.Drawing.Size(200, 23);
+            this.panelEdit.Size = new System.Drawing.Size(201, 23);
             this.panelEdit.TabIndex = 3;
             // 
             // panelSeparator1
             // 
             this.panelSeparator1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelSeparator1.Location = new System.Drawing.Point(172, 0);
+            this.panelSeparator1.Location = new System.Drawing.Point(143, 0);
             this.panelSeparator1.Name = "panelSeparator1";
             this.panelSeparator1.Size = new System.Drawing.Size(5, 23);
             this.panelSeparator1.TabIndex = 4;
@@ -94,10 +98,11 @@
             this.buttonDelete.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonDelete.Dock = System.Windows.Forms.DockStyle.Right;
             this.buttonDelete.Kind = DocumentFlow.Controls.ToolButtonKind.Delete;
-            this.buttonDelete.Location = new System.Drawing.Point(177, 0);
+            this.buttonDelete.Location = new System.Drawing.Point(148, 0);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(23, 23);
             this.buttonDelete.TabIndex = 3;
+            this.buttonDelete.TabStop = false;
             this.buttonDelete.Text = "toolButton2";
             this.buttonDelete.Click += new System.EventHandler(this.ButtonDelete_Click);
             // 
@@ -110,6 +115,32 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(363, 23);
             this.panel1.TabIndex = 4;
+            // 
+            // panelSeparator3
+            // 
+            this.panelSeparator3.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panelSeparator3.Location = new System.Drawing.Point(171, 0);
+            this.panelSeparator3.Name = "panelSeparator3";
+            this.panelSeparator3.Size = new System.Drawing.Size(5, 23);
+            this.panelSeparator3.TabIndex = 8;
+            // 
+            // buttonOpen
+            // 
+            this.buttonOpen.BackClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(255)))));
+            this.buttonOpen.BackColor = System.Drawing.Color.White;
+            this.buttonOpen.BackHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.buttonOpen.BorderClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(209)))), ((int)(((byte)(255)))));
+            this.buttonOpen.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
+            this.buttonOpen.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
+            this.buttonOpen.Dock = System.Windows.Forms.DockStyle.Right;
+            this.buttonOpen.Kind = DocumentFlow.Controls.ToolButtonKind.Open;
+            this.buttonOpen.Location = new System.Drawing.Point(176, 0);
+            this.buttonOpen.Name = "buttonOpen";
+            this.buttonOpen.Size = new System.Drawing.Size(25, 23);
+            this.buttonOpen.TabIndex = 9;
+            this.buttonOpen.TabStop = false;
+            this.buttonOpen.Text = "toolButton1";
+            this.buttonOpen.Click += new System.EventHandler(this.ButtonOpen_Click);
             // 
             // DfComboBox
             // 
@@ -135,5 +166,7 @@
         private ToolButton buttonDelete;
         private System.Windows.Forms.Panel panelSeparator1;
         private System.Windows.Forms.Panel panel1;
+        private Panel panelSeparator3;
+        private ToolButton buttonOpen;
     }
 }

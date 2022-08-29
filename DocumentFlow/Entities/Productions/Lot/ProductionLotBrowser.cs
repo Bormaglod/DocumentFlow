@@ -7,6 +7,8 @@
 // Версия 2022.8.28
 //  - добавлено столбец state_name и метод BrowserCellStyle
 //  - добавлено столбец execute_percent
+// Версия 2022.8.29
+//  - метод BrowserCellStyle перенесен в BaseProductionLotBrowser
 //
 //-----------------------------------------------------------------------
 
@@ -15,7 +17,6 @@ using DocumentFlow.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
-using Syncfusion.WinForms.DataGrid.Styles;
 
 using System.ComponentModel;
 
@@ -23,13 +24,9 @@ namespace DocumentFlow.Entities.Productions.Lot;
 
 public class ProductionLotBrowser : BaseProductionLotBrowser, IProductionLotBrowser
 {
-    private readonly IProductionLotRepository repository;
-
     public ProductionLotBrowser(IProductionLotRepository repository, IPageManager pageManager, IDocumentFilter filter)
         : base(repository, pageManager, filter: filter)
     {
-        this.repository = repository;
-
         AllowGrouping();
 
         var id = CreateText(x => x.id, "Id", width: 180, visible: false);
@@ -58,38 +55,5 @@ public class ProductionLotBrowser : BaseProductionLotBrowser, IProductionLotBrow
             [date] = ListSortDirection.Ascending,
             [number] = ListSortDirection.Ascending
         });
-
-        var menuState = ContextMenu.Add("Состояние");
-
-        foreach (var item in Enum.GetValues(typeof(LotState)))
-        {
-            var menu = ContextMenu.Add(ProductionLot.StateNameFromValue((LotState)item), LotChangeState, menuState);
-            menu.Tag = item;
-        }
-    }
-
-    protected override void BrowserCellStyle(ProductionLot document, string column, CellStyleInfo style)
-    {
-        base.BrowserCellStyle(document, column, style);
-
-        if (column == "state_name")
-        {
-            style.TextColor = document.LotState switch
-            {
-                LotState.Created => Color.Black,
-                LotState.Production => Color.Green,
-                LotState.Completed => Color.Red,
-                _ => Color.Orange
-            };
-        }
-    }
-
-    private void LotChangeState(object? data)
-    {
-        if (data is LotState state && CurrentDocument != null)
-        {
-            repository.SetState(CurrentDocument, state);
-            RefreshGrid();
-        }
     }
 }
