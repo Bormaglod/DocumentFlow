@@ -7,10 +7,14 @@
 // Версия 2022.8.19
 //  - добавлен метод SetColumns
 //  - исправлена процедура заполнения AddItem
-//
 // Версия 2022.8.21
 //  - группы теперь отображаются по имени (без указания кода группы)
 //  - добавлен метод GetPropertyValue
+// Версия 2022.8.31
+//  - добавлено поле nameColumn и работа с ним
+//  - добавлен метод SetSelectedNode
+//  - удалены вызовы ExpandAll
+//  - фильтр теперь осуществляет поиск по столбцам
 //
 //-----------------------------------------------------------------------
 
@@ -29,6 +33,7 @@ public partial class SelectDirectoryForm<T> : Form
     private readonly bool showOnlyFolder;
     private readonly bool removeEmptyFolders;
     private readonly Guid? root;
+    private string nameColumn = string.Empty;
 
     public SelectDirectoryForm(Guid? root, bool showOnlyFolder, bool removeEmptyFolders)
     {
@@ -47,17 +52,34 @@ public partial class SelectDirectoryForm<T> : Form
     public T? SelectedItem
     {
         get => (T?)treeSelect.SelectedNode?.Tag;
-        set => treeSelect.SelectedNode = GetNode(treeSelect.Nodes, value);
+        set => SetSelectedNode(GetNode(treeSelect.Nodes, value));
     }
 
     public Guid? SelectedValue
     {
         get => SelectedItem?.id;
-        set => treeSelect.SelectedNode = value == null ? null : GetNode(treeSelect.Nodes, value.Value);
+        set => SetSelectedNode(value == null ? null : GetNode(treeSelect.Nodes, value.Value));
+    }
+
+    private void SetSelectedNode(TreeNodeAdv? node)
+    {
+        treeSelect.SelectedNode = node;
+        if (node != null)
+        {
+            while (node.Parent != null && !node.Parent.Expanded)
+            {
+                node = node.Parent;
+                node.Expand();
+            }
+            
+            treeSelect.EnsureVisibleV(treeSelect.SelectedNode, false);
+        }
     }
 
     public void SetColumns(string nameColumn, IReadOnlyDictionary<string, string> columns)
     {
+        this.nameColumn = nameColumn;
+
         var type = typeof(T);
         foreach (var item in columns.Keys)
         {
@@ -100,7 +122,6 @@ public partial class SelectDirectoryForm<T> : Form
             treeSelect.EndUpdate();
         }
 
-        treeSelect.ExpandAll();
         treeSelect.Select();
         treeSelect.VScrollPos = 0;
     }
@@ -176,7 +197,6 @@ public partial class SelectDirectoryForm<T> : Form
 
         if (!data.is_folder && treeSelect.Columns.Count > 0)
         {
-            bool first = true;
             foreach (TreeColumnAdv item in treeSelect.Columns)
             {
                 if (item.Tag is not PropertyInfo prop)
@@ -186,10 +206,9 @@ public partial class SelectDirectoryForm<T> : Form
 
                 string text = GetPropertyValue(data, item);
 
-                if (first)
+                if (prop.Name == nameColumn)
                 {
                     n.Text = text;
-                    first = false;
                 }
                 else
                 {
@@ -253,7 +272,16 @@ public partial class SelectDirectoryForm<T> : Form
     {
         if (node is TreeNodeAdv nodeAdv)
         {
-            return nodeAdv.Text.Contains(textBoxExt1.Text, StringComparison.InvariantCultureIgnoreCase);
+            var res = nodeAdv.Text.Contains(textBoxExt1.Text, StringComparison.InvariantCultureIgnoreCase);
+            if (!res)
+            {
+                foreach (var item in nodeAdv.SubItems.OfType<TreeNodeAdvSubItem>())
+                {
+                    res = res || item.Text.Contains(textBoxExt1.Text, StringComparison.InvariantCultureIgnoreCase);
+                }
+            }
+
+            return res;
         }
 
         return false;
@@ -274,7 +302,6 @@ public partial class SelectDirectoryForm<T> : Form
         {
             treeSelect.Filter = null;
             treeSelect.RefreshFilter();
-            treeSelect.ExpandAll();
             treeSelect.VScrollPos = 0;
         }
         else

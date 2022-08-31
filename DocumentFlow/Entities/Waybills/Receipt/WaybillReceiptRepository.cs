@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.01.2022
+//
+// Версия 2022.8.31
+//  - доработан метод GetDefaultQuery - если поле item_name таблицы
+//    conttactor содержит null, то будет возвращено значение поля code
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -37,7 +42,7 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
         return query
             .Select("waybill_receipt.*")
             .Select("o.item_name as organization_name")
-            .Select("c.item_name as contractor_name")
+            .SelectRaw("case when c.item_name is null then c.code else c.item_name end as contractor_name")
             .Select("contract.tax_payer")
             .SelectRaw("case [contract].[tax_payer] when true then 20 else 0 end as [tax]")
             .Select("contract.item_name as contract_name")

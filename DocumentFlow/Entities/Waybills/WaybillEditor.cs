@@ -7,9 +7,14 @@
 // Версия 2022.8.17
 //  - исправлена процедура ContractValueChanged для корректного скрытия
 //    или отображения полей содержащих данные документов 1с
+// Версия 2022.8.31
+//  - если класс представленый как P имеет атрибут ProductContentAttribute,
+//    то для таких объектов правило изменения содержимого в grid-таблице
+//    меняется с Update на DeleteAndInsert
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
@@ -18,6 +23,7 @@ using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Productions.Order;
 using DocumentFlow.Entities.Productions.Processing;
 using DocumentFlow.Entities.Products;
+using DocumentFlow.Entities.Products.Core;
 using DocumentFlow.Entities.Products.Dialogs;
 using DocumentFlow.Infrastructure;
 
@@ -25,6 +31,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
+
+using System.Reflection;
 
 namespace DocumentFlow.Entities.Waybills;
 
@@ -180,6 +188,12 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
         details.DataEdit += (sender, args) =>
         {
             args.Cancel = FormProductPrice<P>.Edit(args.EditingData, contract.SelectedItem) == DialogResult.Cancel;
+
+            var attr = typeof(P).GetCustomAttribute<ProductContentAttribute>();
+            if (attr != null && attr.Content == ProductContent.All)
+            {
+                args.Rule = RuleChange.DeleteAndInsert;
+            }
         };
 
         details.DataCopy += (sender, args) =>
@@ -228,14 +242,13 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
 
     private void ContractValueChanged(object? sender, EventArgs e)
     {
-        bool taxPayer = false;
         if (contract.SelectedItem == null)
         {
             doc1c.Visible = false;
         }
         else
         {
-            taxPayer = contract.SelectedItem.tax_payer;
+            bool taxPayer = contract.SelectedItem.tax_payer;
             upd_panel.Visible = taxPayer;
             if (taxPayer)
             {

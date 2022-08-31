@@ -6,6 +6,9 @@
 //
 // Версия 2022.8.19
 //  - добавлено свойство Columns
+// Версия 2022.8.31
+//  - свойство NameColumn по умолчанию устанавливается в первое значение
+//    списка Columns
 //
 //-----------------------------------------------------------------------
 
@@ -28,16 +31,22 @@ public class DfDirectorySelectBox<T> : SelectBox<T>
 
     public bool RemoveEmptyFolders { get; set; } = false;
 
-    public string? NameColumn { get; set;
-    }
+    public string? NameColumn { get; set; }
+
     public IReadOnlyDictionary<string, string>? Columns { get; set; }
 
     protected override void OnSelect()
     {
         SelectDirectoryForm<T> form = new(RootIdentifier, ShowOnlyFolder, RemoveEmptyFolders);
-        if (Columns != null && NameColumn != null)
+        if (Columns != null && Columns.Count > 0)
         {
-            form.SetColumns(NameColumn, Columns);
+            var nameColumn = NameColumn;
+            if (nameColumn == null)
+            {
+                nameColumn = Columns.First().Key;
+            }
+
+            form.SetColumns(nameColumn, Columns);
         }
 
         form.AddItems(Items);
