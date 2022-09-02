@@ -3,7 +3,6 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 22.12.2019
-// Time: 0:25
 //-----------------------------------------------------------------------
 
 namespace DocumentFlow.Dialogs;
@@ -28,6 +27,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Toolkit.Uwp.Notifications;
+
 
 public partial class SelectEmailForm : Form
 {
@@ -118,9 +119,18 @@ public partial class SelectEmailForm : Form
         // https://stackoverflow.com/questions/59026301/sslhandshakeexception-an-error-occurred-while-attempting-to-establish-an-ssl-or
         //
         client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-
+        
         await client.ConnectAsync(email.mail_host, email.mail_port, SecureSocketOptions.Auto);
-        await client.AuthenticateAsync(email.address, email.user_password);
+
+        try
+        {
+            await client.AuthenticateAsync(email.address, email.user_password);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message);
+            return;
+        }
 
         MimeMessage message = new();
         message.From.Add(new MailboxAddress(emailFrom.Name, emailFrom.Email));
@@ -163,6 +173,13 @@ public partial class SelectEmailForm : Form
         {
             logs.Add(log);
         }
+
+        new ToastContentBuilder()
+            .AddArgument("action", "viewConversation")
+            .AddArgument("conversationId", 9813)
+            .AddText("Документ отправлен")
+            .AddText("")
+            .Show();
     }
 
     private void ButtonSend_Click(object sender, EventArgs e)

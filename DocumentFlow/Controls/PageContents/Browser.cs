@@ -12,6 +12,13 @@
 //      - вызов LoadBrowserSettings перенесен из RefreshPage в Browser_Load
 // Версия 2022.8.28
 //  - добавлен метод RefreshGrid
+// Версия 2022.9.2
+//  - метод AllowColumnsConfigure заменен на AllowColumnsCustomize
+//  - добавлен метод ConfigureColumns
+//  - добавлен метод ConfigureVisibleStatusColumns
+//  - все операции с видимостью колонок (методы ConfigureColumns и
+//    ConfigureVisibleStatusColumns) перенесены в Browser_Load и
+//    RegreshPage (этот метод вызывается только при ручном обновлении)
 //
 //-----------------------------------------------------------------------
 
@@ -288,8 +295,9 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     public void RefreshPage()
     {
+        ConfigureVisibleStatusColumns();
+        ConfigureColumns();
         RefreshView();
-        ConfigureCommands();
     }
 
     public void Refresh(Guid? owner)
@@ -298,7 +306,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
         CurrentApplicationContext.Context.App.OnAppNotify += App_OnAppNotify;
 
-        RefreshPage();
+        RefreshView();
     }
 
     public void OnPageClosing()
@@ -332,7 +340,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             };
             options.Converters.Add(new JsonStringEnumConverter());
 
-            if (AllowColumnsConfigure())
+            if (AllowColumnsCustomize())
             {
                 UpdateSettingsColumn();
             }
@@ -379,7 +387,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     protected virtual BrowserSettings? LoadSettings(string json, JsonSerializerOptions options) => JsonSerializer.Deserialize<BrowserSettings>(json, options);
 
-    protected virtual bool AllowColumnsConfigure() => true;
+    protected virtual bool AllowColumnsCustomize() => true;
 
     protected virtual void DoBeforeRefreshPage() { }
 
@@ -404,36 +412,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             gridContent.DataSource = list;
         }
 
-        foreach (var column in visible)
-        {
-            bool? columnVisible = IsColumnVisible(column);
-            if (columnVisible == null)
-            {
-                continue;
-            }
-
-            column.Visible = columnVisible.Value;
-            var item = menuVisibleColumns.DropDownItems.OfType<ToolStripMenuItem>().FirstOrDefault(x => x.Tag == column);
-            if (item != null)
-            {
-                item.Checked = columnVisible.Value;
-            }
-        }
-
-        foreach (var column in visibility)
-        {
-            var item = menuVisibleColumns.DropDownItems.OfType<ToolStripMenuItem>().FirstOrDefault(x => x.Tag == column);
-            if (item != null)
-            {
-                bool? columnVisible = IsAllowVisibilityColumn(column);
-                if (columnVisible == null)
-                {
-                    continue;
-                }
-
-                item.Visible = columnVisible.Value;
-            }
-        }
+        ConfigureCommands();
     }
 
     protected GridTextColumn CreateText(Expression<Func<T, object?>> memberExpression, string headerText, int width = 0, bool visible = true, bool hidden = true)
@@ -629,6 +608,8 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     protected virtual void BrowserImageStyle(T document, string column, ImageCellStyle style) { }
 
+    protected virtual void ConfigureColumns() { }
+
     protected void AllowGrouping()
     {
         gridContent.AllowGrouping = true;
@@ -670,10 +651,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         return new GroupColumnCollection(gridContent);
     }
 
-    protected void ClearStackedRows()
-    {
-        gridContent.StackedHeaderRows.Clear();
-    }
+    protected void ClearStackedRows() => gridContent.StackedHeaderRows.Clear();
 
     protected void CreateStackedColumns(string header, string[] columns)
     {
@@ -761,9 +739,10 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             return;
         }
 
-        foreach (var item in Settings.Columns)
+        foreach (var (item, column) in from item in Settings.Columns
+                                       let column = gridContent.Columns.FirstOrDefault(x => x.MappingName == item.Name)
+                                       select (item, column))
         {
-            var column = gridContent.Columns.FirstOrDefault(x => x.MappingName == item.Name);
             if (column == null)
             {
                 continue;
@@ -779,20 +758,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             }
 
             column.HeaderText = item.Header;
-            column.Visible = item.Visible;
-
-            bool? b = null;
-            var c = visible.FirstOrDefault(x => x.MappingName == item.Name);
-            if (c != null)
-            {
-                b = IsColumnVisible(c);
-            }
-
-            if (b != null)
-            {
-                column.Visible = column.Visible && b.Value;
-            }
-
             column.AutoSizeColumnsMode = item.AutoSizeMode;
         }
     }
@@ -1136,6 +1101,65 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         }
     }
 
+    private void ConfigureVisibleStatusColumns()
+    {
+        if (Settings.Columns == null)
+        {
+            return;
+        }
+
+        foreach (var (item, column) in from item in Settings.Columns
+                                       let column = gridContent.Columns.FirstOrDefault(x => x.MappingName == item.Name)
+                                       select (item, column))
+        {
+            if (column == null)
+            {
+                continue;
+            }
+
+            if (AllowColumnsCustomize())
+            {
+                column.Visible = item.Visible;
+            }
+
+            bool? b = null;
+            var c = visible.FirstOrDefault(x => x.MappingName == item.Name);
+            if (c != null)
+            {
+                b = IsColumnVisible(c);
+            }
+
+            if (b != null)
+            {
+                if (AllowColumnsCustomize())
+                {
+                    column.Visible = column.Visible && b.Value;
+                }
+                else
+                {
+                    column.Visible = b.Value;
+                }
+            }
+
+            var menu = menuVisibleColumns.DropDownItems.OfType<ToolStripMenuItem>().FirstOrDefault(x => x.Tag == column);
+            if (menu == null)
+            {
+                continue;
+            }
+
+            menu.Checked = column.Visible;
+
+            if (visibility.Contains(column))
+            {
+                bool? columnVisible = IsAllowVisibilityColumn(column);
+                if (columnVisible != null)
+                {
+                    menu.Visible = columnVisible.Value;
+                }
+            }
+        }
+    }
+
     private void App_OnAppNotify(object? sender, NotifyEventArgs e)
     {
         if (e.EntityName == typeof(T).Name.Underscore() && gridContent.DataSource is IList<T> list)
@@ -1453,7 +1477,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         }
     }
 
-    private void ButtonRefresh_Click(object sender, EventArgs e) => RefreshView();
+    private void ButtonRefresh_Click(object sender, EventArgs e) => RefreshPage();
 
     private void ButtonCreate_Click(object sender, EventArgs e) => ShowEditor();
 
@@ -1492,7 +1516,12 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     private void ButtonSettings_Click(object sender, EventArgs e)
     {
-        var form = new BrowserCustomizationForm(Settings);
+        if (AllowColumnsCustomize())
+        {
+            UpdateSettingsColumn();
+        }
+
+        var form = new BrowserCustomizationForm(Settings, AllowColumnsCustomize());
         if (form.ShowDialog() == DialogResult.OK && form.Columns != null)
         {
             CustomizeColumns();
@@ -1758,10 +1787,13 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     private void Browser_Load(object sender, EventArgs e)
     {
         LoadBrowserSettings();
-        if (AllowColumnsConfigure())
+        if (AllowColumnsCustomize())
         {
             RefreshSettingsHiddenColumns();
             CustomizeColumns();
         }
+
+        ConfigureVisibleStatusColumns();
+        ConfigureColumns();
     }
 }

@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 13.07.2022
+//
+// Версия 2022.9.2
+//  - удалён метод ColumnVisible
+//  - IsAllowVisibilityColumn теперь всегда равен false
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -121,15 +126,28 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
 
     protected override string HeaderText => "Материальный отчёт";
 
-    protected override bool AllowColumnsConfigure() => false;
+    protected override bool AllowColumnsCustomize() => false;
 
-    protected override bool? IsColumnVisible(GridColumn column) => ColumnVisible(column);
-
-    protected override bool? IsAllowVisibilityColumn(GridColumn column) => ColumnVisible(column);
-
-    protected override void DoBeforeRefreshPage()
+    protected override bool? IsColumnVisible(GridColumn column)
     {
-        base.DoBeforeRefreshPage();
+        if (filter.AmountVisible && filter.SummaVisible)
+        {
+            return true;
+        }
+        else
+        {
+            return
+                filter.AmountVisible ?
+                column.MappingName.EndsWith("amount") :
+                column.MappingName.EndsWith("summa");
+        }
+    }
+
+    protected override bool? IsAllowVisibilityColumn(GridColumn column) => false;
+
+    protected override void ConfigureColumns()
+    {
+        base.ConfigureColumns();
 
         ClearStackedRows();
         if (filter.AmountVisible && filter.SummaVisible)
@@ -179,21 +197,5 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
         }
 
         return settings;
-    }
-
-    private bool ColumnVisible(GridColumn column)
-    {
-        if (filter.AmountVisible && filter.SummaVisible)
-        {
-            return true;
-        }
-        else
-        {
-            return
-                filter.AmountVisible ?
-                column.MappingName.EndsWith("amount") :
-                column.MappingName.EndsWith("summa");
-
-        }
     }
 }

@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 19.06.2022
+//
+// Версия 2022.9.2
+//  - при попыткесохранить отчёт в уже существующий файл генерировалась
+//    ошибка - исправлено
+//
 //-----------------------------------------------------------------------
 
 using Syncfusion.Windows.Forms.PdfViewer;
@@ -15,7 +20,7 @@ namespace DocumentFlow.Dialogs;
 public partial class PreviewReportForm : Form
 {
     private bool canZoom = true;
-    private Guid? documentId;
+    private readonly Guid? documentId;
     private readonly string pdf;
 
     protected PreviewReportForm(Guid? documentId, string pdf)
@@ -184,7 +189,7 @@ public partial class PreviewReportForm : Form
     {
         if (savePdfDialog.ShowDialog() == DialogResult.OK)
         {
-            File.Copy(pdf, savePdfDialog.FileName);
+            File.Copy(pdf, savePdfDialog.FileName, true);
         }
     }
 
