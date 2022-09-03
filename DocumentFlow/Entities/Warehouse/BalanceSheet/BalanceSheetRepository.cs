@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 14.07.2022
+//
+// Версия 2022.9.3
+//  - добавлена сортировка
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -65,7 +69,8 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
                     q => q.WhereFalse("p.is_service")
                  )
                 .WhereFalse("p.is_folder")
-                .WhereRaw("coalesce(ib.init_amount, ib.init_summa, rb.income_amount, rb.income_summa, rb.expense_amount, rb.expense_summa) is not null");
+                .WhereRaw("coalesce(ib.init_amount, ib.init_summa, rb.income_amount, rb.income_summa, rb.expense_amount, rb.expense_summa) is not null")
+                .OrderBy("pp.item_name", "p.item_name");
         }
 
         return query;

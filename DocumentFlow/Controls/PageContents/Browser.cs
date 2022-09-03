@@ -1,5 +1,4 @@
 ﻿//-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
 // Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
@@ -19,6 +18,13 @@
 //  - все операции с видимостью колонок (методы ConfigureColumns и
 //    ConfigureVisibleStatusColumns) перенесены в Browser_Load и
 //    RegreshPage (этот метод вызывается только при ручном обновлении)
+// Версия 2022.9.3
+//  - удалена возможность настройки каждой папки, теперь они все
+//    настраиваются единообразно:
+//      - удалены процедуры ChangeColumnsVisible, ChangeColumnsVisible,
+//        AllowColumnVisibility, AllowColumnVisibility, IsColumnVisible и
+//        IsAllowVisibilityColumn
+//      - удалены поля visible и visibility
 //
 //-----------------------------------------------------------------------
 
@@ -156,8 +162,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     private T? record = default;
 
     private readonly List<GridColumn> hiddens = new();
-    private readonly List<GridColumn> visible = new();
-    private readonly List<GridColumn> visibility = new();
 
     private BrowserSettings? settings;
 
@@ -295,8 +299,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     public void RefreshPage()
     {
-        ConfigureVisibleStatusColumns();
-        ConfigureColumns();
+        RefreshColumns();
         RefreshView();
     }
 
@@ -390,6 +393,12 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     protected virtual bool AllowColumnsCustomize() => true;
 
     protected virtual void DoBeforeRefreshPage() { }
+
+    protected void RefreshColumns()
+    {
+        ConfigureVisibleStatusColumns();
+        ConfigureColumns();
+    }
 
     protected void RefreshView()
     {
@@ -589,18 +598,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             gridContent.SortColumnDescriptions.Add(sort);
         }
     }
-
-    protected void ChangeColumnsVisible(IEnumerable<GridColumn> columns) => visible.AddRange(columns);
-
-    protected void ChangeColumnsVisible(params GridColumn[] columns) => visible.AddRange(columns);
-
-    protected void AllowColumnVisibility(IEnumerable<GridColumn> columns) => visibility.AddRange(columns);
-
-    protected void AllowColumnVisibility(params GridColumn[] columns) => visibility.AddRange(columns);
-
-    protected virtual bool? IsColumnVisible(GridColumn column) => null;
-
-    protected virtual bool? IsAllowVisibilityColumn(GridColumn column) => null;
 
     protected virtual void OnChangeParent() { }
 
@@ -1103,41 +1100,14 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     private void ConfigureVisibleStatusColumns()
     {
-        if (Settings.Columns == null)
+        foreach (var column in gridContent.Columns)
         {
-            return;
-        }
-
-        foreach (var (item, column) in from item in Settings.Columns
-                                       let column = gridContent.Columns.FirstOrDefault(x => x.MappingName == item.Name)
-                                       select (item, column))
-        {
-            if (column == null)
+            if (Settings.Columns != null && AllowColumnsCustomize())
             {
-                continue;
-            }
-
-            if (AllowColumnsCustomize())
-            {
-                column.Visible = item.Visible;
-            }
-
-            bool? b = null;
-            var c = visible.FirstOrDefault(x => x.MappingName == item.Name);
-            if (c != null)
-            {
-                b = IsColumnVisible(c);
-            }
-
-            if (b != null)
-            {
-                if (AllowColumnsCustomize())
+                var item = Settings.Columns.FirstOrDefault(x => x.Name == column.MappingName);
+                if (item != null)
                 {
-                    column.Visible = column.Visible && b.Value;
-                }
-                else
-                {
-                    column.Visible = b.Value;
+                    column.Visible = item.Visible;
                 }
             }
 
@@ -1148,15 +1118,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             }
 
             menu.Checked = column.Visible;
-
-            if (visibility.Contains(column))
-            {
-                bool? columnVisible = IsAllowVisibilityColumn(column);
-                if (columnVisible != null)
-                {
-                    menu.Visible = columnVisible.Value;
-                }
-            }
         }
     }
 
@@ -1793,7 +1754,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             CustomizeColumns();
         }
 
-        ConfigureVisibleStatusColumns();
-        ConfigureColumns();
+        RefreshColumns();
     }
 }

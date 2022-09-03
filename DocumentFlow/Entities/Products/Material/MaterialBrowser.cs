@@ -3,6 +3,12 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.12.2021
+//
+// Версия 2022.9.3
+//  - удалены методы IsColumnVisible, IsAllowVisibilityColumn,
+//    AvailableWireColumn и OnChangeParent
+// - удалена колонка "Тип провода"
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -20,14 +26,9 @@ namespace DocumentFlow.Entities.Products;
 
 public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
 {
-    private readonly IMaterialRepository repository;
-    private bool isWireFolder = false;
-
     public MaterialBrowser(IMaterialRepository repository, IPageManager pageManager, IProductRowHeader productRowHeader, IBreadcrumb navigator) 
         : base(repository, pageManager, productRowHeader, navigator: navigator)
     {
-        this.repository = repository;
-
         var id = CreateText(x => x.id, "Id", 180, visible: false);
         var code = CreateText(x => x.code, "Код", 150);
         var name = CreateText(x => x.item_name, "Наименование", hidden: false);
@@ -38,17 +39,13 @@ public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
         var min_order = CreateNumeric(x => x.min_order, "Мин. заказ", 100, decimalDigits: 3);
         var ext_article = CreateText(x => x.ext_article, "Доп. артикул", 120);
         var cross = CreateText(x => x.cross_name, "Кросс-артикул", 120);
-        var wire_name = CreateText(x => x.wire_name, "Тип провода", 120);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         measurement.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
         vat.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
         min_order.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
-        AddColumns(new GridColumn[] { id, code, name, measurement, price, vat, weight, min_order, ext_article, wire_name, cross });
-
-        ChangeColumnsVisible(code, measurement, price, vat, weight, min_order, ext_article, cross, wire_name);
-        AllowColumnVisibility(measurement, price, vat, weight, min_order, ext_article, cross, wire_name);
+        AddColumns(new GridColumn[] { id, code, name, measurement, price, vat, weight, min_order, ext_article, cross });
 
         if (repository.HasPrivilege("materials", Privilege.Select))
         {
@@ -59,9 +56,6 @@ public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
             balance.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
             AddColumns(new GridColumn[] { balance, material_using, status });
-
-            ChangeColumnsVisible(balance, material_using, status);
-            AllowColumnVisibility(balance, material_using, status);
         }
 
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
@@ -73,10 +67,6 @@ public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
     }
 
     protected override string HeaderText => "Материалы";
-
-    protected override bool? IsColumnVisible(GridColumn column) => AvailableWireColumn(column);
-
-    protected override bool? IsAllowVisibilityColumn(GridColumn column) => AvailableWireColumn(column);
 
     protected override void BrowserImageStyle(Material document, string column, ImageCellStyle style)
     {
@@ -109,31 +99,6 @@ public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
 
                 style.TextImageRelation = TextImageRelation.ImageBeforeText;
             }
-        }
-    }
-
-    protected override void OnChangeParent()
-    {
-        base.OnChangeParent();
-        if (ParentId == null)
-        {
-            isWireFolder = false;
-        }
-        else
-        {
-            isWireFolder = repository.GetParentFolders(ParentId.Value).FirstOrDefault(x => x.id == Material.WireGroup) != null;
-        }
-    }
-
-    private bool AvailableWireColumn(GridColumn column)
-    {
-        if (column.MappingName == "wire_name")
-        {
-            return RootId.HasValue && isWireFolder;
-        }
-        else
-        {
-            return RootId.HasValue;
         }
     }
 }

@@ -6,6 +6,8 @@
 //
 // Версия 2022.8.28
 //  - время выработки заменено с мин на сек
+// Версия 2022.9.3
+//  - удалены методы IsColumnVisible и IsAllowVisibilityColumn
 //
 //-----------------------------------------------------------------------
 
@@ -47,14 +49,7 @@ public class OperationBrowser : Browser<Operation>, IOperationBrowser
         {
             [name] = ListSortDirection.Ascending
         });
-
-        ChangeColumnsVisible(code, produced, prod_time, production_rate, type_name, salary, operation_using);
-        AllowColumnVisibility(produced, prod_time, production_rate, type_name, salary, operation_using);
     }
 
     protected override string HeaderText => "Произв. операции";
-
-    protected override bool? IsColumnVisible(GridColumn column) => RootId.HasValue;
-
-    protected override bool? IsAllowVisibilityColumn(GridColumn column) => RootId.HasValue;
 }

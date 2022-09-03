@@ -3,6 +3,12 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 22.12.2019
+//
+// Версия 2022.9.3
+//  - добавлена поддержка всплывающих уведомлений об отправке писем
+//  - при ошибке аутетификации выдается соответствующее сообщение
+//  - исправлена ошибка формирования имён получателей
+//
 //-----------------------------------------------------------------------
 
 namespace DocumentFlow.Dialogs;
@@ -16,6 +22,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Uwp.Notifications;
 
 using MimeKit;
 
@@ -27,8 +34,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Toolkit.Uwp.Notifications;
-
 
 public partial class SelectEmailForm : Form
 {
@@ -86,10 +91,11 @@ public partial class SelectEmailForm : Form
         var from = orgs.Concat(ourEmps);
 
         var empRepo = Services.Provider.GetService<IEmployeeRepository>();
-        var to = empRepo!.GetAllValid(
+        var to = empRepo!.GetAllDefault(
             callback: q => q
-                .WhereNotNull("item_name")
-                .WhereNotNull("email"))
+                .WhereFalse("employee.deleted")
+                .WhereNotNull("employee.item_name")
+                .WhereNotNull("employee.email"))
             .Select(x => new EmailAddress($"{x.item_name} ({x.owner_name})", x.email!));
 
         SelectEmailForm window = new(documentId, from, to, title, file);
@@ -178,8 +184,12 @@ public partial class SelectEmailForm : Form
             .AddArgument("action", "viewConversation")
             .AddArgument("conversationId", 9813)
             .AddText("Документ отправлен")
-            .AddText("")
-            .Show();
+            .AddText(textSubject.Text)
+            .AddText($"Получатели: {string.Join(", ", emailTo.Select(x => x.Name))}")
+            .Show(toast => 
+            {
+                toast.ExpirationTime = DateTime.Now.AddMinutes(1);
+            });
     }
 
     private void ButtonSend_Click(object sender, EventArgs e)

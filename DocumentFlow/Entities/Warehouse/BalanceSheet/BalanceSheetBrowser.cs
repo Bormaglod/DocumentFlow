@@ -7,6 +7,8 @@
 // Версия 2022.9.2
 //  - удалён метод ColumnVisible
 //  - IsAllowVisibilityColumn теперь всегда равен false
+// Версия 2022.9.3
+//  - удалены методы IsColumnVisible, IsAllowVisibilityColumn и IsVisible
 //
 //-----------------------------------------------------------------------
 
@@ -41,7 +43,7 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
     }
 
     private readonly IBalanceSheetFilter filter;
-    private readonly List<StackColumnInfo> columns;
+    private readonly StackColumnInfo[] columns;
 
     public BalanceSheetBrowser(IBalanceSheetRepository repository, IPageManager pageManager, IBalanceSheetFilter filter) 
         : base(repository, pageManager, filter: filter) 
@@ -68,28 +70,13 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
         expense_amount.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
         closing_balance_amount.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
-        columns = new()
+        columns = new StackColumnInfo[]
         {
             new StackColumnInfo("Остаток на начало", opening_balance_amount, opening_balance_summa),
             new StackColumnInfo("Приход", income_amount, income_summa),
             new StackColumnInfo("Расход", expense_amount, expense_summa),
             new StackColumnInfo("Остаток на конец", closing_balance_amount, closing_balance_summa),
         };
-
-        var cols = new List<GridColumn>()
-        {
-            opening_balance_amount,
-            opening_balance_summa,
-            income_amount,
-            income_summa,
-            expense_amount,
-            expense_summa,
-            closing_balance_amount,
-            closing_balance_summa
-        };
-
-        ChangeColumnsVisible(cols);
-        AllowColumnVisibility(cols);
 
         CreateSummaryRow(VerticalPosition.Bottom, true)
             .AsSummary(opening_balance_amount, includeDeleted: true)
@@ -128,28 +115,18 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
 
     protected override bool AllowColumnsCustomize() => false;
 
-    protected override bool? IsColumnVisible(GridColumn column)
-    {
-        if (filter.AmountVisible && filter.SummaVisible)
-        {
-            return true;
-        }
-        else
-        {
-            return
-                filter.AmountVisible ?
-                column.MappingName.EndsWith("amount") :
-                column.MappingName.EndsWith("summa");
-        }
-    }
-
-    protected override bool? IsAllowVisibilityColumn(GridColumn column) => false;
-
     protected override void ConfigureColumns()
     {
         base.ConfigureColumns();
 
         ClearStackedRows();
+
+        foreach (var column in columns)
+        {
+            column.Amount.Visible = filter.AmountVisible;
+            column.Summa.Visible = filter.SummaVisible;
+        }
+        
         if (filter.AmountVisible && filter.SummaVisible)
         {
             foreach (var item in columns)

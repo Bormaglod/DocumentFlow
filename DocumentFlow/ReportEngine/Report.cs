@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 13.02.2022
+//
+// Версия 2022.9.3
+//  - тема отчёта теперь формируется с использованием описания
+//    класса (DescriptionAttribute)
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core.Repository;
@@ -13,6 +18,8 @@ using DocumentFlow.ReportEngine.Infrastructure;
 using FastReport;
 
 using Microsoft.Extensions.DependencyInjection;
+
+using System.Reflection;
 
 namespace DocumentFlow.ReportEngine;
 
@@ -60,7 +67,11 @@ public abstract class Report<T> : IReport
     private void ShowReport(T entity)
     {
         string file = BaseReport.CreatePdfDocument(report);
-        PreviewReportForm.ShowReport(entity.id, file, entity?.ToString() ?? string.Empty);
+
+        var attr = typeof(T).GetCustomAttribute<Data.Core.DescriptionAttribute>();
+        string title = $"{attr?.Name ?? string.Empty} {entity?.ToString() ?? string.Empty}";
+
+        PreviewReportForm.ShowReport(entity?.id, file, title);
     }
 
     void IReport.Show(IDocumentInfo document)

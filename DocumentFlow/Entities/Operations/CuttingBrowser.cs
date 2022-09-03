@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.01.2022
+//
+// Версия 2022.9.3
+//  - удалены методы IsColumnVisible и IsAllowVisibilityColumn
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -18,7 +22,7 @@ namespace DocumentFlow.Entities.Operations;
 
 public class CuttingBrowser : Browser<Cutting>, ICuttingBrowser
 {
-    public CuttingBrowser(ICuttingRepository repository, IPageManager pageManager, IBreadcrumb navigator) : base(repository, pageManager, navigator: navigator) 
+    public CuttingBrowser(ICuttingRepository repository, IPageManager pageManager, IBreadcrumb navigator) : base(repository, pageManager, navigator: navigator)
     {
         AllowGrouping();
 
@@ -54,14 +58,7 @@ public class CuttingBrowser : Browser<Cutting>, ICuttingBrowser
         {
             [name] = ListSortDirection.Ascending
         });
-
-        ChangeColumnsVisible(code, produced, prod_time, production_rate, segment_length, program_number, salary, operation_using);
-        AllowColumnVisibility(produced, prod_time, production_rate, segment_length, program_number, salary, left_cleaning, left_sweep, right_cleaning, right_sweep, operation_using);
     }
 
     protected override string HeaderText => "Резка";
-
-    protected override bool? IsColumnVisible(GridColumn column) => RootId.HasValue;
-
-    protected override bool? IsAllowVisibilityColumn(GridColumn column) => RootId.HasValue;
 }
