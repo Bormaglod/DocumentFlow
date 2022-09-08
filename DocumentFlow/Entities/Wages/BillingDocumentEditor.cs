@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 08.08.2022
+//
+// Версия 2022.9.8
+//  - не отображалась панель panel_calc_range. Исправлено.
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -53,6 +57,8 @@ public class BillingDocumentEditor<T> : DocumentEditor<T>
         month.SetChoiceValues(months);
 
         panel_calc_range.Controls.AddRange(new Control[] { year, month });
+
+        AddControls(new Control[] { panel_calc_range });
     }
 
     protected int BillingYear => year.NumericValue == null ? DateTime.Now.Year : year.NumericValue.Value;
