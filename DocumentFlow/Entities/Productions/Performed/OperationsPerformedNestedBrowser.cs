@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.06.2022
+//
+// Версия 2022.9.9
+//  - добавлен столбец double_rate
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -28,6 +32,7 @@ public class OperationsPerformedNestedBrowser : BaseOperationsPerformedBrowser, 
         var material = CreateText(x => x.material_name, "Использованный материал", width: 270);
         var quantity = CreateNumeric(x => x.quantity, "Количество", width: 140, hidden: false, decimalDigits: 3);
         var salary = CreateCurrency(x => x.salary, "Зарплата", width: 120);
+        var double_rate = CreateBoolean(x => x.double_rate, "Двойная оплата", width: 100);
 
         CreateSummaryRow(VerticalPosition.Bottom)
             .AsSummary(quantity)
@@ -36,7 +41,7 @@ public class OperationsPerformedNestedBrowser : BaseOperationsPerformedBrowser, 
         operation.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         quantity.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
-        AddColumns(new GridColumn[] { id, date, operation, employee, material, quantity, salary });
+        AddColumns(new GridColumn[] { id, date, operation, employee, material, quantity, salary, double_rate });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [date] = ListSortDirection.Ascending

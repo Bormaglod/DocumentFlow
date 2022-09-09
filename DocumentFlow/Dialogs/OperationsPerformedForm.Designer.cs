@@ -38,7 +38,7 @@
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.buttonCancel.Location = new System.Drawing.Point(452, 187);
+            this.buttonCancel.Location = new System.Drawing.Point(452, 219);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(112, 28);
             this.buttonCancel.TabIndex = 101;
@@ -50,7 +50,7 @@
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonOk.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.buttonOk.Location = new System.Drawing.Point(333, 187);
+            this.buttonOk.Location = new System.Drawing.Point(333, 219);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(112, 28);
             this.buttonOk.TabIndex = 100;
@@ -65,7 +65,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(592, 227);
+            this.ClientSize = new System.Drawing.Size(592, 259);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.MaximizeBox = false;

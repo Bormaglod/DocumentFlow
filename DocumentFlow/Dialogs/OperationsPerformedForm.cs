@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.06.2022
+//
+// Версия 2022.9.9
+//  - добавлено поле double_rate
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -38,6 +42,7 @@ public partial class OperationsPerformedForm : Form
         replacing_material = new DfDirectorySelectBox<Material>("replacing_material_id", "Использованный материал", headerWidth, 350) { TabIndex = 3 };
         employee = new DfDirectorySelectBox<OurEmployee>("employee_id", "Исполнитель", headerWidth, 350) { TabIndex = 4 };
         quantity = new DfIntegerTextBox<long>("quantity", "Количество", headerWidth, 150) { TabIndex = 5 };
+        var double_rate = new DfToggleButton("double_rate", "Двойная оплата", headerWidth) { TabIndex = 6 };
 
         operations.SetDataSource(() =>
         {
@@ -77,8 +82,11 @@ public partial class OperationsPerformedForm : Form
 
         employee.SetDataSource(() => Services.Provider.GetService<IOurEmployeeRepository>()?.GetAllValid(), true);
 
+        double_rate.ToggleValue = DateTime.Today.DayOfWeek == DayOfWeek.Sunday || DateTime.Today.DayOfWeek == DayOfWeek.Saturday;
+
         Controls.AddRange(new Control[]
         {
+            double_rate,
             quantity,
             employee,
             replacing_material,

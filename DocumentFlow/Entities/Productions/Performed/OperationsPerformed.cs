@@ -7,6 +7,8 @@
 // Версия 2022.8.28
 //  - вызов NotifyPropertyChanged упрощен (параметр передается по
 //    умолчанию - имя свойства подставляется автоматически)
+// Версия 2022.9.9
+//  - добавлено поле double_rate
 //
 //-----------------------------------------------------------------------
 
@@ -34,6 +36,7 @@ public class OperationsPerformed : AccountingDocument
     }
 
     public decimal salary { get; set; }
+    public bool double_rate { get; set; }
     public string? lot_name { get; protected set; }
     public string? order_name { get; protected set; }
     public string? goods_name { get; protected set; }

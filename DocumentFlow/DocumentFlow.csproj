@@ -6,7 +6,7 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>2022.9.8</Version>
+		<Version>2022.9.9</Version>
 		<Company>Автоком</Company>
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2021</Copyright>
 		<Platforms>x64</Platforms>
@@ -48,8 +48,8 @@
 		<PackageReference Include="NLog" Version="5.0.4" />
 		<PackageReference Include="Npgsql" Version="6.0.6" />
 		<PackageReference Include="Scrutor" Version="4.2.0" />
-		<PackageReference Include="SqlKata" Version="2.3.8" />
-		<PackageReference Include="SqlKata.Execution" Version="2.3.8" />
+		<PackageReference Include="SqlKata" Version="2.3.9" />
+		<PackageReference Include="SqlKata.Execution" Version="2.3.9" />
 		<PackageReference Include="Syncfusion.PdfViewer.Windows" Version="20.2.0.48" />
 		<PackageReference Include="Syncfusion.PivotTable.WinForms" Version="20.2.0.48" />
 		<PackageReference Include="Syncfusion.SfDataGrid.WinForms" Version="20.2.0.48" />

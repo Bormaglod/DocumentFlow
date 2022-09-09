@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.06.2022
+//
+// Версия 2022.9.9
+//  - добавлено поле double_rate
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -75,6 +79,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         var quantity = new DfIntegerTextBox<long>("quantity", "Количество", headerWidth, 150);
         var employee = new DfDirectorySelectBox<OurEmployee>("employee_id", "Исполнитель", headerWidth, 350);
         var salary = new DfCurrencyTextBox("salary", "Зарплата", headerWidth, 150);
+        var double_rate = new DfToggleButton("double_rate", "Двойная плата", headerWidth);
 
         lot.SetDataSource(() =>
         {
@@ -145,7 +150,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
             }
         };
 
-        replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials()/*, true*/);
+        replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials());
 
         operations.SetDataSource(() => IsCreating ? null : GetCalculationOperation(Document.calculation_id));
 
@@ -156,6 +161,8 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         };
 
         employee.SetDataSource(() => Services.Provider.GetService<IOurEmployeeRepository>()?.GetAllValid());
+
+        double_rate.ToggleValue = DateTime.Today.DayOfWeek == DayOfWeek.Sunday || DateTime.Today.DayOfWeek == DayOfWeek.Saturday;
 
         AddControls(new Control[]
         {
@@ -168,7 +175,8 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
             replacing_material,
             quantity,
             employee,
-            salary
+            salary,
+            double_rate
         });
     }
 
