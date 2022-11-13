@@ -3,12 +3,15 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 31.01.2022
+//
+// Версия 2022.11.13
+//  - наследование интерфейса изменено на IBalanceProductRepository
+//
 //-----------------------------------------------------------------------
-
-using DocumentFlow.Data.Infrastructure;
 
 namespace DocumentFlow.Entities.Balances;
 
-public interface IBalanceMaterialRepository : IOwnedRepository<Guid, BalanceMaterial>
+
+public interface IBalanceMaterialRepository : IBalanceProductRepository<BalanceMaterial>
 {
 }

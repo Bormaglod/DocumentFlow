@@ -293,6 +293,26 @@ namespace DocumentFlow.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_discount_16 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_discount_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_discount_30 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_discount_30", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_doc_accept_close_16 {
             get {
                 object obj = ResourceManager.GetObject("icons8_doc_accept_close_16", resourceCulture);
@@ -706,6 +726,16 @@ namespace DocumentFlow.Properties {
         internal static System.Drawing.Bitmap icons8_robot_16 {
             get {
                 object obj = ResourceManager.GetObject("icons8_robot_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_robot_30 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_robot_30", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

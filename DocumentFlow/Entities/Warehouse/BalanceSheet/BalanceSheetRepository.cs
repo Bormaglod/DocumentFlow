@@ -6,6 +6,11 @@
 //
 // Версия 2022.9.3
 //  - добавлена сортировка
+// Версия 2022.11.13
+//  - исправлена ошибка с некорректным отображением суммы начального 
+//    остатка
+//  - в таблицу больще не попадают строки в которых отсутствуют остатки
+//    и движение
 //
 //-----------------------------------------------------------------------
 
@@ -34,7 +39,7 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
             var init_balance = new Query($"balance_{name}")
                 .Select("reference_id as id")
                 .SelectRaw("sum(amount) as init_amount")
-                .SelectRaw("sum(operation_summa) as init_summa")
+                .SelectRaw("sum(operation_summa * sign(amount)) as init_summa")
                 .Where("document_date", "<", f.DateFrom)
                 .GroupBy("reference_id");
 
@@ -69,7 +74,7 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
                     q => q.WhereFalse("p.is_service")
                  )
                 .WhereFalse("p.is_folder")
-                .WhereRaw("coalesce(ib.init_amount, ib.init_summa, rb.income_amount, rb.income_summa, rb.expense_amount, rb.expense_summa) is not null")
+                .WhereRaw("coalesce(ib.init_amount, ib.init_summa, rb.income_amount, rb.income_summa, rb.expense_amount, rb.expense_summa, 0) > 0")
                 .OrderBy("pp.item_name", "p.item_name");
         }
 

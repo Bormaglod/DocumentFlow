@@ -10,6 +10,8 @@
 //  - добавлен метод Add(string, bool)
 //  - добавлен метод Add(string, image, Action, ToolStripMenuItem)
 //  - добавлен метод Add(string, Action, ToolStripMenuItem)
+// Версия 2022.11.13
+//  - добавлен метод Add(string, Action, bool)
 //
 //-----------------------------------------------------------------------
 
@@ -30,8 +32,10 @@ internal class BrowserContextMenu : IContextMenu
     public ToolStripMenuItem Add(string text, bool addSeparator = true) => InternalAdd(text, null, null, null, addSeparator);
 
     public ToolStripMenuItem Add(string text, Image image, Action<object?> action, ToolStripMenuItem parent) => InternalAdd(text, image, action, parent, false);
-    
+
     public ToolStripMenuItem Add(string text, Action<object?> action, ToolStripMenuItem parent) => InternalAdd(text, null, action, parent, false);
+
+    public ToolStripMenuItem Add(string text, Action<object?> action, bool addSeparator = true) => InternalAdd(text, null, action, null, addSeparator);
 
     private ToolStripMenuItem InternalAdd(string text, Image? image, Action<object?>? action, ToolStripMenuItem? parent, bool addSeparator)
     {

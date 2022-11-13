@@ -3,10 +3,17 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 31.01.2022
+//
+// Версия 2022.11.13
+//  - в конструкторе изменени тип параметра repository на IBalanceProductRepository
+//  - в контекстное меню добавлен пункт для перепроведения документа
+//    изменившего остаток
+//  - в контекстное меню добавлен пункт для пересчёта остатока
+//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Properties;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -18,7 +25,7 @@ namespace DocumentFlow.Entities.Balances;
 public abstract class BalanceProductBrowser<T> : BalanceBrowser<T>
     where T : BalanceProduct
 {
-    public BalanceProductBrowser(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager) 
+    public BalanceProductBrowser(IBalanceProductRepository<T> repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         var id = CreateText(x => x.id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.document_type_name, "Документ", hidden: false);
@@ -48,6 +55,22 @@ public abstract class BalanceProductBrowser<T> : BalanceBrowser<T>
         });
 
         AllowSorting = false;
+
+        ContextMenu.Add("Перепровести документ изменивший остаток", (_) =>
+        {
+            if (CurrentDocument != null)
+            {
+                repository.ReacceptChangedDocument(CurrentDocument);
+            }
+        });
+
+        ContextMenu.Add("Пересчитать остатки", (_) =>
+        {
+            if (CurrentDocument != null)
+            {
+                repository.UpdateMaterialRemaind(CurrentDocument);
+            }
+        }, false);
     }
 
     protected override string HeaderText => "Остатки";

@@ -3,10 +3,16 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 26.01.2022
+//
+// Версия 2022.11.13
+//  - добавлены кнопки для открытия окон редактирования операции и
+//    материала
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Properties;
 
@@ -19,7 +25,7 @@ namespace DocumentFlow.Entities.Calculations;
 
 public class CalculationOperationBrowser : Browser<CalculationOperation>, ICalculationOperationBrowser
 {
-    public CalculationOperationBrowser(ICalculationOperationRepository repository, IPageManager pageManager) : base(repository, pageManager) 
+    public CalculationOperationBrowser(ICalculationOperationRepository repository, IPageManager pageManager) : base(repository, pageManager)
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
@@ -70,6 +76,10 @@ public class CalculationOperationBrowser : Browser<CalculationOperation>, ICalcu
 
         ShowToolTip = (d) => d?.note ?? string.Empty;
 
+        Toolbar.Add("Производственная операция", Resources.icons8_robot_16, Resources.icons8_robot_30, () => OpenOperation(pageManager));
+        Toolbar.Add("Используемый материал", Resources.icons8_goods_16, Resources.icons8_goods_30, () => OpenMaterial(pageManager));
+        Toolbar.AddSeparator();
+
         Toolbar.Add("Пересчитать стоимость", Resources.icons8_calculate_16, Resources.icons8_calculate_30, () =>
         {
             if (OwnerDocument != null)
@@ -79,7 +89,7 @@ public class CalculationOperationBrowser : Browser<CalculationOperation>, ICalcu
             }
         });
 
-        var clear = Toolbar.Add("Очистить", Resources.icons8_broomstick_16, Resources.icons8_broomstick_30, () =>
+        Toolbar.Add("Очистить", Resources.icons8_broomstick_16, Resources.icons8_broomstick_30, () =>
         {
             if (OwnerDocument != null && MessageBox.Show("Записи помеченные на удаление будут безвозвратно удалены. Продолжить удаление?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
@@ -87,7 +97,26 @@ public class CalculationOperationBrowser : Browser<CalculationOperation>, ICalcu
                 RefreshView();
             }
         });
+
+        ContextMenu.Add("Производственная операция", Resources.icons8_robot_16, (_) => OpenOperation(pageManager));
+        ContextMenu.Add("Используемый материал", Resources.icons8_goods_16, (_) => OpenMaterial(pageManager), false);
     }
 
     protected override string HeaderText => "Операция";
+
+    private void OpenOperation(IPageManager pageManager)
+    {
+        if (CurrentDocument != null && CurrentDocument.material_id != null)
+        {
+            pageManager.ShowEditor<IMaterialEditor>(CurrentDocument.material_id.Value);
+        }
+    }
+
+    private void OpenMaterial(IPageManager pageManager)
+    {
+        if (CurrentDocument != null && CurrentDocument.material_id != null)
+        {
+            pageManager.ShowEditor<IMaterialEditor>(CurrentDocument.material_id.Value);
+        }
+    }
 }

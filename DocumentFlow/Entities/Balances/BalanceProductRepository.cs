@@ -3,7 +3,13 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 31.01.2022
+//
+// Версия 2022.11.13
+//  - добавлена реализация интерфейса IBalanceProductRepository
+//
 //-----------------------------------------------------------------------
+
+using Dapper;
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
@@ -15,10 +21,50 @@ using SqlKata;
 
 namespace DocumentFlow.Entities.Balances;
 
-public class BalanceProductRepository<T> : OwnedRepository<Guid, T>
+public class BalanceProductRepository<T> : OwnedRepository<Guid, T>, IBalanceProductRepository<T>
     where T : BalanceProduct
 {
     public BalanceProductRepository(IDatabase database) : base(database) { }
+
+    public void ReacceptChangedDocument(T balance)
+    {
+        if (balance.owner_id == null)
+        {
+            return;
+        }
+
+        using var conn = Database.OpenConnection();
+        using var transaction = conn.BeginTransaction();
+        try
+        {
+            transaction.Connection.Execute($"call execute_system_operation(:id, 'accept'::system_operation, true, '{balance.document_type_code}')", new { id = balance.owner_id.Value }, transaction);
+            transaction.Commit();
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            throw new RepositoryException(ExceptionHelper.Message(e), e);
+        }
+    }
+
+    public void UpdateMaterialRemaind(T balance)
+    {
+        using var conn = Database.OpenConnection();
+        var avg_price = conn.ExecuteScalar<decimal>("select average_price(:reference_id, :document_date)", balance);
+
+        using var transaction = conn.BeginTransaction();
+        try
+        {
+            balance.operation_summa = avg_price * Math.Abs(balance.amount);
+            Update(balance);
+            transaction.Commit();
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            throw new RepositoryException(ExceptionHelper.Message(e), e);
+        }
+    }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
     {

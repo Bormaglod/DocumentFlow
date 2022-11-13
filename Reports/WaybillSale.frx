@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Name="Накладная" ReportInfo.Version="2022.11.13" ReportInfo.Created="11/13/2022 12:33:16" ReportInfo.Modified="11/13/2022 14:33:11" ReportInfo.CreatorVersion="2022.2.0.0">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+    public static string RurPhrase(decimal money)
+    {
+      return CurPhrase(money, &quot;рубль&quot;, &quot;рубля&quot;, &quot;рублей&quot;, &quot;копейка&quot;, &quot;копейки&quot;, &quot;копеек&quot;);
+    }
+    
+    private static string CurPhrase(decimal money, string word1, string word234, string wordmore, string sword1, string sword234, string swordmore)
+    {
+      money = decimal.Round(money, 2);
+      decimal decintpart = decimal.Truncate(money);
+      ulong intpart = decimal.ToUInt64(decintpart);
+      
+      string str = intpart.ToString(&quot;#,#&quot;) + &quot; &quot;;
+      
+      byte endpart = (byte)(intpart % 100);
+      switch (endpart)
+      {
+        case 1: str += word1; break;
+        case 2:
+        case 3:
+        case 4: str += word234; break;
+        default: str += wordmore; break;
+      }
+      
+      byte fracpart = decimal.ToByte((money - decintpart) * 100M);
+      str += &quot; &quot; + ((fracpart &lt; 10) ? &quot;0&quot; : &quot;&quot;) + fracpart.ToString() + &quot; &quot;;
+      if (fracpart &gt; 19) fracpart = (byte)(fracpart % 10);
+      switch (fracpart)
+      {
+        case 1: str += sword1; break;
+        case 2:
+        case 3:
+        case 4: str += sword234; break;
+        default: str += swordmore; break;
+      };
+      return str;
+    }
+  }
+}
+</ScriptText>
+  <Dictionary>
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75SY/Ce5j+TnuAtC8AeN6yOs=">
+      <TableDataSource Name="waybill_sale" DataType="System.Int32" PropName="public_waybill_sale" Enabled="true" TableName="public.&quot;waybill_sale&quot;" SelectCommand="select&#13;&#10;	ws.*,&#13;&#10;	c.item_name as contractor_name,&#13;&#10;	c.inn as contractor_inn,&#13;&#10;	o.item_name as org_name,&#13;&#10;	o.inn as org_inn,&#13;&#10;	o.address as org_address&#13;&#10;from waybill_sale ws &#13;&#10;	left join contractor c on c.id = ws.contractor_id&#13;&#10;	join organization o on o.id = ws.organization_id&#13;&#10;where ws.id = :waybill_id">
+        <Column Name="id" DataType="System.Guid"/>
+        <Column Name="owner_id" DataType="System.Guid"/>
+        <Column Name="user_created_id" DataType="System.Guid"/>
+        <Column Name="date_created" DataType="System.DateTime"/>
+        <Column Name="user_updated_id" DataType="System.Guid"/>
+        <Column Name="date_updated" DataType="System.DateTime"/>
+        <Column Name="deleted" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="organization_id" DataType="System.Guid"/>
+        <Column Name="document_date" DataType="System.DateTime"/>
+        <Column Name="document_number" DataType="System.Int32"/>
+        <Column Name="carried_out" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="re_carried_out" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="contractor_id" DataType="System.Guid"/>
+        <Column Name="contract_id" DataType="System.Guid"/>
+        <Column Name="waybill_number" DataType="System.String"/>
+        <Column Name="waybill_date" DataType="System.DateTime"/>
+        <Column Name="invoice_number" DataType="System.String"/>
+        <Column Name="invoice_date" DataType="System.DateTime"/>
+        <Column Name="upd" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="contractor_name" DataType="System.String"/>
+        <Column Name="org_name" DataType="System.String"/>
+        <Column Name="contractor_inn" DataType="System.Decimal"/>
+        <Column Name="org_inn" DataType="System.Decimal"/>
+        <Column Name="org_address" DataType="System.String"/>
+        <CommandParameter Name="waybill_id" DataType="40" Expression="[id]" DefaultValue="c11a2911-831d-483f-a58f-b84de42234a2"/>
+      </TableDataSource>
+      <TableDataSource Name="Table" Alias="waybill_sale_rows" DataType="System.Int32" Enabled="true" SelectCommand="select&#13;&#10;	wsp.*,&#13;&#10;	p.item_name,&#13;&#10;	m.abbreviation&#13;&#10;from waybill_sale_price wsp &#13;&#10;	join product p on p.id = wsp.reference_id&#13;&#10;	join measurement m on m.id = p.measurement_id &#13;&#10;where wsp.owner_id = :waybill_id">
+        <Column Name="id" DataType="System.Int64"/>
+        <Column Name="owner_id" DataType="System.Guid"/>
+        <Column Name="reference_id" DataType="System.Guid"/>
+        <Column Name="amount" DataType="System.Decimal"/>
+        <Column Name="price" DataType="System.Decimal"/>
+        <Column Name="product_cost" DataType="System.Decimal"/>
+        <Column Name="tax" DataType="System.Int32"/>
+        <Column Name="tax_value" DataType="System.Decimal"/>
+        <Column Name="full_cost" DataType="System.Decimal"/>
+        <Column Name="item_name" DataType="System.String"/>
+        <Column Name="abbreviation" DataType="System.String"/>
+        <CommandParameter Name="waybill_id" DataType="40" Expression="[id]" DefaultValue="c11a2911-831d-483f-a58f-b84de42234a2"/>
+      </TableDataSource>
+      <TableDataSource Name="Table1" Alias="waybill_summary" DataType="System.Int32" Enabled="true" SelectCommand="select &#13;&#10;	count(id) as row_count,&#13;&#10;	sum(product_cost) as product_cost, &#13;&#10;	sum(tax_value) as tax_value, &#13;&#10;	sum(full_cost) as full_cost&#13;&#10;from waybill_sale_price wsp&#13;&#10;where wsp.owner_id = :waybill_id">
+        <Column Name="product_cost" DataType="System.Decimal"/>
+        <Column Name="tax_value" DataType="System.Decimal"/>
+        <Column Name="full_cost" DataType="System.Decimal"/>
+        <Column Name="row_count" DataType="System.Int64"/>
+        <CommandParameter Name="waybill_id" DataType="40" Expression="[id]" DefaultValue="c11a2911-831d-483f-a58f-b84de42234a2"/>
+      </TableDataSource>
+    </PostgresDataConnection>
+    <Parameter Name="id" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="85.05" CanGrow="true">
+      <TextObject Name="Text3" Width="718.2" Height="28.35" Border.Lines="Bottom" Border.Width="2" Text="Накладная № [waybill_sale.document_number] от [waybill_sale.document_date]" Font="Arial, 12pt, style=Bold">
+        <Formats>
+          <GeneralFormat/>
+          <DateFormat/>
+        </Formats>
+      </TextObject>
+      <TextObject Name="Text4" Top="37.8" Width="94.5" Height="18.9" Text="Поставщик:" Font="Arial, 10pt"/>
+      <TextObject Name="Text5" Top="66.15" Width="94.5" Height="18.9" Text="Получатель:" Font="Arial, 10pt"/>
+      <TextObject Name="Text7" Left="94.5" Top="37.8" Width="623.7" Height="18.9" CanGrow="true" Text="[waybill_sale.org_name], ИНН [waybill_sale.org_inn], [waybill_sale.org_address]" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text8" Left="94.5" Top="66.15" Width="623.7" Height="18.9" CanGrow="true" Text="[waybill_sale.contractor_name], ИНН [waybill_sale.contractor_inn]" Font="Arial, 10pt, style=Bold"/>
+    </ReportTitleBand>
+    <DataBand Name="Data1" Top="130.85" Width="718.2" Height="24.57" DataSource="Table">
+      <TextObject Name="Text52" Width="718.2" Height="24.57" Border.Lines="Left, Right, Bottom" Border.Width="2" IsIntersectedWithOtherObject="true" HorzAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text14" Left="37.8" Width="311.85" Height="24.57" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="[waybill_sale_rows.item_name]" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text15" Left="349.65" Width="66.15" Height="24.57" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="[waybill_sale_rows.abbreviation]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text16" Left="415.8" Width="94.5" Height="24.57" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="[waybill_sale_rows.amount]" HorzAlign="Center" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text17" Left="510.3" Width="94.5" Height="24.57" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="[waybill_sale_rows.price]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text18" Left="604.8" Width="113.4" Height="24.57" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="[waybill_sale_rows.product_cost]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text19" Width="37.8" Height="24.57" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <DataHeaderBand Name="DataHeader1" Top="89.05" Width="718.2" Height="37.8">
+        <TextObject Name="Text53" Top="9.45" Width="718.2" Height="28.35" Border.Lines="Left, Right, Top" Border.Width="2" IsIntersectedWithOtherObject="true" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text6" Top="9.45" Width="37.8" Height="28.35" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="№" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text9" Left="37.8" Top="9.45" Width="311.85" Height="28.35" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="Наименование товара" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text10" Left="415.8" Top="9.45" Width="94.5" Height="28.35" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="Кол-во" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text11" Left="510.3" Top="9.45" Width="94.5" Height="28.35" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="Цена" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text12" Left="604.8" Top="9.45" Width="113.4" Height="28.35" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="Сумма" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text13" Left="349.65" Top="9.45" Width="66.15" Height="28.35" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="Ед. изм." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      </DataHeaderBand>
+      <DataFooterBand Name="DataFooter1" Top="159.42" Width="718.2" Height="292.95" CanGrow="true">
+        <TextObject Name="Text20" Left="425.25" Width="179.55" Height="24.57" Text="Итого:" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text21" Left="425.25" Top="24.57" Width="179.55" Height="24.57" Text="В том числе НДС (20%):" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text22" Left="425.25" Top="49.14" Width="179.55" Height="24.57" Text="Всего (с учётом НДС):" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text24" Left="604.8" Top="24.57" Width="113.4" Height="24.57" Border.Lines="All" Text="[waybill_summary.tax_value]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt, style=Bold" Trimming="EllipsisCharacter"/>
+        <TextObject Name="Text25" Left="604.8" Top="49.14" Width="113.4" Height="24.57" Border.Lines="All" Text="[waybill_summary.full_cost]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt, style=Bold" Trimming="EllipsisCharacter"/>
+        <TextObject Name="Text26" Top="85.05" Width="718.2" Height="18.9" Text="Всего наименований [waybill_summary.row_count], на сумму [RurPhrase([waybill_summary.full_cost])]" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text23" Left="604.8" Width="113.4" Height="24.57" Border.Lines="All" Text="[waybill_summary.product_cost]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt, style=Bold" Trimming="EllipsisCharacter"/>
+        <TextObject Name="Text27" Top="103.95" Width="718.2" Height="18.9" CanGrow="true" Text="[ToWordsRu([waybill_summary.full_cost])]" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text28" Top="122.85" Width="718.2" Height="18.9" Border.Lines="Bottom" Border.Width="2" CanGrow="true" Text="В том числе НДС(20%) [LowerCase(ToWordsRu([waybill_summary.tax_value]))]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" VertAlign="Center" WordWrap="false" Font="Arial, 10pt, style=Bold" Trimming="EllipsisCharacter"/>
+        <TextObject Name="Text29" Top="160.65" Width="122.85" Height="18.9" Text="Отпуск разрешил" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text30" Top="179.55" Width="94.5" Height="18.9" Text="М.П." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text31" Top="207.9" Width="122.85" Height="18.9" Text="Отпустил" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text32" Top="255.15" Width="122.85" Height="18.9" Text="Получил" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text33" Top="274.05" Width="94.5" Height="18.9" Text="М.П." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text34" Left="122.85" Top="160.65" Width="151.2" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text35" Left="122.85" Top="179.55" Width="151.2" Height="18.9" Text="должность" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text36" Left="283.5" Top="160.65" Width="113.4" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text37" Left="283.5" Top="179.55" Width="113.4" Height="18.9" Text="подпись" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text38" Left="406.35" Top="160.65" Width="217.35" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text39" Left="406.35" Top="179.55" Width="217.35" Height="18.9" Text="Ф.И.О." HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text40" Left="122.85" Top="207.9" Width="151.2" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text41" Left="122.85" Top="226.8" Width="151.2" Height="18.9" Text="должность" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text42" Left="283.5" Top="207.9" Width="113.4" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text43" Left="283.5" Top="226.8" Width="113.4" Height="18.9" Text="подпись" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text44" Left="406.35" Top="207.9" Width="217.35" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text45" Left="406.35" Top="226.8" Width="217.35" Height="18.9" Text="Ф.И.О." HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text46" Left="122.85" Top="255.15" Width="151.2" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text47" Left="122.85" Top="274.05" Width="151.2" Height="18.9" Text="должность" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text48" Left="283.5" Top="255.15" Width="113.4" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text49" Left="283.5" Top="274.05" Width="113.4" Height="18.9" Text="подпись" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text50" Left="406.35" Top="255.15" Width="217.35" Height="18.9" Border.Lines="Bottom" HorzAlign="Center" Font="Arial, 7pt"/>
+        <TextObject Name="Text51" Left="406.35" Top="274.05" Width="217.35" Height="18.9" Text="Ф.И.О." HorzAlign="Center" Font="Arial, 7pt"/>
+      </DataFooterBand>
+    </DataBand>
+  </ReportPage>
+</Report>

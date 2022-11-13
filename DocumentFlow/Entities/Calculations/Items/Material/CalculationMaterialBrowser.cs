@@ -5,12 +5,15 @@
 // Date: 29.01.2022
 //
 // Версия 2022.8.28
-//  - из-за изменений в ConextMenu доавлен параметр в вызов Add
+//  - из-за изменений в ConextMenu добавлен параметр в вызов Add
+// Версия 2022.11.13
+//  - добавлена кнопка для открытия окна редактирования материала
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Properties;
 
@@ -53,6 +56,9 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
 
         AllowSorting = false;
 
+        Toolbar.Add("Материал", Resources.icons8_goods_16, Resources.icons8_goods_30, () => OpenMaterial(pageManager));
+        Toolbar.AddSeparator();
+
         Toolbar.Add("Пересчитать количество", Resources.icons8_sigma_16, Resources.icons8_sigma_30, () =>
         {
             if (OwnerDocument != null)
@@ -89,7 +95,17 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
                 RefreshRow(CurrentDocument);
             }
         });
+
+        ContextMenu.Add("Используемый материал", Resources.icons8_goods_16, (_) => OpenMaterial(pageManager));
     }
 
     protected override string HeaderText => "Материалы";
+
+    private void OpenMaterial(IPageManager pageManager)
+    {
+        if (CurrentDocument != null && CurrentDocument.item_id != null)
+        {
+            pageManager.ShowEditor<IMaterialEditor>(CurrentDocument.item_id.Value);
+        }
+    }
 }

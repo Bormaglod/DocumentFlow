@@ -2,15 +2,16 @@
 // Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 31.01.2022
-//
-// Версия 2022.11.13
-//  - наследование интерфейса изменено на IBalanceProductRepository
-//
+// Date: 13.11.2022
 //-----------------------------------------------------------------------
+
+using DocumentFlow.Data.Infrastructure;
 
 namespace DocumentFlow.Entities.Balances;
 
-public interface IBalanceGoodsRepository : IBalanceProductRepository<BalanceGoods>
+public interface IBalanceProductRepository<T> : IOwnedRepository<Guid, T>
+    where T : BalanceProduct
 {
+    void ReacceptChangedDocument(T balance);
+    void UpdateMaterialRemaind(T balance);
 }

@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.02.2022
+//
+// Версия 2022.11.13
+//  - добавлен отчет WaybillSaleReport
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
@@ -14,7 +18,10 @@ namespace DocumentFlow.Entities.Waybills;
 
 public class WaybillSaleEditor : WaybillEditor<WaybillSale, WaybillSalePrice>, IWaybillSaleEditor
 {
-    public WaybillSaleEditor(IWaybillSaleRepository repository, IPageManager pageManager) : base(repository, pageManager) { }
+    public WaybillSaleEditor(IWaybillSaleRepository repository, IPageManager pageManager) : base(repository, pageManager) 
+    {
+        RegisterReport(new WaybillSaleReport());
+    }
 
     protected override IOwnedRepository<long, WaybillSalePrice> GetDetailsRepository()
     {

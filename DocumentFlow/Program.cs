@@ -1,4 +1,9 @@
-using Npgsql.Logging;
+using Microsoft.Extensions.Logging;
+
+using NLog.Extensions.Logging;
+
+using Npgsql;
+
 using System.IO;
 
 namespace DocumentFlow;
@@ -20,8 +25,9 @@ internal static class Program
             MessageBox.Show($"не найден файл {e.FileName}. Выполнение программы невозможно.");
             return;
         }
-        
-        NpgsqlLogManager.Provider = new Core.NLogLoggingProvider();
+
+        var loggerFactory = LoggerFactory.Create(builder => builder.AddNLog());
+        NpgsqlLoggingConfiguration.InitializeLogging(loggerFactory, parameterLoggingEnabled: true);
 
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 

@@ -3,10 +3,15 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.01.2022
+//
+// Версия 2022.11.13
+//  - добавлена кнопка для открытия окна редактирования удержания
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Entities.Deductions;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Properties;
 
@@ -46,7 +51,10 @@ public class CalculationDeductionBrowser : Browser<CalculationDeduction>, ICalcu
 
         AllowSorting = false;
 
-        var clear = Toolbar.Add("Очистить", Resources.icons8_broomstick_16, Resources.icons8_broomstick_30, () =>
+        Toolbar.Add("Удержание", Resources.icons8_discount_16, Resources.icons8_discount_30, () => OpenDeduction(pageManager));
+        Toolbar.AddSeparator();
+
+        Toolbar.Add("Очистить", Resources.icons8_broomstick_16, Resources.icons8_broomstick_30, () =>
         {
             if (OwnerDocument != null && MessageBox.Show("Записи помеченные на удаление будут безвозвратно удалены. Продолжить удаление?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
@@ -54,7 +62,17 @@ public class CalculationDeductionBrowser : Browser<CalculationDeduction>, ICalcu
                 RefreshView();
             }
         });
+
+        ContextMenu.Add("Удержание", Resources.icons8_discount_16, (_) => OpenDeduction(pageManager));
     }
 
     protected override string HeaderText => "Удержания";
+
+    private void OpenDeduction(IPageManager pageManager)
+    {
+        if (CurrentDocument != null && CurrentDocument.item_id != null)
+        {
+            pageManager.ShowEditor<IDeductionEditor>(CurrentDocument.item_id.Value);
+        }
+    }
 }

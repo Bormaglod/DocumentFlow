@@ -11,6 +11,8 @@
 //  - добавлен метод Add(string, image, Action, ToolStripMenuItem)
 //  - добавлен метод Add(string, Action, ToolStripMenuItem)
 //  - параметр Action заменен на Action<object?>
+// Версия 2022.11.13
+//  - добавлен метод Add(string, Action, bool)
 //
 //-----------------------------------------------------------------------
 
@@ -21,6 +23,7 @@ public interface IContextMenu
     ToolStripMenuItem Add(string text, Image image, Action<object?> action, bool addSeparator = true);
     ToolStripMenuItem Add(string text, Image image, Action<object?> action, ToolStripMenuItem parent);
     ToolStripMenuItem Add(string text, Action<object?> action, ToolStripMenuItem parent);
+    ToolStripMenuItem Add(string text, Action<object?> action, bool addSeparator = true);
     ToolStripMenuItem Add(string text, Image image, bool addSeparator = true);
     ToolStripMenuItem Add(string text, bool addSeparator = true);
     void AddSeparator();
