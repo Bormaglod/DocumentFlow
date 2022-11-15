@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 28.07.2022
+//
+// Версия 2022.11.15
+//  - добавлен метод GetAveragePrice(Guid, DateTime?)
+//
 //-----------------------------------------------------------------------
 
 using Dapper;
@@ -17,14 +21,17 @@ public class ProductRepository<T> : DirectoryRepository<T>, IProductRepository<T
 {
     public ProductRepository(IDatabase database) : base(database) { }
 
-    public decimal GetAveragePrice(T product, DateTime? relevance_date = null)
+    public decimal GetAveragePrice(T product, DateTime? relevance_date = null) => GetAveragePrice(product.id, relevance_date);
+
+    public decimal GetAveragePrice(Guid product_id, DateTime? relevance_date = null)
     {
         using var conn = Database.OpenConnection();
         return conn.QuerySingle<decimal>(
-            "select average_price(:product_id, :relevance_date)", 
-            new { 
-                product_id = product.id, 
-                relevance_date = relevance_date ?? DateTime.Now 
+            "select average_price(:product_id, :relevance_date)",
+            new
+            {
+                product_id,
+                relevance_date = relevance_date ?? DateTime.Now
             });
     }
 }

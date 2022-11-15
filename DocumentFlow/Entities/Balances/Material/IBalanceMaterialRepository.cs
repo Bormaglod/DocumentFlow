@@ -6,12 +6,14 @@
 //
 // Версия 2022.11.13
 //  - наследование интерфейса изменено на IBalanceProductRepository
+// Версия 2022.11.15
+//  - добавлен метод UpdateMaterialRemaind
 //
 //-----------------------------------------------------------------------
 
 namespace DocumentFlow.Entities.Balances;
 
-
 public interface IBalanceMaterialRepository : IBalanceProductRepository<BalanceMaterial>
 {
+    void UpdateMaterialRemaind(BalanceMaterial balance);
 }

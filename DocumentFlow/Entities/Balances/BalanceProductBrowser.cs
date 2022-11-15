@@ -8,12 +8,14 @@
 //  - в конструкторе изменени тип параметра repository на IBalanceProductRepository
 //  - в контекстное меню добавлен пункт для перепроведения документа
 //    изменившего остаток
-//  - в контекстное меню добавлен пункт для пересчёта остатока
+//  - в контекстное меню добавлен пункт для пересчёта остатка
+// Версия 2022.11.15
+//  - пункт меню для пересчёта остатка переименован в пересчёт суммы остатка
+//    и перенесен в BalanceMaterialBrowser
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Infrastructure;
-using DocumentFlow.Properties;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -63,14 +65,6 @@ public abstract class BalanceProductBrowser<T> : BalanceBrowser<T>
                 repository.ReacceptChangedDocument(CurrentDocument);
             }
         });
-
-        ContextMenu.Add("Пересчитать остатки", (_) =>
-        {
-            if (CurrentDocument != null)
-            {
-                repository.UpdateMaterialRemaind(CurrentDocument);
-            }
-        }, false);
     }
 
     protected override string HeaderText => "Остатки";
