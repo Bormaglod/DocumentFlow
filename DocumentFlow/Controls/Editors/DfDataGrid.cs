@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.10.2021
+//
+// Версия 2022.11.16
+//  - мелкие исправления
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -298,7 +302,7 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
             object? value = prop.GetValue(gridMain.SelectedItem);
             if (value != null)
             {
-                Clipboard.SetText(value.ToString());
+                Clipboard.SetText(value.ToString() ?? string.Empty);
             }
         }
     }

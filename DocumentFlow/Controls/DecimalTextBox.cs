@@ -3,7 +3,13 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 22.03.2019
+//
+// Версия 2022.11.16
+//  - мелкие исправления
+//
 //-----------------------------------------------------------------------
+
+using iText.Layout.Element;
 
 using Syncfusion;
 using Syncfusion.Windows.Forms.Tools;
@@ -15,10 +21,6 @@ namespace DocumentFlow.Controls;
 
 public class DecimalTextBox : NumericTextBox
 {
-    /// <summary>
-    /// The line of the null value.
-    /// </summary>
-    private const string DEF_NULL_VALUE = "0";
 
     /// <summary>
     /// The minimum value.
@@ -82,7 +84,9 @@ public class DecimalTextBox : NumericTextBox
     public override string Text
     {
         get => base.Text;
+#pragma warning disable CS8765 // Допустимость значений NULL для типа параметра не соответствует переопределенному элементу (возможно, из-за атрибутов допустимости значений NULL).
         set => SetTextProperty(value);
+#pragma warning restore CS8765 // Допустимость значений NULL для типа параметра не соответствует переопределенному элементу (возможно, из-за атрибутов допустимости значений NULL).
     }
 
     /// <summary>

@@ -25,6 +25,8 @@
 //        AllowColumnVisibility, AllowColumnVisibility, IsColumnVisible и
 //        IsAllowVisibilityColumn
 //      - удалены поля visible и visibility
+// Версия 2022.11.16
+//  - мелкие исправления
 //
 //-----------------------------------------------------------------------
 
@@ -1226,7 +1228,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             object? value = prop.GetValue(gridContent.SelectedItem);
             if (value != null)
             {
-                Clipboard.SetText(value.ToString());
+                Clipboard.SetText(value.ToString() ?? string.Empty);
             }
         }
     }

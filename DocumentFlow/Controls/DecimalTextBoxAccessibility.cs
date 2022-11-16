@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 22.03.2019
+//
+// Версия 2022.11.16
+//  - мелкие исправления
+//
 //-----------------------------------------------------------------------
 
 namespace DocumentFlow.Controls;
@@ -57,7 +61,7 @@ public class DecimalTextBoxAccessibility : Control.ControlAccessibleObject
     /// Returns null if no object is at the tested location.</returns>
     public override AccessibleObject? HitTest(int x, int y)
     {
-        Control childAtPoint = m_DecimalTextBox.GetChildAtPoint(m_DecimalTextBox.PointToClient(new Point(x, y)));
+        var childAtPoint = m_DecimalTextBox.GetChildAtPoint(m_DecimalTextBox.PointToClient(new Point(x, y)));
         if (childAtPoint != null)
         {
             return childAtPoint.AccessibilityObject;

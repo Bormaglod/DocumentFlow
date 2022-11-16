@@ -11,6 +11,9 @@
 //    остатка
 //  - в таблицу больще не попадают строки в которых отсутствуют остатки
 //    и движение
+// Версия 2022.11.16
+//  - исправлена ошибка в результате которой в выборку не попадали
+//    некоторые записи
 //
 //-----------------------------------------------------------------------
 
@@ -74,7 +77,13 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
                     q => q.WhereFalse("p.is_service")
                  )
                 .WhereFalse("p.is_folder")
-                .WhereRaw("coalesce(ib.init_amount, ib.init_summa, rb.income_amount, rb.income_summa, rb.expense_amount, rb.expense_summa, 0) > 0")
+                .Where(q => q
+                    .WhereRaw("coalesce(ib.init_amount, 0) != 0").Or()
+                    .WhereRaw("coalesce(ib.init_summa, 0) != 0").Or()
+                    .WhereRaw("coalesce(rb.income_amount, 0) != 0").Or()
+                    .WhereRaw("coalesce(rb.income_summa, 0) != 0").Or()
+                    .WhereRaw("coalesce(rb.expense_amount, 0) != 0").Or()
+                    .WhereRaw("coalesce(rb.expense_summa, 0) != 0"))
                 .OrderBy("pp.item_name", "p.item_name");
         }
 

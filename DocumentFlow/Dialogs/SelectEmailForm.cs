@@ -8,6 +8,8 @@
 //  - добавлена поддержка всплывающих уведомлений об отправке писем
 //  - при ошибке аутетификации выдается соответствующее сообщение
 //  - исправлена ошибка формирования имён получателей
+// Версия 2022.11.16
+//  - мелкие исправления
 //
 //-----------------------------------------------------------------------
 
@@ -104,7 +106,7 @@ public partial class SelectEmailForm : Form
 
     private void ControlSizeChanged(object sender, EventArgs e)
     {
-        if (sender is Control c)
+        if (sender is Control c && c.Parent != null)
         {
             int d = c.Height - 28;
             c.Parent.Height = 34 + d;
