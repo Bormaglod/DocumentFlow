@@ -11,6 +11,11 @@
 //  - если класс представленый как P имеет атрибут ProductContentAttribute,
 //    то для таких объектов правило изменения содержимого в grid-таблице
 //    меняется с Update на DeleteAndInsert
+// Версия 2022.11.26
+//  - добавлено поле для выбора заявки на покупку
+//  - параметр autoRefresh метода SetDataSource в классе
+//    DataSourceControl был удален. Вместо него используется свойство
+//    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
 //
 //-----------------------------------------------------------------------
 
@@ -25,6 +30,7 @@ using DocumentFlow.Entities.Productions.Processing;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Entities.Products.Core;
 using DocumentFlow.Entities.Products.Dialogs;
+using DocumentFlow.Entities.PurchaseRequestLib;
 using DocumentFlow.Infrastructure;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -52,15 +58,32 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
 
     public WaybillEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager, true)
     {
-        contractor = new DfDirectorySelectBox<Contractor>("contractor_id", "Контрагент", 80, 400)
+        contractor = new DfDirectorySelectBox<Contractor>("contractor_id", "Контрагент", 120, 400)
         {
             OpenAction = (t) => pageManager.ShowEditor<IContractorEditor, Contractor>(t)
         };
 
-        contract = new DfDirectorySelectBox<Contract>("contract_id", "Договор", 80, 400)
+        contract = new DfDirectorySelectBox<Contract>("contract_id", "Договор", 120, 400)
         {
             OpenAction = (t) => pageManager.ShowEditor<IContractEditor, Contract>(t)
         };
+
+        var purchase = new DfDocumentSelectBox<PurchaseRequest>("owner_id", "Заявка на покупку", 120, 400) { RefreshMethod = DataRefreshMethod.OnOpen };
+        purchase.SetDataSource(() =>
+        {
+            if (contractor.SelectedItem != null)
+            {
+                var repo = Services.Provider.GetService<IPurchaseRequestRepository>();
+                return repo!.GetAllDefault(callback: q => q
+                        .WhereFalse("purchase_request.deleted")
+                        .WhereTrue("purchase_request.carried_out")
+                        .Where("purchase_request.contractor_id", contractor.SelectedItem.id));
+            }
+
+            return null;
+        });
+
+        purchase.Columns += (sender, e) => PurchaseRequest.CreateGridColumns(e.Columns);
 
         DfDocumentSelectBox<ProductionOrder>? order = null;
         if (typeof(T) == typeof(WaybillProcessing))
@@ -204,7 +227,8 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
         List<Control> controls = new()
         {
             contractor,
-            contract
+            contract,
+            purchase
         };
 
         if (order != null)

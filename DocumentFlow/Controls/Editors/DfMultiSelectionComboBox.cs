@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.11.2021
+//
+// Версия 2022.11.26
+//  - добавлен метод RefreshDataSourceOnLoad
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -91,6 +95,8 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
 
     public void SetDataSource(Func<IEnumerable<IItem>?> func) => dataSource = func;
 
+    #region IDataSourceControl interface
+
     public void RefreshDataSource()
     {
         items.Clear();
@@ -104,6 +110,10 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
             }
         }
     }
+
+    public void RefreshDataSourceOnLoad() => RefreshDataSource();
+
+    #endregion
 
     public void ClearValue() => multiSelectionComboBox1.VisualItems.Clear();
 

@@ -3,6 +3,15 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 21.04.2019
+//
+// Версия 2022.11.26
+//  - изменен метод ButtonSelect_Click для проверки свойства RefreshMethod
+//    и вызова метода RefreshDataSource()
+//  - изменен метод set свойства Value. Если список значений заполняется
+//    при открытии, то при загрузке он пуст и соответственно нет возможности
+//    использовать его для установки значения, поэтому это значение
+//    напрямую читается из соответствующего репозитария.
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -114,6 +123,20 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
             {
                 T? oldValue = selectedItem;
                 selectedItem = items.FirstOrDefault(x => x.id == id);
+                if (selectedItem == null && RefreshMethod == DataRefreshMethod.OnOpen) 
+                {
+                    string typeName = $"{typeof(T).Namespace}.I{typeof(T).Name}Repository";
+                    Type? type = Type.GetType(typeName);
+                    if (type != null)
+                    {
+                        var repo = Services.Provider.GetService(type);
+                        if (repo != null && repo is IRepository<Guid, T> tr)
+                        {
+                            selectedItem = tr.GetById(id);
+                        }
+                    }
+                }
+
                 textValue.Text = selectedItem?.ToString();
                 OnValueChanged(oldValue, selectedItem);
             }
@@ -176,7 +199,15 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
 
     private void ButtonDelete_Click(object sender, EventArgs e) => ClearCurrent();
 
-    private void ButtonSelect_Click(object sender, EventArgs e) => OnSelect();
+    private void ButtonSelect_Click(object sender, EventArgs e)
+    {
+        if (RefreshMethod == DataRefreshMethod.OnOpen)
+        {
+            RefreshDataSource();
+        }
+
+        OnSelect();
+    }
 
     private void ButtonOpen_Click(object sender, EventArgs e)
     {

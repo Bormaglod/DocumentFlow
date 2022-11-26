@@ -7,6 +7,9 @@
 // Версия 2022.8.28
 //  - добавлен метод RefreshPage()
 //  - рефакторинг
+// Версия 2022.11.26
+//  - в методе RefreshData вызов RefreshDataSource заменён на
+//    RefreshDataSourceOnLoad
 //
 //-----------------------------------------------------------------------
 
@@ -456,7 +459,7 @@ public partial class Editor<T> : UserControl, IEditorPage
                 dataSource.SetOwner(document.id);
             }
 
-            item.RefreshDataSource();
+            item.RefreshDataSourceOnLoad();
         }
 
         foreach (var item in controls.OfType<IBindingControl>())

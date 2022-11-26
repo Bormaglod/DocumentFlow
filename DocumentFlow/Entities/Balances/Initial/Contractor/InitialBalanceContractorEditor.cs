@@ -3,8 +3,15 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 15.06.2022
+//
+// Версия 2022.11.26
+//  - параметр autoRefresh метода SetDataSource в классе
+//    DataSourceControl был удален. Вместо него используется свойство
+//    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+//
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Companies;
@@ -24,7 +31,7 @@ internal class InitialBalanceContractorEditor : DocumentEditor<InitialBalanceCon
             OpenAction = (t) => pageManager.ShowEditor<IContractorEditor, Contractor>(t)
         };
 
-        var contract = new DfComboBox<Contract>("contract_id", "Договор", 100, 400);
+        var contract = new DfComboBox<Contract>("contract_id", "Договор", 100, 400) { RefreshMethod = DataRefreshMethod.Immediately };
         var debt = new DfChoice<decimal>("amount", "Долг", 100, 200);
         var op_summa = new DfCurrencyTextBox("operation_summa", "Сумма", 100, 100);
 
@@ -34,7 +41,7 @@ internal class InitialBalanceContractorEditor : DocumentEditor<InitialBalanceCon
             var repo = Services.Provider.GetService<IContractRepository>();
             if (e.NewValue != null && repo != null)
             {
-                contract.SetDataSource(() => repo.Get(e.NewValue), true);
+                contract.SetDataSource(() => repo.Get(e.NewValue));
                 contract.Value = Document.contract_id;
             }
             else

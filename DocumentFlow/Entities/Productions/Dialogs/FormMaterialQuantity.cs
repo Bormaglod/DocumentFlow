@@ -3,8 +3,15 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.07.2022
+//
+// Версия 2022.11.26
+//  - параметр autoRefresh метода SetDataSource в классе
+//    DataSourceControl был удален. Вместо него используется свойство
+//    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+//
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Entities.Products;
 
@@ -21,10 +28,10 @@ public partial class FormMaterialQuantity : Form
     {
         InitializeComponent();
 
-        material = new("material_id", "Материал", 120) { Required = true };
+        material = new("material_id", "Материал", 120) { Required = true, RefreshMethod = DataRefreshMethod.Immediately };
         quantity = new("quantity", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3 };
 
-        material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials(), true);
+        material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials());
 
         Controls.AddRange(new Control[]
         {

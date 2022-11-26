@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.02.2022
+//
+// Версия 2022.11.26
+//  - добавлен столюец executed возвращающее флаг налиличия поставок по
+//    заказу
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -35,6 +40,7 @@ public class PurchaseRequestBrowser : Browser<PurchaseRequest>, IPurchaseRequest
         var tax_value = CreateCurrency(x => x.tax_value, "НДС", width: 120);
         var full_cost = CreateCurrency(x => x.full_cost, "Всего c НДС", width: 120);
         var paid = CreateCurrency(x => x.paid, "Оплачено", width: 120);
+        var executed = CreateBoolean(x => x.executed, "Поставка", width: 100);
 
         CreateSummaryRow(VerticalPosition.Bottom, true)
             .AsSummary(cost_order, SummaryColumnFormat.Currency)
@@ -44,7 +50,7 @@ public class PurchaseRequestBrowser : Browser<PurchaseRequest>, IPurchaseRequest
         contractor.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         tax.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
 
-        AddColumns(new GridColumn[] { id, date, number, contractor, contract, cost_order, tax, tax_value, full_cost, paid });
+        AddColumns(new GridColumn[] { id, date, number, contractor, contract, cost_order, tax, tax_value, full_cost, paid, executed });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [date] = ListSortDirection.Ascending,

@@ -7,6 +7,9 @@
 // Версия 2022.8.31
 //  - доработан метод GetDefaultQuery - если поле item_name таблицы
 //    conttactor содержит null, то будет возвращено значение поля code
+// Версия 2022.11.26
+//  - в выборку добавлены поля document_number и  document_date из 
+//    таблицы purchase_request
 //
 //-----------------------------------------------------------------------
 
@@ -50,8 +53,11 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
             .Select("d.tax_value")
             .Select("d.full_cost")
             .Select("p.transaction_amount as paid")
+            .Select("pr.document_number as purchase_request_number")
+            .Select("pr.document_date as purchase_request_date")
             .Join("organization as o", "o.id", "waybill_receipt.organization_id")
             .Join("contractor as c", "c.id", "waybill_receipt.contractor_id")
+            .LeftJoin("purchase_request as pr", "pr.id", "waybill_receipt.owner_id")
             .LeftJoin("contract", "contract.id", "waybill_receipt.contract_id")
             .LeftJoin(q.As("d"), j => j.On("d.owner_id", "waybill_receipt.id"))
             .LeftJoin(p.As("p"), j => j.On("p.document_id", "waybill_receipt.id"));

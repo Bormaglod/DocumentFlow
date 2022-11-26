@@ -3,8 +3,15 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.04.2022
+//
+// Версия 2022.11.26
+//  - параметр autoRefresh метода SetDataSource в классе
+//    DataSourceControl был удален. Вместо него используется свойство
+//    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+//
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Core;
@@ -31,7 +38,7 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
             OpenAction = (t) => pageManager.ShowEditor<IProductionOrderEditor, ProductionOrder>(t)
         };
 
-        var calc = new DfChoice<Guid>("calculation_id", "Изделие", headerWidth, 500);
+        var calc = new DfChoice<Guid>("calculation_id", "Изделие", headerWidth, 500) { RefreshMethod = DataRefreshMethod.Immediately };
         var quantity = new DfNumericTextBox("quantity", "Количество", headerWidth, 100);
 
         var performed = new DfProductionLot() { Dock = DockStyle.Fill };
@@ -56,7 +63,7 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
                 calc.SetDataSource(() =>
                 {
                     return list.Select(x => new Choice<Guid>(x.calculation_id, x.product_name));
-                }, true);
+                });
 
                 calc.Value = Document.calculation_id;
             }

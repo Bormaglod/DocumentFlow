@@ -6,9 +6,14 @@
 //
 // Версия 2022.8.20
 //  - скорректирован порядок обхода элементов управления
+// Версия 2022.11.26
+//  - параметр autoRefresh метода SetDataSource в классе
+//    DataSourceControl был удален. Вместо него используется свойство
+//    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Entities.Products;
 
@@ -25,7 +30,7 @@ public partial class FormPriceApproval : Form
     {
         InitializeComponent();
 
-        product = new("reference_id", "Материал / Изделие", 150) { TabIndex = 1 };
+        product = new("reference_id", "Материал / Изделие", 150) { TabIndex = 1, RefreshMethod = DataRefreshMethod.Immediately };
         price = new("price", "Цена", 150) { DefaultAsNull = false, TabIndex = 2 };
 
         product.SetDataSource(() =>
@@ -41,7 +46,7 @@ public partial class FormPriceApproval : Form
                     .GetAllValid(callback: q => q.OrderBy("item_name"))
                     .OfType<Product>()
                 );
-        }, true);
+        });
 
         Controls.AddRange(new Control[]
         {

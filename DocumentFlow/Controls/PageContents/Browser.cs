@@ -27,6 +27,9 @@
 //      - удалены поля visible и visibility
 // Версия 2022.11.16
 //  - мелкие исправления
+// Версия 2022.11.26
+//  - изменен метод GetColumnsAfter и AddColumns - ранее можно было
+//    вставить столбцы только после одного столбца, теперь после любого
 //
 //-----------------------------------------------------------------------
 
@@ -569,20 +572,19 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         throw new NullReferenceException("Параметр memberExpression должен содержать имя поля, но оно не найдено в классе.");
     }
 
-    protected virtual (string MappingName, GridColumn[] Columns) GetColumnsAfter() => (string.Empty, Array.Empty<GridColumn>());
+    protected virtual GridColumn[] GetColumnsAfter(string mappingName) => Array.Empty<GridColumn>();
 
     protected void AddColumns(GridColumn[] columns)
     {
-        var inserting = GetColumnsAfter();
         for (int i = 0; i < columns.Length; i++)
         {
             AddColumn(columns[i], hiddens.Contains(columns[i]));
-            if (inserting.MappingName == columns[i].MappingName)
+
+            var inserting = GetColumnsAfter(columns[i].MappingName);
+
+            for (int j = 0; j < inserting.Length; j++)
             {
-                for (int j = 0; j < inserting.Columns.Length; j++)
-                {
-                    AddColumn(inserting.Columns[j], hiddens.Contains(inserting.Columns[j]));
-                }
+                AddColumn(inserting[j], hiddens.Contains(inserting[j]));
             }
         }
     }

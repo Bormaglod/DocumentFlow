@@ -3,8 +3,15 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 06.08.2022
+//
+// Версия 2022.11.26
+//  - параметр autoRefresh метода SetDataSource в классе
+//    DataSourceControl был удален. Вместо него используется свойство
+//    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+//
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Wages.Core;
@@ -22,7 +29,7 @@ public partial class FormEmployeePayroll : Form
     {
         InitializeComponent();
 
-        emp = new("employee_id", "Сотрудник", 120) { Required = true };
+        emp = new("employee_id", "Сотрудник", 120) { Required = true, RefreshMethod = DataRefreshMethod.Immediately };
         payroll = new("payroll", "Зар. плата", 120) { DefaultAsNull = false };
 
         var controls = new List<Control>() 
@@ -31,7 +38,7 @@ public partial class FormEmployeePayroll : Form
             emp
         };
 
-        emp.SetDataSource(() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllDefault(), true);
+        emp.SetDataSource(() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllDefault());
 
         Controls.AddRange(controls.ToArray());
     }

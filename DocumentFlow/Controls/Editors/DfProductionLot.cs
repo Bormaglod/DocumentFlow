@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.05.2022
+//
+// Версия 2022.11.26
+//  - добавлен метод RefreshDataSourceOnLoad
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -279,6 +283,8 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
             gridContent.DataSource = operations.Count > 0 ? operations : (object?)null;
         }
     }
+
+    public void RefreshDataSourceOnLoad() => RefreshDataSource();
 
     #endregion
 

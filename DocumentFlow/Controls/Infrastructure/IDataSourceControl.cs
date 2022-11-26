@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.10.2021
+//
+// Версия 2022.11.26
+//  - добавлен метод RefreshDataSourceOnLoad
+//
 //-----------------------------------------------------------------------
 
 namespace DocumentFlow.Controls.Infrastructure;
@@ -17,4 +21,5 @@ namespace DocumentFlow.Controls.Infrastructure;
 public interface IDataSourceControl
 {
     void RefreshDataSource();
+    void RefreshDataSourceOnLoad();
 }

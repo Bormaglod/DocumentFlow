@@ -6,6 +6,8 @@
 //
 // Версия 2022.11.16
 //  - мелкие исправления
+// Версия 2022.11.26
+//  - добавлен метод RefreshDataSourceOnLoad
 //
 //-----------------------------------------------------------------------
 
@@ -79,6 +81,8 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
         gridMain.DataSource = list;
     }
+
+    public void RefreshDataSourceOnLoad() => RefreshDataSource();
 
     #endregion
 

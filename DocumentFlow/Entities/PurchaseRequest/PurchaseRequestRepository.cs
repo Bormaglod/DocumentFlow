@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.02.2022
+//
+// Версия 2022.11.26
+//  - в выборку добавлено поле executed возвращающее флаг налиличия
+//    поставок по заказу
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -44,6 +49,7 @@ public class PurchaseRequestRepository : DocumentRepository<PurchaseRequest>, IP
             .Select("contract.item_name as contract_name")
             .Select("d.*")
             .Select("p.transaction_amount as paid")
+            .SelectRaw("exists (select * from waybill_receipt wr where wr.owner_id = purchase_request.id) as executed")
             .Join("organization as o", "o.id", "purchase_request.organization_id")
             .Join("contractor as c", "c.id", "purchase_request.contractor_id")
             .LeftJoin("contract", "contract.id", "purchase_request.contract_id")

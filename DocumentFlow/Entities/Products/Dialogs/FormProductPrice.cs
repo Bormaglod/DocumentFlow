@@ -18,9 +18,14 @@
 // Версия 2022.8.29
 //  - скорректирован порядок обхода элементов управления
 //  - рефакторинг
+// Версия 2022.11.26
+//  - параметр autoRefresh метода SetDataSource в классе
+//    DataSourceControl был удален. Вместо него используется свойство
+//    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Calculations;
@@ -79,7 +84,8 @@ public partial class FormProductPrice<P> : Form
                 ["code"] = "Артикул",
                 ["item_name"] = "Наименование"
             },
-            TabIndex = 1
+            TabIndex = 1,
+            RefreshMethod = DataRefreshMethod.Immediately
         };
 
         amount = new("amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3, TabIndex = 3 };
@@ -159,7 +165,7 @@ public partial class FormProductPrice<P> : Form
             {
                 return materials!.GetAllMaterials().OfType<Product>().Union(goods!.GetAllValid());
             }
-        }, true);
+        });
 
         product.ValueChanged += (sender, arg) =>
         {

@@ -6,9 +6,14 @@
 //
 // Версия 2022.9.9
 //  - добавлено поле double_rate
+// Версия 2022.11.26
+//  - параметр autoRefresh метода SetDataSource в классе
+//    DataSourceControl был удален. Вместо него используется свойство
+//    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Core;
@@ -71,7 +76,8 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         var calculation = new DfTextBox("calculation_name", "Калькуляция", headerWidth, 600) { ReadOnly = true };
         var operations = new DfDirectorySelectBox<CalculationOperation>("operation_id", "Операция", headerWidth, 350) 
         { 
-            RemoveEmptyFolders = true
+            RemoveEmptyFolders = true,
+            RefreshMethod = DataRefreshMethod.Immediately
         };
 
         var using_material = new DfTextBox("material_name", "Материал (по спецификации)", headerWidth, 350) { ReadOnly = true };
@@ -123,7 +129,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         {
             if (IsCreating && e.NewValue != null)
             {
-                operations.SetDataSource(() => GetCalculationOperation(e.NewValue.calculation_id), true);
+                operations.SetDataSource(() => GetCalculationOperation(e.NewValue.calculation_id));
             }
 
             if (e.NewValue != null)
@@ -142,7 +148,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         {
             if (args.NewValue != null)
             {
-                operations.SetDataSource(() => GetCalculationOperation(args.NewValue.calculation_id), true);
+                operations.SetDataSource(() => GetCalculationOperation(args.NewValue.calculation_id));
             }
             else
             {
