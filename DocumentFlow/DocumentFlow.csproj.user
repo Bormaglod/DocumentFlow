@@ -142,6 +142,9 @@
     <Compile Update="Controls\SettingPages\BrowserColumnsPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Entities\PaymentOrders\Posting\PostingPaymentsEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Entities\PurchaseRequest\PurchaseRequestBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -377,9 +380,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\PaymentOrders\Posting\PostingPaymentsBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\PaymentOrders\Posting\PostingPaymentsEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Persons\PersonBrowser.cs">

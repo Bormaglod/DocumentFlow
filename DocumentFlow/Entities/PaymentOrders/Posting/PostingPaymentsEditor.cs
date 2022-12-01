@@ -3,6 +3,15 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 06.02.2022
+//
+// Версия 2022.12.1
+//  - исправлена ошибка '42702: column reference "contractor_id" is ambiguous'
+//    при выборе списка документов на расход
+//  - добавлена возможность выбора документов реализации
+//  - в окно выбора документов добавлены колонки даты и номера документа
+//  - из окна выбора документов удалена колонка с контрагентом
+//  - добавлена сортировка документов по дате и номеру
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -49,7 +58,7 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
                     var pr = prr!.GetAllDefault(callback: q => q
                         .WhereTrue("purchase_request.carried_out")
                         .WhereFalse("purchase_request.deleted")
-                        .Where("contractor_id", p.contractor_id))
+                        .Where("purchase_request.contractor_id", p.contractor_id))
                         .Select(d => new DebtDocument(d, "purchase", "Заявка на расход", typeof(IPurchaseRequestEditor)) 
                         {
                             contractor_name = d.contractor_name,
@@ -61,19 +70,37 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
                     var wr = wrr!.GetAllDefault(callback: q => q
                         .WhereTrue("waybill_receipt.carried_out")
                         .WhereFalse("waybill_receipt.deleted")
-                        .Where("contractor_id", p.contractor_id))
-                        .Select(d => new DebtDocument(d, "receipt", "Поступление", typeof(IWaybillReceiptEditor))
-                        {
-                            contractor_name = d.contractor_name,
-                            full_cost = d.full_cost,
-                            paid = d.paid
-                        });
+                        .Where("waybill_receipt.contractor_id", p.contractor_id))
+                        .Select(d => 
+                            new DebtDocument(d, "receipt", "Поступление", typeof(IWaybillReceiptEditor))
+                            {
+                                contractor_name = d.contractor_name,
+                                full_cost = d.full_cost,
+                                paid = d.paid
+                            });
 
-                    return pr.Union(wr);
+                    return pr
+                        .Union(wr)
+                        .OrderBy(x => x.document_date)
+                        .ThenBy(x => x.document_number);
                 }
                 else
                 {
-                    
+                    var wsr = Services.Provider.GetService<IWaybillSaleRepository>();
+                    var wr = wsr!.GetAllDefault(callback: q => q
+                        .WhereTrue("waybill_sale.carried_out")
+                        .WhereFalse("waybill_sale.deleted")
+                        .Where("waybill_sale.contractor_id", p.contractor_id)
+                        .OrderBy("waybill_sale.document_date", "waybill_sale.document_number"))
+                        .Select(d =>
+                            new DebtDocument(d, "sale", "Реализация", typeof(IWaybillSaleEditor))
+                            {
+                                contractor_name = d.contractor_name,
+                                full_cost = d.full_cost,
+                                paid = d.paid
+                            });
+
+                    return wr;
                 }
             }
 
@@ -110,24 +137,42 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
         var document_name = new GridTextColumn()
         {
             MappingName = "DocumentName",
-            HeaderText = "Документ",
-            Width = 200
+            HeaderText = "Документ"/*,
+            Width = 170*/
         };
 
-        var contractor_name = new GridTextColumn()
+        var document_date = new GridDateTimeColumn()
         {
-            MappingName = "contractor_name",
-            HeaderText = "Контрагент"
+            MappingName = "document_date",
+            HeaderText = "Дата",
+            Width = 100
         };
 
         NumberFormatInfo numberFormat = (NumberFormatInfo)Application.CurrentCulture.NumberFormat.Clone();
-        numberFormat.NumberDecimalDigits = 2;
+        numberFormat.NumberDecimalDigits = 0;
+        var document_number = new GridNumericColumn()
+        {
+            MappingName = "document_number",
+            HeaderText = "Номер",
+            FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Numeric,
+            NumberFormatInfo = numberFormat,
+            Width = 80
+        };
+
+        /*var contractor_name = new GridTextColumn()
+        {
+            MappingName = "contractor_name",
+            HeaderText = "Контрагент"
+        };*/
+
+        NumberFormatInfo currencyFormat = (NumberFormatInfo)Application.CurrentCulture.NumberFormat.Clone();
+        currencyFormat.NumberDecimalDigits = 2;
         var payment_required = new GridNumericColumn()
         {
             MappingName = "full_cost",
             HeaderText = "Сумма документа",
             FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency,
-            NumberFormatInfo = numberFormat,
+            NumberFormatInfo = currencyFormat,
             Width = 120
         };
 
@@ -136,15 +181,18 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
             MappingName = "paid",
             HeaderText = "Оплачено",
             FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency,
-            NumberFormatInfo = numberFormat,
-            Width = 120
+            NumberFormatInfo = currencyFormat,
+            Width = 100
         };
 
         columns.Add(document_name);
-        columns.Add(contractor_name);
+        columns.Add(document_date);
+        columns.Add(document_number);
+        //columns.Add(contractor_name);
         columns.Add(payment_required);
         columns.Add(paid);
 
-        contractor_name.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.Fill;
+        document_number.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
+        document_name.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.Fill;
     }
 }

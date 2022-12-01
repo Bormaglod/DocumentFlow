@@ -16,6 +16,9 @@
 //  - параметр autoRefresh метода SetDataSource в классе
 //    DataSourceControl был удален. Вместо него используется свойство
 //    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+// Версия 2022.12.1
+//  - поле purchase добавляется для выбора только при редактировании
+//    поступления товара
 //
 //-----------------------------------------------------------------------
 
@@ -68,27 +71,35 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
             OpenAction = (t) => pageManager.ShowEditor<IContractEditor, Contract>(t)
         };
 
-        var purchase = new DfDocumentSelectBox<PurchaseRequest>("owner_id", "Заявка на покупку", 120, 400) { RefreshMethod = DataRefreshMethod.OnOpen };
-        purchase.SetDataSource(() =>
+        DfDocumentSelectBox<PurchaseRequest>? purchase = null;
+        if (typeof(T) == typeof(WaybillReceipt))
         {
-            if (contractor.SelectedItem != null)
+            purchase = new DfDocumentSelectBox<PurchaseRequest>("owner_id", "Заявка на покупку", 120, 400) 
+            { 
+                RefreshMethod = DataRefreshMethod.OnOpen 
+            };
+
+            purchase.SetDataSource(() =>
             {
-                var repo = Services.Provider.GetService<IPurchaseRequestRepository>();
-                return repo!.GetAllDefault(callback: q => q
-                        .WhereFalse("purchase_request.deleted")
-                        .WhereTrue("purchase_request.carried_out")
-                        .Where("purchase_request.contractor_id", contractor.SelectedItem.id));
-            }
+                if (contractor.SelectedItem != null)
+                {
+                    var repo = Services.Provider.GetService<IPurchaseRequestRepository>();
+                    return repo!.GetAllDefault(callback: q => q
+                            .WhereFalse("purchase_request.deleted")
+                            .WhereTrue("purchase_request.carried_out")
+                            .Where("purchase_request.contractor_id", contractor.SelectedItem.id));
+                }
 
-            return null;
-        });
+                return null;
+            });
 
-        purchase.Columns += (sender, e) => PurchaseRequest.CreateGridColumns(e.Columns);
+            purchase.Columns += (sender, e) => PurchaseRequest.CreateGridColumns(e.Columns);
+        }
 
         DfDocumentSelectBox<ProductionOrder>? order = null;
         if (typeof(T) == typeof(WaybillProcessing))
         {
-            order = new DfDocumentSelectBox<ProductionOrder>("owner_id", "Заказ", 80, 400)
+            order = new DfDocumentSelectBox<ProductionOrder>("owner_id", "Заказ", 120, 400)
             {
                 OpenAction = (t) => pageManager.ShowEditor<IProductionOrderEditor, ProductionOrder>(t)
             };
@@ -227,9 +238,13 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
         List<Control> controls = new()
         {
             contractor,
-            contract,
-            purchase
+            contract
         };
+
+        if (purchase != null)
+        {
+            controls.Add(purchase);
+        }
 
         if (order != null)
         {

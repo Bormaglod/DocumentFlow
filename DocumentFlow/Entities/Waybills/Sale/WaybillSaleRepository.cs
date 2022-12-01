@@ -9,6 +9,8 @@
 // Версия 2022.8.31
 //  - доработан метод GetDefaultQuery - если поле item_name таблицы
 //    conttactor содержит null, то будет возвращено значение поля code
+// Версия 2022.12.1
+//  - в выборку добавлено поле paid
 //
 //-----------------------------------------------------------------------
 
@@ -40,6 +42,12 @@ public class WaybillSaleRepository : DocumentRepository<WaybillSale>, IWaybillSa
             .SelectRaw("sum([full_cost]) as [full_cost]")
             .GroupBy("owner_id");
 
+        var p = new Query("posting_payments_sale")
+            .Select("document_id")
+            .SelectRaw("sum([transaction_amount]) as [transaction_amount]")
+            .WhereTrue("carried_out")
+            .GroupBy("document_id");
+
         return query
             .Select("waybill_sale.*")
             .Select("o.item_name as organization_name")
@@ -50,10 +58,12 @@ public class WaybillSaleRepository : DocumentRepository<WaybillSale>, IWaybillSa
             .Select("d.product_cost")
             .Select("d.tax_value")
             .Select("d.full_cost")
+            .Select("p.transaction_amount as paid")
             .Join("organization as o", "o.id", "waybill_sale.organization_id")
             .Join("contractor as c", "c.id", "waybill_sale.contractor_id")
             .LeftJoin("contract", "contract.id", "waybill_sale.contract_id")
-            .LeftJoin(q.As("d"), j => j.On("d.owner_id", "waybill_sale.id"));
+            .LeftJoin(q.As("d"), j => j.On("d.owner_id", "waybill_sale.id"))
+            .LeftJoin(p.As("p"), j => j.On("p.document_id", "waybill_sale.id"));
     }
 
     protected override void CopyNestedRows(WaybillSale from, WaybillSale to, IDbTransaction transaction)
