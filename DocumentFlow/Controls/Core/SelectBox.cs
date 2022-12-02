@@ -11,6 +11,10 @@
 //    при открытии, то при загрузке он пуст и соответственно нет возможности
 //    использовать его для установки значения, поэтому это значение
 //    напрямую читается из соответствующего репозитария.
+// Версия 2022.12.2
+//  - при вызове метода Value.set может осуществляться вызов метода
+//    GetById в котором парметр fullInformation был установлен в true,
+//    что вызывало проблемы - изменен на false
 //
 //-----------------------------------------------------------------------
 
@@ -132,7 +136,7 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
                         var repo = Services.Provider.GetService(type);
                         if (repo != null && repo is IRepository<Guid, T> tr)
                         {
-                            selectedItem = tr.GetById(id);
+                            selectedItem = tr.GetById(id, fullInformation: false);
                         }
                     }
                 }

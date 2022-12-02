@@ -10,10 +10,18 @@
 //  - параметр autoRefresh метода SetDataSource в классе
 //    DataSourceControl был удален. Вместо него используется свойство
 //    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+// Версия 2022.12.2
+//  - поле double_rate теперь редактируется с помощью DfCheckBox, что бы
+//    была возможность установки неопределенного знаяения
+//  - для предотвращения ошибки при обращении к свойству Document до
+//    его инициализации в поле operations значение свойства RefreshMethod
+//    заменено на DataRefreshMethod.OnOpen
+//  - удалена инициализпция значения свойства double_rate
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
+using DocumentFlow.Controls.Editor;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Core;
@@ -77,7 +85,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         var operations = new DfDirectorySelectBox<CalculationOperation>("operation_id", "Операция", headerWidth, 350) 
         { 
             RemoveEmptyFolders = true,
-            RefreshMethod = DataRefreshMethod.Immediately
+            RefreshMethod = DataRefreshMethod.OnOpen
         };
 
         var using_material = new DfTextBox("material_name", "Материал (по спецификации)", headerWidth, 350) { ReadOnly = true };
@@ -85,7 +93,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         var quantity = new DfIntegerTextBox<long>("quantity", "Количество", headerWidth, 150);
         var employee = new DfDirectorySelectBox<OurEmployee>("employee_id", "Исполнитель", headerWidth, 350);
         var salary = new DfCurrencyTextBox("salary", "Зарплата", headerWidth, 150);
-        var double_rate = new DfToggleButton("double_rate", "Двойная плата", headerWidth);
+        var double_rate = new DfCheckBox("double_rate", "Двойная плата", headerWidth) { AllowThreeState = true };
 
         lot.SetDataSource(() =>
         {
@@ -167,8 +175,6 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         };
 
         employee.SetDataSource(() => Services.Provider.GetService<IOurEmployeeRepository>()?.GetAllValid());
-
-        double_rate.ToggleValue = DateTime.Today.DayOfWeek == DayOfWeek.Sunday || DateTime.Today.DayOfWeek == DayOfWeek.Saturday;
 
         AddControls(new Control[]
         {

@@ -30,6 +30,10 @@
 // Версия 2022.11.26
 //  - изменен метод GetColumnsAfter и AddColumns - ранее можно было
 //    вставить столбцы только после одного столбца, теперь после любого
+// Версия 2022.12.2
+//  - для столбца отображающего checkbox добавлена возможность использования
+//    трёхвариантного выбора - при условии, что отображаемое поле имеет
+//    тип bool?
 //
 //-----------------------------------------------------------------------
 
@@ -492,11 +496,18 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         var member = ReflectionHelper.GetMember(memberExpression);
         if (member != null)
         {
+            bool isNullable = false;
+            if (member is PropertyInfo prop)
+            {
+                isNullable = prop.PropertyType == typeof(bool?);
+            }
+
             var gridColumn = new GridCheckBoxColumn()
             {
                 MappingName = member.Name,
                 HeaderText = headerText,
-                Visible = visible
+                Visible = visible,
+                AllowThreeState = isNullable
             };
 
             SetDefaultData(gridColumn, width, hidden);

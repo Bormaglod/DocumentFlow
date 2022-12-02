@@ -15,6 +15,9 @@
 //  - добавлен метод SetSelectedNode
 //  - удалены вызовы ExpandAll
 //  - фильтр теперь осуществляет поиск по столбцам
+// Версия 2022.12.2
+//  - в методе GetNode поиск элемента осуществлялся по указателю, заменен
+//    на поиск по id
 //
 //-----------------------------------------------------------------------
 
@@ -234,7 +237,7 @@ public partial class SelectDirectoryForm<T> : Form
     {
         foreach (TreeNodeAdv node in nodes)
         {
-            if (node.Tag == data)
+            if (node.Tag is IDirectory nodeDir && data != null && nodeDir.id == data.id)
             {
                 return node;
             }

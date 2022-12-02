@@ -9,6 +9,8 @@
 //    умолчанию - имя свойства подставляется автоматически)
 // Версия 2022.9.9
 //  - добавлено поле double_rate
+// Версия 2022.12.2
+//  - тип поля double_rate заменен на bool?
 //
 //-----------------------------------------------------------------------
 
@@ -36,7 +38,7 @@ public class OperationsPerformed : AccountingDocument
     }
 
     public decimal salary { get; set; }
-    public bool double_rate { get; set; }
+    public bool? double_rate { get; set; }
     public string? lot_name { get; protected set; }
     public string? order_name { get; protected set; }
     public string? goods_name { get; protected set; }

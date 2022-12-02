@@ -10,10 +10,15 @@
 //  - параметр autoRefresh метода SetDataSource в классе
 //    DataSourceControl был удален. Вместо него используется свойство
 //    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+// Версия 2022.12.2
+//  - поле double_rate теперь редактируется с помощью DfCheckBox, что бы
+//    была возможность установки неопределенного знаяения
+//  - удалена инициализпция значения свойства double_rate
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
+using DocumentFlow.Controls.Editor;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Employees;
@@ -48,7 +53,7 @@ public partial class OperationsPerformedForm : Form
         replacing_material = new DfDirectorySelectBox<Material>("replacing_material_id", "Использованный материал", headerWidth, 350) { TabIndex = 3, RefreshMethod = DataRefreshMethod.Immediately };
         employee = new DfDirectorySelectBox<OurEmployee>("employee_id", "Исполнитель", headerWidth, 350) { TabIndex = 4, RefreshMethod = DataRefreshMethod.Immediately };
         quantity = new DfIntegerTextBox<long>("quantity", "Количество", headerWidth, 150) { TabIndex = 5 };
-        var double_rate = new DfToggleButton("double_rate", "Двойная оплата", headerWidth) { TabIndex = 6 };
+        var double_rate = new DfCheckBox("double_rate", "Двойная оплата", headerWidth) { TabIndex = 6, AllowThreeState = true };
 
         operations.SetDataSource(() =>
         {
@@ -87,8 +92,6 @@ public partial class OperationsPerformedForm : Form
         replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials());
 
         employee.SetDataSource(() => Services.Provider.GetService<IOurEmployeeRepository>()?.GetAllValid());
-
-        double_rate.ToggleValue = DateTime.Today.DayOfWeek == DayOfWeek.Sunday || DateTime.Today.DayOfWeek == DayOfWeek.Saturday;
 
         Controls.AddRange(new Control[]
         {

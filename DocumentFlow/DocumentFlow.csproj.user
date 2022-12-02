@@ -25,6 +25,9 @@
     <Compile Update="Controls\DecimalTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="Controls\Editors\DfCheckBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfChoice.cs">
       <SubType>UserControl</SubType>
     </Compile>
