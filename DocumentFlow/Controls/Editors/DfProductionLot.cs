@@ -6,6 +6,9 @@
 //
 // Версия 2022.11.26
 //  - добавлен метод RefreshDataSourceOnLoad
+// Версия 2022.12.3
+//  - значению double_rate не присваивалось значение. Исправлено.
+//  - добавлены классы EmployeeRegex и EmpPropertyiesRegex
 //
 //-----------------------------------------------------------------------
 
@@ -38,6 +41,12 @@ namespace DocumentFlow.Controls.Editors;
 
 public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSourceControl
 {
+    [GeneratedRegex("^Employees\\[(\\d+)\\].+$")]
+    private static partial Regex EmployeeRegex();
+
+    [GeneratedRegex("^Employees\\[(\\d+)\\].(\\w+)$")]
+    private static partial Regex EmpPropertyiesRegex();
+
     private class BaseEmpInfo : INotifyPropertyChanged
     {
         private long quantity;
@@ -309,7 +318,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
             if (oper != null)
             {
                 var cell = gridContent.CurrentCell;
-                Match m = Regex.Match(cell.Column.MappingName, @"^Employees\[(\d+)\].+$");
+                Match m = EmployeeRegex().Match(cell.Column.MappingName);
                 if (m.Success)
                 {
                     if (int.TryParse(m.Groups[1].Value, out int empIndex))
@@ -333,7 +342,8 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                     employee_id = form.Employee.id,
                     operation_id = form.Operation.id,
                     replacing_material_id = form.ReplacingMaterial?.id,
-                    quantity = form.Quantity
+                    quantity = form.Quantity,
+                    double_rate = form.DoubleRate
                 };
 
                 var repo = Services.Provider.GetService<IOperationsPerformedRepository>();
@@ -458,7 +468,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
     {
         if (e.DataRow.RowData is OperationInfo info)
         {
-            Match m = Regex.Match(e.Column.MappingName, @"^Employees\[(\d+)\].(\w+)$");
+            Match m = EmpPropertyiesRegex().Match(e.Column.MappingName);
             if (m.Success)
             {
                 if (int.TryParse(m.Groups[1].Value, out int empIndex))

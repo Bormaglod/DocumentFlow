@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.07.2022
+//
+// Версия 2022.12.3
+//  - в функции AsSummary заменён параметр includeDeleted имеющий значение
+//    true на options равный SelectOptions.All
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -125,9 +130,9 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
         };
 
         details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("product_cost", SummaryColumnFormat.Currency, true)
-            .AsSummary("tax_value", SummaryColumnFormat.Currency, true)
-            .AsSummary("full_cost", SummaryColumnFormat.Currency, true);
+            .AsSummary("product_cost", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("tax_value", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("full_cost", SummaryColumnFormat.Currency, SelectOptions.All);
 
         details.AutoGeneratingColumn += (sender, args) =>
         {

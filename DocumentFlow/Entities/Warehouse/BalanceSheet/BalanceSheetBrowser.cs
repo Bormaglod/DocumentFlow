@@ -9,6 +9,10 @@
 //  - IsAllowVisibilityColumn теперь всегда равен false
 // Версия 2022.9.3
 //  - удалены методы IsColumnVisible, IsAllowVisibilityColumn и IsVisible
+// Версия 2022.12.3
+//  - добавлено колонка product_code
+//  - в функции AsSummary заменён параметр includeDeleted имеющий значение
+//    true на options равный SelectOptions.All
 //
 //-----------------------------------------------------------------------
 
@@ -54,6 +58,7 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
 
         var id = CreateText(x => x.id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.product_name, "Наименование", hidden: false);
+        var code = CreateText(x => x.product_code, "Артикул", width: 150);
         var group_name = CreateText(x => x.group_name, "Группа", width: 200, visible: false);
         var opening_balance_amount = CreateNumeric(x => x.opening_balance_amount, "Остаток на начало", width: 150, decimalDigits: 3);
         var opening_balance_summa = CreateCurrency(x => x.opening_balance_summa, "Остаток на начало", width: 150);
@@ -79,18 +84,19 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
         };
 
         CreateSummaryRow(VerticalPosition.Bottom, true)
-            .AsSummary(opening_balance_amount, includeDeleted: true)
-            .AsSummary(opening_balance_summa, SummaryColumnFormat.Currency, true)
-            .AsSummary(income_amount, includeDeleted: true)
-            .AsSummary(income_summa, SummaryColumnFormat.Currency, true)
-            .AsSummary(expense_amount, includeDeleted: true)
-            .AsSummary(expense_summa, SummaryColumnFormat.Currency, true)
-            .AsSummary(closing_balance_amount, includeDeleted: true)
-            .AsSummary(closing_balance_summa, SummaryColumnFormat.Currency, true);
+            .AsSummary(opening_balance_amount, options: SelectOptions.All)
+            .AsSummary(opening_balance_summa, SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary(income_amount, options: SelectOptions.All)
+            .AsSummary(income_summa, SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary(expense_amount, options: SelectOptions.All)
+            .AsSummary(expense_summa, SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary(closing_balance_amount, options: SelectOptions.All)
+            .AsSummary(closing_balance_summa, SummaryColumnFormat.Currency, SelectOptions.All);
 
         AddColumns(new GridColumn[] { 
             id, 
             name, 
+            code,
             group_name, 
             opening_balance_amount, 
             opening_balance_summa, 

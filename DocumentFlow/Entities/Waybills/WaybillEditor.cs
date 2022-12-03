@@ -19,6 +19,9 @@
 // Версия 2022.12.1
 //  - поле purchase добавляется для выбора только при редактировании
 //    поступления товара
+// Версия 2022.12.3
+//  - в функции AsSummary заменён параметр includeDeleted имеющий значение
+//    true на options равный SelectOptions.All
 //
 //-----------------------------------------------------------------------
 
@@ -175,9 +178,9 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
         upd.ValueChanged += UpdValueChanged;
 
         details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("product_cost", SummaryColumnFormat.Currency, true)
-            .AsSummary("tax_value", SummaryColumnFormat.Currency, true)
-            .AsSummary("full_cost", SummaryColumnFormat.Currency, true);
+            .AsSummary("product_cost", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("tax_value", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("full_cost", SummaryColumnFormat.Currency, SelectOptions.All);
 
         details.AutoGeneratingColumn += (sender, args) =>
         {

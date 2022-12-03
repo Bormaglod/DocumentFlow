@@ -12,8 +12,13 @@
 //    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
 // Версия 2022.12.2
 //  - поле double_rate теперь редактируется с помощью DfCheckBox, что бы
-//    была возможность установки неопределенного знаяения
+//    была возможность установки неопределенного значения
 //  - удалена инициализпция значения свойства double_rate
+// Версия 2022.12.3
+//  - в double_rate инициализация параметра allowThreeState
+//    перенесена в параметры конструктора
+//  - double_rate теперь является полем класса
+//  - добавлено свойство DoubleRate
 //
 //-----------------------------------------------------------------------
 
@@ -37,6 +42,7 @@ public partial class OperationsPerformedForm : Form
     private readonly DfDirectorySelectBox<OurEmployee> employee;
     private readonly DfDirectorySelectBox<Material> replacing_material;
     private readonly DfIntegerTextBox<long> quantity;
+    private readonly DfCheckBox double_rate;
 
     public OperationsPerformedForm(Guid lot_id)
     {
@@ -53,7 +59,7 @@ public partial class OperationsPerformedForm : Form
         replacing_material = new DfDirectorySelectBox<Material>("replacing_material_id", "Использованный материал", headerWidth, 350) { TabIndex = 3, RefreshMethod = DataRefreshMethod.Immediately };
         employee = new DfDirectorySelectBox<OurEmployee>("employee_id", "Исполнитель", headerWidth, 350) { TabIndex = 4, RefreshMethod = DataRefreshMethod.Immediately };
         quantity = new DfIntegerTextBox<long>("quantity", "Количество", headerWidth, 150) { TabIndex = 5 };
-        var double_rate = new DfCheckBox("double_rate", "Двойная оплата", headerWidth) { TabIndex = 6, AllowThreeState = true };
+        double_rate = new DfCheckBox("double_rate", "Двойная оплата", headerWidth, allowThreeState: true) { TabIndex = 6 };
 
         operations.SetDataSource(() =>
         {
@@ -128,6 +134,12 @@ public partial class OperationsPerformedForm : Form
     {
         get => quantity.NumericValue == null ? 0 : quantity.NumericValue.Value;
         set => quantity.NumericValue = value;
+    }
+
+    public bool? DoubleRate
+    {
+        get => (bool?)double_rate.Value;
+        set => double_rate.Value = value;
     }
 
     private void ButtonOk_Click(object sender, EventArgs e)

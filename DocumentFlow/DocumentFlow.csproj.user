@@ -148,6 +148,9 @@
     <Compile Update="Entities\PaymentOrders\Posting\PostingPaymentsEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Entities\Productions\Order\ProductionOrderEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Entities\PurchaseRequest\PurchaseRequestBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -407,9 +410,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Productions\Order\ProductionOrderBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Order\ProductionOrderEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Productions\Performed\BaseOperationsPerformedBrowser.cs">

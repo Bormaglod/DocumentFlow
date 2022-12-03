@@ -9,11 +9,13 @@
 // Версия 2022.11.13
 //  - исправлена ошибка с некорректным отображением суммы начального 
 //    остатка
-//  - в таблицу больще не попадают строки в которых отсутствуют остатки
+//  - в таблицу больше не попадают строки в которых отсутствуют остатки
 //    и движение
 // Версия 2022.11.16
 //  - исправлена ошибка в результате которой в выборку не попадали
 //    некоторые записи
+// Версия 2022.12.3
+//  - в выборку добавлено поле product_code
 //
 //-----------------------------------------------------------------------
 
@@ -60,6 +62,7 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
                 .With("range_balance", range_balance)
                 .Select("p.id")
                 .Select("p.item_name as product_name")
+                .Select("p.code as product_code")
                 .Select("pp.item_name as group_name")
                 .SelectRaw("ib.init_amount as opening_balance_amount")
                 .SelectRaw("ib.init_summa as opening_balance_summa")

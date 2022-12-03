@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.08.2022
+//
+// Версия 2022.12.3
+//  - в функции AsSummary заменён параметр includeDeleted имеющий значение
+//    true на options равный SelectOptions.All
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -30,7 +35,7 @@ public class BasePayrollEditor<T, P, E> : BillingDocumentEditor<T>
         EmployeeRows = new DfDataGrid<P>(repo!) { Dock = DockStyle.Fill };
 
         EmployeeRows.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("wage", SummaryColumnFormat.Currency, true);
+            .AsSummary("wage", SummaryColumnFormat.Currency, SelectOptions.All);
 
         EmployeeRows.AutoGeneratingColumn += (sender, args) =>
         {

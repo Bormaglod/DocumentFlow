@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.12.2022
+//
+// Версия 2022.12.3
+//  - добавлен параметр allowThreeState в конструктор и иниуиализация
+//    checkBoxAdv1 в не нём
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -12,13 +17,19 @@ namespace DocumentFlow.Controls.Editor;
 
 public partial class DfCheckBox : BaseControl, IBindingControl, IAccess
 {
-    public DfCheckBox(string property, string header, int headerWidth) : base(property)
+    public DfCheckBox(string property, string header, int headerWidth, bool allowThreeState = false) : base(property)
     {
         InitializeComponent();
 
         Header = header;
         HeaderWidth = headerWidth;
         PropertyName = property;
+
+        AllowThreeState = allowThreeState;
+        if (allowThreeState)
+        {
+            checkBoxAdv1.CheckState = CheckState.Indeterminate;
+        }
     }
 
     public event EventHandler? ValueChanged;

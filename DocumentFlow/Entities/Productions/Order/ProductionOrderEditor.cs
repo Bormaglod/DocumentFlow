@@ -8,6 +8,9 @@
 //  - из-за появления в классе ProductPrice поля code, содержащего
 //    артикул, внесено изменение для подавления вывода этого столбца
 //    поскольку оно частично дублируется полем calculation_name
+// Версия 2022.12.3
+//  - в функции AsSummary заменён параметр includeDeleted имеющий значение
+//    true на options равный SelectOptions.All
 //
 //-----------------------------------------------------------------------
 
@@ -67,9 +70,9 @@ public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductio
         });
 
         details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("product_cost", SummaryColumnFormat.Currency, true)
-            .AsSummary("tax_value", SummaryColumnFormat.Currency, true)
-            .AsSummary("full_cost", SummaryColumnFormat.Currency, true);
+            .AsSummary("product_cost", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("tax_value", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("full_cost", SummaryColumnFormat.Currency, SelectOptions.All);
 
         details.AutoGeneratingColumn += (sender, args) =>
         {
