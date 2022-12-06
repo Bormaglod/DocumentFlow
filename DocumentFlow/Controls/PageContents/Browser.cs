@@ -34,6 +34,9 @@
 //  - для столбца отображающего checkbox добавлена возможность использования
 //    трёхвариантного выбора - при условии, что отображаемое поле имеет
 //    тип bool?
+// Версия 2022.12.6
+//  - интерфейс IFilter обзавелся новым свойством IOwnerIdentifier, поэтому
+//    в методе Refresh(Guid?) добавлена инициализация этого свойства
 //
 //-----------------------------------------------------------------------
 
@@ -315,6 +318,10 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     public void Refresh(Guid? owner)
     {
         owner_id = owner;
+        if (filter != null)
+        {
+            filter.OwnerIdentifier = owner;
+        }
 
         CurrentApplicationContext.Context.App.OnAppNotify += App_OnAppNotify;
 

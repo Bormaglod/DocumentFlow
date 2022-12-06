@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 13.07.2022
+//
+// Версия 2022.12.6
+//  - добавлено свойство OwnerIdentifier
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
@@ -42,6 +46,8 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
 
         Content = BalanceSheetContent.Material;
     }
+
+    public Guid? OwnerIdentifier { get; set; }
 
     public BalanceSheetContent Content 
     { 

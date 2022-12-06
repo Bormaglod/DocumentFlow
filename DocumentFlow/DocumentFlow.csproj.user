@@ -4,6 +4,9 @@
     <_LastSelectedProfileId>C:\Projects\DocumentFlow.version 6\DocumentFlow\Properties\PublishProfiles\registry.hub.docker.com_autokom.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="Controls\BalanceContractorFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\BalanceSheetFilter.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.11.2021
+//
+// Версия 2022.12.6
+//  - добавлено свойство OwnerIdentifier
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
@@ -28,6 +32,8 @@ namespace DocumentFlow.Controls
             comboOrg.DataSource = list;
             comboOrg.SelectedItem = list.FirstOrDefault(x => x.default_org);
         }
+
+        public Guid? OwnerIdentifier { get; set; }
 
         public bool DateFromEnabled 
         {

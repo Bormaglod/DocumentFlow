@@ -2,20 +2,12 @@
 // Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 07.11.2021
-//
-// Версия 2022.12.6
-//  - добавлено свойство OwnerIdentifier
-
+// Date: 06.12.2022
 //-----------------------------------------------------------------------
-
-using SqlKata;
 
 namespace DocumentFlow.Data.Infrastructure;
 
-public interface IFilter
+public interface IBalanceContractorFilter : IFilter
 {
-    Guid? OwnerIdentifier { get; set; }
-    Control Control { get; }
-    Query? CreateQuery<T>();
+    Guid? ContractIdentifier { get; set; }
 }

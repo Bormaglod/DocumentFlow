@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 31.01.2022
+//
+// Версия 2022.12.6
+//  - в конструктор добавлен параметр filter
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -23,7 +27,8 @@ public abstract class BalanceBrowser<T> : Browser<T>
 {
     private readonly IPageManager pageManager;
 
-    public BalanceBrowser(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager)
+    public BalanceBrowser(IRepository<Guid, T> repository, IPageManager pageManager, IFilter? filter = null) 
+        : base(repository, pageManager, filter: filter)
     {
         this.pageManager = pageManager;
 

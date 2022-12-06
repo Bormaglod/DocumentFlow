@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 27.12.2019
+//
+// Версия 2022.12.6
+//  - добавлен интерфейс IBalanceContractorFilter
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -53,6 +57,9 @@ public static class Services
                         .AsMatchingInterface()
                         .WithTransientLifetime()
                     .AddClasses(classes => classes.AssignableTo<IDateRangeFilter>())
+                        .AsMatchingInterface()
+                        .WithTransientLifetime()
+                    .AddClasses(classes => classes.AssignableTo<IBalanceContractorFilter>())
                         .AsMatchingInterface()
                         .WithTransientLifetime()
                     .AddClasses(classes => classes.AssignableTo<IRowHeaderImage>())
