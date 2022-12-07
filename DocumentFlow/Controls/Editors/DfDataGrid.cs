@@ -8,6 +8,8 @@
 //  - мелкие исправления
 // Версия 2022.11.26
 //  - добавлен метод RefreshDataSourceOnLoad
+// Версия 2022.12.7
+//  - добапвлена кнопка Refresh
 //
 //-----------------------------------------------------------------------
 
@@ -314,5 +316,6 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
     private void GridMain_CellDoubleClick(object sender, CellClickEventArgs e) => Edit();
 
     private void GridMain_AutoGeneratingColumn(object sender, AutoGeneratingColumnArgs e) => AutoGeneratingColumn?.Invoke(this, e);
-   
+
+    private void ButtonRefresh_Click(object sender, EventArgs e) => RefreshDataSource();
 }

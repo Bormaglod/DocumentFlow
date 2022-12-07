@@ -35,6 +35,7 @@ namespace DocumentFlow.Controls.Editors
             this.buttonDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonCopy = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparatorCustom1 = new System.Windows.Forms.ToolStripSeparator();
             this.gridMain = new Syncfusion.WinForms.DataGrid.SfDataGrid();
             this.contextMenuStripEx1 = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             this.menuCopyToClipboard = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,8 +45,8 @@ namespace DocumentFlow.Controls.Editors
             this.menuDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.menuCopy = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparatorCustom1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparatorCustom2 = new System.Windows.Forms.ToolStripSeparator();
+            this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridMain)).BeginInit();
             this.contextMenuStripEx1.SuspendLayout();
@@ -59,7 +60,8 @@ namespace DocumentFlow.Controls.Editors
             this.buttonDelete,
             this.toolStripSeparator1,
             this.buttonCopy,
-            this.toolStripSeparatorCustom1});
+            this.toolStripSeparatorCustom1,
+            this.buttonRefresh});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -107,6 +109,12 @@ namespace DocumentFlow.Controls.Editors
             this.buttonCopy.Text = "Копия";
             this.buttonCopy.ToolTipText = "Создать копированием";
             this.buttonCopy.Click += new System.EventHandler(this.ButtonCopy_Click);
+            // 
+            // toolStripSeparatorCustom1
+            // 
+            this.toolStripSeparatorCustom1.Name = "toolStripSeparatorCustom1";
+            this.toolStripSeparatorCustom1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparatorCustom1.Visible = false;
             // 
             // gridMain
             // 
@@ -205,17 +213,22 @@ namespace DocumentFlow.Controls.Editors
             this.menuCopy.Text = "Создать копию";
             this.menuCopy.Click += new System.EventHandler(this.ButtonCopy_Click);
             // 
-            // toolStripSeparatorCustom1
-            // 
-            this.toolStripSeparatorCustom1.Name = "toolStripSeparatorCustom1";
-            this.toolStripSeparatorCustom1.Size = new System.Drawing.Size(6, 25);
-            this.toolStripSeparatorCustom1.Visible = false;
-            // 
             // toolStripSeparatorCustom2
             // 
             this.toolStripSeparatorCustom2.Name = "toolStripSeparatorCustom2";
             this.toolStripSeparatorCustom2.Size = new System.Drawing.Size(178, 6);
             this.toolStripSeparatorCustom2.Visible = false;
+            // 
+            // buttonRefresh
+            // 
+            this.buttonRefresh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.buttonRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonRefresh.Image = global::DocumentFlow.Properties.Resources.icons8_refresh_16;
+            this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonRefresh.Name = "buttonRefresh";
+            this.buttonRefresh.Size = new System.Drawing.Size(23, 22);
+            this.buttonRefresh.Text = "Обновить";
+            this.buttonRefresh.Click += new System.EventHandler(this.ButtonRefresh_Click);
             // 
             // DfDataGrid
             // 
@@ -254,5 +267,6 @@ namespace DocumentFlow.Controls.Editors
         private System.Windows.Forms.ToolStripMenuItem menuCopy;
         private ToolStripSeparator toolStripSeparatorCustom1;
         private ToolStripSeparator toolStripSeparatorCustom2;
+        private ToolStripButton buttonRefresh;
     }
 }

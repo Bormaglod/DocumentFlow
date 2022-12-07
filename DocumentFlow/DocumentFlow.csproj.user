@@ -40,6 +40,9 @@
     <Compile Update="Controls\Editors\DfCurrencyTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Editors\DfDataGrid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfDateTimePicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -80,9 +83,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfDataGrid.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfState.cs">
@@ -152,6 +152,15 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Productions\Order\ProductionOrderEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Productions\Performed\BaseOperationsPerformedEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Productions\Performed\OperationsPerformedEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Productions\Performed\OperationsPerformedNestedEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\PurchaseRequest\PurchaseRequestBrowser.cs">
@@ -418,19 +427,10 @@
     <Compile Update="Entities\Productions\Performed\BaseOperationsPerformedBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Productions\Performed\BaseOperationsPerformedEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Entities\Productions\Performed\OperationsPerformedBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Productions\Performed\OperationsPerformedNestedBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Performed\OperationsPerformedNestedEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Performed\OperationsPerformedEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Productions\Processing\WaybillProcessingBrowser.cs">

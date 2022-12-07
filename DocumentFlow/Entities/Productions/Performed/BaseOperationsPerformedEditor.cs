@@ -17,6 +17,12 @@
 //    его инициализации в поле operations значение свойства RefreshMethod
 //    заменено на DataRefreshMethod.OnOpen
 //  - удалена инициализпция значения свойства double_rate
+// Версия 2022.12.7
+//  - добавлена принудительная инициализация using_material - из-за того 
+//    что заполнение списка операций (operations) происходит теперь при
+//    открытии, то начальное значение это поле получает от простого
+//    GetById без доп. информации и соответственно не содержит
+//    наименование материала учавствующего в операции
 //
 //-----------------------------------------------------------------------
 
@@ -170,7 +176,16 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
 
         operations.ValueChanged += (sender, e) =>
         {
-            using_material.Value = e.NewValue?.material_name;
+            if (e.NewValue?.material_name == null && e.NewValue?.material_id != null)
+            {
+                var repo = Services.Provider.GetService<IMaterialRepository>();
+                using_material.Value = repo!.GetById(e.NewValue.material_id.Value, false).item_name;
+            }
+            else
+            {
+                using_material.Value = e.NewValue?.material_name;
+            }
+
             replacing_material.Enabled = e.NewValue?.material_id != null;
         };
 

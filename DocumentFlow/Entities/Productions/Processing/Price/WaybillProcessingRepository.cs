@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.07.2022
+//
+// Версия 2022.12.7
+//  - в выборку добавлено поле material.code
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -24,6 +28,7 @@ public class WaybillProcessingPriceRepository : OwnedRepository<long, WaybillPro
         return query
             .Select("waybill_processing_price.*")
             .Select("m.item_name as product_name")
+            .Select("m.code")
             .Join("material as m", "m.id", "waybill_processing_price.reference_id");
     }
 }

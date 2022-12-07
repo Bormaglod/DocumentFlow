@@ -22,6 +22,8 @@
 // Версия 2022.12.3
 //  - в функции AsSummary заменён параметр includeDeleted имеющий значение
 //    true на options равный SelectOptions.All
+// Версия 2022.12.7
+//  - метод UpdateCurrencyColumn стал статическим
 //
 //-----------------------------------------------------------------------
 
@@ -199,20 +201,20 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
                     args.Column.Width = 100;
                     break;
                 case "price":
-                    UpdateCurrencyColumn(args.Column, 100);
+                    WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 100);
                     break;
                 case "product_cost":
-                    UpdateCurrencyColumn(args.Column, 140);
+                    WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 140);
                     break;
                 case "tax":
                     args.Column.Width = 80;
                     args.Column.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
                     break;
                 case "tax_value":
-                    UpdateCurrencyColumn(args.Column, 140);
+                    WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 140);
                     break;
                 case "full_cost":
-                    UpdateCurrencyColumn(args.Column, 140);
+                    WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 140);
                     break;
             }
         };
@@ -265,7 +267,7 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
 
     protected abstract IOwnedRepository<long, P> GetDetailsRepository();
 
-    private void UpdateCurrencyColumn(GridColumn column, int width)
+    private static void UpdateCurrencyColumn(GridColumn column, int width)
     {
         if (column is GridNumericColumn c)
         {

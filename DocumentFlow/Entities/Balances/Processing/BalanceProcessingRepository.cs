@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 03.07.2022
+//
+// Версия 2022.12.7
+//  - в выборку попадал собственный материал (не давальческий) - исправлено
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -42,11 +46,14 @@ public class BalanceProcessingRepository : OwnedRepository<Guid, BalanceProcessi
             .LeftJoin("production_lot as pl", "pl.id", "op.owner_id")
             .LeftJoin("production_order as po", "po.id", "pl.owner_id")
             .LeftJoin("return_materials as rm", "rm.id", "bm.owner_id")
+            .LeftJoin("calculation as c", "c.id", "pl.calculation_id")
+            .LeftJoin("calculation_material as cm", q => q.On("cm.owner_id", "c.id").On("cm.item_id", "mp.reference_id"))
             .WhereIn("dt.code", new string[] {
                 "waybill_processing",
                 "operations_performed",
                 "return_materials"
-            });
+            })
+            .WhereRaw("coalesce(cm.is_giving, true)");
 
         return query
             .From("cte")
