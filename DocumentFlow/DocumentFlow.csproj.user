@@ -211,6 +211,9 @@
     <Compile Update="Entities\Wages\Wages1c\Wage1cEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Entities\Waybills\Receipt\WaybillReceiptNestedBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Settings\MarginsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>

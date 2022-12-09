@@ -7,6 +7,8 @@
 // Версия 2022.12.3
 //  - в функции AsSummary заменён параметр includeDeleted имеющий значение
 //    true на options равный SelectOptions.All
+// Версия 2022.12.9
+//  - добавлено зависимое окно "Поступление"
 //
 //-----------------------------------------------------------------------
 
@@ -16,6 +18,7 @@ using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.PaymentOrders.Documents;
 using DocumentFlow.Entities.Products.Dialogs;
+using DocumentFlow.Entities.Waybills;
 using DocumentFlow.Infrastructure;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -142,6 +145,7 @@ public class PurchaseRequestEditor : DocumentEditor<PurchaseRequest>, IPurchaseR
     {
         base.DoAfterRefreshData();
         RegisterNestedBrowser<IDocumentPaymentBrowser, DocumentPayment>();
+        RegisterNestedBrowser<IWaybillReceiptNestedBrowser, WaybillReceipt>();
     }
 
     private void UpdateCurrencyColumn(GridColumn column, int width)

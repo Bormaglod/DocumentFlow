@@ -6,7 +6,7 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>2022.12.7</Version>
+		<Version>2022.12.9</Version>
 		<Company>Автоком</Company>
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2021</Copyright>
 		<Platforms>x64</Platforms>
@@ -250,6 +250,7 @@
 	  <Compile Update="Entities\WaybillLib\Receipt\WaybillReceiptBrowser.cs" />
 	  <Compile Update="Entities\WaybillLib\Sale\WaybillSaleBrowser.cs" />
 	  <Compile Update="Entities\WaybillLib\WaybillBrowser.cs" />
+	  <Compile Update="Entities\Waybills\Receipt\WaybillReceiptNestedBrowser.cs" />
 	  <Compile Update="Properties\Resources.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
