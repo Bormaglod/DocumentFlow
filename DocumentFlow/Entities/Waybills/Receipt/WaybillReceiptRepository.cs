@@ -10,12 +10,17 @@
 // Версия 2022.11.26
 //  - в выборку добавлены поля document_number и  document_date из 
 //    таблицы purchase_request
+// Версия 2022.12.11
+//  - добавлен метод FillProductListFromPurchaseRequest
 //
 //-----------------------------------------------------------------------
+
+using Dapper;
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Entities.PurchaseRequestLib;
 
 using SqlKata;
 
@@ -25,6 +30,26 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
 {
     public WaybillReceiptRepository(IDatabase database) : base(database)
     {
+    }
+
+    public void FillProductListFromPurchaseRequest(WaybillReceipt waybillReceipt, PurchaseRequest? purchaseRequest)
+    {
+        using var conn = Database.OpenConnection();
+        using var transaction = conn.BeginTransaction();
+
+        try
+        {
+            conn.Execute("call populate_waybill_receipt(:waybill_receipt_id, :purchase_request_id)",
+                new { waybill_receipt_id = waybillReceipt.id, purchase_request_id = purchaseRequest?.id },
+                transaction);
+
+            transaction.Commit();
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            throw new RepositoryException(ExceptionHelper.Message(e), e);
+        }
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)

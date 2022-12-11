@@ -24,6 +24,8 @@
 //    true на options равный SelectOptions.All
 // Версия 2022.12.7
 //  - метод UpdateCurrencyColumn стал статическим
+// Версия 2022.12.11
+//  - добавлен запрос на заполнение данными из заявки
 //
 //-----------------------------------------------------------------------
 
@@ -99,6 +101,17 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
             });
 
             purchase.Columns += (sender, e) => PurchaseRequest.CreateGridColumns(e.Columns);
+
+            purchase.ManualValueChange += (sender, e) =>
+            {
+                if (MessageBox.Show("Заполнить таблицу по данным заявки?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    if (repository is IWaybillReceiptRepository repo && Document is WaybillReceipt doc)
+                    {
+                        repo.FillProductListFromPurchaseRequest(doc, e.NewValue);
+                    }
+                }
+            };
         }
 
         DfDocumentSelectBox<ProductionOrder>? order = null;

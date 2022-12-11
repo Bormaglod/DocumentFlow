@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 03.02.2022
+//
+// Версия 2022.12.11
+//  - в выборку добавлено поле m.code
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -24,6 +28,7 @@ public class PurchaseRequestPriceRepository : OwnedRepository<long, PurchaseRequ
         return query
             .Select("purchase_request_price.*")
             .Select("m.item_name as product_name")
+            .Select("m.code as code")
             .Join("material as m", "m.id", "purchase_request_price.reference_id");
     }
 }

@@ -8,10 +8,15 @@
 //  - добавлен метод CreateGridColumns
 //  - добавлено поле executed возвращающее флаг налиличия поставок по
 //    заказу
+// Версия 2022.12.11
+//  - добавлено перечисление PurchaseState, свойства state, state_name и
+//    PurchaseState, методы StateNameFromValue и StateFromValue
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
+
+using Humanizer;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -20,6 +25,8 @@ using Syncfusion.WinForms.Input.Enums;
 using System.Globalization;
 
 namespace DocumentFlow.Entities.PurchaseRequestLib;
+
+public enum PurchaseState { NotActive, Active, Canceled, Completed }
 
 [Description("Заявка")]
 public class PurchaseRequest : ShipmentDocument
@@ -32,6 +39,29 @@ public class PurchaseRequest : ShipmentDocument
     public decimal paid { get; protected set; }
     public string? note { get; set; }
     public bool executed { get; protected set; }
+
+    [EnumType("purchase_state")]
+    [DataOperation(DataOperation.Add | DataOperation.Update)]
+    public string state { get; set; } = "not active";
+    public string state_name => StateNameFromValue(PurchaseState);
+
+    [Exclude]
+    public PurchaseState PurchaseState
+    {
+        get { return Enum.Parse<PurchaseState>(state.Dehumanize()); }
+        set { state = StateFromValue(value); }
+    }
+
+    public static string StateNameFromValue(PurchaseState state) => state switch
+    {
+        PurchaseState.NotActive => "Создана",
+        PurchaseState.Active => "В работе",
+        PurchaseState.Canceled => "Отменена",
+        PurchaseState.Completed => "Выполнена",
+        _ => throw new NotImplementedException()
+    };
+
+    public static string StateFromValue(PurchaseState state) => state.ToString().Humanize(LetterCasing.LowerCase);
 
     public static void CreateGridColumns(Columns columns)
     {

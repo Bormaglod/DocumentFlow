@@ -10,6 +10,9 @@
 //  - добавлен метод RefreshDataSourceOnLoad
 // Версия 2022.12.7
 //  - добапвлена кнопка Refresh
+// Версия 2022.12.11
+//  - запрещено редактирование строки, если установлен режим "Только для 
+//    чтения"
 //
 //-----------------------------------------------------------------------
 
@@ -182,6 +185,11 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
     private void Edit()
     {
+        if (!toolStrip1.Enabled)
+        {
+            return;
+        }
+
         if (DataEdit != null && gridMain.SelectedItem is T item && list != null)
         {
             DataEditEventArgs<T> eventArgs = new((T)item.Clone());

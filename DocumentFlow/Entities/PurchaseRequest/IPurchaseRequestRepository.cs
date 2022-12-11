@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.02.2022
+//
+// Версия 2022.12.11
+//  - добавлены методы Cancel и Complete
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
@@ -11,4 +15,6 @@ namespace DocumentFlow.Entities.PurchaseRequestLib;
 
 public interface IPurchaseRequestRepository : IDocumentRepository<PurchaseRequest>
 {
+    void Cancel(PurchaseRequest purchaseRequest);
+    void Complete(PurchaseRequest purchaseRequest);
 }

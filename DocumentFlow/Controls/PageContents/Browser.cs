@@ -37,6 +37,8 @@
 // Версия 2022.12.6
 //  - интерфейс IFilter обзавелся новым свойством IOwnerIdentifier, поэтому
 //    в методе Refresh(Guid?) добавлена инициализация этого свойства
+// Версия 2022.12.11
+//  - добавлен метод DocumentIsReadOnly
 //
 //-----------------------------------------------------------------------
 
@@ -371,35 +373,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         }
     }
 
-    private void LoadBrowserSettings()
-    {
-        if (browserType != null)
-        {
-            var db = Services.Provider.GetService<IDatabase>();
-            if (db == null)
-            {
-                return;
-            }
-
-            var file = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Автоком",
-                "settings",
-                db.CurrentUser,
-                $"{browserType.Name}.json"
-            );
-
-            if (File.Exists(file))
-            {
-                string json = File.ReadAllText(file);
-                var options = new JsonSerializerOptions();
-                options.Converters.Add(new JsonStringEnumConverter());
-
-                settings = LoadSettings(json, options);
-            }
-        }
-    }
-
     protected virtual void SaveSettings() { }
 
     protected virtual BrowserSettings CreateBrowserSettings() => new();
@@ -409,6 +382,8 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     protected virtual bool AllowColumnsCustomize() => true;
 
     protected virtual void DoBeforeRefreshPage() { }
+
+    protected virtual bool DocumentIsReadOnly(T document) => false;
 
     protected void RefreshColumns()
     {
@@ -914,7 +889,8 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         if (browserType != null)
         {
             var document = editableRow as IDocumentInfo;
-            pageManager.ShowEditor(browserType, editableRow?.id, owner_id, parent_id, readOnly || (document?.deleted ?? false));
+            var dro = editableRow != null && DocumentIsReadOnly(editableRow);
+            pageManager.ShowEditor(browserType, editableRow?.id, owner_id, parent_id, readOnly || (document?.deleted ?? false) || dro);
         }
     }
 
@@ -1140,6 +1116,35 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             }
 
             menu.Checked = column.Visible;
+        }
+    }
+
+    private void LoadBrowserSettings()
+    {
+        if (browserType != null)
+        {
+            var db = Services.Provider.GetService<IDatabase>();
+            if (db == null)
+            {
+                return;
+            }
+
+            var file = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Автоком",
+                "settings",
+                db.CurrentUser,
+                $"{browserType.Name}.json"
+            );
+
+            if (File.Exists(file))
+            {
+                string json = File.ReadAllText(file);
+                var options = new JsonSerializerOptions();
+                options.Converters.Add(new JsonStringEnumConverter());
+
+                settings = LoadSettings(json, options);
+            }
         }
     }
 

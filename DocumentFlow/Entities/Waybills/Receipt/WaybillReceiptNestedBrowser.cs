@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 09.12.2022
+//
+// Версия 2022.12.11
+//  - изменена ширина колонки "Договор" на автоматическую
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -31,7 +35,7 @@ public class WaybillReceiptNestedBrowser : Browser<WaybillReceipt>, IWaybillRece
         var waybill_number = CreateNumeric(x => x.waybill_number, "Номер", width: 100, visible: false);
         var invoice_date = CreateDateTime(x => x.invoice_date, "Дата", width: 150, format: "dd.MM.yyyy");
         var invoice_number = CreateNumeric(x => x.invoice_number, "Номер", width: 100);
-        var contract = CreateText(x => x.contract_name, "Договор", width: 200, visible: false);
+        var contract = CreateText(x => x.contract_name, "Договор");
         var product_cost = CreateCurrency(x => x.product_cost, "Сумма", width: 120);
         var tax = CreateNumeric(x => x.tax, "НДС%", width: 80, mode: FormatMode.Percent);
         var tax_value = CreateCurrency(x => x.tax_value, "НДС", width: 120);
@@ -42,6 +46,7 @@ public class WaybillReceiptNestedBrowser : Browser<WaybillReceipt>, IWaybillRece
             .AsSummary(tax_value, SummaryColumnFormat.Currency)
             .AsSummary(full_cost, SummaryColumnFormat.Currency);
 
+        contract.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         tax.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
 
         AddColumns(new GridColumn[] { id, date, number, waybill_date, waybill_number, invoice_date, invoice_number, contract, product_cost, tax, tax_value, full_cost });
