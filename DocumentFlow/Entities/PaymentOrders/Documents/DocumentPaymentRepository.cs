@@ -3,6 +3,12 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.02.2022
+//
+// Версия 2022.12.17
+//  - запрос возвращал документы оплаты отглсящиеся только к текущему,
+//    однако документ поступления может содержать не только оплату
+//    по самому документу, но и предоплату по заявке на закупку материалов.
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -19,13 +25,6 @@ public class DocumentPaymentRepository : DocumentRepository<DocumentPayment>, ID
     protected override Query GetQueryOwner(Query query, Guid owner_id)
     {
         return query
-            .From("payment_order")
-            .Select("payment_order.*")
-            .Select("pp.transaction_amount as posting_transaction")
-            .Select("pp.document_id")
-            .Join("posting_payments as pp", "pp.owner_id", "payment_order.id")
-            .Where("document_id", owner_id)
-            .WhereTrue("payment_order.carried_out")
-            .WhereTrue("pp.carried_out");
+            .FromRaw($"get_list_payments('{owner_id}')");
     }
 }

@@ -9,6 +9,8 @@
 //    true на options равный SelectOptions.All
 // Версия 2022.12.9
 //  - добавлено зависимое окно "Поступление"
+// Версия 2022.12.17
+//  - метод UpdateCurrencyColumn стал статическим
 //
 //-----------------------------------------------------------------------
 
@@ -148,7 +150,7 @@ public class PurchaseRequestEditor : DocumentEditor<PurchaseRequest>, IPurchaseR
         RegisterNestedBrowser<IWaybillReceiptNestedBrowser, WaybillReceipt>();
     }
 
-    private void UpdateCurrencyColumn(GridColumn column, int width)
+    private static void UpdateCurrencyColumn(GridColumn column, int width)
     {
         if (column is GridNumericColumn c)
         {

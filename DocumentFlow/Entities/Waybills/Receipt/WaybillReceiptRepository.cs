@@ -12,6 +12,8 @@
 //    таблицы purchase_request
 // Версия 2022.12.11
 //  - добавлен метод FillProductListFromPurchaseRequest
+// Версия 2022.12.17
+//  - добавлен метод GetByContractor
 //
 //-----------------------------------------------------------------------
 
@@ -52,6 +54,14 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
         }
     }
 
+    public IReadOnlyList<WaybillReceipt> GetByContractor(Guid? contractorId)
+    {
+        return GetAllDefault(callback: q => q
+            .WhereTrue("waybill_receipt.carried_out")
+            .WhereFalse("waybill_receipt.deleted")
+            .Where("waybill_receipt.contractor_id", contractorId));
+    }
+
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
     {
         var q = new Query("waybill_receipt_price")
@@ -74,9 +84,7 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
             .Select("contract.tax_payer")
             .SelectRaw("case [contract].[tax_payer] when true then 20 else 0 end as [tax]")
             .Select("contract.item_name as contract_name")
-            .Select("d.product_cost")
-            .Select("d.tax_value")
-            .Select("d.full_cost")
+            .Select("d.{product_cost, tax_value, full_cost}")
             .Select("p.transaction_amount as paid")
             .Select("pr.document_number as purchase_request_number")
             .Select("pr.document_date as purchase_request_date")

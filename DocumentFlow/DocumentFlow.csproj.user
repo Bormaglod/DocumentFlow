@@ -166,6 +166,12 @@
     <Compile Update="Entities\PurchaseRequest\PurchaseRequestBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Entities\PurchaseRequest\PurchaseRequestEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\PurchaseRequest\PurchaseRequestFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Entities\Wages\BasePayrollBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>

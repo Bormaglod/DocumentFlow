@@ -6,6 +6,8 @@
 //
 // Версия 2022.12.11
 //  - добавлены методы Cancel и Complete
+// Версия 2022.12.17
+//  - IDocumentRepository заменен на IDocumentContractorRepository
 //
 //-----------------------------------------------------------------------
 
@@ -13,7 +15,7 @@ using DocumentFlow.Data.Infrastructure;
 
 namespace DocumentFlow.Entities.PurchaseRequestLib;
 
-public interface IPurchaseRequestRepository : IDocumentRepository<PurchaseRequest>
+public interface IPurchaseRequestRepository : IDocumentContractorRepository<PurchaseRequest>
 {
     void Cancel(PurchaseRequest purchaseRequest);
     void Complete(PurchaseRequest purchaseRequest);

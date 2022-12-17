@@ -11,6 +11,8 @@
 //    conttactor содержит null, то будет возвращено значение поля code
 // Версия 2022.12.1
 //  - в выборку добавлено поле paid
+// Версия 2022.12.17
+//  - добавлен метод GetByContractor
 //
 //-----------------------------------------------------------------------
 
@@ -31,6 +33,15 @@ public class WaybillSaleRepository : DocumentRepository<WaybillSale>, IWaybillSa
     public WaybillSaleRepository(IDatabase database) : base(database)
     {
         ExcludeField(x => x.owner_id);
+    }
+
+    public IReadOnlyList<WaybillSale> GetByContractor(Guid? contractorId)
+    {
+        return GetAllDefault(callback: q => q
+            .WhereTrue("waybill_sale.carried_out")
+            .WhereFalse("waybill_sale.deleted")
+            .Where("waybill_sale.contractor_id", contractorId)
+            .OrderBy("waybill_sale.document_date", "waybill_sale.document_number"));
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)

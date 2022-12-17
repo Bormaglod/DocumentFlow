@@ -13,6 +13,10 @@
 //    у объектов
 // Версия 2022.8.25
 //  - процедура CopyChilds заменена на процедуру CopyNestedRows
+// Версия 2022.12.17
+//  - в методе GetQueryFilters вызов CreateQuery<T>() заменен на
+//    CreateQuery(string tableName)
+//  - метод GetTableName(Query) стал статическим
 //
 //-----------------------------------------------------------------------
 
@@ -491,7 +495,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     protected Query GetDefaultQuery(IDbConnection conn, IFilter? filter = null) =>
         GetQueryFilters(GetDefaultQuery(GetBaseQuery(conn), filter), filter);
 
-    protected string GetTableName(Query query) => query.Clauses.OfType<FromClause>().FirstOrDefault()?.Alias ?? GetTableName();
+    protected static string GetTableName(Query query) => query.Clauses.OfType<FromClause>().FirstOrDefault()?.Alias ?? GetTableName();
 
     protected static IReadOnlyList<T> Get(Query query, Func<Query, Query>? callback = null)
     {
@@ -549,7 +553,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     {
         if (filter != null)
         {
-            var queryFilter = filter.CreateQuery<T>();
+            var queryFilter = filter.CreateQuery(GetTableName(query));
             if (queryFilter != null)
             {
                 query = query.Where(q => queryFilter);

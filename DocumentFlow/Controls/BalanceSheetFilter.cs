@@ -6,6 +6,8 @@
 //
 // Версия 2022.12.6
 //  - добавлено свойство OwnerIdentifier
+// Версия 2022.12.17
+//  - добавлен метод CreateQuery(string tableName);
 //
 //-----------------------------------------------------------------------
 
@@ -108,4 +110,5 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
     public Control Control => this;
 
     public Query? CreateQuery<T>() => null;
+    public Query? CreateQuery(string tableName) => null;
 }

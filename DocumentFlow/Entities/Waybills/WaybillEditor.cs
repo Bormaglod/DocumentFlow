@@ -26,6 +26,11 @@
 //  - метод UpdateCurrencyColumn стал статическим
 // Версия 2022.12.11
 //  - добавлен запрос на заполнение данными из заявки
+// Версия 2022.12.17
+//  - вызов GetAllDefault (поле "Заявка на покупку") заменен на GetByContractor
+//  - добавлен запрос на запись документа перед заполнением табличной
+//    части
+//  - добавлена возможность открыть окно с заявкой
 //
 //-----------------------------------------------------------------------
 
@@ -81,36 +86,10 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
         DfDocumentSelectBox<PurchaseRequest>? purchase = null;
         if (typeof(T) == typeof(WaybillReceipt))
         {
-            purchase = new DfDocumentSelectBox<PurchaseRequest>("owner_id", "Заявка на покупку", 120, 400) 
-            { 
-                RefreshMethod = DataRefreshMethod.OnOpen 
-            };
-
-            purchase.SetDataSource(() =>
+            purchase = new DfDocumentSelectBox<PurchaseRequest>("owner_id", "Заявка на покупку", 120, 400)
             {
-                if (contractor.SelectedItem != null)
-                {
-                    var repo = Services.Provider.GetService<IPurchaseRequestRepository>();
-                    return repo!.GetAllDefault(callback: q => q
-                            .WhereFalse("purchase_request.deleted")
-                            .WhereTrue("purchase_request.carried_out")
-                            .Where("purchase_request.contractor_id", contractor.SelectedItem.id));
-                }
-
-                return null;
-            });
-
-            purchase.Columns += (sender, e) => PurchaseRequest.CreateGridColumns(e.Columns);
-
-            purchase.ManualValueChange += (sender, e) =>
-            {
-                if (MessageBox.Show("Заполнить таблицу по данным заявки?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    if (repository is IWaybillReceiptRepository repo && Document is WaybillReceipt doc)
-                    {
-                        repo.FillProductListFromPurchaseRequest(doc, e.NewValue);
-                    }
-                }
+                RefreshMethod = DataRefreshMethod.OnOpen,
+                OpenAction = (t) => pageManager.ShowEditor<IPurchaseRequestEditor, PurchaseRequest>(t)
             };
         }
 
@@ -261,6 +240,46 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
 
         if (purchase != null)
         {
+            purchase.SetDataSource(() =>
+            {
+                if (contractor.SelectedItem != null)
+                {
+                    var repo = Services.Provider.GetService<IPurchaseRequestRepository>();
+                    return repo!.GetByContractor(contractor.SelectedItem.id);
+                }
+
+                return null;
+            });
+
+            purchase.Columns += (sender, e) => PurchaseRequest.CreateGridColumns(e.Columns);
+
+            purchase.ValueChanged += (sender, e) => contract.Enabled = e.NewValue == null;
+
+            purchase.ManualValueChange += (sender, e) =>
+            {
+                if (MessageBox.Show("Заполнить таблицу по данным заявки?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    contract.Value = e.NewValue?.contract_id;
+
+                    if (IsCreating)
+                    {
+                        if (MessageBox.Show("Перед заполнением документ должен быть записан. Записать?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            Save();
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    if (repository is IWaybillReceiptRepository repo && Document is WaybillReceipt doc)
+                    {
+                        repo.FillProductListFromPurchaseRequest(doc, e.NewValue);
+                        details.RefreshDataSource();
+                    }
+                }
+            };
+
             controls.Add(purchase);
         }
 

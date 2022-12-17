@@ -11,6 +11,11 @@
 // Версия 2022.12.11
 //  - добавлено перечисление PurchaseState, свойства state, state_name и
 //    PurchaseState, методы StateNameFromValue и StateFromValue
+// Версия 2022.12.17
+//  - добавлено поле prepayment
+//  - добавлены поля receipt_payment и delivery_amount
+//  - изменился метод get для поля executed и оно теперь read-only
+//  - поле paid стало bool? и read-only
 //
 //-----------------------------------------------------------------------
 
@@ -36,9 +41,28 @@ public class PurchaseRequest : ShipmentDocument
     public int tax { get; protected set; }
     public decimal tax_value { get; protected set; }
     public decimal full_cost { get; protected set; }
-    public decimal paid { get; protected set; }
+    public decimal prepayment { get; protected set; }
     public string? note { get; set; }
-    public bool executed { get; protected set; }
+    public decimal receipt_payment { get; protected set; }
+    public decimal delivery_amount { get; protected set; }
+    public bool executed { get => delivery_amount > 0; }
+    public bool? paid 
+    { 
+        get
+        {
+            if (prepayment + receipt_payment == 0)
+            {
+                return false;
+            }
+
+            if (prepayment + receipt_payment == delivery_amount)
+            {
+                return true;
+            }
+
+            return null;
+        }
+    }
 
     [EnumType("purchase_state")]
     [DataOperation(DataOperation.Add | DataOperation.Update)]

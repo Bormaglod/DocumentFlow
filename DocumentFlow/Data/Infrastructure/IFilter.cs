@@ -6,7 +6,9 @@
 //
 // Версия 2022.12.6
 //  - добавлено свойство OwnerIdentifier
-
+// Версия 2022.12.17
+//  - добавлен метод CreateQuery(string tableName);
+//
 //-----------------------------------------------------------------------
 
 using SqlKata;
@@ -18,4 +20,5 @@ public interface IFilter
     Guid? OwnerIdentifier { get; set; }
     Control Control { get; }
     Query? CreateQuery<T>();
+    Query? CreateQuery(string tableName);
 }

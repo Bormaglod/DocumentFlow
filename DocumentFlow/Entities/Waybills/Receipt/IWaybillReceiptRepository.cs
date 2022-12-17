@@ -6,6 +6,8 @@
 //
 // Версия 2022.12.11
 //  - добавлен метод FillProductListFromPurvhaseRequest
+// Версия 2022.12.17
+//  - IDocumentRepository заменен на IDocumentContractorRepository
 //
 //-----------------------------------------------------------------------
 
@@ -14,7 +16,7 @@ using DocumentFlow.Entities.PurchaseRequestLib;
 
 namespace DocumentFlow.Entities.Waybills;
 
-public interface IWaybillReceiptRepository : IDocumentRepository<WaybillReceipt>
+public interface IWaybillReceiptRepository : IDocumentContractorRepository<WaybillReceipt>
 {
     void FillProductListFromPurchaseRequest(WaybillReceipt waybillReceipt, PurchaseRequest? purchaseRequest);
 }

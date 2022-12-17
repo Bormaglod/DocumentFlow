@@ -6,6 +6,8 @@
 //
 // Версия 2022.12.6
 //  - добавлено свойство OwnerIdentifier
+// Версия 2022.12.17
+//  - добавлен метод CreateQuery(string tableName);
 //
 //-----------------------------------------------------------------------
 
@@ -62,29 +64,29 @@ namespace DocumentFlow.Controls
 
         public void SetDateRange(DateRange range) => dateRangeControl1.SetRange(range);
 
-        public Query? CreateQuery<T>()
-        {
-            var table = typeof(T).Name.Underscore();
+        public Query? CreateQuery<T>() => CreateQuery(typeof(T).Name.Underscore());
 
+        public virtual Query? CreateQuery(string tableName)
+        {
             var query = new Query();
             if (comboOrg.SelectedItem is Organization org)
             {
-                query.Where($"{table}.organization_id", org.id);
+                query.Where($"{tableName}.organization_id", org.id);
             }
 
             if (DateFromEnabled || DateToEnabled)
             {
                 if (DateFrom == null)
                 {
-                    query.Where($"{table}.document_date", "<=", DateTo);
+                    query.Where($"{tableName}.document_date", "<=", DateTo);
                 }
                 else if (DateTo == null)
                 {
-                    query.Where($"{table}.document_date", ">=", DateFrom);
+                    query.Where($"{tableName}.document_date", ">=", DateFrom);
                 }
                 else
                 {
-                    query.WhereBetween($"{table}.document_date", DateFrom, DateTo);
+                    query.WhereBetween($"{tableName}.document_date", DateFrom, DateTo);
                 }
             }
 

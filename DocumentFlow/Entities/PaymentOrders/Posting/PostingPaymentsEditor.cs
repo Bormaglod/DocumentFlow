@@ -11,6 +11,8 @@
 //  - в окно выбора документов добавлены колонки даты и номера документа
 //  - из окна выбора документов удалена колонка с контрагентом
 //  - добавлена сортировка документов по дате и номеру
+// Версия 2022.12.17
+//  - вызовы GetAllDefault заменены на GetByContractor
 //
 //-----------------------------------------------------------------------
 
@@ -55,22 +57,16 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
                 if (p.PaymentDirection == PaymentDirection.Expense)
                 {
                     var prr = Services.Provider.GetService<IPurchaseRequestRepository>();
-                    var pr = prr!.GetAllDefault(callback: q => q
-                        .WhereTrue("purchase_request.carried_out")
-                        .WhereFalse("purchase_request.deleted")
-                        .Where("purchase_request.contractor_id", p.contractor_id))
+                    var pr = prr!.GetByContractor(p.contractor_id)
                         .Select(d => new DebtDocument(d, "purchase", "Заявка на расход", typeof(IPurchaseRequestEditor)) 
                         {
                             contractor_name = d.contractor_name,
                             full_cost = d.full_cost,
-                            paid = d.paid
+                            paid = d.prepayment
                         });
 
                     var wrr = Services.Provider.GetService<IWaybillReceiptRepository>();
-                    var wr = wrr!.GetAllDefault(callback: q => q
-                        .WhereTrue("waybill_receipt.carried_out")
-                        .WhereFalse("waybill_receipt.deleted")
-                        .Where("waybill_receipt.contractor_id", p.contractor_id))
+                    var wr = wrr!.GetByContractor(p.contractor_id)
                         .Select(d => 
                             new DebtDocument(d, "receipt", "Поступление", typeof(IWaybillReceiptEditor))
                             {
@@ -87,11 +83,7 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
                 else
                 {
                     var wsr = Services.Provider.GetService<IWaybillSaleRepository>();
-                    var wr = wsr!.GetAllDefault(callback: q => q
-                        .WhereTrue("waybill_sale.carried_out")
-                        .WhereFalse("waybill_sale.deleted")
-                        .Where("waybill_sale.contractor_id", p.contractor_id)
-                        .OrderBy("waybill_sale.document_date", "waybill_sale.document_number"))
+                    var wr = wsr!.GetByContractor(p.contractor_id)
                         .Select(d =>
                             new DebtDocument(d, "sale", "Реализация", typeof(IWaybillSaleEditor))
                             {
@@ -137,8 +129,7 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
         var document_name = new GridTextColumn()
         {
             MappingName = "DocumentName",
-            HeaderText = "Документ"/*,
-            Width = 170*/
+            HeaderText = "Документ"
         };
 
         var document_date = new GridDateTimeColumn()
@@ -158,12 +149,6 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
             NumberFormatInfo = numberFormat,
             Width = 80
         };
-
-        /*var contractor_name = new GridTextColumn()
-        {
-            MappingName = "contractor_name",
-            HeaderText = "Контрагент"
-        };*/
 
         NumberFormatInfo currencyFormat = (NumberFormatInfo)Application.CurrentCulture.NumberFormat.Clone();
         currencyFormat.NumberDecimalDigits = 2;
@@ -188,7 +173,6 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
         columns.Add(document_name);
         columns.Add(document_date);
         columns.Add(document_number);
-        //columns.Add(contractor_name);
         columns.Add(payment_required);
         columns.Add(paid);
 

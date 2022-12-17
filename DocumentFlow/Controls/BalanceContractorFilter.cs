@@ -3,10 +3,16 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 06.12.2022
+//
+// Версия 2022.12.17
+//  - добавлен метод CreateQuery(string tableName);
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Companies;
+
+using Humanizer;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -75,7 +81,9 @@ public partial class BalanceContractorFilter : UserControl, IBalanceContractorFi
 
     public Control Control => this;
 
-    public Query? CreateQuery<T>()
+    public Query? CreateQuery<T>() => CreateQuery(typeof(T).Name.Underscore());
+
+    public Query? CreateQuery(string tableName)
     {
         if (sfComboBox1.SelectedIndex != -1)
         {
