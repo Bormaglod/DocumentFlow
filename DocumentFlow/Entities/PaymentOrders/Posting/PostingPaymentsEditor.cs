@@ -13,11 +13,16 @@
 //  - добавлена сортировка документов по дате и номеру
 // Версия 2022.12.17
 //  - вызовы GetAllDefault заменены на GetByContractor
+// Версия 2022.12.18
+//  - добавлена возможность разнечения платежей на начальный остаток по
+//    контрагенту
+//  - класс стал наследоваться от DocumentEditor, а не Editor
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Entities.Balances.Initial;
 using DocumentFlow.Entities.PurchaseRequestLib;
 using DocumentFlow.Entities.Waybills;
 using DocumentFlow.Infrastructure;
@@ -30,11 +35,11 @@ using System.Globalization;
 
 namespace DocumentFlow.Entities.PaymentOrders.Posting;
 
-public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEditor
+public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPaymentsEditor
 {
     private readonly DfDocumentSelectBox<DebtDocument> document;
 
-    public PostingPaymentsEditor(IPostingPaymentsRepository repository, IPageManager pageManager) : base(repository, pageManager) 
+    public PostingPaymentsEditor(IPostingPaymentsRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
         document = new DfDocumentSelectBox<DebtDocument>("document_id", "Документ", 150, 400)
         {
@@ -74,9 +79,19 @@ public class PostingPaymentsEditor : Editor<PostingPayments>, IPostingPaymentsEd
                                 full_cost = d.full_cost,
                                 paid = d.paid
                             });
+                    var bcr = Services.Provider.GetService<IInitialBalanceContractorRepository>();
+                    var bc = bcr!.GetByContractor(p.contractor_id)
+                        .Select(d =>
+                            new DebtDocument(d, "balance", "Нач. остаток", typeof(IInitialBalanceContractorEditor))
+                            {
+                                contractor_name = d.contractor_name,
+                                full_cost = d.operation_summa,
+                                paid = d.paid
+                            });
 
                     return pr
                         .Union(wr)
+                        .Union(bc)
                         .OrderBy(x => x.document_date)
                         .ThenBy(x => x.document_number);
                 }

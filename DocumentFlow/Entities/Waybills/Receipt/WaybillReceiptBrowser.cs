@@ -6,6 +6,8 @@
 //
 // Версия 2022.11.26
 //  - добавлен метод GetColumnsAfter
+// Версия 2022.12.18
+//  - добавлена колонка "Оплата"
 //
 //-----------------------------------------------------------------------
 
@@ -21,7 +23,11 @@ public class WaybillReceiptBrowser : WaybillBrowser<WaybillReceipt>, IWaybillRec
     public WaybillReceiptBrowser(IWaybillReceiptRepository repository, IPageManager pageManager, IDocumentFilter filter)
         : base(repository, pageManager, filter: filter)
     {
+        var payment_exists = CreateBoolean(x => x.payment_exists, "Оплата", 100);
+
         CreateStackedColumns("Заявка", new string[] { "purchase_request_date", "purchase_request_number" });
+
+        AddColumns(new GridColumn[] { payment_exists });
     }
 
     protected override GridColumn[] GetColumnsAfter(string mappingName)

@@ -6,6 +6,8 @@
 //
 // Версия 2022.11.26
 //  - добавлены поля purchase_request_number и purchase_request_date
+// Версия 2022.12.18
+//  - добавлено поле payment_exists
 //
 //-----------------------------------------------------------------------
 
@@ -18,4 +20,21 @@ public class WaybillReceipt : Waybill
 {
     public string? purchase_request_number { get; protected set; }
     public DateTime? purchase_request_date { get; protected set; }
+    public bool? payment_exists
+    {
+        get
+        {
+            if (paid == 0)
+            {
+                return false;
+            }
+
+            if (paid == full_cost)
+            {
+                return true;
+            }
+
+            return null;
+        }
+    }
 }

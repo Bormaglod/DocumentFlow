@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 16.06.2022
+//
+// Версия 2022.12.18
+//  - добавлено поле paid
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
@@ -19,4 +23,5 @@ internal class InitialBalanceContractor : InitialBalance
     public DateTime contract_date { get; protected set; }
     public decimal? OurDebt => amount > 0 ? operation_summa : null;
     public decimal? ContractorDebt => amount < 0 ? operation_summa : null;
+    public decimal paid { get; protected set; }
 }
