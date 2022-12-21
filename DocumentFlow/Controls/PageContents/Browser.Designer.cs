@@ -87,6 +87,7 @@
             this.menuGroupCaptionExpand = new System.Windows.Forms.ToolStripMenuItem();
             this.menuGroupCaptionCollapse = new System.Windows.Forms.ToolStripMenuItem();
             this.panelTools = new System.Windows.Forms.Panel();
+            this.menuCreateBasedOn = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridContent)).BeginInit();
             this.contextGridMenu.SuspendLayout();
@@ -423,12 +424,13 @@
             this.menuCancelAcceptance,
             this.separatorAcceptance,
             this.menuCopy,
+            this.menuCreateBasedOn,
             this.menuCreateGroup,
             this.separatorDocuments,
             this.menuDocuments});
             this.contextRecordMenu.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
             this.contextRecordMenu.Name = "contextGridMenu";
-            this.contextRecordMenu.Size = new System.Drawing.Size(355, 254);
+            this.contextRecordMenu.Size = new System.Drawing.Size(355, 298);
             this.contextRecordMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
             this.contextRecordMenu.ThemeName = "Metro";
             this.contextRecordMenu.Opening += new System.ComponentModel.CancelEventHandler(this.ContextRecordMenu_Opening);
@@ -650,6 +652,12 @@
             this.panelTools.Size = new System.Drawing.Size(1067, 100);
             this.panelTools.TabIndex = 15;
             // 
+            // menuCreateBasedOn
+            // 
+            this.menuCreateBasedOn.Name = "menuCreateBasedOn";
+            this.menuCreateBasedOn.Size = new System.Drawing.Size(354, 22);
+            this.menuCreateBasedOn.Text = "Создать на основании";
+            // 
             // Browser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -736,5 +744,6 @@
         private ToolStripMenuItem toolStripPrintList;
         private ToolStripMenuItem menuId;
         private ToolStripSeparator separatorId;
+        private ToolStripMenuItem menuCreateBasedOn;
     }
 }

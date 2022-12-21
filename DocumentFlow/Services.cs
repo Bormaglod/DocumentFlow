@@ -6,6 +6,8 @@
 //
 // Версия 2022.12.6
 //  - добавлен интерфейс IBalanceContractorFilter
+// Версия 2022.12.21
+//  - добавлен интерфейс ICreationBased
 //
 //-----------------------------------------------------------------------
 
@@ -70,6 +72,9 @@ public static class Services
                         .WithTransientLifetime()
                     .AddClasses(classes => classes.AssignableTo<ISettings>())
                         .AsMatchingInterface()
+                        .WithTransientLifetime()
+                    .AddClasses(classes => classes.AssignableTo<ICreationBased>())
+                        .AsImplementedInterfaces()
                         .WithTransientLifetime()
                 );
 

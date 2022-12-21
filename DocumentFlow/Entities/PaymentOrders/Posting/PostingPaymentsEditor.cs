@@ -17,6 +17,14 @@
 //  - добавлена возможность разнечения платежей на начальный остаток по
 //    контрагенту
 //  - класс стал наследоваться от DocumentEditor, а не Editor
+// Версия 2022.12.21
+//  - для IPurchaseRequestRepository вызов GetContractor(Guid?) заменен
+//    на GetByContractor(Guid?, PurchaseState?)
+//  - добавлена выборка документов у которых сумма документа не равна
+//    уже оплаченной сумме, т.е. получим только те документы по которым
+//    есть долг и можно разнести платёж
+//  - добавлен авторасчёт суммы операции исходя из остатка платежа
+//    по выбранному документу
 //
 //-----------------------------------------------------------------------
 
@@ -62,7 +70,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
                 if (p.PaymentDirection == PaymentDirection.Expense)
                 {
                     var prr = Services.Provider.GetService<IPurchaseRequestRepository>();
-                    var pr = prr!.GetByContractor(p.contractor_id)
+                    var pr = prr!.GetByContractor(p.contractor_id, PurchaseState.Active)
                         .Select(d => new DebtDocument(d, "purchase", "Заявка на расход", typeof(IPurchaseRequestEditor)) 
                         {
                             contractor_name = d.contractor_name,
@@ -92,6 +100,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
                     return pr
                         .Union(wr)
                         .Union(bc)
+                        .Where(x => x.full_cost != x.paid)
                         .OrderBy(x => x.document_date)
                         .ThenBy(x => x.document_number);
                 }
@@ -119,6 +128,18 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
             if (document.SelectedItem != null)
             {
                 contractor.Value = document.SelectedItem.contractor_name ?? string.Empty;
+            }
+        };
+
+        document.ManualValueChange += (sender, e) =>
+        {
+            if (e.NewValue != null) 
+            {
+                amount.NumericValue = e.NewValue.full_cost - e.NewValue.paid;
+            }
+            else
+            {
+                amount.NumericValue = 0;
             }
         };
 

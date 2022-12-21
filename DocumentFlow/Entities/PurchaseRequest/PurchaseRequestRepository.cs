@@ -13,7 +13,9 @@
 //  - добавлен метод CopyNestedRows
 // Версия 2022.12.17
 //  - запрос заменен на использование представления purchase_request_receipt
-//  - добавлен метод GetByContractor
+//  - добавлен метод GetByContractor(Guid?)
+// Версия 2022.12.21
+//  - добавлен метод GetByContractor(Guid?, PurchaseState?)
 //
 //-----------------------------------------------------------------------
 
@@ -45,6 +47,15 @@ public class PurchaseRequestRepository : DocumentRepository<PurchaseRequest>, IP
         return GetAllDefault(callback: q => q
             .WhereTrue("carried_out")
             .WhereFalse("deleted")
+            .Where("contractor_id", contractorId));
+    }
+
+    public IReadOnlyList<PurchaseRequest> GetByContractor(Guid? contractorId, PurchaseState? state)
+    {
+        return GetAllDefault(callback: q => q
+            .WhereTrue("carried_out")
+            .WhereFalse("deleted")
+            .When(state != null, q => q.WhereRaw($"state = '{PurchaseRequest.StateFromValue(state!.Value)}'::purchase_state"))
             .Where("contractor_id", contractorId));
     }
 

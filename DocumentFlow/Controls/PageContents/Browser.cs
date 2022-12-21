@@ -39,6 +39,10 @@
 //    в методе Refresh(Guid?) добавлена инициализация этого свойства
 // Версия 2022.12.11
 //  - добавлен метод DocumentIsReadOnly
+// Версия 2022.12.21
+//  - добавлен пункт меню "Создать на основании"
+//  - в конструктор добавлен параметр и поле IEnumerable<ICreationBased>? creations
+//  - добавлен метод MenuCreateBasedOn_Click
 //
 //-----------------------------------------------------------------------
 
@@ -163,6 +167,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     private readonly IRowHeaderImage? rowHeaderImage;
     private readonly IBreadcrumb? navigator;
     private readonly IFilter? filter;
+    private readonly IEnumerable<ICreationBased>? creations;
     private ShowToolTipMethod? showToolTip;
     private Guid? root_id = null;
     private Guid? parent_id = null;
@@ -184,7 +189,8 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         IPageManager pageManager,
         IRowHeaderImage? rowHeaderImage = null,
         IBreadcrumb? navigator = null,
-        IFilter? filter = null)
+        IFilter? filter = null,
+        IEnumerable<ICreationBased>? creations = null)
     {
         InitializeComponent();
 
@@ -195,6 +201,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         this.rowHeaderImage = rowHeaderImage;
         this.navigator = navigator;
         this.filter = filter;
+        this.creations = creations;
 
         toolbar = new PageToolBar(toolStrip1, new Dictionary<ToolStripItem, (Image, Image)>
         {
@@ -847,6 +854,17 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             panelTools.Controls.Add(filter.Control);
         }
 
+        if (creations != null)
+        {
+            foreach (var item in creations.Where(x => x.CanCreateDocument(typeof(T))))
+            {
+                ToolStripMenuItem menuItem = new(item.DocumentName);
+                menuItem.Click += MenuCreateBasedOn_Click;
+                menuItem.Tag = item;
+                menuCreateBasedOn.DropDownItems.Add(menuItem);
+            }
+        }
+
         Text = HeaderText;
 
         buttonCreateGroup.Visible = Navigator != null;
@@ -854,6 +872,22 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         menuCreateGroup2.Visible = Navigator != null;
 
         gridContent.TableControl.KeyUp += GridContentKeyUp;
+    }
+
+    private void MenuCreateBasedOn_Click(object? sender, EventArgs e)
+    {
+        if (sender is ToolStripMenuItem menu && menu.Tag is ICreationBased creation && gridContent.SelectedItem is T row)
+        {
+            try
+            {
+                Guid id = creation.Create(row);
+                pageManager.ShowEditor(creation.DocumentEditorType, id);
+            }
+            catch (Exception ex)
+            { 
+                ExceptionHelper.MesssageBox(ex);
+            }
+        }
     }
 
     private void ConfigureCommands()

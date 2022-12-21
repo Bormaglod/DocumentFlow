@@ -8,6 +8,8 @@
 //  - добавлены методы Cancel и Complete
 // Версия 2022.12.17
 //  - IDocumentRepository заменен на IDocumentContractorRepository
+// Версия 2022.12.21
+//  - добавлен метод GetByContractor(Guid?, PurchaseState?)
 //
 //-----------------------------------------------------------------------
 
@@ -19,4 +21,5 @@ public interface IPurchaseRequestRepository : IDocumentContractorRepository<Purc
 {
     void Cancel(PurchaseRequest purchaseRequest);
     void Complete(PurchaseRequest purchaseRequest);
+    IReadOnlyList<PurchaseRequest> GetByContractor(Guid? contractorId, PurchaseState? state);
 }

@@ -18,6 +18,8 @@
 //  - колонка "Поставка" переименована в "Выполнена"
 //  - добавлена колонка "Оплачена"
 //  - IDocumentFilter заменен на IPurchaseRequestFilter
+// Версия 2022.12.21
+//  - в конструктор добавлен параметр IEnumerable<ICreationBased>? creations
 //
 //-----------------------------------------------------------------------
 
@@ -25,6 +27,7 @@ using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
@@ -38,8 +41,8 @@ namespace DocumentFlow.Entities.PurchaseRequestLib;
 
 public class PurchaseRequestBrowser : Browser<PurchaseRequest>, IPurchaseRequestBrowser
 {
-    public PurchaseRequestBrowser(IPurchaseRequestRepository repository, IPageManager pageManager, IPurchaseRequestFilter filter)
-        : base(repository, pageManager, filter: filter)
+    public PurchaseRequestBrowser(IPurchaseRequestRepository repository, IPageManager pageManager, IPurchaseRequestFilter filter, IEnumerable<ICreationBased>? creations)
+        : base(repository, pageManager, filter: filter, creations: creations)
     {
         AllowGrouping();
 
