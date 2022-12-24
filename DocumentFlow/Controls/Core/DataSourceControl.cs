@@ -10,13 +10,14 @@
 //  - в методе SetDataSource удален параметр autoRefresh - вместо него
 //    используется свойство RefreshMethod с значением Immediately
 //  - добавлен метод RefreshDataSourceOnLoad
+// Версия 2022.12.24
+//  - добавлены методы GetSingleValueRepositoryType, GetDocument(I) и 
+//    GetDocument(Type, I)
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Data.Infrastructure;
-
-using System.Reflection;
 
 namespace DocumentFlow.Controls.Core;
 
@@ -46,6 +47,19 @@ public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl
                 SetDataSource(value);
             }
         }
+    }
+
+    public virtual T? GetDocument(I id)
+    {
+        string typeName = $"{typeof(T).Namespace}.I{typeof(T).Name}Repository";
+        var type = Type.GetType(typeName);
+
+        if (type != null)
+        {
+            return GetDocument(type, id);
+        }
+
+        return null;
     }
 
     public void SetDataSource(Func<IEnumerable<T>?> func)
@@ -91,4 +105,15 @@ public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl
     protected abstract void DoRefreshDataSource(IEnumerable<T> data);
 
     protected abstract void ClearItems();
+
+    protected T? GetDocument(Type type, I id)
+    {
+        var repo = Services.Provider.GetService(type);
+        if (repo != null && repo is IRepository<I, T> tr)
+        {
+            return tr.GetById(id, fullInformation: false);
+        }
+
+        return null;
+    }
 }

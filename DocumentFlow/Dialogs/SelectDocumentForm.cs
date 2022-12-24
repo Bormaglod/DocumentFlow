@@ -3,9 +3,17 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 06.02.2022
+//
+// Версия 2022.12.24
+//  - в конструктор добавлены параметры currentItem и disableCurrentItem
+//  - добавлен метод GridContent_QueryCellStyle, в котором реализовано
+//    выделение строки со значением currentItem, если disableCurrentItem
+//    установлено в true
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
+using Syncfusion.WinForms.DataGrid.Events;
 
 using Syncfusion.WinForms.DataGrid;
 
@@ -14,11 +22,21 @@ namespace DocumentFlow.Dialogs;
 public partial class SelectDocumentForm<T> : Form
     where T : class, IAccountingDocument
 {
-    public SelectDocumentForm(IList<T> items)
+    private readonly bool disableCurrentItem;
+    private readonly T? currentItem;
+
+    public SelectDocumentForm(IList<T> items, T? currentItem, bool disableCurrentItem)
     {
         InitializeComponent();
 
         AddItems(items);
+        if (currentItem != null) 
+        {
+            gridContent.SelectedItem = items.FirstOrDefault(x => x.id == currentItem.id);
+        }
+
+        this.currentItem = currentItem;
+        this.disableCurrentItem = disableCurrentItem;
     }
 
     public T? SelectedItem
@@ -29,12 +47,9 @@ public partial class SelectDocumentForm<T> : Form
 
     public Columns Columns => gridContent.Columns;
 
-    private void AddItems(IList<T> items)
-    {
-        gridContent.DataSource = items;
-    }
+    private void AddItems(IList<T> items) => gridContent.DataSource = items;
 
-    private void GridContent_CellDoubleClick(object sender, Syncfusion.WinForms.DataGrid.Events.CellClickEventArgs e)
+    private void GridContent_CellDoubleClick(object sender, CellClickEventArgs e)
     {
         DialogResult = DialogResult.OK;
         Close();
@@ -52,8 +67,16 @@ public partial class SelectDocumentForm<T> : Form
         }
     }
 
-    private void ToolButton1_Click(object sender, EventArgs e)
+    private void ToolButton1_Click(object sender, EventArgs e) => textBoxExt1.Text = string.Empty;
+
+    private void GridContent_QueryCellStyle(object sender, QueryCellStyleEventArgs e)
     {
-        textBoxExt1.Text = string.Empty;
+        if (e.DataRow.RowData is T row && currentItem != null && disableCurrentItem)
+        {
+            if (row.id == currentItem.id)
+            {
+                e.Style.TextColor = Color.Gray;
+            }
+        }
     }
 }

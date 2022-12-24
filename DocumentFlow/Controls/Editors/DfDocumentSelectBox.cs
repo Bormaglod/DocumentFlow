@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 06.02.2022
+//
+// Версия 2022.12.24
+//  - добавлено свойство DisableCurrentItem
+//  - изменен вызов конструктора SelectDocumentForm
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -22,12 +27,11 @@ public class DfDocumentSelectBox<T> : SelectBox<T>
 
     public event EventHandler<ColumnDataEventArgs>? Columns;
 
+    public bool DisableCurrentItem { get; set; } = false;
+
     protected override void OnSelect()
     {
-        SelectDocumentForm<T> form = new(Items.Cast<T>().ToList())
-        {
-            SelectedItem = SelectedItem
-        };
+        SelectDocumentForm<T> form = new(Items.ToList(), SelectedItem, DisableCurrentItem);
 
         form.Columns.Clear();
         Columns?.Invoke(this, new ColumnDataEventArgs(form.Columns));

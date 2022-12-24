@@ -25,6 +25,8 @@
 //    есть долг и можно разнести платёж
 //  - добавлен авторасчёт суммы операции исходя из остатка платежа
 //    по выбранному документу
+// Версия 2022.12.24
+//  - добавлена инициализация свойства DisableCurrentItem для document
 //
 //-----------------------------------------------------------------------
 
@@ -52,7 +54,8 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
         document = new DfDocumentSelectBox<DebtDocument>("document_id", "Документ", 150, 400)
         {
             Required = true,
-            OpenAction = (t) => pageManager.ShowEditor(t.EditorType, t.id)
+            OpenAction = (t) => pageManager.ShowEditor(t.EditorType, t.id),
+            DisableCurrentItem = true
         };
 
         var contractor = new DfTextBox("contractor_name", "Контрагент", 150, 400) { Enabled = false };
@@ -100,7 +103,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
                     return pr
                         .Union(wr)
                         .Union(bc)
-                        .Where(x => x.full_cost != x.paid)
+                        .Where(x => x.full_cost != x.paid || x.id == Document.document_id)
                         .OrderBy(x => x.document_date)
                         .ThenBy(x => x.document_number);
                 }

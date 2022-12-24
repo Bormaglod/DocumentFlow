@@ -107,6 +107,7 @@
             this.toolButton1.Name = "toolButton1";
             this.toolButton1.Size = new System.Drawing.Size(25, 25);
             this.toolButton1.TabIndex = 3;
+            this.toolButton1.TabStop = false;
             this.toolButton1.Text = "toolButton1";
             this.toolButton1.Click += new System.EventHandler(this.ToolButton1_Click);
             // 
@@ -173,6 +174,7 @@
             this.gridContent.Style.ProgressBarStyle.TubeForegroundStartColor = System.Drawing.Color.SkyBlue;
             this.gridContent.Style.TableSummaryRowStyle.Font.Size = 9F;
             this.gridContent.TabIndex = 15;
+            this.gridContent.QueryCellStyle += new Syncfusion.WinForms.DataGrid.Events.QueryCellStyleEventHandler(this.GridContent_QueryCellStyle);
             this.gridContent.CellDoubleClick += new Syncfusion.WinForms.DataGrid.Events.CellClickEventHandler(this.GridContent_CellDoubleClick);
             // 
             // SelectDocumentForm

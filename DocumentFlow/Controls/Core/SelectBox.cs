@@ -15,6 +15,9 @@
 //  - при вызове метода Value.set может осуществляться вызов метода
 //    GetById в котором парметр fullInformation был установлен в true,
 //    что вызывало проблемы - изменен на false
+// Версия 2022.12.24
+//  - изменения связанные с добавлением методов GetSingleValueRepositoryType
+//    и GetDocument в класс DataSourceControl
 //
 //-----------------------------------------------------------------------
 
@@ -129,16 +132,7 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
                 selectedItem = items.FirstOrDefault(x => x.id == id);
                 if (selectedItem == null && RefreshMethod == DataRefreshMethod.OnOpen) 
                 {
-                    string typeName = $"{typeof(T).Namespace}.I{typeof(T).Name}Repository";
-                    Type? type = Type.GetType(typeName);
-                    if (type != null)
-                    {
-                        var repo = Services.Provider.GetService(type);
-                        if (repo != null && repo is IRepository<Guid, T> tr)
-                        {
-                            selectedItem = tr.GetById(id, fullInformation: false);
-                        }
-                    }
+                    selectedItem = GetDocument(id);
                 }
 
                 textValue.Text = selectedItem?.ToString();
