@@ -16,6 +16,10 @@
 //  - добавлен метод GetByContractor
 // Версия 2022.12.18
 //  - изменен расчёт суммы оплаты за поставку - добавлена предоплата
+// Версия 2022.12.26
+//  - добавлен метод GetQuery
+//  - в выборке суммы поступления и оплаты скорректированы на сумму
+//    корректировки долга
 //
 //-----------------------------------------------------------------------
 
@@ -73,17 +77,10 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
             .SelectRaw("sum(full_cost) as full_cost")
             .GroupBy("owner_id");
 
-        var ppr = new Query("posting_payments_receipt")
-            .Select("document_id")
-            .SelectRaw("sum(transaction_amount) as transaction_amount")
-            .WhereTrue("carried_out")
-            .GroupBy("document_id");
-
-        var ppp = new Query("posting_payments_purchase")
-            .Select("document_id")
-            .SelectRaw("sum(transaction_amount) as transaction_amount")
-            .WhereTrue("carried_out")
-            .GroupBy("document_id");
+        var ppr = GetQuery("posting_payments_receipt", "document_id");
+        var ppp = GetQuery("posting_payments_purchase", "document_id");
+        var debt = GetQuery("debt_adjustment", "document_debt_id");
+        var credit = GetQuery("debt_adjustment", "document_credit_id");
 
         return query
             .Select("waybill_receipt.*")
@@ -92,8 +89,9 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
             .Select("contract.tax_payer")
             .SelectRaw("case contract.tax_payer when true then 20 else 0 end as tax")
             .Select("contract.item_name as contract_name")
-            .Select("d.{product_cost, tax_value, full_cost}")
-            .SelectRaw("coalesce(ppr.transaction_amount, 0) + coalesce(ppp.transaction_amount, 0) as paid")
+            .Select("d.{product_cost, tax_value}")
+            .SelectRaw("full_cost + coalesce(debt.transaction_amount, 0) as full_cost")
+            .SelectRaw("coalesce(ppr.transaction_amount, 0) + coalesce(ppp.transaction_amount, 0) + coalesce(credit.transaction_amount, 0) as paid")
             .Select("pr.document_number as purchase_request_number")
             .Select("pr.document_date as purchase_request_date")
             .Join("organization as o", "o.id", "waybill_receipt.organization_id")
@@ -102,6 +100,17 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
             .LeftJoin("contract", "contract.id", "waybill_receipt.contract_id")
             .LeftJoin(q.As("d"), j => j.On("d.owner_id", "waybill_receipt.id"))
             .LeftJoin(ppr.As("ppr"), j => j.On("ppr.document_id", "waybill_receipt.id"))
-            .LeftJoin(ppp.As("ppp"), j => j.On("ppp.document_id", "pr.id"));
+            .LeftJoin(ppp.As("ppp"), j => j.On("ppp.document_id", "pr.id"))
+            .LeftJoin(debt.As("debt"), j => j.On("debt.document_debt_id", "waybill_receipt.id"))
+            .LeftJoin(credit.As("credit"), j => j.On("credit.document_credit_id", "waybill_receipt.id"));
+    }
+
+    private static Query GetQuery(string table, string doc)
+    {
+        return new Query(table)
+            .Select(doc)
+            .SelectRaw("sum(transaction_amount) as transaction_amount")
+            .WhereTrue("carried_out")
+            .GroupBy(doc);
     }
 }
