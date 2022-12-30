@@ -3,13 +3,20 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 15.06.2022
+//
+// Версия 2022.12.29
+//  - интерфейс теперь public
+//  - добавлено перечисление BalanceCategory
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Entities.Balances.Initial;
 
-internal class InitialBalance : AccountingDocument
+public enum BalanceCategory { Debet, Credit }
+
+public class InitialBalance : AccountingDocument
 {
     public Guid reference_id { get; set; }
     public decimal operation_summa { get; set; }

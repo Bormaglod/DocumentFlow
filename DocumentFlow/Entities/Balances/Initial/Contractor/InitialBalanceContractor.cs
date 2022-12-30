@@ -6,6 +6,8 @@
 //
 // Версия 2022.12.18
 //  - добавлено поле paid
+// Версия 2022.12.29
+//  - класс теперь public
 //
 //-----------------------------------------------------------------------
 
@@ -14,7 +16,7 @@ using DocumentFlow.Data.Core;
 namespace DocumentFlow.Entities.Balances.Initial;
 
 [Description("Нач. остаток")]
-internal class InitialBalanceContractor : InitialBalance
+public class InitialBalanceContractor : InitialBalance
 {
     public string? contractor_name { get; protected set; }
     public Guid contract_id { get; set; }

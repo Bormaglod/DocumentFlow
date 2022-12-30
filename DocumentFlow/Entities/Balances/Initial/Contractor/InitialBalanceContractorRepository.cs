@@ -7,6 +7,8 @@
 // Версия 2022.12.18
 //  - добавлен метод GetByContractor
 //  - метод GetDefaultQuery изменен для получения значения поля paid
+// Версия 2022.12.29
+//  - класс теперь public
 //
 //-----------------------------------------------------------------------
 
@@ -18,13 +20,22 @@ using SqlKata;
 
 namespace DocumentFlow.Entities.Balances.Initial;
 
-internal class InitialBalanceContractorRepository : DocumentRepository<InitialBalanceContractor>, IInitialBalanceContractorRepository
+public class InitialBalanceContractorRepository : DocumentRepository<InitialBalanceContractor>, IInitialBalanceContractorRepository
 {
     public InitialBalanceContractorRepository(IDatabase database) : base(database)
     {
     }
 
-    public IReadOnlyList<InitialBalanceContractor> GetByContractor(Guid? contractorId) => GetAllDefault(callback: q => q.Where("reference_id", contractorId));
+    public IReadOnlyList<InitialBalanceContractor> GetByContractor(Guid? contractorId, BalanceCategory category)
+    {
+        return GetAllDefault(callback: q => q
+            .Where("reference_id", contractorId)
+            .When(
+                category == BalanceCategory.Debet, 
+                q => q.Where("amount", ">", 0), 
+                q => q.Where("amount", "<", 0))
+            );
+    }
     
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
     {

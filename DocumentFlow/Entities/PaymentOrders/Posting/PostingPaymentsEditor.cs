@@ -27,6 +27,9 @@
 //    по выбранному документу
 // Версия 2022.12.24
 //  - добавлена инициализация свойства DisableCurrentItem для document
+// Версия 2022.12.29
+//  - разнесение документов на начальный остаток работало некорректно - 
+//    не учитывалься дебетовый остаток - исправлено
 //
 //-----------------------------------------------------------------------
 
@@ -91,7 +94,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
                                 paid = d.paid
                             });
                     var bcr = Services.Provider.GetService<IInitialBalanceContractorRepository>();
-                    var bc = bcr!.GetByContractor(p.contractor_id)
+                    var bc = bcr!.GetByContractor(p.contractor_id, BalanceCategory.Credit)
                         .Select(d =>
                             new DebtDocument(d, "balance", "Нач. остаток", typeof(IInitialBalanceContractorEditor))
                             {
@@ -118,8 +121,20 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
                                 full_cost = d.full_cost,
                                 paid = d.paid
                             });
+                    var bcr = Services.Provider.GetService<IInitialBalanceContractorRepository>();
+                    var bc = bcr!.GetByContractor(p.contractor_id, BalanceCategory.Debet)
+                        .Select(d =>
+                            new DebtDocument(d, "balance", "Нач. остаток", typeof(IInitialBalanceContractorEditor))
+                            {
+                                contractor_name = d.contractor_name,
+                                full_cost = d.operation_summa,
+                                paid = d.paid
+                            });
 
-                    return wr;
+                    return wr
+                        .Union(bc)
+                        .OrderBy(x => x.document_date)
+                        .ThenBy(x => x.document_number);
                 }
             }
 

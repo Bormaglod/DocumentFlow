@@ -6,6 +6,9 @@
 //
 // Версия 2022.12.18
 //  - добавлен метод GetByContractor
+// Версия 2022.12.29
+//  - интерфейс теперь public
+//  - добавлен второй параметр BalanceCategory в GetByContractor
 //
 //-----------------------------------------------------------------------
 
@@ -13,7 +16,7 @@ using DocumentFlow.Data.Infrastructure;
 
 namespace DocumentFlow.Entities.Balances.Initial;
 
-internal interface IInitialBalanceContractorRepository : IDocumentRepository<InitialBalanceContractor>
+public interface IInitialBalanceContractorRepository : IDocumentRepository<InitialBalanceContractor>
 {
-    IReadOnlyList<InitialBalanceContractor> GetByContractor(Guid? contractorId);
+    IReadOnlyList<InitialBalanceContractor> GetByContractor(Guid? contractorId, BalanceCategory category);
 }
