@@ -6,7 +6,12 @@
 //
 // Версия 2022.8.28
 //  - метод RefreshPage перенес в IPage
+// Версия 2022.12.30
+//  - добавлен метод RegisterReport (перенесен из IPage)
+//
 //-----------------------------------------------------------------------
+
+using DocumentFlow.ReportEngine.Infrastructure;
 
 namespace DocumentFlow.Controls.Infrastructure;
 
@@ -14,4 +19,5 @@ public interface IBrowserPage : IPage
 {
     bool ReadOnly { get; set; }
     void Refresh(Guid? owner = null);
+    void RegisterReport(IReport report);
 }

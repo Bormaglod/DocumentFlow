@@ -2,18 +2,15 @@
 // Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 31.01.2022
-//
-// Версия 2022.12.30
-//  - добавлен метод GetCustomersDebt
-//
+// Date: 30.12.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Entities.Balances;
 
-public interface IBalanceContractorRepository : IOwnedRepository<Guid, BalanceContractor>
+public class ContractorDebt : Entity<Guid>
 {
-    IReadOnlyList<ContractorDebt> GetCustomersDebt(int limit = 0);
+    public string contractor_name { get; protected set; } = string.Empty;
+    public decimal debt { get; protected set; }
 }

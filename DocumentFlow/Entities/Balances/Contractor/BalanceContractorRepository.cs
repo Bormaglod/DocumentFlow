@@ -7,6 +7,8 @@
 // Версия 2022.12.6
 //  - в выборку дабавлены поля contract.item_name, contract_code и
 //    contract.document_date
+// Версия 2022.12.30
+//  - добавлен метод GetCustomersDebt
 //
 //-----------------------------------------------------------------------
 
@@ -15,6 +17,7 @@ using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
 
 using SqlKata;
+using SqlKata.Execution;
 
 namespace DocumentFlow.Entities.Balances;
 
@@ -36,6 +39,23 @@ public class BalanceContractorRepository : OwnedRepository<Guid, BalanceContract
             .Select("c.document_date as contract_date")
             .Join("document_type as dt", "dt.id", "document_type_id")
             .LeftJoin("contract as c", "c.id", "balance_contractor.contract_id");
+    }
+
+    public IReadOnlyList<ContractorDebt> GetCustomersDebt(int limit = 0)
+    {
+        using var conn = Database.OpenConnection();
+
+        var query = GetBaseQuery(conn)
+            .Select("c.id")
+            .SelectRaw("coalesce(c.item_name, c.code) as contractor_name")
+            .SelectRaw("sum(operation_summa * amount) as debt")
+            .Join("contractor as c", "c.id", "reference_id")
+            .GroupBy("c.id")
+            .HavingRaw("sum(operation_summa * amount) > 0")
+            .OrderByRaw("3 desc")
+            .When(limit > 0, q => q.Limit(limit));
+
+        return query.Get<ContractorDebt>().ToList();
     }
 
     protected override Query GetQueryOwner(Query query, Guid owner_id) => query.Where($"balance_contractor.reference_id", owner_id);

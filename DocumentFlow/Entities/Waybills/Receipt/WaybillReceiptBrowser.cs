@@ -8,10 +8,11 @@
 //  - добавлен метод GetColumnsAfter
 // Версия 2022.12.18
 //  - добавлена колонка "Оплата"
+// Версия 2022.12.30
+//  - IDocumentFilter заменен на IWaybillReceiptFilter
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
@@ -20,7 +21,7 @@ namespace DocumentFlow.Entities.Waybills;
 
 public class WaybillReceiptBrowser : WaybillBrowser<WaybillReceipt>, IWaybillReceiptBrowser
 {
-    public WaybillReceiptBrowser(IWaybillReceiptRepository repository, IPageManager pageManager, IDocumentFilter filter)
+    public WaybillReceiptBrowser(IWaybillReceiptRepository repository, IPageManager pageManager, IWaybillReceiptFilter filter)
         : base(repository, pageManager, filter: filter)
     {
         var payment_exists = CreateBoolean(x => x.payment_exists, "Оплата", 100);
