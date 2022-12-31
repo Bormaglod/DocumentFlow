@@ -52,6 +52,7 @@
             this.linkLabelContractor.TabStop = true;
             this.linkLabelContractor.Text = "Контрагент";
             this.linkLabelContractor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.linkLabelContractor.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabelContractor_LinkClicked);
             // 
             // CardRow
             // 

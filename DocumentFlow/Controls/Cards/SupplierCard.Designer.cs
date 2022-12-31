@@ -1,6 +1,6 @@
-﻿namespace DocumentFlow.Controls.PageContents
+﻿namespace DocumentFlow.Controls.Cards
 {
-    partial class StartPage
+    partial class SupplierCard
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -30,13 +30,12 @@
         {
             this.SuspendLayout();
             // 
-            // StartPage
+            // SupplierCard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Window;
-            this.Name = "StartPage";
-            this.SizeChanged += new System.EventHandler(this.StartPage_SizeChanged);
+            this.Name = "SupplierCard";
+            this.Padding = new System.Windows.Forms.Padding(12);
             this.ResumeLayout(false);
 
         }

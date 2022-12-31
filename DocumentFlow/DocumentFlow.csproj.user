@@ -10,7 +10,13 @@
     <Compile Update="Controls\BalanceSheetFilter.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\CardPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\CardRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Cards\SupplierCard.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\ComboBoxAdvImage.cs">
@@ -110,6 +116,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\PageContents\Editor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\PageContents\StartPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\TablessControl.cs">

@@ -9,6 +9,8 @@
 //    contract.document_date
 // Версия 2022.12.30
 //  - добавлен метод GetCustomersDebt
+// Версия 2022.12.30
+//  - добавлен метод GetSuppliersDebt
 //
 //-----------------------------------------------------------------------
 
@@ -47,11 +49,28 @@ public class BalanceContractorRepository : OwnedRepository<Guid, BalanceContract
 
         var query = GetBaseQuery(conn)
             .Select("c.id")
-            .SelectRaw("coalesce(c.item_name, c.code) as contractor_name")
+            .SelectRaw("c.code as contractor_name")
             .SelectRaw("sum(operation_summa * amount) as debt")
             .Join("contractor as c", "c.id", "reference_id")
             .GroupBy("c.id")
             .HavingRaw("sum(operation_summa * amount) > 0")
+            .OrderByRaw("3 desc")
+            .When(limit > 0, q => q.Limit(limit));
+
+        return query.Get<ContractorDebt>().ToList();
+    }
+
+    public IReadOnlyList<ContractorDebt> GetSuppliersDebt(int limit = 0)
+    {
+        using var conn = Database.OpenConnection();
+
+        var query = GetBaseQuery(conn)
+            .Select("c.id")
+            .SelectRaw("c.code as contractor_name")
+            .SelectRaw("sum(operation_summa * amount) as debt")
+            .Join("contractor as c", "c.id", "reference_id")
+            .GroupBy("c.id")
+            .HavingRaw("sum(operation_summa * amount) < 0")
             .OrderByRaw("3 desc")
             .When(limit > 0, q => q.Limit(limit));
 

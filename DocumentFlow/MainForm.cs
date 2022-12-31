@@ -6,6 +6,8 @@
 //
 // Версия 2022.8.28
 //  - добавлена реакция на нажатие клавиши F5
+// Версия 2022.12.31
+//  - добавлен метод ShowStartPage (заглушка)
 //
 //-----------------------------------------------------------------------
 
@@ -102,6 +104,8 @@ namespace DocumentFlow
                 OnAppNotify?.Invoke(this, args);
             }
         }
+
+        public static void ShowStartPage() => Services.Provider.GetService<IPageManager>()?.ShowStartPage();
 
         private void CreateMenu()
         {

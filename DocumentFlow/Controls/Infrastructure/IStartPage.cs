@@ -2,14 +2,11 @@
 // Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 30.12.2022
+// Date: 31.12.2022
 //-----------------------------------------------------------------------
 
 namespace DocumentFlow.Controls.Infrastructure;
 
-public interface ICard
+public interface IStartPage : IPage
 {
-    int Index { get; }
-    string Title { get; }
-    void RefreshCard();
 }

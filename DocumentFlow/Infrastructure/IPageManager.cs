@@ -6,6 +6,8 @@
 //
 // Версия 2022.8.28
 //  - добавлен метод Get(TabPageAdv)
+// Версия 2022.12.31
+//  - добавлен метод ShowStartPage
 //
 //-----------------------------------------------------------------------
 
@@ -32,4 +34,5 @@ public interface IPageManager
     void ShowEditor(Type editorType, Guid objectId);
     void ShowEditor(IEditorPage editorPage, Guid objectId);
     void ShowEditor(Type browserType, Guid? objectId, Guid? owner_id, Guid? parentId, bool readOnly);
+    void ShowStartPage();
 }

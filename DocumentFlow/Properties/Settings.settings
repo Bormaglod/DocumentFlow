@@ -44,5 +44,8 @@
     <Setting Name="UseDataNotification" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="CardSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">208, 236</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

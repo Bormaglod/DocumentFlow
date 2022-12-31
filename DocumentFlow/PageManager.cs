@@ -6,6 +6,9 @@
 //
 // Версия 2022.8.28
 //  - добавлен метод Get(TabPageAdv)
+// Версия 2022.12.31
+//  - в методе Get вызов ContainsKey заменен на TryGetValue
+//  - добавлен метод ShowStartPage
 //
 //-----------------------------------------------------------------------
 
@@ -54,7 +57,7 @@ public class PageManager : IPageManager
         }
     }
 
-    public IPage? Get(TabPageAdv page) => pages.ContainsKey(page) ? pages[page] : null;
+    public IPage? Get(TabPageAdv page) => pages.TryGetValue(page, out IPage? value) ? value : null;
 
     public void AddToHistory(TabPageAdv page) => historyPages.Push(page);
 
@@ -184,6 +187,24 @@ public class PageManager : IPageManager
             {
                 tabPages.Selected = page;
             }
+        }
+    }
+
+    public void ShowStartPage()
+    {
+        var page = pages.FirstOrDefault(p => p.Value is IStartPage).Key;
+        if (page == null)
+        {
+            var startPage = Services.Provider.GetService<IStartPage>();
+            if (startPage != null)
+            {
+                page = AddPage(startPage);
+            }
+        }
+
+        if (page != null)
+        {
+            tabPages.Selected = page;
         }
     }
 

@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.06.2018
+//
+// Версия 2022.12.31
+//  - в вызов ShowMainForm добавлен параметр newDatabaseSelecting
+//    определяющий необходимость показа стартовой страницы
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -20,6 +25,8 @@ namespace DocumentFlow;
 
 public partial class LoginForm : Form
 {
+    private string prevDatabaseName = string.Empty;
+
     public LoginForm()
     {
         InitializeComponent();
@@ -80,7 +87,11 @@ public partial class LoginForm : Form
             }
 
             Properties.Settings.Default.Save();
-            CurrentApplicationContext.Context.ShowMainForm();
+
+            bool newDatabaseSelecting = prevDatabaseName != comboDatabase.SelectedItem.ToString();
+            prevDatabaseName = comboDatabase.SelectedItem.ToString() ?? string.Empty;
+
+            CurrentApplicationContext.Context.ShowMainForm(newDatabaseSelecting);
         }
     }
 

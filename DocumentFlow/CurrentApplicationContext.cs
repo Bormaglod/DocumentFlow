@@ -6,6 +6,10 @@
 //
 // Версия 2022.8.17
 //  - рефакторинг
+// Версия 2022.12.31
+//  - в ShowMainForm добавлен параметр showStartPage с помощью
+//    которого вызывается метод ShowStartPage из MainForm
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -51,9 +55,15 @@ public class CurrentApplicationContext : ApplicationContext
         loginForm.Show();
     }
 
-    public void ShowMainForm()
+    public void ShowMainForm(bool showStartPage)
     {
         loginForm.Hide();
+
+        if (showStartPage) 
+        {
+            DocumentFlow.MainForm.ShowStartPage();
+        }
+
         mainForm.Show();
     }
 

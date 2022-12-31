@@ -6,6 +6,8 @@
 //
 // Версия 2022.12.30
 //  - добавлен метод GetCustomersDebt
+// Версия 2022.12.30
+//  - добавлен метод GetSuppliersDebt
 //
 //-----------------------------------------------------------------------
 
@@ -16,4 +18,5 @@ namespace DocumentFlow.Entities.Balances;
 public interface IBalanceContractorRepository : IOwnedRepository<Guid, BalanceContractor>
 {
     IReadOnlyList<ContractorDebt> GetCustomersDebt(int limit = 0);
+    IReadOnlyList<ContractorDebt> GetSuppliersDebt(int limit = 0);
 }

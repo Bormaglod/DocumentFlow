@@ -2,11 +2,7 @@
 // Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 30.12.2022
-//
-// Версия 2022.12.31
-//  - реализован функционал
-//
+// Date: 31.12.2022
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -16,17 +12,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentFlow.Controls.Cards;
 
-public partial class CustomerCard : UserControl, ICard
+public partial class SupplierCard : UserControl, ICard
 {
-    public CustomerCard()
+    public SupplierCard()
     {
         InitializeComponent();
         RefreshCard();
     }
 
-    public int Index => 0;
+    public int Index => 1;
 
-    public string Title => "Покупатели";
+    public string Title => "Поставщики";
 
     public void RefreshCard()
     {
@@ -35,11 +31,11 @@ public partial class CustomerCard : UserControl, ICard
         var balance = Services.Provider.GetService<IBalanceContractorRepository>();
         if (balance != null)
         {
-            var customers = balance.GetCustomersDebt(6);
-            int cnt = Math.Min(customers.Count, 6);
+            var suppliers = balance.GetSuppliersDebt(6);
+            int cnt = Math.Min(suppliers.Count, 6);
             for (int i = 0; i < cnt; i++)
             {
-                CardRow row = new(customers[i]);
+                CardRow row = new(suppliers[i]);
                 Controls.Add(row);
 
                 row.BringToFront();

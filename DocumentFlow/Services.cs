@@ -8,6 +8,8 @@
 //  - добавлен интерфейс IBalanceContractorFilter
 // Версия 2022.12.21
 //  - добавлен интерфейс ICreationBased
+// Версия 2022.12.31
+//  - добавлены интерфейсы IStartPage и ICard
 //
 //-----------------------------------------------------------------------
 
@@ -74,6 +76,12 @@ public static class Services
                         .AsMatchingInterface()
                         .WithTransientLifetime()
                     .AddClasses(classes => classes.AssignableTo<ICreationBased>())
+                        .AsImplementedInterfaces()
+                        .WithTransientLifetime()
+                    .AddClasses(classes => classes.AssignableTo<IStartPage>())
+                        .AsMatchingInterface()
+                        .WithTransientLifetime()
+                    .AddClasses(classes => classes.AssignableTo<ICard>())
                         .AsImplementedInterfaces()
                         .WithTransientLifetime()
                 );
