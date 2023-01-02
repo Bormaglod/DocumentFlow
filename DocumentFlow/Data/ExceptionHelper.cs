@@ -1,15 +1,22 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.03.2019
+//
+// Версия 2023.1.2
+//  - добавлена поддержка для json-сообщений
+//
 //-----------------------------------------------------------------------
 
 using Dapper;
 
+using DocumentFlow.Core;
+
 using Npgsql;
 
 using System.Text;
+using System.Text.Json;
 
 namespace DocumentFlow.Data;
 
@@ -30,16 +37,35 @@ public static class ExceptionHelper
         {
             if (pgException.SqlState == "P0001")
             {
-                strings.AppendLine(pgException.MessageText);
+                if (pgException.MessageText.IsJson())
+                {
+                    var message = JsonSerializer.Deserialize<ExceptionData>(pgException.MessageText);
+                    if (message != null) 
+                    {
+                        strings.AppendLine(message.Text);
+                    }
+                    else
+                    {
+                        strings.AppendLine(pgException.MessageText);
+                    }
+                }
+                else
+                {
+                    strings.AppendLine(pgException.MessageText);
+                }
             }
             else if (pgException.SqlState == "23514")
             {
                 using var conn = new Database().OpenConnection();
                 string msg = conn.QuerySingleOrDefault<string>($"select d.description from pg_catalog.pg_constraint c join pg_catalog.pg_description d on (d.objoid = c.oid) where conname = '{pgException.ConstraintName}'");
                 if (string.IsNullOrEmpty(msg))
+                {
                     strings.AppendLine(DefaultMessage(pgException));
+                }
                 else
+                {
                     strings.AppendLine(msg);
+                }
             }
             else
             {
@@ -53,12 +79,13 @@ public static class ExceptionHelper
                 CreateMessage(strings, e);
             }
         }
-
         else
         {
             strings.AppendLine(exception.Message);
             if (exception.InnerException != null)
+            {
                 CreateMessage(strings, exception.InnerException);
+            }
         }
     }
 
