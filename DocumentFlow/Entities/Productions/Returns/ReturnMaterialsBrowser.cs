@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.07.2022
+//
+// Версия 2023.1.5
+//  - добавлен вызов MoveToEnd для перемещения в конец таблицы
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
@@ -41,6 +45,8 @@ public class ReturnMaterialsBrowser : Browser<ReturnMaterials>, IReturnMaterials
         });
 
         CreateStackedColumns("Заказ", new string[] { "order_date", "order_number" });
+
+        MoveToEnd();
     }
 
     protected override string HeaderText => "Возврат материалов заказчику";

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 28.12.2021
@@ -43,6 +43,10 @@
 //  - добавлен пункт меню "Создать на основании"
 //  - в конструктор добавлен параметр и поле IEnumerable<ICreationBased>? creations
 //  - добавлен метод MenuCreateBasedOn_Click
+// Версия 2023.1.5
+//  - добавлено поле moveToEnd и метод MoveToEnd
+//  - в методе Refresh(Guid?) реализовано перемещение в конец таблицы,
+//    если moveToEnd равно true
 //
 //-----------------------------------------------------------------------
 
@@ -174,6 +178,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     private Guid? owner_id = null;
     private bool readOnly = false;
     private readonly Type? browserType;
+    private bool moveToEnd = false;
 
     private GridColumn? column = null;
     private SfDataGrid? grid = null;
@@ -335,6 +340,24 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         CurrentApplicationContext.Context.App.OnAppNotify += App_OnAppNotify;
 
         RefreshView();
+
+        if (moveToEnd && gridContent.RowCount > 0)
+        {
+            int rows = 0;
+            if (gridContent.ShowRowHeader)
+            {
+                rows += gridContent.StackedHeaderRows.Count + 1;
+            }
+
+            if (gridContent.View is CollectionViewAdv collection)
+            {
+                rows += collection.Count;
+            }
+
+            gridContent.SelectedIndex = rows - 2;
+            gridContent.TableControl.ScrollRows.ScrollInView(rows - 2);
+            gridContent.TableControl.ScrollRows.UpdateScrollBar();
+        }
     }
 
     public void OnPageClosing()
@@ -391,6 +414,8 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     protected virtual void DoBeforeRefreshPage() { }
 
     protected virtual bool DocumentIsReadOnly(T document) => false;
+
+    protected void MoveToEnd() => moveToEnd = true;
 
     protected void RefreshColumns()
     {

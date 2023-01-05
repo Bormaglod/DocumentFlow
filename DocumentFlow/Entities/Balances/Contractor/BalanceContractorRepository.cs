@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 31.01.2022
@@ -11,6 +11,9 @@
 //  - добавлен метод GetCustomersDebt
 // Версия 2022.12.30
 //  - добавлен метод GetSuppliersDebt
+// Версия 2023.1.5
+//  - в методе GetSuppliersDebt отрицательные значения изменены на
+//    положительные
 //
 //-----------------------------------------------------------------------
 
@@ -67,7 +70,7 @@ public class BalanceContractorRepository : OwnedRepository<Guid, BalanceContract
         var query = GetBaseQuery(conn)
             .Select("c.id")
             .SelectRaw("c.code as contractor_name")
-            .SelectRaw("sum(operation_summa * amount) as debt")
+            .SelectRaw("abs(sum(operation_summa * amount)) as debt")
             .Join("contractor as c", "c.id", "reference_id")
             .GroupBy("c.id")
             .HavingRaw("sum(operation_summa * amount) < 0")

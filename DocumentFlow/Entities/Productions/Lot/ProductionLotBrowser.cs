@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.04.2022
@@ -9,6 +9,10 @@
 //  - добавлено столбец execute_percent
 // Версия 2022.8.29
 //  - метод BrowserCellStyle перенесен в BaseProductionLotBrowser
+// Версия 2023.1.5
+//  - параметр IDocumentFilter заменен на IProductionLotFilter
+//  - добавлена установка диапазона дат для фильтра IDocumentFilter
+//  - добавлен вызов MoveToEnd для перемещения в конец таблицы
 //
 //-----------------------------------------------------------------------
 
@@ -24,7 +28,7 @@ namespace DocumentFlow.Entities.Productions.Lot;
 
 public class ProductionLotBrowser : BaseProductionLotBrowser, IProductionLotBrowser
 {
-    public ProductionLotBrowser(IProductionLotRepository repository, IPageManager pageManager, IDocumentFilter filter)
+    public ProductionLotBrowser(IProductionLotRepository repository, IPageManager pageManager, IProductionLotFilter filter)
         : base(repository, pageManager, filter: filter)
     {
         AllowGrouping();
@@ -55,5 +59,9 @@ public class ProductionLotBrowser : BaseProductionLotBrowser, IProductionLotBrow
             [date] = ListSortDirection.Ascending,
             [number] = ListSortDirection.Ascending
         });
+
+        filter?.SetDateRange(DateRange.CurrentYear);
+
+        MoveToEnd();
     }
 }

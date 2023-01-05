@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.02.2022
@@ -20,6 +20,9 @@
 //  - IDocumentFilter заменен на IPurchaseRequestFilter
 // Версия 2022.12.21
 //  - в конструктор добавлен параметр IEnumerable<ICreationBased>? creations
+// Версия 2023.1.5
+//  - добавлена установка диапазона дат для фильтра IDocumentFilter
+//  - добавлен вызов MoveToEnd для перемещения в конец таблицы
 //
 //-----------------------------------------------------------------------
 
@@ -79,6 +82,10 @@ public class PurchaseRequestBrowser : Browser<PurchaseRequest>, IPurchaseRequest
 
         ContextMenu.Add("Отменить заказ", (x) => SetStatePurchaseRequest(repository.Cancel));
         ContextMenu.Add("Завершить заказ", (x) => SetStatePurchaseRequest(repository.Complete), addSeparator: false);
+
+        filter?.SetDateRange(DateRange.CurrentYear);
+
+        MoveToEnd();
     }
 
     protected override string HeaderText => "Заявка";
