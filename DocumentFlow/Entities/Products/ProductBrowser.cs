@@ -1,8 +1,12 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 21.05.2022
+//
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -11,6 +15,7 @@ using DocumentFlow.Core;
 using DocumentFlow.Data.Core.Repository;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,8 +26,8 @@ namespace DocumentFlow.Entities.Products;
 public abstract class ProductBrowser<T> : Browser<T>
     where T : Product
 {
-    public ProductBrowser(IRepository<Guid, T> repository, IPageManager pageManager, IProductRowHeader productRowHeader, IBreadcrumb navigator) 
-        : base(repository, pageManager, rowHeaderImage: productRowHeader, navigator: navigator)
+    public ProductBrowser(IRepository<Guid, T> repository, IPageManager pageManager, IProductRowHeader productRowHeader, IBreadcrumb navigator, IStandaloneSettings? settings = null) 
+        : base(repository, pageManager, rowHeaderImage: productRowHeader, navigator: navigator, settings: settings)
     {
         AllowGrouping();
     }

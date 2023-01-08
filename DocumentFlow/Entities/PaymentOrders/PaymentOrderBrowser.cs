@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.5
 //  - добавлен вызов MoveToEnd для перемещения в конец таблицы
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
@@ -13,6 +15,7 @@ using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -23,8 +26,8 @@ namespace DocumentFlow.Entities.PaymentOrders;
 
 public class PaymentOrderBrowser : Browser<PaymentOrder>, IPaymentOrderBrowser
 {
-    public PaymentOrderBrowser(IPaymentOrderRepository repository, IPageManager pageManager, IDocumentFilter filter)
-        : base(repository, pageManager, filter: filter)
+    public PaymentOrderBrowser(IPaymentOrderRepository repository, IPageManager pageManager, IDocumentFilter filter, IStandaloneSettings settings)
+        : base(repository, pageManager, filter: filter, settings: settings)
     {
         AllowGrouping();
 

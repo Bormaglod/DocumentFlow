@@ -667,7 +667,6 @@
             this.Controls.Add(this.toolStrip1);
             this.Name = "Browser";
             this.Size = new System.Drawing.Size(1067, 556);
-            this.Load += new System.EventHandler(this.Browser_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridContent)).EndInit();

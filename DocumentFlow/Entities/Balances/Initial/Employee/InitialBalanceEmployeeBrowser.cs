@@ -1,12 +1,17 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.08.2022
+//
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -17,8 +22,8 @@ namespace DocumentFlow.Entities.Balances.Initial;
 
 internal class InitialBalanceEmployeeBrowser : Browser<InitialBalanceEmployee>, IInitialBalanceEmployeeBrowser
 {
-    public InitialBalanceEmployeeBrowser(IInitialBalanceEmployeeRepository repository, IPageManager pageManager)
-        : base(repository, pageManager)
+    public InitialBalanceEmployeeBrowser(IInitialBalanceEmployeeRepository repository, IPageManager pageManager, IStandaloneSettings settings)
+        : base(repository, pageManager, settings: settings)
     {
         var id = CreateText(x => x.id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);

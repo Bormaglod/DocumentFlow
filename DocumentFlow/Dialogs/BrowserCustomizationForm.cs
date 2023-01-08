@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 20.01.2022
@@ -7,6 +7,8 @@
 // Версия 2022.9.2
 //  - добавлен параметр customizeColumn определяющий возможность
 //    настройки колонок
+// Версия 2023.1.8
+//  - удалён параметр customizeColumn
 //
 //-----------------------------------------------------------------------
 
@@ -64,7 +66,7 @@ public partial class BrowserCustomizationForm : Form
         public override string ToString() => Name;
     }
 
-    public BrowserCustomizationForm(BrowserSettings settings, bool customizeColumn)
+    public BrowserCustomizationForm(BrowserSettings settings)
     {
         InitializeComponent();
 
@@ -91,10 +93,7 @@ public partial class BrowserCustomizationForm : Form
             [fonts] = tabPageFonts
         };
 
-        if (customizeColumn)
-        {
-            gridColumns.DataSource = settings.Columns;
-        }
+        gridColumns.DataSource = settings.Columns;
 
         PrinterSettings ps = new();
         foreach (var size in ps.PaperSizes.OfType<PaperSize>())

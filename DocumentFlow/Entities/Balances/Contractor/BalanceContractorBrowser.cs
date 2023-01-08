@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 31.01.2022
@@ -7,11 +7,14 @@
 // Версия 2022.12.6
 //  - в конструктор добавлен параметр filter
 //  - добавлена колонка contract_name
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -22,8 +25,8 @@ namespace DocumentFlow.Entities.Balances;
 
 public class BalanceContractorBrowser : BalanceBrowser<BalanceContractor>, IBalanceContractorBrowser
 {
-    public BalanceContractorBrowser(IBalanceContractorRepository repository, IPageManager pageManager, IBalanceContractorFilter filter) 
-        : base(repository, pageManager, filter) 
+    public BalanceContractorBrowser(IBalanceContractorRepository repository, IPageManager pageManager, IBalanceContractorFilter filter, IStandaloneSettings settings) 
+        : base(repository, pageManager, filter, settings: settings) 
     {
         GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
         GridTextColumn name = CreateText(x => x.document_type_name, "Документ", hidden: false);

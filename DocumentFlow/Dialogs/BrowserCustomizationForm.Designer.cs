@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            Syncfusion.Windows.Forms.Tools.TreeNodeAdvStyleInfo treeNodeAdvStyleInfo2 = new Syncfusion.Windows.Forms.Tools.TreeNodeAdvStyleInfo();
+            Syncfusion.Windows.Forms.Tools.TreeNodeAdvStyleInfo treeNodeAdvStyleInfo1 = new Syncfusion.Windows.Forms.Tools.TreeNodeAdvStyleInfo();
             this.panelButtons = new System.Windows.Forms.Panel();
             this.buttonOk = new Syncfusion.WinForms.Controls.SfButton();
             this.buttonCancel = new Syncfusion.WinForms.Controls.SfButton();
@@ -298,7 +298,7 @@
             // textHeight
             // 
             this.textHeight.BackGroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.textHeight.BeforeTouchSize = new System.Drawing.Size(118, 23);
+            this.textHeight.BeforeTouchSize = new System.Drawing.Size(386, 49);
             this.textHeight.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
             this.textHeight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textHeight.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -378,16 +378,16 @@
             // treeViewAdv1
             // 
             this.treeViewAdv1.BackColor = System.Drawing.Color.White;
-            treeNodeAdvStyleInfo2.CheckBoxTickThickness = 1;
-            treeNodeAdvStyleInfo2.CheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            treeNodeAdvStyleInfo2.EnsureDefaultOptionedChild = true;
-            treeNodeAdvStyleInfo2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            treeNodeAdvStyleInfo2.IntermediateCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            treeNodeAdvStyleInfo2.OptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            treeNodeAdvStyleInfo2.SelectedOptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            treeNodeAdvStyleInfo2.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            treeNodeAdvStyleInfo1.CheckBoxTickThickness = 1;
+            treeNodeAdvStyleInfo1.CheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            treeNodeAdvStyleInfo1.EnsureDefaultOptionedChild = true;
+            treeNodeAdvStyleInfo1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            treeNodeAdvStyleInfo1.IntermediateCheckColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            treeNodeAdvStyleInfo1.OptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            treeNodeAdvStyleInfo1.SelectedOptionButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            treeNodeAdvStyleInfo1.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
             this.treeViewAdv1.BaseStylePairs.AddRange(new Syncfusion.Windows.Forms.Tools.StyleNamePair[] {
-            new Syncfusion.Windows.Forms.Tools.StyleNamePair("Standard", treeNodeAdvStyleInfo2)});
+            new Syncfusion.Windows.Forms.Tools.StyleNamePair("Standard", treeNodeAdvStyleInfo1)});
             this.treeViewAdv1.BeforeTouchSize = new System.Drawing.Size(201, 270);
             this.treeViewAdv1.Border3DStyle = System.Windows.Forms.Border3DStyle.Flat;
             this.treeViewAdv1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;

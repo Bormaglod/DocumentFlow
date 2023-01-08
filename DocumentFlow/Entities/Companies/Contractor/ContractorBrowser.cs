@@ -1,17 +1,20 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.12.2021
 //
 // Версия 2022.9.3
 //  - удалены методы IsColumnVisible, IsAllowVisibilityColumn и IsVisible
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -24,7 +27,8 @@ public class ContractorBrowser : Browser<Contractor>, IContractorBrowser
 {
     private readonly GridNumericColumn inn;
 
-    public ContractorBrowser(IContractorRepository repository, IPageManager pageManager, IBreadcrumb navigator) : base(repository, pageManager, navigator: navigator) 
+    public ContractorBrowser(IContractorRepository repository, IPageManager pageManager, IBreadcrumb navigator, IStandaloneSettings settings) 
+        : base(repository, pageManager, navigator: navigator, settings: settings) 
     {
         inn = CreateNumeric(x => x.inn, "ИНН", width: 100);
 

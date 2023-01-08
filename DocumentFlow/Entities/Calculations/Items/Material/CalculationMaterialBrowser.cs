@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.01.2022
@@ -8,6 +8,8 @@
 //  - из-за изменений в ConextMenu добавлен параметр в вызов Add
 // Версия 2022.11.13
 //  - добавлена кнопка для открытия окна редактирования материала
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
@@ -16,6 +18,7 @@ using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Properties;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -26,7 +29,8 @@ namespace DocumentFlow.Entities.Calculations;
 
 public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalculationMaterialBrowser
 {
-    public CalculationMaterialBrowser(ICalculationMaterialRepository repository, IPageManager pageManager) : base(repository, pageManager) 
+    public CalculationMaterialBrowser(ICalculationMaterialRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
+        : base(repository, pageManager, settings: settings) 
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 

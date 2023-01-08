@@ -1,13 +1,18 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 05.02.2022
+//
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -18,7 +23,8 @@ namespace DocumentFlow.Entities.PaymentOrders.Posting;
 
 public class PostingPaymentsBrowser : Browser<PostingPayments>, IPostingPaymentsBrowser
 {
-    public PostingPaymentsBrowser(IPostingPaymentsRepository repository, IPageManager pageManager) : base(repository, pageManager) 
+    public PostingPaymentsBrowser(IPostingPaymentsRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
+        : base(repository, pageManager, settings: settings) 
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 

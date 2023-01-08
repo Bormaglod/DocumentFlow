@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.11.2021
@@ -8,8 +8,12 @@
 //  - добавлено свойство OwnerIdentifier
 // Версия 2022.12.17
 //  - добавлен метод CreateQuery(string tableName);
+// Версия 2023.1.8
+//  - добавлены методы Configure и WriteConfigure
 //
 //-----------------------------------------------------------------------
+
+using DocumentFlow.Settings.Infrastructure;
 
 using SqlKata;
 
@@ -21,4 +25,6 @@ public interface IFilter
     Control Control { get; }
     Query? CreateQuery<T>();
     Query? CreateQuery(string tableName);
+    void Configure(IAppSettings appSettings);
+    void WriteConfigure(IAppSettings appSettings);
 }

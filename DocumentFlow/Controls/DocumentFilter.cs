@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.11.2021
@@ -8,11 +8,16 @@
 //  - добавлено свойство OwnerIdentifier
 // Версия 2022.12.17
 //  - добавлен метод CreateQuery(string tableName);
+// Версия 2023.1.8
+//  - добавлен метод Configure и WriteConfigure (реализация метода
+//    интерфейса IBalanceContractorFilter
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Companies;
+using DocumentFlow.Settings.Infrastructure;
 
 using Humanizer;
 
@@ -22,6 +27,7 @@ using SqlKata;
 
 namespace DocumentFlow.Controls
 {
+
     public partial class DocumentFilter : UserControl, IDocumentFilter
     {
         public DocumentFilter()
@@ -42,6 +48,7 @@ namespace DocumentFlow.Controls
             get => dateRangeControl1.FromEnabled;
             set => dateRangeControl1.FromEnabled = value;
         }
+
         public bool DateToEnabled 
         {
             get => dateRangeControl1.ToEnabled;
@@ -61,6 +68,29 @@ namespace DocumentFlow.Controls
         }
 
         public Control Control => this;
+
+        public void Configure(IAppSettings appSettings)
+        {
+            var data = appSettings.Get<DocumentFilterData>("filter");
+            
+            DateFromEnabled = data.DateFromEnabled;
+            DateToEnabled = data.DateToEnabled;
+            DateFrom = data.DateFrom;
+            DateTo = data.DateTo;
+        }
+
+        public void WriteConfigure(IAppSettings appSettings)
+        {
+            DocumentFilterData data = new()
+            {
+                DateFromEnabled = DateFromEnabled,
+                DateToEnabled = DateToEnabled,
+                DateFrom = DateFrom,
+                DateTo = DateTo
+            };
+
+            appSettings.Write("filter", data);
+        }
 
         public void SetDateRange(DateRange range) => dateRangeControl1.SetRange(range);
 

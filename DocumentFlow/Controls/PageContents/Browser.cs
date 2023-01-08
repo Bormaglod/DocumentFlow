@@ -47,6 +47,19 @@
 //  - добавлено поле moveToEnd и метод MoveToEnd
 //  - в методе Refresh(Guid?) реализовано перемещение в конец таблицы,
 //    если moveToEnd равно true
+// Версия 2023.1.8
+//  - отключено выделение последней строки при вызове и установке флага
+//    moveToEnd из-за некорректного поведения скроллинга в конец таблицы
+//  - добавлен класс SettingsKeyRegex
+//  - добавлен параметр в конструктор IStandaloneSettings
+//  - метод Browser_Load изменен с учётом использования поля settings
+//  - удалены поле BrowserSettings settings и свойство Settings - значения
+//    берутся из параметра конструктора settings
+//  - удалён метод AllowColumnsCustomize
+//  - удалён метод Browser_Load - содержимое перенесено в Refresh(Guid?)
+//  - добавлен метод ApplySettings
+//  - множественные изменения, связанные с изменением механизма
+//    чтения/записи настроек
 //
 //-----------------------------------------------------------------------
 
@@ -65,6 +78,7 @@ using DocumentFlow.Infrastructure;
 using DocumentFlow.Properties;
 using DocumentFlow.ReportEngine;
 using DocumentFlow.ReportEngine.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using FastReport;
 using FastReport.Utils;
@@ -84,18 +98,18 @@ using Syncfusion.WinForms.Input.Enums;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace DocumentFlow.Controls.PageContents;
 
 public abstract partial class Browser<T> : UserControl, IBrowserPage
     where T : class, IIdentifier<Guid>
 {
+    [GeneratedRegex("^I(.+)Browser$")]
+    private static partial Regex SettingsKeyRegex();
+
     private class CustomComparer : IComparer<object>, ISortDirection
     {
         private readonly PropertyInfo? property;
@@ -131,7 +145,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                         res = CompareString(obj_x, obj_y);
                     }
                 }
-                else if (x is Group grp_x && y is Group grp_y)
+                else if (x is Syncfusion.Data.Group grp_x && y is Syncfusion.Data.Group grp_y)
                 {
                     res = CompareString(grp_x.Key, grp_y.Key);
                 }
@@ -172,6 +186,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     private readonly IBreadcrumb? navigator;
     private readonly IFilter? filter;
     private readonly IEnumerable<ICreationBased>? creations;
+    private readonly IStandaloneSettings? settings;
     private ShowToolTipMethod? showToolTip;
     private Guid? root_id = null;
     private Guid? parent_id = null;
@@ -182,12 +197,10 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     private GridColumn? column = null;
     private SfDataGrid? grid = null;
-    private Group? group = null;
+    private Syncfusion.Data.Group? group = null;
     private T? record = default;
 
     private readonly List<GridColumn> hiddens = new();
-
-    private BrowserSettings? settings;
 
     protected Browser(
         IRepository<Guid, T> repository,
@@ -195,11 +208,10 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         IRowHeaderImage? rowHeaderImage = null,
         IBreadcrumb? navigator = null,
         IFilter? filter = null,
-        IEnumerable<ICreationBased>? creations = null)
+        IEnumerable<ICreationBased>? creations = null,
+        IStandaloneSettings? settings = null)
     {
         InitializeComponent();
-
-        settings = CreateBrowserSettings();
 
         this.repository = repository;
         this.pageManager = pageManager;
@@ -207,6 +219,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         this.navigator = navigator;
         this.filter = filter;
         this.creations = creations;
+        this.settings = settings;
 
         toolbar = new PageToolBar(toolStrip1, new Dictionary<ToolStripItem, (Image, Image)>
         {
@@ -234,7 +247,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             }
         }
 
-        ConfigureBrowser();
+        ConfigureBrowser(settings);
     }
 
     public IRowHeaderImage? RowHeaderImage => rowHeaderImage;
@@ -302,8 +315,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     protected abstract string HeaderText { get; }
 
-    protected BrowserSettings Settings => settings ?? CreateBrowserSettings();
-
     protected T? CurrentDocument => gridContent.SelectedItem as T;
 
     public void RegisterReport(IReport report)
@@ -337,6 +348,24 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             filter.OwnerIdentifier = owner;
         }
 
+        ApplySettings(out bool canceledSettings);
+        if (!canceledSettings && settings != null)
+        {
+            var b_settings = settings.Get<BrowserSettings>();
+            filter?.Configure(settings);
+
+            if (b_settings.Columns != null)
+            {
+                foreach (var item in b_settings.Columns)
+                {
+                    item.Hidden = hiddens.FirstOrDefault(x => x.MappingName == item.Name) != null;
+                }
+            }
+
+            CustomizeColumns(b_settings);
+            RefreshColumns();
+        }
+
         CurrentApplicationContext.Context.App.OnAppNotify += App_OnAppNotify;
 
         RefreshView();
@@ -354,7 +383,10 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                 rows += collection.Count;
             }
 
-            gridContent.SelectedIndex = rows - 2;
+            // FIX: Неправильное поведение при скроллинге окна при установленнном выделении
+            // Если количество записей больше, чем помещается в окно, то при установке выделения не
+            // происходит перемещение окна в конец таблицы
+            // gridContent.SelectedIndex = rows - 2;
             gridContent.TableControl.ScrollRows.ScrollInView(rows - 2);
             gridContent.TableControl.ScrollRows.UpdateScrollBar();
         }
@@ -362,58 +394,28 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     public void OnPageClosing()
     {
-
-        if (browserType != null)
+        WriteSettings(out bool canceledSettings);
+        if (!canceledSettings && settings != null)
         {
-            var db = Services.Provider.GetService<IDatabase>();
-            if (db == null)
-            {
-                return;
-            }
-
-            var path = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Автоком",
-                "settings",
-                db.CurrentUser
-            );
-
-            if (!System.IO.Directory.Exists(path))
-            {
-                System.IO.Directory.CreateDirectory(path);
-            }
-
-            string file = Path.Combine(path, $"{browserType.Name}.json");
-            var options = new JsonSerializerOptions
-            {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                WriteIndented = true
-            };
-            options.Converters.Add(new JsonStringEnumConverter());
-
-            if (AllowColumnsCustomize())
-            {
-                UpdateSettingsColumn();
-            }
-
-            SaveSettings();
-
-            string json = JsonSerializer.Serialize(Settings, Settings.GetType(), options);
-            File.WriteAllText(file, json);
+            UpdateSettingsColumn();
+            settings.Write<BrowserSettings>();
+            filter?.WriteConfigure(settings);
         }
     }
-
-    protected virtual void SaveSettings() { }
-
-    protected virtual BrowserSettings CreateBrowserSettings() => new();
-
-    protected virtual BrowserSettings? LoadSettings(string json, JsonSerializerOptions options) => JsonSerializer.Deserialize<BrowserSettings>(json, options);
-
-    protected virtual bool AllowColumnsCustomize() => true;
 
     protected virtual void DoBeforeRefreshPage() { }
 
     protected virtual bool DocumentIsReadOnly(T document) => false;
+
+    protected virtual void ApplySettings(out bool canceledSettings)
+    {
+        canceledSettings = false;
+    }
+
+    protected virtual void WriteSettings(out bool canceledSettings)
+    {
+        canceledSettings = false;
+    }
 
     protected void MoveToEnd() => moveToEnd = true;
 
@@ -731,41 +733,35 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     protected virtual bool CanExpandPreview(T row) => false;
 
-    private void RefreshSettingsHiddenColumns()
+    private void UpdateSettingsColumn(BrowserSettings? b_settings = null)
     {
-        if (Settings.Columns != null)
+        if (settings != null)
         {
-            foreach (var item in Settings.Columns)
+            b_settings ??= settings.Get<BrowserSettings>();
+
+            var list = new List<BrowserColumn>();
+            foreach (var item in gridContent.Columns)
             {
-                item.Hidden = hiddens.FirstOrDefault(x => x.MappingName == item.Name) != null;
+                BrowserColumn column = new(item)
+                {
+                    Hidden = hiddens.Contains(item)
+                };
+
+                list.Add(column);
             }
+
+            b_settings.Columns = list;
         }
     }
 
-    private void UpdateSettingsColumn()
+    private void CustomizeColumns(BrowserSettings b_settings)
     {
-        var list = new List<BrowserColumn>();
-        foreach (var item in gridContent.Columns)
-        {
-            BrowserColumn column = new(item)
-            {
-                Hidden = hiddens.Contains(item)
-            };
-
-            list.Add(column);
-        }
-
-        Settings.Columns = list;
-    }
-
-    private void CustomizeColumns()
-    {
-        if (Settings.Columns == null)
+        if (b_settings.Columns == null)
         {
             return;
         }
 
-        foreach (var (item, column) in from item in Settings.Columns
+        foreach (var (item, column) in from item in b_settings.Columns
                                        let column = gridContent.Columns.FirstOrDefault(x => x.MappingName == item.Name)
                                        select (item, column))
         {
@@ -829,7 +825,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         }
     }
 
-    private void ConfigureBrowser()
+    private void ConfigureBrowser(IStandaloneSettings? settings = null)
     {
         gridContent.ColumnHeaderContextMenu = contextHeaderMenu;
         gridContent.RowHeaderContextMenu = contextRowMenu;
@@ -897,6 +893,29 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         menuCreateGroup2.Visible = Navigator != null;
 
         gridContent.TableControl.KeyUp += GridContentKeyUp;
+
+        if (settings != null)
+        {
+            string settingsKey;
+            if (browserType != null)
+            {
+                Match m = SettingsKeyRegex().Match(browserType.Name);
+                if (m.Success)
+                {
+                    settingsKey = m.Groups[1].Value.Underscore();
+                }
+                else
+                {
+                    settingsKey = browserType.Name;
+                }
+            }
+            else
+            {
+                settingsKey = typeof(T).Name;
+            }
+
+            settings.Configure(settingsKey);
+        }
     }
 
     private void MenuCreateBasedOn_Click(object? sender, EventArgs e)
@@ -909,7 +928,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                 pageManager.ShowEditor(creation.DocumentEditorType, id);
             }
             catch (Exception ex)
-            { 
+            {
                 ExceptionHelper.MesssageBox(ex);
             }
         }
@@ -1157,11 +1176,17 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     private void ConfigureVisibleStatusColumns()
     {
+        if (settings == null)
+        {
+            return;
+        }
+
+        var b_settings = settings.Get<BrowserSettings>();
         foreach (var column in gridContent.Columns)
         {
-            if (Settings.Columns != null && AllowColumnsCustomize())
+            if (b_settings.Columns != null)
             {
-                var item = Settings.Columns.FirstOrDefault(x => x.Name == column.MappingName);
+                var item = b_settings.Columns.FirstOrDefault(x => x.Name == column.MappingName);
                 if (item != null)
                 {
                     column.Visible = item.Visible;
@@ -1175,35 +1200,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             }
 
             menu.Checked = column.Visible;
-        }
-    }
-
-    private void LoadBrowserSettings()
-    {
-        if (browserType != null)
-        {
-            var db = Services.Provider.GetService<IDatabase>();
-            if (db == null)
-            {
-                return;
-            }
-
-            var file = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Автоком",
-                "settings",
-                db.CurrentUser,
-                $"{browserType.Name}.json"
-            );
-
-            if (File.Exists(file))
-            {
-                string json = File.ReadAllText(file);
-                var options = new JsonSerializerOptions();
-                options.Converters.Add(new JsonStringEnumConverter());
-
-                settings = LoadSettings(json, options);
-            }
         }
     }
 
@@ -1429,7 +1425,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         if (e.ContextMenutype == ContextMenuType.GroupCaption)
         {
             grid = (e.ContextMenuInfo as RowContextMenuInfo)?.DataGrid;
-            group = (e.ContextMenuInfo as RowContextMenuInfo)?.Row as Group;
+            group = (e.ContextMenuInfo as RowContextMenuInfo)?.Row as Syncfusion.Data.Group;
         }
 
         if (e.ContextMenutype == ContextMenuType.GroupDropAreaItem || e.ContextMenutype == ContextMenuType.ColumnHeader)
@@ -1563,15 +1559,16 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     private void ButtonSettings_Click(object sender, EventArgs e)
     {
-        if (AllowColumnsCustomize())
+        if (settings != null)
         {
-            UpdateSettingsColumn();
-        }
+            var b_settings = settings.Get<BrowserSettings>();
+            UpdateSettingsColumn(b_settings);
 
-        var form = new BrowserCustomizationForm(Settings, AllowColumnsCustomize());
-        if (form.ShowDialog() == DialogResult.OK && form.Columns != null)
-        {
-            CustomizeColumns();
+            var form = new BrowserCustomizationForm(b_settings);
+            if (form.ShowDialog() == DialogResult.OK && form.Columns != null)
+            {
+                CustomizeColumns(b_settings);
+            }
         }
     }
 
@@ -1691,24 +1688,28 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     private void ToolStripPrintList_Click(object sender, EventArgs e)
     {
-        if (gridContent.DataSource is IList<T> list)
+        if (gridContent.DataSource is IList<T> list && settings != null)
         {
+            var b_settings = settings.Get<BrowserSettings>();
+
             string dataName = typeof(T).Name.Underscore();
 
             FastReport.Report report = new();
             report.RegisterData(list, dataName);
             report.GetDataSource(dataName).Enabled = true;
 
+
+
             FastReport.ReportPage page1 = new()
             {
                 Name = "Page1",
-                LeftMargin = Settings.Page.Settings.LeftMargin,
-                RightMargin = Settings.Page.Settings.RightMargin,
-                TopMargin = Settings.Page.Settings.TopMargin,
-                BottomMargin = Settings.Page.Settings.BottomMargin,
-                PaperWidth = Settings.Page.Settings.PaperWidth,
-                PaperHeight = Settings.Page.Settings.PaperHeight,
-                MirrorMargins = Settings.Page.Settings.MirrorMargins,
+                LeftMargin = b_settings.Page.Settings.LeftMargin,
+                RightMargin = b_settings.Page.Settings.RightMargin,
+                TopMargin = b_settings.Page.Settings.TopMargin,
+                BottomMargin = b_settings.Page.Settings.BottomMargin,
+                PaperWidth = b_settings.Page.Settings.PaperWidth,
+                PaperHeight = b_settings.Page.Settings.PaperHeight,
+                MirrorMargins = b_settings.Page.Settings.MirrorMargins,
                 ReportTitle = new()
                 {
                     Name = "ReportTitle1",
@@ -1716,12 +1717,12 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                 }
             };
 
-            int width = Settings.Page.Settings.PrintableWidth;
+            int width = b_settings.Page.Settings.PrintableWidth;
 
             TextObject textTitle = new()
             {
                 Bounds = new RectangleF(0, 0, Units.Millimeters * width, Units.Centimeters * 1.0f),
-                Font = Settings.Page.Fonts.Title.CreateFont(),
+                Font = b_settings.Page.Fonts.Title.CreateFont(),
                 Text = HeaderText,
                 Name = "TextTitle"
             };
@@ -1752,7 +1753,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                 TextObject textHeader = new()
                 {
                     Bounds = new RectangleF(x, 0, w, Units.Centimeters * 0.5f),
-                    Font = Settings.Page.Fonts.Header.CreateFont(),
+                    Font = b_settings.Page.Fonts.Header.CreateFont(),
                     Border = new()
                     {
                         Lines = BorderLines.All
@@ -1768,7 +1769,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                 TextObject textData = new()
                 {
                     Bounds = new RectangleF(x, 0, w, Units.Centimeters * 0.5f),
-                    Font = Settings.Page.Fonts.Base.CreateFont(),
+                    Font = b_settings.Page.Fonts.Base.CreateFont(),
                     Border = new()
                     {
                         Lines = BorderLines.All
@@ -1829,17 +1830,5 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             Clipboard.SetText(rec.id.ToString());
             MessageBox.Show($"Идентификатор записи {{{rec.id}}} скопирован в буфер обмена.", "Идентификатор скопирован", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-    }
-
-    private void Browser_Load(object sender, EventArgs e)
-    {
-        LoadBrowserSettings();
-        if (AllowColumnsCustomize())
-        {
-            RefreshSettingsHiddenColumns();
-            CustomizeColumns();
-        }
-
-        RefreshColumns();
     }
 }

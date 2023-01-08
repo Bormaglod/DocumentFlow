@@ -23,6 +23,8 @@
 // Версия 2023.1.5
 //  - добавлена установка диапазона дат для фильтра IDocumentFilter
 //  - добавлен вызов MoveToEnd для перемещения в конец таблицы
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
@@ -32,6 +34,7 @@ using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -44,8 +47,8 @@ namespace DocumentFlow.Entities.PurchaseRequestLib;
 
 public class PurchaseRequestBrowser : Browser<PurchaseRequest>, IPurchaseRequestBrowser
 {
-    public PurchaseRequestBrowser(IPurchaseRequestRepository repository, IPageManager pageManager, IPurchaseRequestFilter filter, IEnumerable<ICreationBased>? creations)
-        : base(repository, pageManager, filter: filter, creations: creations)
+    public PurchaseRequestBrowser(IPurchaseRequestRepository repository, IPageManager pageManager, IPurchaseRequestFilter filter, IEnumerable<ICreationBased>? creations, IStandaloneSettings settings)
+        : base(repository, pageManager, filter: filter, creations: creations, settings: settings)
     {
         AllowGrouping();
 

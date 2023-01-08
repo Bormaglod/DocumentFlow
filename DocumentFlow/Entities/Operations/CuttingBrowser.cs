@@ -1,17 +1,20 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.01.2022
 //
 // Версия 2022.9.3
 //  - удалены методы IsColumnVisible и IsAllowVisibilityColumn
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -22,7 +25,8 @@ namespace DocumentFlow.Entities.Operations;
 
 public class CuttingBrowser : Browser<Cutting>, ICuttingBrowser
 {
-    public CuttingBrowser(ICuttingRepository repository, IPageManager pageManager, IBreadcrumb navigator) : base(repository, pageManager, navigator: navigator)
+    public CuttingBrowser(ICuttingRepository repository, IPageManager pageManager, IBreadcrumb navigator, IStandaloneSettings settings) 
+        : base(repository, pageManager, navigator: navigator, settings: settings)
     {
         AllowGrouping();
 

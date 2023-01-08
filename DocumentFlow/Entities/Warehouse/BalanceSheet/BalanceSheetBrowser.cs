@@ -21,6 +21,7 @@ using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Controls.Settings;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -48,13 +49,15 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
 
     private readonly IBalanceSheetFilter filter;
     private readonly StackColumnInfo[] columns;
+    private readonly ISingletoneSettings settings;
 
-    public BalanceSheetBrowser(IBalanceSheetRepository repository, IPageManager pageManager, IBalanceSheetFilter filter) 
+    public BalanceSheetBrowser(IBalanceSheetRepository repository, IPageManager pageManager, IBalanceSheetFilter filter, ISingletoneSettings settings) 
         : base(repository, pageManager, filter: filter) 
     {
         AllowGrouping();
 
         this.filter = filter;
+        this.settings = settings;
 
         var id = CreateText(x => x.id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.product_name, "Наименование", hidden: false);
@@ -119,8 +122,6 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
 
     protected override string HeaderText => "Материальный отчёт";
 
-    protected override bool AllowColumnsCustomize() => false;
-
     protected override void ConfigureColumns()
     {
         base.ConfigureColumns();
@@ -152,7 +153,22 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
         }
     }
 
-    protected override void SaveSettings()
+    protected override void ApplySettings(out bool canceledSettings)
+    {
+        //settings.Get<BalanceSheetBrowserSettings>("balance_sheet");
+        filter?.Configure(settings);
+
+        canceledSettings = true;
+    }
+
+    protected override void WriteSettings(out bool canceledSettings)
+    {
+        filter?.WriteConfigure(settings);
+
+        canceledSettings = true;
+    }
+
+    /*protected override void SaveSettings()
     {
         if (Settings is BalanceSheetBrowserSettings settings)
         {
@@ -162,11 +178,11 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
             settings.DateTo = filter.DateTo;
             settings.Content = filter.Content;
         }
-    }
+    }*/
 
-    protected override BrowserSettings CreateBrowserSettings() => new BalanceSheetBrowserSettings();
+    //protected override BrowserSettings CreateBrowserSettings() => new BalanceSheetBrowserSettings();
 
-    protected override BrowserSettings? LoadSettings(string json, JsonSerializerOptions options)
+    /*protected override BrowserSettings? LoadSettings(string json, JsonSerializerOptions options)
     {
         var settings = JsonSerializer.Deserialize<BalanceSheetBrowserSettings>(json, options);
 
@@ -180,5 +196,5 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
         }
 
         return settings;
-    }
+    }*/
 }

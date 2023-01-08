@@ -1,17 +1,20 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.07.2022
 //
 // Версия 2022.11.26
 //  - изменен метод GetColumnsAfter
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Waybills;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 
@@ -19,8 +22,8 @@ namespace DocumentFlow.Entities.Productions.Processing;
 
 public class WaybillProcessingBrowser : WaybillBrowser<WaybillProcessing>, IWaybillProcessingBrowser
 {
-    public WaybillProcessingBrowser(IWaybillProcessingRepository repository, IPageManager pageManager, IDocumentFilter filter)
-        : base(repository, pageManager, filter: filter)
+    public WaybillProcessingBrowser(IWaybillProcessingRepository repository, IPageManager pageManager, IDocumentFilter filter, IStandaloneSettings settings)
+        : base(repository, pageManager, filter: filter, settings: settings)
     {
         CreateStackedColumns("Заказ", new string[] { "order_date", "order_number" });
     }

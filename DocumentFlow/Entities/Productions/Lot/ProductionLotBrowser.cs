@@ -13,11 +13,14 @@
 //  - параметр IDocumentFilter заменен на IProductionLotFilter
 //  - добавлена установка диапазона дат для фильтра IDocumentFilter
 //  - добавлен вызов MoveToEnd для перемещения в конец таблицы
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -28,8 +31,8 @@ namespace DocumentFlow.Entities.Productions.Lot;
 
 public class ProductionLotBrowser : BaseProductionLotBrowser, IProductionLotBrowser
 {
-    public ProductionLotBrowser(IProductionLotRepository repository, IPageManager pageManager, IProductionLotFilter filter)
-        : base(repository, pageManager, filter: filter)
+    public ProductionLotBrowser(IProductionLotRepository repository, IPageManager pageManager, IProductionLotFilter filter, IStandaloneSettings settings)
+        : base(repository, pageManager, filter: filter, settings: settings)
     {
         AllowGrouping();
 

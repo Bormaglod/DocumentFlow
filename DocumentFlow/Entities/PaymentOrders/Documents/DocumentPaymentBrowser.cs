@@ -1,8 +1,12 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 05.02.2022
+//
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -10,6 +14,7 @@ using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Properties;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -22,7 +27,8 @@ public class DocumentPaymentBrowser : Browser<DocumentPayment>, IDocumentPayment
 {
     private readonly IPageManager pageManager;
 
-    public DocumentPaymentBrowser(IDocumentPaymentRepository repository, IPageManager pageManager) : base(repository, pageManager) 
+    public DocumentPaymentBrowser(IDocumentPaymentRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
+        : base(repository, pageManager, settings: settings) 
     {
         this.pageManager = pageManager;
 

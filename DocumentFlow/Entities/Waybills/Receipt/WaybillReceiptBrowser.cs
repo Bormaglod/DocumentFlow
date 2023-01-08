@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.01.2022
@@ -10,10 +10,13 @@
 //  - добавлена колонка "Оплата"
 // Версия 2022.12.30
 //  - IDocumentFilter заменен на IWaybillReceiptFilter
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 
@@ -21,8 +24,8 @@ namespace DocumentFlow.Entities.Waybills;
 
 public class WaybillReceiptBrowser : WaybillBrowser<WaybillReceipt>, IWaybillReceiptBrowser
 {
-    public WaybillReceiptBrowser(IWaybillReceiptRepository repository, IPageManager pageManager, IWaybillReceiptFilter filter)
-        : base(repository, pageManager, filter: filter)
+    public WaybillReceiptBrowser(IWaybillReceiptRepository repository, IPageManager pageManager, IWaybillReceiptFilter filter, IStandaloneSettings settings)
+        : base(repository, pageManager, filter: filter, settings: settings)
     {
         var payment_exists = CreateBoolean(x => x.payment_exists, "Оплата", 100);
 

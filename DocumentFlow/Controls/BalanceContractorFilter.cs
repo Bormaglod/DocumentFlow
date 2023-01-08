@@ -1,16 +1,21 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 06.12.2022
 //
 // Версия 2022.12.17
 //  - добавлен метод CreateQuery(string tableName);
+// Версия 2023.1.8
+//  - добавлен метод Configure и WriteConfigure (реализация метода
+//    интерфейса IBalanceContractorFilter
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Companies;
+using DocumentFlow.Settings.Infrastructure;
 
 using Humanizer;
 
@@ -23,6 +28,7 @@ namespace DocumentFlow.Controls;
 public partial class BalanceContractorFilter : UserControl, IBalanceContractorFilter
 {
     private Guid? ownerId;
+    private BalanceContractorFilterData? filterData;
 
     public BalanceContractorFilter()
     {
@@ -81,6 +87,69 @@ public partial class BalanceContractorFilter : UserControl, IBalanceContractorFi
 
     public Control Control => this;
 
+    public void Configure(IAppSettings appSettings)
+    {
+        if (OwnerIdentifier == null)
+        {
+            return;
+        }
+
+        filterData = appSettings.Get<BalanceContractorFilterData>("filter");
+        ContractIdentifier = filterData.GetContract(OwnerIdentifier.Value);
+    }
+
+    public void WriteConfigure(IAppSettings appSettings)
+    {
+        if (OwnerIdentifier == null)
+        {
+            return;
+        }
+
+        if (filterData == null)
+        {
+            if (ContractIdentifier != null)
+            {
+                filterData = new()
+                {
+                    ContractIdentifiers = new Dictionary<Guid, Guid?>()
+                    {
+                        [OwnerIdentifier.Value] = ContractIdentifier
+                    }
+                };
+            }
+        }
+        else
+        {
+            filterData.ContractIdentifiers ??= new Dictionary<Guid, Guid?>();
+
+            if (filterData.ContractIdentifiers.ContainsKey(OwnerIdentifier.Value))
+            {
+                if (ContractIdentifier == null)
+                {
+                    filterData.ContractIdentifiers.Remove(OwnerIdentifier.Value);
+                }
+                else
+                {
+                    filterData.ContractIdentifiers[OwnerIdentifier.Value] = ContractIdentifier;
+                }
+            }
+            else
+            {
+                if (ContractIdentifier != null)
+                {
+                    filterData.ContractIdentifiers.Add(OwnerIdentifier.Value, ContractIdentifier);
+                }
+            }
+
+            if (filterData.ContractIdentifiers.Count == 0)
+            {
+                filterData.ContractIdentifiers = null;
+            }
+        }
+
+        appSettings.Write("filter", filterData);
+    }
+
     public Query? CreateQuery<T>() => CreateQuery(typeof(T).Name.Underscore());
 
     public Query? CreateQuery(string tableName)
@@ -95,8 +164,5 @@ public partial class BalanceContractorFilter : UserControl, IBalanceContractorFi
         return null;
     }
 
-    private void ToolButton1_Click(object sender, EventArgs e)
-    {
-        sfComboBox1.SelectedIndex = -1;
-    }
+    private void ToolButton1_Click(object sender, EventArgs e) => sfComboBox1.SelectedIndex = -1;
 }

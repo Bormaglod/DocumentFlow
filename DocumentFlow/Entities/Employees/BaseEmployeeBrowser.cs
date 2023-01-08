@@ -1,14 +1,19 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 01.01.2022
+//
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -20,7 +25,8 @@ namespace DocumentFlow.Entities.Employees;
 public abstract class BaseEmployeeBrowser<T> : Browser<T>
     where T : Employee
 {
-    protected BaseEmployeeBrowser(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager)
+    protected BaseEmployeeBrowser(IRepository<Guid, T> repository, IPageManager pageManager, IStandaloneSettings? settings = null) 
+        : base(repository, pageManager, settings: settings)
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 

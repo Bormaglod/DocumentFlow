@@ -6,7 +6,7 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>2023.1.5</Version>
+		<Version>2023.1.8</Version>
 		<Company>Автоком</Company>
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2021</Copyright>
 		<Platforms>x64</Platforms>
@@ -217,9 +217,7 @@
 	  </Compile>
 	  <Compile Update="Entities\ProductionLib\Returns\ReturnMaterialsBrowser.cs" />
 	  <Compile Update="Entities\ProductionLib\Returns\ReturnMaterialsEditor.cs" />
-	  <Compile Update="Entities\Productions\Finished\BaseFinishedGoodsBrowser.cs">
-	    <SubType>UserControl</SubType>
-	  </Compile>
+	  <Compile Update="Entities\Productions\Finished\BaseFinishedGoodsBrowser.cs" />
 	  <Compile Update="Entities\Productions\Finished\FinishedGoodsBrowser.cs" />
 	  <Compile Update="Entities\Productions\Finished\FinishedGoodsNestedBrowser.cs" />
 	  <Compile Update="Entities\Productions\Finished\BaseFinishedGoodsEditor.cs" />
@@ -313,6 +311,10 @@
 		<None Update="Reports\Specification.frx">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Settings\Core\" />
 	</ItemGroup>
 
 </Project>

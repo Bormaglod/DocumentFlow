@@ -1,11 +1,13 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.01.2022
 //
 // Версия 2022.11.13
 //  - добавлена кнопка для открытия окна редактирования удержания
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
@@ -14,6 +16,7 @@ using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Deductions;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Properties;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -21,11 +24,14 @@ using Syncfusion.WinForms.Input.Enums;
 
 using System.ComponentModel;
 
+using static Dapper.SqlMapper;
+
 namespace DocumentFlow.Entities.Calculations;
 
 public class CalculationDeductionBrowser : Browser<CalculationDeduction>, ICalculationDeductionBrowser
 {
-    public CalculationDeductionBrowser(ICalculationDeductionRepository repository, IPageManager pageManager) : base(repository, pageManager) 
+    public CalculationDeductionBrowser(ICalculationDeductionRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
+        : base(repository, pageManager, settings: settings) 
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 

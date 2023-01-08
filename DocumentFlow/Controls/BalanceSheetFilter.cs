@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 13.07.2022
@@ -8,12 +8,19 @@
 //  - добавлено свойство OwnerIdentifier
 // Версия 2022.12.17
 //  - добавлен метод CreateQuery(string tableName);
+// Версия 2023.1.8
+//  - добавлен метод Configure и WriteConfigure (реализация метода
+//    интерфейса IBalanceContractorFilter
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using SqlKata;
+
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DocumentFlow.Controls;
 
@@ -39,7 +46,7 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
     {
         InitializeComponent();
 
-        list = new List<ViewInfo>() { 
+        list = new List<ViewInfo>() {
             new ViewInfo(BalanceSheetContent.Material, "Материалы"),
             new ViewInfo(BalanceSheetContent.Goods, "Продукция")
         };
@@ -51,8 +58,8 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
 
     public Guid? OwnerIdentifier { get; set; }
 
-    public BalanceSheetContent Content 
-    { 
+    public BalanceSheetContent Content
+    {
         get
         {
             if (comboView.SelectedItem is ViewInfo view)
@@ -70,13 +77,13 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
         }
     }
 
-    public bool AmountVisible 
+    public bool AmountVisible
     {
         get => checkAmount.Checked;
         set => checkAmount.Checked = value;
     }
 
-    public bool SummaVisible 
+    public bool SummaVisible
     {
         get => checkSumma.Checked;
         set => checkSumma.Checked = value;
@@ -103,6 +110,35 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
     {
         get => dateRangeControl1.To;
         set => dateRangeControl1.To = value;
+    }
+
+    public void Configure(IAppSettings appSettings)
+    {
+        var data = appSettings.Get<BalanceSheetFilterData>("balance_sheet:filter");
+
+        DateFromEnabled = data.DateFromEnabled;
+        DateToEnabled = data.DateToEnabled;
+        DateFrom = data.DateFrom;
+        DateTo = data.DateTo;
+        Content = data.Content;
+        AmountVisible = data.AmountVisible;
+        SummaVisible = data.SummaVisible;
+    }
+
+    public void WriteConfigure(IAppSettings appSettings)
+    {
+        BalanceSheetFilterData data = new()
+        {
+            DateFromEnabled = DateFromEnabled,
+            DateToEnabled = DateToEnabled,
+            DateFrom = DateFrom,
+            DateTo = DateTo,
+            Content = Content,
+            AmountVisible = AmountVisible,
+            SummaVisible = SummaVisible
+        };
+
+        appSettings.Write("balance_sheet:filter", data);
     }
 
     public void SetDateRange(DateRange range) => dateRangeControl1.SetRange(range);

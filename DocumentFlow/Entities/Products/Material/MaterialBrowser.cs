@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.12.2021
@@ -7,7 +7,9 @@
 // Версия 2022.9.3
 //  - удалены методы IsColumnVisible, IsAllowVisibilityColumn,
 //    AvailableWireColumn и OnChangeParent
-// - удалена колонка "Тип провода"
+//  - удалена колонка "Тип провода"
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
@@ -15,6 +17,7 @@ using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -26,8 +29,8 @@ namespace DocumentFlow.Entities.Products;
 
 public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
 {
-    public MaterialBrowser(IMaterialRepository repository, IPageManager pageManager, IProductRowHeader productRowHeader, IBreadcrumb navigator) 
-        : base(repository, pageManager, productRowHeader, navigator: navigator)
+    public MaterialBrowser(IMaterialRepository repository, IPageManager pageManager, IProductRowHeader productRowHeader, IBreadcrumb navigator, IStandaloneSettings settings) 
+        : base(repository, pageManager, productRowHeader, navigator: navigator, settings: settings)
     {
         var id = CreateText(x => x.id, "Id", 180, visible: false);
         var code = CreateText(x => x.code, "Код", 150);

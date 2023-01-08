@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.05.2022
@@ -9,6 +9,8 @@
 // Версия 2022.12.3
 //  - значению double_rate не присваивалось значение. Исправлено.
 //  - добавлены классы EmployeeRegex и EmpPropertyiesRegex
+// Версия 2023.1.8
+//  - расширено использование EmpPropertiesRegex
 //
 //-----------------------------------------------------------------------
 
@@ -45,7 +47,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
     private static partial Regex EmployeeRegex();
 
     [GeneratedRegex("^Employees\\[(\\d+)\\].(\\w+)$")]
-    private static partial Regex EmpPropertyiesRegex();
+    private static partial Regex EmpPropertiesRegex();
 
     private class BaseEmpInfo : INotifyPropertyChanged
     {
@@ -153,7 +155,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
             {
                 if (items is IEnumerable<OperationInfo> enumerableItems && pd.Name == "ComplexSum")
                 {
-                    Match m = Regex.Match(property, @"^Employees\[(\d+)\].\w+$");
+                    Match m = EmpPropertiesRegex().Match(property);
                     if (m.Success && int.TryParse(m.Groups[1].Value, out int empIndex))
                     {
                         ComplexSum = enumerableItems.Sum(x => empIndex < x.Employees.Count ? x.Employees[empIndex].Salary : 0);
@@ -468,7 +470,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
     {
         if (e.DataRow.RowData is OperationInfo info)
         {
-            Match m = EmpPropertyiesRegex().Match(e.Column.MappingName);
+            Match m = EmpPropertiesRegex().Match(e.Column.MappingName);
             if (m.Success)
             {
                 if (int.TryParse(m.Groups[1].Value, out int empIndex))

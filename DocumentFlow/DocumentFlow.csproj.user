@@ -40,6 +40,9 @@
     <Compile Update="Controls\DecimalTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="Controls\DocumentFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfCheckBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -106,9 +109,6 @@
     <Compile Update="Controls\Editors\DfWireStripping.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\DocumentFilter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Controls\PageContents\Browser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -166,10 +166,25 @@
     <Compile Update="Entities\PaymentOrders\Posting\PostingPaymentsEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Entities\Productions\Finished\BaseFinishedGoodsBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Productions\Lot\BaseProductionLotBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Productions\Lot\ProductionLotBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Productions\Lot\ProductionLotNestedBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Entities\Productions\Order\ProductionOrderBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Productions\Order\ProductionOrderEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Productions\Performed\BaseOperationsPerformedBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Productions\Performed\BaseOperationsPerformedEditor.cs">
@@ -236,9 +251,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Waybills\Receipt\WaybillReceiptNestedBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Settings\MarginsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Dialogs\SettingsForm.cs">
@@ -436,19 +448,7 @@
     <Compile Update="Entities\Productions\Dialogs\FormMaterialQuantity.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Entities\Productions\Lot\BaseProductionLotBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Lot\ProductionLotBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Lot\ProductionLotNestedBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Entities\Productions\Lot\ProductionLotEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Performed\BaseOperationsPerformedBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Productions\Performed\OperationsPerformedBrowser.cs">

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 27.12.2019
@@ -10,6 +10,8 @@
 //  - добавлен интерфейс ICreationBased
 // Версия 2022.12.31
 //  - добавлены интерфейсы IStartPage и ICard
+// Версия 2023.1.8
+//  - интерфейс ISettings переименован в IAppSettings
 //
 //-----------------------------------------------------------------------
 
@@ -72,7 +74,7 @@ public static class Services
                     .AddClasses(classes => classes.AssignableTo<ISettingsPage>())
                         .AsImplementedInterfaces()
                         .WithTransientLifetime()
-                    .AddClasses(classes => classes.AssignableTo<ISettings>())
+                    .AddClasses(classes => classes.AssignableTo<IAppSettings>())
                         .AsMatchingInterface()
                         .WithTransientLifetime()
                     .AddClasses(classes => classes.AssignableTo<ICreationBased>())

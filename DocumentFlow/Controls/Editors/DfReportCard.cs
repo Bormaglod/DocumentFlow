@@ -1,11 +1,14 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 08.08.2022
 //
 // Версия 2022.11.26
 //  - добавлен метод RefreshDataSourceOnLoad
+// Версия 2023.1.8
+//  - добавлен класс ZoomRegex
+//  - поле autoFitOptions стало только для чтения
 //
 //-----------------------------------------------------------------------
 
@@ -35,7 +38,10 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
     private readonly List<ReportCardEmployee> deleted = new();
     private readonly List<ReportCardEmployee> created = new();
     private readonly List<ReportCardEmployee> updated = new();
-    private RowAutoFitOptions autoFitOptions = new();
+    private readonly RowAutoFitOptions autoFitOptions = new();
+
+    [GeneratedRegex("^info\\[(\\d+)\\]$")]
+    private static partial Regex InfoPropertyRegex();
 
     public DfReportCard() : base(string.Empty)
     {
@@ -304,7 +310,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
     {
         if (e.RowData is ReportCardEmployee emp)
         {
-            Match m = Regex.Match(e.Column.MappingName, @"^info\[(\d+)\]$");
+            Match m = InfoPropertyRegex().Match(e.Column.MappingName);
             if (m.Success)
             {
                 if (int.TryParse(m.Groups[1].Value, out int empIndex))

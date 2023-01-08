@@ -1,17 +1,20 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 09.12.2022
 //
 // Версия 2022.12.11
 //  - изменена ширина колонки "Договор" на автоматическую
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -23,8 +26,8 @@ namespace DocumentFlow.Entities.Waybills;
 
 public class WaybillReceiptNestedBrowser : Browser<WaybillReceipt>, IWaybillReceiptNestedBrowser
 {
-    public WaybillReceiptNestedBrowser(IWaybillReceiptRepository repository, IPageManager pageManager)
-        : base(repository, pageManager)
+    public WaybillReceiptNestedBrowser(IWaybillReceiptRepository repository, IPageManager pageManager, IStandaloneSettings settings)
+        : base(repository, pageManager, settings: settings)
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 

@@ -1,13 +1,18 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 25.12.2022
+//
+// Версия 2023.1.8
+//  - в конструктор добавлен параметр settings
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -18,8 +23,8 @@ namespace DocumentFlow.Entities.PaymentOrders;
 
 public class DebtAdjustmentBrowser : Browser<DebtAdjustment>, IDebtAdjustmentBrowser
 {
-    public DebtAdjustmentBrowser(IDebtAdjustmentRepository repository, IPageManager pageManager, IDocumentFilter filter)
-        : base(repository, pageManager, filter: filter)
+    public DebtAdjustmentBrowser(IDebtAdjustmentRepository repository, IPageManager pageManager, IDocumentFilter filter, IStandaloneSettings settings)
+        : base(repository, pageManager, filter: filter, settings: settings)
     {
         AllowGrouping();
 
