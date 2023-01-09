@@ -155,7 +155,6 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
 
     protected override void ApplySettings(out bool canceledSettings)
     {
-        //settings.Get<BalanceSheetBrowserSettings>("balance_sheet");
         filter?.Configure(settings);
 
         canceledSettings = true;
@@ -167,34 +166,4 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
 
         canceledSettings = true;
     }
-
-    /*protected override void SaveSettings()
-    {
-        if (Settings is BalanceSheetBrowserSettings settings)
-        {
-            settings.ViewAmount = filter.AmountVisible;
-            settings.ViewSumma = filter.SummaVisible;
-            settings.DateFrom = filter.DateFrom;
-            settings.DateTo = filter.DateTo;
-            settings.Content = filter.Content;
-        }
-    }*/
-
-    //protected override BrowserSettings CreateBrowserSettings() => new BalanceSheetBrowserSettings();
-
-    /*protected override BrowserSettings? LoadSettings(string json, JsonSerializerOptions options)
-    {
-        var settings = JsonSerializer.Deserialize<BalanceSheetBrowserSettings>(json, options);
-
-        if (settings != null)
-        {
-            filter.AmountVisible = settings.ViewAmount;
-            filter.SummaVisible = settings.ViewSumma;
-            filter.DateFrom = settings.DateFrom;
-            filter.DateTo = settings.DateTo;
-            filter.Content = settings.Content;
-        }
-
-        return settings;
-    }*/
 }

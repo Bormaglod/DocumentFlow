@@ -5,6 +5,7 @@
 // Date: 06.01.2022
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Core;
 using DocumentFlow.Settings.Infrastructure;
 
 namespace DocumentFlow.Settings;
@@ -55,7 +56,7 @@ public class StandaloneSettings : BaseSettings, IStandaloneSettings
                 throw new InvalidOperationException();
             }
 
-            var t_json = GetJson(t_settings);
+            var t_json = JsonHelper.GetJsonText(t_settings);
             WriteJson(t_json.JsonText);
         }
     }

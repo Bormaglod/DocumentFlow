@@ -60,6 +60,11 @@
 //  - добавлен метод ApplySettings
 //  - множественные изменения, связанные с изменением механизма
 //    чтения/записи настроек
+// Версия 2023.1.9
+//  - если класс-потомок реализует свой IAppSettings и с помощью метода
+//    ApplySettings запрещает дальнейшую инициализацию настроек, то
+//    не вызывается метод ConfigureColumns, который в свою очередь
+//    вызывается из RefreshColumns - исправлено
 //
 //-----------------------------------------------------------------------
 
@@ -363,8 +368,9 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             }
 
             CustomizeColumns(b_settings);
-            RefreshColumns();
         }
+
+        RefreshColumns();
 
         CurrentApplicationContext.Context.App.OnAppNotify += App_OnAppNotify;
 

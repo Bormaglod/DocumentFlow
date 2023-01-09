@@ -4,6 +4,9 @@
     <_LastSelectedProfileId>C:\Projects\DocumentFlow.version 6\DocumentFlow\Properties\PublishProfiles\registry.hub.docker.com_autokom.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Controls\BalanceContractorFilter.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -120,6 +123,9 @@
     </Compile>
     <Compile Update="Controls\PageContents\StartPage.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\PictureContainer.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Update="Controls\TablessControl.cs">
       <SubType>Component</SubType>
@@ -515,6 +521,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SplashForm.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

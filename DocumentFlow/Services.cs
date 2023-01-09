@@ -42,7 +42,7 @@ public static class Services
         }
     }
 
-    private static void ConfigureServices()
+    public static void ConfigureServices()
     {
         var services = new ServiceCollection()
             .Scan(scan => scan

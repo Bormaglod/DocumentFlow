@@ -11,6 +11,8 @@
 // Версия 2023.1.8
 //  - добавлен метод Configure и WriteConfigure (реализация метода
 //    интерфейса IBalanceContractorFilter
+// Версия 2023.1.9
+//  - изменился способ адресации пути в json
 //
 //-----------------------------------------------------------------------
 
@@ -19,8 +21,6 @@ using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Settings.Infrastructure;
 
 using SqlKata;
-
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DocumentFlow.Controls;
 
@@ -114,7 +114,7 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
 
     public void Configure(IAppSettings appSettings)
     {
-        var data = appSettings.Get<BalanceSheetFilterData>("balance_sheet:filter");
+        var data = appSettings.Get<BalanceSheetFilterData>("#/balance_sheet/filter");
 
         DateFromEnabled = data.DateFromEnabled;
         DateToEnabled = data.DateToEnabled;
@@ -138,7 +138,7 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
             SummaVisible = SummaVisible
         };
 
-        appSettings.Write("balance_sheet:filter", data);
+        appSettings.Write("#/balance_sheet/filter", data);
     }
 
     public void SetDateRange(DateRange range) => dateRangeControl1.SetRange(range);

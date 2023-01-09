@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 27.12.2021
@@ -8,6 +8,8 @@
 //  - добавлена реакция на нажатие клавиши F5
 // Версия 2022.12.31
 //  - добавлен метод ShowStartPage (заглушка)
+// Версия 2023.1.9
+//  - добавлен пункт меню "О программе"
 //
 //-----------------------------------------------------------------------
 
@@ -27,316 +29,320 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace DocumentFlow
+namespace DocumentFlow;
+
+public partial class MainForm : Form, IHostApp, ITabPages
 {
-    public partial class MainForm : Form, IHostApp, ITabPages
+#if USE_LISTENER
+    private Task? listenerTask;
+    private readonly ConcurrentQueue<NotifyMessage> notifies = new();
+#endif
+
+    public MainForm()
     {
+        InitializeComponent();
+
+        tabControlAdv1.TabPages.Clear();
+
+        CreateMenu();
+
 #if USE_LISTENER
-        private Task? listenerTask;
-        private readonly ConcurrentQueue<NotifyMessage> notifies = new();
+        if (Properties.Settings.Default.UseDataNotification)
+        {
+            timerDatabaseListen.Start();
+
+            listenerTask = CreateListener();
+        }
 #endif
+    }
 
-        public MainForm()
+    public event EventHandler<NotifyEventArgs>? OnAppNotify;
+
+    #region ITabPages implemented
+
+    TabPageAdv ITabPages.Selected { get => tabControlAdv1.SelectedTab; set => tabControlAdv1.SelectedTab = value; }
+
+    void ITabPages.Add(TabPageAdv page) => tabControlAdv1.TabPages.Add(page);
+
+    void ITabPages.Remove(TabPageAdv page) => tabControlAdv1.TabPages.Remove(page);
+
+    #endregion
+
+    public void SendNotify(string entityName, IDocumentInfo document, MessageAction action)
+    {
+        OnAppNotify?.Invoke(this, new NotifyEventArgs(entityName, document, action));
+    }
+
+    public void SendNotify(MessageDestination destination, string? entityName, Guid objectId, MessageAction action)
+    {
+        if (string.IsNullOrEmpty(entityName))
         {
-            InitializeComponent();
-
-            tabControlAdv1.TabPages.Clear();
-
-            CreateMenu();
-
-#if USE_LISTENER
-            if (Properties.Settings.Default.UseDataNotification)
-            {
-                timerDatabaseListen.Start();
-
-                listenerTask = CreateListener();
-            }
-#endif
+            return;
         }
 
-        public event EventHandler<NotifyEventArgs>? OnAppNotify;
-
-        #region ITabPages implemented
-
-        TabPageAdv ITabPages.Selected { get => tabControlAdv1.SelectedTab; set => tabControlAdv1.SelectedTab = value; }
-
-        void ITabPages.Add(TabPageAdv page) => tabControlAdv1.TabPages.Add(page);
-
-        void ITabPages.Remove(TabPageAdv page) => tabControlAdv1.TabPages.Remove(page);
-
-        #endregion
-
-        public void SendNotify(string entityName, IDocumentInfo document, MessageAction action)
+        NotifyEventArgs? args = null;
+        switch (destination)
         {
-            OnAppNotify?.Invoke(this, new NotifyEventArgs(entityName, document, action));
-        }
-
-        public void SendNotify(MessageDestination destination, string? entityName, Guid objectId, MessageAction action)
-        {
-            if (string.IsNullOrEmpty(entityName))
-            {
-                return;
-            }
-
-            NotifyEventArgs? args = null;
-            switch (destination)
-            {
-                case MessageDestination.Object:
-                    args = new(entityName, objectId, action);
-                    break;
-                case MessageDestination.List:
-                    if (objectId == Guid.Empty)
-                    {
-                        args = new(entityName);
-                    }
-                    else
-                    {
-                        args = new(entityName, objectId);
-                    }
-
-                    break;
-                default:
-                    break;
-            }
-
-            if (args != null)
-            {
-                OnAppNotify?.Invoke(this, args);
-            }
-        }
-
-        public static void ShowStartPage() => Services.Provider.GetService<IPageManager>()?.ShowStartPage();
-
-        private void CreateMenu()
-        {
-            Type browserType = typeof(IBrowser<>);
-
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.GetTypes())
-                .Where(p => p.IsInterface)
-                .Where(p => p.GetInterfaces().Any(i => i.IsGenericType && browserType == i.GetGenericTypeDefinition()));
-
-            Dictionary<MenuAttribute, Type> browsers = new();
-            foreach (var type in types)
-            {
-                var attr = type.GetCustomAttribute<MenuAttribute>();
-                if (attr != null)
+            case MessageDestination.Object:
+                args = new(entityName, objectId, action);
+                break;
+            case MessageDestination.List:
+                if (objectId == Guid.Empty)
                 {
-                    browsers.Add(attr, type);
+                    args = new(entityName);
                 }
-            }
-
-            Dictionary<string, TreeMenuItem> menus = new();
-            foreach (var item in browsers.Keys.OfType<MenuAttribute>().OrderBy(m => m.Order))
-            {
-                TreeMenuItem treeMenu = item.Destination switch
+                else
                 {
-                    MenuDestination.Directory => treeMenuDictionary,
-                    MenuDestination.Document => treeMenuDocument,
-                    _ => throw new NotImplementedException()
-                };
-
-                if (!string.IsNullOrEmpty(item.Path))
-                {
-                    if (menus.ContainsKey(item.Path))
-                    {
-                        treeMenu = menus[item.Path];
-                    }
-                    else
-                    {
-                        treeMenu = AddMenu(treeMenu, item.Path);
-                        menus.Add(item.Path, treeMenu);
-                    }
+                    args = new(entityName, objectId);
                 }
 
-                AddMenu(treeMenu, item.Name, browsers[item]);
+                break;
+            default:
+                break;
+        }
+
+        if (args != null)
+        {
+            OnAppNotify?.Invoke(this, args);
+        }
+    }
+
+    public static void ShowStartPage() => Services.Provider.GetService<IPageManager>()?.ShowStartPage();
+
+    private void CreateMenu()
+    {
+        Type browserType = typeof(IBrowser<>);
+
+        var types = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(assembly => assembly.GetTypes())
+            .Where(p => p.IsInterface)
+            .Where(p => p.GetInterfaces().Any(i => i.IsGenericType && browserType == i.GetGenericTypeDefinition()));
+
+        Dictionary<MenuAttribute, Type> browsers = new();
+        foreach (var type in types)
+        {
+            var attr = type.GetCustomAttribute<MenuAttribute>();
+            if (attr != null)
+            {
+                browsers.Add(attr, type);
             }
         }
 
-#if USE_LISTENER
-        private void Listener()
+        Dictionary<string, TreeMenuItem> menus = new();
+        foreach (var item in browsers.Keys.OfType<MenuAttribute>().OrderBy(m => m.Order))
         {
-
-            using var conn = new NpgsqlConnection(Database.ConnectionString);
-            conn.Open();
-            conn.Notification += (o, e) =>
+            TreeMenuItem treeMenu = item.Destination switch
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters =
-                        {
-                                new JsonStringEnumConverter()
-                        }
-                };
-                NotifyMessage? message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload, options);
-                if (message != null)
-                {
-                    notifies.Enqueue(message);
-                }
+                MenuDestination.Directory => treeMenuDictionary,
+                MenuDestination.Document => treeMenuDocument,
+                _ => throw new NotImplementedException()
             };
 
-            using (var cmd = new NpgsqlCommand("LISTEN db_notification", conn))
+            if (!string.IsNullOrEmpty(item.Path))
             {
-                cmd.ExecuteNonQuery();
+                if (menus.ContainsKey(item.Path))
+                {
+                    treeMenu = menus[item.Path];
+                }
+                else
+                {
+                    treeMenu = AddMenu(treeMenu, item.Path);
+                    menus.Add(item.Path, treeMenu);
+                }
             }
 
-            while (true)
-            {
-                conn.Wait();
-            }
+            AddMenu(treeMenu, item.Name, browsers[item]);
         }
-
-        private async Task CreateListener()
-        {
-            try
-            {
-                await Task.Run(() => Listener());
-            }
-            catch (Exception)
-            {
-            }
-        }
-#endif
-
-        private TreeMenuItem AddMenu(TreeMenuItem parent, string text, Type? browserType = null)
-        {
-            TreeMenuItem item = new()
-            {
-                Text = text,
-                Tag = browserType,
-                BackColor = parent.BackColor,
-                ForeColor = parent.ForeColor,
-                ItemBackColor = parent.ItemBackColor,
-                ItemHoverColor = parent.ItemHoverColor,
-                SelectedColor = parent.SelectedColor,
-                SelectedItemForeColor = parent.SelectedItemForeColor
-            };
-
-            if (browserType != null)
-            {
-                item.Click += AddonItem_Click;
-            }
-
-            parent.Items.Add(item);
-
-            return item;
-        }
-
-        private void AddonItem_Click(object? sender, EventArgs e)
-        {
-            var pages = Services.Provider.GetService<IPageManager>();
-            if (sender is TreeMenuItem menu && menu.Tag is Type type && pages != null)
-            {
-                pages.ShowBrowser(type);
-            }
-        }
-
-        private void TreeMenuLogout_Click(object sender, EventArgs e)
-        {
-            CurrentApplicationContext.Context.ShowLoginForm();
-        }
-
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            var settings = Properties.Settings.Default;
-
-            settings.WindowState = WindowState;
-            settings.Location = Location;
-            settings.Size = Size;
-            settings.PanelMenuWidth = splitContainer1.SplitterDistance;
-            settings.Save();
-
-            Services.Provider.GetService<IPageManager>()?.OnPageClosing();
+    }
 
 #if USE_LISTENER
-            if (settings.UseDataNotification)
+    private void Listener()
+    {
+
+        using var conn = new NpgsqlConnection(Database.ConnectionString);
+        conn.Open();
+        conn.Notification += (o, e) =>
+        {
+            var options = new JsonSerializerOptions
             {
-                timerDatabaseListen.Stop();
-                timerCheckListener.Stop();
+                PropertyNameCaseInsensitive = true,
+                Converters =
+                    {
+                        new JsonStringEnumConverter()
+                    }
+            };
+            NotifyMessage? message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload, options);
+            if (message != null)
+            {
+                notifies.Enqueue(message);
             }
-#endif
+        };
+
+        using (var cmd = new NpgsqlCommand("LISTEN db_notification", conn))
+        {
+            cmd.ExecuteNonQuery();
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        while (true)
         {
-            var settings = Properties.Settings.Default;
+            conn.Wait();
+        }
+    }
 
-            if (settings.Size.Width == 0 || settings.Size.Height == 0)
-                settings.Upgrade();
+    private async Task CreateListener()
+    {
+        try
+        {
+            await Task.Run(() => Listener());
+        }
+        catch (Exception)
+        {
+        }
+    }
+#endif
 
-            if (settings.Size.Width == 0 || settings.Size.Height == 0)
+    private TreeMenuItem AddMenu(TreeMenuItem parent, string text, Type? browserType = null)
+    {
+        TreeMenuItem item = new()
+        {
+            Text = text,
+            Tag = browserType,
+            BackColor = parent.BackColor,
+            ForeColor = parent.ForeColor,
+            ItemBackColor = parent.ItemBackColor,
+            ItemHoverColor = parent.ItemHoverColor,
+            SelectedColor = parent.SelectedColor,
+            SelectedItemForeColor = parent.SelectedItemForeColor
+        };
+
+        if (browserType != null)
+        {
+            item.Click += AddonItem_Click;
+        }
+
+        parent.Items.Add(item);
+
+        return item;
+    }
+
+    private void AddonItem_Click(object? sender, EventArgs e)
+    {
+        var pages = Services.Provider.GetService<IPageManager>();
+        if (sender is TreeMenuItem menu && menu.Tag is Type type && pages != null)
+        {
+            pages.ShowBrowser(type);
+        }
+    }
+
+    private void TreeMenuLogout_Click(object sender, EventArgs e)
+    {
+        CurrentApplicationContext.Context.ShowLoginForm();
+    }
+
+    private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        var settings = Properties.Settings.Default;
+
+        settings.WindowState = WindowState;
+        settings.Location = Location;
+        settings.Size = Size;
+        settings.PanelMenuWidth = splitContainer1.SplitterDistance;
+        settings.Save();
+
+        Services.Provider.GetService<IPageManager>()?.OnPageClosing();
+
+#if USE_LISTENER
+        if (settings.UseDataNotification)
+        {
+            timerDatabaseListen.Stop();
+            timerCheckListener.Stop();
+        }
+#endif
+    }
+
+    private void MainForm_Load(object sender, EventArgs e)
+    {
+        var settings = Properties.Settings.Default;
+
+        if (settings.Size.Width == 0 || settings.Size.Height == 0)
+            settings.Upgrade();
+
+        if (settings.Size.Width == 0 || settings.Size.Height == 0)
+        {
+            StartPosition = FormStartPosition.WindowsDefaultLocation;
+            WindowState = FormWindowState.Normal;
+        }
+        else
+        {
+            WindowState = settings.WindowState;
+            if (settings.WindowState == FormWindowState.Minimized)
             {
-                StartPosition = FormStartPosition.WindowsDefaultLocation;
                 WindowState = FormWindowState.Normal;
             }
-            else
+
+            if (settings.WindowState == FormWindowState.Normal)
             {
-                WindowState = settings.WindowState;
-                if (settings.WindowState == FormWindowState.Minimized)
-                {
-                    WindowState = FormWindowState.Normal;
-                }
-
-                if (settings.WindowState == FormWindowState.Normal)
-                {
-                    Location = settings.Location;
-                    Size = settings.Size;
-                }
+                Location = settings.Location;
+                Size = settings.Size;
             }
+        }
 
-            splitContainer1.SplitterDistance = settings.PanelMenuWidth;
+        splitContainer1.SplitterDistance = settings.PanelMenuWidth;
 
-            Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{Database.ConnectionName}>";
+        Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{Database.ConnectionName}>";
 
 #if USE_LISTENER
-            if (settings.UseDataNotification)
-            {
-                timerCheckListener.Start();
-                timerDatabaseListen.Start();
-            }
-#endif
-        }
-
-        private void TimerDatabaseListen_Tick(object sender, EventArgs e)
+        if (settings.UseDataNotification)
         {
+            timerCheckListener.Start();
+            timerDatabaseListen.Start();
+        }
+#endif
+    }
+
+    private void TimerDatabaseListen_Tick(object sender, EventArgs e)
+    {
 #if USE_LISTENER
-            if (Properties.Settings.Default.UseDataNotification && notifies.TryDequeue(out NotifyMessage? message))
-            {
-                SendNotify(message.Destination, message.EntityName, message.ObjectId, message.Action);
-            }
-#endif
-        }
-
-        private void TimerCheckListener_Tick(object sender, EventArgs e)
+        if (Properties.Settings.Default.UseDataNotification && notifies.TryDequeue(out NotifyMessage? message))
         {
+            SendNotify(message.Destination, message.EntityName, message.ObjectId, message.Action);
+        }
+#endif
+    }
+
+    private void TimerCheckListener_Tick(object sender, EventArgs e)
+    {
 #if USE_LISTENER
-            if (listenerTask != null && listenerTask.Status != TaskStatus.WaitingForActivation)
-            {
-                listenerTask = CreateListener();
-            }
+        if (listenerTask != null && listenerTask.Status != TaskStatus.WaitingForActivation)
+        {
+            listenerTask = CreateListener();
+        }
 #endif
-        }
+    }
 
-        private void TabControlAdv1_SelectedIndexChanging(object sender, SelectedIndexChangingEventArgs args)
+    private void TabControlAdv1_SelectedIndexChanging(object sender, SelectedIndexChangingEventArgs args)
+    {
+        if (args.NewSelectedIndex != -1)
         {
-            if (args.NewSelectedIndex != -1)
+            Services.Provider.GetService<IPageManager>()?.AddToHistory(tabControlAdv1.TabPages[args.NewSelectedIndex]);
+        }
+    }
+
+    private void MainForm_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.F5 && tabControlAdv1.SelectedTab != null)
+        {
+            var manager = Services.Provider.GetService<IPageManager>();
+            if (manager != null)
             {
-                Services.Provider.GetService<IPageManager>()?.AddToHistory(tabControlAdv1.TabPages[args.NewSelectedIndex]);
+                var page = manager.Get(tabControlAdv1.SelectedTab);
+                page?.RefreshPage();
             }
         }
+    }
 
-        private void MainForm_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.F5 && tabControlAdv1.SelectedTab != null)
-            {
-                var manager = Services.Provider.GetService<IPageManager>();
-                if (manager != null)
-                {
-                    var page = manager.Get(tabControlAdv1.SelectedTab);
-                    page?.RefreshPage();
-                }
-            }
-        }
+    private void TreeMenuAbout_Click(object sender, EventArgs e)
+    {
+        AboutForm.ShowWindow();
     }
 }

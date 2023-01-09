@@ -35,6 +35,7 @@
             this.treeMenuDictionary = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
             this.treeMenuReport = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
             this.treeMenuSystem = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
+            this.treeMenuAbout = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
             this.treeMenuLogout = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControlAdv1 = new Syncfusion.Windows.Forms.Tools.TabControlAdv();
@@ -64,6 +65,7 @@
             this.treeNavigator1.Items.Add(this.treeMenuDictionary);
             this.treeNavigator1.Items.Add(this.treeMenuReport);
             this.treeNavigator1.Items.Add(this.treeMenuSystem);
+            this.treeNavigator1.Items.Add(this.treeMenuAbout);
             this.treeNavigator1.Items.Add(this.treeMenuLogout);
             this.treeNavigator1.Location = new System.Drawing.Point(0, 0);
             this.treeNavigator1.MinimumSize = new System.Drawing.Size(150, 150);
@@ -129,7 +131,22 @@
             this.treeMenuSystem.SelectedItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
             this.treeMenuSystem.Size = new System.Drawing.Size(196, 50);
             this.treeMenuSystem.TabIndex = 0;
-            this.treeMenuSystem.Text = "Система";
+            this.treeMenuSystem.Text = "О программе";
+            // 
+            // treeMenuAbout
+            // 
+            this.treeMenuAbout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.treeMenuAbout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.treeMenuAbout.ItemBackColor = System.Drawing.SystemColors.Control;
+            this.treeMenuAbout.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(242)))), ((int)(((byte)(250)))));
+            this.treeMenuAbout.Location = new System.Drawing.Point(0, 208);
+            this.treeMenuAbout.Name = "treeMenuAbout";
+            this.treeMenuAbout.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
+            this.treeMenuAbout.SelectedItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.treeMenuAbout.Size = new System.Drawing.Size(196, 50);
+            this.treeMenuAbout.TabIndex = 0;
+            this.treeMenuAbout.Text = "О программе";
+            this.treeMenuAbout.Click += new System.EventHandler(this.TreeMenuAbout_Click);
             // 
             // treeMenuLogout
             // 
@@ -137,7 +154,7 @@
             this.treeMenuLogout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
             this.treeMenuLogout.ItemBackColor = System.Drawing.SystemColors.Control;
             this.treeMenuLogout.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(242)))), ((int)(((byte)(250)))));
-            this.treeMenuLogout.Location = new System.Drawing.Point(0, 208);
+            this.treeMenuLogout.Location = new System.Drawing.Point(0, 260);
             this.treeMenuLogout.Name = "treeMenuLogout";
             this.treeMenuLogout.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
             this.treeMenuLogout.SelectedItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
@@ -239,6 +256,7 @@
         private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuDictionary;
         private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuReport;
         private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuSystem;
+        private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuAbout;
         private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuLogout;
         private System.Windows.Forms.Timer timerDatabaseListen;
         private System.Windows.Forms.Timer timerCheckListener;
