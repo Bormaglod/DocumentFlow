@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.01.2022
@@ -31,6 +31,10 @@
 //  - добавлен запрос на запись документа перед заполнением табличной
 //    части
 //  - добавлена возможность открыть окно с заявкой
+// Версия 2023.1.15
+//  - удалены ссылки на WaybillProcessing, т.к. WaybillProcessingEditor
+//    больше не наследуется от WaybillEditor
+//  - таблица теперь корректно размещается в окне
 //
 //-----------------------------------------------------------------------
 
@@ -40,8 +44,6 @@ using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Companies;
-using DocumentFlow.Entities.Productions.Order;
-using DocumentFlow.Entities.Productions.Processing;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Entities.Products.Core;
 using DocumentFlow.Entities.Products.Dialogs;
@@ -91,26 +93,6 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
                 RefreshMethod = DataRefreshMethod.OnOpen,
                 OpenAction = (t) => pageManager.ShowEditor<IPurchaseRequestEditor, PurchaseRequest>(t)
             };
-        }
-
-        DfDocumentSelectBox<ProductionOrder>? order = null;
-        if (typeof(T) == typeof(WaybillProcessing))
-        {
-            order = new DfDocumentSelectBox<ProductionOrder>("owner_id", "Заказ", 120, 400)
-            {
-                OpenAction = (t) => pageManager.ShowEditor<IProductionOrderEditor, ProductionOrder>(t)
-            };
-
-            order.SetDataSource(() =>
-            {
-                var repo = Services.Provider.GetService<IProductionOrderRepository>();
-                return repo!.GetAllDefault(callback: q => q
-                    .WhereFalse("production_order.deleted")
-                    .WhereTrue("carried_out")
-                    .WhereFalse("closed"));
-            });
-
-            order.Columns += (sender, e) => ProductionOrder.CreateGridColumns(e.Columns);
         }
 
         waybill_number = new DfTextBox("waybill_number", "Накладная №", 110, 120) { Dock = DockStyle.Left, Width = 235 };
@@ -283,11 +265,6 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
             controls.Add(purchase);
         }
 
-        if (order != null)
-        {
-            controls.Add(order);
-        }
-
         controls.AddRange(new Control[]
         {
             details,
@@ -295,6 +272,8 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
         });
 
         AddControls(controls);
+
+        details.BringToFront();
     }
 
     protected abstract IOwnedRepository<long, P> GetDetailsRepository();

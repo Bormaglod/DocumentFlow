@@ -11,6 +11,8 @@
 // Версия 2023.1.8
 //  - добавлен метод Configure и WriteConfigure (реализация метода
 //    интерфейса IBalanceContractorFilter
+// Версия 2023.1.15
+//  - DocumentFilterData переименован в DocumentFilterSettings
 //
 //-----------------------------------------------------------------------
 
@@ -71,7 +73,7 @@ namespace DocumentFlow.Controls
 
         public void Configure(IAppSettings appSettings)
         {
-            var data = appSettings.Get<DocumentFilterData>("filter");
+            var data = appSettings.Get<DocumentFilterSettings>("filter");
             
             DateFromEnabled = data.DateFromEnabled;
             DateToEnabled = data.DateToEnabled;
@@ -81,7 +83,7 @@ namespace DocumentFlow.Controls
 
         public void WriteConfigure(IAppSettings appSettings)
         {
-            DocumentFilterData data = new()
+            DocumentFilterSettings data = new()
             {
                 DateFromEnabled = DateFromEnabled,
                 DateToEnabled = DateToEnabled,
@@ -128,9 +130,6 @@ namespace DocumentFlow.Controls
             return null;
         }
 
-        private void ButtonClearOrg_Click(object sender, EventArgs e)
-        {
-            comboOrg.SelectedIndex = -1;
-        }
+        private void ButtonClearOrg_Click(object sender, EventArgs e) => comboOrg.SelectedIndex = -1;
     }
 }

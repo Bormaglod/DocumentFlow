@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.07.2022
+//
+// Версия 2023.1.15
+//  - добавлен атрибут ProductExcludingPrice
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Entities.Products;
@@ -13,8 +17,12 @@ using System.ComponentModel.DataAnnotations;
 namespace DocumentFlow.Entities.Productions.Processing;
 
 [ProductContent(ProductContent.Materials)]
+[ProductExcludingPrice]
 public class WaybillProcessingPrice : ProductPrice
 {
     [Display(AutoGenerateField = false)]
     public decimal written_off { get; set; }
+
+    [Display(Name = "Остаток", Order = 900)]
+    public decimal remainder => amount - written_off;
 }

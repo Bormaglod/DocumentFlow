@@ -7,9 +7,12 @@
 // Версия 2022.12.3
 //  - в функции AsSummary заменён параметр includeDeleted имеющий значение
 //    true на options равный SelectOptions.All
+// Версия 2023.1.15
+//  - изменён критерий отбора заказов
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
@@ -41,20 +44,16 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
 
         var order = new DfDocumentSelectBox<ProductionOrder>("owner_id", "Заказ", 80, 400)
         {
+            RefreshMethod = DataRefreshMethod.OnOpen,
             OpenAction = (t) => pageManager.ShowEditor<IProductionOrderEditor, ProductionOrder>(t)
         };
 
         order.SetDataSource(() =>
         {
             var repo = Services.Provider.GetService<IProductionOrderRepository>();
-            if (repo != null && contractor.SelectedItem != null && contract.SelectedItem != null)
+            if (repo != null && contract.SelectedItem != null)
             {
-                return repo!.GetAllDefault(callback: q => q
-                    .WhereFalse("production_order.deleted")
-                    .WhereTrue("carried_out")
-                    .WhereFalse("closed")
-                    .Where("production_order.contractor_id", contractor.SelectedItem.id)
-                    .Where("production_order.contract_id", contract.SelectedItem.id));
+                return repo.GetWithReturnMaterial(contract.SelectedItem);
             }
 
             return null;
@@ -100,7 +99,7 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
             var repo = Services.Provider.GetService<IContractorRepository>();
             if (repo != null)
             {
-                return repo.GetCustomers();
+                return repo.GetSuppliers();
             }
 
             return null;
@@ -113,7 +112,7 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
                 var repo = Services.Provider.GetService<IContractRepository>();
                 if (repo != null)
                 {
-                    return repo.GetCustomers(contractor.SelectedItem.id);
+                    return repo.GetSuppliers(contractor.SelectedItem.id);
                 }
             }
 

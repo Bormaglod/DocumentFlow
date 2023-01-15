@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.11.2021
@@ -22,6 +22,8 @@
 //  - параметр autoRefresh метода SetDataSource в классе
 //    DataSourceControl был удален. Вместо него используется свойство
 //    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+// Версия 2023.1.15
+//  - добавлена обработка атрибута ProductExcludingPriceAttribute
 //
 //-----------------------------------------------------------------------
 
@@ -54,6 +56,7 @@ public partial class FormProductPrice<P> : Form
     private readonly DfCurrencyTextBox full_cost;
 
     private readonly Contract? contract;
+    private readonly bool excludePrice;
 
     protected FormProductPrice(Contract? contract, bool calculationSelect)
     {
@@ -66,6 +69,8 @@ public partial class FormProductPrice<P> : Form
         {
             throw new ArgumentNullException(nameof(attr));
         }
+
+        excludePrice = typeof(P).GetCustomAttribute<ProductExcludingPriceAttribute>() != null;
 
         var productHeader = attr.Content switch
         {
@@ -89,11 +94,11 @@ public partial class FormProductPrice<P> : Form
         };
 
         amount = new("amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3, TabIndex = 3 };
-        price = new("price", "Цена", 120) { DefaultAsNull = false, TabIndex = 4 };
-        cost = new("product_cost", "Сумма", 120) { DefaultAsNull = false, TabIndex = 5 };
-        tax = new("tax", "НДС%", 120) { TabIndex = 6 };
-        tax_value = new("tax_value", "НДС", 120) { DefaultAsNull = false, TabIndex = 7 };
-        full_cost = new("full_cost", "Всего с НДС", 120) { DefaultAsNull = false, TabIndex = 8 };
+        price = new("price", "Цена", 120) { DefaultAsNull = false, TabIndex = 4, Visible = !excludePrice };
+        cost = new("product_cost", "Сумма", 120) { DefaultAsNull = false, TabIndex = 5, Visible = !excludePrice };
+        tax = new("tax", "НДС%", 120) { TabIndex = 6, Visible = !excludePrice };
+        tax_value = new("tax_value", "НДС", 120) { DefaultAsNull = false, TabIndex = 7, Visible = !excludePrice };
+        full_cost = new("full_cost", "Всего с НДС", 120) { DefaultAsNull = false, TabIndex = 8, Visible = !excludePrice };
 
         var controls = new List<Control>() 
         { 
@@ -169,6 +174,11 @@ public partial class FormProductPrice<P> : Form
 
         product.ValueChanged += (sender, arg) =>
         {
+            if (excludePrice)
+            {
+                return;
+            }
+
             decimal avgPrice = 0;
 
             if (product.SelectedItem is Material material)
@@ -200,10 +210,7 @@ public partial class FormProductPrice<P> : Form
 
             price.Value = avgPrice == 0 ? (product.SelectedItem?.price ?? 0) : avgPrice;
 
-            if (calc != null)
-            {
-                calc.RefreshDataSource();
-            }
+            calc?.RefreshDataSource();
         };
 
         amount.ValueChanged += (sender, arg) => cost.Value = price.NumericValue * amount.NumericValue;
@@ -214,7 +221,16 @@ public partial class FormProductPrice<P> : Form
 
         Controls.AddRange(controls.ToArray());
 
-        Height = calculationSelect ? 362 : 330;
+        Height = 362;
+        if (!calculationSelect)
+        {
+            Height -= 32;
+        }
+
+        if (excludePrice) 
+        {
+            Height -= 160;
+        }
     }
 
     public static DialogResult Create(P productPrice, Contract? contract, bool calculationSelect = false)

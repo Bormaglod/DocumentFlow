@@ -3,13 +3,17 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.01.2023
+//
+// Версия 2023.1.15
+//  - переименован в DocumentFilterSettings
+//
 //-----------------------------------------------------------------------
 
 using System.Text.Json.Serialization;
 
 namespace DocumentFlow.Controls.Core;
 
-public class DocumentFilterData
+public class DocumentFilterSettings
 {
     [JsonPropertyName("date_from_enabled")]
     public bool DateFromEnabled { get; set; } = false;

@@ -8,6 +8,9 @@
 //  - удалён метод AddNode
 //  - добавлено использование методов из JsonExtension
 //  - метод GetJson перемещен в JsonHelper и переименован в GetJsonText
+// Версия 2023.1.15
+//  - исправление незначительных ошибок
+//  - функция JsonHelper.GetJsonText возвращает только string
 //
 //-----------------------------------------------------------------------
 
@@ -61,14 +64,8 @@ public abstract class BaseSettings
             
             if (jsonObj != null)
             {
-                var t_json = JsonHelper.GetJsonText(section);
-                var jsonNode = JsonNode.Parse(t_json.JsonText);
-                if (jsonNode != null) 
-                {
-                    jsonObj.Add(key, section);
-                }
-
-                WriteJson(jsonObj.ToJsonString(t_json.Options));
+                jsonObj.Add(key, section);
+                WriteJson(jsonObj.ToJsonString(JsonHelper.StandardOptions()));
             }
         }
     }

@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 06.01.2022
+//
+// Версия 2023.1.15
+//  - функция JsonHelper.GetJsonText возвращает только string
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Core;
@@ -56,8 +60,7 @@ public class StandaloneSettings : BaseSettings, IStandaloneSettings
                 throw new InvalidOperationException();
             }
 
-            var t_json = JsonHelper.GetJsonText(t_settings);
-            WriteJson(t_json.JsonText);
+            WriteJson(JsonHelper.GetJsonText(t_settings));
         }
     }
 }

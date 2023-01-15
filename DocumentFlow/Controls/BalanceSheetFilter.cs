@@ -13,6 +13,8 @@
 //    интерфейса IBalanceContractorFilter
 // Версия 2023.1.9
 //  - изменился способ адресации пути в json
+// Версия 2023.1.15
+//  - BalanceSheetFilterData переименован в BalanceSheetFilterSettings
 //
 //-----------------------------------------------------------------------
 
@@ -114,8 +116,8 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
 
     public void Configure(IAppSettings appSettings)
     {
-        var data = appSettings.Get<BalanceSheetFilterData>("#/balance_sheet/filter");
-
+        var data = appSettings.Get<BalanceSheetFilterSettings>("#/balance_sheet/filter");
+        
         DateFromEnabled = data.DateFromEnabled;
         DateToEnabled = data.DateToEnabled;
         DateFrom = data.DateFrom;
@@ -127,7 +129,7 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
 
     public void WriteConfigure(IAppSettings appSettings)
     {
-        BalanceSheetFilterData data = new()
+        BalanceSheetFilterSettings data = new()
         {
             DateFromEnabled = DateFromEnabled,
             DateToEnabled = DateToEnabled,

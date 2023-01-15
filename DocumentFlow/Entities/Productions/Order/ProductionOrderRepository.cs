@@ -7,16 +7,19 @@
 // Версия 2022.9.2
 //  - доработан метод GetDefaultQuery - если поле item_name таблицы
 //    conttactor содержит null, то будет возвращено значение поля code
+// Версия 2023.1.15
+//  - добавлен метод GetWithReturnMaterial
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
-
+using DocumentFlow.Entities.Companies;
 using Microsoft.Extensions.DependencyInjection;
 
 using SqlKata;
+using SqlKata.Execution;
 
 namespace DocumentFlow.Entities.Productions.Order;
 
@@ -31,6 +34,45 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
     {
         var repo = Services.Provider.GetService<IProductionOrderPriceRepository>();
         return repo!.GetByOwner(order.id);
+    }
+
+    public IReadOnlyList<ProductionOrder> GetWithReturnMaterial(Contract contract)
+    {
+        using var conn = Database.OpenConnection();
+
+        var d = new Query("production_order_price")
+            .Select("owner_id")
+            .SelectRaw("sum(product_cost) as product_cost")
+            .SelectRaw("sum(tax_value) as tax_value")
+            .SelectRaw("sum(full_cost) as full_cost")
+            .GroupBy("owner_id");
+
+        var wpp = new Query("waybill_processing_price")
+            .Select("owner_id")
+            .SelectRaw("sum(amount - written_off) as remainder")
+            .GroupBy("owner_id");
+
+        var wp = new Query("waybill_processing")
+            .SelectRaw("distinct on (owner_id) id, owner_id, contractor_id, contract_id");
+
+        return GetBaseQuery(conn, "po")
+            .Select("po.*")
+            .Select("c.item_name as contractor_name")
+            .Select("wpp.remainder")
+            .Select("d.*")
+            .Select("wp.contractor_id as wp_contractor_id")
+            .Select("wp.contract_id as wp_contract_id")
+            .Join(wp.As("wp"), j => j.On("wp.owner_id", "po.id"))
+            .Join(wpp.As("wpp"), j => j.On("wpp.owner_id", "wp.id"))
+            .LeftJoin(d.As("d"), j => j.On("d.owner_id", "po.id"))
+            .Join("contractor as c", "c.id", "po.contractor_id")
+            .WhereFalse("po.deleted")
+            .WhereTrue("po.carried_out")
+            .Where("wpp.remainder", ">", 0)
+            .Where("wp.contractor_id", contract.owner_id)
+            .Where("wp.contract_id", contract.id)
+            .Get<ProductionOrder>()
+            .ToList();
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)

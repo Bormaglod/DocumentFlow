@@ -10,6 +10,10 @@
 // Версия 2022.11.26
 //  - в методе RefreshData вызов RefreshDataSource заменён на
 //    RefreshDataSourceOnLoad
+// Версия 2023.1.15
+//  - исправлен вызов DocumentRefEditorForm.Create, теперь он возвращает
+//    в случае успеха true, а остальные параметры передаются через out
+//  - рефакторинг
 //
 //-----------------------------------------------------------------------
 
@@ -368,10 +372,7 @@ public partial class Editor<T> : UserControl, IEditorPage
         foreach (var item in controls.OfType<IBindingControl>().Where(x => x.AllowSaving))
         {
             PropertyInfo? prop = typeof(T).GetProperty(item.PropertyName);
-            if (prop != null)
-            {
-                prop.SetValue(doc, item.Value);
-            }
+            prop?.SetValue(doc, item.Value);
         }
     }
 
@@ -505,10 +506,7 @@ public partial class Editor<T> : UserControl, IEditorPage
             if (DocumentRefEditorForm.Edit(refs))
             {
                 var repo = Services.Provider.GetService<IDocumentRefsRepository>();
-                if (repo != null)
-                {
-                    repo.Update(refs);
-                }
+                repo?.Update(refs);
 
                 gridDocuments.Refresh();
             }
@@ -517,11 +515,7 @@ public partial class Editor<T> : UserControl, IEditorPage
 
     private void OpenReport(IReport report)
     {
-        T? doc = document;
-        if (doc == null)
-        {
-            doc = CreateDocument();
-        }
+        T doc = document ?? CreateDocument();
 
         UpdateDocument(doc);
 
@@ -605,13 +599,12 @@ public partial class Editor<T> : UserControl, IEditorPage
             return;
         }
 
-        var refs = DocumentRefEditorForm.Create(document.id);
-        if (refs.Document != null)
+        if (DocumentRefEditorForm.Create(document.id, out var refs, out var _))
         {
             var repo = Services.Provider.GetService<IDocumentRefsRepository>();
             if (repo != null)
             {
-                var res = repo!.Add(refs.Document);
+                var res = repo!.Add(refs!);
 
                 if (gridDocuments.DataSource is IList<DocumentRefs> list)
                 {

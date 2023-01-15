@@ -8,36 +8,56 @@
 //  - изменен метод GetColumnsAfter
 // Версия 2023.1.8
 //  - в конструктор добавлен параметр settings
+// Версия 2023.1.15
+//  - изменено наследование с WaybillBrowser на Browser
+//  - удалены колонки с ценой
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Infrastructure;
-using DocumentFlow.Entities.Waybills;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
+using Syncfusion.WinForms.DataGrid.Enums;
+
+using System.ComponentModel;
 
 namespace DocumentFlow.Entities.Productions.Processing;
 
-public class WaybillProcessingBrowser : WaybillBrowser<WaybillProcessing>, IWaybillProcessingBrowser
+public class WaybillProcessingBrowser : Browser<WaybillProcessing>, IWaybillProcessingBrowser
 {
     public WaybillProcessingBrowser(IWaybillProcessingRepository repository, IPageManager pageManager, IDocumentFilter filter, IStandaloneSettings settings)
         : base(repository, pageManager, filter: filter, settings: settings)
     {
-        CreateStackedColumns("Заказ", new string[] { "order_date", "order_number" });
-    }
+        AllowGrouping();
 
-    protected override GridColumn[] GetColumnsAfter(string MappingName)
-    {
-        if (MappingName == "invoice_number")
+        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        var waybill_date = CreateDateTime(x => x.waybill_date, "Дата", width: 150, format: "dd.MM.yyyy", visible: false);
+        var waybill_number = CreateNumeric(x => x.waybill_number, "Номер", width: 100, visible: false);
+        var invoice_date = CreateDateTime(x => x.invoice_date, "Дата", width: 150, format: "dd.MM.yyyy");
+        var invoice_number = CreateNumeric(x => x.invoice_number, "Номер", width: 100);
+        var order_date = CreateDateTime(x => x.order_date, "Дата", width: 150);
+        var order_number = CreateNumeric(x => x.order_number, "Номер", width: 100);
+        var contractor = CreateText(x => x.contractor_name, "Контрагент");
+        var contract = CreateText(x => x.contract_name, "Договор", width: 200, visible: false);
+
+        contractor.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
+
+        AddColumns(new GridColumn[] { id, date, number, waybill_date, waybill_number, invoice_date, invoice_number, order_date, order_number, contractor, contract });
+        AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
-            var order_date = CreateDateTime(x => x.order_date, "Дата", width: 150);
-            var order_number = CreateNumeric(x => x.order_number, "Номер", width: 100);
-            return new GridColumn[] { order_date, order_number };
-        }
-        
-        return base.GetColumnsAfter(MappingName);
+            [date] = ListSortDirection.Ascending,
+            [number] = ListSortDirection.Ascending
+        });
+
+        CreateStackedColumns("Счёт-фактура", new GridColumn[] { invoice_date, invoice_number });
+        CreateStackedColumns("Заказ", new string[] { "order_date", "order_number" });
+
+        MoveToEnd();
     }
 
     protected override string HeaderText => "Поступление в переработку";

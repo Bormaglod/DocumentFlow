@@ -202,6 +202,12 @@
     <Compile Update="Entities\Productions\Performed\OperationsPerformedNestedEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Entities\Productions\Processing\WaybillProcessingBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Productions\Processing\WaybillProcessingEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Entities\PurchaseRequest\PurchaseRequestBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -463,12 +469,6 @@
     <Compile Update="Entities\Productions\Performed\OperationsPerformedNestedBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Productions\Processing\WaybillProcessingBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Processing\WaybillProcessingEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Entities\Productions\Returns\ReturnMaterialsBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -522,6 +522,9 @@
     </Compile>
     <Compile Update="MainForm.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Settings\Page\MarginsPanel.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="SplashForm.cs">
       <SubType>Form</SubType>

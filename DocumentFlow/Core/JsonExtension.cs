@@ -3,17 +3,15 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 09.01.2023
+//
+// Версия 2023.1.15
+//  - функция JsonHelper.GetJsonText возвращает только string
+//
 //-----------------------------------------------------------------------
-
-using iText.StyledXmlParser.Jsoup.Nodes;
-using iText.StyledXmlParser.Node.Impl.Jsoup.Node;
 
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using System.Windows.Forms;
-
-using Windows.Media.Protection.PlayReady;
 
 namespace DocumentFlow.Core;
 
@@ -86,7 +84,7 @@ public static class JsonExtension
     public static void Add<T>(this JsonObject jsonObj, string path, T value)
     {
         var json = JsonHelper.GetJsonText(value);
-        var jsonNode = JsonNode.Parse(json.JsonText);
+        var jsonNode = JsonNode.Parse(json);
         if (jsonNode == null)
         {
             return;
