@@ -13,6 +13,8 @@
 //    интерфейса IBalanceContractorFilter
 // Версия 2023.1.15
 //  - DocumentFilterData переименован в DocumentFilterSettings
+// Версия 2023.1.17
+//  - namespace заменен с DocumentFlow.Controls на DocumentFlow.Controls.Filters
 //
 //-----------------------------------------------------------------------
 
@@ -27,7 +29,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using SqlKata;
 
-namespace DocumentFlow.Controls
+namespace DocumentFlow.Controls.Filters
 {
 
     public partial class DocumentFilter : UserControl, IDocumentFilter

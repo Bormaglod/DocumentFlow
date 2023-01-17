@@ -15,6 +15,8 @@
 //  - изменился способ адресации пути в json
 // Версия 2023.1.15
 //  - BalanceSheetFilterData переименован в BalanceSheetFilterSettings
+// Версия 2023.1.17
+//  - namespace заменен с DocumentFlow.Controls на DocumentFlow.Controls.Filters
 //
 //-----------------------------------------------------------------------
 
@@ -24,7 +26,7 @@ using DocumentFlow.Settings.Infrastructure;
 
 using SqlKata;
 
-namespace DocumentFlow.Controls;
+namespace DocumentFlow.Controls.Filters;
 
 public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
 {

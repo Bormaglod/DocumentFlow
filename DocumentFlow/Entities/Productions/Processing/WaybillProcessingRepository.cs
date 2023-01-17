@@ -3,6 +3,13 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.07.2022
+//
+// Версия 2023.1.17
+//  - изменён запрос в GetReturnMaterials в связи с удалением
+//    поля written_off из waybill_processing_price и добавлением
+//    таблицы waybill_processing_writeoff, которая теперь хранит
+//    записи о списании давальческого материала
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -25,13 +32,23 @@ public class WaybillProcessingRepository : DocumentRepository<WaybillProcessing>
     public IReadOnlyList<ReturnMaterialsRows> GetReturnMaterials(ProductionOrder order)
     {
         using var conn = Database.OpenConnection();
+
+        var wpw = new Query("waybill_processing_writeoff")
+            .Select("waybill_processing_id")
+            .Select("material_id")
+            .SelectRaw("sum(amount) as written_off")
+            .GroupBy("waybill_processing_id", "material_id");
+
         return GetBaseQuery(conn, "wp")
             .Select("wpp.reference_id as material_id")
             .Select("m.item_name as material_name")
-            .SelectRaw("sum(wpp.amount - wpp.written_off) as quantity")
+            .SelectRaw("sum(wpp.amount - coalesce(wpw.written_off, 0)) as quantity")
             .Join("waybill_processing_price as wpp", "wp.id", "wpp.owner_id")
             .Join("material as m", "m.id", "wpp.reference_id")
-            .WhereColumns("wpp.written_off", "<", "wpp.amount")
+            .LeftJoin(wpw.As("wpw"), j => j
+                .On("wpw.waybill_processing_id", "wp.id")
+                .On("wpw.material_id", "wpp.reference_id"))
+            .WhereRaw("coalesce(wpw.written_off, 0) < wpp.amount")
             .GroupBy("wpp.reference_id", "m.item_name")
             .Where("wp.owner_id", order.id)
             .Get<ReturnMaterialsRows>()

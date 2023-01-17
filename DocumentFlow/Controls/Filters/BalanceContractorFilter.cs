@@ -9,6 +9,8 @@
 // Версия 2023.1.8
 //  - добавлен метод Configure и WriteConfigure (реализация метода
 //    интерфейса IBalanceContractorFilter
+// Версия 2023.1.17
+//  - namespace заменен с DocumentFlow.Controls на DocumentFlow.Controls.Filters
 //
 //-----------------------------------------------------------------------
 
@@ -23,7 +25,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using SqlKata;
 
-namespace DocumentFlow.Controls;
+namespace DocumentFlow.Controls.Filters;
 
 public partial class BalanceContractorFilter : UserControl, IBalanceContractorFilter
 {

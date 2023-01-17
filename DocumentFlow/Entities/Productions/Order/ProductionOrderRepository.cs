@@ -9,12 +9,18 @@
 //    conttactor содержит null, то будет возвращено значение поля code
 // Версия 2023.1.15
 //  - добавлен метод GetWithReturnMaterial
+// Версия 2023.1.17
+//  - изменён запрос в GetWithReturnMaterial в связи с удалением
+//    поля written_off из waybill_processing_price и добавлением
+//    таблицы waybill_processing_writeoff, которая теперь хранит
+//    записи о списании давальческого материала
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Entities.Accounts;
 using DocumentFlow.Entities.Companies;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -40,6 +46,18 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
     {
         using var conn = Database.OpenConnection();
 
+        var wpw = new Query("waybill_processing_writeoff")
+            .Select("waybill_processing_id")
+            .Select("material_id")
+            .SelectRaw("sum(amount) as written_off")
+            .GroupBy("waybill_processing_id", "material_id");
+
+        var rm = new Query("waybill_processing_price as wpp")
+            .Distinct()
+            .Select("wpp.owner_id as waybill_processing_id")
+            .Join(wpw.As("wpw"), j => j.On("wpw.waybill_processing_id", "wpp.owner_id").On("wpw.material_id", "wpp.reference_id"))
+            .WhereColumns("wpp.amount", "!=", "wpw.written_off");
+
         var d = new Query("production_order_price")
             .Select("owner_id")
             .SelectRaw("sum(product_cost) as product_cost")
@@ -47,28 +65,19 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .SelectRaw("sum(full_cost) as full_cost")
             .GroupBy("owner_id");
 
-        var wpp = new Query("waybill_processing_price")
-            .Select("owner_id")
-            .SelectRaw("sum(amount - written_off) as remainder")
-            .GroupBy("owner_id");
-
-        var wp = new Query("waybill_processing")
-            .SelectRaw("distinct on (owner_id) id, owner_id, contractor_id, contract_id");
-
         return GetBaseQuery(conn, "po")
+            .With("rm_waybills", rm)
             .Select("po.*")
             .Select("c.item_name as contractor_name")
-            .Select("wpp.remainder")
             .Select("d.*")
             .Select("wp.contractor_id as wp_contractor_id")
             .Select("wp.contract_id as wp_contract_id")
-            .Join(wp.As("wp"), j => j.On("wp.owner_id", "po.id"))
-            .Join(wpp.As("wpp"), j => j.On("wpp.owner_id", "wp.id"))
-            .LeftJoin(d.As("d"), j => j.On("d.owner_id", "po.id"))
             .Join("contractor as c", "c.id", "po.contractor_id")
+            .LeftJoin(d.As("d"), j => j.On("d.owner_id", "po.id"))
+            .Join("waybill_processing as wp", "wp.owner_id", "po.id")
+            .Join("rm_waybills as rm", "rm.waybill_processing_id", "wp.id")
             .WhereFalse("po.deleted")
             .WhereTrue("po.carried_out")
-            .Where("wpp.remainder", ">", 0)
             .Where("wp.contractor_id", contract.owner_id)
             .Where("wp.contract_id", contract.id)
             .Get<ProductionOrder>()

@@ -3,9 +3,13 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 05.01.2023
+//
+// Версия 2023.1.17
+//  - DocumentFlow.Controls заменен на DocumentFlow.Controls.Filters
+//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls;
+using DocumentFlow.Controls.Filters;
 
 using SqlKata;
 

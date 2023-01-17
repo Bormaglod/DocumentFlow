@@ -6,6 +6,9 @@
 //
 // Версия 2022.12.7
 //  - в выборку добавлено поле material.code
+// Версия 2023.1.17
+//  - запрос изменён с учётом переноса количества списываемого давальческого
+//    материала из таблицы waybill_processing_price в waybill_processing_writeoff
 //
 //-----------------------------------------------------------------------
 
@@ -25,10 +28,20 @@ public class WaybillProcessingPriceRepository : OwnedRepository<long, WaybillPro
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
     {
+        var wpp = new Query("waybill_processing_writeoff")
+            .Select("waybill_processing_id")
+            .Select("material_id")
+            .SelectRaw("sum(amount) as written_off")
+            .GroupBy("waybill_processing_id", "material_id");
+
         return query
             .Select("waybill_processing_price.*")
             .Select("m.item_name as product_name")
             .Select("m.code")
-            .Join("material as m", "m.id", "waybill_processing_price.reference_id");
+            .Select("wpp.written_off")
+            .Join("material as m", "m.id", "waybill_processing_price.reference_id")
+            .LeftJoin(wpp.As("wpp"), j => j
+                .On("wpp.waybill_processing_id", "waybill_processing_price.owner_id")
+                .On("wpp.material_id", "waybill_processing_price.reference_id"));
     }
 }

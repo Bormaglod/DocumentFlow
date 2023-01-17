@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.15
 //  - добавлен атрибут ProductExcludingPrice
+// Версия 2023.1.17
+//  - свойство written_off стало protected set
 //
 //-----------------------------------------------------------------------
 
@@ -21,7 +23,7 @@ namespace DocumentFlow.Entities.Productions.Processing;
 public class WaybillProcessingPrice : ProductPrice
 {
     [Display(AutoGenerateField = false)]
-    public decimal written_off { get; set; }
+    public decimal written_off { get; protected set; }
 
     [Display(Name = "Остаток", Order = 900)]
     public decimal remainder => amount - written_off;

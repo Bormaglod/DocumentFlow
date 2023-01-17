@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.15
 //  - функция JsonHelper.GetJsonText возвращает только string
+// Версия 2023.1.17
+//  - добавлен вызов PrepareJson в Configure для чтения json-текста
 //
 //-----------------------------------------------------------------------
 
@@ -21,6 +23,7 @@ public class StandaloneSettings : BaseSettings, IStandaloneSettings
     public void Configure(string key)
     {
         PrepareJsonFile(key, "standalone");
+        PrepareJson();
     }
 
     public T Get<T>() where T : new()

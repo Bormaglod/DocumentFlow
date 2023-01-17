@@ -1,5 +1,5 @@
 ﻿
-namespace DocumentFlow.Controls
+namespace DocumentFlow.Controls.Filters
 {
     partial class DocumentFilter
     {
