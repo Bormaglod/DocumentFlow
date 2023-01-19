@@ -280,7 +280,7 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
                         deleted.Add(item);
                     }
 
-                    // FIX: если в таблицу добавлены GridSummaryRow, то удаление последней строки приводит к Exception
+                    // FIX: Если в таблицу добавлены GridSummaryRow, то удаление последней строки приводит к Exception
                     if (last)
                     {
                         gridMain.DataSource = null;

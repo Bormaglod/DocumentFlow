@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 31.12.2022
+//
+// Версия 2023.1.19
+//  - удалён метод RefreshPanel
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Infrastructure;
@@ -31,6 +35,4 @@ public partial class CardPanel : UserControl
     }
 
     public ICard Card => card;
-
-    public void RefreshPanel() => card.RefreshCard();
 }

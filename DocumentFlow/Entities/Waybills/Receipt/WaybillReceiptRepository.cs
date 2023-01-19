@@ -20,6 +20,8 @@
 //  - добавлен метод GetQuery
 //  - в выборке суммы поступления и оплаты скорректированы на сумму
 //    корректировки долга
+// Версия 2023.1.19
+//  - суммы поступления и оплаты были неверно скорректированы - исправлено
 //
 //-----------------------------------------------------------------------
 
@@ -90,8 +92,8 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
             .SelectRaw("case contract.tax_payer when true then 20 else 0 end as tax")
             .Select("contract.item_name as contract_name")
             .Select("d.{product_cost, tax_value}")
-            .SelectRaw("full_cost + coalesce(debt.transaction_amount, 0) as full_cost")
-            .SelectRaw("coalesce(ppr.transaction_amount, 0) + coalesce(ppp.transaction_amount, 0) + coalesce(credit.transaction_amount, 0) as paid")
+            .SelectRaw("full_cost")
+            .SelectRaw("coalesce(ppr.transaction_amount, 0) + coalesce(ppp.transaction_amount, 0) + coalesce(credit.transaction_amount, 0) - coalesce(debt.transaction_amount, 0) as paid")
             .Select("pr.document_number as purchase_request_number")
             .Select("pr.document_date as purchase_request_date")
             .Join("organization as o", "o.id", "waybill_receipt.organization_id")

@@ -6,10 +6,13 @@
 //
 // Версия 2022.11.13
 //  - добавлен отчет WaybillSaleReport
+// Версия 2023.1.19
+//  - добавлено зависимое окно "Платежи"
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Entities.PaymentOrders.Documents;
 using DocumentFlow.Infrastructure;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -26,5 +29,11 @@ public class WaybillSaleEditor : WaybillEditor<WaybillSale, WaybillSalePrice>, I
     protected override IOwnedRepository<long, WaybillSalePrice> GetDetailsRepository()
     {
         return Services.Provider.GetService<IWaybillSalePriceRepository>()!;
+    }
+
+    protected override void DoAfterRefreshData()
+    {
+        base.DoAfterRefreshData();
+        RegisterNestedBrowser<IDocumentPaymentBrowser, DocumentPayment>();
     }
 }

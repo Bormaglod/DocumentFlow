@@ -6,12 +6,16 @@
 //
 // Версия 2023.1.8
 //  - в конструктор добавлен параметр settings
+// Версия 2022.1.19
+//  - добавлена колонка "Оплата"
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Settings.Infrastructure;
+
+using Syncfusion.WinForms.DataGrid;
 
 namespace DocumentFlow.Entities.Waybills;
 
@@ -20,6 +24,9 @@ public class WaybillSaleBrowser : WaybillBrowser<WaybillSale>, IWaybillSaleBrows
     public WaybillSaleBrowser(IWaybillSaleRepository repository, IPageManager pageManager, IDocumentFilter filter, IStandaloneSettings settings)
         : base(repository, pageManager, filter: filter, settings: settings)
     {
+        var payment_exists = CreateBoolean(x => x.payment_exists, "Оплата", 100);
+        
+        AddColumns(new GridColumn[] { payment_exists });
     }
 
     protected override string HeaderText => "Реализация";

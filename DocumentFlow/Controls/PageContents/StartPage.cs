@@ -7,6 +7,10 @@
 // Версия 2022.12.31
 //  - наследование от IPage заменено на IStartPage
 //  - реализован весь функционал
+// Версия 2023.1.19
+//  - добавлена кнопка "Обновить"
+//  - карты переместились на panelCards
+//  - RefreshPage обновляет карты напрямую, а не через CardPanel
 //
 //-----------------------------------------------------------------------
 
@@ -35,9 +39,9 @@ public partial class StartPage : UserControl, IStartPage
 
     public void RefreshPage()
     {
-        foreach (var cardPanel in Controls.OfType<CardPanel>())
+        foreach (var card in cards)
         {
-            cardPanel.RefreshPanel();
+            card.RefreshCard();
         }
     }
 
@@ -56,7 +60,7 @@ public partial class StartPage : UserControl, IStartPage
 
             SetCardLocation(cardPanel, columnCount);
 
-            Controls.Add(cardPanel);
+            panelCards.Controls.Add(cardPanel);
         }
     }
 
@@ -92,4 +96,6 @@ public partial class StartPage : UserControl, IStartPage
     {
         UpdateCardControlLayout();
     }
+
+    private void ButtonRefresh_Click(object sender, EventArgs e) => RefreshPage();
 }

@@ -65,6 +65,10 @@
 //    ApplySettings запрещает дальнейшую инициализацию настроек, то
 //    не вызывается метод ConfigureColumns, который в свою очередь
 //    вызывается из RefreshColumns - исправлено
+// Версия 2023.1.19
+//  - из-за ошибки в Syncfusion.GridCommon.WinForms при установленном 
+//    ShowPreviewRow нет возможности присвоить GridColumn.Width значение,
+//    поэтому временно отключена настройка колонок
 //
 //-----------------------------------------------------------------------
 
@@ -767,6 +771,15 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             return;
         }
 
+        // FIX: При установленном ShowPreviewRow и попытке присвоить GridColumn.Width какое-либо значение выпадает ошибка
+        // Исключение типа "System.ArgumentOutOfRangeException" возникло в Syncfusion.GridCommon.WinForms.dll, но не было обработано в коде пользователя 13 out of range 0 to 12
+        // Поэтому настройка колонок для данного случая временно отключена
+        // Проверено в Syncfusion версий 20.4.0.43, 20.4.0.44
+        if (gridContent.ShowPreviewRow)
+        {
+            return;
+        }
+
         foreach (var (item, column) in from item in b_settings.Columns
                                        let column = gridContent.Columns.FirstOrDefault(x => x.MappingName == item.Name)
                                        select (item, column))
@@ -778,7 +791,8 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
             if (item.AutoSizeMode == AutoSizeColumnsMode.None && item.Width != null)
             {
-                column.Width = item.Width.Value;
+                int n = item.Width.Value;
+                column.Width = n;
             }
             else
             {
