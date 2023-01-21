@@ -1,13 +1,17 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 25.03.2022
 //
 // Версия 2022.8.18
 //  - изменен порядок столбцов
+// Версия 2023.1.21
+//  - добавлен метод SetCalculation
+//
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Entities.Products.Core;
 
@@ -26,4 +30,10 @@ public class ProductionOrderPrice : ProductPrice
 
     [Display(Name = "Калькуляция", Order = 20)]
     public string calculation_name { get; protected set; } = string.Empty;
+
+    public void SetCalculation(Calculation calculation)
+    {
+        calculation_id = calculation.id;
+        calculation_name = calculation.code;
+    }
 }

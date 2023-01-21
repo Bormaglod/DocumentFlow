@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 10.01.2022
@@ -8,6 +8,8 @@
 //  - расширены возможности полей owner и measurement (добавлены
 //    кнопки для редактирования выбранных значений)
 //  - удалена кнопка "Кросс"
+// Версия 2023.1.21
+//  - в вызове SetChoiceValues использовано свойство Product.Taxes
 //
 //-----------------------------------------------------------------------
 
@@ -77,12 +79,7 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
                     .WhereNot("id", Document.id)));
         });
         measurement.SetDataSource(() => Services.Provider.GetService<IMeasurementRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-        vat.SetChoiceValues(new Dictionary<int, string>
-        {
-            [0] = "Без НДС",
-            [10] = "10%",
-            [20] = "20%"
-        });
+        vat.SetChoiceValues(Product.Taxes);
 
         AddControls(new Control[]
         {

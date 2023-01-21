@@ -1,8 +1,13 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.02.2022
+//
+// Версия 2023.1.21
+//  - поле Directions заменено на свойство и поменяло тип на
+//    IReadOnlyDictionary
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
@@ -16,6 +21,12 @@ public enum PaymentDirection { Income, Expense }
 [Description("Банк/касса")]
 public class PaymentOrder : AccountingDocument
 {
+    private readonly static Dictionary<PaymentDirection, string> directions = new()
+    {
+        [PaymentDirection.Income] = "Приход",
+        [PaymentDirection.Expense] = "Расход"
+    };
+
     public Guid? contractor_id { get; set; }
     public string? contractor_name { get; protected set; }
     public string? payment_number { get; set; }
@@ -33,9 +44,5 @@ public class PaymentOrder : AccountingDocument
         protected set { direction = value.ToString().Underscore(); }
     }
 
-    public readonly static Dictionary<PaymentDirection, string> Directions = new()
-    {
-        [PaymentDirection.Income] = "Приход",
-        [PaymentDirection.Expense] = "Расход"
-    };
+    public static IReadOnlyDictionary<PaymentDirection, string> Directions => directions;
 }

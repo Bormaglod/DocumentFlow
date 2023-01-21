@@ -1,11 +1,13 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.01.2022
 //
 // Версия 2022.8.28
 //  - процедура ExecuteSql заменена на Call
+// Версия 2023.1.21
+//  - добавлен метод GetOnlyGivingMaterials
 //
 //-----------------------------------------------------------------------
 
@@ -25,6 +27,11 @@ public class CalculationMaterialRepository : CalculationItemRepository<Calculati
     public void RecalculateCount(Guid calculate_id) => Call("recalculate_amount_material", calculate_id);
 
     public void RecalculatePrices(Guid calculate_id) => Call("make_prices_materials_relevant", calculate_id);
+
+    public IReadOnlyList<CalculationMaterial> GetOnlyGivingMaterials(Calculation calculation)
+    {
+        return GetAllDefault(callback: q => q.WhereTrue("calculation_material.is_giving"));
+    }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
     {

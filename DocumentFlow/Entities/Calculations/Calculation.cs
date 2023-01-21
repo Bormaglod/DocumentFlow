@@ -1,8 +1,13 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 23.10.2021
+//
+// Версия 2023.1.21
+//  - поле StimulatingValues заменено на свойство и поменяло тип на
+//    IReadOnlyDictionary
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
@@ -18,6 +23,12 @@ public enum StimulatingValue { Money, Percent }
 [Description("Калькуляция")]
 public class Calculation : Directory
 {
+    private static readonly Dictionary<StimulatingValue, string> stimulatingValues = new()
+    {
+        [StimulatingValue.Money] = "Сумма",
+        [StimulatingValue.Percent] = "Процент"
+    };
+
     public string? goods_name { get; protected set; }
     public decimal cost_price { get; set; }
     public decimal profit_percent { get; set; }
@@ -67,9 +78,5 @@ public class Calculation : Directory
         set { stimul_type = value.ToString().Underscore(); }
     }
 
-    public static Dictionary<StimulatingValue, string> StimulatingValues = new()
-    {
-        [StimulatingValue.Money] = "Сумма",
-        [StimulatingValue.Percent] = "Процент"
-    };
+    public static IReadOnlyDictionary<StimulatingValue, string> StimulatingValues => stimulatingValues;
 }

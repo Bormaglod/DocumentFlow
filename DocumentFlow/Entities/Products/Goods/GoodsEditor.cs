@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 10.01.2022
@@ -7,6 +7,8 @@
 // Версия 2022.8.29
 //  - расширены возможности полей measurement и calculation (добавлены
 //    кнопки для редактирования выбранных значений)
+// Версия 2023.1.21
+//  - в вызове SetChoiceValues использовано свойство Product.Taxes
 //
 //-----------------------------------------------------------------------
 
@@ -48,12 +50,7 @@ public class GoodsEditor : Editor<Goods>, IGoodsEditor
 
         parent.SetDataSource(() => repository.GetOnlyFolders());
         measurement.SetDataSource(() => Services.Provider.GetService<IMeasurementRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-        vat.SetChoiceValues(new Dictionary<int, string>
-        {
-            [0] = "Без НДС",
-            [10] = "10%",
-            [20] = "20%"
-        });
+        vat.SetChoiceValues(Product.Taxes);
 
         var controls = new List<Control>() { code, name, parent, measurement, weight, price, vat, is_service, note };
 

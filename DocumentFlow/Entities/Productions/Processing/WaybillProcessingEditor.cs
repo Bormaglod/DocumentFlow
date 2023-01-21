@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.01.2022
@@ -8,6 +8,8 @@
 //  - изменено наследование с WaybillEditor на DocumentEditor
 //  - из табличной части удалены колонки с ценой
 //  - таблица теперь корректно размещается в окне
+// Версия 2023.1.21
+//  - в табличную часть добавлена кнопка "Заполнить"
 //
 //-----------------------------------------------------------------------
 
@@ -135,6 +137,19 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
         {
             args.Cancel = FormProductPrice<WaybillProcessingPrice>.Edit(args.CopiedData, contract.SelectedItem) == DialogResult.Cancel;
         };
+
+        details.AddCommand("Заполнить", Properties.Resources.icons8_incoming_data_16, (sender, e) =>
+        {
+            if (order.SelectedItem != null)
+            {
+                var repo = Services.Provider.GetService<IProductionOrderRepository>();
+                if (repo != null)
+                {
+                    var rows = repo.GetOnlyGivingMaterials<WaybillProcessingPrice>(order.SelectedItem);
+                    details.Fill(rows);
+                }
+            }
+        });
 
         AddControls(new Control[]
         {

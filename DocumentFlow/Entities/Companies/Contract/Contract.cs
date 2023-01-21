@@ -1,8 +1,13 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 16.01.2022
+//
+// Версия 2023.1.21
+//  - поле ContractorTypes заменено на свойство и поменяло тип на
+//    IReadOnlyDictionary
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
@@ -16,6 +21,12 @@ public enum ContractorType { Seller, Buyer }
 [Description("Договор")]
 public class Contract : Directory
 {
+    private static readonly Dictionary<ContractorType, string> contractorTypes = new()
+    {
+        [ContractorType.Seller] = "С продавцом",
+        [ContractorType.Buyer] = "С покупателем"
+    };
+
     [Exclude]
     public Guid organization_id { get; set; }
     public string? contractor_name { get; protected set; }
@@ -42,11 +53,7 @@ public class Contract : Directory
         protected set { c_type = value.ToString().Underscore(); }
     }
 
-    public static Dictionary<ContractorType, string> ContractorTypes => new()
-    {
-        [ContractorType.Seller] = "С продавцом",
-        [ContractorType.Buyer] = "С покупателем"
-    };
+    public static IReadOnlyDictionary<ContractorType, string> ContractorTypes => contractorTypes;
 
     public override string ToString()
     {

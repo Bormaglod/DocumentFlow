@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 06.02.2022
@@ -30,6 +30,10 @@
 // Версия 2022.12.29
 //  - разнесение документов на начальный остаток работало некорректно - 
 //    не учитывалься дебетовый остаток - исправлено
+// Версия 2023.1.21
+//  - авторасчёт суммы теперь учитывает остаток по платёжному документу
+//  - выборка документов из версии 2022.12.21 работала только для расхода,
+//    теперь работает и для прихода
 //
 //-----------------------------------------------------------------------
 
@@ -133,6 +137,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
 
                     return wr
                         .Union(bc)
+                        .Where(x => x.full_cost != x.paid || x.id == Document.document_id)
                         .OrderBy(x => x.document_date)
                         .ThenBy(x => x.document_number);
                 }
@@ -153,7 +158,16 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
         {
             if (e.NewValue != null) 
             {
-                amount.NumericValue = e.NewValue.full_cost - e.NewValue.paid;
+                var por = Services.Provider.GetService<IPaymentOrderRepository>();
+                decimal balance = por == null || OwnerId == null ? 0 : por.GetPaymentBalance(OwnerId.Value);
+
+                decimal newAmount = e.NewValue.full_cost - e.NewValue.paid;
+                if (newAmount > balance) 
+                { 
+                    newAmount = balance;
+                }
+
+                amount.NumericValue = newAmount;
             }
             else
             {

@@ -1,8 +1,13 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 19.12.2019
+//
+// Версия 2023.1.21
+//  - в методе SetChoiceValues у параметра keyValues заменен тип с
+//    IDictionary на IReadOnlyDictionary
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
@@ -120,7 +125,7 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
 
     #endregion
 
-    public void SetChoiceValues(IDictionary<T, string> keyValues, bool autoRefresh = false)
+    public void SetChoiceValues(IReadOnlyDictionary<T, string> keyValues, bool autoRefresh = false)
     {
         choices.Clear();
         foreach (var item in keyValues)
@@ -146,10 +151,7 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
         }
     }
 
-    protected override void ClearItems()
-    {
-        comboBoxAdv1.Items.Clear();
-    }
+    protected override void ClearItems() => comboBoxAdv1.Items.Clear();
 
     private void SetSelectedItem(T? item)
     {

@@ -24,6 +24,12 @@
 //    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
 // Версия 2023.1.15
 //  - добавлена обработка атрибута ProductExcludingPriceAttribute
+// Версия 2023.1.21
+//  - для установки значения калькуляции в классе ProductionOrderPrice
+//    необходимо использовать метод SetCalculation
+//  - в выборку калькуляций добавлено поле code
+//  - добавлено использование Product.Taxes
+//  - ArgumentNullException заменен на Exception с текстом
 //
 //-----------------------------------------------------------------------
 
@@ -67,7 +73,7 @@ public partial class FormProductPrice<P> : Form
         var attr = typeof(P).GetCustomAttribute<ProductContentAttribute>();
         if (attr == null)
         {
-            throw new ArgumentNullException(nameof(attr));
+            throw new Exception($"Использование FormProductPrice с типом {typeof(P).Name} возиожно только при условии наличия у этого типа атрибута ProductContentAttribute");
         }
 
         excludePrice = typeof(P).GetCustomAttribute<ProductExcludingPriceAttribute>() != null;
@@ -124,7 +130,7 @@ public partial class FormProductPrice<P> : Form
                         product.SelectedItem.id,
                         useBaseQuery: true,
                         callback: q => q
-                            .Select("calculation.id")
+                            .Select("calculation.{id, code}")
                             .SelectRaw("calculation.code || ' от ' || calculation.date_approval as item_name")
                             .WhereRaw("calculation.state = 'approved'::calculation_state")
                             .OrderBy("calculation.code"));
@@ -136,12 +142,7 @@ public partial class FormProductPrice<P> : Form
             controls.Insert(6, calc);
         }
 
-        tax.SetChoiceValues(new Dictionary<int, string>
-        {
-            [0] = "Без НДС",
-            [10] = "10%",
-            [20] = "20%"
-        }, true);
+        tax.SetChoiceValues(Product.Taxes, true);
 
         product.SetDataSource(() =>
         {
@@ -287,7 +288,7 @@ public partial class FormProductPrice<P> : Form
 
         if (calc != null && calc.SelectedItem != null && dest is ProductionOrderPrice pop)
         {
-            pop.calculation_id = calc.SelectedItem.id;
+            pop.SetCalculation(calc.SelectedItem);
         }
     }
 

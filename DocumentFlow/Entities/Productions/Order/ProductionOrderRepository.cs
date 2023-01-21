@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 25.03.2022
@@ -14,14 +14,18 @@
 //    поля written_off из waybill_processing_price и добавлением
 //    таблицы waybill_processing_writeoff, которая теперь хранит
 //    записи о списании давальческого материала
+// Версия 2023.1.21
+//  - добавлен метод GetOnlyGivingMaterials
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
-using DocumentFlow.Entities.Accounts;
+using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Companies;
+using DocumentFlow.Entities.Products;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using SqlKata;
@@ -81,6 +85,25 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .Where("wp.contractor_id", contract.owner_id)
             .Where("wp.contract_id", contract.id)
             .Get<ProductionOrder>()
+            .ToList();
+    }
+
+    public IReadOnlyList<T> GetOnlyGivingMaterials<T>(ProductionOrder order) where T : ProductPrice
+    {
+        using var conn = Database.OpenConnection();
+        return GetBaseQuery(conn, "po")
+            .Select("cm.item_id as reference_id")
+            .Select("m.code")
+            .Select("m.item_name as product_name")
+            .SelectRaw("sum(pop.amount * cm.amount) as amount")
+            .Join("production_order_price as pop", "pop.owner_id", "po.id")
+            .Join("calculation as c", "c.id", "pop.calculation_id")
+            .Join("calculation_material as cm", q => q.On("cm.owner_id", "c.id").WhereTrue("cm.is_giving"))
+            .Join("material as m", "m.id", "cm.item_id")
+            .Where("po.id", order.id)
+            .GroupBy("cm.item_id", "m.code", "m.item_name")
+            .OrderBy("m.code")
+            .Get<T>()
             .ToList();
     }
 
