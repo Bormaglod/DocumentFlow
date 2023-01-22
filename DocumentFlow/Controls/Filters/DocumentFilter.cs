@@ -15,13 +15,16 @@
 //  - DocumentFilterData переименован в DocumentFilterSettings
 // Версия 2023.1.17
 //  - namespace заменен с DocumentFlow.Controls на DocumentFlow.Controls.Filters
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Companies;
-using DocumentFlow.Settings.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Infrastructure.Settings;
 
 using Humanizer;
 

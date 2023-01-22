@@ -253,7 +253,7 @@
             this.buttonSelectDateRange.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
             this.buttonSelectDateRange.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonSelectDateRange.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonSelectDateRange.Kind = DocumentFlow.Controls.ToolButtonKind.Select;
+            this.buttonSelectDateRange.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Select;
             this.buttonSelectDateRange.Location = new System.Drawing.Point(389, 0);
             this.buttonSelectDateRange.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonSelectDateRange.Name = "buttonSelectDateRange";

@@ -69,11 +69,15 @@
 //  - из-за ошибки в Syncfusion.GridCommon.WinForms при установленном 
 //    ShowPreviewRow нет возможности присвоить GridColumn.Width значение,
 //    поэтому временно отключена настройка колонок
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+//  - DocumentFlow.ReportEngine.Infrastructure перемещено в DocumentFlow.Infrastructure.ReportEngine
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.Renderers;
 using DocumentFlow.Controls.Settings;
 using DocumentFlow.Core;
@@ -81,13 +85,15 @@ using DocumentFlow.Core.Reflection;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Core.Repository;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
+using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Infrastructure.ReportEngine;
+using DocumentFlow.Infrastructure.Settings;
 using DocumentFlow.Properties;
 using DocumentFlow.ReportEngine;
-using DocumentFlow.ReportEngine.Infrastructure;
-using DocumentFlow.Settings.Infrastructure;
 
 using FastReport;
 using FastReport.Utils;

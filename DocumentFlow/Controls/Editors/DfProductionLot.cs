@@ -11,17 +11,19 @@
 //  - добавлены классы EmployeeRegex и EmpPropertyiesRegex
 // Версия 2023.1.8
 //  - расширено использование EmpPropertiesRegex
+// Версия 2023.1.22
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.Renderers;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Productions.Lot;
 using DocumentFlow.Entities.Productions.Performed;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 

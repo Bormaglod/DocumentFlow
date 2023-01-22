@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.12.2022
@@ -11,10 +11,12 @@
 //  - добавлена кнопка "Обновить"
 //  - карты переместились на panelCards
 //  - RefreshPage обновляет карты напрямую, а не через CardPanel
+// Версия 2023.1.22
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Controls.PageContents;
 

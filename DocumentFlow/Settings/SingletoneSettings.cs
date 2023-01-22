@@ -3,9 +3,13 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 08.01.2022
+//
+// Версия 2023.1.22
+//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Settings.Infrastructure;
+using DocumentFlow.Infrastructure.Settings;
 
 namespace DocumentFlow.Settings;
 

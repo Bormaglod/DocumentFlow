@@ -10,18 +10,23 @@
 //  - добавлен метод ShowStartPage (заглушка)
 // Версия 2023.1.9
 //  - добавлен пункт меню "О программе"
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Core;
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Controls.Infrastructure;
+using DocumentFlow.Core;
 using DocumentFlow.Data;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Data;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Npgsql;
-using Microsoft.Extensions.DependencyInjection;
+
 using Syncfusion.Windows.Forms.Tools;
 
 using System.Collections.Concurrent;

@@ -16,15 +16,16 @@
 //    записи о списании давальческого материала
 // Версия 2023.1.21
 //  - добавлен метод GetOnlyGivingMaterials
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
-using DocumentFlow.Data.Infrastructure;
-using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Products;
+using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 

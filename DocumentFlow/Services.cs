@@ -12,14 +12,18 @@
 //  - добавлены интерфейсы IStartPage и ICard
 // Версия 2023.1.8
 //  - интерфейс ISettings переименован в IAppSettings
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Data;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
-using DocumentFlow.Settings.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Infrastructure.Settings;
 
 using Microsoft.Extensions.DependencyInjection;
 

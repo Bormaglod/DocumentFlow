@@ -9,11 +9,13 @@
 // Версия 2023.1.8
 //  - добавлен класс ZoomRegex
 //  - поле autoFitOptions стало только для чтения
+// Версия 2023.1.22
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Controls.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Wages;

@@ -6,10 +6,12 @@
 //
 // Версия 2023.1.21
 //  - добавлен метод GetPaymentBalance
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Entities.PaymentOrders;
 

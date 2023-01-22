@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 13.07.2022
@@ -13,21 +13,23 @@
 //  - добавлено колонка product_code
 //  - в функции AsSummary заменён параметр includeDeleted имеющий значение
 //    true на options равный SelectOptions.All
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
-using DocumentFlow.Controls.Settings;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
-using DocumentFlow.Settings.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Infrastructure.Settings;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 
 using System.ComponentModel;
-using System.Text.Json;
 
 namespace DocumentFlow.Entities.Warehouse;
 

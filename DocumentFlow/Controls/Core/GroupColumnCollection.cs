@@ -1,13 +1,17 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 20.11.2020
-// Time: 18:25
+//
+// Версия 2023.1.22
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+//
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Infrastructure.Controls;
+
 using Syncfusion.WinForms.DataGrid;
-using DocumentFlow.Controls.Infrastructure;
 
 namespace DocumentFlow.Controls.Core;
 

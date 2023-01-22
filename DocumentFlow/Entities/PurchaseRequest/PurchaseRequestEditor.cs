@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 03.02.2022
@@ -11,17 +11,19 @@
 //  - добавлено зависимое окно "Поступление"
 // Версия 2022.12.17
 //  - метод UpdateCurrencyColumn стал статическим
+// Версия 2023.1.22
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
-using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.PaymentOrders.Documents;
 using DocumentFlow.Entities.Products.Dialogs;
 using DocumentFlow.Entities.Waybills;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 

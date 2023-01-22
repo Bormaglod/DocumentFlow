@@ -10,16 +10,18 @@
 //  - таблица теперь корректно размещается в окне
 // Версия 2023.1.21
 //  - в табличную часть добавлена кнопка "Заполнить"
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Productions.Order;
 using DocumentFlow.Entities.Products.Dialogs;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 

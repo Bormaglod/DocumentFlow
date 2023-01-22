@@ -7,12 +7,14 @@
 // Версия 2022.12.24
 //  - добавлено свойство DisableCurrentItem
 //  - изменен вызов конструктора SelectDocumentForm
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Dialogs;
+using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Controls.Editors;
 

@@ -9,16 +9,18 @@
 //    кнопки для редактирования выбранных значений)
 // Версия 2023.1.21
 //  - в вызове SetChoiceValues использовано свойство Product.Taxes
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Balances;
 using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Measurements;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 

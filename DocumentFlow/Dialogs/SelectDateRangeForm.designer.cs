@@ -94,7 +94,7 @@
             this.buttonNextYear.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
             this.buttonNextYear.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonNextYear.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonNextYear.Kind = DocumentFlow.Controls.ToolButtonKind.Forward;
+            this.buttonNextYear.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Forward;
             this.buttonNextYear.Location = new System.Drawing.Point(305, 4);
             this.buttonNextYear.Name = "buttonNextYear";
             this.buttonNextYear.Size = new System.Drawing.Size(32, 32);
@@ -111,7 +111,7 @@
             this.buttonPrevYear.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
             this.buttonPrevYear.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonPrevYear.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonPrevYear.Kind = DocumentFlow.Controls.ToolButtonKind.Back;
+            this.buttonPrevYear.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Back;
             this.buttonPrevYear.Location = new System.Drawing.Point(161, 4);
             this.buttonPrevYear.Name = "buttonPrevYear";
             this.buttonPrevYear.Size = new System.Drawing.Size(32, 32);

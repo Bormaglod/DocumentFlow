@@ -9,11 +9,13 @@
 //    этому поля данного значения в не имеет смысла
 // Версия 2022.8.25
 //  - процедура CopyChilds заменена на процедуру CopyNestedRows
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
-using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 using DocumentFlow.Entities.Calculations;
 
 using Microsoft.Extensions.DependencyInjection;

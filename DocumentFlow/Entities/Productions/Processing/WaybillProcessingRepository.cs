@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.07.2022
@@ -9,14 +9,16 @@
 //    поля written_off из waybill_processing_price и добавлением
 //    таблицы waybill_processing_writeoff, которая теперь хранит
 //    записи о списании давальческого материала
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Productions.Order;
 using DocumentFlow.Entities.Productions.Returns;
+using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
 using SqlKata.Execution;

@@ -6,10 +6,12 @@
 //
 // Версия 2023.1.15
 //  - переименован в BalanceSheetFilterSettings
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 
 using System.Text.Json.Serialization;
 

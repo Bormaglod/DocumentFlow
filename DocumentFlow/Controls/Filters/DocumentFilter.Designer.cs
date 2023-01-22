@@ -82,7 +82,7 @@ namespace DocumentFlow.Controls.Filters
             this.buttonClearOrg.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
             this.buttonClearOrg.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonClearOrg.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonClearOrg.Kind = DocumentFlow.Controls.ToolButtonKind.Delete;
+            this.buttonClearOrg.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Delete;
             this.buttonClearOrg.Location = new System.Drawing.Point(380, 3);
             this.buttonClearOrg.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonClearOrg.Name = "buttonClearOrg";

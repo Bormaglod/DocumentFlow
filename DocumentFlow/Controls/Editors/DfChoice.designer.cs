@@ -103,7 +103,7 @@
             this.buttonDelete.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
             this.buttonDelete.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonDelete.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonDelete.Kind = DocumentFlow.Controls.ToolButtonKind.Delete;
+            this.buttonDelete.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Delete;
             this.buttonDelete.Location = new System.Drawing.Point(281, 0);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(23, 23);

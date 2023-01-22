@@ -8,23 +8,24 @@
 //  - добавлена кнопка для открытия окна редактирования удержания
 // Версия 2023.1.8
 //  - в конструктор добавлен параметр settings
+// Версия 2023.1.22
+//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Deductions;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Settings;
 using DocumentFlow.Properties;
-using DocumentFlow.Settings.Infrastructure;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.Input.Enums;
 
 using System.ComponentModel;
-
-using static Dapper.SqlMapper;
 
 namespace DocumentFlow.Entities.Calculations;
 

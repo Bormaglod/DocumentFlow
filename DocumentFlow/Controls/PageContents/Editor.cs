@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.09.2021
@@ -14,20 +14,24 @@
 //  - исправлен вызов DocumentRefEditorForm.Create, теперь он возвращает
 //    в случае успеха true, а остальные параметры передаются через out
 //  - рефакторинг
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+//  - DocumentFlow.ReportEngine.Infrastructure перемещено в DocumentFlow.Infrastructure.ReportEngine
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Core;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Core.Repository;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Infrastructure.ReportEngine;
 using DocumentFlow.Properties;
-using DocumentFlow.ReportEngine.Infrastructure;
 
 using Humanizer;
 

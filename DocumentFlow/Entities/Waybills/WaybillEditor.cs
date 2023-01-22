@@ -35,20 +35,23 @@
 //  - удалены ссылки на WaybillProcessing, т.к. WaybillProcessingEditor
 //    больше не наследуется от WaybillEditor
 //  - таблица теперь корректно размещается в окне
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
-using DocumentFlow.Controls.Infrastructure;
 using DocumentFlow.Controls.PageContents;
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Entities.Products.Core;
 using DocumentFlow.Entities.Products.Dialogs;
 using DocumentFlow.Entities.PurchaseRequestLib;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 

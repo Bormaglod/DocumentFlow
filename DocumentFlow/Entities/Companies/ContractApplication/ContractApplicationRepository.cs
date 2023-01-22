@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 16.01.2022
@@ -8,6 +8,8 @@
 //  - добавлен метод GetCurrents
 // Версия 2022.8.25
 //  - процедура CopyChilds заменена на процедуру CopyNestedRows
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
@@ -15,7 +17,7 @@ using Dapper;
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
-using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
 using SqlKata.Execution;

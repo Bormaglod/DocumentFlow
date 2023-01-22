@@ -30,12 +30,14 @@
 //  - в выборку калькуляций добавлено поле code
 //  - добавлено использование Product.Taxes
 //  - ArgumentNullException заменен на Exception с текстом
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
-using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Products.Core;

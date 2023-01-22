@@ -8,12 +8,15 @@
 //  - в конструктор добавлен параметр settings
 // Версия 2022.1.19
 //  - добавлена колонка "Оплата"
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
-using DocumentFlow.Settings.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Infrastructure.Settings;
 
 using Syncfusion.WinForms.DataGrid;
 

@@ -100,7 +100,7 @@
             this.buttonDelete.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
             this.buttonDelete.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonDelete.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonDelete.Kind = DocumentFlow.Controls.ToolButtonKind.Delete;
+            this.buttonDelete.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Delete;
             this.buttonDelete.Location = new System.Drawing.Point(156, 0);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(25, 25);
@@ -117,7 +117,7 @@
             this.buttonSelect.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
             this.buttonSelect.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonSelect.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonSelect.Kind = DocumentFlow.Controls.ToolButtonKind.Select;
+            this.buttonSelect.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Select;
             this.buttonSelect.Location = new System.Drawing.Point(186, 0);
             this.buttonSelect.Name = "buttonSelect";
             this.buttonSelect.Size = new System.Drawing.Size(25, 25);
@@ -142,7 +142,7 @@
             this.buttonOpen.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
             this.buttonOpen.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonOpen.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonOpen.Kind = DocumentFlow.Controls.ToolButtonKind.Open;
+            this.buttonOpen.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Open;
             this.buttonOpen.Location = new System.Drawing.Point(216, 0);
             this.buttonOpen.Name = "buttonOpen";
             this.buttonOpen.Size = new System.Drawing.Size(25, 25);

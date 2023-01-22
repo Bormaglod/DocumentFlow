@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.03.2019
@@ -11,10 +11,12 @@
 //    в корневом каталоге. Исправлено.
 //  - если попытаться изменить группу, открывается окно поля которого
 //    должны быть заполнены значениями группы, но они пустые. Исправлено.
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
-using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Dialogs
 {

@@ -6,11 +6,13 @@
 //
 // Версия 2022.08.17
 //  - удалено свойство UseGetId
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
-using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Entities.PaymentOrders.Posting;
 

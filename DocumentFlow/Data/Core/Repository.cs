@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 26.12.2021
@@ -17,6 +17,8 @@
 //  - в методе GetQueryFilters вызов CreateQuery<T>() заменен на
 //    CreateQuery(string tableName)
 //  - метод GetTableName(Query) стал статическим
+// Версия 2023.1.22
+//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
@@ -24,7 +26,7 @@ using Dapper;
 
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Core.Reflection;
-using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 
 using Humanizer;
 

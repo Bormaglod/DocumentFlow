@@ -8,11 +8,13 @@
 //  - функция JsonHelper.GetJsonText возвращает только string
 // Версия 2023.1.17
 //  - добавлен вызов PrepareJson в Configure для чтения json-текста
+// Версия 2023.1.22
+//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Core;
-using DocumentFlow.Settings.Infrastructure;
+using DocumentFlow.Infrastructure.Settings;
 
 namespace DocumentFlow.Settings;
 

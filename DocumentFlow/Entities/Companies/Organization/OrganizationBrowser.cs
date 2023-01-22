@@ -6,12 +6,14 @@
 //
 // Версия 2023.1.8
 //  - в конструктор добавлен параметр settings
+// Версия 2023.1.22
+//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
-using DocumentFlow.Settings.Infrastructure;
+using DocumentFlow.Infrastructure.Settings;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;

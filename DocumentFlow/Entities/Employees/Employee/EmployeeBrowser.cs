@@ -6,12 +6,15 @@
 //
 // Версия 2023.1.8
 //  - в конструктор добавлен параметр settings
+// Версия 2023.1.22
+//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure;
-using DocumentFlow.Settings.Infrastructure;
+using DocumentFlow.Infrastructure.Settings;
 
 namespace DocumentFlow.Entities.Employees;
 

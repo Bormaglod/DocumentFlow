@@ -1,16 +1,19 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 09.06.2018
+//
+// Версия 2022.1.22
+//  - ToolButtonKind перенесён в DocumentFlow.Infrastructure.Controls
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Core;
+using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Properties;
 
 namespace DocumentFlow.Controls;
-
-public enum ToolButtonKind { Back, Forward, Up, Down, Refresh, Home, Delete, Select, Edit, Open }
 
 public class ToolButton : Control
 {
