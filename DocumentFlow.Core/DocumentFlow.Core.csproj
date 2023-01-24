@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Version>2023.1.24</Version>
+		<Company>Автоком</Company>
+		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
+		<Platforms>x64</Platforms>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DocumentFlow.Infrastructure\DocumentFlow.Infrastructure.csproj" />
+	</ItemGroup>
+
+</Project>

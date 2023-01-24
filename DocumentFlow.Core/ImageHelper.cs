@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using System.Drawing.Imaging;
-using System.IO;
 
 namespace DocumentFlow.Core;
 
@@ -25,8 +24,6 @@ public static class ImageHelper
         Image image = Image.FromStream(ms, true);
         return image;
     }
-
-    
 
     public static string ImageToBase64(Image image, ImageFormat imageFormat)
     {

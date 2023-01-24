@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.06.2018
@@ -7,12 +7,15 @@
 // Версия 2022.12.31
 //  - в вызов ShowMainForm добавлен параметр newDatabaseSelecting
 //    определяющий необходимость показа стартовой страницы
+// Версия 2023.1.24
+//  - IDatabase перенесён из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Core.Repository;
+using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 

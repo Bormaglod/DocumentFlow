@@ -2,16 +2,17 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 26.12.2021
-//
-// Версия 2023.1.24
-//  - добавлен атрибут AttributeUsage
-//
+// Date: 24.01.2023
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Data.Core;
+namespace DocumentFlow.Infrastructure.Data;
 
-[AttributeUsage(AttributeTargets.Property)]
-public class ExcludeAttribute : Attribute
+public interface IDocumentRefs
 {
+    byte[]? file_content { get; set; }
+    long file_length { get; set; }
+    string? file_name { get; set; }
+    string? note { get; set; }
+    string? thumbnail { get; set; }
+    bool thumbnail_exist { get; }
 }

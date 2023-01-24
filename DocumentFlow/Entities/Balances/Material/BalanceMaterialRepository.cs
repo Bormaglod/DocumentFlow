@@ -1,19 +1,20 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 31.01.2022
 //
 // Версия 2022.11.15
 //  - добавлен метод UpdateMaterialRemaind
+// Версия 2023.1.24
+//  - IDatabase перенесён из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
-
-using Dapper;
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Products;
+using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 

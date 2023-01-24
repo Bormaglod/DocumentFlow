@@ -11,11 +11,13 @@
 // Версия 2023.1.15
 //  - исправление незначительных ошибок
 //  - функция JsonHelper.GetJsonText возвращает только string
+// Версия 2023.1.24
+//  - IDatabase перенесён из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Core;
-using DocumentFlow.Data;
+using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 

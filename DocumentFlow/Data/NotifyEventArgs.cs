@@ -6,13 +6,14 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.1.23
+//  - перемещено из DocumentFlow.Core в DocumentFlow.Data
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
 using DocumentFlow.Infrastructure.Data;
 
-namespace DocumentFlow.Core
+namespace DocumentFlow.Data
 {
     public class NotifyEventArgs : EventArgs
     {

@@ -1,15 +1,21 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 18.08.2019
+//
+// Версия 2023.1.24
+//  - добавлено наследование от IDocumentRefs
+//
 //-----------------------------------------------------------------------
+
+using DocumentFlow.Infrastructure.Data;
 
 using System.ComponentModel.DataAnnotations;
 
 namespace DocumentFlow.Data.Core;
 
-public class DocumentRefs : Entity<long>
+public class DocumentRefs : Entity<long>, IDocumentRefs
 {
 
     [Display(Name = "Имя файла", Order = 2)]
