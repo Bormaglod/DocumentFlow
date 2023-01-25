@@ -118,8 +118,8 @@ Global
 		{190ED485-0F49-4651-B468-6ED4C04C651A}.Debug|x64.Build.0 = Debug|x64
 		{190ED485-0F49-4651-B468-6ED4C04C651A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{190ED485-0F49-4651-B468-6ED4C04C651A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{190ED485-0F49-4651-B468-6ED4C04C651A}.Release|x64.ActiveCfg = Release|Any CPU
-		{190ED485-0F49-4651-B468-6ED4C04C651A}.Release|x64.Build.0 = Release|Any CPU
+		{190ED485-0F49-4651-B468-6ED4C04C651A}.Release|x64.ActiveCfg = Release|x64
+		{190ED485-0F49-4651-B468-6ED4C04C651A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,6 +7,9 @@
     <Compile Update="AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Controls\Editors\DfMaskedTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Filters\BalanceContractorFilter.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -74,9 +77,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfLine.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfMaskedTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfMultiSelectionComboBox.cs">
@@ -167,6 +167,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Controls\SettingPages\BrowserColumnsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Companies\Contractor\ContractorEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\PaymentOrders\Posting\PostingPaymentsEditor.cs">
@@ -356,9 +359,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Entities\Companies\Contractor\ContractorBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Companies\Contractor\ContractorEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Companies\Contract\ContractBrowser.cs">

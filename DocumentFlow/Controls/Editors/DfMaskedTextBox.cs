@@ -6,6 +6,9 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.1.25
+//  - изменены функции ClearValue и GetValueTextBox вызов которых (при
+//    значении Value == null) приводил к ошибке
 //
 //-----------------------------------------------------------------------
 
@@ -67,9 +70,9 @@ public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, 
         set => TextBox.ReadOnly = value;
     }
 
-    public override void ClearValue() => TextBox.Text = string.Empty;
+    public override void ClearValue() => TextBox.Text = default(T).ToString();
 
-    protected override T GetValueTextBox() => (T)Convert.ChangeType(TextBox.Text, typeof(T));
+    protected override T GetValueTextBox() => (T)Convert.ChangeType(TextBox.Text.Trim(), typeof(T));
 
     protected override void UpdateTextControl(T value)
     {
