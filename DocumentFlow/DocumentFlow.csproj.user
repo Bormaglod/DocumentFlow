@@ -172,6 +172,9 @@
     <Compile Update="Entities\Companies\Contractor\ContractorEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Entities\PaymentOrders\PaymentOrderEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Entities\PaymentOrders\Posting\PostingPaymentsEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -449,9 +452,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\PaymentOrders\PaymentOrderBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\PaymentOrders\PaymentOrderEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\PaymentOrders\Posting\PostingPaymentsBrowser.cs">

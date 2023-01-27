@@ -7,6 +7,8 @@
 // Версия 2023.1.21
 //  - поле Directions заменено на свойство и поменяло тип на
 //    IReadOnlyDictionary
+// Версия 2023.1.27
+//  - добавлено свойство without_distrib
 //
 //-----------------------------------------------------------------------
 
@@ -37,6 +39,8 @@ public class PaymentOrder : AccountingDocument
 
     [EnumType("payment_direction")]
     public string direction { get; set; } = "Expense";
+
+    public bool without_distrib { get; set; }
 
     public PaymentDirection PaymentDirection
     {

@@ -3,8 +3,13 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.02.2022
+//
+// Версия 2023.1.27
+//  - добавлено поле without_distrib
+//
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Editor;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Companies;
@@ -54,12 +59,15 @@ public class PaymentOrderEditor : DocumentEditor<PaymentOrder>, IPaymentOrderEdi
         contractor.SetDataSource(() => Services.Provider.GetService<IContractorRepository>()!.GetAll());
         direction.SetChoiceValues(PaymentOrder.Directions);
 
+        var without_distrib = new DfCheckBox("without_distrib", "Не распределять", 120);
+
         AddControls(new Control[]
         {
             panel_pp,
             contractor,
             direction,
-            amount
+            amount,
+            without_distrib
         });
     }
 
