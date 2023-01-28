@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - перенесено из DocumentFlow.Controls.Infrastructure в DocumentFlow.Infrastructure.Controls
+// Версия 2023.1.28
+//  - добавлено свойство Size
 //
 //-----------------------------------------------------------------------
 
@@ -15,5 +17,6 @@ public interface ICard
 {
     int Index { get; }
     string Title { get; }
+    Size Size { get; }
     void RefreshCard();
 }

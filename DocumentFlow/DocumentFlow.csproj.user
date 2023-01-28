@@ -259,6 +259,12 @@
     <Compile Update="Entities\Wages\GrossPayrols\GrossPayrollEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Entities\Wages\Payroll\PayrollBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Wages\Payroll\PayrollEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Entities\Wages\ReportCards\ReportCardBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>

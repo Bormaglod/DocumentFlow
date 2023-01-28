@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.1.28
+//  - добавлено свойство Size
 //
 //-----------------------------------------------------------------------
 
@@ -27,6 +29,8 @@ public partial class SupplierCard : UserControl, ICard
     public int Index => 1;
 
     public string Title => "Поставщики";
+
+    Size ICard.Size => new(1, 1);
 
     public void RefreshCard()
     {

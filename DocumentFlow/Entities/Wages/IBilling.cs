@@ -2,16 +2,15 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 17.01.2022
-//
-// Версия 2023.1.22
-//  - перенесено из DocumentFlow.Data.Infrastructure в DocumentFlow.Infrastructure.Data
-//
+// Date: 28.08.2022
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Infrastructure.Data;
+namespace DocumentFlow.Entities.Wages;
 
-public interface IEntityClonable
+public interface IBilling
 {
-    object Copy();
+#pragma warning disable IDE1006 // Стили именования
+    int billing_year { get; }
+    short billing_month { get; }
+#pragma warning restore IDE1006 // Стили именования
 }

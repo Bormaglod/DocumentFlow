@@ -47,5 +47,8 @@
     <Setting Name="CardSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">208, 236</Value>
     </Setting>
+    <Setting Name="CardPadding" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

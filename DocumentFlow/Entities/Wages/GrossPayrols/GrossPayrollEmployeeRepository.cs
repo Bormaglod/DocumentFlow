@@ -6,10 +6,12 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.1.28
+//  - в выборке метода GetDefaultQuery поле ii.item_name отображается как
+//    income_item_name
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 
@@ -28,7 +30,7 @@ public class GrossPayrollEmployeeRepository : OwnedRepository<long, GrossPayroll
         return query
             .Select("gross_payroll_employee.*")
             .Select("oe.item_name as employee_name")
-            .Select("ii.item_name")
+            .Select("ii.item_name as income_item_name")
             .Join("our_employee as oe", "oe.id", "gross_payroll_employee.employee_id")
             .Join("income_item as ii", "ii.id", "gross_payroll_employee.income_item_id")
             .OrderBy("oe.item_name");

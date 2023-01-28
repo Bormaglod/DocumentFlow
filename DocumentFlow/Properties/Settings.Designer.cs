@@ -196,5 +196,17 @@ namespace DocumentFlow.Properties {
                 this["CardSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int CardPadding {
+            get {
+                return ((int)(this["CardPadding"]));
+            }
+            set {
+                this["CardPadding"] = value;
+            }
+        }
     }
 }

@@ -1,12 +1,17 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 20.01.2022
+//
+// Версия 2023.1.28
+//  - DocumentFlow.Entities.Wages.IncomeItems заменен на
+//    DocumentFlow.Entities.Employees.IncomeItems
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
-using DocumentFlow.Entities.Wages.IncomeItems;
+using DocumentFlow.Entities.Employees.IncomeItems;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Entities.Balances;
 

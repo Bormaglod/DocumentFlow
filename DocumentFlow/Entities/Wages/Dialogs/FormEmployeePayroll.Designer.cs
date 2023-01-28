@@ -72,8 +72,12 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormEmployeePayroll";
             this.Padding = new System.Windows.Forms.Padding(10);
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Заработная плата сотрудника";
             this.ResumeLayout(false);

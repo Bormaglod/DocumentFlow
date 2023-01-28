@@ -8,6 +8,9 @@
 //  - параметр autoRefresh метода SetDataSource в классе
 //    DataSourceControl был удален. Вместо него используется свойство
 //    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+// Версия 2023.1.28
+//  - для установки значения employee_name в интерфейсе IWageEmployeeInfo
+//    используется метод SetEmployeeName
 //
 //-----------------------------------------------------------------------
 
@@ -74,8 +77,8 @@ public partial class FormEmployeePayroll : Form
     private void SaveControlData(IWageEmployeeInfo dest)
     {
         dest.employee_id = emp.SelectedItem?.id ?? Guid.Empty;
-        dest.employee_name = emp.ValueText;
         dest.wage = payroll.NumericValue.GetValueOrDefault();
+        dest.SetEmployeeName(emp.ValueText);
     }
 
     private void ButtonOk_Click(object sender, EventArgs e)

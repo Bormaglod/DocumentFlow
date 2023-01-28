@@ -13,6 +13,8 @@
 //  - RefreshPage обновляет карты напрямую, а не через CardPanel
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.1.28
+//  - немного оптимизации
 //
 //-----------------------------------------------------------------------
 
@@ -24,6 +26,7 @@ public partial class StartPage : UserControl, IStartPage
 {
     private readonly Size cardSize;
     private readonly IEnumerable<ICard> cards;
+    private readonly int cardPadding;
 
     public StartPage(IEnumerable<ICard> cards)
     {
@@ -33,6 +36,7 @@ public partial class StartPage : UserControl, IStartPage
 
         Text = "Начальная страница";
         cardSize = Properties.Settings.Default.CardSize;
+        cardPadding = Properties.Settings.Default.CardPadding;
 
         SetCardControlLayout();
     }
@@ -49,17 +53,12 @@ public partial class StartPage : UserControl, IStartPage
 
     private void SetCardControlLayout()
     {
+        //calc visible column count
+        int columnCount = Width / (cardSize.Width + cardPadding);
+
         foreach (var card in cards)
         {
-            //calc visible column count
-            int columnCount = Width / cardSize.Width;
-
-            var cardPanel = new CardPanel(card)
-            {
-                Width = cardSize.Width,
-                Height = cardSize.Height
-            };
-
+            var cardPanel = new CardPanel(card, cardSize);
             SetCardLocation(cardPanel, columnCount);
 
             panelCards.Controls.Add(cardPanel);
@@ -68,7 +67,7 @@ public partial class StartPage : UserControl, IStartPage
 
     private void UpdateCardControlLayout()
     {
-        int columnCount = Width / (cardSize.Width + 10);
+        int columnCount = Width / (cardSize.Width + cardPadding);
 
         foreach (var cardPanel in Controls.OfType<CardPanel>())
         {
@@ -81,8 +80,8 @@ public partial class StartPage : UserControl, IStartPage
         if (columnCount > 0)
         {
             //calc the x index and y index.
-            int xPos = cardPanel.Card.Index % columnCount * (cardSize.Width + 10) + 10;
-            int yPos = cardPanel.Card.Index / columnCount * (cardSize.Height + 10) + 10;
+            int xPos = cardPanel.Card.Index % columnCount * (cardSize.Width + cardPadding) + cardPadding;
+            int yPos = cardPanel.Card.Index / columnCount * (cardSize.Height + cardPadding) + cardPadding;
 
             cardPanel.Location = new Point(xPos, yPos);
         }

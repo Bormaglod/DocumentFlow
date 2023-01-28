@@ -6,10 +6,11 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.1.28
+//  - сумма операции в выборке не учитывала даход и расход. Исправлено
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 
@@ -25,9 +26,9 @@ public class BalanceEmployeeRepository : OwnedRepository<Guid, BalanceEmployee>,
     {
         return query
             .Select("balance_employee.*")
-            .SelectRaw("case when [amount] > 0 then [operation_summa] else null end as [employee_debt]")
-            .SelectRaw("case when [amount] < 0 then [operation_summa] else null end as [organization_debt]")
-            .SelectRaw("sum([operation_summa] * abs([amount])) over (order by [document_date], [document_number]) as [debt]")
+            .SelectRaw("case when amount > 0 then operation_summa else null end as employee_debt")
+            .SelectRaw("case when amount < 0 then operation_summa else null end as organization_debt")
+            .SelectRaw("sum(operation_summa * amount) over (order by document_date, document_number) as debt")
             .Select("dt.code as document_type_code")
             .Select("dt.document_name as document_type_name")
             .Join("document_type as dt", "dt.id", "document_type_id");

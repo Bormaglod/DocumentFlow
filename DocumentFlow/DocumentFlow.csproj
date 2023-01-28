@@ -6,7 +6,7 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>2023.1.27</Version>
+		<Version>2023.1.28</Version>
 		<Company>Автоком</Company>
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
 		<Platforms>x64</Platforms>
@@ -186,6 +186,14 @@
 	  <Compile Update="Entities\Wages\BasePayrollEditor.cs" />
 	  <Compile Update="Entities\Wages\GrossPayrols\GrossPayrollEditor.cs" />
 	  <Compile Update="Entities\Wages\BasePayrollBrowser.cs" />
+	  <Compile Update="Entities\Wages\Payment\PayrollPaymentEditor.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Wages\Payment\PayrollPaymentBrowser.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="Entities\Wages\Payroll\PayrollEditor.cs" />
+	  <Compile Update="Entities\Wages\Payroll\PayrollBrowser.cs" />
 	  <Compile Update="Entities\Wages\ReportCards\ReportCardEditor.cs" />
 	  <Compile Update="Entities\Wages\ReportCards\ReportCardBrowser.cs" />
 	  <Compile Update="Entities\Wages\Wages1c\Wage1cEditor.cs" />

@@ -2,16 +2,15 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 17.01.2022
-//
-// Версия 2023.1.22
-//  - перенесено из DocumentFlow.Data.Infrastructure в DocumentFlow.Infrastructure.Data
-//
+// Date: 28.01.2023
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Controls.Core;
+using DocumentFlow.Infrastructure.Controls;
 
-public interface IEntityClonable
+namespace DocumentFlow.Entities.Wages;
+
+[Menu(MenuDestination.Document, "Платёжная ведомость", 108900, "Зар. плата")]
+public interface IPayrollBrowser : IBrowser<Payroll>
 {
-    object Copy();
 }
