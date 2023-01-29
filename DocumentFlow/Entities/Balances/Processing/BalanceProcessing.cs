@@ -1,13 +1,29 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 03.07.2022
+//
+// Версия 2023.1.29
+//  - у свойства material_name метод set стал protected
+//  - добавлено свойство contractor_name
+//  - добавлен атрибут Display для свойств
+//  - добавлено подавление предупреждения IDE1006 о необходимости
+//    писать слова с прописных символов
+//
 //-----------------------------------------------------------------------
+
+using System.ComponentModel.DataAnnotations;
 
 namespace DocumentFlow.Entities.Balances;
 
 public class BalanceProcessing : BalanceProduct 
 {
-    public string material_name { get; set; } = string.Empty;
+#pragma warning disable IDE1006 // Стили именования
+    [Display(Name = "Материал", Order = 100)]
+    public string material_name { get; protected set; } = string.Empty;
+
+    [Display(Name = "Контрагент", Order = 200)]
+    public string contractor_name { get; protected set; } = string.Empty;
+#pragma warning restore IDE1006 // Стили именования
 }

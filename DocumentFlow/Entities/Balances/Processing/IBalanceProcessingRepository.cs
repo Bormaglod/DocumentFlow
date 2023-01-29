@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.1.29
+//  - добавлен метод GetRemainders
 //
 //-----------------------------------------------------------------------
 
@@ -15,4 +17,9 @@ namespace DocumentFlow.Entities.Balances;
 
 public interface IBalanceProcessingRepository : IOwnedRepository<Guid, BalanceProcessing>
 {
+    /// <summary>
+    /// Возвращает список давальческих материалов и остаток этого материала.
+    /// </summary>
+    /// <returns>Список давальческих материалов и остаток этого материала.</returns>
+    IReadOnlyList<BalanceProcessing> GetRemainders();
 }

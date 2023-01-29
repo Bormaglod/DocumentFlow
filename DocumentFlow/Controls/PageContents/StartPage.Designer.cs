@@ -58,6 +58,7 @@
             // 
             // panelCards
             // 
+            this.panelCards.AutoScroll = true;
             this.panelCards.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCards.Location = new System.Drawing.Point(0, 52);
             this.panelCards.Name = "panelCards";

@@ -8,20 +8,58 @@
 //  - в выборку попадал собственный материал (не давальческий) - исправлено
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.1.29
+//  - добавлен метод GetRemainders
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
+using SqlKata.Execution;
 
 namespace DocumentFlow.Entities.Balances;
 
 public class BalanceProcessingRepository : OwnedRepository<Guid, BalanceProcessing>, IBalanceProcessingRepository
 {
     public BalanceProcessingRepository(IDatabase database) : base(database) { }
+
+    public IReadOnlyList<BalanceProcessing> GetRemainders()
+    {
+        using var conn = Database.OpenConnection();
+
+        var q_wpp = new Query("waybill_processing_price as wpp")
+            .Select("wp.contractor_id")
+            .Select("wpp.reference_id")
+            .SelectRaw("sum(wpp.amount) as income_material")
+            .Join("waybill_processing as wp", "wp.id", "wpp.owner_id")
+            .GroupBy("wp.contractor_id", "wpp.reference_id");
+
+        var q_wpw = new Query("waybill_processing_writeoff as wpw")
+            .Select("wp.contractor_id")
+            .Select("wpw.material_id")
+            .SelectRaw("sum(wpw.amount) as expense_material")
+            .Join("waybill_processing as wp", "wp.id", "wpw.waybill_processing_id")
+            .GroupBy("wp.contractor_id", "wpw.material_id");
+
+        return GetBaseQuery(conn)
+            .From("q_wpp as i")
+            .With("q_wpp", q_wpp)
+            .With("q_wpw", q_wpw)
+            .Select("m.item_name as material_name")
+            .Select("c.item_name as contractor_name")
+            .Select("i.income_material as income")
+            .Select("e.expense_material as expense")
+            .SelectRaw("i.income_material - coalesce(e.expense_material, 0) as remainder")
+            .LeftJoin("q_wpw as e", q => q.On("e.contractor_id", "i.contractor_id").On("e.material_id", "i.reference_id"))
+            .Join("material as m", "m.id", "i.reference_id")
+            .Join("contractor as c", "c.id", "i.contractor_id")
+            .WhereRaw("i.income_material - coalesce(e.expense_material, 0) > 0")
+            .OrderBy("m.item_name")
+            .Get<BalanceProcessing>()
+            .ToList();
+    }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
     {

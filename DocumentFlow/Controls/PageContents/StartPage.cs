@@ -15,10 +15,14 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.1.28
 //  - немного оптимизации
+// Версия 2023.1.29
+//  - реализована логика для размещения карточек произвольного размера
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Infrastructure.Controls;
+
+using Windows.Media.Devices;
 
 namespace DocumentFlow.Controls.PageContents;
 
@@ -38,7 +42,12 @@ public partial class StartPage : UserControl, IStartPage
         cardSize = Properties.Settings.Default.CardSize;
         cardPadding = Properties.Settings.Default.CardPadding;
 
-        SetCardControlLayout();
+        foreach (var card in cards)
+        {
+            panelCards.Controls.Add(new CardPanel(card, cardSize));
+        }
+
+        UpdateCardControlLayout();
     }
 
     public void OnPageClosing() { }
@@ -51,52 +60,68 @@ public partial class StartPage : UserControl, IStartPage
         }
     }
 
-    private void SetCardControlLayout()
-    {
-        //calc visible column count
-        int columnCount = Width / (cardSize.Width + cardPadding);
-
-        foreach (var card in cards)
-        {
-            var cardPanel = new CardPanel(card, cardSize);
-            SetCardLocation(cardPanel, columnCount);
-
-            panelCards.Controls.Add(cardPanel);
-        }
-    }
-
     private void UpdateCardControlLayout()
     {
-        int columnCount = Width / (cardSize.Width + cardPadding);
+        Point pos = new(cardPadding, cardPadding);
 
-        foreach (var cardPanel in Controls.OfType<CardPanel>())
+        List<CardPanel> placed = new();
+        foreach (var card in cards.OrderBy(x => x.Index))
         {
-            SetCardLocation(cardPanel, columnCount);
+            if (card is Control cardControl && cardControl.Parent is CardPanel cardPanel) 
+            {
+                if (pos.X != cardPadding)
+                {
+                    if (pos.X + cardPanel.Width > panelCards.Width)
+                    {
+                        pos = new(cardPadding, pos.Y + cardSize.Height + cardPadding);
+                    }
+                }
+
+                // проверим, не перекрывает ли карточка другие
+                // если есть перекрытие, выберем другую точку размещения
+                // и еще раз попробуем проверить
+                while (true)
+                {
+                    bool notIntersects = true;
+                    Rectangle cur = new(pos, cardPanel.Size);
+                    foreach (var p in placed)
+                    {
+                        Rectangle pRect = new(p.Location, p.Size);
+                        if (cur.IntersectsWith(pRect))
+                        {
+                            pos = NextPosition(cardPanel, pos);
+
+                            notIntersects = false;
+                            break;
+                        }
+                    }
+
+                    if (notIntersects)
+                        break;
+                }
+
+                cardPanel.Location = pos;
+                placed.Add(cardPanel);
+
+                pos = NextPosition(cardPanel, pos);
+            }
         }
     }
 
-    private void SetCardLocation(CardPanel cardPanel, int columnCount)
+    private Point NextPosition(CardPanel panel, Point p)
     {
-        if (columnCount > 0)
+        int xPos = p.X + cardSize.Width + cardPadding;
+        int yPos = p.Y;
+        if (xPos + panel.Width > panelCards.Width)
         {
-            //calc the x index and y index.
-            int xPos = cardPanel.Card.Index % columnCount * (cardSize.Width + cardPadding) + cardPadding;
-            int yPos = cardPanel.Card.Index / columnCount * (cardSize.Height + cardPadding) + cardPadding;
-
-            cardPanel.Location = new Point(xPos, yPos);
-        }
-        else
-        {
-            cardPanel.Location = new Point(0, 0);
+            xPos = cardPadding;
+            yPos += cardSize.Height + cardPadding;
         }
 
-        cardPanel.Visible = columnCount > 0;
+        return new Point(xPos, yPos);
     }
 
-    private void StartPage_SizeChanged(object sender, EventArgs e)
-    {
-        UpdateCardControlLayout();
-    }
+    private void StartPage_SizeChanged(object sender, EventArgs e) => UpdateCardControlLayout();
 
     private void ButtonRefresh_Click(object sender, EventArgs e) => RefreshPage();
 }

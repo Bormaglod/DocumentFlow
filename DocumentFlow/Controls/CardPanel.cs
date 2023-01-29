@@ -27,16 +27,16 @@ public partial class CardPanel : UserControl
 
         if (card is Control control)
         {
-            var cardPadding = Properties.Settings.Default.CardPadding;
-
             control.Dock = DockStyle.Fill;
-            control.Size = new Size(
-                cardSize.Width * card.Size.Width + cardPadding * (card.Size.Width - 1), 
-                cardSize.Height * card.Size.Height + cardPadding * (card.Size.Height - 1));
             Controls.Add(control);
 
             control.BringToFront();
         }
+
+        var cardPadding = Properties.Settings.Default.CardPadding;
+        Size = new Size(
+            cardSize.Width * card.Size.Width + cardPadding * (card.Size.Width - 1),
+            cardSize.Height * card.Size.Height + cardPadding * (card.Size.Height - 1));
 
         this.card = card;
     }
