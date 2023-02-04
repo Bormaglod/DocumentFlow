@@ -8,6 +8,8 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.1.28
 //  - добавлено свойство Size
+// Версия 2023.2.4
+//  - из конструктора убран вызов RefreshCard
 //
 //-----------------------------------------------------------------------
 
@@ -23,7 +25,6 @@ public partial class SupplierCard : UserControl, ICard
     public SupplierCard()
     {
         InitializeComponent();
-        RefreshCard();
     }
 
     public int Index => 1;

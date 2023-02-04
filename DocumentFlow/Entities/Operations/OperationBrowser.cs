@@ -13,6 +13,8 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.2.4
+//  - добавлен столбец "Дата нормир."
 //
 //-----------------------------------------------------------------------
 
@@ -44,6 +46,7 @@ public class OperationBrowser : Browser<Operation>, IOperationBrowser
         var type_name = CreateText(x => x.type_name, "Тип операции", width: 250);
         var salary = CreateNumeric(x => x.salary, "Зар. плата, руб.", width: 100, decimalDigits: 4);
         var operation_using = CreateBoolean(x => x.operation_using, "Используется", 120);
+        var date_norm = CreateDateTime(x => x.date_norm, "Дата нормир.", 100, format: "dd.MM.yyyy", visible: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         produced.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
@@ -51,7 +54,7 @@ public class OperationBrowser : Browser<Operation>, IOperationBrowser
         production_rate.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
         salary.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
-        AddColumns(new GridColumn[] { id, code, name, produced, prod_time, production_rate, type_name, salary, operation_using });
+        AddColumns(new GridColumn[] { id, code, name, produced, prod_time, production_rate, type_name, salary, operation_using, date_norm });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [name] = ListSortDirection.Ascending

@@ -3,13 +3,19 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.01.2023
+//
+// Версия 2023.2.4
+//  - из конструктора убран вызов RefreshCard
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Entities.Balances;
 using DocumentFlow.Infrastructure.Controls;
-using Syncfusion.WinForms.DataGrid.Events;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using Syncfusion.WinForms.DataGrid.Enums;
+using Syncfusion.WinForms.DataGrid.Events;
 
 namespace DocumentFlow.Controls.Cards;
 
@@ -18,7 +24,6 @@ public partial class GivingMaterialsCard : UserControl, ICard
     public GivingMaterialsCard()
     {
         InitializeComponent();
-        RefreshCard();
     }
 
     public int Index => 3;

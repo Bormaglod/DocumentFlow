@@ -17,9 +17,14 @@
 //  - немного оптимизации
 // Версия 2023.1.29
 //  - реализована логика для размещения карточек произвольного размера
+// Версия 2023.2.4
+//  - добавлена обработка исключения DbAccessException - если карточка
+//    генерирует его (у пользователя нет каких-то прав), то она не 
+//    будет добавлятся
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Infrastructure.Controls;
 
 using Windows.Media.Devices;
@@ -44,7 +49,13 @@ public partial class StartPage : UserControl, IStartPage
 
         foreach (var card in cards)
         {
-            panelCards.Controls.Add(new CardPanel(card, cardSize));
+            try
+            {
+                panelCards.Controls.Add(new CardPanel(card, cardSize));
+            }
+            catch (DbAccessException)
+            {
+            }
         }
 
         UpdateCardControlLayout();

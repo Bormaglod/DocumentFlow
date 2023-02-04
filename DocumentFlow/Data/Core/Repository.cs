@@ -19,6 +19,8 @@
 //  - метод GetTableName(Query) стал статическим
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.2.4
+//  - добавлены функции GetView и GetViewList
 //
 //-----------------------------------------------------------------------
 
@@ -443,11 +445,11 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
         if (operation == DataOperation.Update)
         {
-            return string.Join(',', list.Select(x => $"{x} = :{x}{(enums.ContainsKey(x) ? "::" + enums[x] : "")}"));
+            return string.Join(',', list.Select(x => $"{x} = :{x}{(enums.TryGetValue(x, out string? value) ? "::" + value : "")}"));
         }
         else
         {
-            return string.Join(',', list.Select(x => $":{x}{(enums.ContainsKey(x) ? "::" + enums[x] : "")}"));
+            return string.Join(',', list.Select(x => $":{x}{(enums.TryGetValue(x, out string? value) ? "::" + value : "")}"));
         }
     }
 
@@ -485,6 +487,20 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     }
 
     protected virtual Query GetDefaultQuery(Query query, IFilter? filter = null) => query;
+
+    protected Query GetView(IDbConnection conn, string viewName)
+    {
+        var factory = new QueryFactory(conn, new PostgresCompiler());
+        return factory.Query(viewName);
+    }
+
+    protected IReadOnlyList<P> GetViewList<P>(string viewName)
+    {
+        using var conn = Database.OpenConnection();
+        return GetView(conn, viewName)
+            .Get<P>()
+            .ToList();
+    }
 
     protected Query GetBaseQuery(IDbConnection conn, string? alias = null)
     {

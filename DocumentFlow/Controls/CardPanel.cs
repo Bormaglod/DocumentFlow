@@ -8,6 +8,8 @@
 //  - удалён метод RefreshPanel
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.2.4
+//  - добавлено автоматическое обновление карты при создании
 //
 //-----------------------------------------------------------------------
 
@@ -37,6 +39,8 @@ public partial class CardPanel : UserControl
         Size = new Size(
             cardSize.Width * card.Size.Width + cardPadding * (card.Size.Width - 1),
             cardSize.Height * card.Size.Height + cardPadding * (card.Size.Height - 1));
+
+        card.RefreshCard();
 
         this.card = card;
     }

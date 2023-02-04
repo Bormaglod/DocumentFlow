@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.2.4
+//  - добавлен метод GetWages
 //
 //-----------------------------------------------------------------------
 
@@ -15,4 +17,5 @@ namespace DocumentFlow.Entities.Employees;
 
 public interface IOurEmployeeRepository : IRepository<Guid, OurEmployee>
 {
+    IReadOnlyList<Wages> GetWages();
 }

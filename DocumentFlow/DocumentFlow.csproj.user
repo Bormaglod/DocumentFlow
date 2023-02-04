@@ -10,6 +10,9 @@
     <Compile Update="Controls\Cards\GivingMaterialsCard.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Cards\WageCard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfMaskedTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -173,6 +176,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Companies\Contractor\ContractorEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Operations\CuttingEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\PaymentOrders\PaymentOrderEditor.cs">
@@ -440,9 +446,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Operations\CuttingBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Operations\CuttingEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Operations\OperationBrowser.cs">

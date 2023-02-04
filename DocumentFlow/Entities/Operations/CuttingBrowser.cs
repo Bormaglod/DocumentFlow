@@ -11,6 +11,8 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.2.4
+//  - добавлен столбец "Дата нормир."
 //
 //-----------------------------------------------------------------------
 
@@ -47,6 +49,7 @@ public class CuttingBrowser : Browser<Cutting>, ICuttingBrowser
         var program_number = CreateNumeric(x => x.program_number, "Программа", width: 100, visible: false);
         var salary = CreateNumeric(x => x.salary, "Зар. плата", width: 100, visible: false, decimalDigits: 4);
         var operation_using = CreateBoolean(x => x.operation_using, "Используется", 120);
+        var date_norm = CreateDateTime(x => x.date_norm, "Дата нормир.", 100, format: "dd.MM.yyyy", visible: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         produced.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
@@ -60,7 +63,7 @@ public class CuttingBrowser : Browser<Cutting>, ICuttingBrowser
         program_number.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
         salary.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
-        AddColumns(new GridColumn[] { id, code, name, produced, prod_time, production_rate, segment_length, left_cleaning, left_sweep, right_cleaning, right_sweep, program_number, salary, operation_using });
+        AddColumns(new GridColumn[] { id, code, name, produced, prod_time, production_rate, segment_length, left_cleaning, left_sweep, right_cleaning, right_sweep, program_number, salary, date_norm, operation_using });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [name] = ListSortDirection.Ascending

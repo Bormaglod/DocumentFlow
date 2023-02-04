@@ -74,6 +74,10 @@
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.ReportEngine.Infrastructure перемещено в DocumentFlow.Infrastructure.ReportEngine
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.2.4
+//  - в методе ToolStripPrintList_Click изменен способ получения списка
+//    записей для печати (вместо исходного набора, теперь используется
+//    экранный набор записей)
 //
 //-----------------------------------------------------------------------
 
@@ -780,7 +784,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         // FIX: При установленном ShowPreviewRow и попытке присвоить GridColumn.Width какое-либо значение выпадает ошибка
         // Исключение типа "System.ArgumentOutOfRangeException" возникло в Syncfusion.GridCommon.WinForms.dll, но не было обработано в коде пользователя 13 out of range 0 to 12
         // Поэтому настройка колонок для данного случая временно отключена
-        // Проверено в Syncfusion версий 20.4.0.43, 20.4.0.44
+        // Проверено в Syncfusion версий 20.4.0.43, 20.4.0.44, 20.4.0.48
         if (gridContent.ShowPreviewRow)
         {
             return;
@@ -1714,8 +1718,10 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     private void ToolStripPrintList_Click(object sender, EventArgs e)
     {
-        if (gridContent.DataSource is IList<T> list && settings != null)
+        if (settings != null)
         {
+            var list = gridContent.View.Records.Select(x => x.Data).OfType<T>();
+
             var b_settings = settings.Get<BrowserSettings>();
 
             string dataName = typeof(T).Name.Underscore();
@@ -1723,8 +1729,6 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             FastReport.Report report = new();
             report.RegisterData(list, dataName);
             report.GetDataSource(dataName).Enabled = true;
-
-
 
             FastReport.ReportPage page1 = new()
             {

@@ -1,8 +1,12 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 11.01.2022
+//
+// Версия 2023.2.4
+//  - добавлен поле "Дата нормирования"
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -28,6 +32,7 @@ public class OperationEditor : Editor<Operation>, IOperationEditor
         var prod_time = new DfIntegerTextBox<int>("prod_time", "Время выработки, сек.", headerWidth, 100) { DefaultAsNull = false };
         var production_rate = new DfIntegerTextBox<int>("production_rate", "Норма выработка, ед./час", headerWidth, 100) { DefaultAsNull = false, Enabled = false };
         var salary = new DfNumericTextBox("salary", "Зарплата, руб.", headerWidth, 100) { DefaultAsNull = false, Enabled = false, NumberDecimalDigits = 4 };
+        var date_norm = new DfDateTimePicker("date_norm", "Дата нормирования", headerWidth, 150) { Required = false };
 
         type.SetDataSource(() => Services.Provider.GetService<IOperationTypeRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
         parent.SetDataSource(() => repository.GetOnlyFolders());
@@ -41,6 +46,7 @@ public class OperationEditor : Editor<Operation>, IOperationEditor
             produced,
             prod_time,
             production_rate,
+            date_norm,
             salary
         });
     }

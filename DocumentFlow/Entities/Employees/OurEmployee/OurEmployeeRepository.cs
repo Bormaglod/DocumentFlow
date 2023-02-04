@@ -6,10 +6,13 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.2.4
+//  - добавлен метод GetWages
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
+using DocumentFlow.Core;
+using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 
@@ -22,6 +25,16 @@ public class OurEmployeeRepository : Repository<Guid, OurEmployee>, IOurEmployee
     public OurEmployeeRepository(IDatabase database) : base(database)
     {
         ExcludeField(x => x.parent_id);
+    }
+
+    public IReadOnlyList<Wages> GetWages()
+    {
+        if (HasPrivilege("employee_wages", Privilege.Select))
+        {
+            return GetViewList<Wages>("employee_wages");
+        }
+
+        throw new DbAccessException($"Отсутствует доступ к таблице {"employee_wages"}");
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
