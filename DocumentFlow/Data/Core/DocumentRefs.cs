@@ -6,12 +6,16 @@
 //
 // Версия 2023.1.24
 //  - добавлено наследование от IDocumentRefs
+// Версия 2023.2.6
+//  - добавлен метод CreateThumbnailImage
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Core;
 using DocumentFlow.Infrastructure.Data;
-
+using System.Drawing.Imaging;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 
 namespace DocumentFlow.Data.Core;
 
@@ -35,4 +39,18 @@ public class DocumentRefs : Entity<long>, IDocumentRefs
 
     [Display(AutoGenerateField = false)]
     public byte[]? file_content { get; set; }
+
+    public void CreateThumbnailImage()
+    {
+        string[] images = { ".jpg", ".jpeg", ".png", ".bmp" };
+        if (images.Contains(Path.GetExtension(file_name)) && file_content != null)
+        {
+            using MemoryStream stream = new(file_content);
+            Image image = Image.FromStream(stream);
+            Image thumb = image.GetThumbnailImage(120, 120, () => false, IntPtr.Zero);
+            thumbnail = ImageHelper.ImageToBase64(thumb, ImageFormat.Bmp);
+        }
+
+        thumbnail = null;
+    }
 }

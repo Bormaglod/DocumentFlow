@@ -78,6 +78,9 @@
 //  - в методе ToolStripPrintList_Click изменен способ получения списка
 //    записей для печати (вместо исходного набора, теперь используется
 //    экранный набор записей)
+// Версия 2023.2.6
+//  - отключена работа ConfigureVisibleStatusColumns при установленном
+//    ShowPreviewRow
 //
 //-----------------------------------------------------------------------
 
@@ -1206,6 +1209,15 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     private void ConfigureVisibleStatusColumns()
     {
+        // FIX: При установленном ShowPreviewRow и попытке присвоить GridColumn.Width какое-либо значение выпадает ошибка
+        // Исключение типа "System.ArgumentOutOfRangeException" возникло в Syncfusion.GridCommon.WinForms.dll, но не было обработано в коде пользователя 13 out of range 0 to 12
+        // Поэтому настройка колонок для данного случая временно отключена
+        // Проверено в Syncfusion версий 20.4.0.43, 20.4.0.44, 20.4.0.48
+        if (gridContent.ShowPreviewRow)
+        {
+            return;
+        }
+
         if (settings == null)
         {
             return;

@@ -36,6 +36,7 @@ namespace DocumentFlow.Controls.Editors
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonCopy = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparatorCustom1 = new System.Windows.Forms.ToolStripSeparator();
+            this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
             this.gridMain = new Syncfusion.WinForms.DataGrid.SfDataGrid();
             this.contextMenuStripEx1 = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             this.menuCopyToClipboard = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,7 +47,7 @@ namespace DocumentFlow.Controls.Editors
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.menuCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparatorCustom2 = new System.Windows.Forms.ToolStripSeparator();
-            this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
+            this.labelHeader = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridMain)).BeginInit();
             this.contextMenuStripEx1.SuspendLayout();
@@ -62,7 +63,7 @@ namespace DocumentFlow.Controls.Editors
             this.buttonCopy,
             this.toolStripSeparatorCustom1,
             this.buttonRefresh});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 32);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
             this.toolStrip1.TabIndex = 0;
@@ -116,6 +117,17 @@ namespace DocumentFlow.Controls.Editors
             this.toolStripSeparatorCustom1.Size = new System.Drawing.Size(6, 25);
             this.toolStripSeparatorCustom1.Visible = false;
             // 
+            // buttonRefresh
+            // 
+            this.buttonRefresh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.buttonRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonRefresh.Image = global::DocumentFlow.Properties.Resources.icons8_refresh_16;
+            this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonRefresh.Name = "buttonRefresh";
+            this.buttonRefresh.Size = new System.Drawing.Size(23, 22);
+            this.buttonRefresh.Text = "Обновить";
+            this.buttonRefresh.Click += new System.EventHandler(this.ButtonRefresh_Click);
+            // 
             // gridMain
             // 
             this.gridMain.AccessibleName = "Table";
@@ -126,10 +138,10 @@ namespace DocumentFlow.Controls.Editors
             this.gridMain.ContextMenuStrip = this.contextMenuStripEx1;
             this.gridMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridMain.LiveDataUpdateMode = Syncfusion.Data.LiveDataUpdateMode.AllowSummaryUpdate;
-            this.gridMain.Location = new System.Drawing.Point(0, 25);
+            this.gridMain.Location = new System.Drawing.Point(0, 57);
             this.gridMain.Name = "gridMain";
             this.gridMain.NavigationMode = Syncfusion.WinForms.DataGrid.Enums.NavigationMode.Row;
-            this.gridMain.Size = new System.Drawing.Size(800, 175);
+            this.gridMain.Size = new System.Drawing.Size(800, 143);
             this.gridMain.Style.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
             this.gridMain.Style.CheckBoxStyle.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
             this.gridMain.Style.CheckBoxStyle.CheckedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
@@ -219,16 +231,15 @@ namespace DocumentFlow.Controls.Editors
             this.toolStripSeparatorCustom2.Size = new System.Drawing.Size(178, 6);
             this.toolStripSeparatorCustom2.Visible = false;
             // 
-            // buttonRefresh
+            // labelHeader
             // 
-            this.buttonRefresh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.buttonRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonRefresh.Image = global::DocumentFlow.Properties.Resources.icons8_refresh_16;
-            this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonRefresh.Name = "buttonRefresh";
-            this.buttonRefresh.Size = new System.Drawing.Size(23, 22);
-            this.buttonRefresh.Text = "Обновить";
-            this.buttonRefresh.Click += new System.EventHandler(this.ButtonRefresh_Click);
+            this.labelHeader.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelHeader.Location = new System.Drawing.Point(0, 0);
+            this.labelHeader.Name = "labelHeader";
+            this.labelHeader.Size = new System.Drawing.Size(800, 32);
+            this.labelHeader.TabIndex = 2;
+            this.labelHeader.Text = "Заголовок";
+            this.labelHeader.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // DfDataGrid
             // 
@@ -236,6 +247,7 @@ namespace DocumentFlow.Controls.Editors
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gridMain);
             this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.labelHeader);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Name = "DfDataGrid";
             this.Size = new System.Drawing.Size(800, 200);
@@ -268,5 +280,6 @@ namespace DocumentFlow.Controls.Editors
         private ToolStripSeparator toolStripSeparatorCustom1;
         private ToolStripSeparator toolStripSeparatorCustom2;
         private ToolStripButton buttonRefresh;
+        private Label labelHeader;
     }
 }

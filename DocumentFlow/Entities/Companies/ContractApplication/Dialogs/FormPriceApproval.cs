@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 18.01.2022
@@ -10,6 +10,8 @@
 //  - параметр autoRefresh метода SetDataSource в классе
 //    DataSourceControl был удален. Вместо него используется свойство
 //    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+// Версия 2023.2.6
+//  - исправлена орфографическая ошибка
 //
 //-----------------------------------------------------------------------
 
@@ -100,7 +102,7 @@ public partial class FormPriceApproval : Form
     {
         if (product.SelectedItem == null)
         {
-            MessageBox.Show("Необхлдимо выбрать материал/изделие.", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Необходимо выбрать материал/изделие.", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Error);
             DialogResult = DialogResult.None;
         }
     }

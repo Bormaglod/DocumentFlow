@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 18.08.2019
@@ -7,13 +7,14 @@
 // Версия 2023.1.15
 //  - исправлен вызов Create, теперь он возвращает в случае успеха true,
 //    а остальные параметры передаются через out
+// Версия 2023.2.6
+//  - удален метод CreateThumbnailImage, вместо него используется метод
+//    класса DocumentRefs.CreateThumbnailImage()
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Core;
 using DocumentFlow.Data.Core;
 
-using System.Drawing.Imaging;
 using System.IO;
 
 namespace DocumentFlow.Dialogs;
@@ -63,7 +64,7 @@ public partial class DocumentRefEditorForm : Form
 
             if (f.checkBoxThumbnail.Checked)
             {
-                document.thumbnail = CreateThumbnailImage(document);
+                document.CreateThumbnailImage();
             }
 
             fileName = f.FileNameWithPath;
@@ -81,26 +82,19 @@ public partial class DocumentRefEditorForm : Form
         if (f.ShowDialog() == DialogResult.OK)
         {
             refs.note = f.textNote.Text;
-            refs.thumbnail = f.checkBoxThumbnail.Checked ? CreateThumbnailImage(refs) : null;
+            if (f.checkBoxThumbnail.Checked)
+            {
+                refs.CreateThumbnailImage();
+            }
+            else
+            {
+                refs.thumbnail = null;
+            }
 
             return true;
         }
 
         return false;
-    }
-
-    private static string? CreateThumbnailImage(DocumentRefs refs)
-    {
-        string[] images = { ".jpg", ".jpeg", ".png", ".bmp" };
-        if (images.Contains(Path.GetExtension(refs.file_name)) && refs.file_content != null)
-        {
-            using MemoryStream stream = new(refs.file_content);
-            Image image = Image.FromStream(stream);
-            Image thumb = image.GetThumbnailImage(120, 120, () => false, IntPtr.Zero);
-            return ImageHelper.ImageToBase64(thumb, ImageFormat.Bmp);
-        }
-
-        return null;
     }
 
     private void ButtonOk_Click(object sender, EventArgs e)

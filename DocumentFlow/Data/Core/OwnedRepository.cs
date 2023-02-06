@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.2.6
+//  - метод GetList стал статическим
 //
 //-----------------------------------------------------------------------
 
@@ -40,7 +42,6 @@ public abstract class OwnedRepository<Key, T> : Repository<Key, T>, IOwnedReposi
         var res2 = res1.ToList();
 
         return res2;
-
     }
 
     public IReadOnlyList<T> GetByOwner(Key? id, Guid? owner_id, IFilter? filter = null, Func<Query, Query>? callback = null, bool useBaseQuery = false)
@@ -63,12 +64,12 @@ public abstract class OwnedRepository<Key, T> : Repository<Key, T>, IOwnedReposi
             GetQueryOwner(GetBaseQuery(conn), owner_id.Value) :
             GetQueryOwner(GetDefaultQuery(conn, filter), owner_id.Value);
 
-        return GetList(query, id, callback);
+        return OwnedRepository<Key, T>.GetList(query, id, callback);
     }
 
     protected virtual Query GetQueryOwner(Query query, Guid owner_id) => query.Where($"{GetTableName(query)}.owner_id", owner_id);
 
-    private IReadOnlyList<T> GetList(Query query, Key? id, Func<Query, Query>? callback = null)
+    private static IReadOnlyList<T> GetList(Query query, Key? id, Func<Query, Query>? callback = null)
     {
         if (callback != null)
         {

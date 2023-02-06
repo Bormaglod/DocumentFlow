@@ -6,15 +6,20 @@
 //
 // Версия 2023.2.4
 //  - добавлен поле "Дата нормирования"
+// Версия 2023.2.6
+//  - добавлено поле goods
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Entities.Operations.Dialogs;
 using DocumentFlow.Entities.OperationTypes;
 using DocumentFlow.Infrastructure;
 
 using Microsoft.Extensions.DependencyInjection;
+
+using Syncfusion.WinForms.DataGrid.Enums;
 
 namespace DocumentFlow.Entities.Operations;
 
@@ -33,9 +38,45 @@ public class OperationEditor : Editor<Operation>, IOperationEditor
         var production_rate = new DfIntegerTextBox<int>("production_rate", "Норма выработка, ед./час", headerWidth, 100) { DefaultAsNull = false, Enabled = false };
         var salary = new DfNumericTextBox("salary", "Зарплата, руб.", headerWidth, 100) { DefaultAsNull = false, Enabled = false, NumberDecimalDigits = 4 };
         var date_norm = new DfDateTimePicker("date_norm", "Дата нормирования", headerWidth, 150) { Required = false };
+        var goods = new DfDataGrid<OperationGoods>(Services.Provider.GetService<IOperationGoodsRepository>()!) 
+        { 
+            Dock = DockStyle.Fill,
+            Header = "Операция будет использовоться только при производстве этих изделий"
+        };
 
         type.SetDataSource(() => Services.Provider.GetService<IOperationTypeRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-        parent.SetDataSource(() => repository.GetOnlyFolders());
+        parent.SetDataSource(repository.GetOnlyFolders);
+
+        goods.AutoGeneratingColumn += (sender, args) =>
+        {
+            switch (args.Column.MappingName)
+            {
+                case "goods_code":
+                    args.Column.Width = 150;
+                    break;
+                case "goods_name":
+                    args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
+                    break;
+                default:
+                    args.Cancel = true;
+                    break;
+            }
+        };
+
+        goods.DataCreate += (sender, args) =>
+        {
+            args.Cancel = GoodsSelectForm.Create(args.CreatingData) == DialogResult.Cancel;
+        };
+
+        goods.DataEdit += (sender, args) =>
+        {
+            args.Cancel = GoodsSelectForm.Edit(args.EditingData) == DialogResult.Cancel;
+        };
+
+        goods.DataCopy += (sender, args) =>
+        {
+            args.Cancel = GoodsSelectForm.Edit(args.CopiedData) == DialogResult.Cancel;
+        };
 
         AddControls(new Control[]
         {
@@ -47,7 +88,8 @@ public class OperationEditor : Editor<Operation>, IOperationEditor
             prod_time,
             production_rate,
             date_norm,
-            salary
+            salary,
+            goods
         });
     }
 
