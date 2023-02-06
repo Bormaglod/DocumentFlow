@@ -266,3 +266,4 @@ packages
 /DocumentFlow.Export
 /DocumentFlow.ReportExport
 /DocumentFlow.Setup
+/DocumentFlow.Install
