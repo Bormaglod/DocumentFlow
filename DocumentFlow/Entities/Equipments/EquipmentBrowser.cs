@@ -8,6 +8,8 @@
 //  - в конструктор добавлен параметр settings
 // Версия 2023.1.22
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+// Версия 2023.2.7
+//  - добавлен столбец "Ввод в экспл."
 //
 //-----------------------------------------------------------------------
 
@@ -27,15 +29,16 @@ public class EquipmentBrowser : Browser<Equipment>, IEquipmentBrowser
     public EquipmentBrowser(IEquipmentRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
         : base(repository, pageManager, settings: settings) 
     {
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        GridTextColumn code = CreateText(x => x.code, "Код", width: 110);
-        GridTextColumn name = CreateText(x => x.item_name, "Наименование", hidden: false);
-        GridTextColumn serial = CreateText(x => x.serial_number, "Серийный номер", width: 100);
-        GridCheckBoxColumn is_tools = CreateBoolean(x => x.is_tools, "Инструмент", width: 160);
+        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var code = CreateText(x => x.code, "Код", width: 110);
+        var name = CreateText(x => x.item_name, "Наименование", hidden: false);
+        var serial = CreateText(x => x.serial_number, "Серийный номер", width: 100);
+        var is_tools = CreateBoolean(x => x.is_tools, "Инструмент", width: 160);
+        var commissioning = CreateDateTime(x => x.commissioning, "Ввод в экспл.", width: 150, format: "dd.MM.yyyy");
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 
-        AddColumns(new GridColumn[] { id, code, name, serial, is_tools });
+        AddColumns(new GridColumn[] { id, code, name, serial, commissioning, is_tools });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [code] = ListSortDirection.Ascending

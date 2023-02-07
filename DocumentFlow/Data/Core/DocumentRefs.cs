@@ -8,6 +8,9 @@
 //  - добавлено наследование от IDocumentRefs
 // Версия 2023.2.6
 //  - добавлен метод CreateThumbnailImage
+// Версия 2023.2.7
+//  - исправлена ошибка в CreateThumbnailImage (thumbnail всегда 
+//    присваивалось null)
 //
 //-----------------------------------------------------------------------
 
@@ -50,7 +53,9 @@ public class DocumentRefs : Entity<long>, IDocumentRefs
             Image thumb = image.GetThumbnailImage(120, 120, () => false, IntPtr.Zero);
             thumbnail = ImageHelper.ImageToBase64(thumb, ImageFormat.Bmp);
         }
-
-        thumbnail = null;
+        else
+        {
+            thumbnail = null;
+        }
     }
 }
