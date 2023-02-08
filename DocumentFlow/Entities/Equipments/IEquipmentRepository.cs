@@ -15,4 +15,5 @@ namespace DocumentFlow.Entities.Equipments;
 
 public interface IEquipmentRepository : IRepository<Guid, Equipment>
 {
+    IReadOnlyList<Applicator> GetApplicators();
 }

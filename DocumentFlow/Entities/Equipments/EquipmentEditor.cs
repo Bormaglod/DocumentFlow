@@ -6,6 +6,8 @@
 //
 // Версия 2023.2.7
 //  - добавлено поле "Ввод в экспл."
+// Версия 2023.2.8
+//  - добавлено поле "Кол-во опрессовок"
 //
 //-----------------------------------------------------------------------
 
@@ -26,6 +28,7 @@ public class EquipmentEditor : Editor<Equipment>, IEquipmentEditor
         var serial = new DfTextBox("serial_number", "Серийный номер", headerWidth, 100);
         var is_tools = new DfToggleButton("is_tools", "Это инструмент", headerWidth);
         var commissioning = new DfDateTimePicker("commissioning", "Ввод в экспл.", headerWidth, 150) { Required = false };
+        var starting_hits = new DfIntegerTextBox<int>("starting_hits", "Кол-во опрессовок", headerWidth, 150) { DefaultAsNull = true };
 
         AddControls(new Control[]
         {
@@ -33,6 +36,7 @@ public class EquipmentEditor : Editor<Equipment>, IEquipmentEditor
             name,
             serial,
             commissioning,
+            starting_hits,
             is_tools
         });
     }

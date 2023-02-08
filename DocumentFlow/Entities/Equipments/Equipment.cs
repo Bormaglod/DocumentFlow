@@ -6,6 +6,8 @@
 //
 // Версия 2023.2.7
 //  - добавлено свойство commissioning
+// Версия 2023.2.8
+//  - добавлено свойство starting_hits
 //
 //-----------------------------------------------------------------------
 
@@ -31,5 +33,10 @@ public class Equipment : Directory
     /// Дата ввода в эксплуатацию.
     /// </summary>
     public DateTime? commissioning { get; set; }
+
+    /// <summary>
+    /// Начальное количество опрессовок. Используется только для аппликаторов.
+    /// </summary>
+    public int? starting_hits { get; set; }
 #pragma warning restore IDE1006 // Стили именования
 }

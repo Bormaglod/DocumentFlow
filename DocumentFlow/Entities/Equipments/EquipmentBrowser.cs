@@ -10,6 +10,8 @@
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 // Версия 2023.2.7
 //  - добавлен столбец "Ввод в экспл."
+// Версия 2023.2.8
+//  - добавлен столбец
 //
 //-----------------------------------------------------------------------
 
@@ -35,10 +37,11 @@ public class EquipmentBrowser : Browser<Equipment>, IEquipmentBrowser
         var serial = CreateText(x => x.serial_number, "Серийный номер", width: 100);
         var is_tools = CreateBoolean(x => x.is_tools, "Инструмент", width: 160);
         var commissioning = CreateDateTime(x => x.commissioning, "Ввод в экспл.", width: 150, format: "dd.MM.yyyy");
+        var starting_hits = CreateNumeric(x => x.starting_hits, "Кол-во опрессовок", width: 100, visible: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 
-        AddColumns(new GridColumn[] { id, code, name, serial, commissioning, is_tools });
+        AddColumns(new GridColumn[] { id, code, name, serial, commissioning, starting_hits, is_tools });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [code] = ListSortDirection.Ascending
