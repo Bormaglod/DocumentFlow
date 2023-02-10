@@ -8,13 +8,13 @@
 //  - IDatabase перенесён из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
 // Версия 2023.2.8
 //  - добавлен метод GetApplicators
+// Версия 2023.2.10
+//  - реализация GetApplicators изменена на использование GetViewList
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
-
-using SqlKata.Execution;
 
 namespace DocumentFlow.Entities.Equipments;
 
@@ -26,17 +26,5 @@ public class EquipmentRepository : Repository<Guid, Equipment>, IEquipmentReposi
         ExcludeField(x => x.owner_id);
     }
 
-    public IReadOnlyList<Applicator> GetApplicators()
-    {
-        using var conn = Database.OpenConnection();
-        return GetBaseQuery(conn)
-            .Select("e.{id, item_name, commissioning, starting_hits}")
-            .SelectRaw("sum(op.quantity) as quantity")
-            .Join("calculation_operation as co", "co.id", "op.operation_id")
-            .Join("equipment as e", "e.id", "co.tools_id")
-            .WhereStarts("e.item_name", "Апп%")
-            .GroupBy("e.id")
-            .Get<Applicator>()
-            .ToList();
-    }
+    public IReadOnlyList<Applicator> GetApplicators() => GetViewList<Applicator>("applicator_usage");
 }
