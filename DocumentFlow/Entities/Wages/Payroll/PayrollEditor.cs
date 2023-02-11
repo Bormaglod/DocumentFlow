@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 28.01.2023
+//
+// Версия 2023.2.11
+//  - в методе FillEmployeeList вызов GetByOwner заменен на GetSummaryWage
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -118,7 +122,8 @@ public class PayrollEditor : DocumentEditor<Payroll>, IPayrollEditor
         var repo = Services.Provider.GetService<IGrossPayrollEmployeeRepository>();
         if (repo != null)
         {
-            var employees = repo.GetByOwner(gross.id).Select(x => new PayrollEmployee(Document, x));
+            var employees = repo.GetSummaryWage(gross)
+                .Select(x => new PayrollEmployee(Document, x));
             details.Fill(employees);
         }
     }

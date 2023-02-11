@@ -9,6 +9,8 @@
 // Версия 2023.1.28
 //  - в выборке метода GetDefaultQuery поле ii.item_name отображается как
 //    income_item_name
+// Версия 2023.2.11
+//  - добавлен метод GetSummaryWage
 //
 //-----------------------------------------------------------------------
 
@@ -16,6 +18,7 @@ using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
+using SqlKata.Execution;
 
 namespace DocumentFlow.Entities.Wages;
 
@@ -23,6 +26,20 @@ public class GrossPayrollEmployeeRepository : OwnedRepository<long, GrossPayroll
 {
     public GrossPayrollEmployeeRepository(IDatabase database) : base(database)
     {
+    }
+
+    public IReadOnlyList<GrossPayrollEmployee> GetSummaryWage(GrossPayroll payroll)
+    {
+        using var conn = Database.OpenConnection();
+        return GetBaseQuery(conn, "gpe")
+            .Select("oe.id as employee_id")
+            .Select("oe.item_name as employee_name")
+            .SelectRaw("sum(gpe.wage) as wage")
+            .Join("our_employee as oe", "oe.id", "gpe.employee_id")
+            .Where("gpe.owner_id", payroll.id)
+            .GroupBy("oe.id")
+            .Get<GrossPayrollEmployee>()
+            .ToList();
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter = null)
