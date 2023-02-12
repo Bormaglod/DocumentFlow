@@ -13,11 +13,12 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.2.12
+//  - исправлены мелкие ошибки
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Core;
 using DocumentFlow.Data;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;

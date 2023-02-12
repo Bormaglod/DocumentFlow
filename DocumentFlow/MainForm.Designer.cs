@@ -131,7 +131,7 @@
             this.treeMenuSystem.SelectedItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
             this.treeMenuSystem.Size = new System.Drawing.Size(196, 50);
             this.treeMenuSystem.TabIndex = 0;
-            this.treeMenuSystem.Text = "О программе";
+            this.treeMenuSystem.Text = "Система";
             // 
             // treeMenuAbout
             // 
