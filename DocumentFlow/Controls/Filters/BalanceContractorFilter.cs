@@ -14,6 +14,8 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+// Версия 2023.2.23
+//  - класс BalanceContractorFilterData переименован в BalanceContractorFilterSettings
 //
 //-----------------------------------------------------------------------
 
@@ -33,7 +35,7 @@ namespace DocumentFlow.Controls.Filters;
 public partial class BalanceContractorFilter : UserControl, IBalanceContractorFilter
 {
     private Guid? ownerId;
-    private BalanceContractorFilterData? filterData;
+    private BalanceContractorFilterSettings? filterData;
 
     public BalanceContractorFilter()
     {
@@ -99,7 +101,7 @@ public partial class BalanceContractorFilter : UserControl, IBalanceContractorFi
             return;
         }
 
-        filterData = appSettings.Get<BalanceContractorFilterData>("filter");
+        filterData = appSettings.Get<BalanceContractorFilterSettings>("filter");
         ContractIdentifier = filterData.GetContract(OwnerIdentifier.Value);
     }
 

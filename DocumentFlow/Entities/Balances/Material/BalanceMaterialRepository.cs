@@ -8,11 +8,13 @@
 //  - добавлен метод UpdateMaterialRemaind
 // Версия 2023.1.24
 //  - IDatabase перенесён из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
+// Версия 2023.2.23
+//  - добавлена ссылка на DocumentFlow.Core.Exceptions
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure.Data;
 

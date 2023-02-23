@@ -9,6 +9,9 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.2.23
+//  - добавлена колонка "Ед. изм."
+//  - для колонки "Количество" добавлен параметр decimalDigits равный 3
 //
 //-----------------------------------------------------------------------
 
@@ -34,8 +37,9 @@ public class FinishedGoodsNestedBrowser : BaseFinishedGoodsBrowser, IFinishedGoo
         var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
         var goods = CreateText(x => x.goods_name, "Изделие", hidden: false);
-        var quantity = CreateNumeric(x => x.quantity, "Количество", width: 150, hidden: false);
-        var price = CreateCurrency(x => x.price, "1 изд.", width: 100);
+        var quantity = CreateNumeric(x => x.quantity, "Количество", width: 150, hidden: false, decimalDigits: 3);
+        var measurement = CreateText(x => x.measurement_name, "Ед. изм.", width: 100);
+        var price = CreateCurrency(x => x.price, "1 ед. изм..", width: 120);
         var cost = CreateCurrency(x => x.product_cost, "Всего", width: 100);
 
         goods.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
@@ -46,7 +50,7 @@ public class FinishedGoodsNestedBrowser : BaseFinishedGoodsBrowser, IFinishedGoo
             .AsSummary(price, SummaryColumnFormat.Currency)
             .AsSummary(cost, SummaryColumnFormat.Currency);
 
-        AddColumns(new GridColumn[] { id, date, number, goods, quantity, price, cost });
+        AddColumns(new GridColumn[] { id, date, number, goods, quantity, measurement, price, cost });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [date] = ListSortDirection.Ascending,

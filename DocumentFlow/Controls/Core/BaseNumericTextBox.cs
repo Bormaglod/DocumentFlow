@@ -6,6 +6,9 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.2.23
+//  - добавлен control labelSuffix
+//  - добавлены свойства SuffixText и ShowSuffix
 //
 //-----------------------------------------------------------------------
 
@@ -33,6 +36,7 @@ abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingCo
 
         Controls.Add(textBox);
         textBox.BringToFront();
+        labelSuffix.BringToFront();
 
         SetNumericValue(default);
 
@@ -71,6 +75,10 @@ abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingCo
     }
 
     public T? NumericValue { get => (T?)Value; set => Value = value; }
+
+    public string SuffixText { get => labelSuffix.Text; set => labelSuffix.Text = value; }
+
+    public bool ShowSuffix { get => labelSuffix.Visible; set => labelSuffix.Visible = value; }
 
     #region IBindingControl interface
 

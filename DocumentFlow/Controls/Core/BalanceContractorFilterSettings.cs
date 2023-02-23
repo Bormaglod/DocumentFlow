@@ -3,13 +3,18 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.01.2023
+//
+// Версия 2023.2.23
+//  - класс переименован из BalanceContractorFilterData в
+//    BalanceContractorFilterSettings
+//
 //-----------------------------------------------------------------------
 
 using System.Text.Json.Serialization;
 
 namespace DocumentFlow.Controls.Core
 {
-    public class BalanceContractorFilterData
+    public class BalanceContractorFilterSettings
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("contract_ids")]

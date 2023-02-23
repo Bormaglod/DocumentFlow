@@ -29,12 +29,14 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.2.23
+//  - добавлена ссылка на DocumentFlow.Core.Exceptions
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;

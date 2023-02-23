@@ -1,12 +1,21 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.08.2022
+//
+// Версия 2023.2.23
+//  - свойство quantity класса FinishedGoods стало decimal, поэтому
+//    тип поля "Количество" изменился на DfNumericTextBox
+//  - при выборе изделия/калькуляции устанавливается значение еденицы измерения
+//    в поле "Количество"
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Entities.Calculations;
+using DocumentFlow.Entities.Measurements;
 using DocumentFlow.Entities.Productions.Lot;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
@@ -17,10 +26,10 @@ namespace DocumentFlow.Entities.Productions.Finished;
 
 public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
 {
-    private readonly int headerWidth = 150;
+    private readonly int headerWidth = 160;
 
-    public BaseFinishedGoodsEditor(IFinishedGoodsRepository repository, IPageManager pageManager, bool nested) 
-        : base(repository, pageManager, true) 
+    public BaseFinishedGoodsEditor(IFinishedGoodsRepository repository, IPageManager pageManager, bool nested)
+        : base(repository, pageManager, true)
     {
         var lot = new DfDocumentSelectBox<ProductionLot>("owner_id", "Партия", headerWidth, 300)
         {
@@ -33,8 +42,8 @@ public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
             OpenAction = (t) => pageManager.ShowEditor<IGoodsEditor, Goods>(t)
         };
 
-        var quantity = new DfIntegerTextBox<int>("quantity", "Количество", headerWidth, 100);
-        var price = new DfCurrencyTextBox("price", "Себестоимость 1 изд.", headerWidth, 100);
+        var quantity = new DfNumericTextBox("quantity", "Количество", headerWidth, 100) { NumberDecimalDigits = 3 };
+        var price = new DfCurrencyTextBox("price", "Себестоимость 1 ед. изм.", headerWidth, 100);
         var cost = new DfCurrencyTextBox("product_cost", "Себестоимость (всего)", headerWidth, 100);
 
         lot.SetDataSource(() =>
@@ -61,6 +70,27 @@ public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
         };
 
         goods.SetDataSource(() => Services.Provider.GetService<IGoodsRepository>()!.GetAllValid());
+
+        goods.ValueChanged += (sender, e) =>
+        {
+            if (e.NewValue == null)
+            {
+                quantity.ShowSuffix = false;
+            }
+            else
+            {
+                var repoGoods = Services.Provider.GetService<IGoodsRepository>();
+                var goods = repoGoods!.GetById(e.NewValue.id, fullInformation: false);
+                if (goods.measurement_id != null)
+                {
+                    var repoMeas = Services.Provider.GetService<IMeasurementRepository>();
+                    var meas = repoMeas!.GetById(goods.measurement_id.Value);
+
+                    quantity.ShowSuffix = true;
+                    quantity.SuffixText = meas.abbreviation ?? meas.item_name ?? meas.code;
+                }
+            }
+        };
 
         AddControls(new Control[]
         {

@@ -30,6 +30,7 @@ namespace DocumentFlow.Controls.Core
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
+            this.labelSuffix = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -43,20 +44,35 @@ namespace DocumentFlow.Controls.Core
             this.label1.TabIndex = 2;
             this.label1.Text = "Text";
             // 
+            // labelSuffix
+            // 
+            this.labelSuffix.AutoSize = true;
+            this.labelSuffix.Dock = System.Windows.Forms.DockStyle.Left;
+            this.labelSuffix.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labelSuffix.Location = new System.Drawing.Point(117, 0);
+            this.labelSuffix.Name = "labelSuffix";
+            this.labelSuffix.Size = new System.Drawing.Size(59, 17);
+            this.labelSuffix.TabIndex = 4;
+            this.labelSuffix.Text = "Суффикс";
+            this.labelSuffix.Visible = false;
+            // 
             // BaseNumericTextBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.labelSuffix);
             this.Controls.Add(this.label1);
             this.Name = "BaseNumericTextBox";
             this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 7);
             this.Size = new System.Drawing.Size(870, 32);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.Label label1;
+        private Label labelSuffix;
     }
 }

@@ -34,7 +34,6 @@ using SqlKata;
 
 namespace DocumentFlow.Controls.Filters
 {
-
     public partial class DocumentFilter : UserControl, IDocumentFilter
     {
         public DocumentFilter()

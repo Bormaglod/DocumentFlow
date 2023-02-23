@@ -12,6 +12,8 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.2.23
+//  - в конструктор добавлен параметр IEnumerable<ICreationBased>? creations
 //
 //-----------------------------------------------------------------------
 
@@ -31,8 +33,8 @@ namespace DocumentFlow.Entities.Productions.Order;
 
 public class ProductionOrderBrowser : Browser<ProductionOrder>, IProductionOrderBrowser
 {
-    public ProductionOrderBrowser(IProductionOrderRepository repository, IPageManager pageManager, IDocumentFilter filter, IStandaloneSettings settings)
-        : base(repository, pageManager, filter: filter, settings: settings)
+    public ProductionOrderBrowser(IProductionOrderRepository repository, IPageManager pageManager, IDocumentFilter filter, IEnumerable<ICreationBased>? creations, IStandaloneSettings settings)
+        : base(repository, pageManager, filter: filter, creations: creations, settings: settings)
     {
         AllowGrouping();
 

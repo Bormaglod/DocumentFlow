@@ -10,11 +10,14 @@
 //  - метод UpdateMaterialRemaind перенесен в BalanceMaterialRepository
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.2.23
+//  - добавлена ссылка на DocumentFlow.Core.Exceptions
 //
 //-----------------------------------------------------------------------
 
 using Dapper;
 
+using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;

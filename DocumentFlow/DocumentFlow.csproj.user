@@ -16,10 +16,25 @@
     <Compile Update="Controls\Cards\WageCard.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Core\BaseNumericTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfCurrencyTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfDataGrid.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Editors\DfIntegerTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfMaskedTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfNumericTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfPercentTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Filters\BalanceContractorFilter.cs">
@@ -41,9 +56,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Update="Controls\Core\BaseControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Core\BaseNumericTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Core\DataSourceControl.cs">
@@ -70,9 +82,6 @@
     <Compile Update="Controls\Editors\DfComboBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Editors\DfCurrencyTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Controls\Editors\DfDateTimePicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -82,25 +91,16 @@
     <Compile Update="Controls\Editors\DfDocumentSelectBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Editors\DfIntegerTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Controls\Editors\DfLine.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfMultiSelectionComboBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Editors\DfNumericTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Controls\Editors\DfOperationProperty.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfPercentTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfProductionLot.cs">

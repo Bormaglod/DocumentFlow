@@ -13,12 +13,14 @@
 //  - расширено использование EmpPropertiesRegex
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.2.23
+//  - добавлена ссылка на DocumentFlow.Core.Exceptions
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Renderers;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Productions.Lot;

@@ -6,9 +6,12 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.2.23
+//  - добавлена ссылка на DocumentFlow.Core.Exceptions
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Infrastructure.Data;
 
 using System.Data;

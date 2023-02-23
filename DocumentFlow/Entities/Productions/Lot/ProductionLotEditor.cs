@@ -8,6 +8,10 @@
 //  - параметр autoRefresh метода SetDataSource в классе
 //    DataSourceControl был удален. Вместо него используется свойство
 //    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+// Версия 2022.2.23
+//  - для поля "Количество" свойство NumberDecimalDigits изменено на значение 3
+//  - при выборе изделия/калькуляции устанавливается значение еденицы измерения
+//    в поле "Количество"
 //
 //-----------------------------------------------------------------------
 
@@ -16,6 +20,7 @@ using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Calculations;
+using DocumentFlow.Entities.Measurements;
 using DocumentFlow.Entities.Productions.Finished;
 using DocumentFlow.Entities.Productions.Order;
 using DocumentFlow.Entities.Productions.Performed;
@@ -31,7 +36,7 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
 {
     private readonly int headerWidth = 100;
 
-    public ProductionLotEditor(IProductionLotRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
+    public ProductionLotEditor(IProductionLotRepository repository, IPageManager pageManager) : base(repository, pageManager, true)
     {
         var order = new DfDocumentSelectBox<ProductionOrder>("owner_id", "Заказ", headerWidth, 300)
         {
@@ -39,7 +44,7 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
         };
 
         var calc = new DfChoice<Guid>("calculation_id", "Изделие", headerWidth, 500) { RefreshMethod = DataRefreshMethod.Immediately };
-        var quantity = new DfNumericTextBox("quantity", "Количество", headerWidth, 100);
+        var quantity = new DfNumericTextBox("quantity", "Количество", headerWidth, 100) { NumberDecimalDigits = 3 };
 
         var performed = new DfProductionLot() { Dock = DockStyle.Fill };
 
@@ -70,6 +75,33 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
             else
             {
                 calc.ClearValue();
+            }
+        };
+
+        calc.ValueChanged += (sender, e) =>
+        {
+            if (e.Value == null)
+            {
+                quantity.ShowSuffix = false;
+            }
+            else
+            {
+                var repoCalc = Services.Provider.GetService<ICalculationRepository>();
+                var calculation = repoCalc!.GetById(e.Value.Value, fullInformation: false);
+
+                var repoGoods = Services.Provider.GetService<IGoodsRepository>();
+                if (calculation.owner_id != null)
+                {
+                    var goods = repoGoods!.GetById(calculation.owner_id.Value, fullInformation: false);
+                    if (goods.measurement_id != null)
+                    {
+                        var repoMeas = Services.Provider.GetService<IMeasurementRepository>();
+                        var meas = repoMeas!.GetById(goods.measurement_id.Value);
+
+                        quantity.ShowSuffix = true;
+                        quantity.SuffixText = meas.abbreviation ?? meas.item_name ?? meas.code;
+                    }
+                }
             }
         };
 

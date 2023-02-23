@@ -81,6 +81,8 @@
 // Версия 2023.2.6
 //  - отключена работа ConfigureVisibleStatusColumns при установленном
 //    ShowPreviewRow
+// Версия 2023.2.23
+//  - добавлена ссылка на DocumentFlow.Core.Exceptions
 //
 //-----------------------------------------------------------------------
 
@@ -88,6 +90,7 @@ using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Renderers;
 using DocumentFlow.Controls.Settings;
 using DocumentFlow.Core;
+using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Core.Reflection;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;

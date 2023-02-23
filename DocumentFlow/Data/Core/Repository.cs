@@ -21,6 +21,10 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 // Версия 2023.2.4
 //  - добавлены функции GetView и GetViewList
+// Версия 2023.2.23
+//  - доработана функция GetTableName(T? entity). Если entity наследуется
+//    от IDiscriminator, то у этого объекта должно быть заполнено поле
+//    TableName
 //
 //-----------------------------------------------------------------------
 
@@ -559,6 +563,11 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
         var table = GetTableName();
         if (entity is IDiscriminator discriminator)
         {
+            if (string.IsNullOrEmpty(discriminator.TableName))
+            {
+                throw new RepositoryException($"У объекта {entity.GetType().Name} должно быть заполнено свойство TableName.");
+            }
+
             return $"{table}_{discriminator.TableName}";
         }
 
