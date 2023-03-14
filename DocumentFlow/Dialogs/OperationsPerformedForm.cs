@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.06.2022
@@ -19,6 +19,8 @@
 //    перенесена в параметры конструктора
 //  - double_rate теперь является полем класса
 //  - добавлено свойство DoubleRate
+// Версия 2023.3.14
+//  - GetAllMaterials заменен на GetAllValid
 //
 //-----------------------------------------------------------------------
 
@@ -95,7 +97,7 @@ public partial class OperationsPerformedForm : Form
             replacing_material.Enabled = e.NewValue?.material_id != null;
         };
 
-        replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials());
+        replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllValid());
 
         employee.SetDataSource(() => Services.Provider.GetService<IOurEmployeeRepository>()?.GetAllValid());
 

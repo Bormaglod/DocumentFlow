@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.3.14
+//  - метод GetAllMaterials удалён
 //
 //-----------------------------------------------------------------------
 
@@ -31,28 +33,6 @@ public class MaterialRepository : ProductRepository<Material>, IMaterialReposito
         else
         {
             return query.From("materials_simple");
-        }
-    }
-
-    public IReadOnlyList<Material> GetAllMaterials()
-    {
-        string sql = @"
-            with recursive r as 
-            (
-                select * from material where parent_id is null and not deleted 
-                union 
-                select m.* from material m join r on r.id = m.parent_id and not m.deleted
-            ) select * from r order by item_name";
-
-        using var conn = Database.OpenConnection();
-        try
-        {
-            return conn.Query<Material>(sql).ToList();
-        }
-        catch (Exception e)
-        {
-            ExceptionHelper.MesssageBox(e);
-            return Array.Empty<Material>();
         }
     }
 

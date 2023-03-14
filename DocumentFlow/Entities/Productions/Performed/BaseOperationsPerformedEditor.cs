@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.06.2022
@@ -23,6 +23,8 @@
 //    открытии, то начальное значение это поле получает от простого
 //    GetById без доп. информации и соответственно не содержит
 //    наименование материала учавствующего в операции
+// Версия 2023.3.14
+//  - GetAllMaterials заменен на GetAllValid
 //
 //-----------------------------------------------------------------------
 
@@ -170,7 +172,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
             }
         };
 
-        replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials());
+        replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllValid());
 
         operations.SetDataSource(() => IsCreating ? null : GetCalculationOperation(Document.calculation_id));
 

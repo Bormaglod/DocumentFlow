@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.07.2022
@@ -8,6 +8,8 @@
 //  - параметр autoRefresh метода SetDataSource в классе
 //    DataSourceControl был удален. Вместо него используется свойство
 //    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
+// Версия 2023.3.14
+//  - GetAllMaterials заменен на GetAllValid
 //
 //-----------------------------------------------------------------------
 
@@ -31,7 +33,7 @@ public partial class FormMaterialQuantity : Form
         material = new("material_id", "Материал", 120) { Required = true, RefreshMethod = DataRefreshMethod.Immediately };
         quantity = new("quantity", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3 };
 
-        material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials());
+        material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllValid());
 
         Controls.AddRange(new Control[]
         {

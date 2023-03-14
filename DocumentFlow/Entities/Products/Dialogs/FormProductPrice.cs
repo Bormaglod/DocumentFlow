@@ -32,6 +32,8 @@
 //  - ArgumentNullException заменен на Exception с текстом
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.3.14
+//  - GetAllMaterials заменен на GetAllValid
 //
 //-----------------------------------------------------------------------
 
@@ -167,11 +169,11 @@ public partial class FormProductPrice<P> : Form
             }
             else if (goods == null)
             {
-                return materials!.GetAllMaterials();
+                return materials!.GetAllValid();
             }
             else
             {
-                return materials!.GetAllMaterials().OfType<Product>().Union(goods!.GetAllValid());
+                return materials!.GetAllValid().OfType<Product>().Union(goods!.GetAllValid());
             }
         });
 

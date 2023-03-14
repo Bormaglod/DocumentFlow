@@ -1,8 +1,12 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.07.2022
+//
+// Версия 2023.3.14
+//  - GetAllMaterials заменен на GetAllValid
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -23,10 +27,9 @@ public class AdjustingBalancesEditor : DocumentEditor<AdjustingBalances>, IAdjus
             OpenAction = (t) => pageManager.ShowEditor<IMaterialEditor, Material>(t)
         };
 
-        var quantity = new DfNumericTextBox("quantity", "Количество", 100, 200) { NumberDecimalDigits = 3 }; 
+        var quantity = new DfNumericTextBox("quantity", "Количество", 100, 200) { NumberDecimalDigits = 3 };
 
-        material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllMaterials());
-
+        material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllValid());
 
         AddControls(new Control[]
         {
