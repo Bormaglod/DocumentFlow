@@ -98,7 +98,7 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
         {
             if (comboBoxAdv1.SelectedItem != null && comboBoxAdv1.SelectedItem is IChoice<T> selectedItem)
             {
-                return selectedItem.id;
+                return selectedItem.Id;
             }
 
             if (DefaultAsNull)
@@ -167,7 +167,7 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
             }
             else
             {
-                var selected = comboBoxAdv1.Items.OfType<IChoice<T>>().FirstOrDefault(x => x.id.CompareTo(item) == 0);
+                var selected = comboBoxAdv1.Items.OfType<IChoice<T>>().FirstOrDefault(x => x.Id.CompareTo(item) == 0);
                 comboBoxAdv1.SelectedItem = selected;
             }
         }
@@ -203,7 +203,7 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
         {
             if (comboBoxAdv1.Items[e.NewIndex] is IChoice<T> value)
             {
-                OnValueChanged(value.id);
+                OnValueChanged(value.Id);
             }
         }
     }

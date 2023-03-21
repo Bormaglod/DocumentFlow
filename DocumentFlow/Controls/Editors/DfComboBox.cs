@@ -132,7 +132,7 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
         {
             if (comboBoxAdv1.SelectedItem != null && comboBoxAdv1.SelectedItem is T selectedItem)
             {
-                return selectedItem.id;
+                return selectedItem.Id;
             }
 
             if (Required)
@@ -147,7 +147,7 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
         {
             if (value is Guid id)
             {
-                T? identifier = comboBoxAdv1.Items.OfType<T>().FirstOrDefault(x => x.id.CompareTo(id) == 0);
+                T? identifier = comboBoxAdv1.Items.OfType<T>().FirstOrDefault(x => x.Id.CompareTo(id) == 0);
                 SelectedItem = identifier;
                 return;
             }

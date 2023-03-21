@@ -71,18 +71,18 @@ namespace DocumentFlow.Controls.Renderers
                     {
                         if (rowData.Data is IDirectory dir && dir.is_folder)
                         {
-                            image = rowView.deleted ? Resources.icons8_folder_delete_16 : Resources.icons8_folder_16;
+                            image = rowView.Deleted ? Resources.icons8_folder_delete_16 : Resources.icons8_folder_16;
                         }
                         else
                         {
-                            if (rowView.deleted)
+                            if (rowView.Deleted)
                             {
                                 image = Resources.icons8_document_delete_16;
                             }
                             else
                             {
-                                image = (rowData.Data is IAccountingDocument doc && doc.carried_out) 
-                                    ? (doc.re_carried_out ? Resources.icons8_document_warn_check_16 : Resources.icons8_document_check_16)
+                                image = (rowData.Data is IAccountingDocument doc && doc.CarriedOut) 
+                                    ? (doc.ReCarriedOut ? Resources.icons8_document_warn_check_16 : Resources.icons8_document_check_16)
                                     : Resources.icons8_document_16;
                             }
                         }

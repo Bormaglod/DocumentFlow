@@ -14,8 +14,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Entities.Productions.Order;
 using DocumentFlow.Entities.Productions.Returns;
 using DocumentFlow.Infrastructure.Data;
@@ -52,7 +51,7 @@ public class WaybillProcessingRepository : DocumentRepository<WaybillProcessing>
                 .On("wpw.material_id", "wpp.reference_id"))
             .WhereRaw("coalesce(wpw.written_off, 0) < wpp.amount")
             .GroupBy("wpp.reference_id", "m.item_name")
-            .Where("wp.owner_id", order.id)
+            .Where("wp.owner_id", order.Id)
             .Get<ReturnMaterialsRows>()
             .ToList();
     }

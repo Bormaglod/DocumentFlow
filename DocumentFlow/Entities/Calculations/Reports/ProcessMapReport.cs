@@ -15,6 +15,6 @@ public class ProcessMapReport : Report<Calculation>
 
     protected override void SetParameterValues(Calculation document)
     {
-        GetReport().SetParameterValue("id", document.id);
+        GetReport().SetParameterValue("id", document.Id);
     }
 }

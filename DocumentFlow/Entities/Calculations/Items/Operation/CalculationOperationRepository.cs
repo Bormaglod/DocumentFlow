@@ -14,7 +14,6 @@
 using Dapper;
 
 using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
@@ -54,17 +53,17 @@ public class CalculationOperationRepository : CalculationItemRepository<Calculat
 
     public void AddProperty(CalculationOperationProperty prop, IDbTransaction transaction)
     {
-        if (transaction.Connection == null || prop.id != default)
+        if (transaction.Connection == null || prop.Id != default)
         {
             return;
         }
 
-        prop.id = transaction.Connection.QuerySingle<long>("insert into calculation_operation_property (operation_id, property_id, property_value) values (:operation_id, :property_id, :property_value) returning id", prop, transaction);
+        prop.Id = transaction.Connection.QuerySingle<long>("insert into calculation_operation_property (operation_id, property_id, property_value) values (:operation_id, :property_id, :property_value) returning id", prop, transaction);
     }
 
     public void UpdateProperty(CalculationOperationProperty prop, IDbTransaction transaction)
     {
-        if (transaction.Connection == null || prop.id == default)
+        if (transaction.Connection == null || prop.Id == default)
         {
             return;
         }
@@ -74,7 +73,7 @@ public class CalculationOperationRepository : CalculationItemRepository<Calculat
 
     public void DeleteProperty(CalculationOperationProperty prop, IDbTransaction transaction)
     {
-        if (transaction.Connection == null || prop.id == default)
+        if (transaction.Connection == null || prop.Id == default)
         {
             return;
         }

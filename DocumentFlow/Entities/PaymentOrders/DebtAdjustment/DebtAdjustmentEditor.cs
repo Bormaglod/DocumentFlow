@@ -36,14 +36,14 @@ public class DebtAdjustmentEditor : DocumentEditor<DebtAdjustment>, IDebtAdjustm
         document_debt = new DfDocumentSelectBox<WaybillReceipt>("document_debt_id", "Документ (долг контрагента)", 190, 400)
         {
             Required = true,
-            OpenAction = (t) => pageManager.ShowEditor<IWaybillReceiptEditor>(t.id),
+            OpenAction = (t) => pageManager.ShowEditor<IWaybillReceiptEditor>(t.Id),
             RefreshMethod = DataRefreshMethod.OnOpen
         };
 
         document_credit = new DfDocumentSelectBox<WaybillReceipt>("document_credit_id", "Документ (долг организации)", 190, 400)
         {
             Required = true,
-            OpenAction = (t) => pageManager.ShowEditor<IWaybillReceiptEditor>(t.id),
+            OpenAction = (t) => pageManager.ShowEditor<IWaybillReceiptEditor>(t.Id),
             RefreshMethod = DataRefreshMethod.OnOpen
         };
 
@@ -53,14 +53,14 @@ public class DebtAdjustmentEditor : DocumentEditor<DebtAdjustment>, IDebtAdjustm
 
         document_debt.SetDataSource(() =>
         {
-            Guid? c = contractor.SelectedItem?.id ?? Document.contractor_id;
+            Guid? c = contractor.SelectedItem?.Id ?? Document.contractor_id;
             var wrr = Services.Provider.GetService<IWaybillReceiptRepository>();
             return wrr!.GetByContractor(c).Where(x => x.full_cost < x.paid);
         });
 
         document_credit.SetDataSource(() =>
         {
-            Guid? c = contractor.SelectedItem?.id ?? Document.contractor_id;
+            Guid? c = contractor.SelectedItem?.Id ?? Document.contractor_id;
             var wrr = Services.Provider.GetService<IWaybillReceiptRepository>();
             return wrr!.GetByContractor(c).Where(x => x.full_cost > x.paid);
         });

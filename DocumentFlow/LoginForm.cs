@@ -13,8 +13,7 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
-using DocumentFlow.Data.Core.Repository;
+using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -66,7 +65,7 @@ public partial class LoginForm : Form
             return;
         }
 
-        string userName = comboUsers.SelectedItem is UserAlias c ? (c.pg_name ?? string.Empty) : comboUsers.Text;
+        string userName = comboUsers.SelectedItem is UserAlias c ? (c.PgName ?? string.Empty) : comboUsers.Text;
 
         Properties.Settings.Default.PreviousUser = userName;
         Properties.Settings.Default.LastConnectedDatabase = comboDatabase.SelectedItem.ToString();
@@ -117,7 +116,7 @@ public partial class LoginForm : Form
         comboUsers.DataSource = list;
 
 #if DEBUG
-        comboUsers.SelectedItem = list!.FirstOrDefault(u => u.pg_name == "postgres");
+        comboUsers.SelectedItem = list!.FirstOrDefault(u => u.PgName == "postgres");
         if (File.Exists("password.txt"))
         {
             textPassword.Text = File.ReadLines("password.txt").First();

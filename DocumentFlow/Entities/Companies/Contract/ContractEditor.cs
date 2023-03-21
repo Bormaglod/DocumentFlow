@@ -39,7 +39,7 @@ public class ContractEditor : Editor<Contract>, IContractEditor
             var emps = Services.Provider.GetService<IEmployeeRepository>();
             if (signatory.SelectedItem != null)
             {
-                return emps!.GetByOwner(signatory.SelectedItem.id, OwnerId, callback: q => q.WhereFalse("employee.deleted"));
+                return emps!.GetByOwner(signatory.SelectedItem.Id, OwnerId, callback: q => q.WhereFalse("employee.deleted"));
             }
             else
             {

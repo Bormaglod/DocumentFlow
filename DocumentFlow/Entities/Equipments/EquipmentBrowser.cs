@@ -31,7 +31,7 @@ public class EquipmentBrowser : Browser<Equipment>, IEquipmentBrowser
     public EquipmentBrowser(IEquipmentRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
         : base(repository, pageManager, settings: settings) 
     {
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.code, "Код", width: 110);
         var name = CreateText(x => x.item_name, "Наименование", hidden: false);
         var serial = CreateText(x => x.serial_number, "Серийный номер", width: 100);

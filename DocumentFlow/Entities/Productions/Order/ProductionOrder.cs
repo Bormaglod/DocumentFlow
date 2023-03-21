@@ -5,6 +5,7 @@
 // Date: 25.03.2022
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 
 using Syncfusion.WinForms.DataGrid;

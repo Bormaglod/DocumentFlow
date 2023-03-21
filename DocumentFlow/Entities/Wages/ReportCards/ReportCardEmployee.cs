@@ -9,9 +9,9 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 using DocumentFlow.Entities.Employees;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Entities.Wages;
 
@@ -57,8 +57,8 @@ public class ReportCardEmployee : Entity<long>, IEntityClonable, ICloneable
 
     public void SetEmployee(OurEmployee emp)
     {
-        employee_id = emp.id;
-        employee_name = emp.item_name ?? string.Empty;
+        employee_id = emp.Id;
+        employee_name = emp.ItemName ?? string.Empty;
     }
 
     public void SetInfo(int index, string empInfo)
@@ -94,7 +94,7 @@ public class ReportCardEmployee : Entity<long>, IEntityClonable, ICloneable
     public object Copy()
     {
         var copy = Clone();
-        ((ReportCardEmployee)copy).id = 0;
+        ((ReportCardEmployee)copy).Id = 0;
 
         return copy;
     }

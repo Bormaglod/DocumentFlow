@@ -5,7 +5,7 @@
 // Date: 21.07.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Entities.Calculations;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -53,7 +53,7 @@ public partial class PropertyForm : Form
         {
             CalculationOperationProperty prop = new()
             {
-                property_id = f.Parameter.id,
+                property_id = f.Parameter.Id,
                 Property = f.Parameter,
                 property_value = f.Value
             };
@@ -74,7 +74,7 @@ public partial class PropertyForm : Form
 
         if (f.ShowDialog() == DialogResult.OK && f.Parameter != null)
         {
-            prop.property_id = f.Parameter.id;
+            prop.property_id = f.Parameter.Id;
             prop.Property = f.Parameter;
             prop.property_value = f.Value;
 

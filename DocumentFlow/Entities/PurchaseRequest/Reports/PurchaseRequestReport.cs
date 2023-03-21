@@ -15,7 +15,7 @@ public class PurchaseRequestReport : Report<PurchaseRequest>
 
     protected override void SetParameterValues(PurchaseRequest document)
     {
-        GetReport().SetParameterValue("id", document.id);
+        GetReport().SetParameterValue("id", document.Id);
     }
 }
 

@@ -93,7 +93,7 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
         {
             if (contractor.SelectedItem != null)
             {
-                return Services.Provider.GetService<IContractRepository>()?.GetSuppliers(contractor.SelectedItem.id);
+                return Services.Provider.GetService<IContractRepository>()?.GetSuppliers(contractor.SelectedItem.Id);
             }
 
             return null;

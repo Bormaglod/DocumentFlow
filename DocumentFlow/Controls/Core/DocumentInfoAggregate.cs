@@ -38,22 +38,22 @@ public class DocumentInfoAggregate : ISummaryAggregate
                 switch (pd.Name)
                 {
                     case "CountExceptDeleted":
-                        CountExceptDeleted = docItems.Count(r => !r.deleted);
+                        CountExceptDeleted = docItems.Count(r => !r.Deleted);
                         break;
                     case "CountOnlyAccepted":
-                        CountOnlyAccepted = docItems.Count(r => r.carried_out);
+                        CountOnlyAccepted = docItems.Count(r => r.CarriedOut);
                         break;
                     case "CountLegalRows":
-                        CountLegalRows = docItems.Count(r => r.carried_out && !r.deleted);
+                        CountLegalRows = docItems.Count(r => r.CarriedOut && !r.Deleted);
                         break;
                     case "SumExceptDeleted":
-                        SumExceptDeleted = GetSumDocuments(docItems, property, r => !r.deleted);
+                        SumExceptDeleted = GetSumDocuments(docItems, property, r => !r.Deleted);
                         break;
                     case "SumOnlyAccepted":
-                        SumOnlyAccepted = GetSumDocuments(docItems, property, r => r.carried_out);
+                        SumOnlyAccepted = GetSumDocuments(docItems, property, r => r.CarriedOut);
                         break;
                     case "SumLegalRows":
-                        SumLegalRows = GetSumDocuments(docItems, property, r => r.carried_out && !r.deleted);
+                        SumLegalRows = GetSumDocuments(docItems, property, r => r.CarriedOut && !r.Deleted);
                         break;
                 }
             }
@@ -63,7 +63,7 @@ public class DocumentInfoAggregate : ISummaryAggregate
                 {
                     case "CountExceptDeleted":
                     case "CountLegalRows":
-                        CountExceptDeleted = enumerableItems.Count(r => !r.deleted);
+                        CountExceptDeleted = enumerableItems.Count(r => !r.Deleted);
                         CountLegalRows = CountExceptDeleted;
                         break;
                     case "CountOnlyAccepted":
@@ -80,7 +80,7 @@ public class DocumentInfoAggregate : ISummaryAggregate
                         else
                         {
                             var p = first.GetType().GetProperty(property);
-                            SumExceptDeleted = p != null ? enumerableItems.Where(r => !r.deleted).Sum(x => Convert.ToDecimal(p.GetValue(x))) : 0;
+                            SumExceptDeleted = p != null ? enumerableItems.Where(r => !r.Deleted).Sum(x => Convert.ToDecimal(p.GetValue(x))) : 0;
                             SumLegalRows = SumExceptDeleted;
                         }
 

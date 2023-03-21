@@ -37,10 +37,10 @@ public class DocumentPaymentBrowser : Browser<DocumentPayment>, IDocumentPayment
 
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn document_name = CreateText(x => x.document_name, "Документ");
-        GridDateTimeColumn date = CreateDateTime(x => x.document_date, "Дата/время", hidden: false, width: 150);
-        GridNumericColumn number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        GridDateTimeColumn date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
+        GridNumericColumn number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         GridTextColumn payment_number = CreateText(x => x.payment_number, "Номер плат. ордера", width: 150);
         GridDateTimeColumn date_operation = CreateDateTime(x => x.date_operation, "Дата операции", width: 150, format: "dd.MM.yyyy");
         GridNumericColumn transaction_amount = CreateCurrency(x => x.transaction_amount, "Сумма", width: 150);
@@ -68,7 +68,7 @@ public class DocumentPaymentBrowser : Browser<DocumentPayment>, IDocumentPayment
         {
             try
             {
-                pageManager.ShowEditor<IPaymentOrderEditor>(CurrentDocument.id);
+                pageManager.ShowEditor<IPaymentOrderEditor>(CurrentDocument.Id);
             }
             catch (BrowserException e)
             {

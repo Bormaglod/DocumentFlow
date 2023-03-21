@@ -14,13 +14,13 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Entities.Employees.IncomeItems;
 
 public class IncomeItem : Identifier<Guid>, IItem
 {
-    public string code { get; set; } = string.Empty;
-    public string? item_name { get; set; }
+    public string Code { get; set; } = string.Empty;
+    public string? ItemName { get; set; }
 }

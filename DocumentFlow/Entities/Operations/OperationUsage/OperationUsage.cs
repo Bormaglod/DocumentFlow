@@ -5,7 +5,7 @@
 // Date: 22.05.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Entities.Operations;
 

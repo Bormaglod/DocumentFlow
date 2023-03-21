@@ -28,7 +28,7 @@ using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
-using DocumentFlow.Data.Core.Repository;
+using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
@@ -103,7 +103,7 @@ public partial class Editor<T> : UserControl, IEditorPage
 
     public IToolBar Toolbar => toolbar;
 
-    public Guid? Id => document?.id;
+    public Guid? Id => document?.Id;
 
     protected T Document => document ?? throw new ArgumentNullException(nameof(Document), "Значение Document не определено.");
 
@@ -174,7 +174,7 @@ public partial class Editor<T> : UserControl, IEditorPage
 
     public bool Save() => Save(true);
 
-    public void RefreshPage() => RefreshData(document?.id);
+    public void RefreshPage() => RefreshData(document?.Id);
 
     protected Panel CreatePanel(Control[] controls)
     {
@@ -284,7 +284,7 @@ public partial class Editor<T> : UserControl, IEditorPage
         MessageAction action;
         try
         {
-            if (Document.id == Guid.Empty)
+            if (Document.Id == Guid.Empty)
             {
                 document = repository.Add(Document, transaction);
                 action = MessageAction.Add;
@@ -299,7 +299,7 @@ public partial class Editor<T> : UserControl, IEditorPage
             {
                 if (action == MessageAction.Add)
                 {
-                    grid.SetOwner(Document.id);
+                    grid.SetOwner(Document.Id);
                 }
 
                 grid.UpdateData(transaction);
@@ -315,7 +315,7 @@ public partial class Editor<T> : UserControl, IEditorPage
             return false;
         }
 
-        RefreshData(Document.id);
+        RefreshData(Document.Id);
         if (action == MessageAction.Add)
         {
             RegisterNestedBrowsers();
@@ -385,13 +385,13 @@ public partial class Editor<T> : UserControl, IEditorPage
 
     private void RefreshInfo(T entity)
     {
-        textId.Text = entity.id.ToString();
-        dateTimeCreate.Value = entity.date_created;
-        dateTimeUpdate.Value = entity.date_updated;
+        textId.Text = entity.Id.ToString();
+        dateTimeCreate.Value = entity.DateCreated;
+        dateTimeUpdate.Value = entity.DateUpdated;
 
         var users = Services.Provider.GetService<IUserAliasRepository>();
-        textAuthor.Text = users!.GetById(entity.user_created_id).name;
-        textEditor.Text = users!.GetById(entity.user_updated_id).name;
+        textAuthor.Text = users!.GetById(entity.UserCreatedId).Name;
+        textEditor.Text = users!.GetById(entity.UserUpdatedId).Name;
 
         UpdateText(entity);
     }
@@ -464,7 +464,7 @@ public partial class Editor<T> : UserControl, IEditorPage
         {
             if (item is IGridDataSource dataSource && document != null)
             {
-                dataSource.SetOwner(document.id);
+                dataSource.SetOwner(document.Id);
             }
 
             item.RefreshDataSourceOnLoad();
@@ -547,9 +547,9 @@ public partial class Editor<T> : UserControl, IEditorPage
                     switch (e.Destination)
                     {
                         case MessageDestination.Object:
-                            if (document != null && e.ObjectId == document.id && !isClosing)
+                            if (document != null && e.ObjectId == document.Id && !isClosing)
                             {
-                                RefreshData(document.id, false);
+                                RefreshData(document.Id, false);
                             }
 
                             break;
@@ -595,7 +595,7 @@ public partial class Editor<T> : UserControl, IEditorPage
     {
         if (document != null)
         {
-            RefreshData(document.id);
+            RefreshData(document.Id);
         }
     }
 
@@ -606,7 +606,7 @@ public partial class Editor<T> : UserControl, IEditorPage
             return;
         }
 
-        if (DocumentRefEditorForm.Create(document.id, out var refs, out var _))
+        if (DocumentRefEditorForm.Create(document.Id, out var refs, out var _))
         {
             var repo = Services.Provider.GetService<IDocumentRefsRepository>();
             if (repo != null)
@@ -670,7 +670,7 @@ public partial class Editor<T> : UserControl, IEditorPage
             return;
         }
 
-        RefreshDocumentRefs(document.id);
+        RefreshDocumentRefs(document.Id);
     }
 
     private void ButtonAccept_Click(object sender, EventArgs e) => Accept();

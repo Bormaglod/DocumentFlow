@@ -15,6 +15,6 @@ public class ContractApplicationReport : Report<ContractApplication>
 
     protected override void SetParameterValues(ContractApplication document)
     {
-        GetReport().SetParameterValue("id", document.id);
+        GetReport().SetParameterValue("id", document.Id);
     }
 }

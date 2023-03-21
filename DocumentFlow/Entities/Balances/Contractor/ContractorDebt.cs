@@ -5,7 +5,7 @@
 // Date: 30.12.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Entities.Balances;
 

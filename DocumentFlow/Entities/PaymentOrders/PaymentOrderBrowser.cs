@@ -35,9 +35,9 @@ public class PaymentOrderBrowser : Browser<PaymentOrder>, IPaymentOrderBrowser
     {
         AllowGrouping();
 
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        GridDateTimeColumn date = CreateDateTime(x => x.document_date, "Дата/время", hidden: false, width: 150);
-        GridNumericColumn number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        GridDateTimeColumn date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
+        GridNumericColumn number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         GridTextColumn contractor = CreateText(x => x.contractor_name, "Контрагент");
         GridDateTimeColumn date_operation = CreateDateTime(x => x.date_operation, "Дата операции", width: 150, format: "dd.MM.yyyy");
         GridTextColumn payment_number = CreateText(x => x.payment_number, "Номер п/п", width: 100);

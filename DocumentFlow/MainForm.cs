@@ -20,6 +20,7 @@
 
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;

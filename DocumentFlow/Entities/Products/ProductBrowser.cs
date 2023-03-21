@@ -15,7 +15,7 @@
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Core;
-using DocumentFlow.Data.Core.Repository;
+using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
@@ -50,7 +50,7 @@ public abstract class ProductBrowser<T> : Browser<T>
                 var docs = Services.Provider.GetService<IDocumentRefsRepository>();
                 if (docs != null)
                 {
-                    row.SetDocuments(docs.GetByOwner(row.id, callback: q => q.WhereNotNull("thumbnail")));
+                    row.SetDocuments(docs.GetByOwner(row.Id, callback: q => q.WhereNotNull("thumbnail")));
                 }
             }
 

@@ -107,7 +107,7 @@ namespace DocumentFlow.Controls.Filters
             var query = new Query();
             if (comboOrg.SelectedItem is Organization org)
             {
-                query.Where($"{tableName}.organization_id", org.id);
+                query.Where($"{tableName}.organization_id", org.Id);
             }
 
             if (DateFromEnabled || DateToEnabled)

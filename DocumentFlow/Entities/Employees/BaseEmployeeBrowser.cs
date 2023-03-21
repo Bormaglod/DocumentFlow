@@ -34,7 +34,7 @@ public abstract class BaseEmployeeBrowser<T> : Browser<T>
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn name = CreateText(x => x.item_name, "Сотрудник", hidden: false);
         GridTextColumn post_name = CreateText(x => x.post_name, "Должность", width: 300);
         GridTextColumn phone = CreateText(x => x.phone, "Телефон", width: 250, visible: false);

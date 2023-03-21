@@ -32,7 +32,7 @@ using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editor;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Productions.Lot;
@@ -52,15 +52,15 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
     {
         public LotOrder(ProductionOrder order)
         {
-            id = order.id;
-            item_name = $"Заказ №{order.document_number} от {order.document_date:d} ({order.contractor_name})";
+            Id = order.Id;
+            item_name = $"Заказ №{order.DocumentNumber} от {order.DocumentDate:d} ({order.contractor_name})";
             is_folder = true;
         }
 
         public LotOrder(ProductionLot lot)
         {
-            id = lot.id;
-            item_name = $"№{lot.document_number} от {lot.document_date:d}";
+            Id = lot.Id;
+            item_name = $"№{lot.DocumentNumber} от {lot.DocumentDate:d}";
             parent_id = lot.owner_id;
             good_name = lot.goods_name;
             calculation_name = lot.calculation_name;
@@ -85,7 +85,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         var lot = new DfDirectorySelectBox<LotOrder>("owner_id", "Производственная партия", headerWidth, 350)
         {
             ReadOnly = nested,
-            OpenAction = (t) => pageManager.ShowEditor<IProductionLotEditor>(t.id)
+            OpenAction = (t) => pageManager.ShowEditor<IProductionLotEditor>(t.Id)
         };
 
         var goods = new DfTextBox("goods_name", "Изделие", headerWidth, 600) { ReadOnly = true };

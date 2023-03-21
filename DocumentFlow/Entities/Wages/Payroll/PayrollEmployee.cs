@@ -15,7 +15,7 @@ public class PayrollEmployee : WageEmployee
 
     public PayrollEmployee(Payroll payroll, GrossPayrollEmployee grossPayroll)
     {
-        owner_id = payroll.id;
+        owner_id = payroll.Id;
         employee_id = grossPayroll.employee_id;
         employee_name = grossPayroll.employee_name;
         wage = grossPayroll.wage;

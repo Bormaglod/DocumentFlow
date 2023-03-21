@@ -39,9 +39,9 @@ public class WaybillProcessingBrowser : Browser<WaybillProcessing>, IWaybillProc
     {
         AllowGrouping();
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
-        var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         var waybill_date = CreateDateTime(x => x.waybill_date, "Дата", width: 150, format: "dd.MM.yyyy", visible: false);
         var waybill_number = CreateNumeric(x => x.waybill_number, "Номер", width: 100, visible: false);
         var order_date = CreateDateTime(x => x.order_date, "Дата", width: 150);

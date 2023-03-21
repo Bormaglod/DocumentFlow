@@ -13,7 +13,7 @@
 
 using Dapper;
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Entities.Products;
@@ -23,7 +23,7 @@ public class ProductRepository<T> : DirectoryRepository<T>, IProductRepository<T
 {
     public ProductRepository(IDatabase database) : base(database) { }
 
-    public decimal GetAveragePrice(T product, DateTime? relevance_date = null) => GetAveragePrice(product.id, relevance_date);
+    public decimal GetAveragePrice(T product, DateTime? relevance_date = null) => GetAveragePrice(product.Id, relevance_date);
 
     public decimal GetAveragePrice(Guid product_id, DateTime? relevance_date = null)
     {

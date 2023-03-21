@@ -5,7 +5,7 @@
 // Date: 05.02.2023
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure.Data;
 
@@ -32,7 +32,7 @@ public class OperationGoods : Entity<long>, ICloneable, IEntityClonable
     public object Copy()
     {
         var copy = Clone();
-        ((OperationGoods)copy).id = 0;
+        ((OperationGoods)copy).Id = 0;
 
         return copy;
     }

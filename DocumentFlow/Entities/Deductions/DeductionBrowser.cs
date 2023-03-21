@@ -28,7 +28,7 @@ public class DeductionBrowser : Browser<Deduction>, IDeductionBrowser
     public DeductionBrowser(IDeductionRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
         : base(repository, pageManager, settings: settings) 
     {
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn name = CreateText(x => x.item_name, "Наименование", hidden: false);
         GridTextColumn base_calc = CreateText(x => x.base_calc_text, "База для начисления", width: 160);
         GridNumericColumn percent = CreateNumeric(x => x.percent_value, "Процент", width: 100, mode: FormatMode.Percent, decimalDigits: 2);

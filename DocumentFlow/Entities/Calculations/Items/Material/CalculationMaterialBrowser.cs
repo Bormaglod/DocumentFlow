@@ -37,7 +37,7 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn material_name = CreateText(x => x.material_name, "Материал", hidden: false);
         GridNumericColumn amount = CreateNumeric(x => x.amount, "Количество", width: 150, decimalDigits: 3);
         GridNumericColumn price = CreateCurrency(x => x.price, "Цена", width: 150);

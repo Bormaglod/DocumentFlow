@@ -57,7 +57,7 @@ public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductio
         contractor.ValueChanged += (sender, args) =>
         {
             contract.RefreshDataSource();
-            contract.Value = contract.Items.FirstOrDefault(x => x.is_default)?.id;
+            contract.Value = contract.Items.FirstOrDefault(x => x.is_default)?.Id;
         };
 
         contract.SetDataSource(() =>
@@ -65,7 +65,7 @@ public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductio
             if (contractor.SelectedItem != null)
             {
                 var repo = Services.Provider.GetService<IContractRepository>();
-                return repo!.GetCustomers(contractor.SelectedItem.id);
+                return repo!.GetCustomers(contractor.SelectedItem.Id);
             }
 
             return Array.Empty<Contract>();

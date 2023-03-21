@@ -13,7 +13,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Entities.Equipments;

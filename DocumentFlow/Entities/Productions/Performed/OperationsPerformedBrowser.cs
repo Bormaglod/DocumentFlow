@@ -36,8 +36,8 @@ public class OperationsPerformedBrowser : BaseOperationsPerformedBrowser, IOpera
 
         filter.SetDateRange(DateRange.CurrentDay);
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата/время", hidden: false, width: 150);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
         var order_name = CreateText(x => x.order_name, "Заказ", width: 150, visible: false);
         var lot_name = CreateText(x => x.lot_name, "Партия", width: 150, visible: false);
         var goods = CreateText(x => x.goods_name, "Изделие", width: 200, visible: false);

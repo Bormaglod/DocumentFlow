@@ -37,9 +37,9 @@ public class FinishedGoodsBrowser : BaseFinishedGoodsBrowser, IFinishedGoodsBrow
     {
         AllowGrouping();
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
-        var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         var lot_date = CreateDateTime(x => x.lot_date, "Дата", width: 150);
         var lot_number = CreateNumeric(x => x.lot_number, "Номер", width: 100);
         var goods = CreateText(x => x.goods_name, "Изделие", hidden: false);

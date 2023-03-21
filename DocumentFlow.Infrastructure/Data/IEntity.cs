@@ -14,5 +14,5 @@ namespace DocumentFlow.Infrastructure.Data;
 public interface IEntity<T> : IIdentifier<T>
     where T : struct, IComparable
 {
-    Guid? owner_id { get; set; }
+    Guid? OwnerId { get; set; }
 }

@@ -33,7 +33,7 @@ public class ProductionOrderPrice : ProductPrice
 
     public void SetCalculation(Calculation calculation)
     {
-        calculation_id = calculation.id;
+        calculation_id = calculation.Id;
         calculation_name = calculation.code;
     }
 }

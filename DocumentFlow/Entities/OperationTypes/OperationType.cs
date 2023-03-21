@@ -5,6 +5,7 @@
 // Date: 01.01.2022
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Entities.OperationTypes;

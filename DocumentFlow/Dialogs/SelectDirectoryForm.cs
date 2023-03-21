@@ -62,7 +62,7 @@ public partial class SelectDirectoryForm<T> : Form
 
     public Guid? SelectedValue
     {
-        get => SelectedItem?.id;
+        get => SelectedItem?.Id;
         set => SetSelectedNode(value == null ? null : GetNode(treeSelect.Nodes, value.Value));
     }
 
@@ -170,7 +170,7 @@ public partial class SelectDirectoryForm<T> : Form
             }
 
             TreeNodeAdv new_node = AddItem(node, item.is_folder, item);
-            AddItems(items, new_node, item.id);
+            AddItems(items, new_node, item.Id);
         }
     }
 
@@ -239,7 +239,7 @@ public partial class SelectDirectoryForm<T> : Form
     {
         foreach (TreeNodeAdv node in nodes)
         {
-            if (node.Tag is IDirectory nodeDir && data != null && nodeDir.id == data.id)
+            if (node.Tag is IDirectory nodeDir && data != null && nodeDir.Id == data.Id)
             {
                 return node;
             }
@@ -258,7 +258,7 @@ public partial class SelectDirectoryForm<T> : Form
     {
         foreach (TreeNodeAdv node in nodes)
         {
-            if (node.Tag is T t && t.id == id)
+            if (node.Tag is T t && t.Id == id)
             {
                 return node;
             }

@@ -9,8 +9,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Infrastructure.Data;
@@ -55,8 +54,8 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
     {
         using var conn = Database.OpenConnection();
         return QuerySummary(conn, lot_id)
-            .Where("operations_performed.operation_id", operation.id)
-            .Where("operations_performed.employee_id", employee.id)
+            .Where("operations_performed.operation_id", operation.Id)
+            .Where("operations_performed.employee_id", employee.Id)
             .FirstOrDefault<OperationsPerformed>();
     }
 

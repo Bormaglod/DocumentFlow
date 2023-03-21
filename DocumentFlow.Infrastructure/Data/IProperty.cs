@@ -13,6 +13,6 @@ namespace DocumentFlow.Infrastructure.Data;
 
 public interface IProperty : IIdentifier<Guid>
 {
-    string property_name { get; set; }
-    string? title { get; set; }
+    string PropertyName { get; set; }
+    string? Title { get; set; }
 }

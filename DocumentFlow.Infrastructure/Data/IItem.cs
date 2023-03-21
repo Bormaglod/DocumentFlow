@@ -14,6 +14,6 @@
 namespace DocumentFlow.Infrastructure.Data;
 public interface IItem
 {
-    string code { get; set; }
-    string? item_name { get; set; }
+    string Code { get; set; }
+    string? ItemName { get; set; }
 }

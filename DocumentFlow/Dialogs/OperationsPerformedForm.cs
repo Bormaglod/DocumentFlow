@@ -117,19 +117,19 @@ public partial class OperationsPerformedForm : Form
     public CalculationOperation? Operation
     {
         get => operations.SelectedItem;
-        set => operations.Value = value?.id;
+        set => operations.Value = value?.Id;
     }
 
     public OurEmployee? Employee
     {
         get => employee.SelectedItem;
-        set => employee.Value = value?.id;
+        set => employee.Value = value?.Id;
     }
 
     public Material? ReplacingMaterial
     {
         get => replacing_material.SelectedItem;
-        set => replacing_material.Value = value?.id;
+        set => replacing_material.Value = value?.Id;
     }
 
     public long Quantity

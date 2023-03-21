@@ -5,10 +5,7 @@
 // Date: 28.01.2023
 //-----------------------------------------------------------------------
 
-using Dapper;
-
-using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;

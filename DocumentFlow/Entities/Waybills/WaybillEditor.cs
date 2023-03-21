@@ -144,8 +144,8 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
                 if (repo != null)
                 {
                     return typeof(T) == typeof(WaybillSale) ?
-                        repo.GetCustomers(contractor.SelectedItem.id) :
-                        repo.GetSuppliers(contractor.SelectedItem.id);
+                        repo.GetCustomers(contractor.SelectedItem.Id) :
+                        repo.GetSuppliers(contractor.SelectedItem.Id);
                 }
             }
 
@@ -230,7 +230,7 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
                 if (contractor.SelectedItem != null)
                 {
                     var repo = Services.Provider.GetService<IPurchaseRequestRepository>();
-                    return repo!.GetByContractor(contractor.SelectedItem.id);
+                    return repo!.GetByContractor(contractor.SelectedItem.Id);
                 }
 
                 return null;
@@ -295,7 +295,7 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
     private void ContractorValueChanged(object? sender, EventArgs e)
     {
         contract.RefreshDataSource();
-        contract.Value = Document.contract_id;
+        contract.Value = Document.ContractId;
     }
 
     private void ContractValueChanged(object? sender, EventArgs e)

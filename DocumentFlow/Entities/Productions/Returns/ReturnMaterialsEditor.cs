@@ -114,7 +114,7 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
                 var repo = Services.Provider.GetService<IContractRepository>();
                 if (repo != null)
                 {
-                    return repo.GetSuppliers(contractor.SelectedItem.id);
+                    return repo.GetSuppliers(contractor.SelectedItem.Id);
                 }
             }
 

@@ -33,9 +33,9 @@ public class ReturnMaterialsBrowser : Browser<ReturnMaterials>, IReturnMaterials
     {
         AllowGrouping();
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
-        var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         var order_date = CreateDateTime(x => x.order_date, "Дата", width: 150);
         var order_number = CreateNumeric(x => x.order_number, "Номер", width: 100);
         var contractor = CreateText(x => x.contractor_name, "Контрагент");

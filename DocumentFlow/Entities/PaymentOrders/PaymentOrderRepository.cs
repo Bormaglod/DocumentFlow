@@ -11,8 +11,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
@@ -34,7 +33,7 @@ public class PaymentOrderRepository : DocumentRepository<PaymentOrder>, IPayment
             .SelectRaw("sum(pp.transaction_amount)")
             .Join("posting_payments as pp", "pp.owner_id", "payment_order.id")
             .GroupBy("pp.owner_id")
-            .Where("payment_order.id", order.id)
+            .Where("payment_order.id", order.Id)
             .WhereTrue("pp.carried_out")
             .First<decimal>();
         return order.transaction_amount - balance;

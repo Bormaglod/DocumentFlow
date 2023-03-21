@@ -71,7 +71,7 @@ public partial class BalanceContractorFilter : UserControl, IBalanceContractorFi
             }
             else
             {
-                return ((Contract)sfComboBox1.SelectedItem).id;
+                return ((Contract)sfComboBox1.SelectedItem).Id;
             }
         }
 
@@ -79,7 +79,7 @@ public partial class BalanceContractorFilter : UserControl, IBalanceContractorFi
         {
             if (value != null) 
             { 
-                var c = ((IList<Contract>)sfComboBox1.DataSource).FirstOrDefault(x => x.id == value);
+                var c = ((IList<Contract>)sfComboBox1.DataSource).FirstOrDefault(x => x.Id == value);
                 if (c != null) 
                 { 
                     sfComboBox1.SelectedItem = c;

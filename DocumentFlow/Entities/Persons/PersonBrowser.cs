@@ -27,7 +27,7 @@ public class PersonBrowser : Browser<Person>, IPersonBrowser
     public PersonBrowser(IPersonRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
         : base(repository, pageManager, settings: settings) 
     {
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn name = CreateText(x => x.item_name, "Фамилия И.О.", hidden: false);
         GridTextColumn surname = CreateText(x => x.surname, "Фамилия", width: 150);
         GridTextColumn first_name = CreateText(x => x.first_name, "Имя", width: 100);

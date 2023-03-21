@@ -26,7 +26,7 @@
 using Dapper;
 
 using DocumentFlow.Core.Exceptions;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
@@ -76,7 +76,7 @@ public class PurchaseRequestRepository : DocumentRepository<PurchaseRequest>, IP
         }
 
         var sql = "insert into purchase_request_price (owner_id, reference_id, amount, price, product_cost, tax, tax_value, full_cost) select :id_to, prp.reference_id, prp.amount, prp.price, prp.product_cost, prp.tax, prp.tax_value, prp.full_cost from purchase_request_price prp where owner_id = :id_from";
-        conn.Execute(sql, new { id_to = to.id, id_from = from.id }, transaction: transaction);
+        conn.Execute(sql, new { id_to = to.Id, id_from = from.Id }, transaction: transaction);
     }
 
     private void SetState(PurchaseRequest purchaseRequest, PurchaseState state)
@@ -87,7 +87,7 @@ public class PurchaseRequestRepository : DocumentRepository<PurchaseRequest>, IP
         try
         {
             conn.Execute($"call set_purchase_request_state(:purchase_request_id, '{PurchaseRequest.StateFromValue(state)}'::purchase_state)",
-                new { purchase_request_id = purchaseRequest.id },
+                new { purchase_request_id = purchaseRequest.Id },
                 transaction);
             transaction.Commit();
 

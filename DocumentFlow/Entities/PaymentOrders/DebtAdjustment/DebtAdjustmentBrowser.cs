@@ -31,9 +31,9 @@ public class DebtAdjustmentBrowser : Browser<DebtAdjustment>, IDebtAdjustmentBro
     {
         AllowGrouping();
 
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        GridDateTimeColumn date = CreateDateTime(x => x.document_date, "Дата/время", hidden: false, width: 130);
-        GridNumericColumn number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        GridDateTimeColumn date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 130);
+        GridNumericColumn number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         GridTextColumn contractor = CreateText(x => x.contractor_name, "Контрагент");
         GridDateTimeColumn document_debt_date = CreateDateTime(x => x.document_debt_date, "Дата", width: 110, format: "dd.MM.yyyy");
         GridNumericColumn document_debt_number = CreateNumeric(x => x.document_debt_number, "Номер", width: 100);

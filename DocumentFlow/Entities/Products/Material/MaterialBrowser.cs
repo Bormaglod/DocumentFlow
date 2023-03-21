@@ -36,7 +36,7 @@ public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
     public MaterialBrowser(IMaterialRepository repository, IPageManager pageManager, IProductRowHeader productRowHeader, IBreadcrumb navigator, IStandaloneSettings settings) 
         : base(repository, pageManager, productRowHeader, navigator: navigator, settings: settings)
     {
-        var id = CreateText(x => x.id, "Id", 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", 180, visible: false);
         var code = CreateText(x => x.code, "Код", 150);
         var name = CreateText(x => x.item_name, "Наименование", hidden: false);
         var measurement = CreateText(x => x.measurement_name, "Ед. изм.", width: 100);

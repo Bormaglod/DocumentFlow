@@ -73,13 +73,13 @@ public class DocumentEditor<T> : Editor<T>
         base.DoAfterRefreshData();
         if (DocumentNumberControl != null)
         {
-            DocumentNumberControl.Enabled = Document.id != Guid.Empty;
+            DocumentNumberControl.Enabled = Document.Id != Guid.Empty;
         }
     }
 
     protected override void DoCreatedDocument(T document)
     {
         base.DoCreatedDocument(document);
-        document.SetOrganization(Services.Provider.GetService<IOrganizationRepository>()!.GetMain().id);
+        document.SetOrganization(Services.Provider.GetService<IOrganizationRepository>()!.GetMain().Id);
     }
 }

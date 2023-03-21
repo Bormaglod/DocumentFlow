@@ -10,8 +10,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
-
+using DocumentFlow.Data;
 using System.ComponentModel.DataAnnotations;
 
 namespace DocumentFlow.Entities.Equipments;

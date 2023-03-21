@@ -14,9 +14,8 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
-using DocumentFlow.Infrastructure.Data;
 using DocumentFlow.Entities.Calculations;
+using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -81,7 +80,7 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository
             }
 
             var calc = calcRepo.GetById(from.calculation_id.Value, transaction.Connection, false);
-            calc.owner_id = to.id;
+            calc.owner_id = to.Id;
             calc.CalculationState = CalculationState.Prepare;
 
             calcRepo.CopyFrom(calc, transaction);

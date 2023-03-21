@@ -28,10 +28,10 @@ public class BalanceProcessingBrowser : BalanceBrowser<BalanceProcessing>, IBala
     {
         AllowGrouping();
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.document_type_name, "Документ", hidden: false);
-        var doc_date = CreateDateTime(x => x.document_date, "Дата", 150);
-        var doc_number = CreateNumeric(x => x.document_number, "Номер", 100);
+        var doc_date = CreateDateTime(x => x.DocumentDate, "Дата", 150);
+        var doc_number = CreateNumeric(x => x.DocumentNumber, "Номер", 100);
         var material = CreateText(x => x.material_name, "Материал", 200, visible: false);
         var income = CreateNumeric(x => x.income, "Приход", 130, decimalDigits: 3);
         var expense = CreateNumeric(x => x.expense, "Расход", 130, decimalDigits: 3);

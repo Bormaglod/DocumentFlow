@@ -20,7 +20,7 @@ public class ProductRowHeader : IProductRowHeader
     {
         if (entity is Product product && product.thumbnails)
         {
-            return product.deleted ? Resources.icons8_document_image_delete_16 : Resources.icons8_document_image_16;
+            return product.Deleted ? Resources.icons8_document_image_delete_16 : Resources.icons8_document_image_16;
         }
 
         return null;

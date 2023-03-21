@@ -17,5 +17,5 @@ namespace DocumentFlow.Infrastructure.Data;
 public interface IIdentifier<T>
     where T : struct, IComparable
 {
-    T id { get; set; }
+    T Id { get; set; }
 }

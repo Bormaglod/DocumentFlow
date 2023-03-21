@@ -33,9 +33,9 @@ public class ProductionLotNestedBrowser : BaseProductionLotBrowser, IProductionL
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
-        var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         var goods = CreateText(x => x.goods_name, "Изделие", hidden: false);
         var calculation = CreateText(x => x.calculation_name, "Калькуляция", width: 150);
         var quantity = CreateNumeric(x => x.quantity, "Количество", width: 150, hidden: false, decimalDigits: 3);

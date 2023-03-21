@@ -71,7 +71,7 @@ public partial class FormMaterialQuantity : Form
 
     private void SaveControlData(ReturnMaterialsRows row)
     {
-        row.material_id = material.SelectedItem?.id ?? Guid.Empty;
+        row.material_id = material.SelectedItem?.Id ?? Guid.Empty;
         row.material_name = material.ValueText;
         row.quantity = quantity.NumericValue.GetValueOrDefault();
     }

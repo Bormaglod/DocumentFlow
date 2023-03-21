@@ -71,7 +71,7 @@ public partial class GoodsSelectForm : Form
     {
         if (goods.SelectedItem != null)
         {
-            operationGoods.goods_id = goods.SelectedItem.id;
+            operationGoods.goods_id = goods.SelectedItem.Id;
             operationGoods.SetGoodsData(goods.SelectedItem);
         }
         else

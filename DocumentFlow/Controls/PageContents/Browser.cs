@@ -94,7 +94,7 @@ using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Core.Reflection;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
-using DocumentFlow.Data.Core.Repository;
+using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
@@ -737,7 +737,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     {
         if (gridContent.DataSource is IList<T> list)
         {
-            T loadedRow = repository.GetById(row.id);
+            T loadedRow = repository.GetById(row.Id);
             list[list.IndexOf(row)] = loadedRow;
         }
     }
@@ -1004,7 +1004,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         {
             var document = editableRow as IDocumentInfo;
             var dro = editableRow != null && DocumentIsReadOnly(editableRow);
-            pageManager.ShowEditor(browserType, editableRow?.id, owner_id, parent_id, readOnly || (document?.deleted ?? false) || dro);
+            pageManager.ShowEditor(browserType, editableRow?.Id, owner_id, parent_id, readOnly || (document?.Deleted ?? false) || dro);
         }
     }
 
@@ -1035,7 +1035,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         {
             if (row is IDirectory dir && dir.is_folder)
             {
-                ParentId = row.id;
+                ParentId = row.Id;
                 if (navigator != null)
                 {
                     navigator.Push(dir);
@@ -1069,7 +1069,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                 {
                     if (MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        pageManager.ShowEditor(browserType, copy.id, owner_id, parent_id, false);
+                        pageManager.ShowEditor(browserType, copy.Id, owner_id, parent_id, false);
                     }
                 }
 
@@ -1089,7 +1089,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             try
             {
                 func(row);
-                list[list.IndexOf(row)] = repository.GetById(row.id);
+                list[list.IndexOf(row)] = repository.GetById(row.Id);
             }
             catch (RepositoryException e)
             {
@@ -1128,7 +1128,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     {
         if (gridContent.SelectedItem is IDocumentInfo row)
         {
-            if (row.deleted)
+            if (row.Deleted)
             {
                 Undelete((T)row);
             }
@@ -1203,7 +1203,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     private void RefreshBrowserList(NotifyEventArgs e)
     {
-        Guid idObj = e.Document?.id ?? e.ObjectId;
+        Guid idObj = e.Document?.Id ?? e.ObjectId;
         if (idObj == Guid.Empty || idObj == OwnerDocument)
         {
             RefreshView();
@@ -1263,7 +1263,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                     switch (e.Destination)
                     {
                         case MessageDestination.Object:
-                            var row = list.Cast<T>().FirstOrDefault(x => x.id == e.ObjectId);
+                            var row = list.Cast<T>().FirstOrDefault(x => x.Id == e.ObjectId);
                             if (row != null)
                             {
                                 list.Remove(row);
@@ -1283,7 +1283,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                     {
                         case MessageDestination.Object:
                             T refreshDoc = (T?)e.Document ?? repository.GetById(e.ObjectId);
-                            var row = list.Cast<T>().FirstOrDefault(x => x.id == refreshDoc.id);
+                            var row = list.Cast<T>().FirstOrDefault(x => x.Id == refreshDoc.Id);
                             if (row != null)
                             {
                                 bool change = false;
@@ -1511,11 +1511,11 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         menuDocuments.DropDownItems.Clear();
         if (record != null)
         {
-            menuId.Text = $"Идентификатор: {{{record.id}}}";
+            menuId.Text = $"Идентификатор: {{{record.Id}}}";
             menuId.Tag = record;
 
             var service = Services.Provider.GetService<IDocumentRefsRepository>();
-            var docs = service!.GetByOwner(record.id);
+            var docs = service!.GetByOwner(record.Id);
 
             foreach (var doc in docs)
             {
@@ -1680,13 +1680,13 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
                     if (delete)
                     {
-                        if (row is IDocumentInfo doc && !doc.deleted)
+                        if (row is IDocumentInfo doc && !doc.Deleted)
                         {
                             MessageBox.Show("Запись не помечена на удаление. Операция прервана", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
 
-                        repository.Wipe(row.id);
+                        repository.Wipe(row.Id);
                         list.Remove(row);
                     }
                 }
@@ -1872,8 +1872,8 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     {
         if (sender is ToolStripMenuItem menu && menu.Tag is T rec)
         {
-            Clipboard.SetText(rec.id.ToString());
-            MessageBox.Show($"Идентификатор записи {{{rec.id}}} скопирован в буфер обмена.", "Идентификатор скопирован", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Clipboard.SetText(rec.Id.ToString());
+            MessageBox.Show($"Идентификатор записи {{{rec.Id}}} скопирован в буфер обмена.", "Идентификатор скопирован", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

@@ -13,9 +13,9 @@ namespace DocumentFlow.Infrastructure.Data;
 
 public interface IDocumentInfo : IEntity<Guid>
 {
-    Guid user_created_id { get; }
-    DateTime date_created { get; }
-    Guid user_updated_id { get; }
-    DateTime date_updated { get; }
-    bool deleted { get; }
+    Guid UserCreatedId { get; }
+    DateTime DateCreated { get; }
+    Guid UserUpdatedId { get; }
+    DateTime DateUpdated { get; }
+    bool Deleted { get; }
 }

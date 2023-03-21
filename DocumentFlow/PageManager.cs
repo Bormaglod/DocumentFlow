@@ -124,7 +124,7 @@ public class PageManager : IPageManager
         where E : IEditorPage
         where T : IDocumentInfo
     {
-        ShowEditor<E>(document.id);
+        ShowEditor<E>(document.Id);
     }
 
     public void ShowEditor(Type editorType, Guid id)

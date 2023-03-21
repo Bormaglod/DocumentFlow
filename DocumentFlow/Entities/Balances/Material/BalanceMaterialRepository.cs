@@ -15,6 +15,7 @@
 
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure.Data;
 
@@ -31,7 +32,7 @@ public class BalanceMaterialRepository : BalanceProductRepository<BalanceMateria
         var repo = Services.Provider.GetService<IMaterialRepository>();
         if (repo != null)
         {
-            var avg_price = repo.GetAveragePrice(balance.reference_id, balance.document_date);
+            var avg_price = repo.GetAveragePrice(balance.reference_id, balance.DocumentDate);
 
             using var conn = Database.OpenConnection();
             using var transaction = conn.BeginTransaction();

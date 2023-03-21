@@ -33,7 +33,7 @@ public class CalculationBrowser : Browser<Calculation>, ICalculationBrowser
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.code, "Код", width: 130);
         var state = CreateText(x => x.state_name, "Состояние");
         var approval = CreateDateTime(x => x.date_approval, "Дата утв.", width: 100, format: "dd.MM.yyyy");

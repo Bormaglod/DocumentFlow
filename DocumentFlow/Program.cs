@@ -32,6 +32,7 @@ internal static class Program
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         Dapper.SqlMapper.AddTypeHandler(new Data.Core.DapperSqlDateOnlyTypeHandler());
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
         FastReport.Utils.RegisteredObjects.AddConnection(typeof(FastReport.Data.PostgresDataConnection));
 

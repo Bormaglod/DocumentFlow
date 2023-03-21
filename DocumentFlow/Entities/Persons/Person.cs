@@ -5,6 +5,7 @@
 // Date: 03.10.2021
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 
 namespace DocumentFlow.Entities.Persons;

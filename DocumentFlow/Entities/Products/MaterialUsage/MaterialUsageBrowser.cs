@@ -33,7 +33,7 @@ public class MaterialUsageBrowser : Browser<MaterialUsage>, IMaterialUsageBrowse
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        var id = CreateText(x => x.id, "Идентификатор", 180, visible: false);
+        var id = CreateText(x => x.Id, "Идентификатор", 180, visible: false);
         var goods_id = CreateText(x => x.goods_id, "Идентификатор изделия", 180, visible: false);
         var code = CreateText(x => x.goods_code, "Артикул", 140, visible: false);
         var goods_name = CreateText(x => x.goods_name, "Изделие", hidden: false);
@@ -62,7 +62,7 @@ public class MaterialUsageBrowser : Browser<MaterialUsage>, IMaterialUsageBrowse
         {
             if (CurrentDocument != null)
             {
-                pageManager.ShowEditor<ICalculationEditor>(CurrentDocument.id);
+                pageManager.ShowEditor<ICalculationEditor>(CurrentDocument.Id);
             }
         });
     }

@@ -9,10 +9,10 @@ namespace DocumentFlow.Infrastructure.Data;
 
 public interface IDocumentRefs
 {
-    byte[]? file_content { get; set; }
-    long file_length { get; set; }
-    string? file_name { get; set; }
-    string? note { get; set; }
-    string? thumbnail { get; set; }
-    bool thumbnail_exist { get; }
+    byte[]? FileContent { get; set; }
+    long FileLength { get; set; }
+    string? FileName { get; set; }
+    string? Note { get; set; }
+    string? Thumbnail { get; set; }
+    bool ThumbnailExist { get; }
 }

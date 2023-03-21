@@ -36,13 +36,13 @@ public class WaybillReceiptCreationBased : ICreationBased
 
             WaybillReceipt waybill = new()
             {
-                contractor_id = document.contractor_id,
-                contract_id = document.contract_id
+                ContractorId = document.ContractorId,
+                ContractId = document.ContractId
             };
 
             if (document.PurchaseState == PurchaseState.Active)
             {
-                waybill.owner_id= document.id;
+                waybill.OwnerId = document.Id;
             }
 
             var wrr = Services.Provider.GetService<IWaybillReceiptRepository>();
@@ -53,11 +53,11 @@ public class WaybillReceiptCreationBased : ICreationBased
                 try
                 {
                     var wr = wrr.Add(waybill, transaction);
-                    foreach (var item in prpr.GetByOwner(document.id))
+                    foreach (var item in prpr.GetByOwner(document.Id))
                     {
                         WaybillReceiptPrice row = new()
                         {
-                            owner_id = wr.id,
+                            OwnerId = wr.Id,
                             reference_id = item.reference_id,
                             amount = item.amount,
                             price = item.price,
@@ -72,7 +72,7 @@ public class WaybillReceiptCreationBased : ICreationBased
 
                     transaction.Commit();
 
-                    return wr.id;
+                    return wr.Id;
                 }
                 catch (Exception)
                 {

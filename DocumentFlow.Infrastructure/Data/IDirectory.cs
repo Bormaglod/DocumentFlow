@@ -13,6 +13,6 @@ namespace DocumentFlow.Infrastructure.Data;
 
 public interface IDirectory : IDocumentInfo, IItem
 {
-    Guid? parent_id { get; set; }
-    bool is_folder { get; set; }
+    Guid? ParentId { get; set; }
+    bool IsFolder { get; set; }
 }

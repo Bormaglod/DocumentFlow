@@ -15,8 +15,7 @@
 
 using Dapper;
 
-using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
@@ -36,7 +35,7 @@ public class ContractApplicationRepository : OwnedRepository<Guid, ContractAppli
     {
         using var conn = Database.OpenConnection();
         var query = GetDefaultQuery(conn)
-            .Where("c.id", contract.id)
+            .Where("c.id", contract.Id)
             .WhereDate("contract_application.date_start", "<=", DateTime.Now)
             .Where(q => q
                 .WhereNull("contract_application.date_end")
@@ -59,6 +58,6 @@ public class ContractApplicationRepository : OwnedRepository<Guid, ContractAppli
         
         var sql = "insert into price_approval (owner_id, product_id, price) select :id_to, product_id, price from price_approval where owner_id = :id_from";
 
-        transaction.Connection?.Execute(sql, new { id_to = to.id, id_from = from.id }, transaction: transaction);
+        transaction.Connection?.Execute(sql, new { id_to = to.Id, id_from = from.Id }, transaction: transaction);
     }
 }

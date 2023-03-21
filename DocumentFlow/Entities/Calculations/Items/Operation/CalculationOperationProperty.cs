@@ -5,7 +5,7 @@
 // Date: 21.07.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 
 using System.ComponentModel.DataAnnotations;
 

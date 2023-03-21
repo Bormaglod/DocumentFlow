@@ -14,7 +14,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
@@ -36,7 +36,7 @@ public class GrossPayrollEmployeeRepository : OwnedRepository<long, GrossPayroll
             .Select("oe.item_name as employee_name")
             .SelectRaw("sum(gpe.wage) as wage")
             .Join("our_employee as oe", "oe.id", "gpe.employee_id")
-            .Where("gpe.owner_id", payroll.id)
+            .Where("gpe.owner_id", payroll.Id)
             .GroupBy("oe.id")
             .Get<GrossPayrollEmployee>()
             .ToList();

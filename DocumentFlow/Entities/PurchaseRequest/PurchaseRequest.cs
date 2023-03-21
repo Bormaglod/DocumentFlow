@@ -19,6 +19,7 @@
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 
 using Humanizer;

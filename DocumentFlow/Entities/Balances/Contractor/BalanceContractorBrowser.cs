@@ -31,10 +31,10 @@ public class BalanceContractorBrowser : BalanceBrowser<BalanceContractor>, IBala
     public BalanceContractorBrowser(IBalanceContractorRepository repository, IPageManager pageManager, IBalanceContractorFilter filter, IStandaloneSettings settings) 
         : base(repository, pageManager, filter, settings: settings) 
     {
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn name = CreateText(x => x.document_type_name, "Документ", hidden: false);
-        GridDateTimeColumn doc_date = CreateDateTime(x => x.document_date, "Дата", 150);
-        GridNumericColumn doc_number = CreateNumeric(x => x.document_number, "Номер", 100);
+        GridDateTimeColumn doc_date = CreateDateTime(x => x.DocumentDate, "Дата", 150);
+        GridNumericColumn doc_number = CreateNumeric(x => x.DocumentNumber, "Номер", 100);
         GridTextColumn contract_name = CreateText(x => x.contract_header, "Договор", 200);
         GridNumericColumn c_debt = CreateCurrency(x => x.contractor_debt, "Долг контрагента.", 150);
         GridNumericColumn o_debt = CreateCurrency(x => x.organization_debt, "Наш долг", 130);

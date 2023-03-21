@@ -14,7 +14,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Infrastructure.Data;
 
 using System.ComponentModel.DataAnnotations;
@@ -55,7 +55,7 @@ public abstract class ProductPrice : Entity<long>, ICloneable, IEntityClonable
     public object Copy()
     {
         var copy = Clone();
-        ((ProductPrice)copy).id = 0;
+        ((ProductPrice)copy).Id = 0;
 
         return copy;
     }

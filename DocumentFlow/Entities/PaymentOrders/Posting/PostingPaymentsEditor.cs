@@ -61,7 +61,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
         document = new DfDocumentSelectBox<DebtDocument>("document_id", "Документ", 150, 400)
         {
             Required = true,
-            OpenAction = (t) => pageManager.ShowEditor(t.EditorType, t.id),
+            OpenAction = (t) => pageManager.ShowEditor(t.EditorType, t.Id),
             DisableCurrentItem = true
         };
 
@@ -110,9 +110,9 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
                     return pr
                         .Union(wr)
                         .Union(bc)
-                        .Where(x => x.full_cost != x.paid || x.id == Document.document_id)
-                        .OrderBy(x => x.document_date)
-                        .ThenBy(x => x.document_number);
+                        .Where(x => x.full_cost != x.paid || x.Id == Document.document_id)
+                        .OrderBy(x => x.DocumentDate)
+                        .ThenBy(x => x.DocumentNumber);
                 }
                 else
                 {
@@ -137,9 +137,9 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
 
                     return wr
                         .Union(bc)
-                        .Where(x => x.full_cost != x.paid || x.id == Document.document_id)
-                        .OrderBy(x => x.document_date)
-                        .ThenBy(x => x.document_number);
+                        .Where(x => x.full_cost != x.paid || x.Id == Document.document_id)
+                        .OrderBy(x => x.DocumentDate)
+                        .ThenBy(x => x.DocumentNumber);
                 }
             }
 

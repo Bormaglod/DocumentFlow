@@ -27,7 +27,7 @@ public class BankBrowser : Browser<Bank>, IBankBrowser
     public BankBrowser(IBankRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
         : base(repository, pageManager, settings: settings)
     {
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn name = CreateText(x => x.item_name, "Наименование", hidden: false);
         GridNumericColumn bik = CreateNumeric(x => x.bik, "БИК", width: 100, format: "00 00 00 000");
         GridNumericColumn account = CreateNumeric(x => x.account, "Корр. счёт", width: 180, format: "000 00 000 0 00000000 000");

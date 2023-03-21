@@ -26,7 +26,7 @@ public class MeasurementBrowser : Browser<Measurement>, IMeasurementBrowser
 {
     public MeasurementBrowser(IMeasurementRepository repository, IPageManager pageManager, IStandaloneSettings settings) : base(repository, pageManager, settings: settings) 
     {
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn code = CreateText(x => x.code, "Код", width: 110);
         GridTextColumn name = CreateText(x => x.item_name, "Наименование", hidden: false);
         GridTextColumn abbreviation = CreateText(x => x.abbreviation, "Сокр. наименование", width: 160);

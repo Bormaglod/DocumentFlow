@@ -13,8 +13,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
-
+using DocumentFlow.Data;
 using System.IO;
 
 namespace DocumentFlow.Dialogs;

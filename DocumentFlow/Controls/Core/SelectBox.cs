@@ -116,7 +116,7 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
         {
             if (selectedItem != null)
             {
-                return selectedItem.id;
+                return selectedItem.Id;
             }
 
             if (Required)
@@ -132,7 +132,7 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
             if (value is Guid id)
             {
                 T? oldValue = selectedItem;
-                selectedItem = items.FirstOrDefault(x => x.id == id);
+                selectedItem = items.FirstOrDefault(x => x.Id == id);
                 if (selectedItem == null && RefreshMethod == DataRefreshMethod.OnOpen) 
                 {
                     selectedItem = GetDocument(id);

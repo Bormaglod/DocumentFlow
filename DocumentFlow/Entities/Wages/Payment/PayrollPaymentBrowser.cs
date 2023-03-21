@@ -24,9 +24,9 @@ public class PayrollPaymentBrowser : Browser<PayrollPayment>, IPayrollPaymentBro
     {
         AllowGrouping();
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
-        var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         var payroll_date = CreateDateTime(x => x.payroll_date, "Дата", hidden: false, width: 150);
         var payroll_number = CreateNumeric(x => x.payroll_number, "Номер", width: 100);
         var billing_range = CreateText(x => x.billing_range, "Расчётный период");

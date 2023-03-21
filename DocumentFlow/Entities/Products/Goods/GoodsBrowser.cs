@@ -31,7 +31,7 @@ public class GoodsBrowser : ProductBrowser<Goods>, IGoodsBrowser
     public GoodsBrowser(IGoodsRepository repository, IPageManager pageManager, IProductRowHeader productRowHeader, IBreadcrumb navigator, IStandaloneSettings settings) 
         : base(repository, pageManager, productRowHeader, navigator: navigator, settings: settings) 
     {
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.code, "Код", width: 120);
         var name = CreateText(x => x.item_name, "Наименование", hidden: false);
         var price = CreateCurrency(x => x.price, "Цена", width: 80);

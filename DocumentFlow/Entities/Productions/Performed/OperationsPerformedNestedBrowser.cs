@@ -32,8 +32,8 @@ public class OperationsPerformedNestedBrowser : BaseOperationsPerformedBrowser, 
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата/время", hidden: false, width: 150);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
         var operation = CreateText(x => x.operation_name, "Операция", hidden: false);
         var employee = CreateText(x => x.employee_name, "Исполнитель", width: 200);
         var material = CreateText(x => x.material_name, "Использованный материал", width: 270);

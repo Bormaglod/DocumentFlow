@@ -32,8 +32,8 @@
 using Dapper;
 
 using DocumentFlow.Core.Exceptions;
-using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Entities.PurchaseRequestLib;
 using DocumentFlow.Infrastructure.Data;
 
@@ -55,7 +55,7 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
         try
         {
             conn.Execute("call populate_waybill_receipt(:waybill_receipt_id, :purchase_request_id)",
-                new { waybill_receipt_id = waybillReceipt.id, purchase_request_id = purchaseRequest?.id },
+                new { waybill_receipt_id = waybillReceipt.Id, purchase_request_id = purchaseRequest?.Id },
                 transaction);
 
             transaction.Commit();

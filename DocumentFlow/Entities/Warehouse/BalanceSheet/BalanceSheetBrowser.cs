@@ -61,7 +61,7 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
         this.filter = filter;
         this.settings = settings;
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.product_name, "Наименование", hidden: false);
         var code = CreateText(x => x.product_code, "Артикул", width: 150);
         var group_name = CreateText(x => x.group_name, "Группа", width: 200, visible: false);

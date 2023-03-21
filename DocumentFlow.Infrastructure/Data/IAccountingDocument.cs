@@ -13,6 +13,6 @@ namespace DocumentFlow.Infrastructure.Data;
 
 public interface IAccountingDocument : IBaseDocument
 {
-    bool carried_out { get; }
-    bool re_carried_out { get; }
+    bool CarriedOut { get; }
+    bool ReCarriedOut { get; }
 }

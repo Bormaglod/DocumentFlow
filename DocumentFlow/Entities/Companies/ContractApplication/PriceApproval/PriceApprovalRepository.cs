@@ -11,8 +11,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure.Data;
 
@@ -31,8 +30,8 @@ public class PriceApprovalRepository : OwnedRepository<long, PriceApproval>, IPr
     {
         using var conn = Database.OpenConnection();
         var query = GetDefaultQuery(conn)
-            .Where("price_approval.owner_id", contractApplication.id)
-            .Where("price_approval.product_id", product.id);
+            .Where("price_approval.owner_id", contractApplication.Id)
+            .Where("price_approval.product_id", product.Id);
         return query.FirstOrDefault<PriceApproval>();
     }
 

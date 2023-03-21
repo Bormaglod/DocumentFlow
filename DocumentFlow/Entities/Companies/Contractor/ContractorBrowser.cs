@@ -35,7 +35,7 @@ public class ContractorBrowser : Browser<Contractor>, IContractorBrowser
     {
         inn = CreateNumeric(x => x.inn, "ИНН", width: 100);
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.code, "Наименование", hidden: false);
         var name = CreateText(x => x.item_name, "Краткое наименование", width: 150, visible: false);
         var full_name = CreateText(x => x.full_name, "Полное наименование", width: 400);

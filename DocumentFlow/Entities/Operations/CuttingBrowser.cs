@@ -35,7 +35,7 @@ public class CuttingBrowser : Browser<Cutting>, ICuttingBrowser
     {
         AllowGrouping();
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.code, "Код", width: 150, visible: false);
         var name = CreateText(x => x.item_name, "Наименование", hidden: false);
         var produced = CreateNumeric(x => x.produced, "Выработка", width: 100, visible: false);

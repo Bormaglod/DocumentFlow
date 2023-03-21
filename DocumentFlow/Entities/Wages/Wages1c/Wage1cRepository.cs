@@ -9,8 +9,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
@@ -21,7 +20,7 @@ public class Wage1cRepository : DocumentRepository<Wage1c>, IWage1cRepository
 {
     public Wage1cRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.OwnerId);
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)

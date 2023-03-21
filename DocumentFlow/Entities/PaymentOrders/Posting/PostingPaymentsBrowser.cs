@@ -31,9 +31,9 @@ public class PostingPaymentsBrowser : Browser<PostingPayments>, IPostingPayments
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        GridDateTimeColumn date = CreateDateTime(x => x.document_date, "Дата/время", hidden: false, width: 150);
-        GridNumericColumn number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        GridDateTimeColumn date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
+        GridNumericColumn number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         GridTextColumn contractor = CreateText(x => x.contractor_name, "Контрагент");
         GridTextColumn document_name = CreateText(x => x.document_name, "Документ");
         GridNumericColumn transaction_amount = CreateCurrency(x => x.transaction_amount, "Сумма", width: 120);

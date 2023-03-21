@@ -33,7 +33,7 @@ public abstract class BaseAccountBrowser<T> : Browser<T>
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.item_name, "Наименование", width: 200, hidden: false);
         var account = CreateNumeric(x => x.account_value, "Расчётный счёт", width: 200, format: "000 00 000 0 0000 0000000");
         var bank = CreateText(x => x.bank_name, "Банк");

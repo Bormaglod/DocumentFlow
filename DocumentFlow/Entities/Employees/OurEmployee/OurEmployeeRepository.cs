@@ -13,7 +13,7 @@
 
 using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;

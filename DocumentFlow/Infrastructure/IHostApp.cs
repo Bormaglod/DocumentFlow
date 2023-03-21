@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Core;
-using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Infrastructure;

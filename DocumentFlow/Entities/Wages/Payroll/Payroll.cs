@@ -10,6 +10,7 @@
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Wages.Core;
 

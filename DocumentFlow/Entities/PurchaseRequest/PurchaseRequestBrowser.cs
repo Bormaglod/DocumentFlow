@@ -36,7 +36,7 @@
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Core.Exceptions;
-using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
@@ -58,9 +58,9 @@ public class PurchaseRequestBrowser : Browser<PurchaseRequest>, IPurchaseRequest
     {
         AllowGrouping();
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
-        var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         var contractor = CreateText(x => x.contractor_name, "Контрагент");
         var contract = CreateText(x => x.contract_name, "Договор", width: 200, visible: false);
         var cost_order = CreateCurrency(x => x.cost_order, "Сумма", width: 120);

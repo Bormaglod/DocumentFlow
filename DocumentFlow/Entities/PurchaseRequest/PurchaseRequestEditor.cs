@@ -74,7 +74,7 @@ public class PurchaseRequestEditor : DocumentEditor<PurchaseRequest>, IPurchaseR
             if (contractor.SelectedItem != null)
             {
                 var repo = Services.Provider.GetService<IContractRepository>();
-                return repo!.GetSuppliers(contractor.SelectedItem.id);
+                return repo!.GetSuppliers(contractor.SelectedItem.Id);
             }
 
             return null;

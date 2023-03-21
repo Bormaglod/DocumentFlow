@@ -33,7 +33,7 @@ public class СustomerBrowser : Browser<Сustomer>, IСustomerBrowser
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.code, "Наименование", hidden: false);
         var doc_name = CreateText(x => x.doc_name, "Наименование документа", width: 400);
         var doc_number = CreateText(x => x.doc_number, "Номер документа", width: 150);
@@ -52,7 +52,7 @@ public class СustomerBrowser : Browser<Сustomer>, IСustomerBrowser
         {
             if (CurrentDocument != null)
             {
-                pageManager.ShowEditor<IContractorEditor>(CurrentDocument.id);
+                pageManager.ShowEditor<IContractorEditor>(CurrentDocument.Id);
             }
         });
 

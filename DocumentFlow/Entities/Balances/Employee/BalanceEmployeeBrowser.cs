@@ -25,10 +25,10 @@ public class BalanceEmployeeBrowser : BalanceBrowser<BalanceEmployee>, IBalanceE
 {
     public BalanceEmployeeBrowser(IBalanceEmployeeRepository repository, IPageManager pageManager, IStandaloneSettings settings) : base(repository, pageManager, settings: settings) 
     {
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn name = CreateText(x => x.document_type_name, "Документ", hidden: false);
-        GridDateTimeColumn doc_date = CreateDateTime(x => x.document_date, "Дата", 150);
-        GridNumericColumn doc_number = CreateNumeric(x => x.document_number, "Номер", 100);
+        GridDateTimeColumn doc_date = CreateDateTime(x => x.DocumentDate, "Дата", 150);
+        GridNumericColumn doc_number = CreateNumeric(x => x.DocumentNumber, "Номер", 100);
         GridNumericColumn c_debt = CreateCurrency(x => x.employee_debt, "Долг сотрудника.", 150);
         GridNumericColumn o_debt = CreateCurrency(x => x.organization_debt, "Наш долг", 130);
         GridNumericColumn debt = CreateCurrency(x => x.debt, "Текущий долг", 130);

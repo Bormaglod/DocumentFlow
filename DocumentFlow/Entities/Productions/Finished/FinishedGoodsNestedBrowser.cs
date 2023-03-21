@@ -33,9 +33,9 @@ public class FinishedGoodsNestedBrowser : BaseFinishedGoodsBrowser, IFinishedGoo
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
-        var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         var goods = CreateText(x => x.goods_name, "Изделие", hidden: false);
         var quantity = CreateNumeric(x => x.quantity, "Количество", width: 150, hidden: false, decimalDigits: 3);
         var measurement = CreateText(x => x.measurement_name, "Ед. изм.", width: 100);

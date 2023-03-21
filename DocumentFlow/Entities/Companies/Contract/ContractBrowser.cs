@@ -31,7 +31,7 @@ public class ContractBrowser : Browser<Contract>, IContractBrowser
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn code = CreateText(x => x.code, "Номер", width: 180);
         GridDateTimeColumn document_date = CreateDateTime(x => x.document_date, "Дата", width: 150, format: "dd.MM.yyyy");
         GridTextColumn name = CreateText(x => x.item_name, "Наименование");

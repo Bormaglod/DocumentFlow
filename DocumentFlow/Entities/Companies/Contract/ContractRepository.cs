@@ -9,8 +9,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
@@ -33,7 +32,7 @@ public class ContractRepository : OwnedRepository<Guid, Contract>, IContractRepo
         return GetByOwner(customer, callback: q => q.WhereRaw("contract.c_type = 'buyer'::contractor_type"));
     }
 
-    public IReadOnlyList<Contract> Get(Contractor contractor) => GetByOwner(contractor.id, callback: q => q.WhereFalse("contract.deleted"));
+    public IReadOnlyList<Contract> Get(Contractor contractor) => GetByOwner(contractor.Id, callback: q => q.WhereFalse("contract.deleted"));
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
     {

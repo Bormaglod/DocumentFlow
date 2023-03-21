@@ -27,9 +27,9 @@ internal class InitialBalanceContractorBrowser : Browser<InitialBalanceContracto
     public InitialBalanceContractorBrowser(IInitialBalanceContractorRepository repository, IPageManager pageManager, IStandaloneSettings settings)
         : base(repository, pageManager, settings: settings)
     {
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
-        var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         var contractor_name = CreateText(x => x.contractor_name, "Контрагент");
         var contract_date = CreateDateTime(x => x.contract_date, "Дата", width: 150, format: "dd.MM.yyyy");
         var contract_number = CreateText(x => x.contract_number, "Номер", width: 100);

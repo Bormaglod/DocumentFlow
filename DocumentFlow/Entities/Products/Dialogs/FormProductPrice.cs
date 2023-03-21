@@ -130,8 +130,8 @@ public partial class FormProductPrice<P> : Form
                 {
                     var calcRepo = Services.Provider.GetService<ICalculationRepository>();
                     return calcRepo!.GetByOwner(
-                        calc.SelectedItem?.id, 
-                        product.SelectedItem.id,
+                        calc.SelectedItem?.Id, 
+                        product.SelectedItem.Id,
                         useBaseQuery: true,
                         callback: q => q
                             .Select("calculation.{id, code}")
@@ -277,7 +277,7 @@ public partial class FormProductPrice<P> : Form
 
     private void SaveControlData(P dest)
     {
-        dest.reference_id = product.SelectedItem?.id ?? Guid.Empty;
+        dest.reference_id = product.SelectedItem?.Id ?? Guid.Empty;
         dest.amount = amount.NumericValue.GetValueOrDefault();
         dest.price = price.NumericValue.GetValueOrDefault();
         dest.product_cost = cost.NumericValue.GetValueOrDefault();

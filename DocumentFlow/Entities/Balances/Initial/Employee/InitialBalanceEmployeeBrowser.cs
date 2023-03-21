@@ -27,9 +27,9 @@ internal class InitialBalanceEmployeeBrowser : Browser<InitialBalanceEmployee>, 
     public InitialBalanceEmployeeBrowser(IInitialBalanceEmployeeRepository repository, IPageManager pageManager, IStandaloneSettings settings)
         : base(repository, pageManager, settings: settings)
     {
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
-        var date = CreateDateTime(x => x.document_date, "Дата", hidden: false, width: 150);
-        var number = CreateNumeric(x => x.document_number, "Номер", width: 100);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
         var contractor_name = CreateText(x => x.employee_name, "Сотрудник");
         var our_debt = CreateCurrency(x => x.OurDebt, "Наш", width: 120);
         var employee_debt = CreateCurrency(x => x.EmployeeDebt, "Сотрудника", width: 120);

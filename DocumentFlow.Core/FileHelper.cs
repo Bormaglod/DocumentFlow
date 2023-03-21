@@ -35,7 +35,7 @@ public static class FileHelper
     public static void OpenFile(IDocumentRefs doc)
     {
         FileHelper.DeleteTempFiles("DocumentRefs");
-        if (doc.file_name != null && doc.file_content != null)
+        if (doc.FileName != null && doc.FileContent != null)
         {
             string path = Path.Combine(Path.GetTempPath(), "DocumentFlow", "DocumentRefs");
             if (!Directory.Exists(path))
@@ -43,10 +43,10 @@ public static class FileHelper
                 Directory.CreateDirectory(path);
             }
 
-            string file = Path.Combine(path, doc.file_name);
+            string file = Path.Combine(path, doc.FileName);
             using (FileStream stream = new(file, FileMode.Create, FileAccess.Write))
             {
-                stream.Write(doc.file_content, 0, doc.file_content.Length);
+                stream.Write(doc.FileContent, 0, doc.FileContent.Length);
             }
 
             Process.Start(new ProcessStartInfo(file) { UseShellExecute = true });

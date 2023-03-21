@@ -14,8 +14,8 @@
 using Dapper;
 
 using DocumentFlow.Core.Exceptions;
-using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
@@ -48,7 +48,7 @@ public class GrossPayrollRepository : DocumentRepository<GrossPayroll>, IGrossPa
         }
     }
 
-    public void CalculateEmployeeWages(GrossPayroll grossPayroll) => CalculateEmployeeWages(grossPayroll.id);
+    public void CalculateEmployeeWages(GrossPayroll grossPayroll) => CalculateEmployeeWages(grossPayroll.Id);
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
     {

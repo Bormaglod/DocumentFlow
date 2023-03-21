@@ -52,10 +52,10 @@ public partial class Breadcrumb : UserControl, IBreadcrumb
 
         SplitButton crumb = new()
         {
-            Text = directory.item_name,
+            Text = directory.ItemName,
             BorderColor = Color.White,
             Dock = DockStyle.Left,
-            Identifier = entity.id
+            Identifier = entity.Id
         };
 
         panelCrumbs.Controls.Add(crumb);

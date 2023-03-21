@@ -18,7 +18,7 @@ public class Choice<T> : Identifier<T>, IChoice<T>
 {
     public Choice(T id, string name)
     {
-        this.id = id;
+        this.Id = id;
         this.name = name;
     }
 

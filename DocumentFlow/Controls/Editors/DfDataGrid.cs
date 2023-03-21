@@ -217,7 +217,7 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
                 if (eventArgs.Rule == RuleChange.Update)
                 {
-                    if (item.id != 0)
+                    if (item.Id != 0)
                     {
                         if (updated.Contains(item))
                         {
@@ -230,7 +230,7 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
                 else
                 {
                     // Если при изменении записи необходимо сначала удалить запись, в потом добавить, то...
-                    if (item.id == 0)
+                    if (item.Id == 0)
                     {
                         // Изменяемая запись была новая. Удалим её из новых.
                         created.Remove(item);
@@ -246,7 +246,7 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
                         // Запись существует физически, добавим её к удаляемым
                         deleted.Add(item);
 
-                        eventArgs.EditingData.id = 0;
+                        eventArgs.EditingData.Id = 0;
                         created.Add(eventArgs.EditingData);
                     }
                 }
@@ -283,7 +283,7 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
                 {
                     bool last = list.IndexOf(item) == list.Count - 1;
                     list.Remove(item);
-                    if (item.id == 0)
+                    if (item.Id == 0)
                     {
                         created.Remove(item);
                     }

@@ -80,7 +80,7 @@ public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
             else
             {
                 var repoGoods = Services.Provider.GetService<IGoodsRepository>();
-                var goods = repoGoods!.GetById(e.NewValue.id, fullInformation: false);
+                var goods = repoGoods!.GetById(e.NewValue.Id, fullInformation: false);
                 if (goods.measurement_id != null)
                 {
                     var repoMeas = Services.Provider.GetService<IMeasurementRepository>();

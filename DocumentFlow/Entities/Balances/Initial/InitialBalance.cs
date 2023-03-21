@@ -10,7 +10,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Entities.Balances.Initial;
 

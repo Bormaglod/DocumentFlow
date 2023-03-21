@@ -20,8 +20,7 @@
 
 using Dapper;
 
-using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
@@ -34,7 +33,7 @@ public class WaybillSaleRepository : DocumentRepository<WaybillSale>, IWaybillSa
 {
     public WaybillSaleRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.OwnerId);
     }
 
     public IReadOnlyList<WaybillSale> GetByContractor(Guid? contractorId)
@@ -88,7 +87,7 @@ public class WaybillSaleRepository : DocumentRepository<WaybillSale>, IWaybillSa
         foreach (var table in tables)
         {
             var sql = $"insert into waybill_sale_price_{table} (owner_id, reference_id, amount, price, product_cost, tax, tax_value, full_cost) select :id_to, reference_id, amount, price, product_cost, tax, tax_value, full_cost from waybill_sale_price_{table} where owner_id = :id_from";
-            transaction.Connection?.Execute(sql, new { id_to = to.id, id_from = from.id }, transaction: transaction);
+            transaction.Connection?.Execute(sql, new { id_to = to.Id, id_from = from.Id }, transaction: transaction);
         }
     }
 }

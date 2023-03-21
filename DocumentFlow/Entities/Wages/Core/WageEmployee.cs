@@ -11,6 +11,7 @@
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 
 using System.ComponentModel.DataAnnotations;
@@ -34,7 +35,7 @@ public class WageEmployee : Entity<long>, IWageEmployee
     public object Copy()
     {
         var copy = Clone();
-        ((WageEmployee)copy).id = 0;
+        ((WageEmployee)copy).Id = 0;
 
         return copy;
     }

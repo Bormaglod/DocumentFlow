@@ -15,8 +15,8 @@
 
 using Dapper;
 
-using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using Humanizer;
@@ -49,7 +49,7 @@ public class ProductionLotRepository : DocumentRepository<ProductionLot>, IProdu
         using var transaction = conn.BeginTransaction();
         try
         {
-            conn.Execute($"call set_production_lot_state(:document_id, '{state.ToString().Underscore()}'::lot_state)", new { document_id = lot.id }, transaction);
+            conn.Execute($"call set_production_lot_state(:document_id, '{state.ToString().Underscore()}'::lot_state)", new { document_id = lot.Id }, transaction);
             transaction.Commit();
 
             lot.state = state.ToString().Underscore();

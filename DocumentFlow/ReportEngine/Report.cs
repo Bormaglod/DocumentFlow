@@ -13,7 +13,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core.Repository;
+using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Infrastructure.Data;
 using DocumentFlow.Infrastructure.ReportEngine;
@@ -35,9 +35,9 @@ public abstract class Report<T> : IReport
     public Report()
     {
         var r = Services.Provider.GetService<IReportRepository>()!.GetById(Id);
-        Name = r.code;
-        Title = r.title;
-        reportText = r.schema_report;
+        Name = r.Code;
+        Title = r.Title;
+        reportText = r.SchemaReport;
     }
 
     public void Show(T entity)
@@ -74,7 +74,7 @@ public abstract class Report<T> : IReport
         var attr = typeof(T).GetCustomAttribute<Data.Core.DescriptionAttribute>();
         string title = $"{attr?.Name ?? string.Empty} {entity?.ToString() ?? string.Empty}";
 
-        PreviewReportForm.ShowReport(entity?.id, file, title);
+        PreviewReportForm.ShowReport(entity?.Id, file, title);
     }
 
     void IReport.Show(IDocumentInfo document)

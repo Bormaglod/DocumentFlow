@@ -37,7 +37,7 @@ public partial class CardRow : UserControl
         linkLabelContractor.Text = contractor.contractor_name;
         labelAmount.Text = contractor.debt.ToString("#,###.00", customProvider);
 
-        contractorId = contractor.id;
+        contractorId = contractor.Id;
     }
 
     private void LinkLabelContractor_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

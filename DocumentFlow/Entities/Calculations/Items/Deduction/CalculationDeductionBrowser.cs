@@ -36,7 +36,7 @@ public class CalculationDeductionBrowser : Browser<CalculationDeduction>, ICalcu
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn deduction_name = CreateText(x => x.deduction_name, "Удержание", hidden: false);
         GridTextColumn calculation_base = CreateText(x => x.calculation_base_text, "База удерж.", width: 200);
         GridNumericColumn price = CreateCurrency(x => x.price, "База, руб.", width: 150);

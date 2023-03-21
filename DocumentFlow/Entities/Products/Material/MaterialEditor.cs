@@ -60,8 +60,8 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
         {
             if (e.NewValue != null)
             {
-                var parents = repository.GetParentFolders(e.NewValue.id);
-                wire.Visible = parents.FirstOrDefault(x => x.id == Material.WireGroup) != null;
+                var parents = repository.GetParentFolders(e.NewValue.Id);
+                wire.Visible = parents.FirstOrDefault(x => x.Id == Material.WireGroup) != null;
             }
             else
             {
@@ -77,8 +77,8 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
             return repo!.GetAllValid(callback: query => query
                 .OrderBy("item_name")
                 .WhereNull("owner_id")
-                .When(Document.id != Guid.Empty, q => q
-                    .WhereNot("id", Document.id)));
+                .When(Document.Id != Guid.Empty, q => q
+                    .WhereNot("id", Document.Id)));
         });
         measurement.SetDataSource(() => Services.Provider.GetService<IMeasurementRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
         vat.SetChoiceValues(Product.Taxes);

@@ -13,9 +13,9 @@ namespace DocumentFlow.Infrastructure.Data;
 
 public interface IBaseDocument : IDocumentInfo
 {
-    Guid organization_id { get; }
-    string? organization_name { get; }
-    DateTime? document_date { get; set; }
-    int? document_number { get; set; }
+    Guid OrganizationId { get; }
+    string? OrganizationName { get; }
+    DateTime? DocumentDate { get; set; }
+    int? DocumentNumber { get; set; }
     void SetOrganization(Guid orgId);
 }

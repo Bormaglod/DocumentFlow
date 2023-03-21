@@ -5,8 +5,7 @@
 // Date: 04.02.2023
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
-
+using DocumentFlow.Data;
 using System.ComponentModel.DataAnnotations;
 
 namespace DocumentFlow.Entities.Employees;

@@ -13,7 +13,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Entities.Wages.Core;
 
 namespace DocumentFlow.Entities.Wages;

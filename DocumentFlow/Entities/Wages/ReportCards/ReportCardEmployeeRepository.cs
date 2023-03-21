@@ -14,8 +14,8 @@
 using Dapper;
 
 using DocumentFlow.Core.Exceptions;
-using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
@@ -47,7 +47,7 @@ public class ReportCardEmployeeRepository : OwnedRepository<long, ReportCardEmpl
         }
     }
 
-    public void PopulateReportCard(ReportCard reportCard) => PopulateReportCard(reportCard.id);
+    public void PopulateReportCard(ReportCard reportCard) => PopulateReportCard(reportCard.Id);
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter = null)
     {

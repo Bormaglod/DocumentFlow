@@ -5,7 +5,7 @@
 // Date: 24.10.2021
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Entities.Calculations;
 

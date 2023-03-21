@@ -242,7 +242,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
             if (form.ShowDialog() == DialogResult.OK && form.SelectedItem != null && list != null)
             {
                 emp.SetEmployee(form.SelectedItem);
-                if (emp.id != default)
+                if (emp.Id != default)
                 {
                     updated.Add(emp);
                 }
@@ -256,7 +256,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
     {
         if (gridContent.SelectedItem is ReportCardEmployee emp && list != null)
         {
-            if (emp.id == default)
+            if (emp.Id == default)
             {
                 created.Remove(emp);
             }
@@ -318,7 +318,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
                 if (int.TryParse(m.Groups[1].Value, out int empIndex))
                 {
                     emp.SetInfo(empIndex, e.NewValue.ToString() ?? string.Empty);
-                    if (emp.id != 0 && !updated.Contains(emp))
+                    if (emp.Id != 0 && !updated.Contains(emp))
                     {
                         updated.Add(emp);
                     }

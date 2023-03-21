@@ -15,7 +15,7 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Dialogs

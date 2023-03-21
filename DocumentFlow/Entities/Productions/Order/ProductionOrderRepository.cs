@@ -21,8 +21,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data.Repositiry;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure.Data;
@@ -44,7 +43,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
     public IReadOnlyList<ProductionOrderPrice> GetList(ProductionOrder order)
     {
         var repo = Services.Provider.GetService<IProductionOrderPriceRepository>();
-        return repo!.GetByOwner(order.id);
+        return repo!.GetByOwner(order.Id);
     }
 
     public IReadOnlyList<ProductionOrder> GetWithReturnMaterial(Contract contract)
@@ -84,7 +83,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .WhereFalse("po.deleted")
             .WhereTrue("po.carried_out")
             .Where("wp.contractor_id", contract.owner_id)
-            .Where("wp.contract_id", contract.id)
+            .Where("wp.contract_id", contract.Id)
             .Get<ProductionOrder>()
             .ToList();
     }
@@ -101,7 +100,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .Join("calculation as c", "c.id", "pop.calculation_id")
             .Join("calculation_material as cm", q => q.On("cm.owner_id", "c.id").WhereTrue("cm.is_giving"))
             .Join("material as m", "m.id", "cm.item_id")
-            .Where("po.id", order.id)
+            .Where("po.id", order.Id)
             .GroupBy("cm.item_id", "m.code", "m.item_name")
             .OrderBy("m.code")
             .Get<T>()

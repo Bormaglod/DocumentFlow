@@ -36,7 +36,7 @@ public class CalculationCuttingBrowser : Browser<CalculationCutting>, ICalculati
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        var id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var operation_name = CreateText(x => x.operation_name, "Производственная операция", width: 400, visible: false);
         var equipment_name = CreateText(x => x.equipment_name, "Оборудование", width: 250, visible: false);
         var tools_name = CreateText(x => x.tools_name, "Инструмент", width: 250, visible: false);

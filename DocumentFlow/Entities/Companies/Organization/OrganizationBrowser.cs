@@ -27,7 +27,7 @@ public class OrganizationBrowser : Browser<Organization>, IOrganizationBrowser
     public OrganizationBrowser(IOrganizationRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
         : base(repository, pageManager, settings: settings) 
     {
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn code = CreateText(x => x.code, "Наименование", hidden: false);
         GridTextColumn name = CreateText(x => x.item_name, "Краткое наименование", width: 150, visible: false);
         GridTextColumn full_name = CreateText(x => x.full_name, "Полное наименование", width: 200, visible: false);

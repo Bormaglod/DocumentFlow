@@ -9,7 +9,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 using DocumentFlow.Infrastructure.Data;
 
 using System.ComponentModel.DataAnnotations;
@@ -37,7 +37,7 @@ public class PriceApproval: Entity<long>, ICloneable, IEntityClonable
     public object Copy()
     {
         var copy = Clone();
-        ((PriceApproval)copy).id = 0;
+        ((PriceApproval)copy).Id = 0;
         
         return copy;
     }

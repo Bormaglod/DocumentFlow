@@ -9,6 +9,7 @@
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Products.Core;
 using DocumentFlow.Infrastructure.Data;
@@ -35,7 +36,7 @@ public class ReturnMaterialsRows : Entity<long>, ICloneable, IEntityClonable
     public object Copy()
     {
         var copy = Clone();
-        ((ReturnMaterialsRows)copy).id = 0;
+        ((ReturnMaterialsRows)copy).Id = 0;
 
         return copy;
     }

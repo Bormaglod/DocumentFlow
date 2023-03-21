@@ -32,9 +32,9 @@ public class WaybilSlaleCreationBased : ICreationBased
 
             WaybillSale waybill = new()
             {
-                contractor_id = document.contractor_id,
-                contract_id = document.contract_id,
-                owner_id = document.id
+                ContractorId = document.ContractorId,
+                ContractId = document.ContractId,
+                OwnerId = document.Id
             };
 
             var wrr = Services.Provider.GetService<IWaybillSaleRepository>();
@@ -45,11 +45,11 @@ public class WaybilSlaleCreationBased : ICreationBased
                 try
                 {
                     var wr = wrr.Add(waybill, transaction);
-                    foreach (var item in prpr.GetByOwner(document.id))
+                    foreach (var item in prpr.GetByOwner(document.Id))
                     {
                         WaybillSalePrice row = new()
                         {
-                            owner_id = wr.id,
+                            owner_id = wr.Id,
                             reference_id = item.reference_id,
                             amount = item.amount,
                             price = item.price,
@@ -65,7 +65,7 @@ public class WaybilSlaleCreationBased : ICreationBased
 
                     transaction.Commit();
 
-                    return wr.id;
+                    return wr.Id;
                 }
                 catch (Exception)
                 {

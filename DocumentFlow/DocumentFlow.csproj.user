@@ -550,8 +550,5 @@
     <Compile Update="Settings\Page\MarginsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="SplashForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
   </ItemGroup>
 </Project>

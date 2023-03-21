@@ -27,7 +27,7 @@ public class OperationTypeBrowser : Browser<OperationType>, IOperationTypeBrowse
     public OperationTypeBrowser(IOperationTypeRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
         : base(repository, pageManager, settings: settings) 
     {
-        GridTextColumn id = CreateText(x => x.id, "Id", width: 180, visible: false);
+        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         GridTextColumn name = CreateText(x => x.item_name, "Наименование", hidden: false);
         GridNumericColumn salary = CreateCurrency(x => x.salary, "Расценка, руб./час", width: 200);
 

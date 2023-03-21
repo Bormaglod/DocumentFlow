@@ -6,8 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System.Data;
-
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Entities.Calculations;
 

@@ -15,8 +15,8 @@
 
 namespace DocumentFlow.Dialogs;
 
-using DocumentFlow.Data.Core;
-using DocumentFlow.Data.Core.Repository;
+using DocumentFlow.Data;
+using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Employees;
 
@@ -118,7 +118,7 @@ public partial class SelectEmailForm : Form
         using var client = new SmtpClient();
         EmailLog log = new()
         {
-            email_id = email.id,
+            email_id = email.Id,
             to_address = string.Join(";", emailTo.Select(x => x.Email)),
             document_id = id
         };

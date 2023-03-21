@@ -13,7 +13,6 @@
 
 using Dapper;
 
-using DocumentFlow.Data;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;

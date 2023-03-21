@@ -21,6 +21,7 @@
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Renderers;
 using DocumentFlow.Core.Exceptions;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Productions.Lot;
@@ -123,7 +124,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
         {
             for (int i = 0; i < Employees.Count; i++)
             {
-                if (Employees[i].Employee.id == operation.employee_id)
+                if (Employees[i].Employee.Id == operation.employee_id)
                 {
                     Employees[i].Quantity = operation.quantity;
                     Employees[i].Salary = operation.salary;
@@ -222,7 +223,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
             var summary = repoPerf.GetSummary(owner_id.Value);
             foreach (var item in summary)
             {
-                var opInfo = operations.FirstOrDefault(x => x.Operation.id == item.operation_id);
+                var opInfo = operations.FirstOrDefault(x => x.Operation.Id == item.operation_id);
                 if (opInfo == null)
                 {
                     continue;
@@ -345,9 +346,9 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                 var op = new OperationsPerformed()
                 {
                     owner_id = owner_id,
-                    employee_id = form.Employee.id,
-                    operation_id = form.Operation.id,
-                    replacing_material_id = form.ReplacingMaterial?.id,
+                    employee_id = form.Employee.Id,
+                    operation_id = form.Operation.Id,
+                    replacing_material_id = form.ReplacingMaterial?.Id,
                     quantity = form.Quantity,
                     double_rate = form.DoubleRate
                 };
@@ -360,7 +361,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                         // добавим и проведем выполнение операции сотрудником
                         op = repo.AddAndAccept(op);
 
-                        CurrentApplicationContext.Context.App.SendNotify("operations_performed", op, Data.MessageAction.Add);
+                        CurrentApplicationContext.Context.App.SendNotify("operations_performed", op, MessageAction.Add);
 
                         // поучим сводную информацию - количество выполненных операций указанным сотрудником
                         var summary = repo.GetSummary(owner_id.Value, form.Operation, form.Employee);
@@ -369,7 +370,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                             // если сотрудник ещё ны был задействован для выполнения данной операции,
                             // то его добавляем в список работников, добавляем его во все записи операций и
                             // добавляем колонку с сотрудником в таблицу
-                            if (employees.FirstOrDefault(x => x.id == op.employee_id) == null)
+                            if (employees.FirstOrDefault(x => x.Id == op.employee_id) == null)
                             {
                                 employees.Add(form.Employee);
                                 foreach (var item in list)
@@ -381,7 +382,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                             }
 
                             // обновим информацию о сотруднике
-                            var o = list.FirstOrDefault(x => x.Operation.id == summary.operation_id);
+                            var o = list.FirstOrDefault(x => x.Operation.Id == summary.operation_id);
                             if (o != null)
                             {
                                 o.SetEmployeeData(summary);

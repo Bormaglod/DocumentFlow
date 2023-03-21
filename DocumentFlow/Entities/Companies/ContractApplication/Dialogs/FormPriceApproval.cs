@@ -87,7 +87,7 @@ public partial class FormPriceApproval : Form
     {
         if (product.SelectedItem != null)
         {
-            priceApproval.product_id = product.SelectedItem.id;
+            priceApproval.product_id = product.SelectedItem.Id;
         }
 
         if (price.NumericValue != null)

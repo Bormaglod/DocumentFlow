@@ -5,6 +5,7 @@
 // Date: 28.01.2023
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Wages.Core;
 

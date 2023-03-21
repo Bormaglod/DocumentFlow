@@ -25,7 +25,7 @@ public class GrossPayrollEditor : BasePayrollEditor<GrossPayroll, GrossPayrollEm
             string question1 = "Документ не записан, для заполнения таблицы документ должен быть записан. Записать?";
             string question2 = "Для заполнения таблицы документ должен быть записан. Записать?";
 
-            string question = Document.id == default ?
+            string question = Document.Id == default ?
                 question1 :
                 (Document.billing_year != BillingYear || Document.billing_month != BilingMonth ? 
                     question2 : 
@@ -45,7 +45,7 @@ public class GrossPayrollEditor : BasePayrollEditor<GrossPayroll, GrossPayrollEm
             }
 
             var repo = Services.Provider.GetService<IGrossPayrollRepository>();
-            repo!.CalculateEmployeeWages(Document.id);
+            repo!.CalculateEmployeeWages(Document.Id);
 
             EmployeeRows.RefreshDataSource();
         });

@@ -34,7 +34,7 @@ public partial class SelectDocumentForm<T> : Form
         AddItems(items);
         if (currentItem != null) 
         {
-            gridContent.SelectedItem = items.FirstOrDefault(x => x.id == currentItem.id);
+            gridContent.SelectedItem = items.FirstOrDefault(x => x.Id == currentItem.Id);
         }
 
         this.currentItem = currentItem;
@@ -75,7 +75,7 @@ public partial class SelectDocumentForm<T> : Form
     {
         if (e.DataRow.RowData is T row && currentItem != null && disableCurrentItem)
         {
-            if (row.id == currentItem.id)
+            if (row.Id == currentItem.Id)
             {
                 e.Style.TextColor = Color.Gray;
             }

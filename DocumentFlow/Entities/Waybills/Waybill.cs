@@ -5,7 +5,7 @@
 // Date: 06.11.2021
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Core;
+using DocumentFlow.Data;
 
 namespace DocumentFlow.Entities.Waybills;
 

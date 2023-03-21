@@ -76,7 +76,7 @@ public partial class FormEmployeePayroll : Form
 
     private void SaveControlData(IWageEmployeeInfo dest)
     {
-        dest.employee_id = emp.SelectedItem?.id ?? Guid.Empty;
+        dest.employee_id = emp.SelectedItem?.Id ?? Guid.Empty;
         dest.wage = payroll.NumericValue.GetValueOrDefault();
         dest.SetEmployeeName(emp.ValueText);
     }
