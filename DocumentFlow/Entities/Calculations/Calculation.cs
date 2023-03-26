@@ -30,25 +30,25 @@ public class Calculation : Directory
         [StimulatingValue.Percent] = "Процент"
     };
 
-    public string? goods_name { get; protected set; }
-    public decimal cost_price { get; set; }
-    public decimal profit_percent { get; set; }
-    public decimal profit_value { get; set; }
-    public decimal price { get; set; }
-    public string? note { get; set; }
+    public string? GoodsName { get; protected set; }
+    public decimal CostPrice { get; set; }
+    public decimal ProfitPercent { get; set; }
+    public decimal ProfitValue { get; set; }
+    public decimal Price { get; set; }
+    public string? Note { get; set; }
 
     [DataOperation(DataOperation.Add | DataOperation.Update)]
     [EnumType("calculation_state")]
-    public string state { get; set; } = "prepare";
-    public string state_name => StateNameFromValue(CalculationState);
-    public decimal weight { get; protected set; }
-    public decimal produced_time { get; protected set; }
+    public string State { get; set; } = "prepare";
+    public string StateName => StateNameFromValue(CalculationState);
+    public decimal Weight { get; protected set; }
+    public decimal ProducedTime { get; protected set; }
 
     [EnumType("stimulating_value")]
-    public string stimul_type { get; set; } = "money";
-    public string stimul_type_name => StimulTypeNameFromValue(StimulatingValue);
-    public decimal stimul_payment { get; set; }
-    public DateTime? date_approval { get; set; }
+    public string StimulType { get; set; } = "money";
+    public string StimulTypeName => StimulTypeNameFromValue(StimulatingValue);
+    public decimal StimulPayment { get; set; }
+    public DateTime? DateApproval { get; set; }
 
     public static string StateNameFromValue(CalculationState state) => state switch
     {
@@ -68,15 +68,15 @@ public class Calculation : Directory
     [Exclude]
     public CalculationState CalculationState
     {
-        get { return Enum.Parse<CalculationState>(state.Pascalize()); }
-        set { state = value.ToString().Underscore(); }
+        get { return Enum.Parse<CalculationState>(State.Pascalize()); }
+        set { State = value.ToString().Underscore(); }
     }
 
     [Exclude]
     public StimulatingValue StimulatingValue
     {
-        get { return Enum.Parse<StimulatingValue>(stimul_type.Pascalize()); }
-        set { stimul_type = value.ToString().Underscore(); }
+        get { return Enum.Parse<StimulatingValue>(StimulType.Pascalize()); }
+        set { StimulType = value.ToString().Underscore(); }
     }
 
     public static IReadOnlyDictionary<StimulatingValue, string> StimulatingValues => stimulatingValues;

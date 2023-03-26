@@ -18,7 +18,7 @@ public enum BalanceCategory { Debet, Credit }
 
 public class InitialBalance : AccountingDocument
 {
-    public Guid reference_id { get; set; }
-    public decimal operation_summa { get; set; }
-    public decimal amount { get; set; }
+    public Guid ReferenceId { get; set; }
+    public decimal OperationSumma { get; set; }
+    public decimal Amount { get; set; }
 }

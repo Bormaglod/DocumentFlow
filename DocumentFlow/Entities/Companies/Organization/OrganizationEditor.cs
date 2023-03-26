@@ -5,7 +5,6 @@
 // Date: 04.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Accounts;
 using DocumentFlow.Entities.Employees;
@@ -22,39 +21,21 @@ public class OrganizationEditor : Editor<Organization>, IOrganizationEditor
 
     public OrganizationEditor(IOrganizationRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var code = new DfTextBox("code", "Наименование", headerWidth, 400) { DefaultAsNull = false };
-        var name = new DfTextBox("item_name", "Короткое наименование", headerWidth, 500);
-        var full_name = new DfTextBox("full_name", "Полное наименование", headerWidth, 500) { Multiline = true, Height = 75 };
-        var inn = new DfMaskedTextBox<decimal>("inn", "ИНН", headerWidth, 200, mask: "#### ##### #");
-        var kpp = new DfMaskedTextBox<decimal>("kpp", "КПП", headerWidth, 200, mask: "#### ## ###");
-        var ogrn = new DfMaskedTextBox<decimal>("ogrn", "ОГРН", headerWidth, 200, mask: "# ## ## ## ##### #");
-        var okpo = new DfMaskedTextBox<decimal>("okpo", "ОКПО", headerWidth, 200, mask: "## ##### #");
-        var okopf = new DfComboBox<Okopf>("okopf_id", "ОКОПФ", headerWidth, 450);
-        var account = new DfComboBox<OurAccount>("account_id", "Расчётный счёт", headerWidth, 450);
-        var address = new DfTextBox("address", "Адрес", headerWidth, 500) { Multiline = true, Height = 75 };
-        var phone = new DfTextBox("phone", "Телефон", headerWidth, 250);
-        var email = new DfTextBox("email", "Эл. почта", headerWidth, 250);
-        var default_org = new DfToggleButton("default_org", "Основная организация", headerWidth);
-
-        okopf.SetDataSource(() => Services.Provider.GetService<IOkopfRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-
-        account.SetDataSource(() => Services.Provider.GetService<IOurAccountRepository>()!.GetByOwner(Document.account_id, Id));
-
         AddControls(new Control[]
         {
-            code,
-            name,
-            full_name,
-            inn,
-            kpp,
-            ogrn,
-            okpo,
-            okopf,
-            account,
-            address,
-            phone,
-            email,
-            default_org
+            CreateTextBox(x => x.Code, "Наименование", headerWidth, 400, defaultAsNull: false),
+            CreateTextBox(x => x.ItemName, "Короткое наименование", headerWidth, 500),
+            CreateMultilineTextBox(x => x.FullName, "Полное наименование", headerWidth, 500),
+            CreateMaskedTextBox<decimal>(x => x.Inn, "ИНН", headerWidth, 200, mask: "#### ##### #"),
+            CreateMaskedTextBox<decimal>(x => x.Kpp, "КПП", headerWidth, 200, mask: "#### ## ###"),
+            CreateMaskedTextBox<decimal>(x => x.Ogrn, "ОГРН", headerWidth, 200, mask: "# ## ## ## ##### #"),
+            CreateMaskedTextBox<decimal>(x => x.Okpo, "ОКПО", headerWidth, 200, mask: "## ##### #"),
+            CreateComboBox(x => x.OkopfId, "ОКОПФ", headerWidth, 450, data: GetOkopfs),
+            CreateComboBox(x => x.AccountId, "Расчётный счёт", headerWidth, 450, data: GetAccounts),
+            CreateMultilineTextBox(x => x.Address, "Адрес", headerWidth, 500),
+            CreateTextBox(x => x.Phone, "Телефон", headerWidth, 250),
+            CreateTextBox(x => x.Email, "Эл. почта", headerWidth, 250),
+            CreateToggleButton(x => x.DefaultOrg, "Основная организация", headerWidth)
         });
     }
 
@@ -64,4 +45,8 @@ public class OrganizationEditor : Editor<Organization>, IOrganizationEditor
         RegisterNestedBrowser<IOurAccountBrowser, OurAccount>();
         RegisterNestedBrowser<IOrgEmployeeBrowser, OurEmployee>();
     }
+
+    private IEnumerable<Okopf> GetOkopfs() => Services.Provider.GetService<IOkopfRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+
+    private IEnumerable<OurAccount> GetAccounts() => Services.Provider.GetService<IOurAccountRepository>()!.GetByOwner(Document.AccountId, Id);
 }

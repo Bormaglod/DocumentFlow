@@ -21,7 +21,7 @@ public class CalculationItemRepository<T> : OwnedRepository<Guid, T>
 {
     public CalculationItemRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.parent_id);
+        ExcludeField(x => x.ParentId);
     }
 
     public decimal GetSumItemCost(Guid owner_id)

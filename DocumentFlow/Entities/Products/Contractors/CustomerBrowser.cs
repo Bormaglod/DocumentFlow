@@ -34,11 +34,11 @@ public class СustomerBrowser : Browser<Сustomer>, IСustomerBrowser
         Toolbar.IconSize = ButtonIconSize.Small;
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var code = CreateText(x => x.code, "Наименование", hidden: false);
-        var doc_name = CreateText(x => x.doc_name, "Наименование документа", width: 400);
-        var doc_number = CreateText(x => x.doc_number, "Номер документа", width: 150);
-        var date_start = CreateDateTime(x => x.date_start, "Начиная с...", width: 120, format: "dd.MM.yyyy");
-        var price = CreateCurrency(x => x.price, "Цена", width: 100);
+        var code = CreateText(x => x.Code, "Наименование", hidden: false);
+        var doc_name = CreateText(x => x.DocName, "Наименование документа", width: 400);
+        var doc_number = CreateText(x => x.DocNumber, "Номер документа", width: 150);
+        var date_start = CreateDateTime(x => x.DateStart, "Начиная с...", width: 120, format: "dd.MM.yyyy");
+        var price = CreateCurrency(x => x.Price, "Цена", width: 100);
         code.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 
         AddColumns(new GridColumn[] { id, code, doc_name, doc_number, date_start, price });
@@ -58,17 +58,17 @@ public class СustomerBrowser : Browser<Сustomer>, IСustomerBrowser
 
         Toolbar.Add("Договор", Resources.icons8_contract_16, Resources.icons8_contract_30, () =>
         {
-            if (CurrentDocument != null && CurrentDocument.contract_id != null)
+            if (CurrentDocument != null && CurrentDocument.ContractId != null)
             {
-                pageManager.ShowEditor<IContractEditor>(CurrentDocument.contract_id.Value);
+                pageManager.ShowEditor<IContractEditor>(CurrentDocument.ContractId.Value);
             }
         });
 
         Toolbar.Add("Приложение", Resources.icons8_contract_app_16, Resources.icons8_contract_app_30, () =>
         {
-            if (CurrentDocument != null && CurrentDocument.application_id != null)
+            if (CurrentDocument != null && CurrentDocument.ApplicationId != null)
             {
-                pageManager.ShowEditor<IContractApplicationEditor>(CurrentDocument.application_id.Value);
+                pageManager.ShowEditor<IContractApplicationEditor>(CurrentDocument.ApplicationId.Value);
             }
         });
     }

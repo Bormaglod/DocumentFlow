@@ -11,10 +11,10 @@ namespace DocumentFlow.Entities.Products;
 
 public class Сustomer : Contractor
 {
-    public Guid? contract_id { get; protected set; }
-    public Guid? application_id { get; protected set; }
-    public string? doc_number { get; protected set; }
-    public string? doc_name { get; protected set; }
-    public DateTime date_start { get; protected set; }
-    public decimal price { get; protected set; }
+    public Guid? ContractId { get; protected set; }
+    public Guid? ApplicationId { get; protected set; }
+    public string? DocNumber { get; protected set; }
+    public string? DocName { get; protected set; }
+    public DateTime DateStart { get; protected set; }
+    public decimal Price { get; protected set; }
 }

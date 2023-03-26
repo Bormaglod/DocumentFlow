@@ -18,16 +18,14 @@ namespace DocumentFlow.Entities.Wages;
 
 
 [Description("Платёжная ведомость")]
-public class Payroll : AccountingDocument, IBilling//BasePayroll
+public class Payroll : AccountingDocument, IBilling
 {
-    public Payroll() => billing_range = new(this);
-    public int billing_year { get; } = DateTime.Now.Year;
-    public short billing_month { get; } = Convert.ToInt16(DateTime.Now.Month);
+    public Payroll() => BillingRange = new(this);
+    public int BillingYear { get; } = DateTime.Now.Year;
+    public short BillingMonth { get; } = Convert.ToInt16(DateTime.Now.Month);
 
-#pragma warning disable IDE1006 // Стили именования
-    public decimal wage { get; protected set; }
-    public BillingRange billing_range { get; }
-    public string[]? employee_names { get; protected set; }
-    public string employee_names_text => employee_names != null ? string.Join(',', employee_names.Distinct()) : string.Empty;
-#pragma warning restore IDE1006 // Стили именования
+    public decimal Wage { get; protected set; }
+    public BillingRange BillingRange { get; }
+    public string[]? EmployeeNames { get; protected set; }
+    public string EmployeeNamesText => EmployeeNames != null ? string.Join(',', EmployeeNames.Distinct()) : string.Empty;
 }

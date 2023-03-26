@@ -17,17 +17,15 @@ namespace DocumentFlow.Entities.Balances;
 
 public class BalanceProduct : Balance
 {
-#pragma warning disable IDE1006 // Стили именования
     [Display(Name = "Приход", Order = 500)]
-    public decimal? income { get; protected set; }
+    public decimal? Income { get; protected set; }
 
     [Display(Name = "Расход", Order = 600)]
-    public decimal? expense { get; protected set; }
+    public decimal? Expense { get; protected set; }
 
     [Display(Name = "Остаток", Order = 700)]
-    public decimal remainder { get; protected set; }
+    public decimal Remainder { get; protected set; }
 
     [Display(Name = "Остаток, руб.", Order = 800)]
-    public decimal monetary_balance { get; protected set; }
-#pragma warning restore IDE1006 // Стили именования
+    public decimal MonetaryBalance { get; protected set; }
 }

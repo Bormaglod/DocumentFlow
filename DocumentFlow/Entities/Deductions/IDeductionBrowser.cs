@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Deductions;
 
-[Menu(MenuDestination.Directory, "Удержания", 211000)]
+[Menu(MenuDestination.Directory, "Удержания", order: 120)]
 public interface IDeductionBrowser : IBrowser<Deduction>
 {
 }

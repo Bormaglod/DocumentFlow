@@ -15,23 +15,17 @@ namespace DocumentFlow.Entities.Wages;
 
 public class PayrollPaymentEditor : DocumentEditor<PayrollPayment>, IPayrollPaymentEditor
 {
-    public PayrollPaymentEditor(IPayrollPaymentRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
+    public PayrollPaymentEditor(IPayrollPaymentRepository repository, IPageManager pageManager) : base(repository, pageManager, true)
     {
-        var payment_number = new DfTextBox("payment_number", "Номер пл. ордера", 150, 100)
-        {
-            Dock = DockStyle.Left,
-            Width = 250
-        };
+        var payment_number = CreateTextBox(x => x.PaymentNumber, "Номер пл. ордера", 150, 100);
+        payment_number.Dock = DockStyle.Left;
+        payment_number.Width = 250;
 
-        var date_operation = new DfDateTimePicker("date_operation", "от", 25, 100)
-        {
-            Format = DateTimePickerFormat.Custom,
-            CustomFormat = "dd.MM.yyyy",
-            Required = true,
-            Dock = DockStyle.Left,
-            Width = 200,
-            HeaderTextAlign = ContentAlignment.MiddleCenter
-        };
+        var date_operation = CreateDateTimePicker(x => x.DateOperation, "от", 25, 100, format: DateTimePickerFormat.Custom, required: true);
+        date_operation.CustomFormat = "dd.MM.yyyy";
+        date_operation.Dock = DockStyle.Left;
+        date_operation.Width = 200;
+        date_operation.HeaderTextAlign = ContentAlignment.MiddleCenter;
 
         var panel_pp = new Panel()
         {
@@ -41,18 +35,8 @@ public class PayrollPaymentEditor : DocumentEditor<PayrollPayment>, IPayrollPaym
 
         panel_pp.Controls.AddRange(new Control[] { date_operation, payment_number });
 
-        var payroll = new DfDocumentSelectBox<Payroll>("owner_id", "Платёжная ведомость", 150, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IPayrollEditor, Payroll>(t)
-        };
-
-        var transaction = new DfCurrencyTextBox("transaction_amount", "Сумма", 150, 200) { DefaultAsNull = false };
-
-        payroll.SetDataSource(() =>
-        {
-            var repo = Services.Provider.GetService<IPayrollRepository>();
-            return repo?.GetAllDefault();
-        });
+        var payroll = CreateDocumentSelectBox<Payroll, IPayrollEditor>(x => x.OwnerId, "Платёжная ведомость", 150, 400, data: GetPayrolls);
+        var transaction = CreateCurrencyTextBox(x => x.TransactionAmount, "Сумма", 150, 200, defaultAsNull: false);
 
         payroll.Columns += (sender, e) => BasePayroll.CreateGridColumns(e.Columns);
 
@@ -60,7 +44,7 @@ public class PayrollPaymentEditor : DocumentEditor<PayrollPayment>, IPayrollPaym
         {
             if (e.NewValue != null)
             {
-                transaction.NumericValue = e.NewValue.wage;
+                transaction.NumericValue = e.NewValue.Wage;
             }
         };
 
@@ -71,4 +55,6 @@ public class PayrollPaymentEditor : DocumentEditor<PayrollPayment>, IPayrollPaym
             transaction
         });
     }
+
+    private IEnumerable<Payroll> GetPayrolls() => Services.Provider.GetService<IPayrollRepository>()!.GetAllDefault();
 }

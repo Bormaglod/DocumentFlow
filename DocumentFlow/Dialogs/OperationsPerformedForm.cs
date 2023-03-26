@@ -84,7 +84,7 @@ public partial class OperationsPerformedForm : Form
                     .Select("calculation_operation.*")
                     .Select("m.item_name as material_name")
                     .LeftJoin("material as m", "m.id", "material_id")
-                    .Where("calculation_operation.owner_id", lot.calculation_id)
+                    .Where("calculation_operation.owner_id", lot.CalculationId)
                     .OrderBy("code")
                 );
 
@@ -93,8 +93,8 @@ public partial class OperationsPerformedForm : Form
 
         operations.ValueChanged += (sender, e) =>
         {
-            using_material.Value = e.NewValue?.material_name;
-            replacing_material.Enabled = e.NewValue?.material_id != null;
+            using_material.Value = e.NewValue?.MaterialName;
+            replacing_material.Enabled = e.NewValue?.MaterialId != null;
         };
 
         replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllValid());

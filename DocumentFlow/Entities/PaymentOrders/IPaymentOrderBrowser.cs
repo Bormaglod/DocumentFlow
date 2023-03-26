@@ -15,7 +15,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.PaymentOrders;
 
-[Menu(MenuDestination.Document, "Платежи", 104520, "Расчёты с контрагентами")]
+[Menu(MenuDestination.Document, "Платежи", parent: "Расчёты с контрагентами", order: 20)]
 public interface IPaymentOrderBrowser : IBrowser<PaymentOrder>
 {
 }

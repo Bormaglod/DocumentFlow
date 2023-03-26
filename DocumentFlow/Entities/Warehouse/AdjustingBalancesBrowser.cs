@@ -36,8 +36,8 @@ public class AdjustingBalancesBrowser : Browser<AdjustingBalances>, IAdjustingBa
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        var material_name = CreateText(x => x.material_name, "Материал");
-        var quantity = CreateNumeric(x => x.quantity, "Кол-во", width: 200);
+        var material_name = CreateText(x => x.MaterialName, "Материал");
+        var quantity = CreateNumeric(x => x.Quantity, "Кол-во", width: 200);
 
         material_name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

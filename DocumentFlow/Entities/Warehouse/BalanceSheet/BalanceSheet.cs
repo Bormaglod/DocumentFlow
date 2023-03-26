@@ -15,15 +15,15 @@ namespace DocumentFlow.Entities.Warehouse;
 
 public class BalanceSheet : Identifier<Guid>
 {
-    public string product_name { get; protected set; } = string.Empty;
-    public string product_code { get; protected set; } = string.Empty;
-    public string group_name { get; protected set; } = string.Empty;
-    public decimal opening_balance_amount { get; protected set; }
-    public decimal opening_balance_summa { get; protected set; }
-    public decimal income_amount { get; protected set; }
-    public decimal income_summa { get; protected set; }
-    public decimal expense_amount { get; protected set; }
-    public decimal expense_summa { get; protected set; }
-    public decimal closing_balance_amount { get; protected set; }
-    public decimal closing_balance_summa { get; protected set; }
+    public string ProductName { get; protected set; } = string.Empty;
+    public string ProductCode { get; protected set; } = string.Empty;
+    public string GroupName { get; protected set; } = string.Empty;
+    public decimal OpeningBalanceAmount { get; protected set; }
+    public decimal OpeningBalanceSumma { get; protected set; }
+    public decimal IncomeAmount { get; protected set; }
+    public decimal IncomeSumma { get; protected set; }
+    public decimal ExpenseAmount { get; protected set; }
+    public decimal ExpenseSumma { get; protected set; }
+    public decimal ClosingBalanceAmount { get; protected set; }
+    public decimal ClosingBalanceSumma { get; protected set; }
 }

@@ -13,13 +13,13 @@ namespace DocumentFlow.Entities.Balances;
 
 public class BalanceContractor : Balance
 {
-    public Guid contract_id { get; set; }
-    public string? contract_name { get; protected set; }
-    public string contract_number { get; protected set; } = string.Empty;
-    public DateTime contract_date { get; protected set; }
-    public decimal? contractor_debt { get; protected set; }
-    public decimal? organization_debt { get; protected set; }
-    public decimal debt { get; protected set; }
+    public Guid ContractId { get; set; }
+    public string? ContractName { get; protected set; }
+    public string ContractNumber { get; protected set; } = string.Empty;
+    public DateTime ContractDate { get; protected set; }
+    public decimal? ContractorDebt { get; protected set; }
+    public decimal? OrganizationDebt { get; protected set; }
+    public decimal Debt { get; protected set; }
 
-    public string contract_header => $"{contract_name} {contract_number} от {contract_date:d}";
+    public string ContractHeader => $"{ContractName} {ContractNumber} от {ContractDate:d}";
 }

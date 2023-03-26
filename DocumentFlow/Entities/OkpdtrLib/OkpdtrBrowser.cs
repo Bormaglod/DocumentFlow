@@ -28,8 +28,8 @@ public class OkpdtrBrowser : Browser<Okpdtr>, IOkpdtrBrowser
         : base(repository, pageManager, settings: settings) 
     {
         GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn code = CreateText(x => x.code, "Код", width: 110);
-        GridTextColumn name = CreateText(x => x.item_name, "Наименование", hidden: false);
+        GridTextColumn code = CreateText(x => x.Code, "Код", width: 110);
+        GridTextColumn name = CreateText(x => x.ItemName, "Наименование", hidden: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

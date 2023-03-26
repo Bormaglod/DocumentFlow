@@ -33,16 +33,16 @@ public class ContractorBrowser : Browser<Contractor>, IContractorBrowser
     public ContractorBrowser(IContractorRepository repository, IPageManager pageManager, IBreadcrumb navigator, IStandaloneSettings settings) 
         : base(repository, pageManager, navigator: navigator, settings: settings) 
     {
-        inn = CreateNumeric(x => x.inn, "ИНН", width: 100);
+        inn = CreateNumeric(x => x.Inn, "ИНН", width: 100);
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var code = CreateText(x => x.code, "Наименование", hidden: false);
-        var name = CreateText(x => x.item_name, "Краткое наименование", width: 150, visible: false);
-        var full_name = CreateText(x => x.full_name, "Полное наименование", width: 400);
-        var kpp = CreateNumeric(x => x.kpp, "КПП", width: 100, format: "0000 00 000");
-        var okpo = CreateNumeric(x => x.okpo, "ОКПО", width: 100, format: "00 00000 0");
-        var ogrn = CreateNumeric(x => x.ogrn, "ОГРН", width: 120, format: "0 00 00 00 00000 0");
-        var okopf = CreateText(x => x.okopf_name, "ОКОПФ", width: 300);
+        var code = CreateText(x => x.Code, "Наименование", hidden: false);
+        var name = CreateText(x => x.ItemName, "Краткое наименование", width: 150, visible: false);
+        var full_name = CreateText(x => x.FullName, "Полное наименование", width: 400);
+        var kpp = CreateNumeric(x => x.Kpp, "КПП", width: 100, format: "0000 00 000");
+        var okpo = CreateNumeric(x => x.Okpo, "ОКПО", width: 100, format: "00 00000 0");
+        var ogrn = CreateNumeric(x => x.Ogrn, "ОГРН", width: 120, format: "0 00 00 00 00000 0");
+        var okopf = CreateText(x => x.OkopfName, "ОКОПФ", width: 300);
 
         code.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         okopf.AllowGrouping = true;

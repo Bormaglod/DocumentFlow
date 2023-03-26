@@ -13,5 +13,5 @@ namespace DocumentFlow.Entities.Measurements;
 [Description("Ед. изм.")]
 public class Measurement : Directory
 {
-    public string? abbreviation { get; set; }
+    public string? Abbreviation { get; set; }
 }

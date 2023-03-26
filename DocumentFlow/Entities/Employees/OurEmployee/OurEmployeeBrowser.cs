@@ -29,13 +29,13 @@ public class OurEmployeeBrowser : Browser<OurEmployee>, IOurEmployeeBrowser
     {
         AllowGrouping();
 
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn name = CreateText(x => x.item_name, "Сотрудник", hidden: false);
-        GridTextColumn post_name = CreateText(x => x.post_name, "Должность", width: 300);
-        GridTextColumn org_name = CreateText(x => x.owner_name, "Организация", width: 200);
-        GridTextColumn phone = CreateText(x => x.phone, "Телефон", width: 250, visible: false);
-        GridTextColumn email = CreateText(x => x.email, "Эл. почта", width: 250);
-        GridTextColumn j_role = CreateText(x => x.j_role, "Роль", width: 150, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var name = CreateText(x => x.ItemName, "Сотрудник", hidden: false);
+        var post_name = CreateText(x => x.PostName, "Должность", width: 300);
+        var org_name = CreateText(x => x.OwnerName, "Организация", width: 200);
+        var phone = CreateText(x => x.Phone, "Телефон", width: 250, visible: false);
+        var email = CreateText(x => x.Email, "Эл. почта", width: 250);
+        var j_role = CreateText(x => x.JRole, "Роль", width: 150, visible: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

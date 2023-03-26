@@ -11,15 +11,15 @@ namespace DocumentFlow.Entities.Waybills;
 
 public class Waybill : ShipmentDocument
 {
-    public string? waybill_number { get; set; }
-    public DateTime? waybill_date { get; set; }
-    public string? invoice_number { get; set; }
-    public DateTime? invoice_date { get; set; }
-    public bool upd { get; set; }
-    public decimal product_cost { get; protected set; }
-    public bool tax_payer { get; protected set; }
-    public int tax { get; protected set; }
-    public decimal tax_value { get; protected set; }
-    public decimal full_cost { get; protected set; }
-    public decimal paid { get; protected set; }
+    public string? WaybillNumber { get; set; }
+    public DateTime? WaybillDate { get; set; }
+    public string? InvoiceNumber { get; set; }
+    public DateTime? InvoiceDate { get; set; }
+    public bool Upd { get; set; }
+    public decimal ProductCost { get; protected set; }
+    public bool TaxPayer { get; protected set; }
+    public int Tax { get; protected set; }
+    public decimal TaxValue { get; protected set; }
+    public decimal FullCost { get; protected set; }
+    public decimal Paid { get; protected set; }
 }

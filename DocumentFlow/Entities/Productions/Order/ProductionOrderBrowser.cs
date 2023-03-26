@@ -41,13 +41,13 @@ public class ProductionOrderBrowser : Browser<ProductionOrder>, IProductionOrder
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        var contractor = CreateText(x => x.contractor_name, "Контрагент");
-        var contract = CreateText(x => x.contract_name, "Договор", width: 200, visible: false);
-        var cost_order = CreateCurrency(x => x.cost_order, "Сумма", width: 120);
-        var tax = CreateNumeric(x => x.tax, "НДС%", width: 80, mode: FormatMode.Percent);
-        var tax_value = CreateCurrency(x => x.tax_value, "НДС", width: 120);
-        var full_cost = CreateCurrency(x => x.full_cost, "Всего c НДС", width: 120);
-        var closed = CreateBoolean(x => x.closed, "Закрыт", width: 100);
+        var contractor = CreateText(x => x.ContractorName, "Контрагент");
+        var contract = CreateText(x => x.ContractName, "Договор", width: 200, visible: false);
+        var cost_order = CreateCurrency(x => x.CostOrder, "Сумма", width: 120);
+        var tax = CreateNumeric(x => x.Tax, "НДС%", width: 80, mode: FormatMode.Percent);
+        var tax_value = CreateCurrency(x => x.TaxValue, "НДС", width: 120);
+        var full_cost = CreateCurrency(x => x.FullCost, "Всего c НДС", width: 120);
+        var closed = CreateBoolean(x => x.Closed, "Закрыт", width: 100);
 
         CreateSummaryRow(VerticalPosition.Bottom, true)
             .AsSummary(cost_order, SummaryColumnFormat.Currency)

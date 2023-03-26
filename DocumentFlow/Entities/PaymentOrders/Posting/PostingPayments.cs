@@ -20,13 +20,13 @@ namespace DocumentFlow.Entities.PaymentOrders.Posting;
 [Description("Платёж")]
 public class PostingPayments : AccountingDocument, IDiscriminator
 {
-    string IDiscriminator.TableName { get => table_name; set => table_name = value; }
+    string IDiscriminator.TableName { get => TableName; set => TableName = value; }
 
-    public decimal transaction_amount { get; set; }
-    public Guid document_id { get; set; }
-    public string? document_name { get; protected set; }
-    public string? contractor_name { get; protected set; }
+    public decimal TransactionAmount { get; set; }
+    public Guid DocumentId { get; set; }
+    public string? DocumentName { get; protected set; }
+    public string? ContractorName { get; protected set; }
 
     [Exclude]
-    public string table_name { get; set; } = string.Empty;
+    public string TableName { get; set; } = string.Empty;
 }

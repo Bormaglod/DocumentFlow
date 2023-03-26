@@ -40,13 +40,13 @@ public class FinishedGoodsBrowser : BaseFinishedGoodsBrowser, IFinishedGoodsBrow
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        var lot_date = CreateDateTime(x => x.lot_date, "Дата", width: 150);
-        var lot_number = CreateNumeric(x => x.lot_number, "Номер", width: 100);
-        var goods = CreateText(x => x.goods_name, "Изделие", hidden: false);
-        var quantity = CreateNumeric(x => x.quantity, "Количество", width: 150, hidden: false, decimalDigits: 3);
-        var measurement = CreateText(x => x.measurement_name, "Ед. изм.", width: 100);
-        var price = CreateCurrency(x => x.price, "1 ед. изм.", width: 100);
-        var cost = CreateCurrency(x => x.product_cost, "Всего", width: 100);
+        var lot_date = CreateDateTime(x => x.LotDate, "Дата", width: 150);
+        var lot_number = CreateNumeric(x => x.LotNumber, "Номер", width: 100);
+        var goods = CreateText(x => x.GoodsName, "Изделие", hidden: false);
+        var quantity = CreateNumeric(x => x.Quantity, "Количество", width: 150, hidden: false, decimalDigits: 3);
+        var measurement = CreateText(x => x.MeasurementName, "Ед. изм.", width: 100);
+        var price = CreateCurrency(x => x.Price, "1 ед. изм.", width: 100);
+        var cost = CreateCurrency(x => x.ProductCost, "Всего", width: 100);
 
         goods.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         quantity.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;

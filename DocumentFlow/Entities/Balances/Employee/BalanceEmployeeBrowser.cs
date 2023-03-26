@@ -25,13 +25,13 @@ public class BalanceEmployeeBrowser : BalanceBrowser<BalanceEmployee>, IBalanceE
 {
     public BalanceEmployeeBrowser(IBalanceEmployeeRepository repository, IPageManager pageManager, IStandaloneSettings settings) : base(repository, pageManager, settings: settings) 
     {
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn name = CreateText(x => x.document_type_name, "Документ", hidden: false);
-        GridDateTimeColumn doc_date = CreateDateTime(x => x.DocumentDate, "Дата", 150);
-        GridNumericColumn doc_number = CreateNumeric(x => x.DocumentNumber, "Номер", 100);
-        GridNumericColumn c_debt = CreateCurrency(x => x.employee_debt, "Долг сотрудника.", 150);
-        GridNumericColumn o_debt = CreateCurrency(x => x.organization_debt, "Наш долг", 130);
-        GridNumericColumn debt = CreateCurrency(x => x.debt, "Текущий долг", 130);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var name = CreateText(x => x.DocumentTypeName, "Документ", hidden: false);
+        var doc_date = CreateDateTime(x => x.DocumentDate, "Дата", 150);
+        var doc_number = CreateNumeric(x => x.DocumentNumber, "Номер", 100);
+        var c_debt = CreateCurrency(x => x.EmployeeDebt, "Долг сотрудника.", 150);
+        var o_debt = CreateCurrency(x => x.OrganizationDebt, "Наш долг", 130);
+        var debt = CreateCurrency(x => x.Debt, "Текущий долг", 130);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         c_debt.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;

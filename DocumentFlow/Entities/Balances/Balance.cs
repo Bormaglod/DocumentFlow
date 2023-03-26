@@ -11,10 +11,10 @@ namespace DocumentFlow.Entities.Balances;
 
 public class Balance : BaseDocument
 {
-    public Guid reference_id { get; set; }
-    public decimal operation_summa { get; set; }
-    public decimal amount { get; set; }
-    public Guid document_type_id { get; set; }
-    public string? document_type_code { get; protected set; }
-    public string? document_type_name { get; protected set; }
+    public Guid ReferenceId { get; set; }
+    public decimal OperationSumma { get; set; }
+    public decimal Amount { get; set; }
+    public Guid DocumentTypeId { get; set; }
+    public string? DocumentTypeCode { get; protected set; }
+    public string? DocumentTypeName { get; protected set; }
 }

@@ -18,12 +18,12 @@ namespace DocumentFlow.Entities.Productions.Finished;
 [Description("Готовая продукция")]
 public class FinishedGoods : AccountingDocument
 {
-    public Guid goods_id { get; set; }
-    public decimal quantity { get; set; }
-    public decimal price { get; set; }
-    public decimal product_cost { get; set; }
-    public string goods_name { get; protected set; } = string.Empty;
-    public int lot_number { get; protected set; }
-    public DateTime lot_date { get; protected set; }
-    public string? measurement_name { get; protected set; }
+    public Guid GoodsId { get; set; }
+    public decimal Quantity { get; set; }
+    public decimal Price { get; set; }
+    public decimal ProductCost { get; set; }
+    public string GoodsName { get; protected set; } = string.Empty;
+    public int LotNumber { get; protected set; }
+    public DateTime LotDate { get; protected set; }
+    public string? MeasurementName { get; protected set; }
 }

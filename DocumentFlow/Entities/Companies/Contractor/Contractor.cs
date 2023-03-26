@@ -24,21 +24,21 @@ public class Contractor : Company
     public static readonly Guid CompanyGroup = new("{AEE39994-7BFE-46C0-828B-AC6296103CD1}");
     public static readonly Guid PersonGroup = new("{A9799032-2C6A-46DA-AB8A-CF6423E3BEB6}");
 
-    public static readonly Dictionary<SubjectsCivilLow, string> subjects = new()
+    private static readonly Dictionary<SubjectsCivilLow, string> subjects = new()
     {
         [SubjectsCivilLow.Person] = "Физическое лицо",
         [SubjectsCivilLow.LegalEntity] = "Юридическое лицо"
     };
 
     [EnumType("subjects_civil_low")]
-    public string? subject { get; set; }
+    public string? Subject { get; set; }
 
-    public Guid? person_id { get; set; }
+    public Guid? PersonId { get; set; }
 
     public SubjectsCivilLow? SubjectCivilLow
     {
-        get { return subject == null ? null : Enum.Parse<SubjectsCivilLow>(subject.Dehumanize()); }
-        protected set { subject = value?.ToString().Humanize(LetterCasing.LowerCase); }
+        get { return Subject == null ? null : Enum.Parse<SubjectsCivilLow>(Subject.Dehumanize()); }
+        protected set { Subject = value?.ToString().Humanize(LetterCasing.LowerCase); }
     }
 
     public static IReadOnlyDictionary<SubjectsCivilLow, string> Subjects => subjects;

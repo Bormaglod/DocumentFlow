@@ -14,5 +14,5 @@ namespace DocumentFlow.Infrastructure.Data;
 public interface IChoice<T> : IIdentifier<T>
     where T : struct, IComparable
 {
-    string name { get; }
+    string Name { get; }
 }

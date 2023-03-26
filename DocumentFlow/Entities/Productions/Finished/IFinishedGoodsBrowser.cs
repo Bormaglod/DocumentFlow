@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Productions.Finished;
 
-[Menu(MenuDestination.Document, "Готовая продукция", 102035, "Производство")]
+[Menu(MenuDestination.Document, "Готовая продукция", parent: "Производство", order: 40)]
 public interface IFinishedGoodsBrowser : IBrowser<FinishedGoods>
 {
 }

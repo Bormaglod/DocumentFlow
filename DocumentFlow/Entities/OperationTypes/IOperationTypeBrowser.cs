@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.OperationTypes;
 
-[Menu(MenuDestination.Directory, "Виды производственных операций", 209000)]
+[Menu(MenuDestination.Directory, "Виды производственных операций", order: 100)]
 public interface IOperationTypeBrowser : IBrowser<OperationType>
 {
 }

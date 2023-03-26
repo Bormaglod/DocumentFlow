@@ -11,10 +11,10 @@ namespace DocumentFlow.Entities.Products;
 
 public class MaterialUsage : DocumentInfo
 {
-    public string calculation_name { get; protected set; } = string.Empty;
-    public string calculation_code { get; protected set; } = string.Empty;
-    public Guid goods_id { get; protected set; }
-    public string goods_code { get; protected set; } = string.Empty;
-    public string goods_name { get; protected set; } = string.Empty;
-    public decimal amount { get; protected set; }
+    public string CalculationName { get; protected set; } = string.Empty;
+    public string CalculationCode { get; protected set; } = string.Empty;
+    public Guid GoodsId { get; protected set; }
+    public string GoodsCode { get; protected set; } = string.Empty;
+    public string GoodsName { get; protected set; } = string.Empty;
+    public decimal Amount { get; protected set; }
 }

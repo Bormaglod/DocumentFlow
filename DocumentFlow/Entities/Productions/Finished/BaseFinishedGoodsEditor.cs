@@ -12,9 +12,7 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
-using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Measurements;
 using DocumentFlow.Entities.Productions.Lot;
 using DocumentFlow.Entities.Products;
@@ -26,41 +24,26 @@ namespace DocumentFlow.Entities.Productions.Finished;
 
 public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
 {
+    private readonly IPageManager pageManager;
     private readonly int headerWidth = 160;
 
     public BaseFinishedGoodsEditor(IFinishedGoodsRepository repository, IPageManager pageManager, bool nested)
         : base(repository, pageManager, true)
     {
-        var lot = new DfDocumentSelectBox<ProductionLot>("owner_id", "Партия", headerWidth, 300)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IProductionLotEditor, ProductionLot>(t),
-            ReadOnly = nested
-        };
+        this.pageManager = pageManager;
 
-        var goods = new DfDirectorySelectBox<Goods>("goods_id", "Изделие", headerWidth, 500)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IGoodsEditor, Goods>(t)
-        };
-
-        var quantity = new DfNumericTextBox("quantity", "Количество", headerWidth, 100) { NumberDecimalDigits = 3 };
-        var price = new DfCurrencyTextBox("price", "Себестоимость 1 ед. изм.", headerWidth, 100);
-        var cost = new DfCurrencyTextBox("product_cost", "Себестоимость (всего)", headerWidth, 100);
-
-        lot.SetDataSource(() =>
-        {
-            var repo = Services.Provider.GetService<IProductionLotRepository>();
-            return repo!.GetAllDefault(callback: q => q
-                .WhereFalse("production_lot.deleted")
-                .WhereTrue("production_lot.carried_out"));
-        });
+        var lot = CreateDocumentSelectBox<ProductionLot, IProductionLotEditor>(x => x.OwnerId, "Партия", headerWidth, 300, readOnly: nested, data: GetLots);
+        var goods = CreateDirectorySelectBox<Goods, IGoodsEditor>(x => x.GoodsId, "Изделие", headerWidth, 500, data: GetGoods);
+        var quantity = CreateNumericTextBox(x => x.Quantity, "Количество", headerWidth, 100, digits: 3);
+        var price = CreateCurrencyTextBox(x => x.Price, "Себестоимость 1 ед. изм.", headerWidth, 100);
+        var cost = CreateCurrencyTextBox(x => x.ProductCost, "Себестоимость (всего)", headerWidth, 100);
 
         lot.Columns += (sender, e) => ProductionLot.CreateGridColumns(e.Columns);
-
         lot.ValueChanged += (sender, e) =>
         {
             if (e.NewValue != null)
             {
-                goods.Value = e.NewValue.goods_id;
+                goods.Value = e.NewValue.GoodsId;
                 goods.ReadOnly = true;
             }
             else
@@ -68,8 +51,6 @@ public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
                 goods.ReadOnly = false;
             }
         };
-
-        goods.SetDataSource(() => Services.Provider.GetService<IGoodsRepository>()!.GetAllValid());
 
         goods.ValueChanged += (sender, e) =>
         {
@@ -81,13 +62,13 @@ public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
             {
                 var repoGoods = Services.Provider.GetService<IGoodsRepository>();
                 var goods = repoGoods!.GetById(e.NewValue.Id, fullInformation: false);
-                if (goods.measurement_id != null)
+                if (goods.MeasurementId != null)
                 {
                     var repoMeas = Services.Provider.GetService<IMeasurementRepository>();
-                    var meas = repoMeas!.GetById(goods.measurement_id.Value);
+                    var meas = repoMeas!.GetById(goods.MeasurementId.Value);
 
                     quantity.ShowSuffix = true;
-                    quantity.SuffixText = meas.abbreviation ?? meas.item_name ?? meas.code;
+                    quantity.SuffixText = meas.Abbreviation ?? meas.ItemName ?? meas.Code;
                 }
             }
         };
@@ -101,4 +82,14 @@ public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
             cost
         });
     }
+
+    private IEnumerable<ProductionLot> GetLots()
+    {
+        var repo = Services.Provider.GetService<IProductionLotRepository>();
+        return repo!.GetAllDefault(callback: q => q
+            .WhereFalse("production_lot.deleted")
+            .WhereTrue("production_lot.carried_out"));
+    }
+
+    private IEnumerable<Goods> GetGoods() => Services.Provider.GetService<IGoodsRepository>()!.GetAllValid();
 }

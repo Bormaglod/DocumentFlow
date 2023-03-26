@@ -13,5 +13,5 @@ namespace DocumentFlow.Entities.OperationTypes;
 [Description("Вид операции")]
 public class OperationType : Directory
 {
-    public decimal salary { get; set; }
+    public decimal Salary { get; set; }
 }

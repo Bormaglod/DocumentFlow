@@ -14,17 +14,17 @@ namespace DocumentFlow.Entities.PaymentOrders;
 [Description("Корректировка долга")]
 public class DebtAdjustment : AccountingDocument
 {
-    public Guid? contractor_id { get; set; }
-    public string? contractor_name { get; protected set; }
-    public Guid? document_debt_id { get; set; }
-    public DateTime? document_debt_date { get; protected set; }
-    public int? document_debt_number { get; protected set; }
-    public decimal document_debt_amount { get; protected set; }
-    public decimal document_debt_payment { get; protected set; }
-    public Guid? document_credit_id { get; set; }
-    public DateTime? document_credit_date { get; protected set; }
-    public int? document_credit_number { get; protected set; }
-    public decimal document_credit_amount { get; protected set; }
-    public decimal document_credit_payment { get; protected set; }
-    public decimal transaction_amount { get; set; }
+    public Guid? ContractorId { get; set; }
+    public string? ContractorName { get; protected set; }
+    public Guid? DocumentDebtId { get; set; }
+    public DateTime? DocumentDebtDate { get; protected set; }
+    public int? DocumentDebtNumber { get; protected set; }
+    public decimal DocumentDebtAmount { get; protected set; }
+    public decimal DocumentDebtPayment { get; protected set; }
+    public Guid? DocumentCreditId { get; set; }
+    public DateTime? DocumentCreditDate { get; protected set; }
+    public int? DocumentCreditNumber { get; protected set; }
+    public decimal DocumentCreditAmount { get; protected set; }
+    public decimal DocumentCreditPayment { get; protected set; }
+    public decimal TransactionAmount { get; set; }
 }

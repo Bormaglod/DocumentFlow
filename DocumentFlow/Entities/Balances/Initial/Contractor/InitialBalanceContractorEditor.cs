@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Infrastructure;
@@ -23,38 +22,33 @@ namespace DocumentFlow.Entities.Balances.Initial;
 
 internal class InitialBalanceContractorEditor : DocumentEditor<InitialBalanceContractor>, IInitialBalanceContractorEditor
 {
-    public InitialBalanceContractorEditor(IInitialBalanceContractorRepository repository, IPageManager pageManager) 
+    private readonly Dictionary<decimal, string> debtChoice = new()
+    {
+        [-1] = "Наш долг",
+        [1] = "Долг контрагента"
+    };
+
+public InitialBalanceContractorEditor(IInitialBalanceContractorRepository repository, IPageManager pageManager) 
         : base(repository, pageManager, true) 
     {
-        var contractor = new DfDirectorySelectBox<Contractor>("reference_id", "Контрагент", 100, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IContractorEditor, Contractor>(t)
-        };
+        var contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ReferenceId, "Контрагент", 100, 400, data: GetContractors);
+        var contract = CreateComboBox<Contract>(x => x.ContractId, "Договор", 100, 400, refreshMethod: DataRefreshMethod.Immediately);
+        var debt = CreateChoice(x => x.Amount, "Долг", 100, 200, choices: debtChoice);
+        var op_summa = CreateCurrencyTextBox(x => x.OperationSumma, "Сумма", 100, 100);
 
-        var contract = new DfComboBox<Contract>("contract_id", "Договор", 100, 400) { RefreshMethod = DataRefreshMethod.Immediately };
-        var debt = new DfChoice<decimal>("amount", "Долг", 100, 200);
-        var op_summa = new DfCurrencyTextBox("operation_summa", "Сумма", 100, 100);
-
-        contractor.SetDataSource(() => Services.Provider.GetService<IContractorRepository>()?.GetAllValid());
         contractor.ValueChanged += (sender, e) =>
         {
             var repo = Services.Provider.GetService<IContractRepository>();
             if (e.NewValue != null && repo != null)
             {
                 contract.SetDataSource(() => repo.Get(e.NewValue));
-                contract.Value = Document.contract_id;
+                contract.Value = Document.ContractId;
             }
             else
             {
                 contract.DeleteDataSource();
             }
         };
-
-        debt.SetChoiceValues(new Dictionary<decimal, string>()
-        {
-            [-1] = "Наш долг",
-            [1] = "Долг контрагента"
-        });
 
         AddControls(new Control[]
         {
@@ -64,4 +58,6 @@ internal class InitialBalanceContractorEditor : DocumentEditor<InitialBalanceCon
             debt
         });
     }
+
+    private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetAllValid();
 }

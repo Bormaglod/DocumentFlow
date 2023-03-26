@@ -26,7 +26,7 @@ public class GrossPayrollRepository : DocumentRepository<GrossPayroll>, IGrossPa
 {
     public GrossPayrollRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.OwnerId);
     }
 
     public void CalculateEmployeeWages(Guid gross_id)

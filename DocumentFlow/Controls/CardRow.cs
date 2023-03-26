@@ -34,8 +34,8 @@ public partial class CardRow : UserControl
             NumberGroupSeparator = " ",
         };
 
-        linkLabelContractor.Text = contractor.contractor_name;
-        labelAmount.Text = contractor.debt.ToString("#,###.00", customProvider);
+        linkLabelContractor.Text = contractor.ContractorName;
+        labelAmount.Text = contractor.Debt.ToString("#,###.00", customProvider);
 
         contractorId = contractor.Id;
     }

@@ -30,23 +30,23 @@ public class PaymentOrder : AccountingDocument
         [PaymentDirection.Expense] = "Расход"
     };
 
-    public Guid? contractor_id { get; set; }
-    public string? contractor_name { get; protected set; }
-    public string? payment_number { get; set; }
-    public DateTime date_operation { get; set; } = DateTime.Now;
-    public decimal transaction_amount { get; set; }
-    public decimal? expense { get; protected set; }
-    public decimal? income { get; protected set; }
+    public Guid? ContractorId { get; set; }
+    public string? ContractorName { get; protected set; }
+    public string? PaymentNumber { get; set; }
+    public DateTime DateOperation { get; set; } = DateTime.Now;
+    public decimal TransactionAmount { get; set; }
+    public decimal? Expense { get; protected set; }
+    public decimal? Income { get; protected set; }
 
     [EnumType("payment_direction")]
-    public string direction { get; set; } = "Expense";
+    public string Direction { get; set; } = "Expense";
 
-    public bool without_distrib { get; set; }
+    public bool WithoutDistrib { get; set; }
 
     public PaymentDirection PaymentDirection
     {
-        get { return Enum.Parse<PaymentDirection>(direction.Pascalize()); }
-        protected set { direction = value.ToString().Underscore(); }
+        get { return Enum.Parse<PaymentDirection>(Direction.Pascalize()); }
+        protected set { Direction = value.ToString().Underscore(); }
     }
 
     public static IReadOnlyDictionary<PaymentDirection, string> Directions => directions;

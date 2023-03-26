@@ -14,7 +14,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Balances;
 using DocumentFlow.Entities.Calculations;
@@ -35,33 +34,24 @@ public class GoodsEditor : Editor<Goods>, IGoodsEditor
     {
         this.repository = repository;
 
-        var code = new DfTextBox("code", "Код", headerWidth, 180) { DefaultAsNull = false };
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 600);
-        var parent = new DfDirectorySelectBox<Goods>("parent_id", "Группа", headerWidth, 400) { ShowOnlyFolder = true };
-        var measurement = new DfComboBox<Measurement>("measurement_id", "Единица измерения", headerWidth, 250)
-        {
-            OpenAction = (p) => pageManager.ShowEditor<IMeasurementEditor, Measurement>(p)
-        };
+        var code = CreateTextBox(x => x.Code, "Код", headerWidth, 180, defaultAsNull: false);
+        var name = CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 600);
+        var parent = CreateDirectorySelectBox(x => x.ParentId, "Группа", headerWidth, 400, showOnlyFolder: true, data: repository.GetOnlyFolders);
+        var measurement = CreateComboBox<Measurement, IMeasurementEditor>(x => x.MeasurementId, "Единица измерения", headerWidth, 250);
+        var weight = CreateNumericTextBox(x => x.Weight, "Вес, г", headerWidth, 100, digits: 3);
+        var price = CreateCurrencyTextBox(x => x.Price, "Цена без НДС", headerWidth, 150, defaultAsNull: false);
+        var vat = CreateChoice(x => x.Vat, "НДС", headerWidth, 150, choices: Product.Taxes);
+        var is_service = CreateToggleButton(x => x.IsService, "Услуга", headerWidth);
+        var note = CreateMultilineTextBox(x => x.Note, "Описание", headerWidth, 500);
+        note.Dock = DockStyle.Fill;
 
-        var weight = new DfNumericTextBox("weight", "Вес, г", headerWidth, 100) { NumberDecimalDigits = 3 };
-        var price = new DfCurrencyTextBox("price", "Цена без НДС", headerWidth, 150) { DefaultAsNull = false };
-        var vat = new DfChoice<int>("vat", "НДС", headerWidth, 150);
-        
-        var is_service = new DfToggleButton("is_service", "Услуга", headerWidth);
-        var note = new DfTextBox("note", "Описание", headerWidth, 500) { Multiline = true, Dock = DockStyle.Fill };
-
-        parent.SetDataSource(() => repository.GetOnlyFolders());
         measurement.SetDataSource(() => Services.Provider.GetService<IMeasurementRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-        vat.SetChoiceValues(Product.Taxes);
 
         var controls = new List<Control>() { code, name, parent, measurement, weight, price, vat, is_service, note };
 
         if (repository.HasPrivilege(Privilege.Update))
         {
-            var calculation = new DfComboBox<Calculation>("calculation_id", "Калькуляция", headerWidth, 400)
-            {
-                OpenAction = (p) => pageManager.ShowEditor<ICalculationEditor, Calculation>(p)
-            };
+            var calculation = CreateComboBox<Calculation, ICalculationEditor>(x => x.CalculationId, "Калькуляция", headerWidth, 400);
 
             calculation.SetDataSource(() => Services.Provider.GetService<ICalculationRepository>()!.GetApproved(Document));
 

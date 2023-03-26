@@ -23,8 +23,8 @@ namespace DocumentFlow.Entities.Productions.Processing;
 public class WaybillProcessingPrice : ProductPrice
 {
     [Display(AutoGenerateField = false)]
-    public decimal written_off { get; protected set; }
+    public decimal WrittenOoff { get; protected set; }
 
     [Display(Name = "Остаток", Order = 900)]
-    public decimal remainder => amount - written_off;
+    public decimal Remainder => Amount - WrittenOoff;
 }

@@ -42,12 +42,12 @@ public class WaybillProcessingBrowser : Browser<WaybillProcessing>, IWaybillProc
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        var waybill_date = CreateDateTime(x => x.waybill_date, "Дата", width: 150, format: "dd.MM.yyyy", visible: false);
-        var waybill_number = CreateNumeric(x => x.waybill_number, "Номер", width: 100, visible: false);
-        var order_date = CreateDateTime(x => x.order_date, "Дата", width: 150);
-        var order_number = CreateNumeric(x => x.order_number, "Номер", width: 100);
-        var contractor = CreateText(x => x.contractor_name, "Контрагент");
-        var contract = CreateText(x => x.contract_name, "Договор", width: 200, visible: false);
+        var waybill_date = CreateDateTime(x => x.WaybillDate, "Дата", width: 150, format: "dd.MM.yyyy", visible: false);
+        var waybill_number = CreateNumeric(x => x.WaybillNumber, "Номер", width: 100, visible: false);
+        var order_date = CreateDateTime(x => x.OrderDate, "Дата", width: 150);
+        var order_number = CreateNumeric(x => x.OrderNumber, "Номер", width: 100);
+        var contractor = CreateText(x => x.ContractorName, "Контрагент");
+        var contract = CreateText(x => x.ContractName, "Договор", width: 200, visible: false);
 
         contractor.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

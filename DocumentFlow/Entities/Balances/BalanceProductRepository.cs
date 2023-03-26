@@ -35,7 +35,7 @@ public class BalanceProductRepository<T> : OwnedRepository<Guid, T>, IBalancePro
 
     public void ReacceptChangedDocument(T balance)
     {
-        if (balance.owner_id == null)
+        if (balance.OwnerId == null)
         {
             return;
         }
@@ -44,7 +44,7 @@ public class BalanceProductRepository<T> : OwnedRepository<Guid, T>, IBalancePro
         using var transaction = conn.BeginTransaction();
         try
         {
-            transaction.Connection.Execute($"call execute_system_operation(:id, 'accept'::system_operation, true, '{balance.document_type_code}')", new { id = balance.owner_id.Value }, transaction);
+            transaction.Connection.Execute($"call execute_system_operation(:id, 'accept'::system_operation, true, '{balance.DocumentTypeCode}')", new { id = balance.OwnerId.Value }, transaction);
             transaction.Commit();
         }
         catch (Exception e)

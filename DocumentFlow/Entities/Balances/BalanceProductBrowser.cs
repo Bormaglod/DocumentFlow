@@ -36,14 +36,14 @@ public abstract class BalanceProductBrowser<T> : BalanceBrowser<T>
         : base(repository, pageManager, settings: settings) 
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var name = CreateText(x => x.document_type_name, "Документ", hidden: false);
+        var name = CreateText(x => x.DocumentTypeName, "Документ", hidden: false);
         var doc_date = CreateDateTime(x => x.DocumentDate, "Дата", 150);
         var doc_number = CreateNumeric(x => x.DocumentNumber, "Номер", 100);
-        var operation_summa = CreateCurrency(x => x.operation_summa, "Сумма", width: 100);
-        var income = CreateNumeric(x => x.income, "Приход", 130, decimalDigits: 3);
-        var expense = CreateNumeric(x => x.expense, "Расход", 130, decimalDigits: 3);
-        var remainder = CreateNumeric(x => x.remainder, "Остаток (кол-во)", 130, decimalDigits: 3);
-        var monetary = CreateCurrency(x => x.monetary_balance, "Остаток (сумма)", 130);
+        var operation_summa = CreateCurrency(x => x.OperationSumma, "Сумма", width: 100);
+        var income = CreateNumeric(x => x.Income, "Приход", 130, decimalDigits: 3);
+        var expense = CreateNumeric(x => x.Expense, "Расход", 130, decimalDigits: 3);
+        var remainder = CreateNumeric(x => x.Remainder, "Остаток (кол-во)", 130, decimalDigits: 3);
+        var monetary = CreateCurrency(x => x.MonetaryBalance, "Остаток (сумма)", 130);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         income.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;

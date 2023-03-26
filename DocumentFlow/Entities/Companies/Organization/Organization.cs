@@ -12,8 +12,8 @@ namespace DocumentFlow.Entities.Companies;
 [Description("Организация")]
 public class Organization : Company
 {
-    public string? address { get; set; }
-    public string? phone { get; set; }
-    public string? email { get; set; }
-    public bool default_org { get; set; }
+    public string? Address { get; set; }
+    public string? Phone { get; set; }
+    public string? Email { get; set; }
+    public bool DefaultOrg { get; set; }
 }

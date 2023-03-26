@@ -53,9 +53,9 @@ public partial class PropertyForm : Form
         {
             CalculationOperationProperty prop = new()
             {
-                property_id = f.Parameter.Id,
+                PropertyId = f.Parameter.Id,
                 Property = f.Parameter,
-                property_value = f.Value
+                PropertyValue = f.Value
             };
 
             return prop;
@@ -69,14 +69,14 @@ public partial class PropertyForm : Form
         PropertyForm f = new()
         {
             Parameter = prop.Property,
-            Value = prop.property_value ?? string.Empty
+            Value = prop.PropertyValue ?? string.Empty
         };
 
         if (f.ShowDialog() == DialogResult.OK && f.Parameter != null)
         {
-            prop.property_id = f.Parameter.Id;
+            prop.PropertyId = f.Parameter.Id;
             prop.Property = f.Parameter;
-            prop.property_value = f.Value;
+            prop.PropertyValue = f.Value;
 
             return true;
         }

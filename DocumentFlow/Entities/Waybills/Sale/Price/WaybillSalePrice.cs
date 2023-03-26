@@ -23,9 +23,9 @@ namespace DocumentFlow.Entities.Waybills;
 [ProductContent(ProductContent.All)]
 public class WaybillSalePrice : ProductPrice, IDiscriminator
 {
-    string IDiscriminator.TableName { get => table_name; set => table_name = value; }
+    string IDiscriminator.TableName { get => TableName; set => TableName = value; }
 
     [Exclude]
     [Display(AutoGenerateField = false)]
-    public string table_name { get; set; } = string.Empty;
+    public string TableName { get; set; } = string.Empty;
 }

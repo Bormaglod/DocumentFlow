@@ -19,11 +19,9 @@ namespace DocumentFlow.Entities.Balances;
 
 public class BalanceProcessing : BalanceProduct 
 {
-#pragma warning disable IDE1006 // Стили именования
     [Display(Name = "Материал", Order = 100)]
-    public string material_name { get; protected set; } = string.Empty;
+    public string MaterialName { get; protected set; } = string.Empty;
 
     [Display(Name = "Контрагент", Order = 200)]
-    public string contractor_name { get; protected set; } = string.Empty;
-#pragma warning restore IDE1006 // Стили именования
+    public string ContractorName { get; protected set; } = string.Empty;
 }

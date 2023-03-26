@@ -49,7 +49,7 @@ public abstract class BaseProductionLotBrowser : Browser<ProductionLot>
     {
         base.BrowserCellStyle(document, column, style);
 
-        if (column == "state_name")
+        if (column == "StateName")
         {
             style.TextColor = document.LotState switch
             {

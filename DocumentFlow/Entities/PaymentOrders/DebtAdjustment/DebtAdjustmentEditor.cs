@@ -22,47 +22,33 @@ namespace DocumentFlow.Entities.PaymentOrders;
 
 public class DebtAdjustmentEditor : DocumentEditor<DebtAdjustment>, IDebtAdjustmentEditor
 {
+    private readonly IPageManager pageManager;
     private readonly DfDocumentSelectBox<WaybillReceipt> document_debt;
     private readonly DfDocumentSelectBox<WaybillReceipt> document_credit;
     private readonly DfCurrencyTextBox amount;
 
     public DebtAdjustmentEditor(IDebtAdjustmentRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        var contractor = new DfDirectorySelectBox<Contractor>("contractor_id", "Контрагент", 190, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IContractorEditor, Contractor>(t)
-        };
+        this.pageManager = pageManager;
 
-        document_debt = new DfDocumentSelectBox<WaybillReceipt>("document_debt_id", "Документ (долг контрагента)", 190, 400)
-        {
-            Required = true,
-            OpenAction = (t) => pageManager.ShowEditor<IWaybillReceiptEditor>(t.Id),
-            RefreshMethod = DataRefreshMethod.OnOpen
-        };
+        var contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 190, 400, data: GetContractors);
 
-        document_credit = new DfDocumentSelectBox<WaybillReceipt>("document_credit_id", "Документ (долг организации)", 190, 400)
-        {
-            Required = true,
-            OpenAction = (t) => pageManager.ShowEditor<IWaybillReceiptEditor>(t.Id),
-            RefreshMethod = DataRefreshMethod.OnOpen
-        };
-
-        amount = new DfCurrencyTextBox("transaction_amount", "Сумма", 190, 200) { DefaultAsNull = false };
-
-        contractor.SetDataSource(() => Services.Provider.GetService<IContractorRepository>()!.GetAll());
+        document_debt = CreateDocumentSelectBox<WaybillReceipt, IWaybillReceiptEditor>(x => x.DocumentDebtId, "Документ (долг контрагента)", 190, 400, required: true, refreshMethod: DataRefreshMethod.OnOpen, openById: true);
+        document_credit = CreateDocumentSelectBox<WaybillReceipt, IWaybillReceiptEditor>(x => x.DocumentCreditId, "Документ (долг организации)", 190, 400, required: true, refreshMethod: DataRefreshMethod.OnOpen, openById: true);
+        amount = CreateCurrencyTextBox(x => x.TransactionAmount, "Сумма", 190, 200, defaultAsNull: false);
 
         document_debt.SetDataSource(() =>
         {
-            Guid? c = contractor.SelectedItem?.Id ?? Document.contractor_id;
+            Guid? c = contractor.SelectedItem?.Id ?? Document.ContractorId;
             var wrr = Services.Provider.GetService<IWaybillReceiptRepository>();
-            return wrr!.GetByContractor(c).Where(x => x.full_cost < x.paid);
+            return wrr!.GetByContractor(c).Where(x => x.FullCost < x.Paid);
         });
 
         document_credit.SetDataSource(() =>
         {
-            Guid? c = contractor.SelectedItem?.Id ?? Document.contractor_id;
+            Guid? c = contractor.SelectedItem?.Id ?? Document.ContractorId;
             var wrr = Services.Provider.GetService<IWaybillReceiptRepository>();
-            return wrr!.GetByContractor(c).Where(x => x.full_cost > x.paid);
+            return wrr!.GetByContractor(c).Where(x => x.FullCost > x.Paid);
         });
 
         document_debt.Columns += (sender, e) => CreateColumns(e.Columns);
@@ -80,12 +66,14 @@ public class DebtAdjustmentEditor : DocumentEditor<DebtAdjustment>, IDebtAdjustm
         });
     }
 
+    private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetAll();
+
     private void Document_ManualValueChange(object? sender, ChangeDataEventArgs<WaybillReceipt> e)
     {
         if (document_debt.SelectedItem != null && document_credit.SelectedItem != null)
         {
-            var debt = document_debt.SelectedItem.paid - document_debt.SelectedItem.full_cost;
-            var credit = document_credit.SelectedItem.full_cost - document_credit.SelectedItem.paid;
+            var debt = document_debt.SelectedItem.Paid - document_debt.SelectedItem.FullCost;
+            var credit = document_credit.SelectedItem.FullCost - document_credit.SelectedItem.Paid;
 
             amount.NumericValue = Math.Min(debt, credit);
         }
@@ -95,13 +83,13 @@ public class DebtAdjustmentEditor : DocumentEditor<DebtAdjustment>, IDebtAdjustm
     {
         var document_contract = new GridTextColumn()
         {
-            MappingName = "contract_name",
+            MappingName = "ContractName",
             HeaderText = "Договор"
         };
 
         var document_date = new GridDateTimeColumn()
         {
-            MappingName = "document_date",
+            MappingName = "DocumentDate",
             HeaderText = "Дата",
             Width = 100
         };
@@ -110,7 +98,7 @@ public class DebtAdjustmentEditor : DocumentEditor<DebtAdjustment>, IDebtAdjustm
         numberFormat.NumberDecimalDigits = 0;
         var document_number = new GridNumericColumn()
         {
-            MappingName = "document_number",
+            MappingName = "DocumentNumber",
             HeaderText = "Номер",
             FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Numeric,
             NumberFormatInfo = numberFormat,
@@ -121,7 +109,7 @@ public class DebtAdjustmentEditor : DocumentEditor<DebtAdjustment>, IDebtAdjustm
         currencyFormat.NumberDecimalDigits = 2;
         var payment_required = new GridNumericColumn()
         {
-            MappingName = $"full_cost",
+            MappingName = "FullCost",
             HeaderText = "Сумма документа",
             FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency,
             NumberFormatInfo = currencyFormat,
@@ -130,7 +118,7 @@ public class DebtAdjustmentEditor : DocumentEditor<DebtAdjustment>, IDebtAdjustm
 
         var paid = new GridNumericColumn()
         {
-            MappingName = $"paid",
+            MappingName = "Paid",
             HeaderText = "Оплачено",
             FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency,
             NumberFormatInfo = currencyFormat,

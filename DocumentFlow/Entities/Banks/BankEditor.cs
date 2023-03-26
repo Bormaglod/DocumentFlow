@@ -5,7 +5,6 @@
 // Date: 04.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
 
@@ -17,17 +16,12 @@ public class BankEditor : Editor<Bank>, IBankEditor
 
     public BankEditor(IBankRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 400);
-        var bik = new DfMaskedTextBox<decimal>("bik", "БИК", headerWidth, 100, mask: "## ## ## ###") { DefaultAsNull = false };
-        var account = new DfMaskedTextBox<decimal>("account", "Корр. счёт", headerWidth, 180, mask: "### ## ### # ######## ###") { DefaultAsNull = false };
-        var town = new DfTextBox("town", "Город", headerWidth, 180);
-
         AddControls(new Control[]
         {
-            name,
-            bik,
-            account,
-            town
+            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400),
+            CreateMaskedTextBox<decimal>(x => x.Bik, "БИК", headerWidth, 100, mask: "## ## ## ###", defaultAsNull: false),
+            CreateMaskedTextBox<decimal>(x => x.Account, "Корр. счёт", headerWidth, 180, mask: "### ## ### # ######## ###", defaultAsNull: false),
+            CreateTextBox(x => x.Town, "Город", headerWidth, 180)
         });
     }
 }

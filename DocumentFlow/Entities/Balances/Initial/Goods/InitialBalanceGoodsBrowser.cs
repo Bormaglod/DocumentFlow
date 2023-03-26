@@ -30,10 +30,10 @@ internal class InitialBalanceGoodsBrowser : Browser<InitialBalanceGoods>, IIniti
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        var material_code = CreateText(x => x.goods_code, "Артикул", width: 150);
-        var material_name = CreateText(x => x.goods_name, "Продукция");
-        var operation_summa = CreateCurrency(x => x.operation_summa, "Сумма", width: 120);
-        var amount = CreateNumeric(x => x.amount, "Количество", width: 150, decimalDigits: 3);
+        var material_code = CreateText(x => x.GoodsCode, "Артикул", width: 150);
+        var material_name = CreateText(x => x.GoodsName, "Продукция");
+        var operation_summa = CreateCurrency(x => x.OperationSumma, "Сумма", width: 120);
+        var amount = CreateNumeric(x => x.Amount, "Количество", width: 150, decimalDigits: 3);
 
         material_name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         amount.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;

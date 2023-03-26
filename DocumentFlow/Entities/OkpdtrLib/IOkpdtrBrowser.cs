@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.OkpdtrLib;
 
-[Menu(MenuDestination.Directory, "ОКПДТР", 203000)]
+[Menu(MenuDestination.Directory, "ОКПДТР", order: 30)]
 public interface IOkpdtrBrowser : IBrowser<Okpdtr>
 {
 }

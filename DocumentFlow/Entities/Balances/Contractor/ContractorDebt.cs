@@ -11,6 +11,6 @@ namespace DocumentFlow.Entities.Balances;
 
 public class ContractorDebt : Entity<Guid>
 {
-    public string contractor_name { get; protected set; } = string.Empty;
-    public decimal debt { get; protected set; }
+    public string ContractorName { get; protected set; } = string.Empty;
+    public decimal Debt { get; protected set; }
 }

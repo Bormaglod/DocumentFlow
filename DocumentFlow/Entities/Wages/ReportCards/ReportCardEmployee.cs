@@ -25,45 +25,45 @@ public class ReportCardEmployee : Entity<long>, IEntityClonable, ICloneable
 
         var days = DateTime.DaysInMonth(year, month);
 
-        labels = new string[days];
-        hours = new int[days];
-        info = new string[days];
+        Labels = new string[days];
+        Hours = new int[days];
+        Info = new string[days];
 
         for (int i = 0; i < days; i++)
         {
             var date = new DateTime(year, month, i + 1);
             if (date.DayOfWeek == DayOfWeek.Sunday || date.DayOfWeek == DayOfWeek.Saturday)
             {
-                labels[i] = "В";
-                info[i] = "В";
+                Labels[i] = "В";
+                Info[i] = "В";
             }
             else
             {
-                labels[i] = "Я";
-                hours[i] = 8;
-                info[i] = "Я 8";
+                Labels[i] = "Я";
+                Hours[i] = 8;
+                Info[i] = "Я 8";
             }
         }
 
         UpdateSummary();
     }
 
-    public Guid employee_id { get; set; }
-    public string employee_name { get; protected set; } = string.Empty;
-    public string summary { get; protected set; } = string.Empty;
-    public string[]? labels { get; set; }
-    public int[]? hours { get; set; }
-    public string[]? info { get; protected set; }
+    public Guid EmployeeId { get; set; }
+    public string EmployeeName { get; protected set; } = string.Empty;
+    public string Summary { get; protected set; } = string.Empty;
+    public string[]? Labels { get; set; }
+    public int[]? Hours { get; set; }
+    public string[]? Info { get; protected set; }
 
     public void SetEmployee(OurEmployee emp)
     {
-        employee_id = emp.Id;
-        employee_name = emp.ItemName ?? string.Empty;
+        EmployeeId = emp.Id;
+        EmployeeName = emp.ItemName ?? string.Empty;
     }
 
     public void SetInfo(int index, string empInfo)
     {
-        if (info != null && labels != null && hours != null)
+        if (Info != null && Labels != null && Hours != null)
         {
             var i = empInfo.ToUpper().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             if (i.Length > 0 && ReportCard.Labels.IsValidLabel(i[0]))
@@ -72,16 +72,16 @@ public class ReportCardEmployee : Entity<long>, IEntityClonable, ICloneable
                 {
                     if (i.Length > 1 && int.TryParse(i[1], out int hrs))
                     {
-                        labels[index] = i[0];
-                        hours[index] = hrs;
-                        info[index] = $"{i[0]} {hrs}";
+                        Labels[index] = i[0];
+                        Hours[index] = hrs;
+                        Info[index] = $"{i[0]} {hrs}";
                     }
                 }
                 else
                 {
-                    labels[index] = i[0];
-                    hours[index] = 0;
-                    info[index] = i[0];
+                    Labels[index] = i[0];
+                    Hours[index] = 0;
+                    Info[index] = i[0];
                 }
             }
 
@@ -99,16 +99,16 @@ public class ReportCardEmployee : Entity<long>, IEntityClonable, ICloneable
         return copy;
     }
 
-    public override string ToString() => employee_name;
+    public override string ToString() => EmployeeName;
 
     public void UpdateSummary()
     {
-        if (labels != null && hours != null)
+        if (Labels != null && Hours != null)
         {
             Dictionary<string, (int Days, int Hours)> labelSummary = new();
-            for (int i = 0; i < labels.Length; i++)
+            for (int i = 0; i < Labels.Length; i++)
             {
-                string? label = labels[i];
+                string? label = Labels[i];
                 if (label == null)
                 {
                     continue;
@@ -120,7 +120,7 @@ public class ReportCardEmployee : Entity<long>, IEntityClonable, ICloneable
                 }
 
                 int d = labelSummary[label].Days + 1;
-                int h = labelSummary[label].Hours + hours[i];
+                int h = labelSummary[label].Hours + Hours[i];
                 labelSummary[label] = (d, h);
             }
 
@@ -132,7 +132,7 @@ public class ReportCardEmployee : Entity<long>, IEntityClonable, ICloneable
                 values.Add(text);
             }
 
-            summary = string.Join("\r\n", values);
+            Summary = string.Join("\r\n", values);
         }
     }
 }

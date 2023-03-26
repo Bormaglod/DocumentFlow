@@ -13,7 +13,7 @@ namespace DocumentFlow.Entities.Warehouse;
 [Description("Корректировка остатков")]
 public class AdjustingBalances : AccountingDocument
 {
-    public Guid material_id { get; set; }
-    public string material_name { get; protected set; } = string.Empty;
-    public decimal quantity { get; set; }
+    public Guid MaterialId { get; set; }
+    public string MaterialName { get; protected set; } = string.Empty;
+    public decimal Quantity { get; set; }
 }

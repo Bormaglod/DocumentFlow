@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.PurchaseRequestLib;
 
-[Menu(MenuDestination.Document, "Заявка на приобретение материалов", 101000)]
+[Menu(MenuDestination.Document, "Заявка на приобретение материалов", order: 10)]
 public interface IPurchaseRequestBrowser : IBrowser<PurchaseRequest>
 {
 }

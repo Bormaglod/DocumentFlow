@@ -24,31 +24,31 @@ namespace DocumentFlow.Entities.Products;
 public abstract class ProductPrice : Entity<long>, ICloneable, IEntityClonable
 {
     [Display(AutoGenerateField = false)]
-    public Guid reference_id { get; set; }
+    public Guid ReferenceId { get; set; }
 
     [Display(Name = "Материал / Изделие", Order = 1)]
-    public string product_name { get; protected set; } = string.Empty;
+    public string ProductName { get; protected set; } = string.Empty;
 
     [Display(Name = "Артикул", Order = 100)]
-    public string code { get; protected set; } = string.Empty;
+    public string Code { get; protected set; } = string.Empty;
 
     [Display(Name = "Количество", Order = 200)]
-    public decimal amount { get; set; }
+    public decimal Amount { get; set; }
 
     [Display(Name = "Цена", Order = 300)]
-    public decimal price { get; set; }
+    public decimal Price { get; set; }
 
     [Display(Name = "Сумма", Order = 400)]
-    public decimal product_cost { get; set; }
+    public decimal ProductCost { get; set; }
 
     [Display(Name = "%НДС", Order = 500)]
-    public int tax { get; set; }
+    public int Tax { get; set; }
 
     [Display(Name = "НДС", Order = 600)]
-    public decimal tax_value { get; set; }
+    public decimal TaxValue { get; set; }
 
     [Display(Name = "Всего с НДС", Order = 700)]
-    public decimal full_cost { get; set; }
+    public decimal FullCost { get; set; }
 
     public object Clone() => MemberwiseClone();
 
@@ -60,6 +60,6 @@ public abstract class ProductPrice : Entity<long>, ICloneable, IEntityClonable
         return copy;
     }
 
-    public void SetProductInfo(string code, string name) => (this.code, product_name) = (code, name);
-    public void SetProductInfo(Product? product) => SetProductInfo(product?.code ?? string.Empty, product?.item_name ?? string.Empty);
+    public void SetProductInfo(string code, string name) => (this.Code, ProductName) = (code, name);
+    public void SetProductInfo(Product? product) => SetProductInfo(product?.Code ?? string.Empty, product?.ItemName ?? string.Empty);
 }

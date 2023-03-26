@@ -11,8 +11,8 @@ namespace DocumentFlow.Entities.Calculations;
 
 public class CalculationItem : Directory
 {
-    public string? calculation_name { get; protected set; }
-    public Guid? item_id { get; set; }
-    public decimal price { get; set; }
-    public decimal item_cost { get; set; }
+    public string? CalculationName { get; protected set; }
+    public Guid? ItemId { get; set; }
+    public decimal Price { get; set; }
+    public decimal ItemCost { get; set; }
 }

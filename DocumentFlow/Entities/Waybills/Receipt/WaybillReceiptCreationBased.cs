@@ -58,13 +58,13 @@ public class WaybillReceiptCreationBased : ICreationBased
                         WaybillReceiptPrice row = new()
                         {
                             OwnerId = wr.Id,
-                            reference_id = item.reference_id,
-                            amount = item.amount,
-                            price = item.price,
-                            product_cost = item.product_cost,
-                            tax = item.tax,
-                            tax_value = item.tax_value,
-                            full_cost = item.full_cost
+                            ReferenceId = item.ReferenceId,
+                            Amount = item.Amount,
+                            Price = item.Price,
+                            ProductCost = item.ProductCost,
+                            Tax = item.Tax,
+                            TaxValue = item.TaxValue,
+                            FullCost = item.FullCost
                         };
 
                         wrpr.Add(row, transaction);

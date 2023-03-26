@@ -28,8 +28,8 @@ public class OperationTypeBrowser : Browser<OperationType>, IOperationTypeBrowse
         : base(repository, pageManager, settings: settings) 
     {
         GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn name = CreateText(x => x.item_name, "Наименование", hidden: false);
-        GridNumericColumn salary = CreateCurrency(x => x.salary, "Расценка, руб./час", width: 200);
+        GridTextColumn name = CreateText(x => x.ItemName, "Наименование", hidden: false);
+        GridNumericColumn salary = CreateCurrency(x => x.Salary, "Расценка, руб./час", width: 200);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

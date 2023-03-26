@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Warehouse;
 
-[Menu(MenuDestination.Document, "Корректировка остатков", 101520, "Склад")]
+[Menu(MenuDestination.Document, "Корректировка остатков", parent: "Склад", order: 30 )]
 public interface IAdjustingBalancesBrowser : IBrowser<AdjustingBalances>
 {
 }

@@ -30,33 +30,27 @@ public class BillingDocumentEditor<T> : DocumentEditor<T>
 
     public BillingDocumentEditor(IDocumentRepository<T> repository, IPageManager pageManager) : base(repository, pageManager, true)
     {
-        month = new DfChoice<short>("billing_month", "Расчётный период: месяц", 170, 200)
-        {
-            Width = 370,
-            Dock = DockStyle.Left
-        };
-
-        year = new DfIntegerTextBox<int>("billing_year", "год", 50, 100)
-        {
-            Width = 300,
-            Dock = DockStyle.Left,
-            HeaderTextAlign = ContentAlignment.MiddleRight,
-            NumberGroupSeparator = string.Empty
-        };
-
-        var panel_calc_range = new Panel()
-        {
-            Dock = DockStyle.Top,
-            Height = 32
-        };
-
         var months = new Dictionary<short, string>();
         for (short i = 1; i < 13; i++)
         {
             months.Add(i, CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i).Humanize());
         }
 
-        month.SetChoiceValues(months);
+        month = CreateChoice<short>(x => x.BillingMonth, "Расчётный период: месяц", 170, 200, choices: months);
+        month.Width = 370;
+        month.Dock = DockStyle.Left;
+
+        year = CreateIntegerTextBox<int>(x => x.BillingYear, "год", 50, 100);
+        year.Width = 300;
+        year.Dock = DockStyle.Left;
+        year.HeaderTextAlign = ContentAlignment.MiddleRight;
+        year.NumberGroupSeparator = string.Empty;
+
+        var panel_calc_range = new Panel()
+        {
+            Dock = DockStyle.Top,
+            Height = 32
+        };
 
         panel_calc_range.Controls.AddRange(new Control[] { year, month });
 

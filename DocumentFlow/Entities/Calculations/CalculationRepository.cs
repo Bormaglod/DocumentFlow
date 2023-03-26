@@ -28,7 +28,7 @@ public class CalculationRepository : OwnedRepository<Guid, Calculation>, ICalcul
 {
     public CalculationRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.parent_id);
+        ExcludeField(x => x.ParentId);
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
@@ -60,7 +60,7 @@ public class CalculationRepository : OwnedRepository<Guid, Calculation>, ICalcul
         using var conn = Database.OpenConnection();
         return GetBaseQuery(conn)
             .Select("id", "code as item_name")
-            .Where("id", goods.calculation_id)
+            .Where("id", goods.CalculationId)
             .OrWhere(q => q
                 .WhereFalse("deleted")
                 .WhereRaw("[state] = 'approved'::calculation_state")

@@ -5,7 +5,6 @@
 // Date: 04.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
 
@@ -19,12 +18,12 @@ public class PersonEditor : Editor<Person>, IPersonEditor
     {
         AddControls(new Control[]
         {
-            new DfTextBox("item_name", "Фамилия И.О.", headerWidth, 250),
-            new DfTextBox("surname", "Фамилия", headerWidth, 200),
-            new DfTextBox("first_name", "Имя", headerWidth, 200),
-            new DfTextBox("middle_name", "Отчество", headerWidth, 200),
-            new DfTextBox("phone", "Телефон", headerWidth, 200),
-            new DfTextBox("email", "Эл. почта", headerWidth, 300)
+            CreateTextBox(x => x.ItemName, "Фамилия И.О.", headerWidth, 250),
+            CreateTextBox(x => x.Surname, "Фамилия", headerWidth, 200),
+            CreateTextBox(x => x.FirstName, "Имя", headerWidth, 200),
+            CreateTextBox(x => x.MiddleName, "Отчество", headerWidth, 200),
+            CreateTextBox(x => x.Phone, "Телефон", headerWidth, 200),
+            CreateTextBox(x => x.Email, "Эл. почта", headerWidth, 300)
         });
     }
 }

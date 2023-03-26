@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Companies;
 
-[Menu(MenuDestination.Directory, "Организации", 207000)]
+[Menu(MenuDestination.Directory, "Организации", order: 70)]
 public interface IOrganizationBrowser : IBrowser<Organization>
 {
 }

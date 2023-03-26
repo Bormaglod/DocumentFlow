@@ -32,8 +32,8 @@ public partial class FormEmployeePayroll : Form
     {
         InitializeComponent();
 
-        emp = new("employee_id", "Сотрудник", 120) { Required = true, RefreshMethod = DataRefreshMethod.Immediately };
-        payroll = new("payroll", "Зар. плата", 120) { DefaultAsNull = false };
+        emp = new("EmployeeId", "Сотрудник", 120) { Required = true, RefreshMethod = DataRefreshMethod.Immediately };
+        payroll = new("Payroll", "Зар. плата", 120) { DefaultAsNull = false };
 
         var controls = new List<Control>() 
         { 
@@ -62,8 +62,8 @@ public partial class FormEmployeePayroll : Form
     {
         FormEmployeePayroll form = new();
         
-        form.emp.Value = employeePayroll.employee_id;
-        form.payroll.Value = employeePayroll.wage;
+        form.emp.Value = employeePayroll.EmployeeId;
+        form.payroll.Value = employeePayroll.Wage;
 
         if (form.ShowDialog() == DialogResult.OK)
         {
@@ -76,8 +76,8 @@ public partial class FormEmployeePayroll : Form
 
     private void SaveControlData(IWageEmployeeInfo dest)
     {
-        dest.employee_id = emp.SelectedItem?.Id ?? Guid.Empty;
-        dest.wage = payroll.NumericValue.GetValueOrDefault();
+        dest.EmployeeId = emp.SelectedItem?.Id ?? Guid.Empty;
+        dest.Wage = payroll.NumericValue.GetValueOrDefault();
         dest.SetEmployeeName(emp.ValueText);
     }
 

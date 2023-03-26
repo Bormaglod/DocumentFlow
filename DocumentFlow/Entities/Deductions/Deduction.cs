@@ -31,25 +31,25 @@ public class Deduction : Directory
     };
 
     [EnumType("base_deduction")]
-    public string? base_calc { get; set; }
-    public Guid? person_id { get; set; }
-    public decimal value { get; set; }
-    public decimal? fix_value { get; protected set; }
-    public decimal? percent_value { get; protected set; }
-    public string? base_calc_text => BaseDeductions[BaseDeduction];
+    public string? BaseCalc { get; set; }
+    public Guid? PersonId { get; set; }
+    public decimal Value { get; set; }
+    public decimal? FixValue { get; protected set; }
+    public decimal? PercentValue { get; protected set; }
+    public string? BaseCalcText => BaseDeductions[BaseDeduction];
 
     public BaseDeduction BaseDeduction
     {
         get 
         { 
-            if (base_calc == null)
+            if (BaseCalc == null)
             {
                 return BaseDeduction.NotDefined;
             }
 
-            return Enum.Parse<BaseDeduction>(base_calc.Pascalize()); 
+            return Enum.Parse<BaseDeduction>(BaseCalc.Pascalize()); 
         }
-        protected set { base_calc = value == BaseDeduction.NotDefined ? null : value.ToString().Underscore(); }
+        protected set { BaseCalc = value == BaseDeduction.NotDefined ? null : value.ToString().Underscore(); }
     }
 
     public static IReadOnlyDictionary<BaseDeduction, string> BaseDeductions => baseDeductions;

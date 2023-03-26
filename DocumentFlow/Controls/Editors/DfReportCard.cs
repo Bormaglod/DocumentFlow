@@ -35,7 +35,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
 {
     private int year;
     private int month;
-    private Guid? owner_id;
+    private Guid? ownerId;
     private ObservableCollection<ReportCardEmployee>? list;
     private readonly List<ReportCardEmployee> deleted = new();
     private readonly List<ReportCardEmployee> created = new();
@@ -102,9 +102,9 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
         var repo = Services.Provider.GetService<IReportCardEmployeeRepository>();
         if (repo != null)
         {
-            if (owner_id != null)
+            if (ownerId != null)
             {
-                list = new ObservableCollection<ReportCardEmployee>(repo.GetByOwner(owner_id));
+                list = new ObservableCollection<ReportCardEmployee>(repo.GetByOwner(ownerId));
             }
             else
             {
@@ -126,13 +126,13 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
 
     #region IGridDataSource interface
 
-    public void SetOwner(Guid owner_id) => this.owner_id = owner_id;
+    public void SetOwner(Guid owner_id) => this.ownerId = owner_id;
 
     public void UpdateData(IDbTransaction transaction)
     {
-        if (owner_id == null)
+        if (ownerId == null)
         {
-            throw new ArgumentNullException(nameof(owner_id), "Не определено значение owner_id.");
+            throw new ArgumentNullException(nameof(ownerId), "Не определено значение owner_id.");
         }
 
         var repo = Services.Provider.GetService<IReportCardEmployeeRepository>();
@@ -140,7 +140,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
         {
             foreach (var item in created)
             {
-                item.owner_id = owner_id;
+                item.OwnerId = ownerId;
                 repo.Add(item, transaction);
             }
 
@@ -170,7 +170,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
 
         gridContent.Columns.Add(new GridTextColumn() 
         { 
-            MappingName = "employee_name", 
+            MappingName = "EmployeeName", 
             HeaderText = "Сотрудник" ,
             Width = 150,
             AllowEditing = false
@@ -178,7 +178,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
 
         gridContent.Columns.Add(new GridTextColumn()
         {
-            MappingName = "summary",
+            MappingName = "Summary",
             HeaderText = "Итого",
             Width = 100,
             AllowEditing = false
@@ -190,7 +190,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
 
             var column = new GridTextColumn()
             {
-                MappingName = $"info[{i}]",
+                MappingName = $"Info[{i}]",
                 HeaderText = $"{i + 1}\r\n{date:ddd}",
                 AllowHeaderTextWrapping = true,
                 Width = 50
@@ -238,7 +238,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
         {
             SelectDirectoryForm<OurEmployee> form = new(null, false, true);
             form.AddItems(repo.GetAllValid());
-            form.SelectedValue = emp.employee_id;
+            form.SelectedValue = emp.EmployeeId;
             if (form.ShowDialog() == DialogResult.OK && form.SelectedItem != null && list != null)
             {
                 emp.SetEmployee(form.SelectedItem);
@@ -286,7 +286,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
             return;
         }
 
-        if (owner_id == null || owner_id.Value == default)
+        if (ownerId == null || ownerId.Value == default)
         {
             if (MessageBox.Show("Документ не записан, для заполнения таблицы документ должен быть записан. Записать?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
@@ -299,10 +299,10 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
             }
         }
 
-        if (owner_id != null)
+        if (ownerId != null)
         {
             var repo = Services.Provider.GetService<IReportCardEmployeeRepository>();
-            repo!.PopulateReportCard(owner_id.Value);
+            repo!.PopulateReportCard(ownerId.Value);
 
             RefreshDataSource();
         }

@@ -35,27 +35,18 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
     {
         this.repository = repository;
 
-        var code = new DfTextBox("code", "Код", headerWidth, 180) { DefaultAsNull = false };
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 400);
-        var parent = new DfDirectorySelectBox<Material>("parent_id", "Группа", headerWidth, 400) { ShowOnlyFolder = true };
-        var wire = new DfComboBox<Wire>("wire_id", "Тип провода", headerWidth, 200);
-        var ext_article = new DfTextBox("ext_article", "Доп. артикул", headerWidth, 250);
-        var owner = new DfDirectorySelectBox<Material>("owner_id", "Кросс-артикул", headerWidth, 400)
-        {
-            OpenAction = (p) => pageManager.ShowEditor<IMaterialEditor, Material>(p)
-        };
+        var code = CreateTextBox(x => x.Code, "Код", headerWidth, 180, defaultAsNull: false);
+        var name = CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400);
+        var parent = CreateDirectorySelectBox(x => x.ParentId, "Группа", headerWidth, 400, showOnlyFolder: true, data: repository.GetOnlyFolders);
+        var wire = CreateComboBox(x => x.WireId, "Тип провода", headerWidth, 200, data: GetWires);
+        var ext_article = CreateTextBox(x => x.ExtArticle, "Доп. артикул", headerWidth, 250);
+        var owner = CreateDirectorySelectBox<Material, IMaterialEditor>(x => x.OwnerId, "Кросс-артикул", headerWidth, 400);
+        var measurement = CreateComboBox<Measurement, IMeasurementEditor>(x => x.MeasurementId, "Единица измерения", headerWidth, 250, data: GetMeasurements);
+        var weight = CreateNumericTextBox(x => x.Weight, "Вес, г", headerWidth, 100, digits: 3);
+        var price = CreateCurrencyTextBox(x => x.Price, "Цена без НДС", headerWidth, 150, defaultAsNull: false);
+        var vat = CreateChoice(x => x.Vat, "НДС", headerWidth, 150, choices: Product.Taxes);
+        var min_order = CreateNumericTextBox(x => x.MinOrder, "Мин. заказ", headerWidth, 150, digits: 3);
 
-        var measurement = new DfComboBox<Measurement>("measurement_id", "Единица измерения", headerWidth, 250)
-        {
-            OpenAction = (p) => pageManager.ShowEditor<IMeasurementEditor, Measurement>(p)
-        };
-
-        var weight = new DfNumericTextBox("weight", "Вес, г", headerWidth, 100) { NumberDecimalDigits = 3 };
-        var price = new DfCurrencyTextBox("price", "Цена без НДС", headerWidth, 150) { DefaultAsNull = false };
-        var vat = new DfChoice<int>("vat", "НДС", headerWidth, 150);
-        var min_order = new DfNumericTextBox("min_order", "Мин. заказ", headerWidth, 150) { NumberDecimalDigits = 3, DefaultAsNull = false };
-
-        parent.SetDataSource(() => repository.GetOnlyFolders());
         parent.ValueChanged += (sender, e) =>
         {
             if (e.NewValue != null)
@@ -69,8 +60,6 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
             }
         };
 
-        wire.SetDataSource(() => Services.Provider.GetService<IWireRepository>()?.GetAllValid());
-
         owner.SetDataSource(() =>
         {
             var repo = Services.Provider.GetService<IMaterialRepository>();
@@ -80,8 +69,6 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
                 .When(Document.Id != Guid.Empty, q => q
                     .WhereNot("id", Document.Id)));
         });
-        measurement.SetDataSource(() => Services.Provider.GetService<IMeasurementRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-        vat.SetChoiceValues(Product.Taxes);
 
         AddControls(new Control[]
         {
@@ -109,4 +96,8 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
             RegisterNestedBrowser<IMaterialUsageBrowser, MaterialUsage>();
         }
     }
+
+    private IEnumerable<Wire> GetWires() => Services.Provider.GetService<IWireRepository>()!.GetAllValid();
+
+    private IEnumerable<Measurement> GetMeasurements() => Services.Provider.GetService<IMeasurementRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
 }

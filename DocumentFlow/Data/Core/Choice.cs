@@ -18,12 +18,12 @@ public class Choice<T> : Identifier<T>, IChoice<T>
 {
     public Choice(T id, string name)
     {
-        this.Id = id;
-        this.name = name;
+        Id = id;
+        Name = name;
     }
 
     public Choice(T id) : this(id, id.ToString() ?? string.Empty) { }
 
-    public string name { get; }
-    public override string ToString() => name;
+    public string Name { get; }
+    public override string ToString() => Name;
 }

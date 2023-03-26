@@ -31,19 +31,19 @@ public class DebtAdjustmentBrowser : Browser<DebtAdjustment>, IDebtAdjustmentBro
     {
         AllowGrouping();
 
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridDateTimeColumn date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 130);
-        GridNumericColumn number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        GridTextColumn contractor = CreateText(x => x.contractor_name, "Контрагент");
-        GridDateTimeColumn document_debt_date = CreateDateTime(x => x.document_debt_date, "Дата", width: 110, format: "dd.MM.yyyy");
-        GridNumericColumn document_debt_number = CreateNumeric(x => x.document_debt_number, "Номер", width: 100);
-        GridNumericColumn document_debt_amount = CreateCurrency(x => x.document_debt_amount, "Сумма", width: 120);
-        GridNumericColumn document_debt_payment = CreateCurrency(x => x.document_debt_payment, "Оплата", width: 120);
-        GridDateTimeColumn document_credit_date = CreateDateTime(x => x.document_credit_date, "Дата", width: 110, format: "dd.MM.yyyy");
-        GridNumericColumn document_credit_number = CreateNumeric(x => x.document_credit_number, "Номер", width: 100);
-        GridNumericColumn document_credit_amount = CreateCurrency(x => x.document_credit_amount, "Сумма", width: 120);
-        GridNumericColumn document_credit_payment = CreateCurrency(x => x.document_credit_payment, "Оплата", width: 120);
-        GridNumericColumn transaction_amount = CreateCurrency(x => x.transaction_amount, "Корректировка", width: 150);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 130);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
+        var contractor = CreateText(x => x.ContractorName, "Контрагент");
+        var document_debt_date = CreateDateTime(x => x.DocumentDebtDate, "Дата", width: 110, format: "dd.MM.yyyy");
+        var document_debt_number = CreateNumeric(x => x.DocumentDebtNumber, "Номер", width: 100);
+        var document_debt_amount = CreateCurrency(x => x.DocumentDebtAmount, "Сумма", width: 120);
+        var document_debt_payment = CreateCurrency(x => x.DocumentDebtPayment, "Оплата", width: 120);
+        var document_credit_date = CreateDateTime(x => x.DocumentCreditDate, "Дата", width: 110, format: "dd.MM.yyyy");
+        var document_credit_number = CreateNumeric(x => x.DocumentCreditNumber, "Номер", width: 100);
+        var document_credit_amount = CreateCurrency(x => x.DocumentCreditAmount, "Сумма", width: 120);
+        var document_credit_payment = CreateCurrency(x => x.DocumentCreditPayment, "Оплата", width: 120);
+        var transaction_amount = CreateCurrency(x => x.TransactionAmount, "Корректировка", width: 150);
 
         CreateStackedColumns("Долг контрагента", new GridColumn[] { document_debt_date, document_debt_number, document_debt_amount, document_debt_payment });
         CreateStackedColumns("Долг организации", new GridColumn[] { document_credit_date, document_credit_number, document_credit_amount, document_credit_payment });

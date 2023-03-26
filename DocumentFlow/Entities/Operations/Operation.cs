@@ -17,14 +17,12 @@ namespace DocumentFlow.Entities.Operations;
 [Description("Операция")]
 public class Operation : Directory
 {
-#pragma warning disable IDE1006 // Стили именования
-    public int produced { get; set; }
-    public int prod_time { get; set; }
-    public int production_rate { get; set; }
-    public Guid type_id { get; set; }
-    public string? type_name { get; protected set; }
-    public decimal salary { get; set; }
-    public bool operation_using { get; protected set; }
-    public DateTime? date_norm { get; set; }
-#pragma warning restore IDE1006 // Стили именования
+    public int Produced { get; set; }
+    public int ProdTime { get; set; }
+    public int ProductionRate { get; set; }
+    public Guid TypeId { get; set; }
+    public string? TypeNme { get; protected set; }
+    public decimal Salary { get; set; }
+    public bool OperationUsing { get; protected set; }
+    public DateTime? DateNorm { get; set; }
 }

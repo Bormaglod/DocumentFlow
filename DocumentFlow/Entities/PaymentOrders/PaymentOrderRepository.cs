@@ -23,7 +23,7 @@ public class PaymentOrderRepository : DocumentRepository<PaymentOrder>, IPayment
 {
     public PaymentOrderRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.OwnerId);
     }
 
     public decimal GetPaymentBalance(PaymentOrder order)
@@ -36,7 +36,7 @@ public class PaymentOrderRepository : DocumentRepository<PaymentOrder>, IPayment
             .Where("payment_order.id", order.Id)
             .WhereTrue("pp.carried_out")
             .First<decimal>();
-        return order.transaction_amount - balance;
+        return order.TransactionAmount - balance;
     }
 
     public decimal GetPaymentBalance(Guid orderId)

@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Equipments;
 
-[Menu(MenuDestination.Directory, "Оборудование", 212000)]
+[Menu(MenuDestination.Directory, "Оборудование", order: 130)]
 public interface IEquipmentBrowser : IBrowser<Equipment>
 {
 }

@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Productions.Lot;
 
-[Menu(MenuDestination.Document, "Партии", 102020, "Производство")]
+[Menu(MenuDestination.Document, "Партии", parent: "Производство", order: 20)]
 public interface IProductionLotBrowser : IBrowser<ProductionLot>
 {
 }

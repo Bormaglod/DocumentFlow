@@ -5,7 +5,6 @@
 // Date: 16.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Persons;
 using DocumentFlow.Infrastructure;
@@ -20,13 +19,12 @@ public class DeductionEditor : Editor<Deduction>, IDeductionEditor
 
     public DeductionEditor(IDeductionRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 400);
-        var base_calc = new DfChoice<BaseDeduction>("BaseDeduction", "База для начисления", headerWidth, 300);
-        var person = new DfComboBox<Person>("person_id", "Получатель фикс. суммы", headerWidth, 300);
-        var value_percent = new DfPercentTextBox("value", "Процент от базы", headerWidth, 100) { DefaultAsNull = false };
-        var value_fix = new DfCurrencyTextBox("value", "Процент от базы", headerWidth, 100) { DefaultAsNull = false };
+        var name = CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400);
+        var base_calc = CreateChoice(x => x.BaseDeduction, "База для начисления", headerWidth, 300, choices: Deduction.BaseDeductions);
+        var person = CreateComboBox(x => x.PersonId, "Получатель фикс. суммы", headerWidth, 300, data: GetPeople);
+        var value_percent = CreatePercentTextBox(x => x.Value, "Процент от базы", headerWidth, 100, defaultAsNull: false);
+        var value_fix = CreateCurrencyTextBox(x => x.Value, "Процент от базы", headerWidth, 100, defaultAsNull: false);
 
-        base_calc.SetChoiceValues(Deduction.BaseDeductions);
         base_calc.ValueChanged += (sender, e) =>
         {
             BaseDeduction baseDeduction = e.Value == null ? BaseDeduction.NotDefined : e.Value.Value;
@@ -34,8 +32,6 @@ public class DeductionEditor : Editor<Deduction>, IDeductionEditor
             value_fix.Visible = baseDeduction == BaseDeduction.Person;
             value_percent.Visible = baseDeduction != BaseDeduction.Person;
         };
-
-        person.SetDataSource(() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
 
         AddControls(new Control[]
         {
@@ -46,4 +42,6 @@ public class DeductionEditor : Editor<Deduction>, IDeductionEditor
             value_fix
         });
     }
+
+    private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
 }

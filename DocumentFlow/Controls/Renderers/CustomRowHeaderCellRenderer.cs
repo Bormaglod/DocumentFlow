@@ -69,7 +69,7 @@ namespace DocumentFlow.Controls.Renderers
 
                     if (image == null)
                     {
-                        if (rowData.Data is IDirectory dir && dir.is_folder)
+                        if (rowData.Data is IDirectory dir && dir.IsFolder)
                         {
                             image = rowView.Deleted ? Resources.icons8_folder_delete_16 : Resources.icons8_folder_16;
                         }

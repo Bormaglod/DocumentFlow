@@ -9,7 +9,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Banks;
 using DocumentFlow.Infrastructure;
@@ -26,19 +25,14 @@ public abstract class BaseAccountEditor<T> : Editor<T>
 
     public BaseAccountEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var company = new DfTextBox("company_name", "Контрагент", headerWidth, 120) { Enabled = false };
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 500);
-        var account = new DfMaskedTextBox<decimal>("account_value", "Номер счета", headerWidth, 400, mask: "### ## ### # #### #######") { DefaultAsNull = false };
-        var bank = new DfComboBox<Bank>("bank_id", "Банк", headerWidth, 400);
-        
-        bank.SetDataSource(() => Services.Provider.GetService<IBankRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-
         AddControls(new Control[]
         {
-            company,
-            name,
-            account,
-            bank
+            CreateTextBox(x => x.CompanyName, "Контрагент", headerWidth, 120, enabled: false),
+            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 500),
+            CreateMaskedTextBox<decimal>(x => x.AccountValue, "Номер счета", headerWidth, 400, mask: "### ## ### # #### #######", defaultAsNull: false),
+            CreateComboBox(x => x.BankId, "Банк", headerWidth, 400, data: GetBanks)
         });
     }
+
+    private IEnumerable<Bank> GetBanks() => Services.Provider.GetService<IBankRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
 }

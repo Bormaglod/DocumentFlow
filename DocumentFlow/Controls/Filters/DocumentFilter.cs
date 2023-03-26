@@ -44,7 +44,7 @@ namespace DocumentFlow.Controls.Filters
 
             var list = orgs!.GetAll();
             comboOrg.DataSource = list;
-            comboOrg.SelectedItem = list.FirstOrDefault(x => x.default_org);
+            comboOrg.SelectedItem = list.FirstOrDefault(x => x.DefaultOrg);
         }
 
         public Guid? OwnerIdentifier { get; set; }

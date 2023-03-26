@@ -38,12 +38,12 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
         Toolbar.IconSize = ButtonIconSize.Small;
 
         GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn material_name = CreateText(x => x.material_name, "Материал", hidden: false);
-        GridNumericColumn amount = CreateNumeric(x => x.amount, "Количество", width: 150, decimalDigits: 3);
-        GridNumericColumn price = CreateCurrency(x => x.price, "Цена", width: 150);
-        GridNumericColumn item_cost = CreateCurrency(x => x.item_cost, "Стоимость", width: 150);
-        GridNumericColumn weight = CreateNumeric(x => x.weight, "Вес, г", width: 100, decimalDigits: 3);
-        GridCheckBoxColumn giving = CreateBoolean(x => x.is_giving, "Давальческий", width: 150);
+        GridTextColumn material_name = CreateText(x => x.MaterialName, "Материал", hidden: false);
+        GridNumericColumn amount = CreateNumeric(x => x.Amount, "Количество", width: 150, decimalDigits: 3);
+        GridNumericColumn price = CreateCurrency(x => x.Price, "Цена", width: 150);
+        GridNumericColumn item_cost = CreateCurrency(x => x.ItemCost, "Стоимость", width: 150);
+        GridNumericColumn weight = CreateNumeric(x => x.Weight, "Вес, г", width: 100, decimalDigits: 3);
+        GridCheckBoxColumn giving = CreateBoolean(x => x.IsGiving, "Давальческий", width: 150);
 
         CreateSummaryRow(VerticalPosition.Bottom)
             .AsCount(material_name, "Всего наименований: {?}")
@@ -97,7 +97,7 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
         {
             if (CurrentDocument != null)
             {
-                CurrentDocument.is_giving = !CurrentDocument.is_giving;
+                CurrentDocument.IsGiving = !CurrentDocument.IsGiving;
                 repository.Update(CurrentDocument);
                 RefreshRow(CurrentDocument);
             }
@@ -110,9 +110,9 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
 
     private void OpenMaterial(IPageManager pageManager)
     {
-        if (CurrentDocument != null && CurrentDocument.item_id != null)
+        if (CurrentDocument != null && CurrentDocument.ItemId != null)
         {
-            pageManager.ShowEditor<IMaterialEditor>(CurrentDocument.item_id.Value);
+            pageManager.ShowEditor<IMaterialEditor>(CurrentDocument.ItemId.Value);
         }
     }
 }

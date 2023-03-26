@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Warehouse;
 
-[Menu(MenuDestination.Document, "Материальный отчёт", 101530, "Склад")]
+[Menu(MenuDestination.Document, "Материальный отчёт", parent: "Склад", order: 40 )]
 public interface IBalanceSheetBrowser : IBrowser<BalanceSheet>
 {
 }

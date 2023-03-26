@@ -31,12 +31,12 @@ public class PostingPaymentsBrowser : Browser<PostingPayments>, IPostingPayments
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridDateTimeColumn date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
-        GridNumericColumn number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        GridTextColumn contractor = CreateText(x => x.contractor_name, "Контрагент");
-        GridTextColumn document_name = CreateText(x => x.document_name, "Документ");
-        GridNumericColumn transaction_amount = CreateCurrency(x => x.transaction_amount, "Сумма", width: 120);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
+        var contractor = CreateText(x => x.ContractorName, "Контрагент");
+        var document_name = CreateText(x => x.DocumentName, "Документ");
+        var transaction_amount = CreateCurrency(x => x.TransactionAmount, "Сумма", width: 120);
 
         CreateSummaryRow(VerticalPosition.Bottom)
             .AsSummary(transaction_amount, SummaryColumnFormat.Currency);

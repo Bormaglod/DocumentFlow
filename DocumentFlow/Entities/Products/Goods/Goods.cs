@@ -12,11 +12,11 @@ namespace DocumentFlow.Entities.Products;
 [Description("Продукция")]
 public class Goods : Product
 {
-    public bool is_service { get; set; }
-    public Guid? calculation_id { get; set; }
-    public string? note { get; set; }
-    public decimal? cost_price { get; protected set; }
-    public decimal? profit_percent { get; protected set; }
-    public decimal? profit_value { get; protected set; }
-    public DateTime? date_approval { get; protected set; }
+    public bool IsService { get; set; }
+    public Guid? CalculationId { get; set; }
+    public string? Note { get; set; }
+    public decimal? CostPrice { get; protected set; }
+    public decimal? ProfitPercent { get; protected set; }
+    public decimal? ProfitValue { get; protected set; }
+    public DateTime? DateApproval { get; protected set; }
 }

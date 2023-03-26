@@ -19,17 +19,17 @@ public class CalculationEditor : Editor<Calculation>, ICalculationEditor
 
     public CalculationEditor(ICalculationRepository repository, IPageManager pageManager) : base(repository, pageManager)
     {
-        state = new DfState("CalculationState", "Состояние", headerWidth);
-        var goods_name = new DfTextBox("goods_name", "Продукция", headerWidth, 500) { Enabled = false };
-        var code = new DfTextBox("code", "Код", headerWidth, 150) { DefaultAsNull = false };
-        var stimul_type = new DfChoice<StimulatingValue>("StimulatingValue", "Способ", headerWidth, 150) { Required = true };
-        var stimul_payment = new DfNumericTextBox("stimul_payment", "Стимул. выплата", headerWidth, 100) { DefaultAsNull = false, NumberDecimalDigits = 2 };
-        var cost_price = new DfCurrencyTextBox("cost_price", "Себестоимость", headerWidth, 100) { DefaultAsNull = false, Enabled = false };
-        var profit_percent = new DfPercentTextBox("profit_percent", "Рентабельность", headerWidth, 100) { DefaultAsNull = false, PercentDecimalDigits = 2 };
-        var profit_value = new DfCurrencyTextBox("profit_value", "Прибыль", headerWidth, 100) { DefaultAsNull = false };
-        var price = new DfCurrencyTextBox("price", "Цена", headerWidth, 100) { DefaultAsNull = false };
-        var approval = new DfDateTimePicker("date_approval", "Дата утверждения", headerWidth, 150) { Required = false };
-        var note = new DfTextBox("note", "Полное наименование", headerWidth, 500) { Multiline = true, Height = 75 };
+        state = CreateState(x => x.CalculationState, "Состояние", headerWidth);
+        var goods_name = CreateTextBox(x => x.GoodsName, "Продукция", headerWidth, 500, enabled: false);
+        var code = CreateTextBox(x => x.Code, "Код", headerWidth, 150, defaultAsNull: false);
+        var stimul_type = CreateChoice(x => x.StimulatingValue, "Способ", headerWidth, 150, required: true, choices: Calculation.StimulatingValues);
+        var stimul_payment = CreateNumericTextBox(x => x.StimulPayment, "Стимул. выплата", headerWidth, 100, defaultAsNull: false, digits: 2);
+        var cost_price = CreateCurrencyTextBox(x => x.CostPrice, "Себестоимость", headerWidth, 100, defaultAsNull: false, enabled: false);
+        var profit_percent = CreatePercentTextBox(x => x.ProfitPercent, "Рентабельность", headerWidth, 100, defaultAsNull: false, digits: 2);
+        var profit_value = CreateCurrencyTextBox(x => x.ProfitValue, "Прибыль", headerWidth, 100, defaultAsNull: false);
+        var price = CreateCurrencyTextBox(x => x.Price, "Цена", headerWidth, 100, defaultAsNull: false);
+        var approval = CreateDateTimePicker(x => x.DateApproval, "Дата утверждения", headerWidth, 150, required: false);
+        var note = CreateMultilineTextBox(x => x.Note, "Полное наименование", headerWidth, 500);
 
         state.ValueChanged += (s, e) =>
         {
@@ -43,8 +43,6 @@ public class CalculationEditor : Editor<Calculation>, ICalculationEditor
             stimul_payment.Enabled = enable;
             SetNestedBrowserStatus(!enable);
         };
-
-        stimul_type.SetChoiceValues(Calculation.StimulatingValues);
 
         AddControls(new Control[]
         {

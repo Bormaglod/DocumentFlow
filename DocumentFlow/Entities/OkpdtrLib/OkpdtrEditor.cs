@@ -5,7 +5,6 @@
 // Date: 04.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
 
@@ -19,9 +18,9 @@ public class OkpdtrEditor : Editor<Okpdtr>, IOkpdtrEditor
     {
         AddControls(new Control[]
         {
-            new DfTextBox("code", "Код", headerWidth, 100) { DefaultAsNull = false },
-            new DfTextBox("item_name", "Наименование", headerWidth, 400),
-            new DfTextBox("signatory_name", "Наименование для договоров", headerWidth, 400)
+            CreateTextBox(x => x.Code, "Код", headerWidth, 100, defaultAsNull: false),
+            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400),
+            CreateTextBox(x => x.SignatoryName, "Наименование для договоров", headerWidth, 400)
         });
     }
 }

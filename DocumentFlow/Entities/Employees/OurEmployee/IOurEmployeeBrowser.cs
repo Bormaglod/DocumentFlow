@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Employees;
 
-[Menu(MenuDestination.Directory, "Сотрудники", 207500)]
+[Menu(MenuDestination.Directory, "Сотрудники", order: 80)]
 public interface IOurEmployeeBrowser : IBrowser<OurEmployee>
 {
 }

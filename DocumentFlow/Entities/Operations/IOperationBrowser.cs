@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Operations;
 
-[Menu(MenuDestination.Directory, "Операция", 210010, "Производственные операции")]
+[Menu(MenuDestination.Directory, "Операция", parent: "Производственные операции", order: 10)]
 public interface IOperationBrowser : IBrowser<Operation>
 {
 }

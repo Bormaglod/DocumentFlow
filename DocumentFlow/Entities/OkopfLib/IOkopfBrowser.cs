@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.OkopfLib;
 
-[Menu(MenuDestination.Directory, "ОКОПФ", 202000)]
+[Menu(MenuDestination.Directory, "ОКОПФ", order: 20)]
 public interface IOkopfBrowser : IBrowser<Okopf>
 {
 }

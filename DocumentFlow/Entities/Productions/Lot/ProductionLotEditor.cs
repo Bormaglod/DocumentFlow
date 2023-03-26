@@ -34,31 +34,19 @@ namespace DocumentFlow.Entities.Productions.Lot;
 
 public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLotEditor
 {
+    private readonly IPageManager pageManager;
     private readonly int headerWidth = 100;
 
     public ProductionLotEditor(IProductionLotRepository repository, IPageManager pageManager) : base(repository, pageManager, true)
     {
-        var order = new DfDocumentSelectBox<ProductionOrder>("owner_id", "Заказ", headerWidth, 300)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IProductionOrderEditor, ProductionOrder>(t)
-        };
+        this.pageManager = pageManager;
 
-        var calc = new DfChoice<Guid>("calculation_id", "Изделие", headerWidth, 500) { RefreshMethod = DataRefreshMethod.Immediately };
-        var quantity = new DfNumericTextBox("quantity", "Количество", headerWidth, 100) { NumberDecimalDigits = 3 };
-
+        var order = CreateDocumentSelectBox<ProductionOrder, IProductionOrderEditor>(x => x.OwnerId, "Заказ", headerWidth, 300, data: GetOrders);
+        var calc = CreateChoice<Guid>(x => x.CalculationId, "Изделие", headerWidth, 500, refreshMethod: DataRefreshMethod.Immediately);
+        var quantity = CreateNumericTextBox(x => x.Quantity, "Количество", headerWidth, 100, digits: 3);
         var performed = new DfProductionLot() { Dock = DockStyle.Fill };
 
-        order.SetDataSource(() =>
-        {
-            var repo = Services.Provider.GetService<IProductionOrderRepository>();
-            return repo!.GetAllDefault(callback: q => q
-                .WhereFalse("production_order.deleted")
-                .WhereTrue("production_order.carried_out")
-                .WhereFalse("production_order.closed"));
-        });
-
         order.Columns += (sender, e) => ProductionOrder.CreateGridColumns(e.Columns);
-
         order.ValueChanged += (sender, e) =>
         {
             if (e.NewValue != null)
@@ -67,10 +55,10 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
                 var list = repo!.GetList(e.NewValue);
                 calc.SetDataSource(() =>
                 {
-                    return list.Select(x => new Choice<Guid>(x.calculation_id, x.product_name));
+                    return list.Select(x => new Choice<Guid>(x.CalculationId, x.ProductName));
                 });
 
-                calc.Value = Document.calculation_id;
+                calc.Value = Document.CalculationId;
             }
             else
             {
@@ -90,16 +78,16 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
                 var calculation = repoCalc!.GetById(e.Value.Value, fullInformation: false);
 
                 var repoGoods = Services.Provider.GetService<IGoodsRepository>();
-                if (calculation.owner_id != null)
+                if (calculation.OwnerId != null)
                 {
-                    var goods = repoGoods!.GetById(calculation.owner_id.Value, fullInformation: false);
-                    if (goods.measurement_id != null)
+                    var goods = repoGoods!.GetById(calculation.OwnerId.Value, fullInformation: false);
+                    if (goods.MeasurementId != null)
                     {
                         var repoMeas = Services.Provider.GetService<IMeasurementRepository>();
-                        var meas = repoMeas!.GetById(goods.measurement_id.Value);
+                        var meas = repoMeas!.GetById(goods.MeasurementId.Value);
 
                         quantity.ShowSuffix = true;
-                        quantity.SuffixText = meas.abbreviation ?? meas.item_name ?? meas.code;
+                        quantity.SuffixText = meas.Abbreviation ?? meas.ItemName ?? meas.Code;
                     }
                 }
             }
@@ -121,9 +109,9 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
                 if (repo != null)
                 {
                     var c = repo.GetById(calc.ChoiceValue.Value, false);
-                    if (c.owner_id != null)
+                    if (c.OwnerId != null)
                     {
-                        pageManager.ShowEditor<IGoodsEditor>(c.owner_id.Value);
+                        pageManager.ShowEditor<IGoodsEditor>(c.OwnerId.Value);
                     }
                 }
             }
@@ -143,5 +131,14 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
         base.RegisterNestedBrowsers();
         RegisterNestedBrowser<IOperationsPerformedNestedBrowser, OperationsPerformed>();
         RegisterNestedBrowser<IFinishedGoodsNestedBrowser, FinishedGoods>();
+    }
+
+    private IEnumerable<ProductionOrder> GetOrders()
+    {
+        var repo = Services.Provider.GetService<IProductionOrderRepository>();
+        return repo!.GetAllDefault(callback: q => q
+            .WhereFalse("production_order.deleted")
+            .WhereTrue("production_order.carried_out")
+            .WhereFalse("production_order.closed"));
     }
 }

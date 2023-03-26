@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Productions.Performed;
 
-[Menu(MenuDestination.Document, "Выполненные работы", 102030, "Производство")]
+[Menu(MenuDestination.Document, "Выполненные работы", parent: "Производство", order: 30 )]
 public interface IOperationsPerformedBrowser : IBrowser<OperationsPerformed>
 {
 }

@@ -18,15 +18,15 @@ public class OperationTypeEditor : Editor<OperationType>, IOperationTypeEditor
 
     public OperationTypeEditor(IOperationTypeRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 400);
-        salary = new DfCurrencyTextBox("salary", "Расценка, руб./час", headerWidth, 200) { DefaultAsNull = false };
+        var name = CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400);
+        salary = CreateCurrencyTextBox(x => x.Salary, "Расценка, руб./час", headerWidth, 200, defaultAsNull: false);
 
         AddControls(new Control[] { name, salary });
     }
 
     protected override bool ConfirmSaveDocument()
     {
-        if (salary.NumericValue != Document.salary)
+        if (salary.NumericValue != Document.Salary)
         {
             return MessageBox.Show("Изменение расценки приведет к пересчёту значений расценок производственных операций и необходимости пересчитать калькуляции. Продолжить?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
         }

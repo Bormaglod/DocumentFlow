@@ -20,13 +20,11 @@ namespace DocumentFlow.Entities.Wages;
 
 public class BillingDocument : AccountingDocument, IBilling
 {
-    public BillingDocument() => billing_range = new(this);
+    public BillingDocument() => BillingRange = new(this);
 
-#pragma warning disable IDE1006 // Стили именования
-    public int billing_year { get; set; } = DateTime.Now.Year;
-    public short billing_month { get; set; } = Convert.ToInt16(DateTime.Now.Month);
-    public BillingRange billing_range { get; }
-    public string[]? employee_names { get; protected set; }
-    public string employee_names_text => employee_names != null ? string.Join(',', employee_names.Distinct()) : string.Empty;
-#pragma warning restore IDE1006 // Стили именования
+    public int BillingYear { get; set; } = DateTime.Now.Year;
+    public short BillingMonth { get; set; } = Convert.ToInt16(DateTime.Now.Month);
+    public BillingRange BillingRange { get; }
+    public string[]? EmployeeNames { get; protected set; }
+    public string EmployeeNamesText => EmployeeNames != null ? string.Join(',', EmployeeNames.Distinct()) : string.Empty;
 }

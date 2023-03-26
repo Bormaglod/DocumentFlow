@@ -34,9 +34,9 @@ public class DebtDocument : IAccountingDocument
     public bool Deleted => Document.Deleted;
     public Guid? OwnerId { get => Document.OwnerId; set => Document.OwnerId = value; }
     public Guid Id { get => Document.Id; set => Document.Id = value; }
-    public string? contractor_name { get; set; }
-    public decimal full_cost { get; set; }
-    public decimal paid { get; set; }
+    public string? ContractorName { get; set; }
+    public decimal FullCost { get; set; }
+    public decimal Paid { get; set; }
 
     public void SetOrganization(Guid orgId) => Document.SetOrganization(orgId);
 

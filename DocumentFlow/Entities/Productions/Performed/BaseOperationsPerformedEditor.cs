@@ -29,8 +29,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Controls.Editor;
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data;
 using DocumentFlow.Entities.Calculations;
@@ -53,55 +51,43 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         public LotOrder(ProductionOrder order)
         {
             Id = order.Id;
-            item_name = $"Заказ №{order.DocumentNumber} от {order.DocumentDate:d} ({order.contractor_name})";
-            is_folder = true;
+            ItemName = $"Заказ №{order.DocumentNumber} от {order.DocumentDate:d} ({order.ContractorName})";
+            IsFolder = true;
         }
 
         public LotOrder(ProductionLot lot)
         {
             Id = lot.Id;
-            item_name = $"№{lot.DocumentNumber} от {lot.DocumentDate:d}";
-            parent_id = lot.owner_id;
-            good_name = lot.goods_name;
-            calculation_name = lot.calculation_name;
-            calculation_id = lot.calculation_id;
+            ItemName = $"№{lot.DocumentNumber} от {lot.DocumentDate:d}";
+            ParentId = lot.OwnerId;
+            GoodName = lot.GoodsName;
+            CalculationName = lot.CalculationName;
+            CalculationId = lot.CalculationId;
         }
 
-        public string? good_name { get; }
-        public string? calculation_name { get; }
-        public Guid calculation_id { get; }
+        public string? GoodName { get; }
+        public string? CalculationName { get; }
+        public Guid CalculationId { get; }
     }
 
     public BaseOperationsPerformedEditor(IOperationsPerformedRepository repository, IPageManager pageManager, bool nested)
         : base(repository, pageManager) 
     {
-        var document_date = new DfDateTimePicker("document_date", "Дата/время", headerWidth, 170)
-        {
-            Format = DateTimePickerFormat.Custom,
-            CustomFormat = "dd.MM.yyyy HH:mm:ss",
-            Required = true
-        };
+        var document_date = CreateDateTimePicker(x => x.DocumentDate, "Дата/время", headerWidth, 170, format: DateTimePickerFormat.Custom, required: true);
+        document_date.CustomFormat = "dd.MM.yyyy HH:mm:ss";
 
-        var lot = new DfDirectorySelectBox<LotOrder>("owner_id", "Производственная партия", headerWidth, 350)
-        {
-            ReadOnly = nested,
-            OpenAction = (t) => pageManager.ShowEditor<IProductionLotEditor>(t.Id)
-        };
+        var lot = CreateDirectorySelectBox<LotOrder, IProductionLotEditor>(x => x.OwnerId, "Производственная партия", headerWidth, 350, readOnly: nested, openById: true);
+        var goods = CreateTextBox(x => x.GoodsName, "Изделие", headerWidth, 600, readOnly: true);
+        var calculation = CreateTextBox(x => x.CalculationName, "Калькуляция", headerWidth, 600, readOnly: true);
+        var operations = CreateDirectorySelectBox<CalculationOperation>(x => x.OperationId, "Операция", headerWidth, 350, refreshMethod: DataRefreshMethod.OnOpen);
+        operations.RemoveEmptyFolders = true;
 
-        var goods = new DfTextBox("goods_name", "Изделие", headerWidth, 600) { ReadOnly = true };
-        var calculation = new DfTextBox("calculation_name", "Калькуляция", headerWidth, 600) { ReadOnly = true };
-        var operations = new DfDirectorySelectBox<CalculationOperation>("operation_id", "Операция", headerWidth, 350) 
-        { 
-            RemoveEmptyFolders = true,
-            RefreshMethod = DataRefreshMethod.OnOpen
-        };
-
-        var using_material = new DfTextBox("material_name", "Материал (по спецификации)", headerWidth, 350) { ReadOnly = true };
-        var replacing_material = new DfDirectorySelectBox<Material>("replacing_material_id", "Использованный материал", headerWidth, 350);
-        var quantity = new DfIntegerTextBox<long>("quantity", "Количество", headerWidth, 150);
-        var employee = new DfDirectorySelectBox<OurEmployee>("employee_id", "Исполнитель", headerWidth, 350);
-        var salary = new DfCurrencyTextBox("salary", "Зарплата", headerWidth, 150);
-        var double_rate = new DfCheckBox("double_rate", "Двойная плата", headerWidth) { AllowThreeState = true };
+        var using_material = CreateTextBox(x => x.MaterialName, "Материал (по спецификации)", headerWidth, 350, readOnly: true);
+        var replacing_material = CreateDirectorySelectBox<Material, IMaterialEditor>(x => x.ReplacingMaterialId, "Использованный материал", headerWidth, 350, data: GetMaterials);
+        var quantity = CreateIntegerTextBox<long>(x => x.Quantity, "Количество", headerWidth, 150);
+        var employee = CreateDirectorySelectBox<OurEmployee, IOurEmployeeEditor>(x => x.EmployeeId, "Исполнитель", headerWidth, 350, data: GetEmployees);
+        var salary = CreateCurrencyTextBox(x => x.Salary, "Зарплата", headerWidth, 150);
+        var double_rate = CreateCheckBox(x => x.DoubleRate, "Двойная плата", headerWidth, allowThreeState: true);
 
         lot.SetDataSource(() =>
         {
@@ -145,13 +131,13 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         {
             if (IsCreating && e.NewValue != null)
             {
-                operations.SetDataSource(() => GetCalculationOperation(e.NewValue.calculation_id));
+                operations.SetDataSource(() => GetCalculationOperation(e.NewValue.CalculationId));
             }
 
             if (e.NewValue != null)
             {
-                goods.Value = e.NewValue.good_name;
-                calculation.Value = e.NewValue.calculation_name;
+                goods.Value = e.NewValue.GoodName;
+                calculation.Value = e.NewValue.CalculationName;
             }
             else
             {
@@ -164,7 +150,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         {
             if (args.NewValue != null)
             {
-                operations.SetDataSource(() => GetCalculationOperation(args.NewValue.calculation_id));
+                operations.SetDataSource(() => GetCalculationOperation(args.NewValue.CalculationId));
             }
             else
             {
@@ -172,26 +158,22 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
             }
         };
 
-        replacing_material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllValid());
-
-        operations.SetDataSource(() => IsCreating ? null : GetCalculationOperation(Document.calculation_id));
+        operations.SetDataSource(() => IsCreating ? null : GetCalculationOperation(Document.CalculationId));
 
         operations.ValueChanged += (sender, e) =>
         {
-            if (e.NewValue?.material_name == null && e.NewValue?.material_id != null)
+            if (e.NewValue?.MaterialName == null && e.NewValue?.MaterialId != null)
             {
                 var repo = Services.Provider.GetService<IMaterialRepository>();
-                using_material.Value = repo!.GetById(e.NewValue.material_id.Value, false).item_name;
+                using_material.Value = repo!.GetById(e.NewValue.MaterialId.Value, false).ItemName;
             }
             else
             {
-                using_material.Value = e.NewValue?.material_name;
+                using_material.Value = e.NewValue?.MaterialName;
             }
 
-            replacing_material.Enabled = e.NewValue?.material_id != null;
+            replacing_material.Enabled = e.NewValue?.MaterialId != null;
         };
-
-        employee.SetDataSource(() => Services.Provider.GetService<IOurEmployeeRepository>()?.GetAllValid());
 
         AddControls(new Control[]
         {
@@ -228,4 +210,8 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
 
         return null;
     }
+
+    private IEnumerable<OurEmployee> GetEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllValid();
+
+    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetAllValid();
 }

@@ -54,19 +54,16 @@ namespace DocumentFlow.Entities.PaymentOrders.Posting;
 
 public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPaymentsEditor
 {
+    private readonly IPageManager pageManager;
     private readonly DfDocumentSelectBox<DebtDocument> document;
 
     public PostingPaymentsEditor(IPostingPaymentsRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        document = new DfDocumentSelectBox<DebtDocument>("document_id", "Документ", 150, 400)
-        {
-            Required = true,
-            OpenAction = (t) => pageManager.ShowEditor(t.EditorType, t.Id),
-            DisableCurrentItem = true
-        };
+        this.pageManager = pageManager;
 
-        var contractor = new DfTextBox("contractor_name", "Контрагент", 150, 400) { Enabled = false };
-        var amount = new DfCurrencyTextBox("transaction_amount", "Сумма операции", 150, 200) { DefaultAsNull = false };
+        document = CreateDocumentSelectBox<DebtDocument>(x => x.DocumentId, "Документ", 150, 400, required: true, open: OpenDocument, disableCurrent: true);
+        var contractor = CreateTextBox(x => x.ContractorName, "Контрагент", 150, 400, enabled: false);
+        var amount = CreateCurrencyTextBox(x => x.TransactionAmount, "Сумма операции", 150, 200, defaultAsNull: false);
 
         document.Columns += (sender, e) => CreateColumns(e.Columns);
 
@@ -80,64 +77,64 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
                 if (p.PaymentDirection == PaymentDirection.Expense)
                 {
                     var prr = Services.Provider.GetService<IPurchaseRequestRepository>();
-                    var pr = prr!.GetByContractor(p.contractor_id, PurchaseState.Active)
+                    var pr = prr!.GetByContractor(p.ContractorId, PurchaseState.Active)
                         .Select(d => new DebtDocument(d, "purchase", "Заявка на расход", typeof(IPurchaseRequestEditor)) 
                         {
-                            contractor_name = d.contractor_name,
-                            full_cost = d.full_cost,
-                            paid = d.prepayment
+                            ContractorName = d.ContractorName,
+                            FullCost = d.FullCost,
+                            Paid = d.Prepayment
                         });
 
                     var wrr = Services.Provider.GetService<IWaybillReceiptRepository>();
-                    var wr = wrr!.GetByContractor(p.contractor_id)
+                    var wr = wrr!.GetByContractor(p.ContractorId)
                         .Select(d => 
                             new DebtDocument(d, "receipt", "Поступление", typeof(IWaybillReceiptEditor))
                             {
-                                contractor_name = d.contractor_name,
-                                full_cost = d.full_cost,
-                                paid = d.paid
+                                ContractorName = d.ContractorName,
+                                FullCost = d.FullCost,
+                                Paid = d.Paid
                             });
                     var bcr = Services.Provider.GetService<IInitialBalanceContractorRepository>();
-                    var bc = bcr!.GetByContractor(p.contractor_id, BalanceCategory.Credit)
+                    var bc = bcr!.GetByContractor(p.ContractorId, BalanceCategory.Credit)
                         .Select(d =>
                             new DebtDocument(d, "balance", "Нач. остаток", typeof(IInitialBalanceContractorEditor))
                             {
-                                contractor_name = d.contractor_name,
-                                full_cost = d.operation_summa,
-                                paid = d.paid
+                                ContractorName = d.ContractorName,
+                                FullCost = d.OperationSumma,
+                                Paid = d.Paid
                             });
 
                     return pr
                         .Union(wr)
                         .Union(bc)
-                        .Where(x => x.full_cost != x.paid || x.Id == Document.document_id)
+                        .Where(x => x.FullCost != x.Paid || x.Id == Document.DocumentId)
                         .OrderBy(x => x.DocumentDate)
                         .ThenBy(x => x.DocumentNumber);
                 }
                 else
                 {
                     var wsr = Services.Provider.GetService<IWaybillSaleRepository>();
-                    var wr = wsr!.GetByContractor(p.contractor_id)
+                    var wr = wsr!.GetByContractor(p.ContractorId)
                         .Select(d =>
                             new DebtDocument(d, "sale", "Реализация", typeof(IWaybillSaleEditor))
                             {
-                                contractor_name = d.contractor_name,
-                                full_cost = d.full_cost,
-                                paid = d.paid
+                                ContractorName = d.ContractorName,
+                                FullCost = d.FullCost,
+                                Paid = d.Paid
                             });
                     var bcr = Services.Provider.GetService<IInitialBalanceContractorRepository>();
-                    var bc = bcr!.GetByContractor(p.contractor_id, BalanceCategory.Debet)
+                    var bc = bcr!.GetByContractor(p.ContractorId, BalanceCategory.Debet)
                         .Select(d =>
                             new DebtDocument(d, "balance", "Нач. остаток", typeof(IInitialBalanceContractorEditor))
                             {
-                                contractor_name = d.contractor_name,
-                                full_cost = d.operation_summa,
-                                paid = d.paid
+                                ContractorName = d.ContractorName,
+                                FullCost = d.OperationSumma,
+                                Paid = d.Paid
                             });
 
                     return wr
                         .Union(bc)
-                        .Where(x => x.full_cost != x.paid || x.Id == Document.document_id)
+                        .Where(x => x.FullCost != x.Paid || x.Id == Document.DocumentId)
                         .OrderBy(x => x.DocumentDate)
                         .ThenBy(x => x.DocumentNumber);
                 }
@@ -150,7 +147,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
         {
             if (document.SelectedItem != null)
             {
-                contractor.Value = document.SelectedItem.contractor_name ?? string.Empty;
+                contractor.Value = document.SelectedItem.ContractorName ?? string.Empty;
             }
         };
 
@@ -161,7 +158,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
                 var por = Services.Provider.GetService<IPaymentOrderRepository>();
                 decimal balance = por == null || OwnerId == null ? 0 : por.GetPaymentBalance(OwnerId.Value);
 
-                decimal newAmount = e.NewValue.full_cost - e.NewValue.paid;
+                decimal newAmount = e.NewValue.FullCost - e.NewValue.Paid;
                 if (newAmount > balance) 
                 { 
                     newAmount = balance;
@@ -188,9 +185,11 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
         base.DoBeforeSave();
         if (document.SelectedItem != null)
         {
-            Document.table_name = document.SelectedItem.TableName;
+            Document.TableName = document.SelectedItem.TableName;
         }
     }
+
+    private void OpenDocument(DebtDocument doc) => pageManager.ShowEditor(doc.EditorType, doc.Id);
 
     private static void CreateColumns(Columns columns)
     {
@@ -202,7 +201,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
 
         var document_date = new GridDateTimeColumn()
         {
-            MappingName = "document_date",
+            MappingName = "DocumentDate",
             HeaderText = "Дата",
             Width = 100
         };
@@ -211,7 +210,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
         numberFormat.NumberDecimalDigits = 0;
         var document_number = new GridNumericColumn()
         {
-            MappingName = "document_number",
+            MappingName = "DocumentNumber",
             HeaderText = "Номер",
             FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Numeric,
             NumberFormatInfo = numberFormat,
@@ -222,7 +221,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
         currencyFormat.NumberDecimalDigits = 2;
         var payment_required = new GridNumericColumn()
         {
-            MappingName = "full_cost",
+            MappingName = "FullCost",
             HeaderText = "Сумма документа",
             FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency,
             NumberFormatInfo = currencyFormat,
@@ -231,7 +230,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
 
         var paid = new GridNumericColumn()
         {
-            MappingName = "paid",
+            MappingName = "Paid",
             HeaderText = "Оплачено",
             FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency,
             NumberFormatInfo = currencyFormat,

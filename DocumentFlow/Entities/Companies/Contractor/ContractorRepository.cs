@@ -25,7 +25,7 @@ public class ContractorRepository : DirectoryRepository<Contractor>, IContractor
 {
     public ContractorRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.OwnerId);
     }
 
     public IReadOnlyList<Contractor> GetSuppliers() => GetContractorByType(ContractorType.Seller);

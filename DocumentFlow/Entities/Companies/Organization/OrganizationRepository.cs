@@ -21,8 +21,8 @@ public class OrganizationRepository : Repository<Guid, Organization>, IOrganizat
 {
     public OrganizationRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.parent_id);
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.ParentId);
+        ExcludeField(x => x.OwnerId);
     }
 
     public Organization GetMain()

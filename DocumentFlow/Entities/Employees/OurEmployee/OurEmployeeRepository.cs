@@ -24,7 +24,7 @@ public class OurEmployeeRepository : Repository<Guid, OurEmployee>, IOurEmployee
 {
     public OurEmployeeRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.parent_id);
+        ExcludeField(x => x.ParentId);
     }
 
     public IReadOnlyList<Wages> GetWages()

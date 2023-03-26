@@ -43,10 +43,7 @@ public class DfDirectorySelectBox<T> : SelectBox<T>
         if (Columns != null && Columns.Count > 0)
         {
             var nameColumn = NameColumn;
-            if (nameColumn == null)
-            {
-                nameColumn = Columns.First().Key;
-            }
+            nameColumn ??= Columns.First().Key;
 
             form.SetColumns(nameColumn, Columns);
         }

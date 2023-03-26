@@ -25,26 +25,18 @@ public class DocumentEditor<T> : Editor<T>
     { 
         if (generateStandardHeader)
         {
-            DocumentNumberControl = new DfIntegerTextBox<int>("document_number", "Номер", 60, 100)
-            {
-                Dock = DockStyle.Left,
-                Width = 165
-            };
+            DocumentNumberControl = CreateIntegerTextBox<int>(x => x.DocumentNumber, "Номер", 60, 100);
+            DocumentNumberControl.Dock = DockStyle.Left;
+            DocumentNumberControl.Width = 165;
 
-            var document_date = new DfDateTimePicker("document_date", "от", 25, 170)
-            {
-                Format = DateTimePickerFormat.Custom,
-                CustomFormat = "dd.MM.yyyy HH:mm:ss",
-                Required = true,
-                Dock = DockStyle.Left,
-                Width = 200
-            };
+            var document_date = CreateDateTimePicker(x => x.DocumentDate, "от", 25, 170, format: DateTimePickerFormat.Custom, required: true);
+            document_date.CustomFormat = "dd.MM.yyyy HH:mm:ss";
+            document_date.Dock = DockStyle.Left;
+            document_date.Width = 200;
 
-            var organization = new DfComboBox<Organization>("organization_id", "Организация", 100, 200)
-            {
-                Dock = DockStyle.Left,
-                Width = 305
-            };
+            var organization = CreateComboBox<Organization>(x => x.OrganizationId, "Организация", 100, 200, data: GetOrganizations);
+            organization.Dock = DockStyle.Left;
+            organization.Width = 305;
 
             var panel_header = new Panel()
             {
@@ -55,8 +47,6 @@ public class DocumentEditor<T> : Editor<T>
             panel_header.Controls.AddRange(new Control[] { organization, document_date, DocumentNumberControl });
 
             var line = new DfLine();
-
-            organization.SetDataSource(() => Services.Provider.GetService<IOrganizationRepository>()?.GetAll());
 
             AddControls(new Control[]
             {
@@ -82,4 +72,6 @@ public class DocumentEditor<T> : Editor<T>
         base.DoCreatedDocument(document);
         document.SetOrganization(Services.Provider.GetService<IOrganizationRepository>()!.GetMain().Id);
     }
+
+    private IEnumerable<Organization> GetOrganizations() => Services.Provider.GetService<IOrganizationRepository>()!.GetAll();
 }

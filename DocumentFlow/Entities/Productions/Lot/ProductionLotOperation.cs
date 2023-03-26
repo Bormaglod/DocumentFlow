@@ -11,5 +11,5 @@ namespace DocumentFlow.Entities.Productions.Lot;
 
 public class ProductionLotOperation : CalculationOperation
 {
-    public decimal quantity_by_lot { get; protected set; }
+    public decimal QuantityByLot { get; protected set; }
 }

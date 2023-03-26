@@ -58,7 +58,7 @@ public abstract class ProductBrowser<T> : Browser<T>
             {
                 foreach (var t in row.Documents)
                 {
-                    var image = ImageHelper.Base64ToImage(t.thumbnail!);
+                    var image = ImageHelper.Base64ToImage(t.Thumbnail!);
                     var rect = new Rectangle(x, bounds.Y + 2, 120, 120);
 
                     graphics.DrawImage(image, rect);
@@ -78,5 +78,5 @@ public abstract class ProductBrowser<T> : Browser<T>
         return false;
     }
 
-    protected override bool CanExpandPreview(T row) => row.thumbnails;
+    protected override bool CanExpandPreview(T row) => row.Thumbnails;
 }

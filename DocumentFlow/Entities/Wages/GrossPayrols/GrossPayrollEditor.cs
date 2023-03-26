@@ -27,7 +27,7 @@ public class GrossPayrollEditor : BasePayrollEditor<GrossPayroll, GrossPayrollEm
 
             string question = Document.Id == default ?
                 question1 :
-                (Document.billing_year != BillingYear || Document.billing_month != BilingMonth ? 
+                (Document.BillingYear != BillingYear || Document.BillingMonth != BilingMonth ? 
                     question2 : 
                     string.Empty);
 

@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Products;
 
-[Menu(MenuDestination.Directory, "Типы проводов", 208010, "Номенклатура")]
+[Menu(MenuDestination.Directory, "Типы проводов", parent: "Номенклатура", order: 10 )]
 public interface IWireBrowser : IBrowser<Wire>
 {
 }

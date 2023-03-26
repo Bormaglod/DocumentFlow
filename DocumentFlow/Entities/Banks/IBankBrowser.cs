@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Banks;
 
-[Menu(MenuDestination.Directory, "Банки", 204000)]
+[Menu(MenuDestination.Directory, "Банки", order: 40)]
 public interface IBankBrowser : IBrowser<Bank>
 {
 }

@@ -151,9 +151,9 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             if (y == null) return 1;
 
             int res;
-            if (x is IDirectory parent_x && y is IDirectory parent_y && (parent_x.is_folder != parent_y.is_folder))
+            if (x is IDirectory parent_x && y is IDirectory parent_y && (parent_x.IsFolder != parent_y.IsFolder))
             {
-                res = parent_x.is_folder ? -1 : 1;
+                res = parent_x.IsFolder ? -1 : 1;
             }
             else
             {
@@ -213,9 +213,9 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     private readonly IEnumerable<ICreationBased>? creations;
     private readonly IStandaloneSettings? settings;
     private ShowToolTipMethod? showToolTip;
-    private Guid? root_id = null;
-    private Guid? parent_id = null;
-    private Guid? owner_id = null;
+    private Guid? rootId = null;
+    private Guid? parentId = null;
+    private Guid? ownerId = null;
     private bool readOnly = false;
     private readonly Type? browserType;
     private bool moveToEnd = false;
@@ -300,32 +300,32 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         set => gridContent.AllowSorting = value;
     }
 
-    public Guid? RootId => root_id;
+    public Guid? RootId => rootId;
 
     public Guid? ParentId
     {
-        get => parent_id;
+        get => parentId;
         set
         {
-            parent_id = value;
+            parentId = value;
 
-            if (parent_id.HasValue)
+            if (parentId.HasValue)
             {
-                if (!root_id.HasValue)
+                if (!rootId.HasValue)
                 {
-                    root_id = parent_id;
+                    rootId = parentId;
                 }
             }
             else
             {
-                root_id = null;
+                rootId = null;
             }
 
             OnChangeParent();
         }
     }
 
-    public Guid? OwnerDocument => owner_id;
+    public Guid? OwnerDocument => ownerId;
 
     public bool ReadOnly
     {
@@ -367,7 +367,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     public void Refresh(Guid? owner)
     {
-        owner_id = owner;
+        ownerId = owner;
         if (filter != null)
         {
             filter.OwnerIdentifier = owner;
@@ -477,53 +477,41 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     protected GridTextColumn CreateText(Expression<Func<T, object?>> memberExpression, string headerText, int width = 0, bool visible = true, bool hidden = true)
     {
-        var member = ReflectionHelper.GetMember(memberExpression);
-        if (member != null)
+        var gridColumn = new GridTextColumn()
         {
-            var gridColumn = new GridTextColumn()
-            {
-                MappingName = member.Name,
-                HeaderText = headerText,
-                Visible = visible
-            };
+            MappingName = memberExpression.ToMember().Name,
+            HeaderText = headerText,
+            Visible = visible
+        };
 
-            SetDefaultData(gridColumn, width, hidden);
+        SetDefaultData(gridColumn, width, hidden);
 
-            return gridColumn;
-        }
-
-        throw new NullReferenceException("Параметр memberExpression должен содержать имя поля, но оно не найдено в классе.");
+        return gridColumn;
     }
 
     protected GridNumericColumn CreateNumeric(Expression<Func<T, object?>> memberExpression, string headerText, int width = 0, bool visible = true, bool hidden = true, FormatMode mode = FormatMode.Numeric, int decimalDigits = 0, string? format = null)
     {
-        var member = ReflectionHelper.GetMember(memberExpression);
-        if (member != null)
+        NumberFormatInfo numberFormat = (NumberFormatInfo)Application.CurrentCulture.NumberFormat.Clone();
+        numberFormat.NumberDecimalDigits = decimalDigits;
+        numberFormat.PercentDecimalDigits = decimalDigits;
+
+        var gridColumn = new GridNumericColumn()
         {
-            NumberFormatInfo numberFormat = (NumberFormatInfo)Application.CurrentCulture.NumberFormat.Clone();
-            numberFormat.NumberDecimalDigits = decimalDigits;
-            numberFormat.PercentDecimalDigits = decimalDigits;
+            MappingName = memberExpression.ToMember().Name,
+            HeaderText = headerText,
+            FormatMode = mode,
+            NumberFormatInfo = numberFormat,
+            Visible = visible
+        };
 
-            var gridColumn = new GridNumericColumn()
-            {
-                MappingName = member.Name,
-                HeaderText = headerText,
-                FormatMode = mode,
-                NumberFormatInfo = numberFormat,
-                Visible = visible
-            };
-
-            if (!string.IsNullOrEmpty(format))
-            {
-                gridColumn.Format = format;
-            }
-
-            SetDefaultData(gridColumn, width, hidden);
-
-            return gridColumn;
+        if (!string.IsNullOrEmpty(format))
+        {
+            gridColumn.Format = format;
         }
 
-        throw new NullReferenceException("Параметр memberExpression должен содержать имя поля, но оно не найдено в классе.");
+        SetDefaultData(gridColumn, width, hidden);
+
+        return gridColumn;
     }
 
     protected GridNumericColumn CreateCurrency(Expression<Func<T, object?>> memberExpression, string headerText, int width = 0, bool visible = true, bool hidden = true, string? format = null)
@@ -535,94 +523,71 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
 
     protected GridCheckBoxColumn CreateBoolean(Expression<Func<T, object?>> memberExpression, string headerText, int width = 0, bool visible = true, bool hidden = true)
     {
-        var member = ReflectionHelper.GetMember(memberExpression);
-        if (member != null)
+        var member = memberExpression.ToMember();
+        bool isNullable = false;
+        if (member is PropertyInfo prop)
         {
-            bool isNullable = false;
-            if (member is PropertyInfo prop)
-            {
-                isNullable = prop.PropertyType == typeof(bool?);
-            }
-
-            var gridColumn = new GridCheckBoxColumn()
-            {
-                MappingName = member.Name,
-                HeaderText = headerText,
-                Visible = visible,
-                AllowThreeState = isNullable
-            };
-
-            SetDefaultData(gridColumn, width, hidden);
-
-            return gridColumn;
+            isNullable = prop.PropertyType == typeof(bool?);
         }
 
-        throw new NullReferenceException("Параметр memberExpression должен содержать имя поля, но оно не найдено в классе.");
+        var gridColumn = new GridCheckBoxColumn()
+        {
+            MappingName = member.Name,
+            HeaderText = headerText,
+            Visible = visible,
+            AllowThreeState = isNullable
+        };
+
+        SetDefaultData(gridColumn, width, hidden);
+
+        return gridColumn;
     }
 
     protected GridProgressBarColumn CreateProgress(Expression<Func<T, object?>> memberExpression, string headerText, int width = 0, bool visible = true, bool hidden = true)
     {
-        var member = ReflectionHelper.GetMember(memberExpression);
-        if (member != null)
+        var gridColumn = new GridProgressBarColumn()
         {
-            var gridColumn = new GridProgressBarColumn()
-            {
-                MappingName = member.Name,
-                HeaderText = headerText,
-                Visible = visible,
-                Maximum = 100,
-                Minimum = 0,
-                ValueMode = ProgressBarValueMode.Percentage
-            };
+            MappingName = memberExpression.ToMember().Name,
+            HeaderText = headerText,
+            Visible = visible,
+            Maximum = 100,
+            Minimum = 0,
+            ValueMode = ProgressBarValueMode.Percentage
+        };
 
-            SetDefaultData(gridColumn, width, hidden);
+        SetDefaultData(gridColumn, width, hidden);
 
-            return gridColumn;
-        }
-
-        throw new NullReferenceException("Параметр memberExpression должен содержать имя поля, но оно не найдено в классе.");
+        return gridColumn;
     }
 
     protected GridDateTimeColumn CreateDateTime(Expression<Func<T, object?>> memberExpression, string headerText, int width = 0, string format = "dd.MM.yyyy HH:mm:ss", bool visible = true, bool hidden = true)
     {
-        var member = ReflectionHelper.GetMember(memberExpression);
-        if (member != null)
+        var gridColumn = new GridDateTimeColumn()
         {
-            var gridColumn = new GridDateTimeColumn()
-            {
-                MappingName = member.Name,
-                HeaderText = headerText,
-                Visible = visible,
-                Pattern = DateTimePattern.Custom,
-                Format = format
-            };
+            MappingName = memberExpression.ToMember().Name,
+            HeaderText = headerText,
+            Visible = visible,
+            Pattern = DateTimePattern.Custom,
+            Format = format
+        };
 
-            SetDefaultData(gridColumn, width, hidden);
+        SetDefaultData(gridColumn, width, hidden);
 
-            return gridColumn;
-        }
-
-        throw new NullReferenceException("Параметр memberExpression должен содержать имя поля, но оно не найдено в классе.");
+        return gridColumn;
     }
 
     protected GridImageColumn CreateImage(Expression<Func<T, object?>> memberExpression, string headerText, int width = 0, bool visible = true, bool hidden = true)
     {
-        var member = ReflectionHelper.GetMember(memberExpression);
-        if (member != null)
+        var gridColumn = new GridImageColumn()
         {
-            var gridColumn = new GridImageColumn()
-            {
-                MappingName = member.Name,
-                HeaderText = headerText,
-                Visible = visible
-            };
+            MappingName = memberExpression.ToMember().Name,
+            HeaderText = headerText,
+            Visible = visible
+        };
 
-            SetDefaultData(gridColumn, width, hidden);
+        SetDefaultData(gridColumn, width, hidden);
 
-            return gridColumn;
-        }
-
-        throw new NullReferenceException("Параметр memberExpression должен содержать имя поля, но оно не найдено в классе.");
+        return gridColumn;
     }
 
     protected virtual GridColumn[] GetColumnsAfter(string mappingName) => Array.Empty<GridColumn>();
@@ -1004,7 +969,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         {
             var document = editableRow as IDocumentInfo;
             var dro = editableRow != null && DocumentIsReadOnly(editableRow);
-            pageManager.ShowEditor(browserType, editableRow?.Id, owner_id, parent_id, readOnly || (document?.Deleted ?? false) || dro);
+            pageManager.ShowEditor(browserType, editableRow?.Id, ownerId, parentId, readOnly || (document?.Deleted ?? false) || dro);
         }
     }
 
@@ -1012,7 +977,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     {
         if (
             gridContent.DataSource is IList<T> list &&
-            editableRow is IDirectory dir && dir.is_folder &&
+            editableRow is IDirectory dir && dir.IsFolder &&
             repository is IDirectoryRepository<T> repo)
         {
 
@@ -1033,7 +998,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     {
         if (gridContent.SelectedItem is T row)
         {
-            if (row is IDirectory dir && dir.is_folder)
+            if (row is IDirectory dir && dir.IsFolder)
             {
                 ParentId = row.Id;
                 if (navigator != null)
@@ -1056,7 +1021,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     {
         if (gridContent.DataSource is IList<T> list && gridContent.SelectedItem is T row)
         {
-            if (row is IDirectory dir && dir.is_folder)
+            if (row is IDirectory dir && dir.IsFolder)
             {
                 MessageBox.Show("Копию группы создавать нельзя. Создайте её вручную.", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -1069,7 +1034,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                 {
                     if (MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        pageManager.ShowEditor(browserType, copy.Id, owner_id, parent_id, false);
+                        pageManager.ShowEditor(browserType, copy.Id, ownerId, parentId, false);
                     }
                 }
 
@@ -1101,7 +1066,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     private void Delete(T row)
     {
         bool delete;
-        if (row is IDirectory dir && dir.is_folder)
+        if (row is IDirectory dir && dir.IsFolder)
         {
             delete = MessageBox.Show("Пометка на Удаление группы приведет к аналогичному действию для всего содержимого группы. Продолжить?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
         }
@@ -1163,10 +1128,10 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         switch (document)
         {
             case IDirectory aDir:
-                add = parent_id == aDir.parent_id && (owner_id == null || owner_id == aDir.owner_id);
+                add = parentId == aDir.ParentId && (ownerId == null || ownerId == aDir.OwnerId);
                 break;
             case IDocumentInfo aDoc:
-                add = owner_id == null || owner_id == aDoc.owner_id;
+                add = ownerId == null || ownerId == aDoc.OwnerId;
                 break;
         }
 
@@ -1290,10 +1255,10 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                                 switch (refreshDoc)
                                 {
                                     case IDirectory rDir:
-                                        change = parent_id == rDir.parent_id && (owner_id == null || owner_id == rDir.owner_id);
+                                        change = parentId == rDir.ParentId && (ownerId == null || ownerId == rDir.OwnerId);
                                         break;
                                     case IDocumentInfo rDoc:
-                                        change = owner_id == null || owner_id == rDoc.owner_id;
+                                        change = ownerId == null || ownerId == rDoc.OwnerId;
                                         break;
                                 }
 
@@ -1521,7 +1486,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             {
                 var menuItem = new ToolStripMenuItem
                 {
-                    Text = string.IsNullOrEmpty(doc.note) ? doc.file_name : doc.note,
+                    Text = string.IsNullOrEmpty(doc.Note) ? doc.FileName : doc.Note,
                     Tag = doc
                 };
 
@@ -1585,7 +1550,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             gridContent.DataSource is IList<T> list &&
             repository is IDirectoryRepository<T> repo)
         {
-            var editor = new GroupEditorForm<T>(repo, parent_id);
+            var editor = new GroupEditorForm<T>(repo, parentId);
             var folder = editor.ShowFolderDialog();
             if (folder != null)
             {
@@ -1673,7 +1638,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                 if (gridContent.SelectedItem is T row)
                 {
                     bool delete = true;
-                    if (row is IDirectory dir && dir.is_folder)
+                    if (row is IDirectory dir && dir.IsFolder)
                     {
                         delete = MessageBox.Show("Удаление группы приведет к аналогичному действию для всего содержимого группы. Продолжить?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
                     }

@@ -30,12 +30,12 @@ public class OperationUsageBrowser : Browser<OperationUsage>, IOperationUsageBro
         Toolbar.IconSize = ButtonIconSize.Small;
 
         var id = CreateText(x => x.Id, "Идентификатор", 180, visible: false);
-        var goods_id = CreateText(x => x.goods_id, "Идентификатор изделия", 180, visible: false);
-        var code = CreateText(x => x.goods_code, "Артикул", 140, visible: false);
-        var goods_name = CreateText(x => x.goods_name, "Изделие", hidden: false);
-        var calculation_name = CreateText(x => x.calculation_name, "Наименование калькуляции", 300, visible: false);
-        var calculation_code = CreateText(x => x.calculation_code, "Калькуляция", 150);
-        var amount = CreateNumeric(x => x.amount, "Количество", 120, decimalDigits: 3);
+        var goods_id = CreateText(x => x.GoodsId, "Идентификатор изделия", 180, visible: false);
+        var code = CreateText(x => x.GoodsCode, "Артикул", 140, visible: false);
+        var goods_name = CreateText(x => x.GoodsName, "Изделие", hidden: false);
+        var calculation_name = CreateText(x => x.CalculationName, "Наименование калькуляции", 300, visible: false);
+        var calculation_code = CreateText(x => x.CalculationCode, "Калькуляция", 150);
+        var amount = CreateNumeric(x => x.Amount, "Количество", 120, decimalDigits: 3);
 
         goods_name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 
@@ -50,7 +50,7 @@ public class OperationUsageBrowser : Browser<OperationUsage>, IOperationUsageBro
         {
             if (CurrentDocument != null)
             {
-                pageManager.ShowEditor<IGoodsEditor>(CurrentDocument.goods_id);
+                pageManager.ShowEditor<IGoodsEditor>(CurrentDocument.GoodsId);
             }
         });
 

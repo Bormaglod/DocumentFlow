@@ -49,15 +49,15 @@ public class WaybilSlaleCreationBased : ICreationBased
                     {
                         WaybillSalePrice row = new()
                         {
-                            owner_id = wr.Id,
-                            reference_id = item.reference_id,
-                            amount = item.amount,
-                            price = item.price,
-                            product_cost = item.product_cost,
-                            tax = item.tax,
-                            tax_value = item.tax_value,
-                            full_cost = item.full_cost,
-                            table_name = "goods"
+                            OwnerId = wr.Id,
+                            ReferenceId = item.ReferenceId,
+                            Amount = item.Amount,
+                            Price = item.Price,
+                            ProductCost = item.ProductCost,
+                            Tax = item.Tax,
+                            TaxValue = item.TaxValue,
+                            FullCost = item.FullCost,
+                            TableName = "goods"
                         };
 
                         wrpr.Add(row, transaction);

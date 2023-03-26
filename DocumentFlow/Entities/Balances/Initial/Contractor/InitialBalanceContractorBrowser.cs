@@ -30,10 +30,10 @@ internal class InitialBalanceContractorBrowser : Browser<InitialBalanceContracto
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        var contractor_name = CreateText(x => x.contractor_name, "Контрагент");
-        var contract_date = CreateDateTime(x => x.contract_date, "Дата", width: 150, format: "dd.MM.yyyy");
-        var contract_number = CreateText(x => x.contract_number, "Номер", width: 100);
-        var contract_name = CreateText(x => x.contract_name, "Наименование", width: 250);
+        var contractor_name = CreateText(x => x.ContractorName, "Контрагент");
+        var contract_date = CreateDateTime(x => x.ContractDate, "Дата", width: 150, format: "dd.MM.yyyy");
+        var contract_number = CreateText(x => x.ContractNumber, "Номер", width: 100);
+        var contract_name = CreateText(x => x.ContractName, "Наименование", width: 250);
         var our_debt = CreateCurrency(x => x.OurDebt, "Наш", width: 120);
         var contractor_debt = CreateCurrency(x => x.ContractorDebt, "Контрагента", width: 120);
 

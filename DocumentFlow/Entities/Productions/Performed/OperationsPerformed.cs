@@ -22,31 +22,31 @@ namespace DocumentFlow.Entities.Productions.Performed;
 [Description("Выполнение работы")]
 public class OperationsPerformed : AccountingDocument
 {
-    private long _quantity;
+    private long quantity;
 
-    public Guid employee_id { get; set; }
-    public Guid operation_id { get; set; }
-    public Guid? replacing_material_id { get; set; }
+    public Guid EmployeeId { get; set; }
+    public Guid OperationId { get; set; }
+    public Guid? ReplacingMaterialId { get; set; }
 
-    public long quantity
+    public long Quantity
     {
-        get => _quantity;
+        get => quantity;
         set
         {
-            _quantity = value;
+            quantity = value;
             NotifyPropertyChanged();
         }
     }
 
-    public decimal salary { get; set; }
-    public bool? double_rate { get; set; }
-    public string? lot_name { get; protected set; }
-    public string? order_name { get; protected set; }
-    public string? goods_name { get; protected set; }
-    public Guid calculation_id { get; protected set; }
-    public string calculation_name { get; protected set; } = string.Empty;
-    public string operation_code { get; protected set; } = string.Empty;
-    public string? operation_name { get; protected set; }
-    public string? employee_name { get; protected set; }
-    public string? material_name { get; protected set; }
+    public decimal Salary { get; set; }
+    public bool? DoubleRate { get; set; }
+    public string? LotName { get; protected set; }
+    public string? OrderName { get; protected set; }
+    public string? GoodsName { get; protected set; }
+    public Guid CalculationId { get; protected set; }
+    public string CalculationName { get; protected set; } = string.Empty;
+    public string OperationCode { get; protected set; } = string.Empty;
+    public string? OperationName { get; protected set; }
+    public string? EmployeeName { get; protected set; }
+    public string? MaterialName { get; protected set; }
 }

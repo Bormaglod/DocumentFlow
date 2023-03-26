@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Productions.Order;
 
-[Menu(MenuDestination.Document, "Заказ на изготовление", 102010, "Производство")]
+[Menu(MenuDestination.Document, "Заказ на изготовление", parent: "Производство", order: 10 )]
 public interface IProductionOrderBrowser : IBrowser<ProductionOrder>
 {
 }

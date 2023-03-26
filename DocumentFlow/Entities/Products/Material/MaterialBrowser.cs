@@ -37,15 +37,15 @@ public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
         : base(repository, pageManager, productRowHeader, navigator: navigator, settings: settings)
     {
         var id = CreateText(x => x.Id, "Id", 180, visible: false);
-        var code = CreateText(x => x.code, "Код", 150);
-        var name = CreateText(x => x.item_name, "Наименование", hidden: false);
-        var measurement = CreateText(x => x.measurement_name, "Ед. изм.", width: 100);
-        var price = CreateCurrency(x => x.price, "Цена", 100);
-        var vat = CreateNumeric(x => x.vat, "НДС", 80, mode: FormatMode.Percent);
-        var weight = CreateNumeric(x => x.weight, "Вес, г", 100, decimalDigits: 3);
-        var min_order = CreateNumeric(x => x.min_order, "Мин. заказ", 100, decimalDigits: 3);
-        var ext_article = CreateText(x => x.ext_article, "Доп. артикул", 120);
-        var cross = CreateText(x => x.cross_name, "Кросс-артикул", 120);
+        var code = CreateText(x => x.Code, "Код", 150);
+        var name = CreateText(x => x.ItemName, "Наименование", hidden: false);
+        var measurement = CreateText(x => x.MeasurementName, "Ед. изм.", width: 100);
+        var price = CreateCurrency(x => x.Price, "Цена", 100);
+        var vat = CreateNumeric(x => x.Vat, "НДС", 80, mode: FormatMode.Percent);
+        var weight = CreateNumeric(x => x.Weight, "Вес, г", 100, decimalDigits: 3);
+        var min_order = CreateNumeric(x => x.MinOrder, "Мин. заказ", 100, decimalDigits: 3);
+        var ext_article = CreateText(x => x.ExtArticle, "Доп. артикул", 120);
+        var cross = CreateText(x => x.CrossName, "Кросс-артикул", 120);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         measurement.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
@@ -56,9 +56,9 @@ public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
 
         if (repository.HasPrivilege("materials", Privilege.Select))
         {
-            var balance = CreateNumeric(x => x.product_balance, "Тек. остаток", 120, decimalDigits: 3);
-            var material_using = CreateBoolean(x => x.material_using, "Используется", 120);
-            var status = CreateImage(x => x.price_status, "Статус цены", 100);
+            var balance = CreateNumeric(x => x.ProductBalance, "Тек. остаток", 120, decimalDigits: 3);
+            var material_using = CreateBoolean(x => x.MaterialUsing, "Используется", 120);
+            var status = CreateImage(x => x.PriceStatus, "Статус цены", 100);
 
             balance.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
@@ -78,15 +78,15 @@ public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
     protected override void BrowserImageStyle(Material document, string column, ImageCellStyle style)
     {
         base.BrowserImageStyle(document, column, style);
-        if (column == "price_status")
+        if (column == nameof(document.PriceStatus))
         {
-            if (document.is_folder)
+            if (document.IsFolder)
             {
                 style.DisplayText = string.Empty;
             }
             else
             {
-                switch (document.price_status)
+                switch (document.PriceStatus)
                 {
                     case 0:
                         style.Image = Properties.Resources.perfect;

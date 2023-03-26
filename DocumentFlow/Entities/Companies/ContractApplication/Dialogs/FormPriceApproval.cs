@@ -32,8 +32,8 @@ public partial class FormPriceApproval : Form
     {
         InitializeComponent();
 
-        product = new("reference_id", "Материал / Изделие", 150) { TabIndex = 1, RefreshMethod = DataRefreshMethod.Immediately };
-        price = new("price", "Цена", 150) { DefaultAsNull = false, TabIndex = 2 };
+        product = new("ReferenceId", "Материал / Изделие", 150) { TabIndex = 1, RefreshMethod = DataRefreshMethod.Immediately };
+        price = new("Price", "Цена", 150) { DefaultAsNull = false, TabIndex = 2 };
 
         product.SetDataSource(() =>
         {
@@ -72,8 +72,8 @@ public partial class FormPriceApproval : Form
     public static DialogResult Edit(PriceApproval price)
     {
         FormPriceApproval form = new();
-        form.product.Value = price.product_id;
-        form.price.Value = price.price;
+        form.product.Value = price.ProductId;
+        form.price.Value = price.Price;
         if (form.ShowDialog() == DialogResult.OK)
         {
             form.SaveControlData(price);
@@ -87,12 +87,12 @@ public partial class FormPriceApproval : Form
     {
         if (product.SelectedItem != null)
         {
-            priceApproval.product_id = product.SelectedItem.Id;
+            priceApproval.ProductId = product.SelectedItem.Id;
         }
 
         if (price.NumericValue != null)
         {
-            priceApproval.price = price.NumericValue.Value;
+            priceApproval.Price = price.NumericValue.Value;
         }
 
         priceApproval.SetProductName(product.ValueText);

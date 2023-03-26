@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Productions.Processing;
 
-[Menu(MenuDestination.Document, "Поступление в переработку", 102040, "Производство")]
+[Menu(MenuDestination.Document, "Поступление в переработку", parent: "Производство", order: 50 )]
 public interface IWaybillProcessingBrowser : IBrowser<WaybillProcessing>
 {
 }

@@ -5,7 +5,6 @@
 // Date: 26.06.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
 
@@ -17,15 +16,11 @@ public class WireEditor : Editor<Wire>, IWireEditor
 
     public WireEditor(IWireRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var code = new DfTextBox("code", "Код", headerWidth, 100) { DefaultAsNull = false };
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 400);
-        var wsize = new DfNumericTextBox("wsize", "Сечение", headerWidth, 100) { NumberDecimalDigits = 2 };
-        
         AddControls(new Control[]
         {
-            code, 
-            name, 
-            wsize
+            CreateTextBox(x => x.Code, "Код", headerWidth, 100, defaultAsNull: false),
+            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400),
+            CreateNumericTextBox(x => x.Wsize, "Сечение", headerWidth, 100, digits: 2)
         });
     }
 }

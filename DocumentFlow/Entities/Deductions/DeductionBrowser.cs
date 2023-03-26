@@ -29,10 +29,10 @@ public class DeductionBrowser : Browser<Deduction>, IDeductionBrowser
         : base(repository, pageManager, settings: settings) 
     {
         GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn name = CreateText(x => x.item_name, "Наименование", hidden: false);
-        GridTextColumn base_calc = CreateText(x => x.base_calc_text, "База для начисления", width: 160);
-        GridNumericColumn percent = CreateNumeric(x => x.percent_value, "Процент", width: 100, mode: FormatMode.Percent, decimalDigits: 2);
-        GridNumericColumn fix = CreateCurrency(x => x.fix_value, "Фикс. сумма", width: 100);
+        GridTextColumn name = CreateText(x => x.ItemName, "Наименование", hidden: false);
+        GridTextColumn base_calc = CreateText(x => x.BaseCalcText, "База для начисления", width: 160);
+        GridNumericColumn percent = CreateNumeric(x => x.PercentValue, "Процент", width: 100, mode: FormatMode.Percent, decimalDigits: 2);
+        GridNumericColumn fix = CreateCurrency(x => x.FixValue, "Фикс. сумма", width: 100);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         percent.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;

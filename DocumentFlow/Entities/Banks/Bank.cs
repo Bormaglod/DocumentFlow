@@ -18,9 +18,7 @@ namespace DocumentFlow.Entities.Banks;
 [Description("Банк")]
 public class Bank : Directory
 {
-#pragma warning disable IDE1006 // Стили именования
-    public decimal bik { get; set; }
-    public decimal account { get; set; }
-    public string? town { get; set; }
-#pragma warning restore IDE1006 // Стили именования
+    public decimal Bik { get; set; }
+    public decimal Account { get; set; }
+    public string? Town { get; set; }
 }

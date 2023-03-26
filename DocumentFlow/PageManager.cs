@@ -84,7 +84,7 @@ public class PageManager : IPageManager
             try
             {
                 var browser = Services.Provider.GetService(browserType);
-                if (browser is Control control && browser is IBrowserPage browserPage)
+                if (browser is IBrowserPage browserPage)
                 {
                     browserPage.Refresh();
                     page = AddPage(browserPage);

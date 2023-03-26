@@ -21,14 +21,14 @@ namespace DocumentFlow.Entities.Wages.Core;
 public class WageEmployee : Entity<long>, IWageEmployee
 {
     [Display(AutoGenerateField = false)]
-    public Guid employee_id { get; set; }
+    public Guid EmployeeId { get; set; }
 
     [Display(Name = "Сотрудник", Order = 1)]
     [Exclude]
-    public string employee_name { get; protected set; } = string.Empty;
+    public string EmployeeName { get; protected set; } = string.Empty;
 
     [Display(Name = "Зар. плата", Order = 100)]
-    public decimal wage { get; set; }
+    public decimal Wage { get; set; }
 
     public object Clone() => MemberwiseClone();
 
@@ -40,7 +40,7 @@ public class WageEmployee : Entity<long>, IWageEmployee
         return copy;
     }
 
-    public void SetEmployeeName(string employeeName) => employee_name = employeeName;
+    public void SetEmployeeName(string employeeName) => EmployeeName = employeeName;
 
-    public override string ToString() => employee_name;
+    public override string ToString() => EmployeeName;
 }

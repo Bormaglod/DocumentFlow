@@ -22,7 +22,7 @@ namespace DocumentFlow.Controls.Editors;
 
 public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, IDataSourceControl, IAccess
 {
-    private List<IItem> items = new();
+    private readonly List<IItem> items = new();
     private Func<IEnumerable<IItem>?>? dataSource;
 
     public DfMultiSelectionComboBox(string property, string header, int headerWidth, int editorWidth) : base(property)
@@ -34,8 +34,8 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
         EditorWidth = editorWidth;
         
         multiSelectionComboBox1.Style = MultiSelectionComboBoxStyle.Office2016Colorful;
-        multiSelectionComboBox1.DisplayMember = "item_name";
-        multiSelectionComboBox1.ValueMember = "code";
+        multiSelectionComboBox1.DisplayMember = "ItemName";
+        multiSelectionComboBox1.ValueMember = "Code";
         multiSelectionComboBox1.VisualItemInputMode = VisualItemInputMode.ValueMemberMode;
     }
 
@@ -82,9 +82,9 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
                 if (multiSelectionComboBox1.DataSource is IList<IItem> list && value is IEnumerable<string> values)
                 {
                     list
-                        .Where(x => values.Contains(x.code))
+                        .Where(x => values.Contains(x.Code))
                         .ToList()
-                        .ForEach(x => multiSelectionComboBox1.AddVisualItem(x.code));
+                        .ForEach(x => multiSelectionComboBox1.AddVisualItem(x.Code));
                 }
             }
         }

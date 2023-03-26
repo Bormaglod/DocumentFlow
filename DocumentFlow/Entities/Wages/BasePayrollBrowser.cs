@@ -28,7 +28,7 @@ public abstract class BasePayrollBrowser<T> : BillingDocumentBrowser<T>
     {
         AddColumns(new GridColumn[] 
         {
-            CreateCurrency(x => x.wage, "Зар. плата", width: 100)
+            CreateCurrency(x => x.Wage, "Зар. плата", width: 100)
         });
     }
 }

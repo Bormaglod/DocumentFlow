@@ -32,13 +32,13 @@ public class BalanceMaterialRepository : BalanceProductRepository<BalanceMateria
         var repo = Services.Provider.GetService<IMaterialRepository>();
         if (repo != null)
         {
-            var avg_price = repo.GetAveragePrice(balance.reference_id, balance.DocumentDate);
+            var avg_price = repo.GetAveragePrice(balance.ReferenceId, balance.DocumentDate);
 
             using var conn = Database.OpenConnection();
             using var transaction = conn.BeginTransaction();
             try
             {
-                balance.operation_summa = avg_price * Math.Abs(balance.amount);
+                balance.OperationSumma = avg_price * Math.Abs(balance.Amount);
                 Update(balance);
                 transaction.Commit();
             }

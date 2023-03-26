@@ -10,10 +10,10 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
+using DocumentFlow.Entities.Balances;
 using DocumentFlow.Entities.Employees.IncomeItems;
 using DocumentFlow.Infrastructure;
-using DocumentFlow.Entities.Balances;
+using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,19 +23,10 @@ public class OurEmployeeEditor : BaseEmployeeEditor<OurEmployee>, IOurEmployeeEd
 {
     public OurEmployeeEditor(IOurEmployeeRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var items = new DfMultiSelectionComboBox("income_items", "Статьи дохода", 120, 500);
-        items.SetDataSource(() =>
+        AddControls(new Control[] 
         {
-            var repo = Services.Provider.GetService<IIncomeItemRepository>();
-            if (repo != null)
-            {
-                return repo.GetAllDefault();
-            }
-
-            return null;
+            CreateMultiSelectionComboBox(x => x.IncomeItems, "Статьи дохода", 120, 500, data: GetItems)
         });
-
-        AddControls(new Control[] { items });
     }
 
     protected override void RegisterNestedBrowsers()
@@ -43,4 +34,6 @@ public class OurEmployeeEditor : BaseEmployeeEditor<OurEmployee>, IOurEmployeeEd
         base.RegisterNestedBrowsers();
         RegisterNestedBrowser<IBalanceEmployeeBrowser, BalanceEmployee>();
     }
+
+    private IEnumerable<IItem> GetItems() => Services.Provider.GetService<IIncomeItemRepository>()!.GetAllDefault();
 }

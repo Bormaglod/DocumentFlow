@@ -11,7 +11,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
 
@@ -23,21 +22,14 @@ public class EquipmentEditor : Editor<Equipment>, IEquipmentEditor
 
     public EquipmentEditor(IEquipmentRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var code = new DfTextBox("code", "Код", headerWidth, 100) { DefaultAsNull = false };
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 400);
-        var serial = new DfTextBox("serial_number", "Серийный номер", headerWidth, 100);
-        var is_tools = new DfToggleButton("is_tools", "Это инструмент", headerWidth);
-        var commissioning = new DfDateTimePicker("commissioning", "Ввод в экспл.", headerWidth, 150) { Required = false };
-        var starting_hits = new DfIntegerTextBox<int>("starting_hits", "Кол-во опрессовок", headerWidth, 150) { DefaultAsNull = true };
-
         AddControls(new Control[]
         {
-            code,
-            name,
-            serial,
-            commissioning,
-            starting_hits,
-            is_tools
+            CreateTextBox(x => x.Code, "Код", headerWidth, 100, defaultAsNull: false),
+            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400),
+            CreateTextBox(x => x.SerialNumber, "Серийный номер", headerWidth, 100),
+            CreateDateTimePicker(x => x.Commissioning, "Ввод в экспл.", headerWidth, 150, required: false),
+            CreateIntegerTextBox<int>(x => x.StartingHits, "Кол-во опрессовок", headerWidth, 150, defaultAsNull: true),
+            CreateToggleButton(x => x.IsTools, "Это инструмент", headerWidth)
         });
     }
 }

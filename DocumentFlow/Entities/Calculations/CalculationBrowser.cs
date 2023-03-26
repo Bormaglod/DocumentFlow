@@ -34,17 +34,17 @@ public class CalculationBrowser : Browser<Calculation>, ICalculationBrowser
         Toolbar.IconSize = ButtonIconSize.Small;
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var code = CreateText(x => x.code, "Код", width: 130);
-        var state = CreateText(x => x.state_name, "Состояние");
-        var approval = CreateDateTime(x => x.date_approval, "Дата утв.", width: 100, format: "dd.MM.yyyy");
-        var weight = CreateNumeric(x => x.weight, "Вес, г", width: 80, decimalDigits: 3);
-        var time = CreateNumeric(x => x.produced_time, "Время изг., с", width: 120, decimalDigits: 1);
-        var stimul_payment = CreateNumeric(x => x.stimul_payment, "Стимул. выпл.", width: 100, decimalDigits: 2);
-        var stimul_type_name = CreateText(x => x.stimul_type_name, "Способ начисления", width: 110);
-        var cost_price = CreateCurrency(x => x.cost_price, "Себестоимость", width: 130);
-        var profit_percent = CreateNumeric(x => x.profit_percent, "Прибыль, %", width: 120, mode: FormatMode.Percent, decimalDigits: 2);
-        var profit_value = CreateCurrency(x => x.profit_value, "Прибыль", width: 100);
-        var price = CreateCurrency(x => x.price, "Цена", width: 80);
+        var code = CreateText(x => x.Code, "Код", width: 130);
+        var state = CreateText(x => x.StateName, "Состояние");
+        var approval = CreateDateTime(x => x.DateApproval, "Дата утв.", width: 100, format: "dd.MM.yyyy");
+        var weight = CreateNumeric(x => x.Weight, "Вес, г", width: 80, decimalDigits: 3);
+        var time = CreateNumeric(x => x.ProducedTime, "Время изг., с", width: 120, decimalDigits: 1);
+        var stimul_payment = CreateNumeric(x => x.StimulPayment, "Стимул. выпл.", width: 100, decimalDigits: 2);
+        var stimul_type_name = CreateText(x => x.StimulTypeName, "Способ начисления", width: 110);
+        var cost_price = CreateCurrency(x => x.CostPrice, "Себестоимость", width: 130);
+        var profit_percent = CreateNumeric(x => x.ProfitPercent, "Прибыль, %", width: 120, mode: FormatMode.Percent, decimalDigits: 2);
+        var profit_value = CreateCurrency(x => x.ProfitValue, "Прибыль", width: 100);
+        var price = CreateCurrency(x => x.Price, "Цена", width: 80);
 
         state.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         weight.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;

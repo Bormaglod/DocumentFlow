@@ -12,9 +12,9 @@ namespace DocumentFlow.Entities.Calculations;
 [Description("Материал")]
 public class CalculationMaterial : CalculationItem
 {
-    public string? material_name { get; protected set; }
-    public decimal amount { get; set; }
-    public bool is_giving { get; set; }
-    public decimal weight { get; protected set; }
-    public override string ToString() => material_name ?? "[NULL]";
+    public string? MaterialName { get; protected set; }
+    public decimal Amount { get; set; }
+    public bool IsGiving { get; set; }
+    public decimal Weight { get; protected set; }
+    public override string ToString() => MaterialName ?? "[NULL]";
 }

@@ -16,16 +16,16 @@ namespace DocumentFlow.Entities.Waybills;
 [Description("Реализация")]
 public class WaybillSale : Waybill
 {
-    public bool? payment_exists
+    public bool? PaymentExists
     {
         get
         {
-            if (paid == 0)
+            if (Paid == 0)
             {
                 return false;
             }
 
-            if (paid == full_cost)
+            if (Paid == FullCost)
             {
                 return true;
             }

@@ -20,7 +20,7 @@ public class СustomerRepository : OwnedRepository<Guid, Сustomer>, IСustomerR
 {
     public СustomerRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.OwnerId);
     }
 
     protected override Query GetQueryOwner(Query query, Guid owner_id)

@@ -13,9 +13,9 @@ namespace DocumentFlow.Entities.Companies;
 [Description("Приложение")]
 public class ContractApplication : Directory
 {
-    public string? contract_name { get; protected set; }
-    public DateTime document_date { get; set; }
-    public DateTime date_start { get; set; }
-    public DateTime? date_end { get; set; }
-    public override string ToString() => $"{item_name} №{code} от {document_date:d}";
+    public string? ContractName { get; protected set; }
+    public DateTime DocumentDate { get; set; }
+    public DateTime DateStart { get; set; }
+    public DateTime? DateEnd { get; set; }
+    public override string ToString() => $"{ItemName} №{Code} от {DocumentDate:d}";
 }

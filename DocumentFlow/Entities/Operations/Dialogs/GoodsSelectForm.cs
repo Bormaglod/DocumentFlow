@@ -24,11 +24,11 @@ public partial class GoodsSelectForm : Form
         goods = new(string.Empty, "Изделме", 120)
         {
             Required = true,
-            NameColumn = "code",
+            NameColumn = "Code",
             Columns = new Dictionary<string, string>
             {
-                ["code"] = "Артикул",
-                ["item_name"] = "Наименование"
+                ["Code"] = "Артикул",
+                ["ItemName"] = "Наименование"
             },
             RefreshMethod = DataRefreshMethod.Immediately
         };
@@ -57,7 +57,7 @@ public partial class GoodsSelectForm : Form
     public static DialogResult Edit(OperationGoods operationGoods)
     {
         GoodsSelectForm form = new();
-        form.goods.Value = operationGoods.goods_id;
+        form.goods.Value = operationGoods.GoodsId;
         if (form.ShowDialog() == DialogResult.OK)
         {
             form.SaveControlData(operationGoods);
@@ -71,7 +71,7 @@ public partial class GoodsSelectForm : Form
     {
         if (goods.SelectedItem != null)
         {
-            operationGoods.goods_id = goods.SelectedItem.Id;
+            operationGoods.GoodsId = goods.SelectedItem.Id;
             operationGoods.SetGoodsData(goods.SelectedItem);
         }
         else

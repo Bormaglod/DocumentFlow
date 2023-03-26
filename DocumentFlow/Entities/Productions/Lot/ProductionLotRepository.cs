@@ -52,7 +52,7 @@ public class ProductionLotRepository : DocumentRepository<ProductionLot>, IProdu
             conn.Execute($"call set_production_lot_state(:document_id, '{state.ToString().Underscore()}'::lot_state)", new { document_id = lot.Id }, transaction);
             transaction.Commit();
 
-            lot.state = state.ToString().Underscore();
+            lot.State = state.ToString().Underscore();
         }
         catch (Exception e)
         {

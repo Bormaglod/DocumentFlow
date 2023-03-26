@@ -34,21 +34,9 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
 {
     public ReturnMaterialsEditor(IReturnMaterialsRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        var contractor = new DfDirectorySelectBox<Contractor>("contractor_id", "Контрагент", 80, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IContractorEditor, Contractor>(t)
-        };
-
-        var contract = new DfDirectorySelectBox<Contract>("contract_id", "Договор", 80, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IContractEditor, Contract>(t)
-        };
-
-        var order = new DfDocumentSelectBox<ProductionOrder>("owner_id", "Заказ", 80, 400)
-        {
-            RefreshMethod = DataRefreshMethod.OnOpen,
-            OpenAction = (t) => pageManager.ShowEditor<IProductionOrderEditor, ProductionOrder>(t)
-        };
+        var contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 80, 400);
+        var contract = CreateDirectorySelectBox<Contract, IContractEditor>(x => x.ContractId, "Договор", 80, 400);
+        var order = CreateDocumentSelectBox<ProductionOrder, IProductionOrderEditor>(x => x.OwnerId, "Заказ", 80, 400, refreshMethod: DataRefreshMethod.OnOpen);
 
         order.SetDataSource(() =>
         {
@@ -87,12 +75,12 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
         contractor.ValueChanged += (sender, e) =>
         {
             contract.RefreshDataSource();
-            contract.Value = Document.contract_id;
+            contract.Value = Document.ContractId;
 
             if (contract.Value != null)
             {
                 order.RefreshDataSource();
-                order.Value = Document.owner_id;
+                order.Value = Document.OwnerId;
             }
         };
 
@@ -126,7 +114,7 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
             if (e.NewValue != e.OldValue)
             {
                 order.RefreshDataSource();
-                order.Value = Document.owner_id;
+                order.Value = Document.OwnerId;
             }
         };
 

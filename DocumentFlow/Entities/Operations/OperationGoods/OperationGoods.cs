@@ -15,17 +15,14 @@ namespace DocumentFlow.Entities.Operations;
 
 public class OperationGoods : Entity<long>, ICloneable, IEntityClonable
 {
-#pragma warning disable IDE1006 // Стили именования
     [Display(AutoGenerateField = false)]
-    public Guid goods_id { get; set; }
+    public Guid GoodsId { get; set; }
 
     [Display(Name = "Артикул")]
-    public string goods_code { get; protected set; } = string.Empty;
+    public string GoodsCode { get; protected set; } = string.Empty;
 
     [Display(Name = "Наименование")]
-    public string goods_name { get; protected set; } = string.Empty;
-
-#pragma warning restore IDE1006 // Стили именования
+    public string GoodsName { get; protected set; } = string.Empty;
 
     public object Clone() => MemberwiseClone();
 
@@ -37,7 +34,7 @@ public class OperationGoods : Entity<long>, ICloneable, IEntityClonable
         return copy;
     }
 
-    public void SetGoodsData(Goods goods) => (goods_code, goods_name) = (goods.code, goods.item_name ?? string.Empty);
+    public void SetGoodsData(Goods goods) => (GoodsCode, GoodsName) = (goods.Code, goods.ItemName ?? string.Empty);
 
-    public void ClearGoodsData() => (goods_code, goods_name) = (string.Empty, string.Empty);
+    public void ClearGoodsData() => (GoodsCode, GoodsName) = (string.Empty, string.Empty);
 }

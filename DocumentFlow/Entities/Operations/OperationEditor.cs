@@ -29,32 +29,20 @@ public class OperationEditor : Editor<Operation>, IOperationEditor
 
     public OperationEditor(IOperationRepository repository, IPageManager pageManager) : base(repository, pageManager)
     {
-        var code = new DfTextBox("code", "Код", headerWidth, 100) { DefaultAsNull = false };
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 400);
-        var type = new DfComboBox<OperationType>("type_id", "Тип операции", headerWidth, 250);
-        var parent = new DfDirectorySelectBox<Operation>("parent_id", "Группа", headerWidth, 400) { ShowOnlyFolder = true };
-        var produced = new DfIntegerTextBox<int>("produced", "Выработка", headerWidth, 100) { DefaultAsNull = false };
-        var prod_time = new DfIntegerTextBox<int>("prod_time", "Время выработки, сек.", headerWidth, 100) { DefaultAsNull = false };
-        var production_rate = new DfIntegerTextBox<int>("production_rate", "Норма выработка, ед./час", headerWidth, 100) { DefaultAsNull = false, Enabled = false };
-        var salary = new DfNumericTextBox("salary", "Зарплата, руб.", headerWidth, 100) { DefaultAsNull = false, Enabled = false, NumberDecimalDigits = 4 };
-        var date_norm = new DfDateTimePicker("date_norm", "Дата нормирования", headerWidth, 150) { Required = false };
         var goods = new DfDataGrid<OperationGoods>(Services.Provider.GetService<IOperationGoodsRepository>()!) 
         { 
             Dock = DockStyle.Fill,
-            Header = "Операция будет использовоться только при производстве этих изделий"
+            Header = "Операция будет использоваться только при производстве этих изделий"
         };
-
-        type.SetDataSource(() => Services.Provider.GetService<IOperationTypeRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-        parent.SetDataSource(repository.GetOnlyFolders);
 
         goods.AutoGeneratingColumn += (sender, args) =>
         {
             switch (args.Column.MappingName)
             {
-                case "goods_code":
+                case "GoodsCode":
                     args.Column.Width = 150;
                     break;
-                case "goods_name":
+                case "GoodsName":
                     args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                     break;
                 default:
@@ -80,15 +68,15 @@ public class OperationEditor : Editor<Operation>, IOperationEditor
 
         AddControls(new Control[]
         {
-            code,
-            name,
-            type,
-            parent,
-            produced,
-            prod_time,
-            production_rate,
-            date_norm,
-            salary,
+            CreateTextBox(x => x.Code, "Код", headerWidth, 100, defaultAsNull: false),
+            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400),
+            CreateComboBox(x => x.TypeId, "Тип операции", headerWidth, 250, data: GetTypes),
+            CreateDirectorySelectBox(x => x.ParentId, "Группа", headerWidth, 400, showOnlyFolder: true, data: repository.GetOnlyFolders),
+            CreateIntegerTextBox<int>(x => x.Produced, "Выработка", headerWidth, 100, defaultAsNull: false),
+            CreateIntegerTextBox<int>(x => x.ProdTime, "Время выработки, сек.", headerWidth, 100, defaultAsNull: false),
+            CreateIntegerTextBox<int>(x => x.ProductionRate, "Норма выработка, ед./час", headerWidth, 100, defaultAsNull: false, enabled: false),
+            CreateDateTimePicker(x => x.DateNorm, "Дата нормирования", headerWidth, 150, required: false),
+            CreateNumericTextBox(x => x.Salary, "Зарплата, руб.", headerWidth, 100, defaultAsNull: false, enabled: false, digits: 4),
             goods
         });
     }
@@ -98,4 +86,6 @@ public class OperationEditor : Editor<Operation>, IOperationEditor
         base.RegisterNestedBrowsers();
         RegisterNestedBrowser<IOperationUsageBrowser, OperationUsage>();
     }
+
+    private IEnumerable<OperationType> GetTypes() => Services.Provider.GetService<IOperationTypeRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
 }

@@ -9,7 +9,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
@@ -22,19 +21,12 @@ public class AdjustingBalancesEditor : DocumentEditor<AdjustingBalances>, IAdjus
 {
     public AdjustingBalancesEditor(IAdjustingBalancesRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        var material = new DfDirectorySelectBox<Material>("material_id", "Материал", 100, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IMaterialEditor, Material>(t)
-        };
-
-        var quantity = new DfNumericTextBox("quantity", "Количество", 100, 200) { NumberDecimalDigits = 3 };
-
-        material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllValid());
-
         AddControls(new Control[]
         {
-            material,
-            quantity
+            CreateDirectorySelectBox<Material, IMaterialEditor>(x => x.MaterialId, "Материал", 100, 400, data: GetMaterials),
+            CreateNumericTextBox(x => x.Quantity, "Количество", 100, 200, digits: 3)
         });
     }
+
+    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetAllValid();
 }

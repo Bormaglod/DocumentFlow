@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Waybills;
 
-[Menu(MenuDestination.Document, "Поступление", 106000)]
+[Menu(MenuDestination.Document, "Поступление", order: 50)]
 public interface IWaybillReceiptBrowser : IBrowser<WaybillReceipt>
 {
 }

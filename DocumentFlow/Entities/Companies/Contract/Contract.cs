@@ -29,35 +29,35 @@ public class Contract : Directory
     };
 
     [Exclude]
-    public Guid organization_id { get; set; }
-    public string? contractor_name { get; protected set; }
-    public bool tax_payer { get; set; }
-    public bool is_default { get; set; }
-    public DateTime document_date { get; set; }
-    public DateTime date_start { get; set; }
-    public DateTime? date_end { get; set; }
-    public Guid? signatory_id { get; set; }
-    public string? signatory_name { get; protected set; }
-    public string? signatory_post { get; protected set; }
-    public Guid? org_signatory_id { get; set; }
-    public string? org_signatory_name { get; protected set; }
-    public string? org_signatory_post { get; protected set; }
+    public Guid OrganizationId { get; set; }
+    public string? ContractorName { get; protected set; }
+    public bool TaxPayer { get; set; }
+    public bool IsDefault { get; set; }
+    public DateTime DocumentDate { get; set; }
+    public DateTime DateStart { get; set; }
+    public DateTime? DateEnd { get; set; }
+    public Guid? SignatoryId { get; set; }
+    public string? SignatoryName { get; protected set; }
+    public string? SignatoryPost { get; protected set; }
+    public Guid? OrgSignatoryId { get; set; }
+    public string? OrgSignatoryName { get; protected set; }
+    public string? OrgSignatoryPost { get; protected set; }
 
     [EnumType("contractor_type")]
-    public string c_type { get; set; } = "buyer";
+    public string CType { get; set; } = "buyer";
 
-    public string c_type_text => ContractorTypes[ContractorType];
+    public string CTypeText => ContractorTypes[ContractorType];
 
     public ContractorType ContractorType 
     { 
-        get { return Enum.Parse<ContractorType>(c_type.Pascalize()); }
-        protected set { c_type = value.ToString().Underscore(); }
+        get { return Enum.Parse<ContractorType>(CType.Pascalize()); }
+        protected set { CType = value.ToString().Underscore(); }
     }
 
     public static IReadOnlyDictionary<ContractorType, string> ContractorTypes => contractorTypes;
 
     public override string ToString()
     {
-        return $"{item_name} {code} от {document_date:d}";
+        return $"{ItemName} {Code} от {DocumentDate:d}";
     }
 }

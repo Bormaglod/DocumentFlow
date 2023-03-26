@@ -12,7 +12,7 @@ namespace DocumentFlow.Entities.Balances.Initial;
 [Description("Нач. остаток")]
 internal class InitialBalanceEmployee : InitialBalance
 {
-    public string? employee_name { get; protected set; }
-    public decimal? OurDebt => amount > 0 ? operation_summa : null;
-    public decimal? EmployeeDebt => amount < 0 ? operation_summa : null;
+    public string? EmployeeName { get; protected set; }
+    public decimal? OurDebt => Amount > 0 ? OperationSumma : null;
+    public decimal? EmployeeDebt => Amount < 0 ? OperationSumma : null;
 }

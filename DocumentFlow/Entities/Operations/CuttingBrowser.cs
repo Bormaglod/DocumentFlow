@@ -36,20 +36,20 @@ public class CuttingBrowser : Browser<Cutting>, ICuttingBrowser
         AllowGrouping();
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var code = CreateText(x => x.code, "Код", width: 150, visible: false);
-        var name = CreateText(x => x.item_name, "Наименование", hidden: false);
-        var produced = CreateNumeric(x => x.produced, "Выработка", width: 100, visible: false);
-        var prod_time = CreateNumeric(x => x.prod_time, "Время выработки, сек.", width: 100, visible: false);
-        var production_rate = CreateNumeric(x => x.production_rate, "Норма выработки, ед./час", width: 100, visible: false);
-        var segment_length = CreateNumeric(x => x.segment_length, "Длина резки", width: 100, visible: false);
-        var left_cleaning = CreateNumeric(x => x.left_cleaning, "Длина зачистки слева", width: 100, visible: false, decimalDigits: 1);
-        var left_sweep = CreateNumeric(x => x.left_sweep, "Ширина окна слева", width: 100, visible: false);
-        var right_cleaning = CreateNumeric(x => x.right_cleaning, "Длина зачистки справа", width: 100, visible: false, decimalDigits: 1);
-        var right_sweep = CreateNumeric(x => x.right_sweep, "Ширина окна справа", width: 100, visible: false);
-        var program_number = CreateNumeric(x => x.program_number, "Программа", width: 100, visible: false);
-        var salary = CreateNumeric(x => x.salary, "Зар. плата", width: 100, visible: false, decimalDigits: 4);
-        var operation_using = CreateBoolean(x => x.operation_using, "Используется", 120);
-        var date_norm = CreateDateTime(x => x.date_norm, "Дата нормир.", 100, format: "dd.MM.yyyy", visible: false);
+        var code = CreateText(x => x.Code, "Код", width: 150, visible: false);
+        var name = CreateText(x => x.ItemName, "Наименование", hidden: false);
+        var produced = CreateNumeric(x => x.Produced, "Выработка", width: 100, visible: false);
+        var prod_time = CreateNumeric(x => x.ProdTime, "Время выработки, сек.", width: 100, visible: false);
+        var production_rate = CreateNumeric(x => x.ProductionRate, "Норма выработки, ед./час", width: 100, visible: false);
+        var segment_length = CreateNumeric(x => x.SegmentLength, "Длина резки", width: 100, visible: false);
+        var left_cleaning = CreateNumeric(x => x.LeftCleaning, "Длина зачистки слева", width: 100, visible: false, decimalDigits: 1);
+        var left_sweep = CreateNumeric(x => x.LeftSweep, "Ширина окна слева", width: 100, visible: false);
+        var right_cleaning = CreateNumeric(x => x.RightCleaning, "Длина зачистки справа", width: 100, visible: false, decimalDigits: 1);
+        var right_sweep = CreateNumeric(x => x.RightSweep, "Ширина окна справа", width: 100, visible: false);
+        var program_number = CreateNumeric(x => x.ProgramNumber, "Программа", width: 100, visible: false);
+        var salary = CreateNumeric(x => x.Salary, "Зар. плата", width: 100, visible: false, decimalDigits: 4);
+        var operation_using = CreateBoolean(x => x.OperationUsing, "Используется", 120);
+        var date_norm = CreateDateTime(x => x.DateNorm, "Дата нормир.", 100, format: "dd.MM.yyyy", visible: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         produced.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;

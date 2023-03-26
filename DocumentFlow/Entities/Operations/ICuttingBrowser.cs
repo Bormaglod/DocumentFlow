@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Operations;
 
-[Menu(MenuDestination.Directory, "Резка", 210020, "Производственные операции")]
+[Menu(MenuDestination.Directory, "Резка", parent: "Производственные операции", order: 20)]
 public interface ICuttingBrowser : IBrowser<Cutting>
 {
 }

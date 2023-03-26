@@ -19,18 +19,18 @@ namespace DocumentFlow.Entities.Productions.Order;
 [Description("Заказ")]
 public class ProductionOrder : ShipmentDocument
 {
-    public bool closed { get; set; }
-    public decimal cost_order { get; protected set; }
-    public bool tax_payer { get; protected set; }
-    public int tax { get; protected set; }
-    public decimal tax_value { get; protected set; }
-    public decimal full_cost { get; protected set; }
+    public bool Closed { get; set; }
+    public decimal CostOrder { get; protected set; }
+    public bool TaxPayer { get; protected set; }
+    public int Tax { get; protected set; }
+    public decimal TaxValue { get; protected set; }
+    public decimal FullCost { get; protected set; }
 
     public static void CreateGridColumns(Columns columns)
     {
         var doc_date = new GridDateTimeColumn()
         {
-            MappingName = "document_date",
+            MappingName = "Document_Date",
             HeaderText = "Дата",
             Pattern = DateTimePattern.LongDate,
             Width = 120
@@ -41,7 +41,7 @@ public class ProductionOrder : ShipmentDocument
 
         var doc_number = new GridNumericColumn()
         {
-            MappingName = "document_number",
+            MappingName = "DocumentNumber",
             HeaderText = "Номер",
             FormatMode = FormatMode.Numeric,
             NumberFormatInfo = numberFormat,
@@ -50,7 +50,7 @@ public class ProductionOrder : ShipmentDocument
 
         var contractor = new GridTextColumn()
         {
-            MappingName = "contractor_name",
+            MappingName = "ContractorName",
             HeaderText = "Контрагент"
         };
 
@@ -59,7 +59,7 @@ public class ProductionOrder : ShipmentDocument
 
         var full_cost = new GridNumericColumn()
         {
-            MappingName = "full_cost",
+            MappingName = "FullCost",
             HeaderText = "Сумма заказа",
             FormatMode = FormatMode.Currency,
             NumberFormatInfo = costFormat,

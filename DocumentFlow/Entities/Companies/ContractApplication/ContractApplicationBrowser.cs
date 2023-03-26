@@ -31,12 +31,12 @@ public class ContractApplicationBrowser : Browser<ContractApplication>, IContrac
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn code = CreateText(x => x.code, "Номер");
-        GridDateTimeColumn document_date = CreateDateTime(x => x.document_date, "Дата", width: 150, format: "dd.MM.yyyy");
-        GridTextColumn name = CreateText(x => x.item_name, "Наименование");
-        GridDateTimeColumn date_start = CreateDateTime(x => x.date_start, "Дата начала", width: 150, format: "dd.MM.yyyy");
-        GridDateTimeColumn date_end = CreateDateTime(x => x.date_end, "Дата окончания", width: 150, format: "dd.MM.yyyy");
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var code = CreateText(x => x.Code, "Номер");
+        var document_date = CreateDateTime(x => x.DocumentDate, "Дата", width: 150, format: "dd.MM.yyyy");
+        var name = CreateText(x => x.ItemName, "Наименование");
+        var date_start = CreateDateTime(x => x.DateStart, "Дата начала", width: 150, format: "dd.MM.yyyy");
+        var date_end = CreateDateTime(x => x.DateEnd, "Дата окончания", width: 150, format: "dd.MM.yyyy");
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

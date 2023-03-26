@@ -62,17 +62,17 @@ public class BalanceSheetBrowser : Browser<BalanceSheet>, IBalanceSheetBrowser
         this.settings = settings;
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var name = CreateText(x => x.product_name, "Наименование", hidden: false);
-        var code = CreateText(x => x.product_code, "Артикул", width: 150);
-        var group_name = CreateText(x => x.group_name, "Группа", width: 200, visible: false);
-        var opening_balance_amount = CreateNumeric(x => x.opening_balance_amount, "Остаток на начало", width: 150, decimalDigits: 3);
-        var opening_balance_summa = CreateCurrency(x => x.opening_balance_summa, "Остаток на начало", width: 150);
-        var income_amount = CreateNumeric(x => x.income_amount, "Приход", width: 150, decimalDigits: 3);
-        var income_summa = CreateCurrency(x => x.income_summa, "Приход", width: 150);
-        var expense_amount = CreateNumeric(x => x.expense_amount, "Расход", width: 150, decimalDigits: 3);
-        var expense_summa = CreateCurrency(x => x.expense_summa, "Расход", width: 150);
-        var closing_balance_amount = CreateNumeric(x => x.closing_balance_amount, "Остаток на конец", width: 150, decimalDigits: 3);
-        var closing_balance_summa = CreateCurrency(x => x.closing_balance_summa, "Остаток на конец", width: 150);
+        var name = CreateText(x => x.ProductName, "Наименование", hidden: false);
+        var code = CreateText(x => x.ProductCode, "Артикул", width: 150);
+        var group_name = CreateText(x => x.GroupName, "Группа", width: 200, visible: false);
+        var opening_balance_amount = CreateNumeric(x => x.OpeningBalanceAmount, "Остаток на начало", width: 150, decimalDigits: 3);
+        var opening_balance_summa = CreateCurrency(x => x.OpeningBalanceSumma, "Остаток на начало", width: 150);
+        var income_amount = CreateNumeric(x => x.IncomeAmount, "Приход", width: 150, decimalDigits: 3);
+        var income_summa = CreateCurrency(x => x.IncomeSumma, "Приход", width: 150);
+        var expense_amount = CreateNumeric(x => x.ExpenseAmount, "Расход", width: 150, decimalDigits: 3);
+        var expense_summa = CreateCurrency(x => x.ExpenseSumma, "Расход", width: 150);
+        var closing_balance_amount = CreateNumeric(x => x.ClosingBalanceAmount, "Остаток на конец", width: 150, decimalDigits: 3);
+        var closing_balance_summa = CreateCurrency(x => x.ClosingBalanceSumma, "Остаток на конец", width: 150);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         opening_balance_amount.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;

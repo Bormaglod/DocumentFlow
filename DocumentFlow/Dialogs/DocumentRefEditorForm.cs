@@ -28,11 +28,11 @@ public partial class DocumentRefEditorForm : Form
 
         if (refs != null)
         {
-            fileNameWithPath = refs.file_name ?? string.Empty;
+            fileNameWithPath = refs.FileName ?? string.Empty;
 
-            textFileName.Text = refs.file_name;
-            textNote.Text = refs.note;
-            checkBoxThumbnail.Checked = refs.thumbnail_exist;
+            textFileName.Text = refs.FileName;
+            textNote.Text = refs.Note;
+            checkBoxThumbnail.Checked = refs.ThumbnailExist;
 
             textFileName.Enabled = false;
             buttonSelectFile.Enabled = false;
@@ -51,15 +51,15 @@ public partial class DocumentRefEditorForm : Form
             var fileInfo = new FileInfo(f.FileNameWithPath);
             document = new DocumentRefs
             {
-                owner_id = owner,
-                file_name = f.FileName,
-                note = f.textNote.Text,
-                file_length = fileInfo.Length
+                OwnerId = owner,
+                FileName = f.FileName,
+                Note = f.textNote.Text,
+                FileLength = fileInfo.Length
             };
 
             using FileStream stream = new(fileInfo.FullName, FileMode.Open, FileAccess.Read);
-            document.file_content = new byte[stream.Length];
-            stream.Read(document.file_content, 0, document.file_content.Length);
+            document.FileContent = new byte[stream.Length];
+            stream.Read(document.FileContent, 0, document.FileContent.Length);
 
             if (f.checkBoxThumbnail.Checked)
             {
@@ -80,14 +80,14 @@ public partial class DocumentRefEditorForm : Form
         DocumentRefEditorForm f = new(refs);
         if (f.ShowDialog() == DialogResult.OK)
         {
-            refs.note = f.textNote.Text;
+            refs.Note = f.textNote.Text;
             if (f.checkBoxThumbnail.Checked)
             {
                 refs.CreateThumbnailImage();
             }
             else
             {
-                refs.thumbnail = null;
+                refs.Thumbnail = null;
             }
 
             return true;

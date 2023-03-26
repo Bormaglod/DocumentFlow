@@ -37,26 +37,26 @@ public enum PurchaseState { NotActive, Active, Canceled, Completed }
 [Description("Заявка")]
 public class PurchaseRequest : ShipmentDocument
 {
-    public decimal cost_order { get; protected set; }
-    public bool tax_payer { get; protected set; }
-    public int tax { get; protected set; }
-    public decimal tax_value { get; protected set; }
-    public decimal full_cost { get; protected set; }
-    public decimal prepayment { get; protected set; }
-    public string? note { get; set; }
-    public decimal receipt_payment { get; protected set; }
-    public decimal delivery_amount { get; protected set; }
-    public bool executed { get => delivery_amount > 0; }
-    public bool? paid 
+    public decimal CostOrder { get; protected set; }
+    public bool TaxPayer { get; protected set; }
+    public int Tax { get; protected set; }
+    public decimal TaxValue { get; protected set; }
+    public decimal FullCost { get; protected set; }
+    public decimal Prepayment { get; protected set; }
+    public string? Note { get; set; }
+    public decimal ReceiptPayment { get; protected set; }
+    public decimal DeliveryAmount { get; protected set; }
+    public bool Executed { get => DeliveryAmount > 0; }
+    public bool? Paid 
     { 
         get
         {
-            if (prepayment + receipt_payment == 0)
+            if (Prepayment + ReceiptPayment == 0)
             {
                 return false;
             }
 
-            if (prepayment + receipt_payment == delivery_amount)
+            if (Prepayment + ReceiptPayment == DeliveryAmount)
             {
                 return true;
             }
@@ -67,14 +67,14 @@ public class PurchaseRequest : ShipmentDocument
 
     [EnumType("purchase_state")]
     [DataOperation(DataOperation.Add | DataOperation.Update)]
-    public string state { get; set; } = "not active";
-    public string state_name => StateNameFromValue(PurchaseState);
+    public string State { get; set; } = "not active";
+    public string StateName => StateNameFromValue(PurchaseState);
 
     [Exclude]
     public PurchaseState PurchaseState
     {
-        get { return Enum.Parse<PurchaseState>(state.Dehumanize()); }
-        set { state = StateFromValue(value); }
+        get { return Enum.Parse<PurchaseState>(State.Dehumanize()); }
+        set { State = StateFromValue(value); }
     }
 
     public static string StateNameFromValue(PurchaseState state) => state switch
@@ -92,7 +92,7 @@ public class PurchaseRequest : ShipmentDocument
     {
         var doc_date = new GridDateTimeColumn()
         {
-            MappingName = "document_date",
+            MappingName = "DocumentDate",
             HeaderText = "Дата",
             Pattern = DateTimePattern.LongDate,
             Width = 120
@@ -103,7 +103,7 @@ public class PurchaseRequest : ShipmentDocument
 
         var doc_number = new GridNumericColumn()
         {
-            MappingName = "document_number",
+            MappingName = "DocumentNumber",
             HeaderText = "Номер",
             FormatMode = FormatMode.Numeric,
             NumberFormatInfo = numberFormat,
@@ -112,7 +112,7 @@ public class PurchaseRequest : ShipmentDocument
 
         var contractor = new GridTextColumn()
         {
-            MappingName = "contractor_name",
+            MappingName = "ContractorName",
             HeaderText = "Контрагент"
         };
 
@@ -121,7 +121,7 @@ public class PurchaseRequest : ShipmentDocument
 
         var full_cost = new GridNumericColumn()
         {
-            MappingName = "full_cost",
+            MappingName = "FullCost",
             HeaderText = "Сумма заказа",
             FormatMode = FormatMode.Currency,
             NumberFormatInfo = costFormat,

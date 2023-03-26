@@ -18,18 +18,18 @@ namespace DocumentFlow.Entities.Waybills;
 [Description("Поступление")]
 public class WaybillReceipt : Waybill
 {
-    public string? purchase_request_number { get; protected set; }
-    public DateTime? purchase_request_date { get; protected set; }
-    public bool? payment_exists
+    public string? PurchaseRequestNumber { get; protected set; }
+    public DateTime? PurchaseRequestDate { get; protected set; }
+    public bool? PaymentExists
     {
         get
         {
-            if (paid == 0)
+            if (Paid == 0)
             {
                 return false;
             }
 
-            if (paid == full_cost)
+            if (Paid == FullCost)
             {
                 return true;
             }

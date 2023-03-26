@@ -9,7 +9,7 @@ namespace DocumentFlow.Entities.Balances;
 
 public class BalanceEmployee : Balance
 {
-    public decimal? employee_debt { get; protected set; }
-    public decimal? organization_debt { get; protected set; }
-    public decimal debt { get; protected set; }
+    public decimal? EmployeeDebt { get; protected set; }
+    public decimal? OrganizationDebt { get; protected set; }
+    public decimal Debt { get; protected set; }
 }

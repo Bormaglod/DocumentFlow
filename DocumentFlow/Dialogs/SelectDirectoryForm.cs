@@ -138,7 +138,7 @@ public partial class SelectDirectoryForm<T> : Form
         {
             if (item is TreeNodeAdv node && node.Tag is IDirectory d)
             {
-                if (d.is_folder)
+                if (d.IsFolder)
                 {
                     int n = FillEmptyFolders(node.Nodes, folders);
                     if (n == 0)
@@ -162,14 +162,14 @@ public partial class SelectDirectoryForm<T> : Form
 
     private void AddItems(IEnumerable<T> items, TreeNodeAdv? node, Guid? parent)
     {
-        foreach (var item in items.Where(x => x.parent_id == parent))
+        foreach (var item in items.Where(x => x.ParentId == parent))
         {
-            if (showOnlyFolder && !item.is_folder)
+            if (showOnlyFolder && !item.IsFolder)
             {
                 continue;
             }
 
-            TreeNodeAdv new_node = AddItem(node, item.is_folder, item);
+            TreeNodeAdv new_node = AddItem(node, item.IsFolder, item);
             AddItems(items, new_node, item.Id);
         }
     }
@@ -180,8 +180,8 @@ public partial class SelectDirectoryForm<T> : Form
         {
             return prop.Name switch
             {
-                "code" => data.code,
-                "item_name" => data.item_name ?? string.Empty,
+                "code" => data.Code,
+                "item_name" => data.ItemName ?? string.Empty,
                 _ => prop.GetValue(data)?.ToString() ?? string.Empty
             };
         }
@@ -200,7 +200,7 @@ public partial class SelectDirectoryForm<T> : Form
             LeftImageIndices = new int[] { isFolder ? 0 : 1 }
         };
 
-        if (!data.is_folder && treeSelect.Columns.Count > 0)
+        if (!data.IsFolder && treeSelect.Columns.Count > 0)
         {
             foreach (TreeColumnAdv item in treeSelect.Columns)
             {

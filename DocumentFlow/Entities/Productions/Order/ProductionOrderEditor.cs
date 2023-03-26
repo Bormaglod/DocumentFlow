@@ -37,27 +37,17 @@ public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductio
 
     public ProductionOrderEditor(IProductionOrderRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        contractor = new DfDirectorySelectBox<Contractor>("contractor_id", "Контрагент", 80, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IContractorEditor, Contractor>(t)
-        };
-
-        var contract = new DfDirectorySelectBox<Contract>("contract_id", "Договор", 80, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IContractEditor, Contract>(t)
-        };
-
+        contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 80, 400, data: GetCustomers);
+        var contract = CreateDirectorySelectBox<Contract, IContractEditor>(x => x.ContractId, "Договор", 80, 400);
         var details = new DfDataGrid<ProductionOrderPrice>(Services.Provider.GetService<IProductionOrderPriceRepository>()!)
         {
             Dock = DockStyle.Fill
         };
 
-        contractor.SetDataSource(() => Services.Provider.GetService<IContractorRepository>()!.GetCustomers());
-
         contractor.ValueChanged += (sender, args) =>
         {
             contract.RefreshDataSource();
-            contract.Value = contract.Items.FirstOrDefault(x => x.is_default)?.Id;
+            contract.Value = contract.Items.FirstOrDefault(x => x.IsDefault)?.Id;
         };
 
         contract.SetDataSource(() =>
@@ -68,7 +58,7 @@ public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductio
                 return repo!.GetCustomers(contractor.SelectedItem.Id);
             }
 
-            return Array.Empty<Contract>();
+            return null;
         });
 
         details.CreateTableSummaryRow(VerticalPosition.Bottom)
@@ -80,36 +70,36 @@ public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductio
         {
             switch (args.Column.MappingName)
             {
-                case "id":
-                case "code":
+                case "Id":
+                case "Code":
                     args.Cancel = true;
                     break;
-                case "product_name":
+                case "ProductName":
                     args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                     break;
-                case "calculation_name":
+                case "CalculationName":
                     args.Column.Width = 150;
                     break;
-                case "amount":
+                case "Amount":
                     args.Column.Width = 100;
                     break;
-                case "price":
+                case "Price":
                     UpdateCurrencyColumn(args.Column, 100);
                     break;
-                case "product_cost":
+                case "ProductCost":
                     UpdateCurrencyColumn(args.Column, 140);
                     break;
-                case "tax":
+                case "Tax":
                     args.Column.Width = 80;
                     args.Column.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
                     break;
-                case "tax_value":
+                case "TaxValue":
                     UpdateCurrencyColumn(args.Column, 140);
                     break;
-                case "full_cost":
+                case "FullCost":
                     UpdateCurrencyColumn(args.Column, 140);
                     break;
-                case "complete_status":
+                case "CompleteStatus":
                     args.Column = new GridProgressBarColumn()
                     {
                         MappingName = args.Column.MappingName,
@@ -151,7 +141,9 @@ public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductio
         RegisterNestedBrowser<IProductionLotNestedBrowser, ProductionLot>();
     }
 
-    private void UpdateCurrencyColumn(GridColumn column, int width)
+    private IEnumerable<Contractor> GetCustomers() => Services.Provider.GetService<IContractorRepository>()!.GetCustomers();
+
+    private static void UpdateCurrencyColumn(GridColumn column, int width)
     {
         if (column is GridNumericColumn c)
         {

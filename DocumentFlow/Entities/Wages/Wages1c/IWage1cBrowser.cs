@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Wages;
 
-[Menu(MenuDestination.Document, "Зар. плата 1С", 108010, "Зар. плата")]
+[Menu(MenuDestination.Document, "Зар. плата 1С", parent: "Зар. плата", order: 20 )]
 public interface IWage1cBrowser : IBrowser<Wage1c>
 {
 }

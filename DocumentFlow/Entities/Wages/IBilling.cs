@@ -9,8 +9,6 @@ namespace DocumentFlow.Entities.Wages;
 
 public interface IBilling
 {
-#pragma warning disable IDE1006 // Стили именования
-    int billing_year { get; }
-    short billing_month { get; }
-#pragma warning restore IDE1006 // Стили именования
+    int BillingYear { get; }
+    short BillingMonth { get; }
 }

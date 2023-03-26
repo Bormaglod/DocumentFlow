@@ -38,19 +38,19 @@ public class BasePayrollEditor<T, P, E> : BillingDocumentEditor<T>
         EmployeeRows = new DfDataGrid<P>(repo!) { Dock = DockStyle.Fill };
 
         EmployeeRows.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("wage", SummaryColumnFormat.Currency, SelectOptions.All);
+            .AsSummary("Wage", SummaryColumnFormat.Currency, SelectOptions.All);
 
         EmployeeRows.AutoGeneratingColumn += (sender, args) =>
         {
             switch (args.Column.MappingName)
             {
-                case "employee_name":
+                case "EmployeeName":
                     args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                     break;
-                case "income_item_name":
+                case "IncomeItemName":
                     args.Column.Width = 250;
                     break;
-                case "wage":
+                case "Wage":
                     if (args.Column is GridNumericColumn c)
                     {
                         c.FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency;

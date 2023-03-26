@@ -38,15 +38,15 @@ public class OperationBrowser : Browser<Operation>, IOperationBrowser
         AllowGrouping();
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var code = CreateText(x => x.code, "Код", width: 150);
-        var name = CreateText(x => x.item_name, "Наименование", hidden: false);
-        var produced = CreateNumeric(x => x.produced, "Выработка", width: 100);
-        var prod_time = CreateNumeric(x => x.prod_time, "Время выработки, сек.", width: 100);
-        var production_rate = CreateNumeric(x => x.production_rate, "Норма выработки, ед./час", width: 100);
-        var type_name = CreateText(x => x.type_name, "Тип операции", width: 250);
-        var salary = CreateNumeric(x => x.salary, "Зар. плата, руб.", width: 100, decimalDigits: 4);
-        var operation_using = CreateBoolean(x => x.operation_using, "Используется", 120);
-        var date_norm = CreateDateTime(x => x.date_norm, "Дата нормир.", 100, format: "dd.MM.yyyy", visible: false);
+        var code = CreateText(x => x.Code, "Код", width: 150);
+        var name = CreateText(x => x.ItemName, "Наименование", hidden: false);
+        var produced = CreateNumeric(x => x.Produced, "Выработка", width: 100);
+        var prod_time = CreateNumeric(x => x.ProdTime, "Время выработки, сек.", width: 100);
+        var production_rate = CreateNumeric(x => x.ProductionRate, "Норма выработки, ед./час", width: 100);
+        var type_name = CreateText(x => x.TypeNme, "Тип операции", width: 250);
+        var salary = CreateNumeric(x => x.Salary, "Зар. плата, руб.", width: 100, decimalDigits: 4);
+        var operation_using = CreateBoolean(x => x.OperationUsing, "Используется", 120);
+        var date_norm = CreateDateTime(x => x.DateNorm, "Дата нормир.", 100, format: "dd.MM.yyyy", visible: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         produced.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;

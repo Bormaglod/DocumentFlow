@@ -29,7 +29,7 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository
 {
     public GoodsRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.OwnerId);
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)
@@ -71,7 +71,7 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository
             return;
         }
 
-        if (from.calculation_id != null)
+        if (from.CalculationId != null)
         {
             var calcRepo = Services.Provider.GetService<ICalculationRepository>();
             if (calcRepo == null)
@@ -79,13 +79,13 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository
                 return;
             }
 
-            var calc = calcRepo.GetById(from.calculation_id.Value, transaction.Connection, false);
-            calc.owner_id = to.Id;
+            var calc = calcRepo.GetById(from.CalculationId.Value, transaction.Connection, false);
+            calc.OwnerId = to.Id;
             calc.CalculationState = CalculationState.Prepare;
 
             calcRepo.CopyFrom(calc, transaction);
 
-            to.calculation_id = null;
+            to.CalculationId = null;
             Update(to, transaction);
         }
     }

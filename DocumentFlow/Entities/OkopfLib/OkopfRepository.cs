@@ -18,7 +18,7 @@ public class OkopfRepository : Repository<Guid, Okopf>, IOkopfRepository
 {
     public OkopfRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.parent_id);
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.ParentId);
+        ExcludeField(x => x.OwnerId);
     }
 }

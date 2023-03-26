@@ -12,14 +12,14 @@ namespace DocumentFlow.Entities.Companies;
 
 public class Company : Directory
 {
-    public string? full_name { get; set; }
-    public decimal? inn { get; set; }
-    public decimal? kpp { get; set; }
-    public decimal? ogrn { get; set; }
-    public decimal? okpo { get; set; }
-    public Guid? okopf_id { get; set; }
-    public string? okopf_name { get; protected set; }
+    public string? FullName { get; set; }
+    public decimal? Inn { get; set; }
+    public decimal? Kpp { get; set; }
+    public decimal? Ogrn { get; set; }
+    public decimal? Okpo { get; set; }
+    public Guid? OkopfId { get; set; }
+    public string? OkopfName { get; protected set; }
 
     [DataOperation(DataOperation.Add | DataOperation.Update)]
-    public Guid? account_id { get; set; }
+    public Guid? AccountId { get; set; }
 }

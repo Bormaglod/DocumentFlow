@@ -32,12 +32,12 @@ public class EquipmentBrowser : Browser<Equipment>, IEquipmentBrowser
         : base(repository, pageManager, settings: settings) 
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var code = CreateText(x => x.code, "Код", width: 110);
-        var name = CreateText(x => x.item_name, "Наименование", hidden: false);
-        var serial = CreateText(x => x.serial_number, "Серийный номер", width: 100);
-        var is_tools = CreateBoolean(x => x.is_tools, "Инструмент", width: 160);
-        var commissioning = CreateDateTime(x => x.commissioning, "Ввод в экспл.", width: 150, format: "dd.MM.yyyy");
-        var starting_hits = CreateNumeric(x => x.starting_hits, "Кол-во опрессовок", width: 100, visible: false);
+        var code = CreateText(x => x.Code, "Код", width: 110);
+        var name = CreateText(x => x.ItemName, "Наименование", hidden: false);
+        var serial = CreateText(x => x.SerialNumber, "Серийный номер", width: 100);
+        var is_tools = CreateBoolean(x => x.IsTools, "Инструмент", width: 160);
+        var commissioning = CreateDateTime(x => x.Commissioning, "Ввод в экспл.", width: 150, format: "dd.MM.yyyy");
+        var starting_hits = CreateNumeric(x => x.StartingHits, "Кол-во опрессовок", width: 100, visible: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

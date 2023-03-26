@@ -45,13 +45,13 @@ public partial class GivingMaterialsCard : UserControl, ICard
     {
         switch (e.Column.MappingName) 
         {
-            case "material_name":
+            case "MaterialName":
                 e.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                 break;
-            case "contractor_name":
+            case "ContractorName":
                 e.Column.Width = 140;
                 break;
-            case "remainder":
+            case "Remainder":
                 e.Column.Width = 80;
                 break;
             default:

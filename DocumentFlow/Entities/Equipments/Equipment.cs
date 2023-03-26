@@ -19,25 +19,23 @@ namespace DocumentFlow.Entities.Equipments;
 [Description("Оборудование")]
 public class Equipment : Directory
 {
-#pragma warning disable IDE1006 // Стили именования
     /// <summary>
     /// Определяет является ли оборудование инструментом.
     /// </summary>
-    public bool is_tools { get; set; }
+    public bool IsTools { get; set; }
 
     /// <summary>
     /// Серийный номер оборудования.
     /// </summary>
-    public string? serial_number { get; set; }
+    public string? SerialNumber { get; set; }
 
     /// <summary>
     /// Дата ввода в эксплуатацию.
     /// </summary>
-    public DateTime? commissioning { get; set; }
+    public DateTime? Commissioning { get; set; }
 
     /// <summary>
     /// Начальное количество опрессовок. Используется только для аппликаторов.
     /// </summary>
-    public int? starting_hits { get; set; }
-#pragma warning restore IDE1006 // Стили именования
+    public int? StartingHits { get; set; }
 }

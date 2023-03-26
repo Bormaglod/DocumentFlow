@@ -13,9 +13,9 @@ namespace DocumentFlow.Entities.Calculations;
 [Description("Удержание")]
 public class CalculationDeduction : CalculationItem
 {
-    public string? deduction_name { get; protected set; }
-    public decimal value { get; set; }
-    public BaseDeduction calculation_base { get; protected set; }
-    public string? calculation_base_text => Deduction.BaseDeductions[calculation_base];
-    public override string ToString() => deduction_name ?? "[NULL]";
+    public string? DeductionName { get; protected set; }
+    public decimal Value { get; set; }
+    public BaseDeduction CalculationBase { get; protected set; }
+    public string? CalculationBaseText => Deduction.BaseDeductions[CalculationBase];
+    public override string ToString() => DeductionName ?? "[NULL]";
 }

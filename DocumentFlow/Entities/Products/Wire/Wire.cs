@@ -13,5 +13,5 @@ namespace DocumentFlow.Entities.Products;
 [Description("Тип провода")]
 public class Wire : Directory
 {
-    public decimal? wsize { get; set; }
+    public decimal? Wsize { get; set; }
 }

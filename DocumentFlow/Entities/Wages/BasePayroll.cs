@@ -19,20 +19,20 @@ namespace DocumentFlow.Entities.Wages;
 
 public class BasePayroll : BillingDocument
 {
-    public decimal wage { get; protected set; }
+    public decimal Wage { get; protected set; }
 
     public static void CreateGridColumns(Columns columns)
     {
         var billing_range = new GridTextColumn()
         {
-            MappingName = "billing_range",
+            MappingName = nameof(BillingRange),
             HeaderText = "Расчётный период",
             Width = 150
         };
 
         var employee_names_text = new GridTextColumn()
         {
-            MappingName = "employee_names_text",
+            MappingName = nameof(EmployeeNamesText),
             HeaderText = "Сотрудники"
         };
 
@@ -41,7 +41,7 @@ public class BasePayroll : BillingDocument
 
         var wage = new GridNumericColumn()
         {
-            MappingName = "wage",
+            MappingName = nameof(Wage),
             HeaderText = "Сумма",
             FormatMode = FormatMode.Currency,
             NumberFormatInfo = costFormat,

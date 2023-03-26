@@ -37,7 +37,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
 {
     public ProductionOrderRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.OwnerId);
     }
 
     public IReadOnlyList<ProductionOrderPrice> GetList(ProductionOrder order)
@@ -82,7 +82,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .Join("rm_waybills as rm", "rm.waybill_processing_id", "wp.id")
             .WhereFalse("po.deleted")
             .WhereTrue("po.carried_out")
-            .Where("wp.contractor_id", contract.owner_id)
+            .Where("wp.contractor_id", contract.OwnerId)
             .Where("wp.contract_id", contract.Id)
             .Get<ProductionOrder>()
             .ToList();

@@ -27,12 +27,12 @@ public class PayrollPaymentBrowser : Browser<PayrollPayment>, IPayrollPaymentBro
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        var payroll_date = CreateDateTime(x => x.payroll_date, "Дата", hidden: false, width: 150);
-        var payroll_number = CreateNumeric(x => x.payroll_number, "Номер", width: 100);
-        var billing_range = CreateText(x => x.billing_range, "Расчётный период");
-        var date_operation = CreateDateTime(x => x.date_operation, "Дата операции", width: 150, format: "dd.MM.yyyy");
-        var payment_number = CreateText(x => x.payment_number, "Номер п/п", width: 100);
-        var transaction = CreateCurrency(x => x.transaction_amount, "Сумма платежа", width: 120);
+        var payroll_date = CreateDateTime(x => x.PayrollDate, "Дата", hidden: false, width: 150);
+        var payroll_number = CreateNumeric(x => x.PayrollNumber, "Номер", width: 100);
+        var billing_range = CreateText(x => x.BillingRange, "Расчётный период");
+        var date_operation = CreateDateTime(x => x.DateOperation, "Дата операции", width: 150, format: "dd.MM.yyyy");
+        var payment_number = CreateText(x => x.PaymentNumber, "Номер п/п", width: 100);
+        var transaction = CreateCurrency(x => x.TransactionAmount, "Сумма платежа", width: 120);
 
         billing_range.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

@@ -17,32 +17,30 @@ namespace DocumentFlow.Entities.Equipments;
 
 public class Applicator : Identifier<Guid>
 {
-#pragma warning disable IDE1006 // Стили именования
     /// <summary>
     /// Наименование аппликатора.
     /// </summary>
     [Display(Name = "Наименование", Order = 100)]
-    public string item_name { get; set; } = string.Empty;
+    public string ItemName { get; set; } = string.Empty;
 
     /// <summary>
     /// Дата ввода в эксплуатацию.
     /// </summary>
     [Display(Name = "Дата ввода в экспл.", Order = 200)]
-    public DateTime? commissioning { get; set; }
+    public DateTime? Commissioning { get; set; }
 
     /// <summary>
     /// Количество выполненных опрессовок за период наблюдения.
     /// </summary>
     [Display(AutoGenerateField = false)]
-    public int quantity { get; set; }
+    public int Quantity { get; set; }
 
     /// <summary>
     /// Количество опрессовок выполненных до начала наблюдения.
     /// </summary>
     [Display(AutoGenerateField = false)]
-    public int starting_hits { get; set; }
-#pragma warning restore IDE1006 // Стили именования
+    public int StartingHits { get; set; }
 
     [Display(Name = "Кол-во опресс.", Order = 300)]
-    public int TotalHits => quantity + starting_hits;
+    public int TotalHits => Quantity + StartingHits;
 }

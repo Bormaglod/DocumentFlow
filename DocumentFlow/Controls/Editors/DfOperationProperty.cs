@@ -28,7 +28,7 @@ namespace DocumentFlow.Controls.Editors;
 
 public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGridDataSource, IAccess
 {
-    private Guid? owner_id;
+    private Guid? ownerId;
     private ObservableCollection<CalculationOperationProperty>? properties;
     private readonly List<CalculationOperationProperty> deleted = new();
     private readonly List<CalculationOperationProperty> created = new();
@@ -68,13 +68,13 @@ public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGri
         set => panel1.Dock = value ? DockStyle.Fill : panel1.Dock = DockStyle.Left;
     }
 
-    public void SetOwner(Guid owner_id) => this.owner_id = owner_id;
+    public void SetOwner(Guid ownerId) => this.ownerId = ownerId;
 
     public void UpdateData(IDbTransaction transaction)
     {
-        if (owner_id == null)
+        if (ownerId == null)
         {
-            throw new ArgumentNullException(nameof(owner_id), "Не определено значение owner_id.");
+            throw new ArgumentNullException(nameof(ownerId), "Не определено значение owner_id.");
         }
 
         var repository = Services.Provider.GetService<ICalculationOperationRepository>();
@@ -82,7 +82,7 @@ public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGri
         {
             foreach (var item in created)
             {
-                item.operation_id = owner_id.Value;
+                item.OperationId = ownerId.Value;
                 repository.AddProperty(item, transaction);
             }
 
@@ -107,12 +107,12 @@ public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGri
     public void RefreshDataSource()
     {
         properties = null;
-        if (owner_id != null)
+        if (ownerId != null)
         {
             var repo = Services.Provider.GetService<ICalculationOperationRepository>();
             if (repo != null)
             {
-                properties = new ObservableCollection<CalculationOperationProperty>(repo.GetProperties(owner_id.Value));
+                properties = new ObservableCollection<CalculationOperationProperty>(repo.GetProperties(ownerId.Value));
             }
         }
 
@@ -140,7 +140,7 @@ public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGri
 
     private void ButtonAdd_Click(object sender, EventArgs e)
     {
-        if (properties != null && owner_id != null)
+        if (properties != null && ownerId != null)
         {
             var prop = PropertyForm.Create();
             if (prop != null)
@@ -192,10 +192,10 @@ public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGri
     {
         switch (e.Column.MappingName)
         {
-            case "property_name":
+            case "PropertyName":
                 e.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.AllCells;
                 break;
-            case "property_value":
+            case "PropertyValue":
                 e.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                 break;
         }

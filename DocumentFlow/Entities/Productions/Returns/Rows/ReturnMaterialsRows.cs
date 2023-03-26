@@ -22,14 +22,14 @@ namespace DocumentFlow.Entities.Productions.Returns;
 public class ReturnMaterialsRows : Entity<long>, ICloneable, IEntityClonable
 {
     [Display(AutoGenerateField = false)]
-    public Guid material_id { get; set; }
+    public Guid MaterialId { get; set; }
 
     [Display(Name = "Материал / Изделие", Order = 10)]
     [Exclude]
-    public string material_name { get; set; } = string.Empty;
+    public string MaterialName { get; set; } = string.Empty;
 
     [Display(Name = "Количество", Order = 20)]
-    public decimal quantity { get; set; }
+    public decimal Quantity { get; set; }
 
     public object Clone() => MemberwiseClone();
 

@@ -99,7 +99,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
         }
 
         public OurEmployee Employee { get; }
-        public override string ToString() => Employee?.item_name ?? string.Empty;
+        public override string ToString() => Employee?.ItemName ?? string.Empty;
     }
 
     private class OperationInfo : BaseEmpInfo
@@ -124,10 +124,10 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
         {
             for (int i = 0; i < Employees.Count; i++)
             {
-                if (Employees[i].Employee.Id == operation.employee_id)
+                if (Employees[i].Employee.Id == operation.EmployeeId)
                 {
-                    Employees[i].Quantity = operation.quantity;
-                    Employees[i].Salary = operation.salary;
+                    Employees[i].Quantity = operation.Quantity;
+                    Employees[i].Salary = operation.Salary;
                     NotifyPropertyChanged($"Employees[{i}].Quantity");
                     break;
                 }
@@ -171,7 +171,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
     }
 
 
-    private Guid? owner_id;
+    private Guid? ownerId;
     private List<OurEmployee> employees = new();
 
     public DfProductionLot() : base(string.Empty)
@@ -186,7 +186,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 
     public void RefreshDataSource()
     {
-        if (owner_id != null)
+        if (ownerId != null)
         {
 
             gridContent.StackedHeaderRows.Clear();
@@ -208,22 +208,22 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
             var operations = new ObservableCollection<OperationInfo>();
 
             // Список занятых в изготовлении партии
-            employees = new List<OurEmployee>(repoPerf.GetWorkedEmployes(owner_id));
+            employees = new List<OurEmployee>(repoPerf.GetWorkedEmployes(ownerId));
 
             // Список всех операций необходимых для изготовления изделия из партии
-            var ops = repoLot.GetOperations(owner_id.Value);
+            var ops = repoLot.GetOperations(ownerId.Value);
 
-            foreach (var item in ops.OrderBy(x => x.code))
+            foreach (var item in ops.OrderBy(x => x.Code))
             {
                 var opInfo = new OperationInfo(item, employees);
                 operations.Add(opInfo);
             }
 
             // Список произведенных работ сгруппированый пооперационно и по каждому сотруднику
-            var summary = repoPerf.GetSummary(owner_id.Value);
+            var summary = repoPerf.GetSummary(ownerId.Value);
             foreach (var item in summary)
             {
-                var opInfo = operations.FirstOrDefault(x => x.Operation.Id == item.operation_id);
+                var opInfo = operations.FirstOrDefault(x => x.Operation.Id == item.OperationId);
                 if (opInfo == null)
                 {
                     continue;
@@ -238,8 +238,8 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                 item.UpdateSummaryValues();
             }
 
-            gridContent.Columns.Add(new GridTextColumn() { MappingName = "Operation.code", HeaderText = "Код" });
-            gridContent.Columns.Add(new GridTextColumn() { MappingName = "Operation.item_name", HeaderText = "Операция", Width = 400 });
+            gridContent.Columns.Add(new GridTextColumn() { MappingName = "Operation.Code", HeaderText = "Код" });
+            gridContent.Columns.Add(new GridTextColumn() { MappingName = "Operation.ItemName", HeaderText = "Операция", Width = 400 });
 
             StackedHeaderRow srow = new();
             gridContent.StackedHeaderRows.Add(srow);
@@ -260,7 +260,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 
             gridContent.Columns.Add(new GridNumericColumn()
             {
-                MappingName = "Operation.quantity_by_lot",
+                MappingName = "Operation.QuantityByLot",
                 HeaderText = "Всего на партию",
                 AllowHeaderTextWrapping = true,
                 NumberFormatInfo = GetNumberFormatInfo()
@@ -306,7 +306,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 
     #region IGridDataSource interface
 
-    public void SetOwner(Guid owner_id) => this.owner_id = owner_id;
+    public void SetOwner(Guid owner_id) => this.ownerId = owner_id;
 
     public void UpdateData(IDbTransaction transaction)
     {
@@ -317,7 +317,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 
     private void AddCompleteOperations()
     {
-        if (owner_id != null)
+        if (ownerId != null)
         {
             OurEmployee? emp = null;
             OperationInfo? oper = gridContent.SelectedItem as OperationInfo;
@@ -335,7 +335,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                 }
             }
 
-            OperationsPerformedForm form = new(owner_id.Value)
+            OperationsPerformedForm form = new(ownerId.Value)
             {
                 Operation = oper?.Operation,
                 Employee = emp
@@ -345,12 +345,12 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
             {
                 var op = new OperationsPerformed()
                 {
-                    owner_id = owner_id,
-                    employee_id = form.Employee.Id,
-                    operation_id = form.Operation.Id,
-                    replacing_material_id = form.ReplacingMaterial?.Id,
-                    quantity = form.Quantity,
-                    double_rate = form.DoubleRate
+                    OwnerId = ownerId,
+                    EmployeeId = form.Employee.Id,
+                    OperationId = form.Operation.Id,
+                    ReplacingMaterialId = form.ReplacingMaterial?.Id,
+                    Quantity = form.Quantity,
+                    DoubleRate = form.DoubleRate
                 };
 
                 var repo = Services.Provider.GetService<IOperationsPerformedRepository>();
@@ -364,13 +364,13 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                         CurrentApplicationContext.Context.App.SendNotify("operations_performed", op, MessageAction.Add);
 
                         // поучим сводную информацию - количество выполненных операций указанным сотрудником
-                        var summary = repo.GetSummary(owner_id.Value, form.Operation, form.Employee);
+                        var summary = repo.GetSummary(ownerId.Value, form.Operation, form.Employee);
                         if (summary != null && gridContent.DataSource is IList<OperationInfo> list)
                         {
                             // если сотрудник ещё ны был задействован для выполнения данной операции,
                             // то его добавляем в список работников, добавляем его во все записи операций и
                             // добавляем колонку с сотрудником в таблицу
-                            if (employees.FirstOrDefault(x => x.Id == op.employee_id) == null)
+                            if (employees.FirstOrDefault(x => x.Id == op.EmployeeId) == null)
                             {
                                 employees.Add(form.Employee);
                                 foreach (var item in list)
@@ -382,7 +382,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                             }
 
                             // обновим информацию о сотруднике
-                            var o = list.FirstOrDefault(x => x.Operation.Id == summary.operation_id);
+                            var o = list.FirstOrDefault(x => x.Operation.Id == summary.OperationId);
                             if (o != null)
                             {
                                 o.SetEmployeeData(summary);
@@ -395,7 +395,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                     }
                     catch (RepositoryException e)
                     {
-                        MessageBox.Show(e.Message, "Ощибка", MessageBoxButtons.OK);
+                        MessageBox.Show(e.Message, "Ошибка", MessageBoxButtons.OK);
                     }
                 }
             }
@@ -500,7 +500,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
 
             if (e.Column.MappingName == "Quantity")
             {
-                if (info.Quantity < info.Operation.quantity_by_lot)
+                if (info.Quantity < info.Operation.QuantityByLot)
                 {
                     e.Style.TextColor = Color.Red;
                 }

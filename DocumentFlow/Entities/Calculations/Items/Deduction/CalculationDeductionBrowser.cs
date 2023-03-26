@@ -37,11 +37,11 @@ public class CalculationDeductionBrowser : Browser<CalculationDeduction>, ICalcu
         Toolbar.IconSize = ButtonIconSize.Small;
 
         GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn deduction_name = CreateText(x => x.deduction_name, "Удержание", hidden: false);
-        GridTextColumn calculation_base = CreateText(x => x.calculation_base_text, "База удерж.", width: 200);
-        GridNumericColumn price = CreateCurrency(x => x.price, "База, руб.", width: 150);
-        GridNumericColumn value = CreateNumeric(x => x.value, "Процент", width: 150, mode: FormatMode.Percent, decimalDigits: 2);
-        GridNumericColumn item_cost = CreateCurrency(x => x.item_cost, "Сумма", width: 150);
+        GridTextColumn deduction_name = CreateText(x => x.DeductionName, "Удержание", hidden: false);
+        GridTextColumn calculation_base = CreateText(x => x.CalculationBaseText, "База удерж.", width: 200);
+        GridNumericColumn price = CreateCurrency(x => x.Price, "База, руб.", width: 150);
+        GridNumericColumn value = CreateNumeric(x => x.Value, "Процент", width: 150, mode: FormatMode.Percent, decimalDigits: 2);
+        GridNumericColumn item_cost = CreateCurrency(x => x.ItemCost, "Сумма", width: 150);
 
         CreateSummaryRow(VerticalPosition.Bottom)
             .AsCount(deduction_name, "Всего наименований: {?}")
@@ -77,9 +77,9 @@ public class CalculationDeductionBrowser : Browser<CalculationDeduction>, ICalcu
 
     private void OpenDeduction(IPageManager pageManager)
     {
-        if (CurrentDocument != null && CurrentDocument.item_id != null)
+        if (CurrentDocument != null && CurrentDocument.ItemId != null)
         {
-            pageManager.ShowEditor<IDeductionEditor>(CurrentDocument.item_id.Value);
+            pageManager.ShowEditor<IDeductionEditor>(CurrentDocument.ItemId.Value);
         }
     }
 }

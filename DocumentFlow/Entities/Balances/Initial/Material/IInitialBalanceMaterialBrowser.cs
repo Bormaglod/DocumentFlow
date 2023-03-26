@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Balances.Initial;
 
-[Menu(MenuDestination.Document, "Нач. остатки (материалы)", 101510, "Склад")]
+[Menu(MenuDestination.Document, "Нач. остатки (материалы)", parent: "Склад", order: 10)]
 internal interface IInitialBalanceMaterialBrowser : IBrowser<InitialBalanceMaterial>
 {
 }

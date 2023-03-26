@@ -13,11 +13,11 @@ namespace DocumentFlow.Entities.Products;
 public class Material : Product
 {
     public static readonly Guid WireGroup = new("0525748e-e98c-4296-bd0e-dcacee7224f3");
-    public string? cross_name { get; protected set; }
-    public decimal min_order { get; set; }
-    public string? ext_article { get; set; }
-    public bool material_using { get; protected set; }
-    public int price_status { get; protected set; }
-    public Guid? wire_id { get; set; }
-    public string? wire_name { get; protected set; }
+    public string? CrossName { get; protected set; }
+    public decimal MinOrder { get; set; }
+    public string? ExtArticle { get; set; }
+    public bool MaterialUsing { get; protected set; }
+    public int PriceStatus { get; protected set; }
+    public Guid? WireId { get; set; }
+    public string? WireName { get; protected set; }
 }

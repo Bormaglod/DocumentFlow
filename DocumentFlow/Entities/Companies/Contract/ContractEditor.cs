@@ -5,7 +5,6 @@
 // Date: 16.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Infrastructure;
@@ -20,19 +19,17 @@ public class ContractEditor : Editor<Contract>, IContractEditor
 
     public ContractEditor(IContractRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var contractor_name = new DfTextBox("contractor_name", "Контрагент", headerWidth, 400) { Enabled = false };
-        var type = new DfChoice<ContractorType>("ContractorType", "Вид договора", headerWidth, 200);
-        var code = new DfTextBox("code", "Номер договора", headerWidth, 200) { DefaultAsNull = false };
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 400);
-        var date = new DfDateTimePicker("document_date", "Дата договора", headerWidth, 200) { Format = DateTimePickerFormat.Short };
-        var tax_payer = new DfToggleButton("tax_payer", "Плательщик НДС", headerWidth);
-        var signatory = new DfDirectorySelectBox<Employee>("signatory_id", "Подпись контрагента", headerWidth, 400);
-        var org_signatory = new DfDirectorySelectBox<Employee>("org_signatory_id", "Подпись организации", headerWidth, 400);
-        var date_start = new DfDateTimePicker("date_start", "Начало действия", headerWidth, 200) { Format = DateTimePickerFormat.Short };
-        var date_end = new DfDateTimePicker("date_end", "Окончание действия", headerWidth, 200) { Required = false, Format = DateTimePickerFormat.Short };
-        var is_default = new DfToggleButton("is_default", "Основной", headerWidth);
-
-        type.SetChoiceValues(Contract.ContractorTypes);
+        var contractor_name = CreateTextBox(x => x.ContractorName, "Контрагент", headerWidth, 400, enabled: false);
+        var type = CreateChoice(x => x.ContractorType, "Вид договора", headerWidth, 200, choices: Contract.ContractorTypes);
+        var code = CreateTextBox(x => x.Code, "Номер договора", headerWidth, 200, defaultAsNull: false);
+        var name = CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400);
+        var date = CreateDateTimePicker(x => x.DocumentDate, "Дата договора", headerWidth, 200, format: DateTimePickerFormat.Short);
+        var tax_payer = CreateToggleButton(x => x.TaxPayer, "Плательщик НДС", headerWidth);
+        var signatory = CreateDirectorySelectBox<Employee>(x => x.SignatoryId, "Подпись контрагента", headerWidth, 400);
+        var org_signatory = CreateDirectorySelectBox<Employee>(x => x.OrgSignatoryId, "Подпись организации", headerWidth, 400);
+        var date_start = CreateDateTimePicker(x => x.DateStart, "Начало действия", headerWidth, 200, format: DateTimePickerFormat.Short);
+        var date_end = CreateDateTimePicker(x => x.DateEnd, "Окончание действия", headerWidth, 200, required: false, format: DateTimePickerFormat.Short);
+        var is_default = CreateToggleButton(x => x.IsDefault, "Основной", headerWidth);
 
         signatory.SetDataSource(() =>
         {

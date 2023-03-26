@@ -18,7 +18,7 @@ public class ProductRowHeader : IProductRowHeader
 {
     public Image? Get(IDocumentInfo entity)
     {
-        if (entity is Product product && product.thumbnails)
+        if (entity is Product product && product.Thumbnails)
         {
             return product.Deleted ? Resources.icons8_document_image_delete_16 : Resources.icons8_document_image_16;
         }

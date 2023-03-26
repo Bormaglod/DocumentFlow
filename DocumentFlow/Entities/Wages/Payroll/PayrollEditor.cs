@@ -28,18 +28,8 @@ public class PayrollEditor : DocumentEditor<Payroll>, IPayrollEditor
 
     public PayrollEditor(IPayrollRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        var gross = new DfDocumentSelectBox<GrossPayroll>("owner_id", "Начисление зар. платы", 150, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IGrossPayrollEditor, GrossPayroll>(t)
-        };
-
+        var gross = CreateDocumentSelectBox<GrossPayroll, IGrossPayrollEditor>(x => x.OwnerId, "Начисление зар. платы", 150, 400, data: GetGrosses);
         details = new DfDataGrid<PayrollEmployee>(Services.Provider.GetService<IPayrollEmployeeRepository>()!) { Dock = DockStyle.Fill };
-
-        gross.SetDataSource(() =>
-        {
-            var repo = Services.Provider.GetService<IGrossPayrollRepository>();
-            return repo?.GetAllDefault();
-        });
 
         gross.Columns += (sender, e) => BasePayroll.CreateGridColumns(e.Columns);
 
@@ -57,19 +47,19 @@ public class PayrollEditor : DocumentEditor<Payroll>, IPayrollEditor
         };
 
         details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("wage", SummaryColumnFormat.Currency, SelectOptions.All);
+            .AsSummary("Wage", SummaryColumnFormat.Currency, SelectOptions.All);
 
         details.AutoGeneratingColumn += (sender, args) =>
          {
              switch (args.Column.MappingName)
              {
-                 case "employee_name":
+                 case "EmployeeName":
                      args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                      break;
-                 case "income_item_name":
+                 case "IncomeItemName":
                      args.Column.Width = 250;
                      break;
-                 case "wage":
+                 case "Wage":
                      if (args.Column is GridNumericColumn c)
                      {
                          c.FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency;
@@ -127,4 +117,6 @@ public class PayrollEditor : DocumentEditor<Payroll>, IPayrollEditor
             details.Fill(employees);
         }
     }
+
+    private IEnumerable<GrossPayroll> GetGrosses() => Services.Provider.GetService<IGrossPayrollRepository>()!.GetAllDefault();
 }

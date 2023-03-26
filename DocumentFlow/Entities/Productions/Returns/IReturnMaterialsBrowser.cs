@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Productions.Returns;
 
-[Menu(MenuDestination.Document, "Возврат материалов заказчику", 102050, "Производство")]
+[Menu(MenuDestination.Document, "Возврат материалов заказчику", parent: "Производство", order: 60 )]
 public interface IReturnMaterialsBrowser : IBrowser<ReturnMaterials>
 {
 }

@@ -22,7 +22,7 @@ public class CuttingRepository : DirectoryRepository<Cutting>, ICuttingRepositor
 {
     public CuttingRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.OwnerId);
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter) => query.From("cuttings");

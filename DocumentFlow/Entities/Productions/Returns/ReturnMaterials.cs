@@ -13,6 +13,6 @@ namespace DocumentFlow.Entities.Productions.Returns;
 [Description("Возврат материалов заказчику")]
 public class ReturnMaterials : ShipmentDocument
 {
-    public DateTime order_date { get; protected set; }
-    public int order_number { get; protected set; }
+    public DateTime OrderDate { get; protected set; }
+    public int OrderNumber { get; protected set; }
 }

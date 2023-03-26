@@ -45,33 +45,20 @@ public class ContractorEditor : Editor<Contractor>, IContractorEditor
     {
         contractorRepository = repository;
 
-        var code = new DfTextBox("code", "Наименование", headerWidth, 400) { DefaultAsNull = false };
-        var parent_id = new DfDirectorySelectBox<Contractor>("parent_id", "Группа", headerWidth, 400) { Required = true, ShowOnlyFolder = true };
-        var name = new DfTextBox("item_name", "Короткое наименование", headerWidth, 500);
-        var full_name = new DfTextBox("full_name", "Полное наименование", headerWidth, 500) { Multiline = true, Height = 75 };
-        subject = new DfChoice<SubjectsCivilLow>("SubjectCivilLow", "Субъект права", headerWidth, 200);
-        inn = new DfMaskedTextBox<decimal>("inn", "ИНН", 190, 200);
-        kpp = new DfMaskedTextBox<decimal>("kpp", "КПП", headerWidth, 200, mask: "#### ## ###");
-        ogrn = new DfMaskedTextBox<decimal>("ogrn", "ОГРН", headerWidth, 200, mask: "# ## ## ## ##### #");
-        okpo = new DfMaskedTextBox<decimal>("okpo", "ОКПО", headerWidth, 200, mask: "## ##### #");
-        okopf = new DfComboBox<Okopf>("okopf_id", "ОКОПФ", headerWidth, 450)
-        {
-            OpenAction = (p) => pageManager.ShowEditor<IOkopfEditor, Okopf>(p)
-        };
-        person_id = new DfDirectorySelectBox<Person>("person_id", "Физ. лицо", headerWidth, 300);
+        var code = CreateTextBox(x => x.Code, "Наименование", headerWidth, 400, defaultAsNull: false);
+        var parent_id = CreateDirectorySelectBox(x => x.ParentId, "Группа", headerWidth, 400, required: true, showOnlyFolder: true, data: contractorRepository.GetOnlyFolders);
+        var name = CreateTextBox(x => x.ItemName, "Короткое наименование", headerWidth, 500);
+        var full_name = CreateMultilineTextBox(x => x.FullName, "Полное наименование", headerWidth, 500);
+        subject = CreateChoice(x => x.SubjectCivilLow, "Субъект права", headerWidth, 200, choices: Contractor.Subjects);
+        inn = CreateMaskedTextBox<decimal>(x => x.Inn, "ИНН", 190, 200);
+        kpp = CreateMaskedTextBox<decimal>(x => x.Kpp, "КПП", headerWidth, 200, mask: "#### ## ###");
+        ogrn = CreateMaskedTextBox<decimal>(x => x.Ogrn, "ОГРН", headerWidth, 200, mask: "# ## ## ## ##### #");
+        okpo = CreateMaskedTextBox<decimal>(x => x.Okpo, "ОКПО", headerWidth, 200, mask: "## ##### #");
+        okopf = CreateComboBox<Okopf, IOkopfEditor>(x => x.OkopfId, "ОКОПФ", headerWidth, 450, data: GetOkopfs);
+        person_id = CreateDirectorySelectBox(x => x.PersonId, "Физ. лицо", headerWidth, 300, data: GetPeople);
+        account = CreateComboBox<Account, IAccountEditor>(x => x.AccountId, "Расчётный счёт", headerWidth, 450, data: GetAccounts);
 
-        account = new DfComboBox<Account>("account_id", "Расчётный счёт", headerWidth, 450)
-        {
-            OpenAction = (p) => pageManager.ShowEditor<IAccountEditor, Account>(p)
-        };
-
-        subject.SetChoiceValues(Contractor.Subjects);
         subject.ManualValueChange += Subject_ManualValueChange;
-
-        parent_id.SetDataSource(() => contractorRepository.GetOnlyFolders());
-        okopf.SetDataSource(() => Services.Provider.GetService<IOkopfRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-        account.SetDataSource(() => Services.Provider.GetService<IAccountRepository>()!.GetByOwner(Document.account_id, Id));
-        person_id.SetDataSource(() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
 
         AddControls(new Control[]
         {
@@ -121,4 +108,10 @@ public class ContractorEditor : Editor<Contractor>, IContractorEditor
         account.Visible = legal_entity.HasValue && legal_entity.Value;
         person_id.Visible = legal_entity.HasValue && !legal_entity.Value;
     }
+
+    private IEnumerable<Okopf> GetOkopfs() => Services.Provider.GetService<IOkopfRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+
+    private IEnumerable<Account> GetAccounts() => Services.Provider.GetService<IAccountRepository>()!.GetByOwner(Document.AccountId, Id);
+
+    private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
 }

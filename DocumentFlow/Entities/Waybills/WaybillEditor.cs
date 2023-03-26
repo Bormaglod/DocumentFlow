@@ -78,36 +78,40 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
 
     public WaybillEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager, true)
     {
-        contractor = new DfDirectorySelectBox<Contractor>("contractor_id", "Контрагент", 120, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IContractorEditor, Contractor>(t)
-        };
-
-        contract = new DfDirectorySelectBox<Contract>("contract_id", "Договор", 120, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IContractEditor, Contract>(t)
-        };
+        contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 120, 400);
+        contract = CreateDirectorySelectBox<Contract, IContractEditor>(x => x.ContractId, "Договор", 120, 400);
 
         DfDocumentSelectBox<PurchaseRequest>? purchase = null;
         if (typeof(T) == typeof(WaybillReceipt))
         {
-            purchase = new DfDocumentSelectBox<PurchaseRequest>("owner_id", "Заявка на покупку", 120, 400)
-            {
-                RefreshMethod = DataRefreshMethod.OnOpen,
-                OpenAction = (t) => pageManager.ShowEditor<IPurchaseRequestEditor, PurchaseRequest>(t)
-            };
+            purchase = CreateDocumentSelectBox<PurchaseRequest, IPurchaseRequestEditor>(x => x.OwnerId, "Заявка на покупку", 120, 400, refreshMethod: DataRefreshMethod.OnOpen);
         }
 
-        waybill_number = new DfTextBox("waybill_number", "Накладная №", 110, 120) { Dock = DockStyle.Left, Width = 235 };
-        waybill_date = new DfDateTimePicker("waybill_date", "от", 25, 170) { Dock = DockStyle.Left, Width = 200, Format = DateTimePickerFormat.Short };
+        waybill_number = CreateTextBox(x => x.WaybillNumber, "Накладная №", 110, 120);
+        waybill_number.Dock = DockStyle.Left;
+        waybill_number.Width = 235;
+
+        waybill_date = CreateDateTimePicker(x => x.WaybillDate, "от", 25, 170, format: DateTimePickerFormat.Short);
+        waybill_date.Dock = DockStyle.Left;
+        waybill_date.Width = 200;
+
         var waybill_panel = CreatePanel(new Control[] { waybill_date, waybill_number });
 
-        var invoice_number = new DfTextBox("invoice_number", "Счёт-фактура №", 110, 120) { Dock = DockStyle.Left, Width = 235 };
-        var invoice_date = new DfDateTimePicker("invoice_date", "от", 25, 170) { Dock = DockStyle.Left, Width = 200, Format = DateTimePickerFormat.Short };
+        var invoice_number = CreateTextBox(x => x.InvoiceNumber, "Счёт-фактура №", 110, 120);
+        invoice_number.Dock = DockStyle.Left;
+        invoice_number.Width = 235;
+
+        var invoice_date = CreateDateTimePicker(x => x.InvoiceDate, "от", 25, 170, format: DateTimePickerFormat.Short);
+        invoice_date.Dock = DockStyle.Left;
+        invoice_date.Width = 200;
+
         invoice_panel = CreatePanel(new Control[] { invoice_date, invoice_number });
 
         invoice_text = new Label() { Padding = new(10, 0, 0, 0), AutoSize = true, Dock = DockStyle.Left };
-        upd = new DfToggleButton("upd", "УПД", 40) { Dock = DockStyle.Left, Width = 130 };
+        upd = CreateToggleButton(x => x.Upd, "УПД", 40);
+        upd.Dock = DockStyle.Left;
+        upd.Width = 130;
+
         upd_panel = CreatePanel(new Control[] { invoice_text, upd });
 
         doc1c = new DfPanel()
@@ -157,40 +161,40 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
         upd.ValueChanged += UpdValueChanged;
 
         details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("product_cost", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("tax_value", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("full_cost", SummaryColumnFormat.Currency, SelectOptions.All);
+            .AsSummary("ProductCost", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("TaxValue", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("FullCost", SummaryColumnFormat.Currency, SelectOptions.All);
 
         details.AutoGeneratingColumn += (sender, args) =>
         {
             switch (args.Column.MappingName)
             {
-                case "id":
+                case "Id":
                     args.Cancel = true;
                     break;
-                case "product_name":
+                case "ProductName":
                     args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                     break;
-                case "code":
+                case "Code":
                     args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.AllCells;
                     break;
-                case "amount":
+                case "Amount":
                     args.Column.Width = 100;
                     break;
-                case "price":
+                case "Price":
                     WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 100);
                     break;
-                case "product_cost":
+                case "Product_Cost":
                     WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 140);
                     break;
-                case "tax":
+                case "Tax":
                     args.Column.Width = 80;
                     args.Column.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
                     break;
-                case "tax_value":
+                case "TaxValue":
                     WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 140);
                     break;
-                case "full_cost":
+                case "FullCost":
                     WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 140);
                     break;
             }
@@ -244,7 +248,7 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
             {
                 if (MessageBox.Show("Заполнить таблицу по данным заявки?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    contract.Value = e.NewValue?.contract_id;
+                    contract.Value = e.NewValue?.ContractId;
 
                     if (IsCreating)
                     {
@@ -306,7 +310,7 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
         }
         else
         {
-            bool taxPayer = contract.SelectedItem.tax_payer;
+            bool taxPayer = contract.SelectedItem.TaxPayer;
             upd_panel.Visible = taxPayer;
             if (taxPayer)
             {

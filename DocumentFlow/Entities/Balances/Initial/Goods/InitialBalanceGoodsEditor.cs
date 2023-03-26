@@ -5,7 +5,6 @@
 // Date: 24.07.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
@@ -21,25 +20,20 @@ internal class InitialBalanceGoodsEditor : DocumentEditor<InitialBalanceGoods>, 
     {
         AddControls(new Control[]
         {
-            new DfDirectorySelectBox<Goods>("reference_id", "Продукция", 100, 400)
-            {
-                OpenAction = (t) => pageManager.ShowEditor<IGoodsEditor, Goods>(t),
-                DataSourceFunc = () => Services.Provider.GetService<IGoodsRepository>()?.GetAllValid(callback: query =>
-                {
-                    query
-                        .Select("goods.id")
-                        .Select("goods.code")
-                        .SelectRaw("goods.code || ', ' || goods.item_name as item_name")
-                        .OrderBy("goods.code");
-
-                    return query;
-                })
-            },
-            new DfNumericTextBox("amount", "Количество", 100, 199)
-            {
-                NumberDecimalDigits = 3
-            },
-            new DfCurrencyTextBox("operation_summa", "Сумма", 100, 100)
-        }); ; ;
+            CreateDirectorySelectBox<Goods, IGoodsEditor>(x => x.ReferenceId, "Продукция", 100, 400, data: GetGoods),
+            CreateNumericTextBox(x => x.Amount, "Количество", 100, 199, digits: 3),
+            CreateCurrencyTextBox(x => x.OperationSumma, "Сумма", 100, 100)
+        });
     }
+
+    private IEnumerable<Goods> GetGoods() => Services.Provider.GetService<IGoodsRepository>()!.GetAllValid(callback: query =>
+    {
+        query
+            .Select("goods.id")
+            .Select("goods.code")
+            .SelectRaw("goods.code || ', ' || goods.item_name as item_name")
+            .OrderBy("goods.code");
+
+        return query;
+    });
 }

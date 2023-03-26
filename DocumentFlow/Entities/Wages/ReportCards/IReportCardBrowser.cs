@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Wages;
 
-[Menu(MenuDestination.Document, "Табель", 108020, "Зар. плата")]
+[Menu(MenuDestination.Document, "Табель", parent: "Зар. плата", order: 30 )]
 public interface IReportCardBrowser : IBrowser<ReportCard>
 {
 }

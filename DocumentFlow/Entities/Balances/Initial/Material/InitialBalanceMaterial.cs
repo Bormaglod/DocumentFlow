@@ -12,6 +12,6 @@ namespace DocumentFlow.Entities.Balances.Initial;
 [Description("Нач. остаток")]
 internal class InitialBalanceMaterial : InitialBalance
 {
-    public string? material_code { get; protected set; }
-    public string? material_name { get; protected set; }
+    public string? MaterialCode { get; protected set; }
+    public string? MaterialName { get; protected set; }
 }

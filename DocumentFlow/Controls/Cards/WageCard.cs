@@ -41,11 +41,11 @@ public partial class WageCard : UserControl, ICard
     {
         switch (e.Column.MappingName)
         {
-            case "employee_name":
+            case "EmployeeName":
                 e.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                 break;
-            case "begining_balance":
-            case "ending_balance":
+            case "BeginingBalance":
+            case "EndingBalance":
                 e.Column.Width = 120;
                 break;
             default:

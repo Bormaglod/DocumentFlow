@@ -10,7 +10,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Wages;
 
-[Menu(MenuDestination.Document, "Платёжная ведомость", 108900, "Зар. плата")]
+[Menu(MenuDestination.Document, "Платёжная ведомость", parent: "Зар. плата", order: 50 )]
 public interface IPayrollBrowser : IBrowser<Payroll>
 {
 }

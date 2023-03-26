@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Companies;
 
-[Menu(MenuDestination.Directory, "Контрагенты", 206000)]
+[Menu(MenuDestination.Directory, "Контрагенты", order: 60)]
 public interface IContractorBrowser : IBrowser<Contractor>
 {
 }

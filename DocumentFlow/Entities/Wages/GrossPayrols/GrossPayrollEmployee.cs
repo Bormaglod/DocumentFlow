@@ -14,8 +14,8 @@ namespace DocumentFlow.Entities.Wages;
 public class GrossPayrollEmployee : WageEmployee
 {
     [Display(AutoGenerateField = false)]
-    public Guid income_item_id { get; set; }
+    public Guid IncomeItemId { get; set; }
 
     [Display(Name = "Статья дохода", Order = 100)]
-    public string income_item_name { get; protected set; } = string.Empty;
+    public string IncomeItemName { get; protected set; } = string.Empty;
 }

@@ -37,22 +37,22 @@ public class CalculationOperationBrowser : Browser<CalculationOperation>, ICalcu
         Toolbar.IconSize = ButtonIconSize.Small;
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var equipment_name = CreateText(x => x.equipment_name, "Оборудование", width: 250, visible: false);
-        var tools_name = CreateText(x => x.tools_name, "Инструмент", width: 250, visible: false);
-        var operation_name = CreateText(x => x.operation_name, "Производственная операция", width: 300, visible: false);
+        var equipment_name = CreateText(x => x.EquipmentName, "Оборудование", width: 250, visible: false);
+        var tools_name = CreateText(x => x.ToolsName, "Инструмент", width: 250, visible: false);
+        var operation_name = CreateText(x => x.OperationName, "Производственная операция", width: 300, visible: false);
 
-        var code = CreateText(x => x.code, "Код", width: 100);
-        var item_name = CreateText(x => x.item_name, "Наименование", hidden: false);
-        var material_name = CreateText(x => x.material_name, "Материал", width: 140);
-        var previous_operation = CreateText(x => x.previous_operation_value, "Пред. операция", width: 150);
-        var using_operations = CreateText(x => x.using_operations_value, "Используется в...", width: 150);
-        var material_amount = CreateNumeric(x => x.material_amount, "Количество", width: 120, decimalDigits: 3);
-        var price = CreateNumeric(x => x.price, "Расценка", width: 100, decimalDigits: 4);
-        var stimul_cost = CreateCurrency(x => x.stimul_cost, "Стимул. выпл.", width: 100);
-        var total_material = CreateNumeric(x => x.total_material, "Количество", width: 120, decimalDigits: 3);
-        var produced_time = CreateNumeric(x => x.produced_time, "Время, с", width: 100, decimalDigits: 1);
-        var item_cost = CreateCurrency(x => x.item_cost, "Стоимость", width: 110);
-        var repeats = CreateNumeric(x => x.repeats, "Кол-во повторов", width: 100);
+        var code = CreateText(x => x.Code, "Код", width: 100);
+        var item_name = CreateText(x => x.ItemName, "Наименование", hidden: false);
+        var material_name = CreateText(x => x.MaterialName, "Материал", width: 140);
+        var previous_operation = CreateText(x => x.PreviousOperationValue, "Пред. операция", width: 150);
+        var using_operations = CreateText(x => x.UsingOperationsValue, "Используется в...", width: 150);
+        var material_amount = CreateNumeric(x => x.MaterialAmount, "Количество", width: 120, decimalDigits: 3);
+        var price = CreateNumeric(x => x.Price, "Расценка", width: 100, decimalDigits: 4);
+        var stimul_cost = CreateCurrency(x => x.StimulCost, "Стимул. выпл.", width: 100);
+        var total_material = CreateNumeric(x => x.TotalMaterial, "Количество", width: 120, decimalDigits: 3);
+        var produced_time = CreateNumeric(x => x.ProducedTime, "Время, с", width: 100, decimalDigits: 1);
+        var item_cost = CreateCurrency(x => x.ItemCost, "Стоимость", width: 110);
+        var repeats = CreateNumeric(x => x.Repeats, "Кол-во повторов", width: 100);
 
         CreateSummaryRow(VerticalPosition.Bottom)
             .AsCount(item_name, "Всего наименований: {?}")
@@ -81,7 +81,7 @@ public class CalculationOperationBrowser : Browser<CalculationOperation>, ICalcu
 
         AllowSorting = false;
 
-        ShowToolTip = (d) => d?.note ?? string.Empty;
+        ShowToolTip = (d) => d?.Note ?? string.Empty;
 
         Toolbar.Add("Производственная операция", Resources.icons8_robot_16, Resources.icons8_robot_30, () => OpenOperation(pageManager));
         Toolbar.Add("Используемый материал", Resources.icons8_goods_16, Resources.icons8_goods_30, () => OpenMaterial(pageManager));
@@ -113,17 +113,17 @@ public class CalculationOperationBrowser : Browser<CalculationOperation>, ICalcu
 
     private void OpenOperation(IPageManager pageManager)
     {
-        if (CurrentDocument != null && CurrentDocument.material_id != null)
+        if (CurrentDocument != null && CurrentDocument.MaterialId != null)
         {
-            pageManager.ShowEditor<IMaterialEditor>(CurrentDocument.material_id.Value);
+            pageManager.ShowEditor<IMaterialEditor>(CurrentDocument.MaterialId.Value);
         }
     }
 
     private void OpenMaterial(IPageManager pageManager)
     {
-        if (CurrentDocument != null && CurrentDocument.material_id != null)
+        if (CurrentDocument != null && CurrentDocument.MaterialId != null)
         {
-            pageManager.ShowEditor<IMaterialEditor>(CurrentDocument.material_id.Value);
+            pageManager.ShowEditor<IMaterialEditor>(CurrentDocument.MaterialId.Value);
         }
     }
 }

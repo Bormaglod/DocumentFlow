@@ -12,5 +12,5 @@ namespace DocumentFlow.Entities.Employees;
 [Description("Сотрудник")]
 public class OurEmployee : Employee
 {
-    public string[]? income_items { get; set; }
+    public string[]? IncomeItems { get; set; }
 }

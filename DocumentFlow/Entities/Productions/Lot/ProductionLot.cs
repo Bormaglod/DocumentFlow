@@ -30,32 +30,32 @@ public enum LotState { Created, Production, Completed }
 [Description("Партия")]
 public class ProductionLot : AccountingDocument
 {
-    private string _state = "created";
+    private string state = "created";
 
-    public Guid calculation_id { get; set; }
-    public decimal quantity { get; set; }
-    public int order_number { get; protected set; }
-    public DateTime order_date { get; protected set; }
-    public Guid goods_id { get; protected set; }
-    public string goods_name { get; protected set; } = string.Empty;
-    public string calculation_name { get; protected set; } = string.Empty;
-    public int execute_percent { get; protected set; }
+    public Guid CalculationId { get; set; }
+    public decimal Quantity { get; set; }
+    public int OrderNumber { get; protected set; }
+    public DateTime OrderDate { get; protected set; }
+    public Guid GoodsId { get; protected set; }
+    public string GoodsName { get; protected set; } = string.Empty;
+    public string CalculationName { get; protected set; } = string.Empty;
+    public int ExecutePercent { get; protected set; }
 
     [DataOperation(DataOperation.Add | DataOperation.Update)]
     [EnumType("lot_state")]
-    public string state 
+    public string State 
     {
-        get => _state;
+        get => state;
         set
         {
-            _state = value;
+            state = value;
             NotifyPropertyChanged();
         }
     }
 
-    public string state_name => StateNameFromValue(LotState);
+    public string StateName => StateNameFromValue(LotState);
 
-    public LotState LotState => Enum.Parse<LotState>(state.Pascalize());
+    public LotState LotState => Enum.Parse<LotState>(State.Pascalize());
 
     public static string StateNameFromValue(LotState state) => state switch
     {
@@ -69,7 +69,7 @@ public class ProductionLot : AccountingDocument
     {
         var doc_date = new GridDateTimeColumn()
         {
-            MappingName = "document_date",
+            MappingName = "DocumentDate",
             HeaderText = "Дата",
             Pattern = DateTimePattern.LongDate,
             Width = 120
@@ -80,7 +80,7 @@ public class ProductionLot : AccountingDocument
 
         var doc_number = new GridNumericColumn()
         {
-            MappingName = "document_number",
+            MappingName = "DocumentNumber",
             HeaderText = "Номер",
             FormatMode = FormatMode.Numeric,
             NumberFormatInfo = numberFormat,
@@ -89,7 +89,7 @@ public class ProductionLot : AccountingDocument
 
         var goods = new GridTextColumn()
         {
-            MappingName = "goods_name",
+            MappingName = "GoodsName",
             HeaderText = "Изделие"
         };
 
@@ -98,7 +98,7 @@ public class ProductionLot : AccountingDocument
 
         var quantity = new GridNumericColumn()
         {
-            MappingName = "quantity",
+            MappingName = "Quantity",
             HeaderText = "Количество",
             FormatMode = FormatMode.Numeric,
             NumberFormatInfo = format,

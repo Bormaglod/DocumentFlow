@@ -9,7 +9,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
@@ -25,16 +24,11 @@ internal class InitialBalanceMaterialEditor : DocumentEditor<InitialBalanceMater
     {
         AddControls(new Control[]
         {
-            new DfDirectorySelectBox<Material>("reference_id", "Материал", 100, 400) 
-            {
-                OpenAction = (t) => pageManager.ShowEditor<IMaterialEditor, Material>(t),
-                DataSourceFunc = () => Services.Provider.GetService<IMaterialRepository>()?.GetAllValid()
-            },
-            new DfNumericTextBox("amount", "Количество", 100, 199) 
-            { 
-                NumberDecimalDigits = 3 
-            },
-            new DfCurrencyTextBox("operation_summa", "Сумма", 100, 100)
+            CreateDirectorySelectBox<Material, IMaterialEditor>(x => x.ReferenceId, "Материал", 100, 400, data: GetMaterials),
+            CreateNumericTextBox(x => x.Amount, "Количество", 100, 200, digits: 3),
+            CreateCurrencyTextBox(x => x.OperationSumma, "Сумма", 100, 100)
         });
     }
+
+    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetAllValid();
 }

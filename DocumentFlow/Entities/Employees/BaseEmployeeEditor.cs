@@ -12,7 +12,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.OkpdtrLib;
 using DocumentFlow.Entities.Persons;
@@ -30,33 +29,18 @@ public class BaseEmployeeEditor<T> : Editor<T>
 
     public BaseEmployeeEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var org = new DfTextBox("owner_name", "Организация", headerWidth, 400) { Enabled = false };
-        var person = new DfDirectorySelectBox<Person>("person_id", "Сотрудник", headerWidth, 300)
-        {
-            OpenAction = (p) => pageManager.ShowEditor<IPersonEditor, Person>(p)
-        };
-
-        var post = new DfDirectorySelectBox<Okpdtr>("post_id", "Должность", headerWidth, 300)
-        {
-            OpenAction = (p) => pageManager.ShowEditor<IOkpdtrEditor, Okpdtr>(p)
-        };
-
-        var phone = new DfTextBox("phone", "Телефон", headerWidth, 200);
-        var email = new DfTextBox("email", "Эл. почта", headerWidth, 200);
-        var role = new DfChoice<JobRole>("JobRole", "Роль", headerWidth, 150);
-
-        person.SetDataSource(() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-        post.SetDataSource(() => Services.Provider.GetService<IOkpdtrRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-        role.SetChoiceValues(Employee.Roles);
-
         AddControls(new Control[]
         {
-            org,
-            person,
-            post,
-            phone,
-            email,
-            role
+            CreateTextBox(x => x.OwnerName, "Организация", headerWidth, 400, enabled: false),
+            CreateDirectorySelectBox<Person, IPersonEditor>(x => x.PersonId, "Сотрудник", headerWidth, 300, data: GetPeople),
+            CreateDirectorySelectBox<Okpdtr, IOkpdtrEditor>(x => x.PostId, "Должность", headerWidth, 300, data: GetPosts),
+            CreateTextBox(x => x.Phone, "Телефон", headerWidth, 200),
+            CreateTextBox(x => x.Email, "Эл. почта", headerWidth, 200),
+            CreateChoice(x => x.JobRole, "Роль", headerWidth, 150, choices: Employee.Roles)
         });
     }
+
+    private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+
+    private IEnumerable<Okpdtr> GetPosts() => Services.Provider.GetService<IOkpdtrRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
 }

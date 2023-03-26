@@ -40,6 +40,23 @@ namespace DocumentFlow;
 
 public partial class MainForm : Form, IHostApp, ITabPages
 {
+    private class PageData
+    {
+        private readonly MenuDestination destination;
+        private readonly string name;
+        private readonly int order;
+        private readonly string? parent;
+
+        public PageData(MenuAttribute menu, Type type) => (destination, name, order, parent, PageType) = (menu.Destination, menu.Name, menu.Order, menu.Parent, type);
+        public PageData(MenuDestination destination, string name, int order, string? parent = null) => (this.destination, this.name, this.order, this.parent) = (destination, name, order, parent);
+
+        public MenuDestination Destination => destination;
+        public string Name => name;
+        public int Order => order;
+        public string? Parent => parent;
+        public Type? PageType { get; }
+    }
+
 #if USE_LISTENER
     private Task? listenerTask;
     private readonly ConcurrentQueue<NotifyMessage> notifies = new();
@@ -118,25 +135,33 @@ public partial class MainForm : Form, IHostApp, ITabPages
 
     private void CreateMenu()
     {
-        Type browserType = typeof(IBrowser<>);
+        Type viewerType = typeof(IBrowser<>);
 
         var types = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(assembly => assembly.GetTypes())
             .Where(p => p.IsInterface)
-            .Where(p => p.GetInterfaces().Any(i => i.IsGenericType && browserType == i.GetGenericTypeDefinition()));
+            .Where(p => p.GetInterfaces().Any(i => i.IsGenericType && viewerType == i.GetGenericTypeDefinition()));
 
-        Dictionary<MenuAttribute, Type> browsers = new();
+        List<PageData> pageTypes = new();
         foreach (var type in types)
         {
             var attr = type.GetCustomAttribute<MenuAttribute>();
             if (attr != null)
             {
-                browsers.Add(attr, type);
+                pageTypes.Add(new(attr, type));
             }
         }
 
-        Dictionary<string, TreeMenuItem> menus = new();
-        foreach (var item in browsers.Keys.OfType<MenuAttribute>().OrderBy(m => m.Order))
+        pageTypes.Add(new(MenuDestination.Document, "Склад", 20));
+        pageTypes.Add(new(MenuDestination.Document, "Производство", 30));
+        pageTypes.Add(new(MenuDestination.Document, "Расчёты с контрагентами", 30));
+        pageTypes.Add(new(MenuDestination.Document, "Зар. плата", 70));
+
+        pageTypes.Add(new(MenuDestination.Directory, "Номенклатура", 90));
+        pageTypes.Add(new(MenuDestination.Directory, "Производственные операции", 110));
+
+
+        foreach (var item in pageTypes.OrderBy(m => m.Order).Where(m => m.Parent == null))
         {
             TreeMenuItem treeMenu = item.Destination switch
             {
@@ -145,21 +170,43 @@ public partial class MainForm : Form, IHostApp, ITabPages
                 _ => throw new NotImplementedException()
             };
 
-            if (!string.IsNullOrEmpty(item.Path))
-            {
-                if (menus.ContainsKey(item.Path))
-                {
-                    treeMenu = menus[item.Path];
-                }
-                else
-                {
-                    treeMenu = AddMenu(treeMenu, item.Path);
-                    menus.Add(item.Path, treeMenu);
-                }
-            }
-
-            AddMenu(treeMenu, item.Name, browsers[item]);
+            var added = CreateMenu(treeMenu, item, pageTypes);
         }
+    }
+
+    private TreeMenuItem CreateMenu(TreeMenuItem root, PageData pageData, IEnumerable<PageData> pages)
+    {
+        TreeMenuItem menu = CreateTreeMenuItem(root, pageData);
+        root.Items.Add(menu);
+
+        foreach (var item in pages.Where(m => m.Parent == pageData.Name).OrderBy(m => m.Order))
+        {
+            CreateMenu(menu, item, pages);
+        }
+
+        return menu;
+    }
+
+    private TreeMenuItem CreateTreeMenuItem(TreeMenuItem parent, PageData data)
+    {
+        TreeMenuItem item = new()
+        {
+            Text = data.Name,
+            Tag = data.PageType,
+            BackColor = parent.BackColor,
+            ForeColor = parent.ForeColor,
+            ItemBackColor = parent.ItemBackColor,
+            ItemHoverColor = parent.ItemHoverColor,
+            SelectedColor = parent.SelectedColor,
+            SelectedItemForeColor = parent.SelectedItemForeColor
+        };
+
+        if (data.PageType != null)
+        {
+            item.Click += AddonItem_Click;
+        }
+
+        return item;
     }
 
 #if USE_LISTENER
@@ -207,30 +254,6 @@ public partial class MainForm : Form, IHostApp, ITabPages
         }
     }
 #endif
-
-    private TreeMenuItem AddMenu(TreeMenuItem parent, string text, Type? browserType = null)
-    {
-        TreeMenuItem item = new()
-        {
-            Text = text,
-            Tag = browserType,
-            BackColor = parent.BackColor,
-            ForeColor = parent.ForeColor,
-            ItemBackColor = parent.ItemBackColor,
-            ItemHoverColor = parent.ItemHoverColor,
-            SelectedColor = parent.SelectedColor,
-            SelectedItemForeColor = parent.SelectedItemForeColor
-        };
-
-        if (browserType != null)
-        {
-            item.Click += AddonItem_Click;
-        }
-
-        parent.Items.Add(item);
-
-        return item;
-    }
 
     private void AddonItem_Click(object? sender, EventArgs e)
     {

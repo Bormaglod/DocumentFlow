@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Measurements;
 
-[Menu(MenuDestination.Directory, "Единицы измерения", 201000)]
+[Menu(MenuDestination.Directory, "Единицы измерения", order: 10)]
 public interface IMeasurementBrowser : IBrowser<Measurement>
 {
 }

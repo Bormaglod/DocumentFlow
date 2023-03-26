@@ -40,10 +40,10 @@ public partial class ApplicatorCard : UserControl, ICard
     {
         switch (e.Column.MappingName)
         {
-            case "item_name":
+            case "ItemName":
                 e.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                 break;
-            case "commissioning":
+            case "Commissioning":
                 e.Column.Width = 120;
                 break;
             case "TotalHits":

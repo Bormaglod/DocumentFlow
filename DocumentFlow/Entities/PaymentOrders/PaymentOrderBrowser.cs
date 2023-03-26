@@ -35,14 +35,14 @@ public class PaymentOrderBrowser : Browser<PaymentOrder>, IPaymentOrderBrowser
     {
         AllowGrouping();
 
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridDateTimeColumn date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
-        GridNumericColumn number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        GridTextColumn contractor = CreateText(x => x.contractor_name, "Контрагент");
-        GridDateTimeColumn date_operation = CreateDateTime(x => x.date_operation, "Дата операции", width: 150, format: "dd.MM.yyyy");
-        GridTextColumn payment_number = CreateText(x => x.payment_number, "Номер п/п", width: 100);
-        GridNumericColumn income = CreateCurrency(x => x.income, "Приход", width: 120);
-        GridNumericColumn expense = CreateCurrency(x => x.expense, "Расход", width: 120);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
+        var contractor = CreateText(x => x.ContractorName, "Контрагент");
+        var date_operation = CreateDateTime(x => x.DateOperation, "Дата операции", width: 150, format: "dd.MM.yyyy");
+        var payment_number = CreateText(x => x.PaymentNumber, "Номер п/п", width: 100);
+        var income = CreateCurrency(x => x.Income, "Приход", width: 120);
+        var expense = CreateCurrency(x => x.Expense, "Расход", width: 120);
 
         CreateSummaryRow(VerticalPosition.Bottom, true)
             .AsSummary(income, SummaryColumnFormat.Currency)

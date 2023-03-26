@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Wages;
 
-[Menu(MenuDestination.Document, "Начисление зар. платы", 108090, "Зар. плата")]
+[Menu(MenuDestination.Document, "Начисление зар. платы", parent: "Зар. плата", order: 40 )]
 public interface IGrossPayrollBrowser : IBrowser<GrossPayroll>
 {
 }

@@ -24,8 +24,11 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
+using DocumentFlow.Controls.Editor;
+using DocumentFlow.Controls.Editors;
 using DocumentFlow.Core;
 using DocumentFlow.Core.Exceptions;
+using DocumentFlow.Core.Reflection;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Data.Infrastructure;
@@ -46,6 +49,7 @@ using Syncfusion.WinForms.DataGrid.Events;
 
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace DocumentFlow.Controls.PageContents;
@@ -70,7 +74,7 @@ public partial class Editor<T> : UserControl, IEditorPage
     private readonly IRepository<Guid, T> repository;
     private readonly IPageManager pageManager;
     private Guid? defaultParentId;
-    private Guid? owner_id;
+    private Guid? ownerId;
     private bool readOnly;
     private bool isClosing = false;
 
@@ -109,7 +113,7 @@ public partial class Editor<T> : UserControl, IEditorPage
 
     protected Guid? DefaultParentId => defaultParentId;
 
-    protected Guid? OwnerId => owner_id;
+    protected Guid? OwnerId => ownerId;
 
     protected bool IsCreating { get; set; }
 
@@ -135,7 +139,7 @@ public partial class Editor<T> : UserControl, IEditorPage
         }
 
         this.readOnly = readOnly;
-        this.owner_id = owner_id;
+        this.ownerId = owner_id;
 
         defaultParentId = parent_id;
 
@@ -175,6 +179,251 @@ public partial class Editor<T> : UserControl, IEditorPage
     public bool Save() => Save(true);
 
     public void RefreshPage() => RefreshData(document?.Id);
+
+    protected DfCheckBox CreateCheckBox(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, bool allowThreeState = false)
+    {
+        return new DfCheckBox(memberExpression.ToMember().Name,
+                              header,
+                              headerWidth,
+                              allowThreeState);
+    }
+
+    protected DfChoice<P> CreateChoice<P>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, bool required = false, IReadOnlyDictionary<P, string>? choices = null)
+        where P : struct, IComparable
+    {
+        var choice = new DfChoice<P>(memberExpression.ToMember().Name,
+                                     header,
+                                     headerWidth,
+                                     editorWidth)
+        { Required = required };
+        if (choices != null)
+        {
+            choice.SetChoiceValues(choices);
+        }
+
+        return choice;
+    }
+
+    protected DfChoice<P> CreateChoice<P>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, bool required = false, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad, Func<IEnumerable<IChoice<P>>?>? data = null)
+        where P : struct, IComparable
+    {
+        var choice = new DfChoice<P>(memberExpression.ToMember().Name,
+                                     header,
+                                     headerWidth,
+                                     editorWidth)
+        { Required = required, RefreshMethod = refreshMethod };
+        if (data != null)
+        {
+            choice.SetDataSource(data);
+        }
+
+        return choice;
+    }
+
+    protected DfComboBox<P> CreateComboBox<P>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad, Func<IEnumerable<P>?>? data = null)
+        where P : class, IIdentifier<Guid>
+    {
+        var combo = new DfComboBox<P>(memberExpression.ToMember().Name,
+                                      header,
+                                      headerWidth,
+                                      editorWidth)
+        { RefreshMethod = refreshMethod };
+        if (data != null)
+        {
+            combo.SetDataSource(data);
+        }
+
+        return combo;
+    }
+
+    protected DfComboBox<P> CreateComboBox<P, I>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad, Func<IEnumerable<P>?>? data = null)
+        where P : class, IDocumentInfo
+        where I : IEditorPage
+    {
+        var combo = CreateComboBox(memberExpression, header, headerWidth, editorWidth, refreshMethod, data);
+        combo.OpenAction = pageManager.ShowEditor<I, P>;
+        return combo;
+    }
+
+    public DfCurrencyTextBox CreateCurrencyTextBox(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, bool enabled = true, bool visible = true, bool defaultAsNull = true)
+    {
+        return new DfCurrencyTextBox(memberExpression.ToMember().Name,
+                                     header,
+                                     headerWidth,
+                                     editorWidth)
+        { Enabled = enabled, Visible = visible, DefaultAsNull = defaultAsNull };
+    }
+
+    protected DfDateTimePicker CreateDateTimePicker(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, bool enabled = true, bool visible = true, bool defaultAsNull = true, bool required = true, DateTimePickerFormat format = DateTimePickerFormat.Long)
+    {
+        return new DfDateTimePicker(memberExpression.ToMember().Name,
+                                 header,
+                                 headerWidth,
+                                 editorWidth)
+        { Enabled = enabled, Visible = visible, DefaultAsNull = defaultAsNull, Required = required, Format = format };
+    }
+
+    protected DfDirectorySelectBox<P> CreateDirectorySelectBox<P>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, bool required = false, bool readOnly = false, Guid? rootIdentifier = null, bool showOnlyFolder = false, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad, Func<IEnumerable<P>?>? data = null)
+        where P : class, IDirectory
+    {
+        var box = new DfDirectorySelectBox<P>(memberExpression.ToMember().Name,
+                                              header,
+                                              headerWidth,
+                                              editorWidth)
+        { Required = required, RootIdentifier = rootIdentifier, ShowOnlyFolder = showOnlyFolder, ReadOnly = readOnly, RefreshMethod = refreshMethod };
+        if (data != null)
+        {
+            box.SetDataSource(data);
+        }
+
+        return box;
+    }
+
+    protected DfDirectorySelectBox<P> CreateDirectorySelectBox<P, I>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, bool required = false, bool readOnly = false, Guid? rootIdentifier = null, bool showOnlyFolder = false, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad, Func<IEnumerable<P>?>? data = null, bool openById = false)
+        where P : class, IDirectory
+        where I : IEditorPage
+    {
+        var box = CreateDirectorySelectBox(memberExpression, header, headerWidth, editorWidth, required, readOnly, rootIdentifier, showOnlyFolder, refreshMethod, data);
+        if (openById)
+        {
+            box.OpenAction = (t) => pageManager.ShowEditor<I>(t.Id);
+        }
+        else
+        {
+            box.OpenAction = pageManager.ShowEditor<I, P>;
+        }
+
+        return box;
+    }
+
+    protected DfDocumentSelectBox<P> CreateDocumentSelectBox<P>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, bool required = false, bool disableCurrent = false, bool readOnly = false, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad, Func<IEnumerable<P>?>? data = null)
+        where P : class, IAccountingDocument
+    {
+        var box = new DfDocumentSelectBox<P>(memberExpression.ToMember().Name,
+                                             header,
+                                             headerWidth,
+                                             editorWidth)
+        { Required = required, RefreshMethod = refreshMethod, DisableCurrentItem = disableCurrent, ReadOnly = readOnly };
+        if (data != null)
+        {
+            box.SetDataSource(data);
+        }
+
+        return box;
+    }
+
+    protected DfDocumentSelectBox<P> CreateDocumentSelectBox<P, I>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, bool required = false, bool disableCurrent = false, bool readOnly = false, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad, Func<IEnumerable<P>?>? data = null, bool openById = false)
+        where P : class, IAccountingDocument
+        where I : IEditorPage
+    {
+        var box = CreateDocumentSelectBox(memberExpression, header, headerWidth, editorWidth, required, disableCurrent, readOnly, refreshMethod, data);
+        if (openById)
+        {
+            box.OpenAction = (t) => pageManager.ShowEditor<I>(t.Id);
+        }
+        else
+        {
+            box.OpenAction = pageManager.ShowEditor<I, P>;
+        }
+
+        return box;
+    }
+
+    protected DfDocumentSelectBox<P> CreateDocumentSelectBox<P>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, bool required = false, bool disableCurrent = false, bool readOnly = false, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad, Func<IEnumerable<P>?>? data = null, Action<P>? open = null)
+        where P : class, IAccountingDocument
+    {
+        var box = CreateDocumentSelectBox(memberExpression, header, headerWidth, editorWidth, required, disableCurrent, readOnly, refreshMethod, data);
+        if (open != null)
+        {
+            box.OpenAction = open;
+        }
+
+        return box;
+    }
+
+    protected DfIntegerTextBox<P> CreateIntegerTextBox<P>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth, bool enabled = true, bool visible = true, bool defaultAsNull = true)
+        where P : struct, IComparable<P>
+    {
+        return new DfIntegerTextBox<P>(memberExpression.ToMember().Name,
+                                       header,
+                                       headerWidth,
+                                       editorWidth)
+        { Enabled = enabled, Visible = visible, DefaultAsNull = defaultAsNull };
+    }
+
+    protected DfMaskedTextBox<P> CreateMaskedTextBox<P>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth, string? mask = null, bool defaultAsNull = true)
+        where P : struct, IComparable<P>
+    {
+        return new DfMaskedTextBox<P>(memberExpression.ToMember().Name,
+                                      header,
+                                      headerWidth,
+                                      editorWidth,
+                                      mask)
+        { DefaultAsNull = defaultAsNull };
+    }
+
+    protected DfMultiSelectionComboBox CreateMultiSelectionComboBox(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth, bool enabled = true, bool visible = true, bool defaultAsNull = true, Func<IEnumerable<IItem>?>? data = null)
+    {
+        var combo = new DfMultiSelectionComboBox(memberExpression.ToMember().Name,
+                                                 header,
+                                                 headerWidth,
+                                                 editorWidth)
+        { Enabled = enabled, Visible = visible, DefaultAsNull = defaultAsNull };
+        if (data != null)
+        {
+            combo.SetDataSource(data);
+        }
+
+        return combo;
+    }
+
+    protected DfNumericTextBox CreateNumericTextBox(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, bool enabled = true, bool visible = true, bool defaultAsNull = true, int digits = 0)
+    {
+        return new DfNumericTextBox(memberExpression.ToMember().Name,
+                                    header,
+                                    headerWidth,
+                                    editorWidth)
+        { Enabled = enabled, Visible = visible, DefaultAsNull = defaultAsNull, NumberDecimalDigits = digits };
+    }
+
+    protected DfPercentTextBox CreatePercentTextBox(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth, bool enabled = true, bool visible = true, bool defaultAsNull = true, int digits = 3)
+    {
+        return new DfPercentTextBox(memberExpression.ToMember().Name,
+                                    header,
+                                    headerWidth,
+                                    editorWidth)
+        { Enabled = enabled, Visible = visible, DefaultAsNull = defaultAsNull, PercentDecimalDigits = digits };
+    }
+
+    protected DfState CreateState(Expression<Func<T, object?>> memberExpression, string header, int headerWidth)
+    {
+        return new DfState(memberExpression.ToMember().Name,
+                                 header,
+                                 headerWidth);
+    }
+
+    protected DfTextBox CreateTextBox(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth, bool enabled = true, bool defaultAsNull = true, bool readOnly = false)
+    {
+        return new DfTextBox(memberExpression.ToMember().Name,
+                             header,
+                             headerWidth,
+                             editorWidth) { Enabled = enabled, DefaultAsNull = defaultAsNull, ReadOnly = readOnly };
+    }
+
+    protected DfTextBox CreateMultilineTextBox(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth, bool enabled = true, bool defaultAsNull = true, int height = 75)
+    {
+        return new DfTextBox(memberExpression.ToMember().Name,
+                             header,
+                             headerWidth,
+                             editorWidth) { Enabled = enabled, DefaultAsNull = defaultAsNull, Multiline = true, Height = height };
+    }
+
+    protected DfToggleButton CreateToggleButton(Expression<Func<T, object?>> memberExpression, string header, int headerWidth)
+    {
+        return new DfToggleButton(memberExpression.ToMember().Name,
+                                 header,
+                                 headerWidth);
+    }
 
     protected Panel CreatePanel(Control[] controls)
     {
@@ -353,14 +602,14 @@ public partial class Editor<T> : UserControl, IEditorPage
     private T CreateDocument()
     {
         T doc = new();
-        if (doc.owner_id == null)
+        if (doc.OwnerId == null)
         {
-            doc.owner_id = owner_id;
+            doc.OwnerId = ownerId;
         }
 
-        if (doc is IDirectory dir && dir.parent_id == null)
+        if (doc is IDirectory dir && dir.ParentId == null)
         {
-            dir.parent_id = defaultParentId;
+            dir.ParentId = defaultParentId;
         }
 
         DoCreatedDocument(doc);
@@ -625,7 +874,7 @@ public partial class Editor<T> : UserControl, IEditorPage
 
     private void ButtonDeleteDoc_Click(object sender, EventArgs e)
     {
-        if (gridDocuments.CurrentItem is DocumentRefs refs && refs.file_name != null && document != null)
+        if (gridDocuments.CurrentItem is DocumentRefs refs && refs.FileName != null && document != null)
         {
             if (MessageBox.Show($"Вы действительно хотите удалить документ?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
@@ -685,13 +934,13 @@ public partial class Editor<T> : UserControl, IEditorPage
 
     private void ButtonSaveDoc_Click(object sender, EventArgs e)
     {
-        if (gridDocuments.CurrentItem is DocumentRefs refs && refs.file_name != null && document != null && refs.file_content != null)
+        if (gridDocuments.CurrentItem is DocumentRefs refs && refs.FileName != null && document != null && refs.FileContent != null)
         {
-            saveFileDialog1.FileName = refs.file_name;
+            saveFileDialog1.FileName = refs.FileName;
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 using FileStream stream = new(saveFileDialog1.FileName, FileMode.Create, FileAccess.Write);
-                stream.Write(refs.file_content, 0, refs.file_content.Length);
+                stream.Write(refs.FileContent, 0, refs.FileContent.Length);
             }
         }
     }

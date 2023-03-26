@@ -34,12 +34,12 @@ public class OperationsPerformedNestedBrowser : BaseOperationsPerformedBrowser, 
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
-        var operation = CreateText(x => x.operation_name, "Операция", hidden: false);
-        var employee = CreateText(x => x.employee_name, "Исполнитель", width: 200);
-        var material = CreateText(x => x.material_name, "Использованный материал", width: 270);
-        var quantity = CreateNumeric(x => x.quantity, "Количество", width: 140, hidden: false, decimalDigits: 3);
-        var salary = CreateCurrency(x => x.salary, "Зарплата", width: 120);
-        var double_rate = CreateBoolean(x => x.double_rate, "Двойная оплата", width: 100);
+        var operation = CreateText(x => x.OperationName, "Операция", hidden: false);
+        var employee = CreateText(x => x.EmployeeName, "Исполнитель", width: 200);
+        var material = CreateText(x => x.MaterialName, "Использованный материал", width: 270);
+        var quantity = CreateNumeric(x => x.Quantity, "Количество", width: 140, hidden: false, decimalDigits: 3);
+        var salary = CreateCurrency(x => x.Salary, "Зарплата", width: 120);
+        var double_rate = CreateBoolean(x => x.DoubleRate, "Двойная оплата", width: 100);
 
         CreateSummaryRow(VerticalPosition.Bottom)
             .AsSummary(quantity)

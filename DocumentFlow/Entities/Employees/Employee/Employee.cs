@@ -31,20 +31,20 @@ public class Employee : Directory
         [JobRole.Worker] = "Рабочий"
     };
 
-    public string? owner_name { get; protected set; }
-    public Guid? person_id { get; set; }
-    public Guid? post_id { get; set; }
-    public string? post_name { get; protected set; }
-    public string? phone { get; set; }
-    public string? email { get; set; }
+    public string? OwnerName { get; protected set; }
+    public Guid? PersonId { get; set; }
+    public Guid? PostId { get; set; }
+    public string? PostName { get; protected set; }
+    public string? Phone { get; set; }
+    public string? Email { get; set; }
 
     [EnumType("job_role")]
-    public string j_role { get; set; } = "not defined";
+    public string JRole { get; set; } = "not defined";
 
     public JobRole JobRole
     {
-        get { return Enum.Parse<JobRole>(j_role.Pascalize()); }
-        protected set { j_role = value.ToString().Underscore(); }
+        get { return Enum.Parse<JobRole>(JRole.Pascalize()); }
+        protected set { JRole = value.ToString().Underscore(); }
     }
 
     public static IReadOnlyDictionary<JobRole, string> Roles => roles;

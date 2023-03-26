@@ -29,19 +29,19 @@ public class WaybillReceiptBrowser : WaybillBrowser<WaybillReceipt>, IWaybillRec
     public WaybillReceiptBrowser(IWaybillReceiptRepository repository, IPageManager pageManager, IWaybillReceiptFilter filter, IStandaloneSettings settings)
         : base(repository, pageManager, filter: filter, settings: settings)
     {
-        var payment_exists = CreateBoolean(x => x.payment_exists, "Оплата", 100);
+        var payment_exists = CreateBoolean(x => x.PaymentExists, "Оплата", 100);
 
-        CreateStackedColumns("Заявка", new string[] { "purchase_request_date", "purchase_request_number" });
+        CreateStackedColumns("Заявка", new string[] { "PurchaseRequestDate", "PurchaseRequestNumber" });
 
         AddColumns(new GridColumn[] { payment_exists });
     }
 
     protected override GridColumn[] GetColumnsAfter(string mappingName)
     {
-        if (mappingName == "document_number")
+        if (mappingName == "DocumentNumber")
         {
-            var date = CreateDateTime(x => x.purchase_request_date, "Дата", width: 150, format: "dd.MM.yyyy");
-            var number = CreateNumeric(x => x.purchase_request_number, "Номер", width: 100);
+            var date = CreateDateTime(x => x.PurchaseRequestDate, "Дата", width: 150, format: "dd.MM.yyyy");
+            var number = CreateNumeric(x => x.PurchaseRequestNumber, "Номер", width: 100);
             return new GridColumn[] { date, number };
         }
 

@@ -12,22 +12,22 @@ namespace DocumentFlow.Entities.Calculations;
 [Description("Произв. операция")]
 public class CalculationOperation : CalculationItem
 {
-    public string? operation_name { get; protected set; }
-    public decimal produced_time { get; protected set; }
-    public Guid? equipment_id { get; set; }
-    public string? equipment_name { get; protected set; }
-    public Guid? tools_id { get; set; }
-    public string? tools_name { get; protected set; }
-    public Guid? material_id { get; set; }
-    public string? material_name { get; protected set; }
-    public decimal material_amount { get; set; }
-    public decimal total_material { get; protected set; }
-    public int repeats { get; set; }
-    public string[]? previous_operation { get; set; }
-    public string previous_operation_value => previous_operation == null ? string.Empty : string.Join(',', previous_operation);
-    public string[]? using_operations { get; protected set; }
-    public string using_operations_value => using_operations == null ? string.Empty : string.Join(',', using_operations);
-    public string? note { get; set; }
-    public decimal stimul_cost { get; set; }
-    public byte[]? preview { get; set; }
+    public string? OperationName { get; protected set; }
+    public decimal ProducedTime { get; protected set; }
+    public Guid? EquipmentId { get; set; }
+    public string? EquipmentName { get; protected set; }
+    public Guid? ToolsId { get; set; }
+    public string? ToolsName { get; protected set; }
+    public Guid? MaterialId { get; set; }
+    public string? MaterialName { get; protected set; }
+    public decimal MaterialAmount { get; set; }
+    public decimal TotalMaterial { get; protected set; }
+    public int Repeats { get; set; }
+    public string[]? PreviousOperation { get; set; }
+    public string PreviousOperationValue => PreviousOperation == null ? string.Empty : string.Join(',', PreviousOperation);
+    public string[]? UsingOperations { get; protected set; }
+    public string UsingOperationsValue => UsingOperations == null ? string.Empty : string.Join(',', UsingOperations);
+    public string? Note { get; set; }
+    public decimal StimulCost { get; set; }
+    public byte[]? Preview { get; set; }
 }

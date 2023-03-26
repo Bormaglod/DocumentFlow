@@ -30,8 +30,8 @@ public partial class FormMaterialQuantity : Form
     {
         InitializeComponent();
 
-        material = new("material_id", "Материал", 120) { Required = true, RefreshMethod = DataRefreshMethod.Immediately };
-        quantity = new("quantity", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3 };
+        material = new("MaterialId", "Материал", 120) { Required = true, RefreshMethod = DataRefreshMethod.Immediately };
+        quantity = new("Quantity", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3 };
 
         material.SetDataSource(() => Services.Provider.GetService<IMaterialRepository>()?.GetAllValid());
 
@@ -57,8 +57,8 @@ public partial class FormMaterialQuantity : Form
     public static DialogResult Edit(ReturnMaterialsRows row)
     {
         FormMaterialQuantity form = new();
-        form.material.Value = row.material_id;
-        form.quantity.Value = row.quantity;
+        form.material.Value = row.MaterialId;
+        form.quantity.Value = row.Quantity;
 
         if (form.ShowDialog() == DialogResult.OK)
         {
@@ -71,9 +71,9 @@ public partial class FormMaterialQuantity : Form
 
     private void SaveControlData(ReturnMaterialsRows row)
     {
-        row.material_id = material.SelectedItem?.Id ?? Guid.Empty;
-        row.material_name = material.ValueText;
-        row.quantity = quantity.NumericValue.GetValueOrDefault();
+        row.MaterialId = material.SelectedItem?.Id ?? Guid.Empty;
+        row.MaterialName = material.ValueText;
+        row.Quantity = quantity.NumericValue.GetValueOrDefault();
     }
 
     private void ButtonOk_Click(object sender, EventArgs e)

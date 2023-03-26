@@ -40,16 +40,16 @@ public abstract class WaybillBrowser<T> : Browser<T>
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        var waybill_date = CreateDateTime(x => x.waybill_date, "Дата", width: 150, format: "dd.MM.yyyy", visible: false);
-        var waybill_number = CreateNumeric(x => x.waybill_number, "Номер", width: 100, visible: false);
-        var invoice_date = CreateDateTime(x => x.invoice_date, "Дата", width: 150, format: "dd.MM.yyyy");
-        var invoice_number = CreateNumeric(x => x.invoice_number, "Номер", width: 100);
+        var waybill_date = CreateDateTime(x => x.WaybillDate, "Дата", width: 150, format: "dd.MM.yyyy", visible: false);
+        var waybill_number = CreateNumeric(x => x.WaybillNumber, "Номер", width: 100, visible: false);
+        var invoice_date = CreateDateTime(x => x.InvoiceDate, "Дата", width: 150, format: "dd.MM.yyyy");
+        var invoice_number = CreateNumeric(x => x.InvoiceNumber, "Номер", width: 100);
         var contractor = CreateText(x => x.ContractorName, "Контрагент");
         var contract = CreateText(x => x.ContractName, "Договор", width: 200, visible: false);
-        var product_cost = CreateCurrency(x => x.product_cost, "Сумма", width: 120);
-        var tax = CreateNumeric(x => x.tax, "НДС%", width: 80, mode: FormatMode.Percent);
-        var tax_value = CreateCurrency(x => x.tax_value, "НДС", width: 120);
-        var full_cost = CreateCurrency(x => x.full_cost, "Всего c НДС", width: 120);
+        var product_cost = CreateCurrency(x => x.ProductCost, "Сумма", width: 120);
+        var tax = CreateNumeric(x => x.Tax, "НДС%", width: 80, mode: FormatMode.Percent);
+        var tax_value = CreateCurrency(x => x.TaxValue, "НДС", width: 120);
+        var full_cost = CreateCurrency(x => x.FullCost, "Всего c НДС", width: 120);
 
         CreateSummaryRow(VerticalPosition.Bottom, true)
             .AsSummary(product_cost, SummaryColumnFormat.Currency)

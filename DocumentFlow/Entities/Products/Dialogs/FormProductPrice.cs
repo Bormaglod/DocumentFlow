@@ -90,25 +90,25 @@ public partial class FormProductPrice<P> : Form
             _ => throw new NotImplementedException()
         };
 
-        product = new("reference_id", productHeader, 120) 
+        product = new("ReferenceId", productHeader, 120) 
         { 
             Required = true,
-            NameColumn = "code",
+            NameColumn = "Code",
             Columns = new Dictionary<string, string> 
             {
-                ["code"] = "Артикул",
-                ["item_name"] = "Наименование"
+                ["Code"] = "Артикул",
+                ["ItemName"] = "Наименование"
             },
             TabIndex = 1,
             RefreshMethod = DataRefreshMethod.Immediately
         };
 
-        amount = new("amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3, TabIndex = 3 };
-        price = new("price", "Цена", 120) { DefaultAsNull = false, TabIndex = 4, Visible = !excludePrice };
-        cost = new("product_cost", "Сумма", 120) { DefaultAsNull = false, TabIndex = 5, Visible = !excludePrice };
-        tax = new("tax", "НДС%", 120) { TabIndex = 6, Visible = !excludePrice };
-        tax_value = new("tax_value", "НДС", 120) { DefaultAsNull = false, TabIndex = 7, Visible = !excludePrice };
-        full_cost = new("full_cost", "Всего с НДС", 120) { DefaultAsNull = false, TabIndex = 8, Visible = !excludePrice };
+        amount = new("Amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3, TabIndex = 3 };
+        price = new("Price", "Цена", 120) { DefaultAsNull = false, TabIndex = 4, Visible = !excludePrice };
+        cost = new("ProductCost", "Сумма", 120) { DefaultAsNull = false, TabIndex = 5, Visible = !excludePrice };
+        tax = new("Tax", "НДС%", 120) { TabIndex = 6, Visible = !excludePrice };
+        tax_value = new("TaxValue", "НДС", 120) { DefaultAsNull = false, TabIndex = 7, Visible = !excludePrice };
+        full_cost = new("FullCost", "Всего с НДС", 120) { DefaultAsNull = false, TabIndex = 8, Visible = !excludePrice };
 
         var controls = new List<Control>() 
         { 
@@ -123,7 +123,7 @@ public partial class FormProductPrice<P> : Form
 
         if (calculationSelect)
         {
-            calc = new DfDirectorySelectBox<Calculation>("calculation_id", "Калькуляция", 120) { Required = true, TabIndex = 2 };
+            calc = new DfDirectorySelectBox<Calculation>("CalculationId", "Калькуляция", 120) { Required = true, TabIndex = 2 };
             calc.SetDataSource(() =>
             {
                 if (product.SelectedItem != null)
@@ -140,7 +140,7 @@ public partial class FormProductPrice<P> : Form
                             .OrderBy("calculation.code"));
                 }
 
-                return Array.Empty<Calculation>();
+                return null;
             });
 
             controls.Insert(6, calc);
@@ -206,14 +206,14 @@ public partial class FormProductPrice<P> : Form
                         var p = priceRepo.GetPrice(app, goods);
                         if (p != null)
                         {
-                            avgPrice = p.price;
+                            avgPrice = p.Price;
                             break;
                         }
                     }
                 }
             }
 
-            price.Value = avgPrice == 0 ? (product.SelectedItem?.price ?? 0) : avgPrice;
+            price.Value = avgPrice == 0 ? (product.SelectedItem?.Price ?? 0) : avgPrice;
 
             calc?.RefreshDataSource();
         };
@@ -255,15 +255,15 @@ public partial class FormProductPrice<P> : Form
     {
         FormProductPrice<P> form = new(contract, calculationSelect);
         form.UpdateControls();
-        form.product.Value = productPrice.reference_id;
-        form.amount.Value = productPrice.amount;
-        form.price.Value = productPrice.price;
-        form.cost.Value = productPrice.product_cost;
-        form.tax_value.Value = productPrice.tax_value;
-        form.full_cost.Value = productPrice.full_cost;
+        form.product.Value = productPrice.ReferenceId;
+        form.amount.Value = productPrice.Amount;
+        form.price.Value = productPrice.Price;
+        form.cost.Value = productPrice.ProductCost;
+        form.tax_value.Value = productPrice.TaxValue;
+        form.full_cost.Value = productPrice.FullCost;
         if (calculationSelect && form.calc != null && productPrice is ProductionOrderPrice pop)
         {
-            form.calc.Value = pop.calculation_id;
+            form.calc.Value = pop.CalculationId;
         }
 
         if (form.ShowDialog() == DialogResult.OK)
@@ -277,13 +277,13 @@ public partial class FormProductPrice<P> : Form
 
     private void SaveControlData(P dest)
     {
-        dest.reference_id = product.SelectedItem?.Id ?? Guid.Empty;
-        dest.amount = amount.NumericValue.GetValueOrDefault();
-        dest.price = price.NumericValue.GetValueOrDefault();
-        dest.product_cost = cost.NumericValue.GetValueOrDefault();
-        dest.tax = tax.ChoiceValue.GetValueOrDefault();
-        dest.tax_value = tax_value.NumericValue.GetValueOrDefault();
-        dest.full_cost = full_cost.NumericValue.GetValueOrDefault();
+        dest.ReferenceId = product.SelectedItem?.Id ?? Guid.Empty;
+        dest.Amount = amount.NumericValue.GetValueOrDefault();
+        dest.Price = price.NumericValue.GetValueOrDefault();
+        dest.ProductCost = cost.NumericValue.GetValueOrDefault();
+        dest.Tax = tax.ChoiceValue.GetValueOrDefault();
+        dest.TaxValue = tax_value.NumericValue.GetValueOrDefault();
+        dest.FullCost = full_cost.NumericValue.GetValueOrDefault();
         dest.SetProductInfo(product.SelectedItem);
         if (dest is IDiscriminator discriminator && product.SelectedItem != null)
         {
@@ -298,7 +298,7 @@ public partial class FormProductPrice<P> : Form
 
     private void UpdateControls()
     {
-        bool isTaxPayer = contract != null && contract.tax_payer;
+        bool isTaxPayer = contract != null && contract.TaxPayer;
         tax.Enabled = isTaxPayer;
         tax_value.Enabled = isTaxPayer;
         if (isTaxPayer)

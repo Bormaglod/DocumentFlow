@@ -13,5 +13,5 @@ namespace DocumentFlow.Entities.OkpdtrLib;
 [Description("ОКПДТР")]
 public class Okpdtr : Directory
 {
-    public string? signatory_name { get; set; }
+    public string? SignatoryName { get; set; }
 }

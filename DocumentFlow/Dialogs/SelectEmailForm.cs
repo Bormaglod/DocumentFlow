@@ -81,14 +81,14 @@ public partial class SelectEmailForm : Form
             callback: q => q
                 .WhereNotNull("item_name")
                 .WhereNotNull("email"))
-            .Select(x => new EmailAddress(x.item_name!, x.email!));
+            .Select(x => new EmailAddress(x.ItemName!, x.Email!));
 
         var ourEmpRepo = Services.Provider.GetService<IOurEmployeeRepository>();
         var ourEmps = ourEmpRepo!.GetAllValid(
             callback: q => q
                 .WhereNotNull("item_name")
                 .WhereNotNull("email"))
-            .Select(x => new EmailAddress(x.item_name!, x.email!));
+            .Select(x => new EmailAddress(x.ItemName!, x.Email!));
 
         var from = orgs.Concat(ourEmps);
 
@@ -98,7 +98,7 @@ public partial class SelectEmailForm : Form
                 .WhereFalse("employee.deleted")
                 .WhereNotNull("employee.item_name")
                 .WhereNotNull("employee.email"))
-            .Select(x => new EmailAddress($"{x.item_name} ({x.owner_name})", x.email!));
+            .Select(x => new EmailAddress($"{x.ItemName} ({x.OwnerName})", x.Email!));
 
         SelectEmailForm window = new(documentId, from, to, title, file);
         return window.ShowDialog() == DialogResult.OK;
@@ -118,9 +118,9 @@ public partial class SelectEmailForm : Form
         using var client = new SmtpClient();
         EmailLog log = new()
         {
-            email_id = email.Id,
-            to_address = string.Join(";", emailTo.Select(x => x.Email)),
-            document_id = id
+            EmailId = email.Id,
+            ToAddress = string.Join(";", emailTo.Select(x => x.Email)),
+            DocumentId = id
         };
 
         // SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection
@@ -128,11 +128,11 @@ public partial class SelectEmailForm : Form
         //
         client.ServerCertificateValidationCallback = (s, c, h, e) => true;
         
-        await client.ConnectAsync(email.mail_host, email.mail_port, SecureSocketOptions.Auto);
+        await client.ConnectAsync(email.MailHost, email.MailPort, SecureSocketOptions.Auto);
 
         try
         {
-            await client.AuthenticateAsync(email.address, email.user_password);
+            await client.AuthenticateAsync(email.Address, email.UserPassword);
         }
         catch (Exception e)
         {
@@ -151,14 +151,14 @@ public partial class SelectEmailForm : Form
         message.Subject = textSubject.Text;
 
         BodyBuilder builder = new();
-        if (!string.IsNullOrEmpty(email.signature_plain))
+        if (!string.IsNullOrEmpty(email.SignaturePlain))
         {
-            builder.TextBody = string.Format("{0}\n--\n{1}", textMessage.Text, email.signature_plain);
+            builder.TextBody = string.Format("{0}\n--\n{1}", textMessage.Text, email.SignaturePlain);
         }
 
-        if (!string.IsNullOrEmpty(email.signature_html))
+        if (!string.IsNullOrEmpty(email.SignatureHtml))
         {
-            builder.HtmlBody = string.Format("<p>{0}</p><br/>{1}", textMessage.Text, email.signature_html);
+            builder.HtmlBody = string.Format("<p>{0}</p><br/>{1}", textMessage.Text, email.SignatureHtml);
         }
 
         if (attachments.Any())
@@ -172,7 +172,7 @@ public partial class SelectEmailForm : Form
         message.Body = builder.ToMessageBody();
 
         await client.SendAsync(message);
-        log.date_time_sending = DateTime.Now;
+        log.DateTimeSending = DateTime.Now;
 
         client.Disconnect(true);
 

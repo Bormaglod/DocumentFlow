@@ -23,17 +23,17 @@ namespace DocumentFlow.Entities.Productions.Order;
 public class ProductionOrderPrice : ProductPrice
 {
     [Display(Name = "Выполнено", Order = 1000)]
-    public int complete_status { get; set; }
+    public int CompleteStatus { get; set; }
 
     [Display(AutoGenerateField = false)]
-    public Guid calculation_id { get; set; }
+    public Guid CalculationId { get; set; }
 
     [Display(Name = "Калькуляция", Order = 20)]
-    public string calculation_name { get; protected set; } = string.Empty;
+    public string CalculationName { get; protected set; } = string.Empty;
 
     public void SetCalculation(Calculation calculation)
     {
-        calculation_id = calculation.Id;
-        calculation_name = calculation.code;
+        CalculationId = calculation.Id;
+        CalculationName = calculation.Code;
     }
 }

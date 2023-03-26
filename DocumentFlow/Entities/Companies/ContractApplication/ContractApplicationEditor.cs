@@ -22,30 +22,24 @@ public class ContractApplicationEditor : Editor<ContractApplication>, IContractA
 
     public ContractApplicationEditor(IContractApplicationRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var contract_name = new DfTextBox("contract_name", "Договор", headerWidth, 400) { Enabled = false };
-        var code = new DfTextBox("code", "Номер приложения", headerWidth, 200) { DefaultAsNull = false };
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 400);
-        var date = new DfDateTimePicker("document_date", "Дата подписания", headerWidth, 200) { Format = DateTimePickerFormat.Short };
-        var date_start = new DfDateTimePicker("date_start", "Начало действия", headerWidth, 200) { Format = DateTimePickerFormat.Short };
-        var date_end = new DfDateTimePicker("date_end", "Окончание действия", headerWidth, 200) { Required = false, Format = DateTimePickerFormat.Short };
         var grid = new DfDataGrid<PriceApproval>(Services.Provider.GetService<IPriceApprovalRepository>()!) { Dock = DockStyle.Fill };
 
         grid.AutoGeneratingColumn += (sender, args) =>
         {
             switch (args.Column.MappingName)
             {
-                case "id":
-                case "owner_id":
+                case "Id":
+                case "OwnerId":
                     args.Cancel = true;
                     break;
-                case "product_name":
+                case "ProductName":
                     args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                     args.Column.HeaderText = "Материал / Изделие";
                     break;
-                case "measurement_name":
+                case "MeasurementName":
                     args.Column.Width = 100;
                     break;
-                case "price":
+                case "Price":
                     if (args.Column is GridNumericColumn c)
                     {
                         c.FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency;
@@ -74,12 +68,12 @@ public class ContractApplicationEditor : Editor<ContractApplication>, IContractA
 
         AddControls(new Control[]
         {
-            contract_name,
-            code,
-            name,
-            date,
-            date_start,
-            date_end,
+            CreateTextBox(x => x.ContractName, "Договор", headerWidth, 400, enabled: false),
+            CreateTextBox(x => x.Code, "Номер приложения", headerWidth, 200, defaultAsNull: false),
+            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400),
+            CreateDateTimePicker(x => x.DocumentDate, "Дата подписания", headerWidth, 200, format: DateTimePickerFormat.Short),
+            CreateDateTimePicker(x => x.DateStart, "Начало действия", headerWidth, 200, format: DateTimePickerFormat.Short),
+            CreateDateTimePicker(x => x.DateEnd, "Окончание действия", headerWidth, 200, required: false, format: DateTimePickerFormat.Short),
             grid
         });
 

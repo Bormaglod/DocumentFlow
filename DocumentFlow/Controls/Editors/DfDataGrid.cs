@@ -40,7 +40,7 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
     where T : IEntity<long>, IEntityClonable, ICloneable, new()
 {
     private ObservableCollection<T>? list;
-    private Guid? owner_id;
+    private Guid? ownerId;
     private readonly IOwnedRepository<long, T> repository;
     private readonly List<T> deleted = new();
     private readonly List<T> created = new();
@@ -92,9 +92,9 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
     public void RefreshDataSource()
     {
-        if (owner_id != null)
+        if (ownerId != null)
         {
-            list = new ObservableCollection<T>(repository.GetByOwner(owner_id));
+            list = new ObservableCollection<T>(repository.GetByOwner(ownerId));
         }
         else
         {
@@ -110,18 +110,18 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
     #region IGridDataSource interface
 
-    public void SetOwner(Guid owner_id) => this.owner_id = owner_id;
+    public void SetOwner(Guid owner_id) => ownerId = owner_id;
 
     public void UpdateData(IDbTransaction transaction)
     {
-        if (owner_id == null)
+        if (ownerId == null)
         {
-            throw new ArgumentNullException(nameof(owner_id), "Не определено значение owner_id.");
+            throw new ArgumentNullException(nameof(ownerId), "Не определено значение owner_id.");
         }
 
         foreach (var item in created)
         {
-            item.owner_id = owner_id;
+            item.OwnerId = ownerId;
             repository.Add(item, transaction);
         }
 
@@ -158,9 +158,9 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
     public void Fill(IEnumerable<T> rows)
     {
-        if (owner_id == null)
+        if (ownerId == null)
         {
-            throw new ArgumentNullException(nameof(owner_id), "Не определено значение owner_id.");
+            throw new ArgumentNullException(nameof(ownerId), "Не определено значение owner_id.");
         }
 
         created.Clear();
@@ -179,7 +179,7 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
         foreach (var row in rows)
         {
-            row.owner_id = owner_id;
+            row.OwnerId = ownerId;
             list.Add(row);
             created.Add(row);
         }

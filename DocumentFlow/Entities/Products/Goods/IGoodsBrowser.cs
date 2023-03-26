@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Products;
 
-[Menu(MenuDestination.Directory, "Продукция", 208030, "Номенклатура")]
+[Menu(MenuDestination.Directory, "Продукция", parent: "Номенклатура", order: 30 )]
 public interface IGoodsBrowser : IBrowser<Goods>
 {
 }

@@ -20,7 +20,7 @@ public class AccountRepository : OwnedRepository<Guid, Account>, IAccountReposit
 {
     public AccountRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.parent_id);
+        ExcludeField(x => x.ParentId);
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)

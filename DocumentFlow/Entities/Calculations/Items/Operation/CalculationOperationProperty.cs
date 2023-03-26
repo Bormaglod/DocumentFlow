@@ -14,17 +14,17 @@ namespace DocumentFlow.Entities.Calculations;
 public class CalculationOperationProperty : Identifier<long>
 {
     [Display(AutoGenerateField = false)]
-    public Guid operation_id { get; set; }
+    public Guid OperationId { get; set; }
     
     [Display(AutoGenerateField = false)]
-    public Guid property_id { get; set; }
+    public Guid PropertyId { get; set; }
 
     [Display(AutoGenerateField = false)]
     public Property? Property { get; set; }
 
     [Display(Name = "Параметр")]
-    public string property_name => Property?.ToString() ?? string.Empty;
+    public string PropertyName => Property?.ToString() ?? string.Empty;
 
     [Display(Name = "Значение")]
-    public string? property_value { get; set; }
+    public string? PropertyValue { get; set; }
 }

@@ -12,24 +12,24 @@ namespace DocumentFlow.Entities.Operations;
 [Description("Резка")]
 public class Cutting : Operation
 {
-    public int segment_length { get; set; }
-    public decimal left_cleaning { get; set; }
-    public int left_sweep { get; set; }
-    public decimal right_cleaning { get; set; }
-    public int right_sweep { get; set; }
-    public int? program_number { get; set; }
+    public int SegmentLength { get; set; }
+    public decimal LeftCleaning { get; set; }
+    public int LeftSweep { get; set; }
+    public decimal RightCleaning { get; set; }
+    public int RightSweep { get; set; }
+    public int? ProgramNumber { get; set; }
 
     [Exclude]
     public Stripping Left 
     {
-        get => new() { Cleaning = left_cleaning, Sweep = left_sweep };
-        set => (left_cleaning, left_sweep) = (value.Cleaning, value.Sweep);
+        get => new() { Cleaning = LeftCleaning, Sweep = LeftSweep };
+        set => (LeftCleaning, LeftSweep) = (value.Cleaning, value.Sweep);
     }
 
     [Exclude]
     public Stripping Right
     {
-        get => new() { Cleaning = right_cleaning, Sweep = right_sweep };
-        set => (right_cleaning, right_sweep) = (value.Cleaning, value.Sweep);
+        get => new() { Cleaning = RightCleaning, Sweep = RightSweep };
+        set => (RightCleaning, RightSweep) = (value.Cleaning, value.Sweep);
     }
 }

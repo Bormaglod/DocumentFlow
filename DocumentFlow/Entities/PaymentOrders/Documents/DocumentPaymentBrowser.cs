@@ -37,13 +37,13 @@ public class DocumentPaymentBrowser : Browser<DocumentPayment>, IDocumentPayment
 
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn document_name = CreateText(x => x.document_name, "Документ");
-        GridDateTimeColumn date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
-        GridNumericColumn number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        GridTextColumn payment_number = CreateText(x => x.payment_number, "Номер плат. ордера", width: 150);
-        GridDateTimeColumn date_operation = CreateDateTime(x => x.date_operation, "Дата операции", width: 150, format: "dd.MM.yyyy");
-        GridNumericColumn transaction_amount = CreateCurrency(x => x.transaction_amount, "Сумма", width: 150);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var document_name = CreateText(x => x.DocumentName, "Документ");
+        var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
+        var payment_number = CreateText(x => x.PaymentNumber, "Номер плат. ордера", width: 150);
+        var date_operation = CreateDateTime(x => x.DateOperation, "Дата операции", width: 150, format: "dd.MM.yyyy");
+        var transaction_amount = CreateCurrency(x => x.TransactionAmount, "Сумма", width: 150);
 
         document_name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

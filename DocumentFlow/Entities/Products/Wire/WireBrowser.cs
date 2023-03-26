@@ -28,9 +28,9 @@ public class WireBrowser : Browser<Wire>, IWireBrowser
         : base(repository, pageManager, settings: settings) 
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var code = CreateText(x => x.code, "Код", width: 110);
-        var name = CreateText(x => x.item_name, "Наименование", hidden: false);
-        var wsize = CreateNumeric(x => x.wsize, "Сечение проводп", width: 100, decimalDigits: 2);
+        var code = CreateText(x => x.Code, "Код", width: 110);
+        var name = CreateText(x => x.ItemName, "Наименование", hidden: false);
+        var wsize = CreateNumeric(x => x.Wsize, "Сечение проводп", width: 100, decimalDigits: 2);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

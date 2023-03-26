@@ -13,50 +13,33 @@ using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Entities.Operations;
 
 public class CuttingEditor : Editor<Cutting>, ICuttingEditor
 {
+    private ICuttingRepository repository;
     private const int headerWidth = 190;
 
     public CuttingEditor(ICuttingRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var code = new DfTextBox("code", "Код", headerWidth, 100) { DefaultAsNull = false };
-        var name = new DfTextBox("item_name", "Наименование", headerWidth, 400);
-        var parent = new DfDirectorySelectBox<Cutting>("parent_id", "Группа", headerWidth, 400) { ShowOnlyFolder = true };
-        var program_number = new DfChoice<int>("program_number", "Программа", headerWidth, 150);
-        var segment_length = new DfIntegerTextBox<int>("segment_length", "Длина провода", headerWidth, 100) { DefaultAsNull = false };
-        var strip_left = new DfWireStripping("Зачистка слева", StrippingPlace.Left, headerWidth);
-        var strip_right = new DfWireStripping("Зачистка справа", StrippingPlace.Right, headerWidth);
-        var produced = new DfIntegerTextBox<int>("produced", "Выработка", headerWidth, 100) { DefaultAsNull = false, Enabled = false };
-        var prod_time = new DfIntegerTextBox<int>("prod_time", "Время выработки, сек.", headerWidth, 100) { DefaultAsNull = false, Enabled = false };
-        var production_rate = new DfIntegerTextBox<int>("production_rate", "Норма выработка, ед./час", headerWidth, 100) { DefaultAsNull = false, Enabled = false };
-        var salary = new DfNumericTextBox("salary", "Зарплата, руб.", headerWidth, 100) { DefaultAsNull = false, Enabled = false, NumberDecimalDigits = 4 };
-        var date_norm = new DfDateTimePicker("date_norm", "Дата нормирования", headerWidth, 150) { Required = false };
-
-        parent.SetDataSource(() => repository.GetOnlyFolders());
-        program_number.SetDataSource(() =>
-        {
-            return repository
-                .GetAvailableProgram(Document.program_number)
-                .Select(x => new Choice<int>(x));
-        });
+        this.repository = repository;
 
         AddControls(new Control[]
         {
-            code,
-            name,
-            parent,
-            program_number,
-            segment_length,
-            strip_left,
-            strip_right,
-            produced,
-            prod_time,
-            production_rate,
-            date_norm,
-            salary
+            CreateTextBox(x => x.Code, "Код", headerWidth, 100, defaultAsNull: false),
+            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400),
+            CreateDirectorySelectBox<Cutting>(x => x.ParentId, "Группа", headerWidth, 400, showOnlyFolder: true, data: repository.GetOnlyFolders),
+            CreateChoice(x => x.ProgramNumber, "Программа", headerWidth, 150, data: GetChoices),
+            CreateIntegerTextBox<int>(x => x.SegmentLength, "Длина провода", headerWidth, 100, defaultAsNull: false),
+            new DfWireStripping("Зачистка слева", StrippingPlace.Left, headerWidth),
+            new DfWireStripping("Зачистка справа", StrippingPlace.Right, headerWidth),
+            CreateIntegerTextBox<int>(x => x.Produced, "Выработка", headerWidth, 100, defaultAsNull: false, enabled: false),
+            CreateIntegerTextBox<int>(x => x.ProdTime, "Время выработки, сек.", headerWidth, 100, defaultAsNull: false, enabled: false),
+            CreateIntegerTextBox<int>(x => x.ProductionRate, "Норма выработка, ед./час", headerWidth, 100, defaultAsNull: false, enabled: false),
+            CreateDateTimePicker(x => x.DateNorm, "Дата нормирования", headerWidth, 150, required: false),
+            CreateNumericTextBox(x => x.Salary, "Зарплата, руб.", headerWidth, 100, defaultAsNull: false, enabled: false)
         });
     }
 
@@ -65,4 +48,7 @@ public class CuttingEditor : Editor<Cutting>, ICuttingEditor
         base.RegisterNestedBrowsers();
         RegisterNestedBrowser<IOperationUsageBrowser, OperationUsage>();
     }
+
+    private IEnumerable<IChoice<int>> GetChoices() => repository.GetAvailableProgram(Document.ProgramNumber)
+                                                                .Select(x => new Choice<int>(x));
 }

@@ -13,9 +13,9 @@ namespace DocumentFlow.Entities.Persons;
 [Description("Физ. лицо")]
 public class Person : Directory
 {
-    public string? surname { get; set; }
-    public string? first_name { get; set; }
-    public string? middle_name { get; set; }
-    public string? phone { get; set; }
-    public string? email { get; set; }
+    public string? Surname { get; set; }
+    public string? FirstName { get; set; }
+    public string? MiddleName { get; set; }
+    public string? Phone { get; set; }
+    public string? Email { get; set; }
 }

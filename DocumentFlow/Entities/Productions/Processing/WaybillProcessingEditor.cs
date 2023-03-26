@@ -33,20 +33,9 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
 {
     public WaybillProcessingEditor(IWaybillProcessingRepository repository, IPageManager pageManager) : base(repository, pageManager, true)
     {
-        var contractor = new DfDirectorySelectBox<Contractor>("contractor_id", "Контрагент", 120, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IContractorEditor, Contractor>(t)
-        };
-
-        var contract = new DfDirectorySelectBox<Contract>("contract_id", "Договор", 120, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IContractEditor, Contract>(t)
-        };
-
-        var order = new DfDocumentSelectBox<ProductionOrder>("owner_id", "Заказ", 120, 400)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<IProductionOrderEditor, ProductionOrder>(t)
-        };
+        var contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 120, 400);
+        var contract = CreateDirectorySelectBox<Contract, IContractEditor>(x => x.ContractId, "Договор", 120, 400);
+        var order = CreateDocumentSelectBox<ProductionOrder, IProductionOrderEditor>(x => x.OwnerId, "Заказ", 120, 400);
 
         order.SetDataSource(() =>
         {
@@ -59,8 +48,14 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
 
         order.Columns += (sender, e) => ProductionOrder.CreateGridColumns(e.Columns);
 
-        var waybill_number = new DfTextBox("waybill_number", "Накладная №", 110, 120) { Dock = DockStyle.Left, Width = 235 };
-        var waybill_date = new DfDateTimePicker("waybill_date", "от", 25, 170) { Dock = DockStyle.Left, Width = 200, Format = DateTimePickerFormat.Short };
+        var waybill_number = CreateTextBox(x => x.WaybillNumber, "Накладная №", 110, 120);
+        waybill_number.Dock = DockStyle.Left;
+        waybill_number.Width = 235;
+
+        var waybill_date = CreateDateTimePicker(x => x.WaybillDate, "от", 25, 170, format: DateTimePickerFormat.Short);
+        waybill_date.Dock = DockStyle.Left;
+        waybill_date.Width = 200;
+
         var waybill_panel = CreatePanel(new Control[] { waybill_date, waybill_number });
 
         var doc1c = new DfPanel()
@@ -79,7 +74,7 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
         contractor.ValueChanged += (sender, e) =>
         {
             contract.RefreshDataSource();
-            contract.Value = Document.contract_id;
+            contract.Value = Document.ContractId;
         };
 
         contractor.SetDataSource(() => Services.Provider.GetService<IContractorRepository>()?.GetSuppliers());
@@ -103,23 +98,23 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
         {
             switch (args.Column.MappingName)
             {
-                case "id":
+                case "Id":
                     args.Cancel = true;
                     break;
-                case "product_name":
+                case "ProductName":
                     args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                     break;
-                case "code":
+                case "Code":
                     args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.AllCells;
                     break;
-                case "amount":
+                case "Amount":
                     args.Column.Width = 100;
                     break;
-                case "price":
-                case "product_cost":
-                case "tax":
-                case "tax_value":
-                case "full_cost":
+                case "Price":
+                case "ProductCost":
+                case "Tax":
+                case "TaxValue":
+                case "FullCost":
                     args.Cancel = true;
                     break;
             }

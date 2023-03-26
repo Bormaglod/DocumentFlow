@@ -437,7 +437,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
             _ => throw new NotImplementedException()
         };
 
-        return string.Join(",", list);
+        return string.Join(",", list.Select(x => x.Underscore()));
     }
 
     protected string GetOperationValues(DataOperation operation)
@@ -452,7 +452,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
         if (operation == DataOperation.Update)
         {
-            return string.Join(',', list.Select(x => $"{x} = :{x}{(enums.TryGetValue(x, out string? value) ? "::" + value : "")}"));
+            return string.Join(',', list.Select(x => $"{x.Underscore()} = :{x}{(enums.TryGetValue(x, out string? value) ? "::" + value : "")}"));
         }
         else
         {

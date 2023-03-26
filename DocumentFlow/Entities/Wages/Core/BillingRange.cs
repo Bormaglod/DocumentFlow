@@ -26,10 +26,10 @@ public class BillingRange : IComparable
     {
         if (obj is BillingRange range)
         {
-            var compare = billing.billing_year.CompareTo(range.billing.billing_year);
+            var compare = billing.BillingYear.CompareTo(range.billing.BillingYear);
             if (compare == 0)
             {
-                compare = billing.billing_month.CompareTo(range.billing.billing_month);
+                compare = billing.BillingMonth.CompareTo(range.billing.BillingMonth);
             }
 
             return compare;
@@ -40,11 +40,11 @@ public class BillingRange : IComparable
 
     public override string ToString()
     {
-        if (billing.billing_year == default || billing.billing_month == default)
+        if (billing.BillingYear == default || billing.BillingMonth == default)
         {
             return "Не установлено";
         }
 
-        return $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(billing.billing_month)} {billing.billing_year}";
+        return $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(billing.BillingMonth)} {billing.BillingYear}";
     }
 }

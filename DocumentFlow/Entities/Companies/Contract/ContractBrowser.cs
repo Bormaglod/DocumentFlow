@@ -31,15 +31,15 @@ public class ContractBrowser : Browser<Contract>, IContractBrowser
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn code = CreateText(x => x.code, "Номер", width: 180);
-        GridDateTimeColumn document_date = CreateDateTime(x => x.document_date, "Дата", width: 150, format: "dd.MM.yyyy");
-        GridTextColumn name = CreateText(x => x.item_name, "Наименование");
-        GridCheckBoxColumn tax_payer = CreateBoolean(x => x.tax_payer, "Плательщик НДС", width: 150);
-        GridTextColumn c_type = CreateText(x => x.c_type_text, "Вид договора", width: 150);
-        GridDateTimeColumn date_start = CreateDateTime(x => x.date_start, "Дата начала", width: 150, format: "dd.MM.yyyy");
-        GridDateTimeColumn date_end = CreateDateTime(x => x.date_end, "Дата окончания", width: 150, format: "dd.MM.yyyy");
-        GridCheckBoxColumn is_default = CreateBoolean(x => x.is_default, "Основной", width: 150);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var code = CreateText(x => x.Code, "Номер", width: 180);
+        var document_date = CreateDateTime(x => x.DocumentDate, "Дата", width: 150, format: "dd.MM.yyyy");
+        var name = CreateText(x => x.ItemName, "Наименование");
+        var tax_payer = CreateBoolean(x => x.TaxPayer, "Плательщик НДС", width: 150);
+        var c_type = CreateText(x => x.CTypeText, "Вид договора", width: 150);
+        var date_start = CreateDateTime(x => x.DateStart, "Дата начала", width: 150, format: "dd.MM.yyyy");
+        var date_end = CreateDateTime(x => x.DateEnd, "Дата окончания", width: 150, format: "dd.MM.yyyy");
+        var is_default = CreateBoolean(x => x.IsDefault, "Основной", width: 150);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

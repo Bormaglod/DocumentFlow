@@ -20,8 +20,8 @@ public class DeductionRepository : Repository<Guid, Deduction>, IDeductionReposi
 {
     public DeductionRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.parent_id);
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.ParentId);
+        ExcludeField(x => x.OwnerId);
     }
 
     protected override Query GetDefaultQuery(Query query, IFilter? filter)

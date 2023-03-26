@@ -39,8 +39,8 @@ namespace DocumentFlow.Dialogs
 
             if (editableDir is IDirectory dir)
             {
-                textCode.Text = dir.code;
-                textName.Text = dir.item_name;
+                textCode.Text = dir.Code;
+                textName.Text = dir.ItemName;
             }
         }
 
@@ -65,8 +65,8 @@ namespace DocumentFlow.Dialogs
             {
                 if (editableDir is IDirectory dir)
                 {
-                    dir.code = textCode.Text;
-                    dir.item_name = textName.Text;
+                    dir.Code = textCode.Text;
+                    dir.ItemName = textName.Text;
                     repository.Update(editableDir);
                 }
                 else

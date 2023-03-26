@@ -39,7 +39,7 @@ public class PurchaseRequestRepository : DocumentRepository<PurchaseRequest>, IP
 {
     public PurchaseRequestRepository(IDatabase database) : base(database)
     {
-        ExcludeField(x => x.owner_id);
+        ExcludeField(x => x.OwnerId);
     }
 
     public void Cancel(PurchaseRequest purchaseRequest) => SetState(purchaseRequest, PurchaseState.Canceled);

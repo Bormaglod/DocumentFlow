@@ -45,9 +45,9 @@ public abstract class BalanceBrowser<T> : Browser<T>
 
     private void OpenDocument()
     {
-        if (CurrentDocument != null && CurrentDocument.owner_id != null)
+        if (CurrentDocument != null && CurrentDocument.OwnerId != null)
         {
-            var strType = $"I{CurrentDocument.document_type_code.Pascalize()}Editor";
+            var strType = $"I{CurrentDocument.DocumentTypeCode.Pascalize()}Editor";
 
             var type = Assembly
                 .GetExecutingAssembly()
@@ -58,7 +58,7 @@ public abstract class BalanceBrowser<T> : Browser<T>
             {
                 try
                 {
-                    pageManager.ShowEditor(type, CurrentDocument.owner_id.Value);
+                    pageManager.ShowEditor(type, CurrentDocument.OwnerId.Value);
                 }
                 catch (BrowserException e)
                 {

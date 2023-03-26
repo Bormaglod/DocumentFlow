@@ -22,13 +22,13 @@ public class Product : Directory
         [20] = "20%"
     };
 
-    public decimal price { get; set; }
-    public int vat { get; set; }
-    public Guid? measurement_id { get; set; }
-    public string? measurement_name { get; protected set; }
-    public decimal? weight { get; set; }
-    public decimal? product_balance { get; protected set; }
-    public bool thumbnails { get; protected set; }
+    public decimal Price { get; set; }
+    public int Vat { get; set; }
+    public Guid? MeasurementId { get; set; }
+    public string? MeasurementName { get; protected set; }
+    public decimal? Weight { get; set; }
+    public decimal? ProductBalance { get; protected set; }
+    public bool Thumbnails { get; protected set; }
     public IReadOnlyList<DocumentRefs>? Documents { get; protected set; }
     public static IReadOnlyDictionary<int, string> Taxes => taxes;
 

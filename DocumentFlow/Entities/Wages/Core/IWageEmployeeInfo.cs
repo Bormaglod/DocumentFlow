@@ -14,9 +14,9 @@ namespace DocumentFlow.Entities.Wages.Core;
 
 public interface IWageEmployeeInfo
 {
-    Guid employee_id { get; set; }
-    string employee_name { get; }
-    decimal wage { get; set; }
+    Guid EmployeeId { get; set; }
+    string EmployeeName { get; }
+    decimal Wage { get; set; }
 
     void SetEmployeeName(string employeeName);
 }
