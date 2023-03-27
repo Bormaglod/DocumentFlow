@@ -81,12 +81,6 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
         contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 120, 400);
         contract = CreateDirectorySelectBox<Contract, IContractEditor>(x => x.ContractId, "Договор", 120, 400);
 
-        DfDocumentSelectBox<PurchaseRequest>? purchase = null;
-        if (typeof(T) == typeof(WaybillReceipt))
-        {
-            purchase = CreateDocumentSelectBox<PurchaseRequest, IPurchaseRequestEditor>(x => x.OwnerId, "Заявка на покупку", 120, 400, refreshMethod: DataRefreshMethod.OnOpen);
-        }
-
         waybill_number = CreateTextBox(x => x.WaybillNumber, "Накладная №", 110, 120);
         waybill_number.Dock = DockStyle.Left;
         waybill_number.Width = 235;
@@ -182,20 +176,20 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
                     args.Column.Width = 100;
                     break;
                 case "Price":
-                    WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 100);
+                    UpdateCurrencyColumn(args.Column, 100);
                     break;
                 case "Product_Cost":
-                    WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 140);
+                    UpdateCurrencyColumn(args.Column, 140);
                     break;
                 case "Tax":
                     args.Column.Width = 80;
                     args.Column.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
                     break;
                 case "TaxValue":
-                    WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 140);
+                    UpdateCurrencyColumn(args.Column, 140);
                     break;
                 case "FullCost":
-                    WaybillEditor<T, P>.UpdateCurrencyColumn(args.Column, 140);
+                    UpdateCurrencyColumn(args.Column, 140);
                     break;
             }
         };
@@ -227,8 +221,9 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
             contract
         };
 
-        if (purchase != null)
+        if (typeof(T) == typeof(WaybillReceipt))
         {
+            var purchase = CreateDocumentSelectBox<PurchaseRequest, IPurchaseRequestEditor>(x => x.OwnerId, "Заявка на покупку", 120, 400, refreshMethod: DataRefreshMethod.OnOpen);
             purchase.SetDataSource(() =>
             {
                 if (contractor.SelectedItem != null)

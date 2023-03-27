@@ -813,20 +813,20 @@ public partial class Editor<T> : UserControl, IEditorPage
     {
         switch (e.Column.MappingName)
         {
-            case "id":
-            case "owner_id":
+            case "Id":
+            case "OwnerId":
                 e.Cancel = true;
                 break;
-            case "file_length":
-                e.Column = new GridFileSizeColumn() { MappingName = "file_length", HeaderText = "Размер", Width = 150 };
+            case "FileLength":
+                e.Column = new GridFileSizeColumn() { MappingName = "FileLength", HeaderText = "Размер", Width = 150 };
                 break;
-            case "note":
+            case "Note":
                 e.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                 break;
-            case "file_name":
+            case "FileName":
                 e.Column.Width = 300;
                 break;
-            case "thumbnail_exist":
+            case "ThumbnailExist":
                 e.Column.Width = 100;
                 break;
         }

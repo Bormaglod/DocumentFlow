@@ -8,6 +8,10 @@
 //  - добавлен метод GetPaymentBalance
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.3.27
+//  - параметр orderId в методе GetPaymentBalance стал Nullable
+//  - метод GetPaymentBalance неверно возвращал значение, если список
+//    разнесенных платежей был пуст
 //
 //-----------------------------------------------------------------------
 
@@ -39,15 +43,19 @@ public class PaymentOrderRepository : DocumentRepository<PaymentOrder>, IPayment
         return order.TransactionAmount - balance;
     }
 
-    public decimal GetPaymentBalance(Guid orderId)
+    public decimal GetPaymentBalance(Guid? orderId)
     {
+        if (orderId == null) 
+        {
+            return 0;
+        }
+
         using var conn = Database.OpenConnection();
         return GetBaseQuery(conn)
-            .SelectRaw("payment_order.transaction_amount - sum(pp.transaction_amount)")
-            .Join("posting_payments as pp", "pp.owner_id", "payment_order.id")
+            .SelectRaw("payment_order.transaction_amount - coalesce(sum(pp.transaction_amount), 0)")
+            .LeftJoin("posting_payments as pp", q => q.WhereColumns("pp.owner_id", "=", "payment_order.id").WhereTrue("pp.carried_out"))
             .GroupBy("payment_order.id")
             .Where("payment_order.id", orderId)
-            .WhereTrue("pp.carried_out")
             .First<decimal>();
     }
 

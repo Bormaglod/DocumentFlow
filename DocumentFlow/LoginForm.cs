@@ -122,7 +122,7 @@ public partial class LoginForm : Form
             textPassword.Text = File.ReadLines("password.txt").First();
         }
 #else
-        comboUsers.SelectedItem = list.FirstOrDefault(u => u.pg_name == Properties.Settings.Default.PreviousUser);
+        comboUsers.SelectedItem = list.FirstOrDefault(u => u.PgName == Properties.Settings.Default.PreviousUser);
 #endif
     }
 }

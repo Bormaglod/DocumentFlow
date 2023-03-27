@@ -27,6 +27,8 @@
 //    TableName
 // Версия 2023.3.17
 //  - перенесено из DocumentFlow.Data.Core в DocumentFlow.Data.Repositiry
+// Версия 2023.3.27
+//  - рефакторинг методов ExcludeField
 //
 //-----------------------------------------------------------------------
 
@@ -64,8 +66,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     {
         Database = database;
 
-        Type t = typeof(T);
-        foreach (var prop in t.GetProperties().Where(p => p.SetMethod?.IsPublic ?? false))
+        foreach (var prop in typeof(T).GetProperties().Where(p => p.SetMethod?.IsPublic ?? false))
         {
             var exclude = prop.GetCustomAttribute<ExcludeAttribute>();
             if (exclude != null)
@@ -467,30 +468,23 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
     protected void ExcludeField(Expression<Func<T, object?>> memberExpression)
     {
-        var member = ReflectionHelper.GetMember(memberExpression);
-        if (member != null)
-        {
-            add.Remove(member.Name);
-            copy.Remove(member.Name);
-            update.Remove(member.Name);
-        }
+        var name = memberExpression.ToMember().Name;
+        add.Remove(name);
+        copy.Remove(name);
+        update.Remove(name);
     }
 
     protected void ExcludeField(Expression<Func<T, object?>> memberExpression, DataOperation operation)
     {
-        var member = ReflectionHelper.GetMember(memberExpression);
-        if (member != null)
+        IList<string> list = operation switch
         {
-            IList<string> list = operation switch
-            {
-                DataOperation.Add => add,
-                DataOperation.Update => update,
-                DataOperation.Copy => copy,
-                _ => throw new NotImplementedException()
-            };
+            DataOperation.Add => add,
+            DataOperation.Update => update,
+            DataOperation.Copy => copy,
+            _ => throw new NotImplementedException()
+        };
 
-            list.Remove(member.Name);
-        }
+        list.Remove(memberExpression.ToMember().Name);
     }
 
     protected virtual Query GetDefaultQuery(Query query, IFilter? filter = null) => query;

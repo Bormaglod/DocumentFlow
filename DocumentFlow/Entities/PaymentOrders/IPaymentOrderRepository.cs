@@ -8,6 +8,8 @@
 //  - добавлен метод GetPaymentBalance
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.3.27
+//  - параметр orderId в методе GetPaymentBalance стал Nullable
 //
 //-----------------------------------------------------------------------
 
@@ -31,5 +33,5 @@ public interface IPaymentOrderRepository : IDocumentRepository<PaymentOrder>
     /// </summary>
     /// <param name="order">Идентификатор платёжного документа.</param>
     /// <returns>Остаток суммы, подлежащий распределению.</returns>
-    decimal GetPaymentBalance(Guid orderId);
+    decimal GetPaymentBalance(Guid? orderId);
 }
