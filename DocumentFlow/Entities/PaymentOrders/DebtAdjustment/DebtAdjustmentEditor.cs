@@ -11,6 +11,7 @@ using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Waybills;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 

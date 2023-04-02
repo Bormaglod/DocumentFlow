@@ -13,6 +13,8 @@
 
 namespace DocumentFlow.Infrastructure.Controls;
 
+public enum DataRefreshMethod { OnLoad, OnOpen, Immediately }
+
 /// <summary>
 /// При чтении данных из БД элемент управления получает значение которое копирует в 
 /// соответствующее поле связанного с этим элементом объкта. Если объект содержит больше, 

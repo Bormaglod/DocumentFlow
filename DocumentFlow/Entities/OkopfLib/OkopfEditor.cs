@@ -1,8 +1,13 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.01.2022
+//
+// Версия 2023.4.2
+//  - создание элементов управления в конструкторе реализовано с 
+//    помощью свойства EditorControls
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
@@ -16,10 +21,14 @@ public class OkopfEditor : Editor<Okopf>, IOkopfEditor
 
     public OkopfEditor(IOkopfRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        AddControls(new Control[]
-        {
-            CreateTextBox(x => x.Code, "Код", headerWidth, 100, defaultAsNull: false),
-            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400)
-        });
+        EditorControls
+            .CreateTextBox(x => x.Code, "Код", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue())
+            .CreateTextBox(x => x.ItemName, "Наименование", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400));
     }
 }

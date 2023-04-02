@@ -16,6 +16,8 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.4.2
+//  - добавлен интерфейс IControls<>
 //
 //-----------------------------------------------------------------------
 
@@ -60,6 +62,9 @@ public static class Services
                         .AsMatchingInterface()
                         .WithTransientLifetime()
                     .AddClasses(classes => classes.AssignableTo(typeof(IEditor<,>)))
+                        .AsMatchingInterface()
+                        .WithTransientLifetime()
+                    .AddClasses(classes => classes.AssignableTo(typeof(IControls<>)))
                         .AsMatchingInterface()
                         .WithTransientLifetime()
                     .AddClasses(classes => classes.AssignableTo<IBreadcrumb>())

@@ -13,25 +13,31 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.4.2
+//  - добавлено наследование от IComboBoxControl
+//  - тип универсального параметра T изменен на IDocumentInfo
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
+using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Syncfusion.Windows.Forms.Tools;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl, IAccess
-    where T : class, IIdentifier<Guid>
+public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl, IAccess, IComboBoxControl<T>
+    where T : class, IDocumentInfo
 {
     private bool requird = false;
     private bool lockManual = false;
     private Action<T>? open;
 
-    public DfComboBox(string property, string header, int headerWidth, int editorWidth = default) : base(property)
+    public DfComboBox(string property, string header, int headerWidth = 100, int editorWidth = default) : base(property)
     {
         InitializeComponent();
 
@@ -202,4 +208,60 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
             open(SelectedItem);
         }
     }
+
+    #region IControl interface
+
+    IControl IControl.SetHeaderWidth(int width)
+    {
+        HeaderWidth = width;
+        return this;
+    }
+
+    IControl IControl.SetEditorWidth(int width)
+    {
+        EditorWidth = width;
+        return this;
+    }
+
+    IControl IControl.Disable()
+    {
+        Enabled = false;
+        return this;
+    }
+
+    IControl IControl.ReadOnly()
+    {
+        ReadOnly = true;
+        return this;
+    }
+
+    IControl IControl.DefaultAsValue()
+    {
+        DefaultAsNull = false;
+        return this;
+    }
+
+    #endregion
+
+    #region IComboBoxControl interface
+
+    IComboBoxControl<T> IComboBoxControl<T>.EnableEditor<E>()
+    {
+        var pageManager = Services.Provider.GetService<IPageManager>();
+        if (pageManager != null)
+        {
+            OpenAction = pageManager.ShowEditor<E, T>;
+        }
+
+        return this;
+    }
+
+    IComboBoxControl<T> IComboBoxControl<T>.SetDataSource(Func<IEnumerable<T>?> func, DataRefreshMethod refreshMethod)
+    {
+        RefreshMethod = refreshMethod;
+        SetDataSource(func);
+        return this;
+    }
+
+    #endregion
 }

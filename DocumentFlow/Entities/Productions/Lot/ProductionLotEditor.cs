@@ -15,7 +15,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Core;
@@ -26,6 +25,7 @@ using DocumentFlow.Entities.Productions.Order;
 using DocumentFlow.Entities.Productions.Performed;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Properties;
 
 using Microsoft.Extensions.DependencyInjection;

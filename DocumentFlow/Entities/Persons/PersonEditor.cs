@@ -1,8 +1,13 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.01.2022
+//
+// Версия 2023.4.2
+//  - создание элементов управления в конструкторе реализовано с 
+//    помощью свойства EditorControls
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
@@ -16,14 +21,30 @@ public class PersonEditor : Editor<Person>, IPersonEditor
 
     public PersonEditor(IPersonRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        AddControls(new Control[]
-        {
-            CreateTextBox(x => x.ItemName, "Фамилия И.О.", headerWidth, 250),
-            CreateTextBox(x => x.Surname, "Фамилия", headerWidth, 200),
-            CreateTextBox(x => x.FirstName, "Имя", headerWidth, 200),
-            CreateTextBox(x => x.MiddleName, "Отчество", headerWidth, 200),
-            CreateTextBox(x => x.Phone, "Телефон", headerWidth, 200),
-            CreateTextBox(x => x.Email, "Эл. почта", headerWidth, 300)
-        });
+        EditorControls
+            .CreateTextBox(x => x.ItemName, "Фамилия И.О.", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(250))
+            .CreateTextBox(x => x.Surname, "Фамилия", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .CreateTextBox(x => x.FirstName, "Имя", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .CreateTextBox(x => x.MiddleName, "Отчество", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .CreateTextBox(x => x.Phone, "Телефон", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .CreateTextBox(x => x.Email, "Эл. почта", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300));
     }
 }

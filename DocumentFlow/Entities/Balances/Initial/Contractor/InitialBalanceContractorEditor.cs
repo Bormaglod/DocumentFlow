@@ -11,10 +11,10 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,8 +28,8 @@ internal class InitialBalanceContractorEditor : DocumentEditor<InitialBalanceCon
         [1] = "Долг контрагента"
     };
 
-public InitialBalanceContractorEditor(IInitialBalanceContractorRepository repository, IPageManager pageManager) 
-        : base(repository, pageManager, true) 
+    public InitialBalanceContractorEditor(IInitialBalanceContractorRepository repository, IPageManager pageManager)
+            : base(repository, pageManager, true)
     {
         var contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ReferenceId, "Контрагент", 100, 400, data: GetContractors);
         var contract = CreateComboBox<Contract>(x => x.ContractId, "Договор", 100, 400, refreshMethod: DataRefreshMethod.Immediately);

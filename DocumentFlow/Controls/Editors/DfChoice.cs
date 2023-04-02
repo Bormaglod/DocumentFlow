@@ -10,6 +10,8 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.4.2
+//  - добавлено наследование от IChoiceControl
 //
 //-----------------------------------------------------------------------
 
@@ -22,14 +24,15 @@ using Syncfusion.Windows.Forms.Tools;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingControl, IAccess
+public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingControl, IAccess, IChoiceControl<T>
     where T : struct, IComparable
 {
     private readonly List<IChoice<T>> choices = new();
     private bool requird = false;
     private bool lockManual = false;
+    private Action<T?>? manualValueChanged;
 
-    public DfChoice(string property, string header, int headerWidth, int editorWidth = default) : base(property)
+    public DfChoice(string property, string header, int headerWidth = 100, int editorWidth = default) : base(property)
     {
         InitializeComponent();
 
@@ -185,6 +188,7 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
         if (!lockManual)
         {
             ManualValueChange?.Invoke(this, new SelectedValueChanged<T?>(value));
+            manualValueChanged?.Invoke(value);
         }
     }
 
@@ -209,4 +213,83 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
     }
 
     private void ButtonDelete_Click(object sender, EventArgs e) => ClearValue();
+
+    #region IControl interface
+
+    string IControl.Tag => Tag?.ToString() ?? string.Empty;
+
+    IControl IControl.SetHeaderWidth(int width)
+    {
+        HeaderWidth = width;
+        return this;
+    }
+
+    IControl IControl.SetEditorWidth(int width)
+    {
+        EditorWidth = width;
+        return this;
+    }
+
+    IControl IControl.Disable()
+    {
+        Enabled = false;
+        return this;
+    }
+
+    IControl IControl.ReadOnly()
+    {
+        ReadOnly = true;
+        return this;
+    }
+
+    IControl IControl.DefaultAsValue()
+    {
+        DefaultAsNull = false;
+        return this;
+    }
+
+    IControl IControl.SetTag(string tag)
+    {
+        Tag = tag;
+        return this;
+    }
+
+    IControl IControl.SetVisible(bool visible)
+    {
+        Visible = visible;
+        return this;
+    }
+
+    #endregion
+
+    #region IChoiceControl interface
+
+    T? IChoiceControl<T>.Value => ChoiceValue;
+
+    IChoiceControl<T> IChoiceControl<T>.Required()
+    {
+        Required = true;
+        return this;
+    }
+
+    IChoiceControl<T> IChoiceControl<T>.SetChoiceValues(IReadOnlyDictionary<T, string> keyValues, bool autoRefresh)
+    {
+        SetChoiceValues(keyValues, autoRefresh); 
+        return this;
+    }
+
+    IChoiceControl<T> IChoiceControl<T>.SetDataSource(Func<IEnumerable<IChoice<T>>?> func, DataRefreshMethod refreshMethod)
+    {
+        RefreshMethod = refreshMethod;
+        SetDataSource(func);
+        return this;
+    }
+
+    IChoiceControl<T> IChoiceControl<T>.ManualValueChanged(Action<T?> action)
+    {
+        manualValueChanged = action;
+        return this;
+    }
+
+    #endregion
 }

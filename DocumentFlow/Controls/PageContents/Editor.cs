@@ -20,6 +20,8 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.2.23
 //  - добавлена ссылка на DocumentFlow.Core.Exceptions
+// Версия 2023.2.4
+//  - добавлено поле controls и его инициализация в конструкторе
 //
 //-----------------------------------------------------------------------
 
@@ -77,6 +79,7 @@ public partial class Editor<T> : UserControl, IEditorPage
     private Guid? ownerId;
     private bool readOnly;
     private bool isClosing = false;
+    private readonly IControls<T> controls;
 
     private T? document;
 
@@ -103,11 +106,20 @@ public partial class Editor<T> : UserControl, IEditorPage
         menuCreateDocument.Enabled = buttonAddDoc.Enabled;
         menuEditDocument.Enabled = buttonEditDoc.Enabled;
         menuDeleteDocument.Enabled = buttonDeleteDoc.Enabled;
+
+        controls = Services.Provider.GetService<IControls<T>>()!;
+        if (controls is IControls ctrls)
+        {
+            ctrls.Container = container.Panel1.Controls;
+            ctrls.EditorPage = this;
+        }
     }
 
     public IToolBar Toolbar => toolbar;
 
     public Guid? Id => document?.Id;
+
+    public IControls<T> EditorControls => controls;
 
     protected T Document => document ?? throw new ArgumentNullException(nameof(Document), "Значение Document не определено.");
 
@@ -221,7 +233,7 @@ public partial class Editor<T> : UserControl, IEditorPage
     }
 
     protected DfComboBox<P> CreateComboBox<P>(Expression<Func<T, object?>> memberExpression, string header, int headerWidth, int editorWidth = default, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad, Func<IEnumerable<P>?>? data = null)
-        where P : class, IIdentifier<Guid>
+        where P : class, IDocumentInfo
     {
         var combo = new DfComboBox<P>(memberExpression.ToMember().Name,
                                       header,

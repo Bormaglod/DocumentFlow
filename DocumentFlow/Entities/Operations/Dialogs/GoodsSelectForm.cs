@@ -5,9 +5,9 @@
 // Date: 05.02.2023
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Entities.Products;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 

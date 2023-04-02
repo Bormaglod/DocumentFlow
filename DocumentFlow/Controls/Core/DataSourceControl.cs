@@ -16,6 +16,8 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.4.2
+//  - DataRefreshMethod перенесен в DocumentFlow.Infrastructure.Controls
 //
 //-----------------------------------------------------------------------
 
@@ -23,8 +25,6 @@ using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Controls.Core;
-
-public enum DataRefreshMethod { OnLoad, OnOpen, Immediately }
 
 public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl
     where T : class, IIdentifier<I>

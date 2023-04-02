@@ -9,6 +9,8 @@
 // Версия 2023.1.25
 //  - изменены функции ClearValue и GetValueTextBox вызов которых (при
 //    значении Value == null) приводил к ошибке
+// Версия 2023.4.2
+//  - добавлено наследование от IMaskedTextBoxControl
 //
 //-----------------------------------------------------------------------
 
@@ -19,12 +21,12 @@ using Syncfusion.Windows.Forms.Tools;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, IAccess
+public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, IAccess, IMaskedTextBoxControl
     where T : struct, IComparable<T>
 {
     private bool lockText = false;
 
-    public DfMaskedTextBox(string property, string header, int headerWidth, int editorWidth, string? mask = null) :
+    public DfMaskedTextBox(string property, string header, int headerWidth = 100, int editorWidth = 100, string? mask = null) :
         base(property, header, headerWidth, editorWidth)
     {
         InitializeComponent();
@@ -92,4 +94,48 @@ public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, 
             UpdateNumericValue();
         }
     }
+
+    #region IControl interface
+
+    IControl IControl.SetHeaderWidth(int width)
+    {
+        HeaderWidth = width;
+        return this;
+    }
+
+    IControl IControl.SetEditorWidth(int width)
+    {
+        EditorWidth = width;
+        return this;
+    }
+
+    IControl IControl.Disable()
+    {
+        Enabled = false;
+        return this;
+    }
+
+    IControl IControl.ReadOnly()
+    {
+        ReadOnly = true;
+        return this;
+    }
+
+    IControl IControl.DefaultAsValue()
+    {
+        DefaultAsNull = false;
+        return this;
+    }
+
+    #endregion
+
+    #region IMaskedTextBoxControl interface
+
+    IMaskedTextBoxControl IMaskedTextBoxControl.SetMask(string mask)
+    {
+        Mask = mask;
+        return this;
+    }
+
+    #endregion
 }

@@ -8,6 +8,8 @@
 //  - в конструктор добавлен параметр settings
 // Версия 2023.1.22
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+// Версия 2023.4.2
+//  - добавлен столбец "Наим. для договоров"
 //
 //-----------------------------------------------------------------------
 
@@ -27,13 +29,14 @@ public class OkpdtrBrowser : Browser<Okpdtr>, IOkpdtrBrowser
     public OkpdtrBrowser(IOkpdtrRepository repository, IPageManager pageManager, IStandaloneSettings settings) 
         : base(repository, pageManager, settings: settings) 
     {
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn code = CreateText(x => x.Code, "Код", width: 110);
-        GridTextColumn name = CreateText(x => x.ItemName, "Наименование", hidden: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var code = CreateText(x => x.Code, "Код", width: 110);
+        var name = CreateText(x => x.ItemName, "Наименование", hidden: false);
+        var sign = CreateText(x => x.SignatoryName, "Наим. для договоров", width: 500);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 
-        AddColumns(new GridColumn[] { id, code, name });
+        AddColumns(new GridColumn[] { id, code, name, sign });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [code] = ListSortDirection.Ascending

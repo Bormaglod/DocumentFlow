@@ -28,7 +28,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data;
 using DocumentFlow.Entities.Calculations;
@@ -37,6 +36,7 @@ using DocumentFlow.Entities.Productions.Lot;
 using DocumentFlow.Entities.Productions.Order;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 

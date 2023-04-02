@@ -24,13 +24,13 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editor;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Productions.Lot;
 using DocumentFlow.Entities.Products;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 

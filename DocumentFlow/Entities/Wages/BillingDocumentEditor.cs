@@ -36,7 +36,7 @@ public class BillingDocumentEditor<T> : DocumentEditor<T>
             months.Add(i, CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i).Humanize());
         }
 
-        month = CreateChoice<short>(x => x.BillingMonth, "Расчётный период: месяц", 170, 200, choices: months);
+        month = CreateChoice(x => x.BillingMonth, "Расчётный период: месяц", 170, 200, choices: months);
         month.Width = 370;
         month.Dock = DockStyle.Left;
 

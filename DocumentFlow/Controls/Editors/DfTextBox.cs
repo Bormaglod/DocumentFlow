@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.4.2
+//  - добавлено наследование от ITextBoxControl
 //
 //-----------------------------------------------------------------------
 
@@ -15,9 +17,9 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfTextBox : BaseControl, IBindingControl, IAccess
+public partial class DfTextBox : BaseControl, IBindingControl, IAccess, ITextBoxControl
 {
-    public DfTextBox(string property, string header, int headerWidth, int editorWidth) : base(property)
+    public DfTextBox(string property, string header, int headerWidth = 100, int editorWidth = 100) : base(property)
     {
         InitializeComponent();
 
@@ -72,4 +74,49 @@ public partial class DfTextBox : BaseControl, IBindingControl, IAccess
     public void ClearValue() => textBoxExt.Text = string.Empty;
 
     private void TextBoxExt_TextChanged(object sender, EventArgs e) => ValueChanged?.Invoke(this, e);
+
+    #region IControl interface
+
+    IControl IControl.SetHeaderWidth(int width)
+    {
+        HeaderWidth = width;
+        return this;
+    }
+
+    IControl IControl.SetEditorWidth(int width)
+    {
+        EditorWidth = width;
+        return this;
+    }
+
+    IControl IControl.Disable()
+    {
+        Enabled = false;
+        return this;
+    }
+
+    IControl IControl.ReadOnly()
+    {
+        ReadOnly = true;
+        return this;
+    }
+
+    IControl IControl.DefaultAsValue()
+    {
+        DefaultAsNull = false;
+        return this;
+    }
+
+    #endregion
+
+    #region ITextBoxControl interface
+
+    ITextBoxControl ITextBoxControl.Multiline(int height)
+    {
+        Multiline = true;
+        Height = height;
+        return this;
+    }
+
+    #endregion
 }

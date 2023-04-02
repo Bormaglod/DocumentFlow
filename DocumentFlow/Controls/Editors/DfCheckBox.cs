@@ -9,6 +9,8 @@
 //    checkBoxAdv1 в не нём
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.4.2
+//  - добавлено наследование от ICheckBoxControl
 //
 //-----------------------------------------------------------------------
 
@@ -17,9 +19,9 @@ using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Controls.Editor;
 
-public partial class DfCheckBox : BaseControl, IBindingControl, IAccess
+public partial class DfCheckBox : BaseControl, IBindingControl, IAccess, ICheckBoxControl
 {
-    public DfCheckBox(string property, string header, int headerWidth, bool allowThreeState = false) : base(property)
+    public DfCheckBox(string property, string header, int headerWidth = 100, bool allowThreeState = false) : base(property)
     {
         InitializeComponent();
 
@@ -71,4 +73,48 @@ public partial class DfCheckBox : BaseControl, IBindingControl, IAccess
     public void ClearValue() => checkBoxAdv1.CheckState = AllowThreeState ? CheckState.Indeterminate : CheckState.Unchecked;
 
     private void CheckBoxAdv1_CheckedChanged(object sender, EventArgs e) => ValueChanged?.Invoke(this, e);
+
+    #region IControl interface
+
+    IControl IControl.SetHeaderWidth(int width)
+    {
+        HeaderWidth = width;
+        return this;
+    }
+
+    IControl IControl.SetEditorWidth(int width)
+    {
+        EditorWidth = width;
+        return this;
+    }
+
+    IControl IControl.Disable()
+    {
+        Enabled = false;
+        return this;
+    }
+
+    IControl IControl.ReadOnly()
+    {
+        ReadOnly = true;
+        return this;
+    }
+
+    IControl IControl.DefaultAsValue()
+    {
+        DefaultAsNull = false;
+        return this;
+    }
+
+    #endregion
+
+    #region ICheckBoxControl interface
+
+    ICheckBoxControl ICheckBoxControl.AllowThreeState()
+    {
+        AllowThreeState = true;
+        return this;
+    }
+
+    #endregion
 }

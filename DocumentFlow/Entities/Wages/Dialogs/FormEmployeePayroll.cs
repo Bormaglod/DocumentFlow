@@ -14,10 +14,10 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Wages.Core;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 

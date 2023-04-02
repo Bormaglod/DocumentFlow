@@ -6,6 +6,9 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.4.2
+//  - создание элементов управления в конструкторе реализовано с 
+//    помощью свойства EditorControls
 //
 //-----------------------------------------------------------------------
 
@@ -25,13 +28,27 @@ public abstract class BaseAccountEditor<T> : Editor<T>
 
     public BaseAccountEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        AddControls(new Control[]
-        {
-            CreateTextBox(x => x.CompanyName, "Контрагент", headerWidth, 120, enabled: false),
-            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 500),
-            CreateMaskedTextBox<decimal>(x => x.AccountValue, "Номер счета", headerWidth, 400, mask: "### ## ### # #### #######", defaultAsNull: false),
-            CreateComboBox(x => x.BankId, "Банк", headerWidth, 400, data: GetBanks)
-        });
+        EditorControls
+            .CreateTextBox(x => x.CompanyName, "Контрагент", (textBox) =>
+                textBox
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(120)
+                    .Disable())
+            .CreateTextBox(x => x.ItemName, "Наименование", (textBox) =>
+                textBox
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(500))
+            .CreateMaskedTextBox<decimal>(x => x.AccountValue, "Номер счета", (textBox) => 
+                textBox
+                    .SetMask("### ## ### # #### #######")
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400)
+                    .DefaultAsValue())
+            .CreateComboBox<Bank>(x => x.BankId, "Банк", (combo) => 
+                combo
+                    .SetDataSource(GetBanks)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400));
     }
 
     private IEnumerable<Bank> GetBanks() => Services.Provider.GetService<IBankRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));

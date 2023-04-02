@@ -37,13 +37,13 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Editors;
-using DocumentFlow.Infrastructure.Data;
 using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Companies;
-using DocumentFlow.Entities.Products.Core;
 using DocumentFlow.Entities.Productions.Order;
+using DocumentFlow.Entities.Products.Core;
+using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Data;
 
 using Humanizer;
 
