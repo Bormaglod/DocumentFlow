@@ -18,12 +18,17 @@ internal class InitialBalanceGoodsEditor : DocumentEditor<InitialBalanceGoods>, 
     public InitialBalanceGoodsEditor(IInitialBalanceGoodsRepository repository, IPageManager pageManager) 
         : base(repository, pageManager, true) 
     {
-        AddControls(new Control[]
-        {
-            CreateDirectorySelectBox<Goods, IGoodsEditor>(x => x.ReferenceId, "Продукция", 100, 400, data: GetGoods),
-            CreateNumericTextBox(x => x.Amount, "Количество", 100, 199, digits: 3),
-            CreateCurrencyTextBox(x => x.OperationSumma, "Сумма", 100, 100)
-        });
+        EditorControls
+            .CreateDirectorySelectBox<Goods>(x => x.ReferenceId, "Продукция", (select) =>
+                select
+                    .SetDataSource(GetGoods)
+                    .Editor<IGoodsEditor>()
+                    .SetEditorWidth(400))
+            .CreateNumericTextBox(x => x.Amount, "Количество", (text) =>
+                text
+                    .SetNumberDecimalDigits(3)
+                    .SetEditorWidth(200))
+            .CreateCurrencyTextBox(x => x.OperationSumma, "Сумма");
     }
 
     private IEnumerable<Goods> GetGoods() => Services.Provider.GetService<IGoodsRepository>()!.GetAllValid(callback: query =>

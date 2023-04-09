@@ -19,19 +19,13 @@ namespace DocumentFlow.Controls.Editors;
 public partial class DfIntegerTextBox<T> : BaseNumericTextBox<T, IntegerTextBox>, IAccess
     where T : struct, IComparable<T>
 {
-    public DfIntegerTextBox(string property, string header, int headerWidth, int editorWidth) :
+    public DfIntegerTextBox(string property, string header, int headerWidth = default, int editorWidth = default) :
         base(property, header, headerWidth, editorWidth)
     {
         InitializeComponent();
 
         TextBox.Style = TextBoxExt.theme.Office2016Colorful;
         TextBox.IntegerValueChanged += IntegerTextBox_IntegerValueChanged;
-    }
-
-    public bool ReadOnly
-    {
-        get => TextBox.ReadOnly;
-        set => TextBox.ReadOnly = value;
     }
 
     public long MinValue { get => TextBox.MinValue; set => TextBox.MinValue = value; }

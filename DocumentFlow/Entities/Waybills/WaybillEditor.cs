@@ -178,7 +178,7 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
                 case "Price":
                     UpdateCurrencyColumn(args.Column, 100);
                     break;
-                case "Product_Cost":
+                case "ProductCost":
                     UpdateCurrencyColumn(args.Column, 140);
                     break;
                 case "Tax":

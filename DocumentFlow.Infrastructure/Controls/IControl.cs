@@ -14,8 +14,8 @@ public interface IControl
     IControl SetHeaderWidth(int width);
     IControl SetEditorWidth(int width);
     IControl Disable();
-    IControl ReadOnly();
     IControl DefaultAsValue();
-    IControl SetTag(string tag);
+    IControl SetTag(string value);
     IControl SetVisible(bool visible);
+    IControl SetEnabled(bool enabled);
 }

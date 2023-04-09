@@ -21,12 +21,12 @@ using Syncfusion.Windows.Forms.Tools;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, IAccess, IMaskedTextBoxControl
+public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, IAccess, IMaskedTextBoxControl<T>
     where T : struct, IComparable<T>
 {
     private bool lockText = false;
 
-    public DfMaskedTextBox(string property, string header, int headerWidth = 100, int editorWidth = 100, string? mask = null) :
+    public DfMaskedTextBox(string property, string header, int headerWidth = default, int editorWidth = default, string? mask = null) :
         base(property, header, headerWidth, editorWidth)
     {
         InitializeComponent();
@@ -66,12 +66,6 @@ public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, 
 
     public int MaxLength { get; set; }
 
-    public bool ReadOnly
-    {
-        get => TextBox.ReadOnly;
-        set => TextBox.ReadOnly = value;
-    }
-
     public override void ClearValue() => TextBox.Text = default(T).ToString();
 
     protected override T GetValueTextBox() => (T)Convert.ChangeType(TextBox.Text.Trim(), typeof(T));
@@ -95,43 +89,9 @@ public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, 
         }
     }
 
-    #region IControl interface
-
-    IControl IControl.SetHeaderWidth(int width)
-    {
-        HeaderWidth = width;
-        return this;
-    }
-
-    IControl IControl.SetEditorWidth(int width)
-    {
-        EditorWidth = width;
-        return this;
-    }
-
-    IControl IControl.Disable()
-    {
-        Enabled = false;
-        return this;
-    }
-
-    IControl IControl.ReadOnly()
-    {
-        ReadOnly = true;
-        return this;
-    }
-
-    IControl IControl.DefaultAsValue()
-    {
-        DefaultAsNull = false;
-        return this;
-    }
-
-    #endregion
-
     #region IMaskedTextBoxControl interface
 
-    IMaskedTextBoxControl IMaskedTextBoxControl.SetMask(string mask)
+    IMaskedTextBoxControl<T> IMaskedTextBoxControl<T>.SetMask(string mask)
     {
         Mask = mask;
         return this;

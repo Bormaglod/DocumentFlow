@@ -7,7 +7,8 @@
 
 namespace DocumentFlow.Infrastructure.Controls;
 
-public interface IMaskedTextBoxControl : IControl 
+public interface IMaskedTextBoxControl<T> : IBaseNumericTextBoxControl<T>
+    where T : struct, IComparable<T>
 {
-    IMaskedTextBoxControl SetMask(string mask);
+    IMaskedTextBoxControl<T> SetMask(string mask);
 }

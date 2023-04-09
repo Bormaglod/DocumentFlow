@@ -21,7 +21,7 @@ namespace DocumentFlow.Controls.Editors;
 public class DfDocumentSelectBox<T> : SelectBox<T>
     where T : class, IAccountingDocument
 {
-    public DfDocumentSelectBox(string property, string header, int headerWidth, int editorWidth = default) 
+    public DfDocumentSelectBox(string property, string header, int headerWidth = default, int editorWidth = default) 
         : base(property, header, headerWidth, editorWidth)
     {
 

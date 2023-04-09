@@ -37,22 +37,15 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
     private T? selectedItem;
     private bool requird = false;
     private Action<T>? open;
+    private Action<T?, T?>? valueChanged;
+    private Action<T?, T?>? valueSelected;
 
-    public SelectBox(string property, string header, int headerWidth, int editorWidth = default) 
+    public SelectBox(string property, string header, int headerWidth = default, int editorWidth = default) 
         : base(property)
     {
         InitializeComponent();
-
-        Header = header;
-        HeaderWidth = headerWidth;
-        if (editorWidth == default)
-        {
-            EditorFitToSize = true;
-        }
-        else
-        {
-            EditorWidth = editorWidth;
-        }
+        SetLabelControl(label1, header, headerWidth);
+        SetNestedControl(panelEdit, editorWidth);
 
         buttonOpen.Visible = false;
         panelSeparator3.Visible = false;
@@ -61,18 +54,6 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
     public event EventHandler<ChangeDataEventArgs<T>>? ValueChanged;
 
     public event EventHandler<ChangeDataEventArgs<T>>? ManualValueChange;
-
-    public string Header { get => label1.Text; set => label1.Text = value; }
-
-    public int HeaderWidth { get => label1.Width; set => label1.Width = value; }
-
-    public bool HeaderAutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-    public ContentAlignment HeaderTextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-    public bool HeaderVisible { get => label1.Visible; set => label1.Visible = value; }
-
-    public int EditorWidth { get => panelEdit.Width; set => panelEdit.Width = value; }
 
     public bool Required
     {
@@ -157,12 +138,6 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
 
     #endregion
 
-    public bool EditorFitToSize
-    {
-        get => panelEdit.Dock == DockStyle.Fill;
-        set => panelEdit.Dock = value ? DockStyle.Fill : panelEdit.Dock = DockStyle.Left;
-    }
-
     public string ValueText => textValue.Text;
 
     public T? SelectedItem
@@ -192,11 +167,23 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
 
     protected virtual void OnSelect() { }
 
+    protected void SetValueChangedAction(Action<T?, T?>? action) => valueChanged = action;
+
+    protected void SetValueSelectedAction(Action<T?, T?>? action) => valueSelected = action;
+
     protected void SetTextValue(string text) => textValue.Text = text;
 
-    protected void OnValueChanged(T? oldValue, T? newValue) => ValueChanged?.Invoke(this, new ChangeDataEventArgs<T>(oldValue, newValue));
+    protected void OnValueChanged(T? oldValue, T? newValue)
+    {
+        ValueChanged?.Invoke(this, new ChangeDataEventArgs<T>(oldValue, newValue));
+        valueChanged?.Invoke(oldValue, newValue);
+    }
 
-    protected void OnManualValueChanged(T? oldValue, T? newValue) => ManualValueChange?.Invoke(this, new ChangeDataEventArgs<T>(oldValue, newValue));
+    protected void OnManualValueChanged(T? oldValue, T? newValue)
+    {
+        ManualValueChange?.Invoke(this, new ChangeDataEventArgs<T>(oldValue, newValue));
+        valueSelected?.Invoke(oldValue, newValue);
+    }
 
     private void ButtonDelete_Click(object sender, EventArgs e) => ClearCurrent();
 

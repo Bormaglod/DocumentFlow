@@ -17,15 +17,18 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Dialogs;
+using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentFlow.Controls.Editors;
 
 public class DfDirectorySelectBox<T> : SelectBox<T>, IDirectorySelectBoxControl<T>
     where T : class, IDirectory
 {
-    public DfDirectorySelectBox(string property, string header, int headerWidth = 100, int editorWidth = default)
+    public DfDirectorySelectBox(string property, string header, int headerWidth = default, int editorWidth = default)
         : base(property, header, headerWidth, editorWidth)
     {
     }
@@ -65,41 +68,28 @@ public class DfDirectorySelectBox<T> : SelectBox<T>, IDirectorySelectBoxControl<
         }
     }
 
-    #region IControl interface
+    #region IDirectorySelectBoxControl interface
 
-    IControl IControl.SetHeaderWidth(int width)
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.Editor<E>(bool openById)
     {
-        HeaderWidth = width;
+        var pageManager = Services.Provider.GetService<IPageManager>()!;
+        if (openById)
+        {
+            OpenAction = (t) => pageManager.ShowEditor<E>(t.Id);
+        }
+        else
+        {
+            OpenAction = pageManager.ShowEditor<E, T>;
+        }
+
         return this;
     }
 
-    IControl IControl.SetEditorWidth(int width)
-    {
-        EditorWidth = width;
-        return this;
-    }
-
-    IControl IControl.Disable()
-    {
-        Enabled = false;
-        return this;
-    }
-
-    IControl IControl.ReadOnly()
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.ReadOnly()
     {
         ReadOnly = true;
         return this;
     }
-
-    IControl IControl.DefaultAsValue()
-    {
-        DefaultAsNull = false;
-        return this;
-    }
-
-    #endregion
-
-    #region IDirectorySelectBoxControl interface
 
     IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.SetRootIdentifier(Guid id)
     {
@@ -129,6 +119,18 @@ public class DfDirectorySelectBox<T> : SelectBox<T>, IDirectorySelectBoxControl<
     {
         RefreshMethod = refreshMethod;
         SetDataSource(func);
+        return this;
+    }
+
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.DirectoryChanged(Action<T?, T?> action)
+    {
+        SetValueChangedAction(action);
+        return this;
+    }
+
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.DirectorySelected(Action<T?, T?> action)
+    {
+        SetValueSelectedAction(action);
         return this;
     }
 

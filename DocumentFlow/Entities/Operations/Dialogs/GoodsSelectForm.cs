@@ -30,7 +30,8 @@ public partial class GoodsSelectForm : Form
                 ["Code"] = "Артикул",
                 ["ItemName"] = "Наименование"
             },
-            RefreshMethod = DataRefreshMethod.Immediately
+            RefreshMethod = DataRefreshMethod.Immediately,
+            EditorFitToSize = true
         };
 
         goods.SetDataSource(() =>

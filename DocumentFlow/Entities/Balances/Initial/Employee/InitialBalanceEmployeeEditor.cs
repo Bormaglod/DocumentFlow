@@ -15,7 +15,7 @@ namespace DocumentFlow.Entities.Balances.Initial;
 
 internal class InitialBalanceEmployeeEditor : DocumentEditor<InitialBalanceEmployee>, IInitialBalanceEmployeeEditor
 {
-    private Dictionary<decimal, string> debtChoice = new()
+    private readonly Dictionary<decimal, string> debtChoice = new()
     {
         [-1] = "Наш долг",
         [1] = "Долг сотрудника"
@@ -24,12 +24,17 @@ internal class InitialBalanceEmployeeEditor : DocumentEditor<InitialBalanceEmplo
     public InitialBalanceEmployeeEditor(IInitialBalanceEmployeeRepository repository, IPageManager pageManager) 
         : base(repository, pageManager, true) 
     {
-        AddControls(new Control[]
-        {
-            CreateDirectorySelectBox<OurEmployee, IOurEmployeeEditor>(x => x.ReferenceId, "Сотрудник", 100, 400, data: GetEmployees),
-            CreateCurrencyTextBox(x => x.OperationSumma, "Сумма", 100, 100),
-            CreateChoice(x => x.Amount, "Долг", 100, 200, choices: debtChoice)
-        });
+        EditorControls
+            .CreateDirectorySelectBox<OurEmployee>(x => x.ReferenceId, "Сотрудник", (select) =>
+                select
+                    .SetDataSource(GetEmployees)
+                    .Editor<IOurEmployeeEditor>()
+                    .SetEditorWidth(400))
+            .CreateCurrencyTextBox(x => x.OperationSumma, "Сумма")
+            .CreateChoice<decimal>(x => x.Amount, "Долг", (choice) =>
+                choice
+                    .SetChoiceValues(debtChoice)
+                    .SetEditorWidth(200));
     }
 
     private IEnumerable<OurEmployee> GetEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllValid();

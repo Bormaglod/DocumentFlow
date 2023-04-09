@@ -34,38 +34,20 @@ public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGri
     private readonly List<CalculationOperationProperty> created = new();
     private readonly List<CalculationOperationProperty> updated = new();
 
-    public DfOperationProperty(string header, int headerWidth, int editorWidth) : base(string.Empty)
+    public DfOperationProperty(string header, int headerWidth = default, int editorWidth = default) 
+        : base(string.Empty)
     {
         InitializeComponent();
+        SetLabelControl(label1, header, headerWidth);
+        SetNestedControl(panel1, editorWidth);
 
         Dock = DockStyle.Top;
-        Header = header;
-        HeaderWidth = headerWidth;
-        EditorWidth = editorWidth;
     }
-
-    public string Header { get => label1.Text; set => label1.Text = value; }
-
-    public int HeaderWidth { get => label1.Width; set => label1.Width = value; }
-
-    public bool HeaderAutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-    public ContentAlignment HeaderTextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-    public bool HeaderVisible { get => label1.Visible; set => label1.Visible = value; }
-
-    public int EditorWidth { get => panel1.Width; set => panel1.Width = value; }
 
     public bool ReadOnly
     {
         get => toolStrip1.Enabled;
         set => toolStrip1.Enabled = value;
-    }
-
-    public bool EditorFitToSize
-    {
-        get => panel1.Dock == DockStyle.Fill;
-        set => panel1.Dock = value ? DockStyle.Fill : panel1.Dock = DockStyle.Left;
     }
 
     public void SetOwner(Guid ownerId) => this.ownerId = ownerId;

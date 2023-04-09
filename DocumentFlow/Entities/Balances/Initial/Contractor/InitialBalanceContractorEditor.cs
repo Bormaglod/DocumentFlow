@@ -31,33 +31,36 @@ internal class InitialBalanceContractorEditor : DocumentEditor<InitialBalanceCon
     public InitialBalanceContractorEditor(IInitialBalanceContractorRepository repository, IPageManager pageManager)
             : base(repository, pageManager, true)
     {
-        var contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ReferenceId, "Контрагент", 100, 400, data: GetContractors);
-        var contract = CreateComboBox<Contract>(x => x.ContractId, "Договор", 100, 400, refreshMethod: DataRefreshMethod.Immediately);
-        var debt = CreateChoice(x => x.Amount, "Долг", 100, 200, choices: debtChoice);
-        var op_summa = CreateCurrencyTextBox(x => x.OperationSumma, "Сумма", 100, 100);
-
-        contractor.ValueChanged += (sender, e) =>
-        {
-            var repo = Services.Provider.GetService<IContractRepository>();
-            if (e.NewValue != null && repo != null)
-            {
-                contract.SetDataSource(() => repo.Get(e.NewValue));
-                contract.Value = Document.ContractId;
-            }
-            else
-            {
-                contract.DeleteDataSource();
-            }
-        };
-
-        AddControls(new Control[]
-        {
-            contractor,
-            contract,
-            op_summa,
-            debt
-        });
+        EditorControls
+            .CreateDirectorySelectBox<Contractor>(x => x.ReferenceId, "Контрагент", (select) =>
+                select
+                    .Editor<IContractorEditor>()
+                    .SetDataSource(GetContractors)
+                    .DirectoryChanged(ContractorChanged)
+                    .SetEditorWidth(400))
+            .CreateComboBox<Contract>(x => x.ContractId, "Договор", (combo) =>
+                combo
+                    .SetEditorWidth(400))
+            .CreateChoice<decimal>(x => x.Amount, "Долг", (choice) =>
+                choice
+                    .SetChoiceValues(debtChoice)
+                    .SetEditorWidth(200))
+            .CreateCurrencyTextBox(x => x.OperationSumma, "Сумма");
     }
 
     private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetAllValid();
+
+    private void ContractorChanged(Contractor? oldValue, Contractor? newValue)
+    {
+        var repo = Services.Provider.GetService<IContractRepository>();
+        var contract = EditorControls.GetControl<IComboBoxControl<Contract>>("ContractId");
+        if (newValue != null && repo != null)
+        {
+            contract.SetDataSource(() => repo.Get(newValue), DataRefreshMethod.Immediately, Document.ContractId);
+        }
+        else
+        {
+            contract.RemoveDataSource();
+        }
+    }
 }

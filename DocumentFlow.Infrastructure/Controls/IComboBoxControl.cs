@@ -12,7 +12,13 @@ namespace DocumentFlow.Infrastructure.Controls;
 public interface IComboBoxControl<T> : IControl
     where T : class, IDocumentInfo
 {
+    T? Selected { get; }
+    void RemoveDataSource();
+
+    IComboBoxControl<T> ReadOnly();
     IComboBoxControl<T> EnableEditor<E>()
         where E : IEditorPage;
-    IComboBoxControl<T> SetDataSource(Func<IEnumerable<T>?> func, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad);
+    IComboBoxControl<T> SetDataSource(Func<IEnumerable<T>?> func, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad, Guid? selectValue = null);
+    IComboBoxControl<T> ItemChanged(Action<T?> action);
+    IComboBoxControl<T> ItemSelected(Action<T?> action);
 }

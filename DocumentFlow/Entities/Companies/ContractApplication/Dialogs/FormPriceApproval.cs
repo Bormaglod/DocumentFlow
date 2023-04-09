@@ -32,8 +32,8 @@ public partial class FormPriceApproval : Form
     {
         InitializeComponent();
 
-        product = new("ReferenceId", "Материал / Изделие", 150) { TabIndex = 1, RefreshMethod = DataRefreshMethod.Immediately };
-        price = new("Price", "Цена", 150) { DefaultAsNull = false, TabIndex = 2 };
+        product = new("ReferenceId", "Материал / Изделие", 150) { TabIndex = 1, RefreshMethod = DataRefreshMethod.Immediately, EditorFitToSize = true };
+        price = new("Price", "Цена", 150) { DefaultAsNull = false, TabIndex = 2, EditorFitToSize = true };
 
         product.SetDataSource(() =>
         {

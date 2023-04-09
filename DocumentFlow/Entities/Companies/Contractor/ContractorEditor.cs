@@ -127,7 +127,7 @@ public class ContractorEditor : Editor<Contractor>, IContractorEditor
 
         if (subj != null)
         {
-            var inn = EditorControls.GetControl<IMaskedTextBoxControl>("Inn");
+            var inn = EditorControls.GetControl<IMaskedTextBoxControl<decimal>>("Inn");
             inn.SetMask(subj == SubjectsCivilLow.Person ? "#### ##### #" : "#### ###### ##");
             legal_entity = subj == SubjectsCivilLow.LegalEntity;
         }

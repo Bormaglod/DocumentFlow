@@ -36,21 +36,14 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
     private bool requird = false;
     private bool lockManual = false;
     private Action<T>? open;
+    private Action<T?>? valueChanged;
+    private Action<T?>? valueSelected;
 
-    public DfComboBox(string property, string header, int headerWidth = 100, int editorWidth = default) : base(property)
+    public DfComboBox(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
     {
         InitializeComponent();
-
-        Header = header;
-        HeaderWidth = headerWidth;
-        if (editorWidth == default)
-        {
-            EditorFitToSize = true;
-        }
-        else
-        {
-            EditorWidth = editorWidth;
-        }
+        SetLabelControl(label1, header, headerWidth);
+        SetNestedControl(panelEdit, editorWidth);
 
         buttonOpen.Visible = false;
         panelSeparator3.Visible = false;
@@ -58,24 +51,6 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
 
     public event EventHandler<SelectedValueChanged<T>>? ValueChanged;
     public event EventHandler<SelectedValueChanged<T>>? ManualValueChange;
-
-    public string Header { get => label1.Text; set => label1.Text = value; }
-
-    public int HeaderWidth { get => label1.Width; set => label1.Width = value; }
-
-    public bool HeaderAutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-    public ContentAlignment HeaderTextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-    public bool HeaderVisible { get => label1.Visible; set => label1.Visible = value; }
-
-    public int EditorWidth { get => panelEdit.Width; set => panelEdit.Width = value; }
-
-    public bool EditorFitToSize
-    {
-        get => panelEdit.Dock == DockStyle.Fill;
-        set => panelEdit.Dock = value ? DockStyle.Fill : panelEdit.Dock = DockStyle.Left;
-    }
 
     public bool Required
     {
@@ -101,7 +76,7 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
 
     public Guid? SelectedValue => (Guid?)Value;
 
-    public T? SelectedItem
+    public T? Selected
     {
         get => comboBoxAdv1.SelectedItem as T;
 
@@ -154,7 +129,7 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
             if (value is Guid id)
             {
                 T? identifier = comboBoxAdv1.Items.OfType<T>().FirstOrDefault(x => x.Id.CompareTo(id) == 0);
-                SelectedItem = identifier;
+                Selected = identifier;
                 return;
             }
 
@@ -164,7 +139,7 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
 
     #endregion
 
-    public void ClearValue() => SelectedItem = null;
+    public void ClearValue() => Selected = null;
 
     protected override void ClearItems() => comboBoxAdv1.Items.Clear();
 
@@ -173,9 +148,11 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
     private void OnValueChanged(T? value)
     {
         ValueChanged?.Invoke(this, new SelectedValueChanged<T>(value));
+        valueChanged?.Invoke(value);
         if (!lockManual)
         {
             ManualValueChange?.Invoke(this, new SelectedValueChanged<T>(value));
+            valueSelected?.Invoke(value);
         }
     }
 
@@ -203,47 +180,19 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
 
     private void ButtonOpen_Click(object sender, EventArgs e)
     {
-        if (open != null && SelectedItem != null)
+        if (open != null && Selected != null)
         {
-            open(SelectedItem);
+            open(Selected);
         }
     }
 
-    #region IControl interface
+    #region IComboBoxControl interface
 
-    IControl IControl.SetHeaderWidth(int width)
-    {
-        HeaderWidth = width;
-        return this;
-    }
-
-    IControl IControl.SetEditorWidth(int width)
-    {
-        EditorWidth = width;
-        return this;
-    }
-
-    IControl IControl.Disable()
-    {
-        Enabled = false;
-        return this;
-    }
-
-    IControl IControl.ReadOnly()
+    IComboBoxControl<T> IComboBoxControl<T>.ReadOnly()
     {
         ReadOnly = true;
         return this;
     }
-
-    IControl IControl.DefaultAsValue()
-    {
-        DefaultAsNull = false;
-        return this;
-    }
-
-    #endregion
-
-    #region IComboBoxControl interface
 
     IComboBoxControl<T> IComboBoxControl<T>.EnableEditor<E>()
     {
@@ -256,10 +205,27 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
         return this;
     }
 
-    IComboBoxControl<T> IComboBoxControl<T>.SetDataSource(Func<IEnumerable<T>?> func, DataRefreshMethod refreshMethod)
+    IComboBoxControl<T> IComboBoxControl<T>.SetDataSource(Func<IEnumerable<T>?> func, DataRefreshMethod refreshMethod, Guid? selectValue)
     {
         RefreshMethod = refreshMethod;
         SetDataSource(func);
+        if (selectValue != null)
+        {
+            Value = selectValue;
+        }
+
+        return this;
+    }
+
+    IComboBoxControl<T> IComboBoxControl<T>.ItemChanged(Action<T?> action)
+    {
+        valueChanged = action;
+        return this;
+    }
+
+    IComboBoxControl<T> IComboBoxControl<T>.ItemSelected(Action<T?> action)
+    {
+        valueSelected = action;
         return this;
     }
 

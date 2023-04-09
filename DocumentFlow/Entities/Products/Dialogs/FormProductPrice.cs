@@ -100,15 +100,16 @@ public partial class FormProductPrice<P> : Form
                 ["ItemName"] = "Наименование"
             },
             TabIndex = 1,
-            RefreshMethod = DataRefreshMethod.Immediately
+            RefreshMethod = DataRefreshMethod.Immediately,
+            EditorFitToSize = true
         };
 
-        amount = new("Amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3, TabIndex = 3 };
-        price = new("Price", "Цена", 120) { DefaultAsNull = false, TabIndex = 4, Visible = !excludePrice };
-        cost = new("ProductCost", "Сумма", 120) { DefaultAsNull = false, TabIndex = 5, Visible = !excludePrice };
-        tax = new("Tax", "НДС%", 120) { TabIndex = 6, Visible = !excludePrice };
-        tax_value = new("TaxValue", "НДС", 120) { DefaultAsNull = false, TabIndex = 7, Visible = !excludePrice };
-        full_cost = new("FullCost", "Всего с НДС", 120) { DefaultAsNull = false, TabIndex = 8, Visible = !excludePrice };
+        amount = new("Amount", "Количество", 120) { DefaultAsNull = false, NumberDecimalDigits = 3, TabIndex = 3, EditorFitToSize = true };
+        price = new("Price", "Цена", 120) { DefaultAsNull = false, TabIndex = 4, Visible = !excludePrice, EditorFitToSize = true };
+        cost = new("ProductCost", "Сумма", 120) { DefaultAsNull = false, TabIndex = 5, Visible = !excludePrice, EditorFitToSize = true };
+        tax = new("Tax", "НДС%", 120) { TabIndex = 6, Visible = !excludePrice, EditorFitToSize = true };
+        tax_value = new("TaxValue", "НДС", 120) { DefaultAsNull = false, TabIndex = 7, Visible = !excludePrice, EditorFitToSize = true };
+        full_cost = new("FullCost", "Всего с НДС", 120) { DefaultAsNull = false, TabIndex = 8, Visible = !excludePrice, EditorFitToSize = true };
 
         var controls = new List<Control>() 
         { 
@@ -123,7 +124,7 @@ public partial class FormProductPrice<P> : Form
 
         if (calculationSelect)
         {
-            calc = new DfDirectorySelectBox<Calculation>("CalculationId", "Калькуляция", 120) { Required = true, TabIndex = 2 };
+            calc = new DfDirectorySelectBox<Calculation>("CalculationId", "Калькуляция", 120) { Required = true, TabIndex = 2, EditorFitToSize = true };
             calc.SetDataSource(() =>
             {
                 if (product.SelectedItem != null)

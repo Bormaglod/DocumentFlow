@@ -19,29 +19,17 @@ namespace DocumentFlow.Controls.Editors;
 
 public partial class DfTextBox : BaseControl, IBindingControl, IAccess, ITextBoxControl
 {
-    public DfTextBox(string property, string header, int headerWidth = 100, int editorWidth = 100) : base(property)
+    public DfTextBox(string property, string header, int headerWidth = default, int editorWidth = default) 
+        : base(property)
     {
         InitializeComponent();
+        SetLabelControl(label1, header, headerWidth);
+        SetNestedControl(textBoxExt, editorWidth);
 
         Dock = DockStyle.Top;
-        Header = header;
-        HeaderWidth = headerWidth;
-        EditorWidth = editorWidth;
     }
 
     public event EventHandler? ValueChanged;
-
-    public string Header { get => label1.Text; set => label1.Text = value; }
-
-    public int HeaderWidth { get => label1.Width; set => label1.Width = value; }
-
-    public bool HeaderAutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-    public ContentAlignment HeaderTextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-    public bool HeaderVisible { get => label1.Visible; set => label1.Visible = value; }
-
-    public int EditorWidth { get => textBoxExt.Width; set => textBoxExt.Width = value; }
 
     public bool ReadOnly
     {
@@ -53,12 +41,6 @@ public partial class DfTextBox : BaseControl, IBindingControl, IAccess, ITextBox
     {
         get => DefaultAsNull ? textBoxExt.Text.NullIfEmpty() : textBoxExt.Text;
         set => textBoxExt.Text = value == null ? string.Empty : value.ToString();
-    }
-
-    public bool EditorFitToSize
-    {
-        get => textBoxExt.Dock == DockStyle.Fill;
-        set => textBoxExt.Dock = value ? DockStyle.Fill : textBoxExt.Dock = DockStyle.Left;
     }
 
     public bool Multiline 
@@ -75,41 +57,13 @@ public partial class DfTextBox : BaseControl, IBindingControl, IAccess, ITextBox
 
     private void TextBoxExt_TextChanged(object sender, EventArgs e) => ValueChanged?.Invoke(this, e);
 
-    #region IControl interface
+    #region ITextBoxControl interface
 
-    IControl IControl.SetHeaderWidth(int width)
-    {
-        HeaderWidth = width;
-        return this;
-    }
-
-    IControl IControl.SetEditorWidth(int width)
-    {
-        EditorWidth = width;
-        return this;
-    }
-
-    IControl IControl.Disable()
-    {
-        Enabled = false;
-        return this;
-    }
-
-    IControl IControl.ReadOnly()
+    ITextBoxControl ITextBoxControl.ReadOnly()
     {
         ReadOnly = true;
         return this;
     }
-
-    IControl IControl.DefaultAsValue()
-    {
-        DefaultAsNull = false;
-        return this;
-    }
-
-    #endregion
-
-    #region ITextBoxControl interface
 
     ITextBoxControl ITextBoxControl.Multiline(int height)
     {

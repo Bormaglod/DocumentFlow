@@ -119,21 +119,21 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
         };
 
         details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("product_cost", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("tax_value", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("full_cost", SummaryColumnFormat.Currency, SelectOptions.All);
+            .AsSummary("ProductCost", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("TaxValue", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("FullCost", SummaryColumnFormat.Currency, SelectOptions.All);
 
         details.AutoGeneratingColumn += (sender, args) =>
         {
             switch (args.Column.MappingName)
             {
-                case "id":
+                case "Id":
                     args.Cancel = true;
                     break;
-                case "material_name":
+                case "MaterialName":
                     args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                     break;
-                case "quantity":
+                case "Quantity":
                     args.Column.Width = 100;
                     break;
             }

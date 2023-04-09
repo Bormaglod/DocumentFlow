@@ -30,7 +30,7 @@ public class ProductionOrder : ShipmentDocument
     {
         var doc_date = new GridDateTimeColumn()
         {
-            MappingName = "Document_Date",
+            MappingName = "DocumentDate",
             HeaderText = "Дата",
             Pattern = DateTimePattern.LongDate,
             Width = 120

@@ -8,6 +8,7 @@
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Deductions;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,71 +20,100 @@ public class CalculationDeductionEditor : Editor<CalculationDeduction>, ICalcula
 
     public CalculationDeductionEditor(ICalculationDeductionRepository repository, IPageManager pageManager) : base(repository, pageManager)
     {
-        var deduction = CreateComboBox(x => x.OwnerId, "Удержание", headerWidth, 400, data: GetDeductions);
-        var price = CreateCurrencyTextBox(x => x.Price, "Сумма с которой произв. удерж.", headerWidth, 150, enabled: false, visible: false, defaultAsNull: false);
-        var percent = CreatePercentTextBox(x => x.Value, "Процент", headerWidth, 150, enabled: false, visible: false, defaultAsNull: false, digits: 2);
-        var item_cost = CreateCurrencyTextBox(x => x.ItemCost, "Сумма удержания", headerWidth, 150, visible: false, defaultAsNull: false);
-
-        deduction.ValueChanged += (s, e) =>
-        {
-            bool visible = false;
-            bool is_not_person = false;
-            if (e.Value != null)
-            {
-                visible = true;
-                is_not_person = e.Value.BaseDeduction != BaseDeduction.Person;
-            }
-
-            price.Visible = visible && is_not_person;
-            percent.Visible = visible && is_not_person;
-            item_cost.Visible = visible;
-
-            if (visible)
-            {
-                item_cost.Enabled = !is_not_person;
-            }
-        };
-
-        deduction.ManualValueChange += (s, e) =>
-        {
-            if (e.Value != null)
-            {
-                if (e.Value.BaseDeduction == BaseDeduction.Person)
-                {
-                    price.Value = e.Value.Value;
-                    percent.Value = 100m;
-                    item_cost.Value = e.Value.Value;
-                }
-                else
-                {
-                    if (Document.OwnerId != null)
-                    {
-                        if (e.Value.BaseDeduction == BaseDeduction.Salary)
-                        {
-                            price.Value = Services.Provider.GetService<ICalculationOperationRepository>()!.GetSumItemCost(Document.OwnerId.Value);
-                        }
-                        else
-                        {
-                            price.Value = Services.Provider.GetService<ICalculationMaterialRepository>()!.GetSumItemCost(Document.OwnerId.Value);
-                        }
-
-                        percent.Value = e.Value.Value;
-                    }
-
-                    item_cost.Value = price.NumericValue * percent.NumericValue / 100;
-                }
-            }
-        };
-
-        AddControls(new Control[]
-        {
-            CreateTextBox(x => x.CalculationName, "Калькуляция", headerWidth, 300, enabled: false),
-            deduction,
-            price,
-            percent,
-            item_cost
-        });
+        EditorControls
+            .CreateTextBox(x => x.CalculationName, "Калькуляция", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300)
+                    .Disable())
+            .CreateComboBox<Deduction>(x => x.ItemId, "Удержание", (combo) =>
+                combo
+                    .ItemChanged(DeductionItemChanged)
+                    .ItemSelected(DeductionItemSelected)
+                    .SetDataSource(GetDeductions)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .CreateCurrencyTextBox(x => x.Price, "Сумма с которой произв. удерж.", (box) =>
+                box
+                    .Disable()
+                    .SetVisible(false)
+                    .DefaultAsValue()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150))
+            .CreatePercentTextBox(x => x.Value, "Процент", (box) =>
+                box
+                    .SetPercentDecimalDigits(2)
+                    .Disable()
+                    .SetVisible(false)
+                    .DefaultAsValue()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150))
+            .CreateCurrencyTextBox(x => x.ItemCost, "Сумма удержания", (box) =>
+                box
+                    .SetVisible(false)
+                    .DefaultAsValue()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150));
     }
 
     private IEnumerable<Deduction> GetDeductions() => Services.Provider.GetService<IDeductionRepository>()!.GetAllValid();
+
+    private void DeductionItemChanged(Deduction? deduction)
+    {
+        bool visible = false;
+        bool is_not_person = false;
+        if (deduction != null)
+        {
+            visible = true;
+            is_not_person = deduction.BaseDeduction != BaseDeduction.Person;
+        }
+
+        EditorControls.GetControl<ICurrencyTextBoxControl>("Price").SetVisible(visible && is_not_person);
+        EditorControls.GetControl<IPercentTextBoxControl>("Value").SetVisible(visible && is_not_person);
+
+        var item_cost = EditorControls.GetControl<ICurrencyTextBoxControl>("ItemCost");
+        item_cost.SetVisible(visible);
+
+        if (visible)
+        {
+            item_cost.SetEnabled(!is_not_person);
+        }
+    }
+
+    private void DeductionItemSelected(Deduction? deduction)
+    {
+        if (deduction == null)
+        {
+            return;
+        }
+
+        var price = EditorControls.GetControl<ICurrencyTextBoxControl>("Price");
+        var percent = EditorControls.GetControl<IPercentTextBoxControl>("Value");
+        var item_cost = EditorControls.GetControl<ICurrencyTextBoxControl>("ItemCost");
+
+        if (deduction.BaseDeduction == BaseDeduction.Person)
+        {
+            price.NumericValue = deduction.Value;
+            percent.NumericValue = 100m;
+            item_cost.NumericValue = deduction.Value;
+        }
+        else
+        {
+            if (Document.OwnerId != null)
+            {
+                if (deduction.BaseDeduction == BaseDeduction.Salary)
+                {
+                    price.NumericValue = Services.Provider.GetService<ICalculationOperationRepository>()!.GetSumItemCost(Document.OwnerId.Value);
+                }
+                else
+                {
+                    price.NumericValue = Services.Provider.GetService<ICalculationMaterialRepository>()!.GetSumItemCost(Document.OwnerId.Value);
+                }
+
+                percent.NumericValue = deduction.Value;
+            }
+
+            item_cost.NumericValue = price.NumericValue * percent.NumericValue / 100;
+        }
+    }
 }

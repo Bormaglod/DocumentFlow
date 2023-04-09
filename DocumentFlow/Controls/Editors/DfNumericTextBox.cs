@@ -16,9 +16,9 @@ using Syncfusion.Windows.Forms.Tools;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfNumericTextBox : BaseNumericTextBox<decimal, DecimalTextBox>, IAccess
+public partial class DfNumericTextBox : BaseNumericTextBox<decimal, DecimalTextBox>, IAccess, INumericTextBoxControl
 {
-    public DfNumericTextBox(string property, string header, int headerWidth, int editorWidth = default) :
+    public DfNumericTextBox(string property, string header, int headerWidth = default, int editorWidth = default) :
         base(property, header, headerWidth, editorWidth)
     {
         InitializeComponent();
@@ -27,12 +27,6 @@ public partial class DfNumericTextBox : BaseNumericTextBox<decimal, DecimalTextB
 
         TextBox.Style = TextBoxExt.theme.Office2016Colorful;
         TextBox.DecimalValueChanged += DecimalText_DecimalValueChanged;
-    }
-
-    public bool ReadOnly
-    {
-        get => TextBox.ReadOnly;
-        set => TextBox.ReadOnly = value;
     }
 
     public int NumberDecimalDigits { get => TextBox.NumberDecimalDigits; set => TextBox.NumberDecimalDigits = value; }
@@ -44,4 +38,14 @@ public partial class DfNumericTextBox : BaseNumericTextBox<decimal, DecimalTextB
     protected override void UpdateTextControl(decimal value) => TextBox.DecimalValue = value;
 
     private void DecimalText_DecimalValueChanged(object? sender, EventArgs e) => UpdateNumericValue();
+
+    #region INumericTextBoxControl interface
+
+    INumericTextBoxControl INumericTextBoxControl.SetNumberDecimalDigits(int digits)
+    {
+        NumberDecimalDigits = digits;
+        return this;
+    }
+
+    #endregion
 }

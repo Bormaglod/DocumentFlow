@@ -48,6 +48,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
     public DfReportCard() : base(string.Empty)
     {
         InitializeComponent();
+        SetNestedControl(gridContent);
 
         year = DateTime.Now.Year;
         month = DateTime.Now.Month;

@@ -20,6 +20,8 @@ using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
 
+using MimeKit.Text;
+
 using Syncfusion.Windows.Forms.Tools;
 
 namespace DocumentFlow.Controls.Editors;
@@ -32,42 +34,15 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
     private bool lockManual = false;
     private Action<T?>? manualValueChanged;
 
-    public DfChoice(string property, string header, int headerWidth = 100, int editorWidth = default) : base(property)
+    public DfChoice(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
     {
         InitializeComponent();
-
-        Header = header;
-        HeaderWidth = headerWidth;
-        if (editorWidth == default)
-        {
-            EditorFitToSize = true;
-        }
-        else
-        {
-            EditorWidth = editorWidth;
-        }
+        SetLabelControl(label1, header, headerWidth);
+        SetNestedControl(panelEdit, editorWidth);
     }
 
     public event EventHandler<SelectedValueChanged<T?>>? ValueChanged;
     public event EventHandler<SelectedValueChanged<T?>>? ManualValueChange;
-
-    public string Header { get => label1.Text; set => label1.Text = value; }
-
-    public int HeaderWidth { get => label1.Width; set => label1.Width = value; }
-
-    public bool HeaderAutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-    public ContentAlignment HeaderTextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-    public bool HeaderVisible { get => label1.Visible; set => label1.Visible = value; }
-
-    public int EditorWidth { get => panelEdit.Width; set => panelEdit.Width = value; }
-
-    public bool EditorFitToSize
-    {
-        get => panelEdit.Dock == DockStyle.Fill;
-        set => panelEdit.Dock = value ? DockStyle.Fill : panelEdit.Dock = DockStyle.Left;
-    }
 
     public bool Required
     {
@@ -214,57 +189,15 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
 
     private void ButtonDelete_Click(object sender, EventArgs e) => ClearValue();
 
-    #region IControl interface
+    #region IChoiceControl interface
 
-    string IControl.Tag => Tag?.ToString() ?? string.Empty;
+    T? IChoiceControl<T>.Value => ChoiceValue;
 
-    IControl IControl.SetHeaderWidth(int width)
-    {
-        HeaderWidth = width;
-        return this;
-    }
-
-    IControl IControl.SetEditorWidth(int width)
-    {
-        EditorWidth = width;
-        return this;
-    }
-
-    IControl IControl.Disable()
-    {
-        Enabled = false;
-        return this;
-    }
-
-    IControl IControl.ReadOnly()
+    IChoiceControl<T> IChoiceControl<T>.ReadOnly()
     {
         ReadOnly = true;
         return this;
     }
-
-    IControl IControl.DefaultAsValue()
-    {
-        DefaultAsNull = false;
-        return this;
-    }
-
-    IControl IControl.SetTag(string tag)
-    {
-        Tag = tag;
-        return this;
-    }
-
-    IControl IControl.SetVisible(bool visible)
-    {
-        Visible = visible;
-        return this;
-    }
-
-    #endregion
-
-    #region IChoiceControl interface
-
-    T? IChoiceControl<T>.Value => ChoiceValue;
 
     IChoiceControl<T> IChoiceControl<T>.Required()
     {

@@ -13,40 +13,23 @@ using DocumentFlow.Controls.Core;
 using DocumentFlow.Entities.Operations;
 using DocumentFlow.Infrastructure.Controls;
 
+using Syncfusion.Windows.Forms.Tools;
+
 namespace DocumentFlow.Controls.Editors;
 
 public enum StrippingPlace { Left, Right }
 
 public partial class DfWireStripping : BaseControl, IBindingControl, IAccess
 {
-    public DfWireStripping(string header, StrippingPlace place, int headerWidth) : base(place.ToString())
+    public DfWireStripping(string header, StrippingPlace place, int headerWidth = default)
+        : base(place.ToString())
     {
         InitializeComponent();
-
-        Header = header;
-        HeaderWidth = headerWidth;
+        SetLabelControl(label1, header, headerWidth);
+        SetNestedControl(panel1);
     }
 
     public event EventHandler? ValueChanged;
-
-    public string Header { get => label1.Text; set => label1.Text = value; }
-
-    public int HeaderWidth { get => label1.Width; set => label1.Width = value; }
-
-    /// <summary>
-    /// default = false
-    /// </summary>
-    public bool HeaderAutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-    /// <summary>
-    /// default = ContentAlignment.TopLeft
-    /// </summary>
-    public ContentAlignment HeaderTextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-    /// <summary>
-    /// default = true
-    /// </summary>
-    public bool HeaderVisible { get => label1.Visible; set => label1.Visible = value; }
 
     public bool ReadOnly
     {

@@ -177,6 +177,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
     public DfProductionLot() : base(string.Empty)
     {
         InitializeComponent();
+        SetNestedControl(gridContent);
 
         gridContent.CellRenderers.Remove("TableSummary");
         gridContent.CellRenderers.Add("TableSummary", new CustomGridTableSummaryRenderer());

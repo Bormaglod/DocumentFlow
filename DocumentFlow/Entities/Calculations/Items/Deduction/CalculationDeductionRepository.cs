@@ -29,7 +29,7 @@ public class CalculationDeductionRepository : CalculationItemRepository<Calculat
         return query
             .Select("calculation_deduction.*")
             .Select("d.item_name as deduction_name")
-            .Select("c.item_name as calculation_name")
+            .Select("c.code as calculation_name")
             .Select("d.base_calc as calculation_base")
             .Join("calculation as c", "c.id", "calculation_deduction.owner_id")
             .LeftJoin("deduction as d", "d.id", "calculation_deduction.item_id");

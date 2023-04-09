@@ -12,9 +12,13 @@ namespace DocumentFlow.Infrastructure.Controls;
 public interface IDirectorySelectBoxControl<T> : IControl
     where T : class, IDirectory
 {
+    IDirectorySelectBoxControl<T> Editor<E>(bool openById = false) where E : IEditorPage;
+    IDirectorySelectBoxControl<T> ReadOnly();
     IDirectorySelectBoxControl<T> SetRootIdentifier(Guid id);
     IDirectorySelectBoxControl<T> ShowOnlyFolder();
     IDirectorySelectBoxControl<T> RemoveEmptyFolders();
     IDirectorySelectBoxControl<T> Required();
     IDirectorySelectBoxControl<T> SetDataSource(Func<IEnumerable<T>?> func, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad);
+    IDirectorySelectBoxControl<T> DirectoryChanged(Action<T?, T?> action);
+    IDirectorySelectBoxControl<T> DirectorySelected(Action<T?, T?> action);
 }

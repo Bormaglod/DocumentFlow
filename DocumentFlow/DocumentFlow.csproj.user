@@ -19,6 +19,12 @@
     <Compile Update="Controls\Core\BaseNumericTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Editors\DfCheckBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfChoice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfCurrencyTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -38,6 +44,18 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfPercentTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfState.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfToggleButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfWireStripping.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Filters\BalanceContractorFilter.cs">
@@ -76,12 +94,6 @@
     <Compile Update="Controls\Filters\DocumentFilter.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Editors\DfCheckBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfChoice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Controls\Editors\DfComboBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -107,18 +119,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfReportCard.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfState.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfToggleButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfWireStripping.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\PageContents\Browser.cs">

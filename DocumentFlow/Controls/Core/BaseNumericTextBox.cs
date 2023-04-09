@@ -9,22 +9,26 @@
 // Версия 2023.2.23
 //  - добавлен control labelSuffix
 //  - добавлены свойства SuffixText и ShowSuffix
+// Версия 2023.4.8
+//  - добавлено наследование от INumericTextBox
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Infrastructure.Controls;
 
+using Syncfusion.Windows.Forms.Tools;
+
 namespace DocumentFlow.Controls.Core;
 
-abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingControl
+abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingControl, IBaseNumericTextBoxControl<T>
     where T : struct, IComparable<T>
-    where C : Control, new()
+    where C : TextBoxExt, new()
 {
     private T numericValue;
     private readonly C textBox;
     private bool lockChangeValue = false;
 
-    public BaseNumericTextBox(string property, string header, int headerWidth, int editorWidth = default) : base(property)
+    public BaseNumericTextBox(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
     {
         InitializeComponent();
 
@@ -34,51 +38,31 @@ abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingCo
             Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point)
         };
 
+        SetLabelControl(label1, header, headerWidth);
+        SetNestedControl(textBox, editorWidth);
+
         Controls.Add(textBox);
         textBox.BringToFront();
         labelSuffix.BringToFront();
 
         SetNumericValue(default);
-
-        Header = header;
-        HeaderWidth = headerWidth;
-        if (editorWidth == default)
-        {
-            EditorFitToSize = true;
-        }
-        else
-        {
-            EditorWidth = editorWidth;
-        }
     }
 
     public event EventHandler? ValueChanged;
 
     public C TextBox => textBox;
 
-    public string Header { get => label1.Text; set => label1.Text = value; }
-
-    public int HeaderWidth { get => label1.Width; set => label1.Width = value; }
-
-    public bool HeaderAutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-    public ContentAlignment HeaderTextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-    public bool HeaderVisible { get => label1.Visible; set => label1.Visible = value; }
-
-    public int EditorWidth { get => textBox.Width; set => textBox.Width = value; }
-
-    public bool EditorFitToSize
-    {
-        get => textBox.Dock == DockStyle.Fill;
-        set => textBox.Dock = value ? DockStyle.Fill : textBox.Dock = DockStyle.Left;
-    }
-
     public T? NumericValue { get => (T?)Value; set => Value = value; }
 
     public string SuffixText { get => labelSuffix.Text; set => labelSuffix.Text = value; }
 
     public bool ShowSuffix { get => labelSuffix.Visible; set => labelSuffix.Visible = value; }
+
+    public bool ReadOnly
+    {
+        get => TextBox.ReadOnly;
+        set => TextBox.ReadOnly = value;
+    }
 
     #region IBindingControl interface
 
@@ -143,4 +127,14 @@ abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingCo
 
         OnValueChange();
     }
+
+    #region IBaseNumericTextBoxControl interface
+
+    IBaseNumericTextBoxControl<T> IBaseNumericTextBoxControl<T>.ReadOnly()
+    {
+        ReadOnly = true;
+        return this;
+    }
+
+    #endregion
 }

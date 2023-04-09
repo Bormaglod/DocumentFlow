@@ -43,7 +43,7 @@ public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl
         {
             if (value == null)
             {
-                DeleteDataSource();
+                RemoveDataSource();
             }
             else
             {
@@ -74,7 +74,7 @@ public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl
         }
     }
 
-    public void DeleteDataSource()
+    public void RemoveDataSource()
     {
         dataSource = null;
         ClearItems();

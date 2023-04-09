@@ -19,20 +19,14 @@ public partial class DfState : BaseControl, IBindingControl, IAccess
 {
     private CalculationState state;
 
-    public DfState(string property, string header, int headerWidth) : base(property)
+    public DfState(string property, string header, int headerWidth = default) : base(property)
     {
         InitializeComponent();
-
-        Header = header;
-        HeaderWidth = headerWidth;
-        PropertyName = property;
+        SetLabelControl(labelState, header, headerWidth);
+        SetNestedControl(panel2);
     }
 
     public event EventHandler? ValueChanged;
-
-    public string Header { get => labelState.Text; set => labelState.Text = value; }
-
-    public int HeaderWidth { get => labelState.Width; set => labelState.Width = value; }
 
     public CalculationState StateValue { get => state; }
 

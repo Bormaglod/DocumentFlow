@@ -154,7 +154,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
             }
             else
             {
-                operations.DeleteDataSource();
+                operations.RemoveDataSource();
             }
         };
 

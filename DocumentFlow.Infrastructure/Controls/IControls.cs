@@ -27,7 +27,7 @@ public interface IControls<T> : IControls
 {
     /*ICheckBoxControl CreateCheckBox(Expression<Func<T, object?>> memberExpression, string header);*/
     IControls<T> CreateTextBox(Expression<Func<T, object?>> memberExpression, string header, Action<ITextBoxControl>? props = null);
-    IControls<T> CreateMaskedTextBox<P>(Expression<Func<T, object?>> memberExpression, string header, Action<IMaskedTextBoxControl>? props = null)
+    IControls<T> CreateMaskedTextBox<P>(Expression<Func<T, object?>> memberExpression, string header, Action<IMaskedTextBoxControl<P>>? props = null)
         where P : struct, IComparable<P>;
     IControls<T> CreateComboBox<P>(Expression<Func<T, object?>> memberExpression, string header, Action<IComboBoxControl<P>>? props = null)
         where P : class, IDocumentInfo;
@@ -35,4 +35,7 @@ public interface IControls<T> : IControls
         where P : class, IDirectory;
     IControls<T> CreateChoice<P>(Expression<Func<T, object?>> memberExpression, string header, Action<IChoiceControl<P>>? props = null)
         where P : struct, IComparable;
+    IControls<T> CreateNumericTextBox(Expression<Func<T, object?>> memberExpression, string header, Action<INumericTextBoxControl>? props = null);
+    IControls<T> CreatePercentTextBox(Expression<Func<T, object?>> memberExpression, string header, Action<IPercentTextBoxControl>? props = null);
+    IControls<T> CreateCurrencyTextBox(Expression<Func<T, object?>> memberExpression, string header, Action<ICurrencyTextBoxControl>? props = null);
 }

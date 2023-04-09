@@ -25,14 +25,13 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
     private readonly List<IItem> items = new();
     private Func<IEnumerable<IItem>?>? dataSource;
 
-    public DfMultiSelectionComboBox(string property, string header, int headerWidth, int editorWidth) : base(property)
+    public DfMultiSelectionComboBox(string property, string header, int headerWidth = default, int editorWidth = default) 
+        : base(property)
     {
         InitializeComponent();
+        SetLabelControl(label1, header, headerWidth);
+        SetNestedControl(multiSelectionComboBox1, editorWidth);
 
-        Header = header;
-        HeaderWidth = headerWidth;
-        EditorWidth = editorWidth;
-        
         multiSelectionComboBox1.Style = MultiSelectionComboBoxStyle.Office2016Colorful;
         multiSelectionComboBox1.DisplayMember = "ItemName";
         multiSelectionComboBox1.ValueMember = "Code";
@@ -40,18 +39,6 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
     }
 
     public event EventHandler? ValueChanged;
-
-    public string Header { get => label1.Text; set => label1.Text = value; }
-
-    public int HeaderWidth { get => label1.Width; set => label1.Width = value; }
-
-    public bool HeaderAutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-    public ContentAlignment HeaderTextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-    public bool HeaderVisible { get => label1.Visible; set => label1.Visible = value; }
-
-    public int EditorWidth { get => multiSelectionComboBox1.Width; set => multiSelectionComboBox1.Width = value; }
 
     public bool ReadOnly
     {
@@ -88,12 +75,6 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
                 }
             }
         }
-    }
-
-    public bool EditorFitToSize
-    {
-        get => multiSelectionComboBox1.Dock == DockStyle.Fill;
-        set => multiSelectionComboBox1.Dock = value ? DockStyle.Fill : multiSelectionComboBox1.Dock = DockStyle.Left;
     }
 
     public void SetDataSource(Func<IEnumerable<IItem>?> func) => dataSource = func;

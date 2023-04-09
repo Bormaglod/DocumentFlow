@@ -16,12 +16,12 @@ namespace DocumentFlow.Controls.Editors;
 
 public partial class DfDateTimePicker : BaseControl, IBindingControl, IAccess
 {
-    public DfDateTimePicker(string property, string header, int headerWidth, int editorWidth = default) : base(property)
+    public DfDateTimePicker(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
     {
         InitializeComponent();
+        SetLabelControl(label1, header, headerWidth);
+        SetNestedControl(datePickerAdv, editorWidth);
 
-        Header = header;
-        HeaderWidth = headerWidth;
         if (editorWidth == default)
         {
             EditorFitToSize = true;
@@ -36,18 +36,6 @@ public partial class DfDateTimePicker : BaseControl, IBindingControl, IAccess
     }
 
     public event EventHandler? ValueChanged;
-
-    public string Header { get => label1.Text; set => label1.Text = value; }
-
-    public int HeaderWidth { get => label1.Width; set => label1.Width = value; }
-
-    public bool HeaderAutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-    public ContentAlignment HeaderTextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-    public bool HeaderVisible { get => label1.Visible; set => label1.Visible = value; }
-
-    public int EditorWidth { get => datePickerAdv.Width; set => datePickerAdv.Width = value; }
 
     public bool Required { get => !datePickerAdv.ShowCheckBox; set => datePickerAdv.ShowCheckBox = !value; }
 
@@ -94,12 +82,6 @@ public partial class DfDateTimePicker : BaseControl, IBindingControl, IAccess
     }
 
     #endregion
-
-    public bool EditorFitToSize
-    {
-        get => datePickerAdv.Dock == DockStyle.Fill;
-        set => datePickerAdv.Dock = value ? DockStyle.Fill : datePickerAdv.Dock = DockStyle.Left;
-    }
 
     public string CustomFormat { get => datePickerAdv.CustomFormat; set => datePickerAdv.CustomFormat = value; }
 

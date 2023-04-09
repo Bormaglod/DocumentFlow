@@ -62,9 +62,9 @@ public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductio
         });
 
         details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("product_cost", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("tax_value", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("full_cost", SummaryColumnFormat.Currency, SelectOptions.All);
+            .AsSummary("ProductCost", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("TaxValue", SummaryColumnFormat.Currency, SelectOptions.All)
+            .AsSummary("FullCost", SummaryColumnFormat.Currency, SelectOptions.All);
 
         details.AutoGeneratingColumn += (sender, args) =>
         {

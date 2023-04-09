@@ -18,37 +18,14 @@ namespace DocumentFlow.Controls.Editors;
 
 public partial class DfToggleButton : BaseControl, IBindingControl, IAccess
 {
-    public DfToggleButton(string property, string header, int headerWidth) : base(property)
+    public DfToggleButton(string property, string header, int headerWidth = default) : base(property)
     {
         InitializeComponent();
-
-        Header = header;
-        HeaderWidth = headerWidth;
-        PropertyName = property;
+        SetLabelControl(label1, header, headerWidth);
+        SetNestedControl(toggleButton1, 90);
     }
 
     public event EventHandler? ValueChanged;
-
-    public string Header { get => label1.Text; set => label1.Text = value; }
-
-    public int HeaderWidth { get => label1.Width; set => label1.Width = value; }
-
-    /// <summary>
-    /// default = false
-    /// </summary>
-    public bool HeaderAutoSize { get => label1.AutoSize; set => label1.AutoSize = value; }
-
-    /// <summary>
-    /// default = ContentAlignment.TopLeft
-    /// </summary>
-    public ContentAlignment HeaderTextAlign { get => label1.TextAlign; set => label1.TextAlign = value; }
-
-    /// <summary>
-    /// default = true
-    /// </summary>
-    public bool HeaderVisible { get => label1.Visible; set => label1.Visible = value; }
-
-    public int EditorWidth { get => toggleButton1.Width; set => toggleButton1.Width = value; }
 
     public bool ToggleValue
     {

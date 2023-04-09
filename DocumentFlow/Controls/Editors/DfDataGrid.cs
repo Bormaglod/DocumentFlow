@@ -46,9 +46,12 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
     private readonly List<T> created = new();
     private readonly List<T> updated = new();
 
-    public DfDataGrid(IOwnedRepository<long, T> content) : base(string.Empty)
+    public DfDataGrid(IOwnedRepository<long, T> content) 
+        : base(string.Empty)
     {
         InitializeComponent();
+        SetLabelControl(labelHeader, string.Empty);
+        SetNestedControl(gridMain);
 
         repository = content;
 
@@ -75,16 +78,6 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
             menuEdit.Enabled = !value;
             menuDelete.Enabled = !value;
             menuCopy.Enabled = !value;
-        }
-    }
-
-    public string Header
-    {
-        get => labelHeader.Text;
-        set
-        {
-            labelHeader.Text = value;
-            labelHeader.Visible = !string.IsNullOrEmpty(value);
         }
     }
 
@@ -198,6 +191,11 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
         gridMain.TableSummaryRows.Add(tableSummaryRow);
 
         return new SummaryRowData(tableSummaryRow, null);
+    }
+
+    protected override void OnHeaderChanged()
+    {
+        HeaderVisible = !string.IsNullOrEmpty(Header);
     }
 
     private void Edit()

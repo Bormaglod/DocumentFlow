@@ -7,7 +7,8 @@
 
 namespace DocumentFlow.Infrastructure.Controls;
 
-public interface ITextBoxControl : IControl 
+public interface ITextBoxControl : IControl
 {
+    ITextBoxControl ReadOnly();
     ITextBoxControl Multiline(int height = 75);
 }

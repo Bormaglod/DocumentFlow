@@ -22,12 +22,17 @@ internal class InitialBalanceMaterialEditor : DocumentEditor<InitialBalanceMater
     public InitialBalanceMaterialEditor(IInitialBalanceMaterialRepository repository, IPageManager pageManager) 
         : base(repository, pageManager, true) 
     {
-        AddControls(new Control[]
-        {
-            CreateDirectorySelectBox<Material, IMaterialEditor>(x => x.ReferenceId, "Материал", 100, 400, data: GetMaterials),
-            CreateNumericTextBox(x => x.Amount, "Количество", 100, 200, digits: 3),
-            CreateCurrencyTextBox(x => x.OperationSumma, "Сумма", 100, 100)
-        });
+        EditorControls
+            .CreateDirectorySelectBox<Material>(x => x.ReferenceId, "Материал", (select) =>
+                select
+                    .SetDataSource(GetMaterials)
+                    .Editor<IMaterialEditor>()
+                    .SetEditorWidth(400))
+            .CreateNumericTextBox(x => x.Amount, "Количество", (text) =>
+                text
+                    .SetNumberDecimalDigits(3)
+                    .SetEditorWidth(200))
+            .CreateCurrencyTextBox(x => x.OperationSumma, "Сумма");
     }
 
     private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetAllValid();

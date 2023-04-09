@@ -83,7 +83,7 @@ public class Controls<T> : IControls<T>
         return this;
     }
 
-    public IControls<T> CreateMaskedTextBox<P>(Expression<Func<T, object?>> memberExpression, string header, Action<IMaskedTextBoxControl>? props = null)
+    public IControls<T> CreateMaskedTextBox<P>(Expression<Func<T, object?>> memberExpression, string header, Action<IMaskedTextBoxControl<P>>? props = null)
         where P : struct, IComparable<P>
     {
         var textBox = new DfMaskedTextBox<P>(memberExpression.ToMember().Name, header)
@@ -135,6 +135,45 @@ public class Controls<T> : IControls<T>
 
         props?.Invoke(choice);
         AddControl(choice);
+
+        return this;
+    }
+
+    public IControls<T> CreateNumericTextBox(Expression<Func<T, object?>> memberExpression, string header, Action<INumericTextBoxControl>? props = null)
+    {
+        var text = new DfNumericTextBox(memberExpression.ToMember().Name, header)
+        {
+            TabIndex = tabIndex
+        };
+
+        props?.Invoke(text);
+        AddControl(text);
+
+        return this;
+    }
+
+    public IControls<T> CreatePercentTextBox(Expression<Func<T, object?>> memberExpression, string header, Action<IPercentTextBoxControl>? props = null)
+    {
+        var text = new DfPercentTextBox(memberExpression.ToMember().Name, header)
+        {
+            TabIndex = tabIndex
+        };
+
+        props?.Invoke(text);
+        AddControl(text);
+
+        return this;
+    }
+
+    public IControls<T> CreateCurrencyTextBox(Expression<Func<T, object?>> memberExpression, string header, Action<ICurrencyTextBoxControl>? props = null)
+    {
+        var text = new DfCurrencyTextBox(memberExpression.ToMember().Name, header)
+        {
+            TabIndex = tabIndex
+        };
+
+        props?.Invoke(text);
+        AddControl(text);
 
         return this;
     }

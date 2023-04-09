@@ -13,6 +13,7 @@ public interface IChoiceControl<T> : IControl
     where T : struct, IComparable
 {
     T? Value { get; }
+    IChoiceControl<T> ReadOnly();
     IChoiceControl<T> Required();
     IChoiceControl<T> SetChoiceValues(IReadOnlyDictionary<T, string> keyValues, bool autoRefresh = false);
     IChoiceControl<T> SetDataSource(Func<IEnumerable<IChoice<T>>?> func, DataRefreshMethod refreshMethod = DataRefreshMethod.OnLoad);
