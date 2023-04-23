@@ -24,6 +24,9 @@ public class Payroll : AccountingDocument, IBilling
     public int BillingYear { get; } = DateTime.Now.Year;
     public short BillingMonth { get; } = Convert.ToInt16(DateTime.Now.Month);
 
+    /// <summary>
+    /// Возвращает сумму заработной платы по платёжной ведомости.
+    /// </summary>
     public decimal Wage { get; protected set; }
     public BillingRange BillingRange { get; }
     public string[]? EmployeeNames { get; protected set; }

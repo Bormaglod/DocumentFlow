@@ -5,6 +5,7 @@
 // Date: 07.08.2022
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Wages.Core;
 
 using System.ComponentModel.DataAnnotations;
@@ -17,5 +18,6 @@ public class GrossPayrollEmployee : WageEmployee
     public Guid IncomeItemId { get; set; }
 
     [Display(Name = "Статья дохода", Order = 100)]
+    [ColumnMode(Width = 250)]
     public string IncomeItemName { get; protected set; } = string.Empty;
 }

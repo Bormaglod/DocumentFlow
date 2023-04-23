@@ -12,12 +12,11 @@
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
+using DocumentFlow.Infrastructure.Controls;
 
 using Humanizer;
 
 namespace DocumentFlow.Entities.Calculations;
-
-public enum CalculationState { Prepare, Approved, Expired }
 
 public enum StimulatingValue { Money, Percent }
 

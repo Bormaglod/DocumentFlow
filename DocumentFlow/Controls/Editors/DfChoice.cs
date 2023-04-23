@@ -18,9 +18,8 @@
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 using DocumentFlow.Infrastructure.Data;
-
-using MimeKit.Text;
 
 using Syncfusion.Windows.Forms.Tools;
 
@@ -30,9 +29,10 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
     where T : struct, IComparable
 {
     private readonly List<IChoice<T>> choices = new();
-    private bool requird = false;
+    private bool required = false;
     private bool lockManual = false;
-    private Action<T?>? manualValueChanged;
+    private ControlValueChanged<T?>? choiceChanged;
+    private ControlValueChanged<T?>? choiceSelected;
 
     public DfChoice(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
     {
@@ -41,22 +41,7 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
         SetNestedControl(panelEdit, editorWidth);
     }
 
-    public event EventHandler<SelectedValueChanged<T?>>? ValueChanged;
-    public event EventHandler<SelectedValueChanged<T?>>? ManualValueChange;
-
-    public bool Required
-    {
-        get => requird;
-
-        set
-        {
-            requird = value;
-            panelSeparator1.Visible = !value;
-            buttonDelete.Visible = !value;
-        }
-    }
-
-    public bool ReadOnly 
+    public bool ReadOnly
     {
         get => comboBoxAdv1.ReadOnly;
         set
@@ -66,12 +51,12 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
         }
     }
 
-    public T? ChoiceValue { get => (T?)Value; set => Value = value; }
+    public T? SelectedValue { get => (T?)Value; set => Value = value; }
 
     #region IBindingControl interface
 
-    public object? Value 
-    { 
+    public object? Value
+    {
         get
         {
             if (comboBoxAdv1.SelectedItem != null && comboBoxAdv1.SelectedItem is IChoice<T> selectedItem)
@@ -81,7 +66,7 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
 
             if (DefaultAsNull)
             {
-                if (Required)
+                if (required)
                 {
                     throw new ArgumentException($"Значение поля [{Header}] должно быть иметь значение.");
                 }
@@ -100,7 +85,7 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
                 return;
             }
 
-            ClearValue();
+            ClearSelectedValue();
         }
     }
 
@@ -122,7 +107,7 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
         }
     }
 
-    public void ClearValue() => SetSelectedItem(null);
+    public void ClearSelectedValue() => SetSelectedItem(null);
 
     protected override void DoRefreshDataSource(IEnumerable<IChoice<T>> data)
     {
@@ -159,11 +144,10 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
 
     private void OnValueChanged(T? value)
     {
-        ValueChanged?.Invoke(this, new SelectedValueChanged<T?>(value));
+        choiceChanged?.Invoke(value);
         if (!lockManual)
         {
-            ManualValueChange?.Invoke(this, new SelectedValueChanged<T?>(value));
-            manualValueChanged?.Invoke(value);
+            choiceSelected?.Invoke(value);
         }
     }
 
@@ -187,11 +171,9 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
         }
     }
 
-    private void ButtonDelete_Click(object sender, EventArgs e) => ClearValue();
+    private void ButtonDelete_Click(object sender, EventArgs e) => ClearSelectedValue();
 
     #region IChoiceControl interface
-
-    T? IChoiceControl<T>.Value => ChoiceValue;
 
     IChoiceControl<T> IChoiceControl<T>.ReadOnly()
     {
@@ -201,26 +183,34 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
 
     IChoiceControl<T> IChoiceControl<T>.Required()
     {
-        Required = true;
+        required = true;
+        panelSeparator1.Visible = false;
+        buttonDelete.Visible = false;
         return this;
     }
 
     IChoiceControl<T> IChoiceControl<T>.SetChoiceValues(IReadOnlyDictionary<T, string> keyValues, bool autoRefresh)
     {
-        SetChoiceValues(keyValues, autoRefresh); 
+        SetChoiceValues(keyValues, autoRefresh);
         return this;
     }
 
-    IChoiceControl<T> IChoiceControl<T>.SetDataSource(Func<IEnumerable<IChoice<T>>?> func, DataRefreshMethod refreshMethod)
+    IChoiceControl<T> IChoiceControl<T>.SetDataSource(GettingDataSource<IChoice<T>> func, DataRefreshMethod refreshMethod)
     {
         RefreshMethod = refreshMethod;
         SetDataSource(func);
         return this;
     }
 
-    IChoiceControl<T> IChoiceControl<T>.ManualValueChanged(Action<T?> action)
+    IChoiceControl<T> IChoiceControl<T>.ChoiceChanged(ControlValueChanged<T?> action)
     {
-        manualValueChanged = action;
+        choiceChanged = action;
+        return this;
+    }
+
+    IChoiceControl<T> IChoiceControl<T>.ChoiceSelected(ControlValueChanged<T?> action)
+    {
+        choiceSelected = action;
         return this;
     }
 

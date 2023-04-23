@@ -22,15 +22,15 @@ public class OkpdtrEditor : Editor<Okpdtr>, IOkpdtrEditor
     public OkpdtrEditor(IOkpdtrRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         EditorControls
-            .CreateTextBox(x => x.Code, "Код", (text) =>
+            .AddTextBox(x => x.Code, "Код", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .DefaultAsValue())
-            .CreateTextBox(x => x.ItemName, "Наименование", (text) =>
+            .AddTextBox(x => x.ItemName, "Наименование", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(400))
-            .CreateTextBox(x => x.SignatoryName, "Наименование для договоров", (text) =>
+            .AddTextBox(x => x.SignatoryName, "Наименование для договоров", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(400));

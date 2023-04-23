@@ -1,7 +1,7 @@
 ﻿
 namespace DocumentFlow.Controls.Editors
 {
-    partial class DfPanel
+    partial class DfPanel<T>
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -59,11 +59,12 @@ namespace DocumentFlow.Controls.Editors
             // 
             // panelControls
             // 
+            this.panelControls.BackColor = System.Drawing.Color.Transparent;
             this.panelControls.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelControls.Location = new System.Drawing.Point(0, 28);
             this.panelControls.Name = "panelControls";
             this.panelControls.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.panelControls.Size = new System.Drawing.Size(815, 286);
+            this.panelControls.Size = new System.Drawing.Size(815, 32);
             this.panelControls.TabIndex = 1;
             // 
             // DfPanel
@@ -74,7 +75,7 @@ namespace DocumentFlow.Controls.Editors
             this.Controls.Add(this.panelHeader);
             this.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Name = "DfPanel";
-            this.Size = new System.Drawing.Size(815, 314);
+            this.Size = new System.Drawing.Size(815, 60);
             this.panelHeader.ResumeLayout(false);
             this.panelHeader.PerformLayout();
             this.ResumeLayout(false);

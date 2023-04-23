@@ -11,6 +11,9 @@
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Infrastructure.Controls.Core;
+using DocumentFlow.Infrastructure.Data;
+
 namespace DocumentFlow.Infrastructure.Controls;
 
 public enum DataRefreshMethod { OnLoad, OnOpen, Immediately }
@@ -24,6 +27,18 @@ public enum DataRefreshMethod { OnLoad, OnOpen, Immediately }
 /// </summary>
 public interface IDataSourceControl
 {
+    void RemoveDataSource();
     void RefreshDataSource();
     void RefreshDataSourceOnLoad();
+}
+
+
+public interface IDataSourceControl<I, T>
+    where T : class, IIdentifier<I>
+    where I : struct, IComparable
+{
+    void SetDataSource(GettingDataSource<T> func);
+    void Select(I? id);
+    void RefreshDataSource(T? selectedValue);
+    void RefreshDataSource(I? selectedValue);
 }

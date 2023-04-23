@@ -98,6 +98,11 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
 
     #region IDataSourceControl interface
 
+    public void RemoveDataSource()
+    {
+        gridContent.DataSource = null;
+    }
+
     public void RefreshDataSource()
     {
         var repo = Services.Provider.GetService<IReportCardEmployeeRepository>();

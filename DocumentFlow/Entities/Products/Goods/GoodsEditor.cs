@@ -19,9 +19,12 @@ using DocumentFlow.Entities.Balances;
 using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Measurements;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
+
+using Syncfusion.Linq;
 
 namespace DocumentFlow.Entities.Products;
 
@@ -34,37 +37,61 @@ public class GoodsEditor : Editor<Goods>, IGoodsEditor
     {
         this.repository = repository;
 
-        var code = CreateTextBox(x => x.Code, "Код", headerWidth, 180, defaultAsNull: false);
-        var name = CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 600);
-        var parent = CreateDirectorySelectBox(x => x.ParentId, "Группа", headerWidth, 400, showOnlyFolder: true, data: repository.GetOnlyFolders);
-        var measurement = CreateComboBox<Measurement, IMeasurementEditor>(x => x.MeasurementId, "Единица измерения", headerWidth, 250);
-        var weight = CreateNumericTextBox(x => x.Weight, "Вес, г", headerWidth, 100, digits: 3);
-        var price = CreateCurrencyTextBox(x => x.Price, "Цена без НДС", headerWidth, 150, defaultAsNull: false);
-        var vat = CreateChoice(x => x.Vat, "НДС", headerWidth, 150, choices: Product.Taxes);
-        var is_service = CreateToggleButton(x => x.IsService, "Услуга", headerWidth);
-        var note = CreateMultilineTextBox(x => x.Note, "Описание", headerWidth, 500);
-        note.Dock = DockStyle.Fill;
-
-        measurement.SetDataSource(() => Services.Provider.GetService<IMeasurementRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name")));
-
-        var controls = new List<Control>() { code, name, parent, measurement, weight, price, vat, is_service, note };
-
-        if (repository.HasPrivilege(Privilege.Update))
-        {
-            var calculation = CreateComboBox<Calculation, ICalculationEditor>(x => x.CalculationId, "Калькуляция", headerWidth, 400);
-
-            calculation.SetDataSource(() => Services.Provider.GetService<ICalculationRepository>()!.GetApproved(Document));
-
-            controls.Insert(7, calculation);
-        }
-
-        is_service.ValueChanged += (sender, e) =>
-        {
-            weight.Visible = !is_service.ToggleValue;
-            measurement.Visible = !is_service.ToggleValue;
-        };
-
-        AddControls(controls);
+        EditorControls
+            .AddTextBox(x => x.Code, "Код", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(180)
+                    .DefaultAsValue())
+            .AddTextBox(x => x.ItemName, "Наименование", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(600))
+            .AddDirectorySelectBox<Goods>(x => x.ParentId, "Группа", (select) =>
+                select
+                    .ShowOnlyFolder()
+                    .SetDataSource(repository.GetOnlyFolders)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddComboBox<Measurement>(x => x.MeasurementId, "Единица измерения", (combo) =>
+                combo
+                    .EnableEditor<IMeasurementEditor>()
+                    .SetDataSource(GetMeasurements)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(250)
+                    .Raise())
+            .AddNumericTextBox(x => x.Weight, "Вес, г", (text) =>
+                text
+                    .SetNumberDecimalDigits(3)
+                    .SetHeaderWidth(headerWidth)
+                    .Raise())
+            .AddCurrencyTextBox(x => x.Price, "Цена без НДС", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150)
+                    .DefaultAsValue())
+            .AddChoice<int>(x => x.Vat, "НДС", (choice) =>
+                choice
+                    .SetChoiceValues(Product.Taxes)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150))
+            .If(repository.HasPrivilege(Privilege.Update), controls =>
+                controls.AddComboBox<Calculation>(x => x.CalculationId, "Калькуляция", (combo) =>
+                    combo
+                        .EnableEditor<ICalculationEditor>()
+                        .SetDataSource(GetCalculations)
+                        .SetHeaderWidth(headerWidth)
+                        .SetEditorWidth(400)))
+            .AddToggleButton(x => x.IsService, "Услуга", (toggle) =>
+                toggle
+                    .ToggleChanged(IsServiceChanged)
+                    .SetHeaderWidth(headerWidth))
+            .AddTextBox(x => x.Note, "Описание", (text) =>
+                text
+                    .Multiline()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(500)
+                    .SetDock(DockStyle.Fill));
     }
 
     protected override void DoAfterRefreshData()
@@ -76,4 +103,15 @@ public class GoodsEditor : Editor<Goods>, IGoodsEditor
             RegisterNestedBrowser<IBalanceGoodsBrowser, BalanceGoods>();
         }
     }
+
+    private void IsServiceChanged(bool value)
+    {
+        EditorControls.GetControls<IControl>()
+                      .Where(x => x.IsRaised)
+                      .ForEach(x => x.SetVisible(!value));
+    }
+
+    private IEnumerable<Calculation> GetCalculations() => Services.Provider.GetService<ICalculationRepository>()!.GetApproved(Document);
+
+    private IEnumerable<Measurement> GetMeasurements() => Services.Provider.GetService<IMeasurementRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
 }

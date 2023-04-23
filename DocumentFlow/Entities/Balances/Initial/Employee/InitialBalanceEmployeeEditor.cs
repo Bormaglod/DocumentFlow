@@ -25,13 +25,13 @@ internal class InitialBalanceEmployeeEditor : DocumentEditor<InitialBalanceEmplo
         : base(repository, pageManager, true) 
     {
         EditorControls
-            .CreateDirectorySelectBox<OurEmployee>(x => x.ReferenceId, "Сотрудник", (select) =>
+            .AddDirectorySelectBox<OurEmployee>(x => x.ReferenceId, "Сотрудник", (select) =>
                 select
                     .SetDataSource(GetEmployees)
-                    .Editor<IOurEmployeeEditor>()
+                    .EnableEditor<IOurEmployeeEditor>()
                     .SetEditorWidth(400))
-            .CreateCurrencyTextBox(x => x.OperationSumma, "Сумма")
-            .CreateChoice<decimal>(x => x.Amount, "Долг", (choice) =>
+            .AddCurrencyTextBox(x => x.OperationSumma, "Сумма")
+            .AddChoice<decimal>(x => x.Amount, "Долг", (choice) =>
                 choice
                     .SetChoiceValues(debtChoice)
                     .SetEditorWidth(200));

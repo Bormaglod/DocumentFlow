@@ -13,21 +13,26 @@
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Core;
+using DocumentFlow.Infrastructure.Data;
+
+using Syncfusion.WinForms.DataGrid.Enums;
 
 using System.ComponentModel.DataAnnotations;
 
 namespace DocumentFlow.Entities.Wages.Core;
 
-public class WageEmployee : Entity<long>, IWageEmployee
+public class WageEmployee : Entity<long>, IEntityClonable, ICloneable
 {
     [Display(AutoGenerateField = false)]
     public Guid EmployeeId { get; set; }
 
     [Display(Name = "Сотрудник", Order = 1)]
     [Exclude]
+    [ColumnMode(AutoSizeColumnsMode = AutoSizeColumnsMode.Fill)]
     public string EmployeeName { get; protected set; } = string.Empty;
 
     [Display(Name = "Зар. плата", Order = 100)]
+    [ColumnMode(Format = ColumnFormat.Currency, Width = 150)]
     public decimal Wage { get; set; }
 
     public object Clone() => MemberwiseClone();

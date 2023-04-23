@@ -16,117 +16,58 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Dialogs;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.PaymentOrders.Documents;
-using DocumentFlow.Entities.Products.Dialogs;
 using DocumentFlow.Entities.Waybills;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 
 namespace DocumentFlow.Entities.PurchaseRequestLib;
 
 public class PurchaseRequestEditor : DocumentEditor<PurchaseRequest>, IPurchaseRequestEditor
 {
-    private readonly DfDirectorySelectBox<Contractor> contractor;
-
     public PurchaseRequestEditor(IPurchaseRequestRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 80, 400, data: GetSuppliers);
-        var contract = CreateDirectorySelectBox<Contract, IContractEditor>(x => x.ContractId, "Договор", 80, 400);
-        var details = new DfDataGrid<PurchaseRequestPrice>(Services.Provider.GetService<IPurchaseRequestPriceRepository>()!) 
-        { 
-            Padding = new Padding(0, 0, 0, 7)
-        };
-
-        var note = CreateMultilineTextBox(x => x.Note, "Доп. информация", 130, 400);
-        note.Dock = DockStyle.Bottom;
-        note.EditorFitToSize = true;
-
-        contractor.ValueChanged += (sender, args) =>
-        {
-            contract.RefreshDataSource();
-            contract.Value = Document.ContractId;
-        };
-
-        contract.SetDataSource(() =>
-        {
-            if (contractor.SelectedItem != null)
-            {
-                var repo = Services.Provider.GetService<IContractRepository>();
-                return repo!.GetSuppliers(contractor.SelectedItem.Id);
-            }
-
-            return null;
-        });
-
-        details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("ProductCost", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("TaxValue", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("FullCost", SummaryColumnFormat.Currency, SelectOptions.All);
-
-        details.AutoGeneratingColumn += (sender, args) =>
-        {
-            switch (args.Column.MappingName)
-            {
-                case "Id":
-                    args.Cancel = true;
-                    break;
-                case "ProductName":
-                    args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
-                    break;
-                case "Amount":
-                    args.Column.Width = 100;
-                    break;
-                case "Price":
-                    UpdateCurrencyColumn(args.Column, 100);
-                    break;
-                case "ProductCost":
-                    UpdateCurrencyColumn(args.Column, 140);
-                    break;
-                case "Tax":
-                    args.Column.Width = 80;
-                    args.Column.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
-                    break;
-                case "TaxValue":
-                    UpdateCurrencyColumn(args.Column, 140);
-                    break;
-                case "FullCost":
-                    UpdateCurrencyColumn(args.Column, 140);
-                    break;
-            }
-        };
-
-        details.DataCreate += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<PurchaseRequestPrice>.Create(args.CreatingData, contract.SelectedItem) == DialogResult.Cancel;
-        };
-
-        details.DataEdit += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<PurchaseRequestPrice>.Edit(args.EditingData, contract.SelectedItem) == DialogResult.Cancel;
-        };
-
-        details.DataCopy += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<PurchaseRequestPrice>.Edit(args.CopiedData, contract.SelectedItem) == DialogResult.Cancel;
-        };
-
-        AddControls(new Control[]
-        {
-            contractor,
-            contract,
-            note,
-            details            
-        });
-
-        details.Dock = DockStyle.Fill;
+        EditorControls
+            .AddDirectorySelectBox<Contractor>(x => x.ContractorId, "Контрагент", select =>
+                select
+                    .SetDataSource(GetSuppliers)
+                    .EnableEditor<IContractorEditor>()
+                    .DirectoryChanged(ContractorChanged)
+                    .SetHeaderWidth(80)
+                    .SetEditorWidth(400))
+            .AddDirectorySelectBox<Contract>(x => x.ContractId, "Договор", select =>
+                select
+                    .SetDataSource(GetContracts)
+                    .EnableEditor<IContractEditor>()
+                    .SetHeaderWidth(80)
+                    .SetEditorWidth(400))
+            .AddTextBox(x => x.Note, "Доп. информация", text =>
+                text
+                    .Multiline()
+                    .SetHeaderWidth(130)
+                    .SetEditorWidth(400)
+                    .SetDock(DockStyle.Bottom)
+                    .EditorFitToSize())
+            .AddDataGrid<PurchaseRequestPrice>(grid =>
+                grid
+                    .DoCreate(CreatePrice)
+                    .DoUpdate(UpdatePrice)
+                    .DoCopy(CopyPrice)
+                    .GridSummaryRow(VerticalPosition.Bottom, summary =>
+                        summary
+                            .AsSummary(x => x.ProductCost, SummaryColumnFormat.Currency, SelectOptions.All)
+                            .AsSummary(x => x.TaxValue, SummaryColumnFormat.Currency, SelectOptions.All)
+                            .AsSummary(x => x.FullCost, SummaryColumnFormat.Currency, SelectOptions.All))
+                    .SetRepository<IPurchaseRequestPriceRepository>()
+                    .SetPadding(0, 0, 0, 7)
+                    .SetDock(DockStyle.Fill));
 
         RegisterReport(new PurchaseRequestReport());
     }
@@ -138,16 +79,54 @@ public class PurchaseRequestEditor : DocumentEditor<PurchaseRequest>, IPurchaseR
         RegisterNestedBrowser<IWaybillReceiptNestedBrowser, WaybillReceipt>();
     }
 
-    private static void UpdateCurrencyColumn(GridColumn column, int width)
+    private bool CreatePrice(PurchaseRequestPrice price)
     {
-        if (column is GridNumericColumn c)
-        {
-            c.FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency;
-        }
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>();
+        ProductPriceDialog<PurchaseRequestPrice> form = new(contract.SelectedItem);
+        return form.Create(price);
+    }
 
-        column.Width = width;
-        column.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
+    private DataOperationResult UpdatePrice(PurchaseRequestPrice price)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>();
+        ProductPriceDialog<PurchaseRequestPrice> form = new(contract.SelectedItem);
+        if (form.Edit(price))
+        {
+            return DataOperationResult.Update;
+        }
+        else
+        {
+            return DataOperationResult.Cancel;
+        }
+    }
+
+    private bool CopyPrice(PurchaseRequestPrice price)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>();
+        ProductPriceDialog<PurchaseRequestPrice> form = new(contract.SelectedItem);
+        return form.Edit(price);
     }
 
     private IEnumerable<Contractor> GetSuppliers() => Services.Provider.GetService<IContractorRepository>()!.GetSuppliers();
+
+    private IEnumerable<Contract> GetContracts()
+    {
+        var contractor = EditorControls.GetControl<IDirectorySelectBoxControl<Contractor>>();
+        if (contractor.SelectedItem != null)
+        {
+            var repo = Services.Provider.GetService<IContractRepository>();
+            return repo!.GetSuppliers(contractor.SelectedItem.Id);
+        }
+
+        return Array.Empty<Contract>();
+    }
+
+    private void ContractorChanged(Contractor? _)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>();
+        if (contract is IDataSourceControl<Guid, Contract> source)
+        {
+            source.RefreshDataSource(Document.ContractId);
+        }
+    }
 }

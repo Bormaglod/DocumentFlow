@@ -43,7 +43,7 @@ public class OperationBrowser : Browser<Operation>, IOperationBrowser
         var produced = CreateNumeric(x => x.Produced, "Выработка", width: 100);
         var prod_time = CreateNumeric(x => x.ProdTime, "Время выработки, сек.", width: 100);
         var production_rate = CreateNumeric(x => x.ProductionRate, "Норма выработки, ед./час", width: 100);
-        var type_name = CreateText(x => x.TypeNme, "Тип операции", width: 250);
+        var type_name = CreateText(x => x.TypeName, "Тип операции", width: 250);
         var salary = CreateNumeric(x => x.Salary, "Зар. плата, руб.", width: 100, decimalDigits: 4);
         var operation_using = CreateBoolean(x => x.OperationUsing, "Используется", 120);
         var date_norm = CreateDateTime(x => x.DateNorm, "Дата нормир.", 100, format: "dd.MM.yyyy", visible: false);

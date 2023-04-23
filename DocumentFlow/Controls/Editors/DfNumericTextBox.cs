@@ -31,7 +31,7 @@ public partial class DfNumericTextBox : BaseNumericTextBox<decimal, DecimalTextB
 
     public int NumberDecimalDigits { get => TextBox.NumberDecimalDigits; set => TextBox.NumberDecimalDigits = value; }
 
-    public override void ClearValue() => TextBox.Text = string.Empty;
+    public override void ClearSelectedValue() => TextBox.Text = string.Empty;
 
     protected override decimal GetValueTextBox() => TextBox.DecimalValue;
 

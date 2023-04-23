@@ -18,7 +18,8 @@ public abstract partial class BaseControl : UserControl, IControl
     private Control? control;
     private Label? label;
 
-    private string tag = string.Empty;
+    private bool raise = false;
+    private int groupRaise = 0;
 
     public BaseControl(string property)
     {
@@ -148,11 +149,20 @@ public abstract partial class BaseControl : UserControl, IControl
 
     #region IControl interface
 
-    string IControl.Tag => tag;
+    bool IControl.IsRaised => raise;
 
-    IControl IControl.SetTag(string value)
+    int IControl.GetRaisedGroup() => groupRaise;
+
+    IControl IControl.Raise()
     {
-        tag = value;
+        raise = true;
+        return this;
+    }
+
+    IControl IControl.Raise(int group)
+    {
+        raise = true;
+        groupRaise = group;
         return this;
     }
 
@@ -180,6 +190,12 @@ public abstract partial class BaseControl : UserControl, IControl
         return this;
     }
 
+    IControl IControl.SetHeaderTextAlign(ContentAlignment alignment)
+    {
+        HeaderTextAlign = alignment;
+        return this;
+    }
+
     IControl IControl.SetHeaderWidth(int width)
     {
         HeaderWidth = width;
@@ -189,6 +205,44 @@ public abstract partial class BaseControl : UserControl, IControl
     IControl IControl.SetEditorWidth(int width)
     {
         EditorWidth = width;
+        return this;
+    }
+
+    IControl IControl.SetDock(DockStyle dockStyle)
+    {
+        Dock = dockStyle;
+        return this;
+    }
+
+    IControl IControl.SetPadding(int left, int top, int right, int bottom)
+    {
+        Padding = new(left, top, right, bottom);
+        return this;
+    }
+
+    IControl IControl.SetWidth(int width)
+    {
+        Width = width;
+        return this;
+    }
+
+    IControl IControl.EditorFitToSize()
+    {
+        EditorFitToSize = true;
+        return this;
+    }
+
+    IControl IControl.If(bool condition, Action<IControl> trueAction, Action<IControl>? falseAction)
+    {
+        if (condition) 
+        {
+            trueAction(this);
+        }
+        else
+        {
+            falseAction?.Invoke(this);
+        }
+
         return this;
     }
 

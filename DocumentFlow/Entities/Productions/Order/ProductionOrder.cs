@@ -26,7 +26,7 @@ public class ProductionOrder : ShipmentDocument
     public decimal TaxValue { get; protected set; }
     public decimal FullCost { get; protected set; }
 
-    public static void CreateGridColumns(Columns columns)
+    public static void CreateGridColumns(IList<GridColumn> columns)
     {
         var doc_date = new GridDateTimeColumn()
         {

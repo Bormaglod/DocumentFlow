@@ -8,8 +8,11 @@
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Persons;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
+
+using Syncfusion.Linq;
 
 namespace DocumentFlow.Entities.Deductions;
 
@@ -19,28 +22,42 @@ public class DeductionEditor : Editor<Deduction>, IDeductionEditor
 
     public DeductionEditor(IDeductionRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var name = CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400);
-        var base_calc = CreateChoice(x => x.BaseDeduction, "База для начисления", headerWidth, 300, choices: Deduction.BaseDeductions);
-        var person = CreateComboBox(x => x.PersonId, "Получатель фикс. суммы", headerWidth, 300, data: GetPeople);
-        var value_percent = CreatePercentTextBox(x => x.Value, "Процент от базы", headerWidth, 100, defaultAsNull: false);
-        var value_fix = CreateCurrencyTextBox(x => x.Value, "Процент от базы", headerWidth, 100, defaultAsNull: false);
+        EditorControls
+            .AddTextBox(x => x.ItemName, "Наименование", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddChoice<BaseDeduction>(x => x.BaseDeduction, "База для начисления", (choice) =>
+                choice
+                    .ChoiceChanged(BaseDeductionChanged)
+                    .SetChoiceValues(Deduction.BaseDeductions)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300))
+            .AddComboBox<Person>(x => x.PersonId, "Получатель фикс. суммы", (combo) =>
+                combo
+                    .SetDataSource(GetPeople)
+                    .EnableEditor<IPersonEditor>()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300)
+                    .Raise(1))
+            .AddPercentTextBox(x => x.Value, "Процент от базы", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue()
+                    .Raise(2))
+            .AddCurrencyTextBox(x => x.Value, "Сумма", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue()
+                    .Raise(1));
+    }
 
-        base_calc.ValueChanged += (sender, e) =>
-        {
-            BaseDeduction baseDeduction = e.Value == null ? BaseDeduction.NotDefined : e.Value.Value;
-            person.Visible = baseDeduction == BaseDeduction.Person;
-            value_fix.Visible = baseDeduction == BaseDeduction.Person;
-            value_percent.Visible = baseDeduction != BaseDeduction.Person;
-        };
-
-        AddControls(new Control[]
-        {
-            name,
-            base_calc,
-            person,
-            value_percent,
-            value_fix
-        });
+    private void BaseDeductionChanged(BaseDeduction? deduction)
+    {
+        BaseDeduction baseDeduction = deduction == null ? BaseDeduction.NotDefined : deduction.Value;
+        EditorControls.GetControls<IControl>()
+                      .Where(c => c.IsRaised)
+                      .ForEach(c => c.SetVisible(c.GetRaisedGroup() == 1 ? baseDeduction == BaseDeduction.Person : baseDeduction != BaseDeduction.Person));
     }
 
     private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));

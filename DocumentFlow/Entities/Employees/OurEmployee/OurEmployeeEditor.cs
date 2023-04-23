@@ -23,10 +23,12 @@ public class OurEmployeeEditor : BaseEmployeeEditor<OurEmployee>, IOurEmployeeEd
 {
     public OurEmployeeEditor(IOurEmployeeRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        AddControls(new Control[] 
-        {
-            CreateMultiSelectionComboBox(x => x.IncomeItems, "Статьи дохода", 120, 500, data: GetItems)
-        });
+        EditorControls
+            .AddMultiSelectionComboBox(x => x.IncomeItems, "Статьи дохода", combo =>
+                combo
+                    .SetDataSource(GetItems)
+                    .SetHeaderWidth(120)
+                    .SetEditorWidth(500));
     }
 
     protected override void RegisterNestedBrowsers()

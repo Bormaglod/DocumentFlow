@@ -26,7 +26,7 @@ using System.Data;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGridDataSource, IAccess
+public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGridDataSource, IAccess, IOperationPropertyControl
 {
     private Guid? ownerId;
     private ObservableCollection<CalculationOperationProperty>? properties;
@@ -85,6 +85,11 @@ public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGri
     }
 
     #region IDataSourceControl interface
+
+    public void RemoveDataSource()
+    {
+        gridParams.DataSource = null;
+    }
 
     public void RefreshDataSource()
     {

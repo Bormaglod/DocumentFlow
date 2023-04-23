@@ -9,12 +9,12 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Equipments;
 using DocumentFlow.Entities.Operations;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -28,108 +28,137 @@ public class BaseCalculationOperationEditor<T> : Editor<T>
 
     public BaseCalculationOperationEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager)
     {
-        var name = CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400);
-        var operation = CreateDirectorySelectBox<Operation>(x => x.ItemId, "Операция", headerWidth, 400);
-        var price = CreateNumericTextBox(x => x.Price, "Расценка", headerWidth, 100, defaultAsNull: false, enabled: false, digits: 4);
-        var equipment = CreateDirectorySelectBox<Equipment>(x => x.EquipmentId, "Оборудование", headerWidth, 300, data: GetEquipments);
-        var tools = CreateDirectorySelectBox<Equipment>(x => x.ToolsId, "Инструмент", headerWidth, 300, data: GetTools);
-        var material = CreateDirectorySelectBox<Material>(x => x.MaterialId, "Материал", headerWidth, 300, rootIdentifier: RootId);
-        var amount = CreateNumericTextBox(x => x.MaterialAmount, "Количество", headerWidth, 100, defaultAsNull: false, digits: 3);
-        var repeats = CreateIntegerTextBox<int>(x => x.Repeats, "Кол-во повторов", headerWidth, 100, defaultAsNull: false);
-
-        if (IsCuttingOperation)
-        {
-            name.Enabled = false;
-            amount.Enabled = false;
-        }
-
-        repeats.NumericValue = 1;
-
-        operation.SetDataSource(() =>
-        {
-            if (IsCuttingOperation)
-            {
-                return Services.Provider.GetService<ICuttingRepository>()!.GetAllValid(callback: q => q.OrderBy("segment_length"));
-            }
-            else
-            {
-                return Services.Provider.GetService<IOperationRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
-            }
-        });
-
-        operation.ManualValueChange += (s, e) =>
-        {
-            if (e.NewValue != null)
-            {
-                price.Value = e.NewValue.Salary;
-                if (e.NewValue is Cutting cutting)
-                {
-                    amount.Value = cutting.SegmentLength / 1000m;
-                }
-            }
-        };
-
-        material.SetDataSource(() =>
-        {
-            if (IsCuttingOperation)
-            {
-                return Services.Provider.GetService<IMaterialRepository>()!.GetWires();
-            }
-            else
-            {
-                return Services.Provider.GetService<IMaterialRepository>()!.GetMaterials();
-            }
-        });
-
-        var controls = new List<Control>()
-        {
-            CreateTextBox(x => x.CalculationName, "Калькуляция", headerWidth, 600, enabled: false),
-            CreateTextBox(x => x.Code, "Код", headerWidth, 150, defaultAsNull: false),
-            name,
-            operation,
-            price,
-            equipment,
-            tools,
-            material,
-            amount,
-            repeats
-        };
-
-        if (!IsCuttingOperation)
-        {
-            var prev = CreateMultiSelectionComboBox(x => x.PreviousOperation, "Пред. операции", headerWidth, 500);
-            prev.SetDataSource(() =>
-            {
-                var repo = Services.Provider.GetService<ICalculationOperationRepository>();
-                return repo!.GetAllValid(callback: q =>
-                {
-                    return q
-                        .Select("id", "code")
-                        .SelectRaw("code || ', ' || item_name as item_name")
-                        .Where("owner_id", Document.OwnerId)
-                        .WhereNotNull("item_name")
-                        .Where("code", "!=", Document.Code)
-                        .OrderBy("code");
-                });
-            });
-
-            controls.Add(prev);
-
-            var p = new DfOperationProperty("Доп. характеристики", headerWidth, 500);
-            controls.Add(p);
-        }
-
-        var note = CreateMultilineTextBox(x => x.Note, "Комментарий", headerWidth, 500);
-        controls.Add(note);
-
-        AddControls(controls);
+        EditorControls
+            .AddTextBox(x => x.CalculationName, "Калькуляция", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(600)
+                    .Disable())
+            .AddTextBox(x => x.Code, "Код", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150)
+                    .DefaultAsValue())
+            .AddTextBox(x => x.ItemName, "Наименование", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400)
+                    .If(IsCuttingOperation, x => x.Disable()))
+            .AddDirectorySelectBox<Operation>(x => x.ItemId, "Операция", select =>
+                select
+                    .SetDataSource(GetOperations)
+                    .DirectorySelected(OperationSelected)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddNumericTextBox(x => x.Price, "Расценка", box =>
+                box
+                    .SetNumberDecimalDigits(4)
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue()
+                    .Disable())
+            .AddDirectorySelectBox<Equipment>(x => x.EquipmentId, "Оборудование", select =>
+                select
+                    .SetDataSource(GetEquipments)
+                    .EnableEditor<IEquipmentEditor>()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300))
+            .AddDirectorySelectBox<Equipment>(x => x.ToolsId, "Инструмент", select =>
+                select
+                    .SetDataSource(GetTools)
+                    .EnableEditor<IEquipmentEditor>()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300))
+            .AddDirectorySelectBox<Material>(x => x.MaterialId, "Материал", select =>
+                select
+                    .SetRootIdentifier(RootId)
+                    .SetDataSource(GetMaterials)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300))
+            .AddNumericTextBox(x => x.MaterialAmount, "Количество", box =>
+                box
+                    .SetNumberDecimalDigits(3)
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue())
+            .AddIntergerTextBox<int>(x => x.Repeats, "Кол-во повторов", box =>
+                box
+                    .Initial(1)
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue()
+                    .If(IsCuttingOperation, x => x.Disable()))
+            .If(!IsCuttingOperation, controls => 
+                controls
+                    .AddMultiSelectionComboBox(x => x.PreviousOperation, "Пред. операции", combo =>
+                        combo
+                            .SetDataSource(GetCalcOperations)
+                            .SetHeaderWidth(headerWidth)
+                            .SetEditorWidth(500))
+                    .AddOperationProperty("Доп. характеристики", prop =>
+                        prop
+                            .SetHeaderWidth(headerWidth)
+                            .SetEditorWidth(500)))
+            .AddTextBox(x => x.Note, "Комментарий", text =>
+                text
+                    .Multiline()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(500));
     }
 
     protected virtual Guid? RootId { get; } = null;
 
     protected virtual bool IsCuttingOperation { get; } = false;
 
+    private IEnumerable<CalculationOperation> GetCalcOperations()
+    {
+        var repo = Services.Provider.GetService<ICalculationOperationRepository>();
+        return repo!.GetAllValid(callback: q =>
+        {
+            return q
+                .Select("id", "code")
+                .SelectRaw("code || ', ' || item_name as item_name")
+                .Where("owner_id", Document.OwnerId)
+                .WhereNotNull("item_name")
+                .Where("code", "!=", Document.Code)
+                .OrderBy("code");
+        });
+    }
+
+    private IEnumerable<Operation> GetOperations()
+    {
+        if (IsCuttingOperation)
+        {
+            return Services.Provider.GetService<ICuttingRepository>()!.GetAllValid(callback: q => q.OrderBy("segment_length"));
+        }
+        else
+        {
+            return Services.Provider.GetService<IOperationRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+        }
+    }
+
+    private IEnumerable<Material> GetMaterials()
+    {
+        if (IsCuttingOperation)
+        {
+            return Services.Provider.GetService<IMaterialRepository>()!.GetWires();
+        }
+        else
+        {
+            return Services.Provider.GetService<IMaterialRepository>()!.GetMaterials();
+        }
+    }
+
     private IEnumerable<Equipment> GetEquipments() => Services.Provider.GetService<IEquipmentRepository>()!.GetAllValid(callback: q => q.WhereFalse("is_tools"));
 
     private IEnumerable<Equipment> GetTools() => Services.Provider.GetService<IEquipmentRepository>()!.GetAllValid(callback: q => q.WhereTrue("is_tools"));
+
+    private void OperationSelected(Operation? newValue)
+    {
+        if (newValue != null)
+        {
+            EditorControls.GetControl<INumericTextBoxControl>("Price").NumericValue = newValue.Salary;
+            if (newValue is Cutting cutting)
+            {
+                EditorControls.GetControl<INumericTextBoxControl>("MaterialAmount").NumericValue = cutting.SegmentLength / 1000m;
+            }
+        }
+    }
 }

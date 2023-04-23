@@ -6,48 +6,53 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Infrastructure;
-
-using Microsoft.Extensions.DependencyInjection;
+using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Wages;
 
 public class GrossPayrollEditor : BasePayrollEditor<GrossPayroll, GrossPayrollEmployee, IGrossPayrollEmployeeRepository>, IGrossPayrollEditor
 {
+    private readonly IGrossPayrollRepository repository;
+
     public GrossPayrollEditor(IGrossPayrollRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        EmployeeRows.AddCommand("Заполнить", Properties.Resources.icons8_incoming_data_16, (sender, e) =>
+        this.repository = repository;
+    }
+
+    protected override void PopulateDataGrid(IDataGridControl<GrossPayrollEmployee> grid)
+    {
+        if (MessageBox.Show("Перед заполнением таблица будет очищена. Продолжить?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
         {
-            if (MessageBox.Show("Перед заполнением таблица будет очищена. Продолжить?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+            return;
+        }
+
+        string question1 = "Документ не записан, для заполнения таблицы документ должен быть записан. Записать?";
+        string question2 = "Для заполнения таблицы документ должен быть записан. Записать?";
+
+        string question = Document.Id == default ?
+            question1 :
+            (Document.BillingYear != BillingYear || Document.BillingMonth != BilingMonth ?
+                question2 :
+                string.Empty);
+
+        if (!string.IsNullOrEmpty(question))
+        {
+            if (MessageBox.Show(question, "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
                 return;
             }
 
-            string question1 = "Документ не записан, для заполнения таблицы документ должен быть записан. Записать?";
-            string question2 = "Для заполнения таблицы документ должен быть записан. Записать?";
-
-            string question = Document.Id == default ?
-                question1 :
-                (Document.BillingYear != BillingYear || Document.BillingMonth != BilingMonth ? 
-                    question2 : 
-                    string.Empty);
-
-            if (!string.IsNullOrEmpty(question))
+            if (!Save(true))
             {
-                if (MessageBox.Show(question, "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-                {
-                    return;
-                }
-
-                if (!Save(true))
-                {
-                    return;
-                }
+                return;
             }
+        }
 
-            var repo = Services.Provider.GetService<IGrossPayrollRepository>();
-            repo!.CalculateEmployeeWages(Document.Id);
+        repository.CalculateEmployeeWages(Document.Id);
 
-            EmployeeRows.RefreshDataSource();
-        });
+        if (grid is IDataSourceControl source)
+        {
+            source.RefreshDataSource();
+        }
     }
 }

@@ -15,7 +15,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Balances;
 using DocumentFlow.Entities.Measurements;
@@ -35,55 +34,63 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
     {
         this.repository = repository;
 
-        var code = CreateTextBox(x => x.Code, "Код", headerWidth, 180, defaultAsNull: false);
-        var name = CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400);
-        var parent = CreateDirectorySelectBox(x => x.ParentId, "Группа", headerWidth, 400, showOnlyFolder: true, data: repository.GetOnlyFolders);
-        var wire = CreateComboBox(x => x.WireId, "Тип провода", headerWidth, 200, data: GetWires);
-        var ext_article = CreateTextBox(x => x.ExtArticle, "Доп. артикул", headerWidth, 250);
-        var owner = CreateDirectorySelectBox<Material, IMaterialEditor>(x => x.OwnerId, "Кросс-артикул", headerWidth, 400);
-        var measurement = CreateComboBox<Measurement, IMeasurementEditor>(x => x.MeasurementId, "Единица измерения", headerWidth, 250, data: GetMeasurements);
-        var weight = CreateNumericTextBox(x => x.Weight, "Вес, г", headerWidth, 100, digits: 3);
-        var price = CreateCurrencyTextBox(x => x.Price, "Цена без НДС", headerWidth, 150, defaultAsNull: false);
-        var vat = CreateChoice(x => x.Vat, "НДС", headerWidth, 150, choices: Product.Taxes);
-        var min_order = CreateNumericTextBox(x => x.MinOrder, "Мин. заказ", headerWidth, 150, digits: 3);
-
-        parent.ValueChanged += (sender, e) =>
-        {
-            if (e.NewValue != null)
-            {
-                var parents = repository.GetParentFolders(e.NewValue.Id);
-                wire.Visible = parents.FirstOrDefault(x => x.Id == Material.WireGroup) != null;
-            }
-            else
-            {
-                wire.Visible = false;
-            }
-        };
-
-        owner.SetDataSource(() =>
-        {
-            var repo = Services.Provider.GetService<IMaterialRepository>();
-            return repo!.GetAllValid(callback: query => query
-                .OrderBy("item_name")
-                .WhereNull("owner_id")
-                .When(Document.Id != Guid.Empty, q => q
-                    .WhereNot("id", Document.Id)));
-        });
-
-        AddControls(new Control[]
-        {
-            code,
-            name,
-            parent,
-            wire,
-            ext_article,
-            owner,
-            measurement,
-            weight,
-            price,
-            vat,
-            min_order
-        });
+        EditorControls
+            .AddTextBox(x => x.Code, "Код", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(180)
+                    .DefaultAsValue())
+            .AddTextBox(x => x.ItemName, "Наименование", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddDirectorySelectBox<Material>(x => x.ParentId, "Группа", select =>
+                select
+                    .SetDataSource(repository.GetOnlyFolders)
+                    .ShowOnlyFolder()
+                    .DirectoryChanged(ParentMaterialChanged)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddComboBox<Wire>(x => x.WireId, "Тип провода", combo =>
+                combo
+                    .SetDataSource(GetWires)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddTextBox(x => x.ExtArticle, "Доп. артикул", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(250))
+            .AddDirectorySelectBox<Material>(x => x.OwnerId, "Кросс-артикул", select =>
+                select
+                    .EnableEditor<IMaterialEditor>()
+                    .SetDataSource(GetCrossMaterials)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddComboBox<Measurement>(x => x.MeasurementId, "Единица измерения", combo =>
+                combo
+                    .EnableEditor<IMeasurementEditor>()
+                    .SetDataSource(GetMeasurements)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(250))
+            .AddNumericTextBox(x => x.Weight, "Вес, г", text =>
+                text
+                    .SetNumberDecimalDigits(3)
+                    .SetHeaderWidth(headerWidth))
+            .AddCurrencyTextBox(x => x.Price, "Цена без НДС", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150)
+                    .DefaultAsValue())
+            .AddChoice<int>(x => x.Vat, "НДС", choice =>
+                choice
+                    .SetChoiceValues(Product.Taxes)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150))
+            .AddNumericTextBox(x => x.MinOrder, "Мин. заказ", text =>
+                text
+                    .SetNumberDecimalDigits(3)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150));
     }
 
     protected override void RegisterNestedBrowsers()
@@ -95,6 +102,30 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
             RegisterNestedBrowser<IBalanceMaterialBrowser, BalanceMaterial>();
             RegisterNestedBrowser<IMaterialUsageBrowser, MaterialUsage>();
         }
+    }
+
+    private void ParentMaterialChanged(Material? newValue)
+    {
+        var wire = EditorControls.GetControl(x => x.WireId);
+        if (newValue != null)
+        {
+            var parents = repository.GetParentFolders(newValue.Id);
+            wire.SetVisible(parents.FirstOrDefault(x => x.Id == Material.WireGroup) != null);
+        }
+        else
+        {
+            wire.Disable();
+        }
+    }
+
+    private IEnumerable<Material> GetCrossMaterials()
+    {
+        var repo = Services.Provider.GetService<IMaterialRepository>();
+        return repo!.GetAllValid(callback: query => query
+            .OrderBy("item_name")
+            .WhereNull("owner_id")
+            .When(Document.Id != Guid.Empty, q => q
+                .WhereNot("id", Document.Id)));
     }
 
     private IEnumerable<Wire> GetWires() => Services.Provider.GetService<IWireRepository>()!.GetAllValid();

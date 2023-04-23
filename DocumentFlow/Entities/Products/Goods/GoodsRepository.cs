@@ -15,6 +15,7 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Entities.Calculations;
+using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;

@@ -17,6 +17,7 @@ using DocumentFlow.Entities.Measurements;
 using DocumentFlow.Entities.Productions.Lot;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,63 +25,75 @@ namespace DocumentFlow.Entities.Productions.Finished;
 
 public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
 {
-    private readonly IPageManager pageManager;
-    private readonly int headerWidth = 160;
+   private readonly int headerWidth = 160;
 
     public BaseFinishedGoodsEditor(IFinishedGoodsRepository repository, IPageManager pageManager, bool nested)
         : base(repository, pageManager, true)
     {
-        this.pageManager = pageManager;
+        EditorControls
+            .AddDocumentSelectBox<ProductionLot>(x => x.OwnerId, "Партия", select =>
+                select
+                    .SetDataSource(GetLots)
+                    .ReadOnly(nested)
+                    .CreateColumns(ProductionLot.CreateGridColumns)
+                    .DocumentChanged(LotChanged)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300))
+            .AddDirectorySelectBox<Goods>(x => x.GoodsId, "Изделие", select =>
+                select
+                    .SetDataSource(GetGoods)
+                    .DirectoryChanged(GoodsChanged)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(500))
+            .AddNumericTextBox(x => x.Quantity, "Количество", text => 
+                text
+                    .SetNumberDecimalDigits(3)
+                    .SetHeaderWidth(headerWidth))
+            .AddCurrencyTextBox(x => x.Price, "Себестоимость 1 ед. изм.", text =>
+                text
+                    .SetHeaderWidth(headerWidth))
+            .AddCurrencyTextBox(x => x.ProductCost, "Себестоимость (всего)", text =>
+                text
+                    .SetHeaderWidth(headerWidth));
+    }
 
-        var lot = CreateDocumentSelectBox<ProductionLot, IProductionLotEditor>(x => x.OwnerId, "Партия", headerWidth, 300, readOnly: nested, data: GetLots);
-        var goods = CreateDirectorySelectBox<Goods, IGoodsEditor>(x => x.GoodsId, "Изделие", headerWidth, 500, data: GetGoods);
-        var quantity = CreateNumericTextBox(x => x.Quantity, "Количество", headerWidth, 100, digits: 3);
-        var price = CreateCurrencyTextBox(x => x.Price, "Себестоимость 1 ед. изм.", headerWidth, 100);
-        var cost = CreateCurrencyTextBox(x => x.ProductCost, "Себестоимость (всего)", headerWidth, 100);
-
-        lot.Columns += (sender, e) => ProductionLot.CreateGridColumns(e.Columns);
-        lot.ValueChanged += (sender, e) =>
+    private void GoodsChanged(Goods? newValue)
+    {
+        var quantity = EditorControls.GetControl<INumericTextBoxControl>(x => x.Quantity);
+        if (newValue == null)
         {
-            if (e.NewValue != null)
-            {
-                goods.Value = e.NewValue.GoodsId;
-                goods.ReadOnly = true;
-            }
-            else
-            {
-                goods.ReadOnly = false;
-            }
-        };
-
-        goods.ValueChanged += (sender, e) =>
+            quantity.HideSuffix();
+        }
+        else
         {
-            if (e.NewValue == null)
+            var repoGoods = Services.Provider.GetService<IGoodsRepository>();
+            var goods = repoGoods!.GetById(newValue.Id, fullInformation: false);
+            if (goods.MeasurementId != null)
             {
-                quantity.ShowSuffix = false;
-            }
-            else
-            {
-                var repoGoods = Services.Provider.GetService<IGoodsRepository>();
-                var goods = repoGoods!.GetById(e.NewValue.Id, fullInformation: false);
-                if (goods.MeasurementId != null)
-                {
-                    var repoMeas = Services.Provider.GetService<IMeasurementRepository>();
-                    var meas = repoMeas!.GetById(goods.MeasurementId.Value);
+                var repoMeas = Services.Provider.GetService<IMeasurementRepository>();
+                var meas = repoMeas!.GetById(goods.MeasurementId.Value);
 
-                    quantity.ShowSuffix = true;
-                    quantity.SuffixText = meas.Abbreviation ?? meas.ItemName ?? meas.Code;
-                }
+                quantity.ShowSuffix(meas.Abbreviation ?? meas.ItemName ?? meas.Code);
             }
-        };
+        }
+    }
 
-        AddControls(new Control[]
+    private void LotChanged(ProductionLot? newValue)
+    {
+        var goods = EditorControls.GetControl<IDirectorySelectBoxControl<Goods>>(x => x.GoodsId);
+        if (newValue != null)
         {
-            lot,
-            goods,
-            quantity,
-            price,
-            cost
-        });
+            if (goods is IDataSourceControl<Guid, Goods> source)
+            {
+                source.Select(newValue.GoodsId);
+            }
+
+            goods.ReadOnly(true);
+        }
+        else
+        {
+            goods.ReadOnly(false);
+        }
     }
 
     private IEnumerable<ProductionLot> GetLots()

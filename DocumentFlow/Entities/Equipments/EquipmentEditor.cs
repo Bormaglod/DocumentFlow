@@ -22,14 +22,28 @@ public class EquipmentEditor : Editor<Equipment>, IEquipmentEditor
 
     public EquipmentEditor(IEquipmentRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        AddControls(new Control[]
-        {
-            CreateTextBox(x => x.Code, "Код", headerWidth, 100, defaultAsNull: false),
-            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400),
-            CreateTextBox(x => x.SerialNumber, "Серийный номер", headerWidth, 100),
-            CreateDateTimePicker(x => x.Commissioning, "Ввод в экспл.", headerWidth, 150, required: false),
-            CreateIntegerTextBox<int>(x => x.StartingHits, "Кол-во опрессовок", headerWidth, 150, defaultAsNull: true),
-            CreateToggleButton(x => x.IsTools, "Это инструмент", headerWidth)
-        });
+        EditorControls
+            .AddTextBox(x => x.Code, "Код", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue())
+            .AddTextBox(x => x.ItemName, "Наименование", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddTextBox(x => x.SerialNumber, "Серийный номер", text =>
+                text
+                    .SetHeaderWidth(headerWidth))
+            .AddDateTimePicker(x => x.Commissioning, "Ввод в экспл.", date =>
+                date
+                    .NotRequired()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150))
+            .AddIntergerTextBox<int>(x => x.StartingHits, "Кол-во опрессовок", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150)
+                    .DefaultAsValue())
+            .AddToggleButton(x => x.IsTools, "Это инструмент", toggle => toggle.SetHeaderWidth(headerWidth));
     }
 }

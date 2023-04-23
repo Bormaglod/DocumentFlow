@@ -37,6 +37,7 @@ public class OperationsPerformedBrowser : BaseOperationsPerformedBrowser, IOpera
         filter.SetDateRange(DateRange.CurrentDay);
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 80, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
         var order_name = CreateText(x => x.OrderName, "Заказ", width: 150, visible: false);
         var lot_name = CreateText(x => x.LotName, "Партия", width: 150, visible: false);
@@ -59,7 +60,7 @@ public class OperationsPerformedBrowser : BaseOperationsPerformedBrowser, IOpera
         operation.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         quantity.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
-        AddColumns(new GridColumn[] { id, date, order_name, lot_name, goods, operation, employee, material, quantity, salary, double_rate });
+        AddColumns(new GridColumn[] { id, number, date, order_name, lot_name, goods, operation, employee, material, quantity, salary, double_rate });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [date] = ListSortDirection.Ascending

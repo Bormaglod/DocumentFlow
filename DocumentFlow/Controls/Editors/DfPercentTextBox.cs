@@ -33,10 +33,7 @@ public partial class DfPercentTextBox : BaseNumericTextBox<decimal, PercentTextB
 
     public double MinValue { get => TextBox.MinValue; set => TextBox.MinValue = value; }
 
-    public override void ClearValue()
-    {
-        TextBox.PercentValue = 0;
-    }
+    public override void ClearSelectedValue() => TextBox.PercentValue = 0;
 
     protected override decimal GetValueTextBox() => Convert.ToDecimal(TextBox.DoubleValue) * 100;
 

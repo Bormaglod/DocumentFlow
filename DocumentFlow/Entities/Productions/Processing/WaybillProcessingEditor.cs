@@ -15,16 +15,16 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Dialogs;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Productions.Order;
-using DocumentFlow.Entities.Products.Dialogs;
 using DocumentFlow.Infrastructure;
-using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 
 namespace DocumentFlow.Entities.Productions.Processing;
@@ -33,135 +33,163 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
 {
     public WaybillProcessingEditor(IWaybillProcessingRepository repository, IPageManager pageManager) : base(repository, pageManager, true)
     {
-        var contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 120, 400);
-        var contract = CreateDirectorySelectBox<Contract, IContractEditor>(x => x.ContractId, "Договор", 120, 400);
-        var order = CreateDocumentSelectBox<ProductionOrder, IProductionOrderEditor>(x => x.OwnerId, "Заказ", 120, 400);
-
-        order.SetDataSource(() =>
-        {
-            var repo = Services.Provider.GetService<IProductionOrderRepository>();
-            return repo!.GetAllDefault(callback: q => q
-                .WhereFalse("production_order.deleted")
-                .WhereTrue("carried_out")
-                .WhereFalse("closed"));
-        });
-
-        order.Columns += (sender, e) => ProductionOrder.CreateGridColumns(e.Columns);
-
-        var waybill_number = CreateTextBox(x => x.WaybillNumber, "Накладная №", 110, 120);
-        waybill_number.Dock = DockStyle.Left;
-        waybill_number.Width = 235;
-
-        var waybill_date = CreateDateTimePicker(x => x.WaybillDate, "от", 25, 170, format: DateTimePickerFormat.Short);
-        waybill_date.Dock = DockStyle.Left;
-        waybill_date.Width = 200;
-
-        var waybill_panel = CreatePanel(new Control[] { waybill_date, waybill_number });
-
-        var doc1c = new DfPanel()
-        {
-            Header = "Докуметы",
-            Height = 80,
-            Dock = DockStyle.Bottom,
-            Padding = new Padding(0, 10, 0, 0),
-            Visible = false
-        };
-
-        doc1c.AddControls(new Control[] { waybill_panel });
-
-        var details = new DfDataGrid<WaybillProcessingPrice>(GetDetailsRepository()) { Dock = DockStyle.Fill };
-
-        contractor.ValueChanged += (sender, e) =>
-        {
-            contract.RefreshDataSource();
-            contract.Value = Document.ContractId;
-        };
-
-        contractor.SetDataSource(() => Services.Provider.GetService<IContractorRepository>()?.GetSuppliers());
-
-        contract.ValueChanged += (sender, e) =>
-        {
-            doc1c.Visible = contract.SelectedItem != null;
-        };
-
-        contract.SetDataSource(() =>
-        {
-            if (contractor.SelectedItem != null)
-            {
-                return Services.Provider.GetService<IContractRepository>()?.GetSuppliers(contractor.SelectedItem.Id);
-            }
-
-            return null;
-        });
-
-        details.AutoGeneratingColumn += (sender, args) =>
-        {
-            switch (args.Column.MappingName)
-            {
-                case "Id":
-                    args.Cancel = true;
-                    break;
-                case "ProductName":
-                    args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
-                    break;
-                case "Code":
-                    args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.AllCells;
-                    break;
-                case "Amount":
-                    args.Column.Width = 100;
-                    break;
-                case "Price":
-                case "ProductCost":
-                case "Tax":
-                case "TaxValue":
-                case "FullCost":
-                    args.Cancel = true;
-                    break;
-            }
-        };
-
-        details.DataCreate += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<WaybillProcessingPrice>.Create(args.CreatingData, contract.SelectedItem) == DialogResult.Cancel;
-        };
-
-        details.DataEdit += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<WaybillProcessingPrice>.Edit(args.EditingData, contract.SelectedItem) == DialogResult.Cancel;
-        };
-
-        details.DataCopy += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<WaybillProcessingPrice>.Edit(args.CopiedData, contract.SelectedItem) == DialogResult.Cancel;
-        };
-
-        details.AddCommand("Заполнить", Properties.Resources.icons8_incoming_data_16, (sender, e) =>
-        {
-            if (order.SelectedItem != null)
-            {
-                var repo = Services.Provider.GetService<IProductionOrderRepository>();
-                if (repo != null)
-                {
-                    var rows = repo.GetOnlyGivingMaterials<WaybillProcessingPrice>(order.SelectedItem);
-                    details.Fill(rows);
-                }
-            }
-        });
-
-        AddControls(new Control[]
-        {
-            contractor,
-            contract,
-            order,
-            details,
-            doc1c
-        });
-
-        details.BringToFront();
+        EditorControls
+            .AddDirectorySelectBox<Contractor>(x => x.ContractorId, "Контрагент", select =>
+                select
+                    .SetDataSource(GetContractors)
+                    .EnableEditor<IContractorEditor>()
+                    .DirectoryChanged(ContractorChanged)
+                    .SetHeaderWidth(120)
+                    .SetEditorWidth(400))
+            .AddDirectorySelectBox<Contract>(x => x.ContractId, "Договор", select =>
+                select
+                    .SetDataSource(GetContracts)
+                    .EnableEditor<IContractEditor>()
+                    .DirectoryChanged(ContractChanged)
+                    .SetHeaderWidth(120)
+                    .SetEditorWidth(400))
+            .AddDocumentSelectBox<ProductionOrder>(x => x.OwnerId, "Заказ", select =>
+                select
+                    .SetDataSource(GetOrders)
+                    .CreateColumns(ProductionOrder.CreateGridColumns)
+                    .EnableEditor<IProductionOrderEditor>()
+                    .SetHeaderWidth(120)
+                    .SetEditorWidth(400))
+            .AddPanel(panel =>
+                panel
+                    .SetName("Doc1C")
+                    .ShowHeader("Докуметы")
+                    .SetHeight(80)
+                    .SetDock(DockStyle.Bottom)
+                    .SetVisible(false)
+                    .AddControls(controls =>
+                        controls
+                            .AddTextBox(x => x.WaybillNumber, "Накладная №", text =>
+                                text
+                                    .SetHeaderWidth(110)
+                                    .SetEditorWidth(120)
+                                    .SetDock(DockStyle.Left)
+                                    .SetWidth(235))
+                            .AddDateTimePicker(x => x.WaybillDate, "от", text =>
+                                text
+                                    .SetFormat(DateTimePickerFormat.Short)
+                                    .SetHeaderWidth(25)
+                                    .SetEditorWidth(170)
+                                    .SetDock(DockStyle.Left)
+                                    .SetWidth(200))))
+            .AddDataGrid<WaybillProcessingPrice>(grid =>
+                grid
+                    .SetRepository<IWaybillProcessingPriceRepository>()
+                    .AutoGeneratingColumn(AutoGenerateColumn)
+                    .DoCreate(DataCreate)
+                    .DoUpdate(DataUpdate)
+                    .DoCopy(DataCopy)
+                    .AddCommand("Заполнить", Properties.Resources.icons8_incoming_data_16, PopulateCommand)
+                    .SetDock(DockStyle.Fill));
     }
 
-    private static IOwnedRepository<long, WaybillProcessingPrice> GetDetailsRepository()
+    private void PopulateCommand(IDataGridControl<WaybillProcessingPrice> grid)
     {
-        return Services.Provider.GetService<IWaybillProcessingPriceRepository>()!;
+        var order = EditorControls.GetControl<IDocumentSelectBoxControl<ProductionOrder>>();
+
+        if (order.SelectedItem != null)
+        {
+            var repo = Services.Provider.GetService<IProductionOrderRepository>();
+            if (repo != null)
+            {
+                var rows = repo.GetOnlyGivingMaterials<WaybillProcessingPrice>(order.SelectedItem);
+                grid.Fill(rows);
+            }
+        }
+    }
+
+    private bool DataCreate(WaybillProcessingPrice data)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        ProductPriceDialog<WaybillProcessingPrice> form = new(contract.SelectedItem);
+        return form.Create(data);
+    }
+
+    private DataOperationResult DataUpdate(WaybillProcessingPrice data)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        ProductPriceDialog<WaybillProcessingPrice> form = new(contract.SelectedItem);
+        if (form.Edit(data))
+        {
+            return DataOperationResult.Update;
+        }
+        else
+        {
+            return DataOperationResult.Cancel;
+        }
+    }
+
+    private bool DataCopy(WaybillProcessingPrice data)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        ProductPriceDialog<WaybillProcessingPrice> form = new(contract.SelectedItem);
+        return form.Edit(data);
+    }
+
+    private bool AutoGenerateColumn(GridColumn column)
+    {
+        switch (column.MappingName)
+        {
+            case "ProductName":
+                column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
+                break;
+            case "Code":
+                column.AutoSizeColumnsMode = AutoSizeColumnsMode.AllCells;
+                break;
+            case "Amount":
+                column.Width = 100;
+                break;
+            case "Id":
+            case "Price":
+            case "ProductCost":
+            case "Tax":
+            case "TaxValue":
+            case "FullCost":
+                return true;
+        }
+
+        return false;
+    }
+
+    private IEnumerable<ProductionOrder> GetOrders()
+    {
+        var repo = Services.Provider.GetService<IProductionOrderRepository>();
+        return repo!.GetAllDefault(callback: q => q
+            .WhereFalse("production_order.deleted")
+            .WhereTrue("carried_out")
+            .WhereFalse("closed"));
+    }
+
+    private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetSuppliers();
+
+    private IEnumerable<Contract>? GetContracts()
+    {
+        var contractor = EditorControls.GetControl<IDirectorySelectBoxControl<Contractor>>(x => x.ContractorId);
+        if (contractor.SelectedItem != null)
+        {
+            return Services.Provider.GetService<IContractRepository>()?.GetSuppliers(contractor.SelectedItem.Id);
+        }
+
+        return null;
+    }
+
+    private void ContractorChanged(Contractor? _)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        if (contract is IDataSourceControl<Guid, Contract> source)
+        {
+            source.RefreshDataSource(Document.ContractId);
+        }
+    }
+
+    private void ContractChanged(Contract? newValue)
+    {
+        var doc1c = EditorControls.GetContainer("Doc1C");
+        doc1c.SetVisible(newValue != null);
     }
 }

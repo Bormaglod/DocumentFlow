@@ -14,6 +14,8 @@ using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Products.Core;
 using DocumentFlow.Infrastructure.Data;
 
+using Syncfusion.WinForms.DataGrid.Enums;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace DocumentFlow.Entities.Productions.Returns;
@@ -26,9 +28,11 @@ public class ReturnMaterialsRows : Entity<long>, ICloneable, IEntityClonable
 
     [Display(Name = "Материал / Изделие", Order = 10)]
     [Exclude]
+    [ColumnMode(AutoSizeColumnsMode = AutoSizeColumnsMode.Fill)]
     public string MaterialName { get; set; } = string.Empty;
 
     [Display(Name = "Количество", Order = 20)]
+    [ColumnMode(Width = 100)]
     public decimal Quantity { get; set; }
 
     public object Clone() => MemberwiseClone();

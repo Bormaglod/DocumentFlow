@@ -16,7 +16,7 @@ public class ReportCardEditor : BillingDocumentEditor<ReportCard>, IReportCardEd
 {
     public ReportCardEditor(IReportCardRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var card = new DfReportCard();
+        //var card = new DfReportCard();
         /*EmployeeRows.AddCommand("Заполнить", Properties.Resources.icons8_incoming_data_16, (sender, e) =>
         {
             if (MessageBox.Show("Перед заполнением таблица будет очищена. Продолжить?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
@@ -42,6 +42,6 @@ public class ReportCardEditor : BillingDocumentEditor<ReportCard>, IReportCardEd
 
             EmployeeRows.RefreshDataSource();
         });*/
-        AddControls(new Control[] { card });
+        //AddControls(new Control[] { card });
     }
 }

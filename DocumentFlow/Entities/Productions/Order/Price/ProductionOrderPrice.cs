@@ -11,6 +11,7 @@
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Entities.Products.Core;
@@ -23,13 +24,15 @@ namespace DocumentFlow.Entities.Productions.Order;
 public class ProductionOrderPrice : ProductPrice
 {
     [Display(Name = "Выполнено", Order = 1000)]
+    [ColumnMode(Format = ColumnFormat.Progress)]
     public int CompleteStatus { get; set; }
+
+    [Display(Name = "Калькуляция", Order = 20)]
+    [ColumnMode(Width = 150)]
+    public string CalculationName { get; protected set; } = string.Empty;
 
     [Display(AutoGenerateField = false)]
     public Guid CalculationId { get; set; }
-
-    [Display(Name = "Калькуляция", Order = 20)]
-    public string CalculationName { get; protected set; } = string.Empty;
 
     public void SetCalculation(Calculation calculation)
     {

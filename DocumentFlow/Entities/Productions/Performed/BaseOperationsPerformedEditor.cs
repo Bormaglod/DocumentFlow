@@ -73,122 +73,72 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
     public BaseOperationsPerformedEditor(IOperationsPerformedRepository repository, IPageManager pageManager, bool nested)
         : base(repository, pageManager) 
     {
-        var document_date = CreateDateTimePicker(x => x.DocumentDate, "Дата/время", headerWidth, 170, format: DateTimePickerFormat.Custom, required: true);
-        document_date.CustomFormat = "dd.MM.yyyy HH:mm:ss";
-
-        var lot = CreateDirectorySelectBox<LotOrder, IProductionLotEditor>(x => x.OwnerId, "Производственная партия", headerWidth, 350, readOnly: nested, openById: true);
-        var goods = CreateTextBox(x => x.GoodsName, "Изделие", headerWidth, 600, readOnly: true);
-        var calculation = CreateTextBox(x => x.CalculationName, "Калькуляция", headerWidth, 600, readOnly: true);
-        var operations = CreateDirectorySelectBox<CalculationOperation>(x => x.OperationId, "Операция", headerWidth, 350, refreshMethod: DataRefreshMethod.OnOpen);
-        operations.RemoveEmptyFolders = true;
-
-        var using_material = CreateTextBox(x => x.MaterialName, "Материал (по спецификации)", headerWidth, 350, readOnly: true);
-        var replacing_material = CreateDirectorySelectBox<Material, IMaterialEditor>(x => x.ReplacingMaterialId, "Использованный материал", headerWidth, 350, data: GetMaterials);
-        var quantity = CreateIntegerTextBox<long>(x => x.Quantity, "Количество", headerWidth, 150);
-        var employee = CreateDirectorySelectBox<OurEmployee, IOurEmployeeEditor>(x => x.EmployeeId, "Исполнитель", headerWidth, 350, data: GetEmployees);
-        var salary = CreateCurrencyTextBox(x => x.Salary, "Зарплата", headerWidth, 150);
-        var double_rate = CreateCheckBox(x => x.DoubleRate, "Двойная плата", headerWidth, allowThreeState: true);
-
-        lot.SetDataSource(() =>
-        {
-            var repo_orders = Services.Provider.GetService<IProductionOrderRepository>();
-            var repo_lots = Services.Provider.GetService<IProductionLotRepository>();
-            if (repo_orders == null || repo_lots == null)
-            {
-                return null;
-            }
-
-            var orders = repo_orders.GetAllValid(callback: query =>
-                query
-                    .Distinct()
-                    .Select("production_order.*")
-                    .Select("c.item_name as contractor_name")
-                    .Join("contractor as c", "c.id", "production_order.contractor_id")
-                    .Join("production_lot as pl", "pl.owner_id", "production_order.id")
-                    .WhereTrue("production_order.carried_out")
-                    .WhereTrue("pl.carried_out")
-                ).Select(x => new LotOrder(x));
-
-            if (orders.Any())
-            {
-                var lots = repo_lots.GetAllValid(callback: query =>
-                    query
-                        .Select("production_lot.*")
-                        .Select("g.item_name as goods_name")
-                        .Select("c.code as calculation_name")
-                        .WhereTrue("production_lot.carried_out")
-                        .Join("calculation as c", "c.id", "production_lot.calculation_id")
-                        .Join("goods as g", "g.id", "c.owner_id")
-                    ).Select(x => new LotOrder(x));
-
-                return orders.Union(lots);
-            }
-
-            return null;
-        });
-
-        lot.ValueChanged += (sender, e) =>
-        {
-            if (IsCreating && e.NewValue != null)
-            {
-                operations.SetDataSource(() => GetCalculationOperation(e.NewValue.CalculationId));
-            }
-
-            if (e.NewValue != null)
-            {
-                goods.Value = e.NewValue.GoodName;
-                calculation.Value = e.NewValue.CalculationName;
-            }
-            else
-            {
-                goods.Value = null;
-                calculation.Value = null;
-            }
-        };
-
-        lot.ManualValueChange += (sender, args) =>
-        {
-            if (args.NewValue != null)
-            {
-                operations.SetDataSource(() => GetCalculationOperation(args.NewValue.CalculationId));
-            }
-            else
-            {
-                operations.RemoveDataSource();
-            }
-        };
-
-        operations.SetDataSource(() => IsCreating ? null : GetCalculationOperation(Document.CalculationId));
-
-        operations.ValueChanged += (sender, e) =>
-        {
-            if (e.NewValue?.MaterialName == null && e.NewValue?.MaterialId != null)
-            {
-                var repo = Services.Provider.GetService<IMaterialRepository>();
-                using_material.Value = repo!.GetById(e.NewValue.MaterialId.Value, false).ItemName;
-            }
-            else
-            {
-                using_material.Value = e.NewValue?.MaterialName;
-            }
-
-            replacing_material.Enabled = e.NewValue?.MaterialId != null;
-        };
-
-        AddControls(new Control[]
-        {
-            document_date,
-            lot,
-            goods,
-            calculation,
-            operations, 
-            using_material,
-            replacing_material,
-            quantity,
-            employee,
-            salary,
-            double_rate
-        });
+        EditorControls
+            .AddIntergerTextBox(x => x.DocumentNumber, "Номер", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(170)
+                    .DefaultAsValue())
+            .AddDateTimePicker(x => x.DocumentDate, "Дата/время", date =>
+                date
+                    .SetCustomFormat("dd.MM.yyyy HH:mm:ss")
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(170))
+            .AddDirectorySelectBox<LotOrder>(x => x.OwnerId, "Производственная партия", select =>
+                select
+                    .ReadOnly(nested)
+                    .SetDataSource(GetLotOrders)
+                    .EnableEditor<IProductionLotEditor>(true)
+                    .DirectoryChanged(LotOrderChanged)
+                    .DirectorySelected(LotOrderSelected)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(350))
+            .AddTextBox(x => x.GoodsName, "Изделие", text =>
+                text
+                    .ReadOnly()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(600))
+            .AddTextBox(x => x.CalculationName, "Калькуляция", text =>
+                text
+                    .ReadOnly()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(600))
+            .AddDirectorySelectBox<CalculationOperation>(x => x.OperationId, "Операция", select =>
+                select
+                    .SetDataSource(GetCalculationOperations, DataRefreshMethod.OnOpen)
+                    .RemoveEmptyFolders()
+                    .DirectoryChanged(OperationChanged)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(350))
+            .AddTextBox(x => x.MaterialName, "Материал (по спецификации)", text =>
+                text
+                    .ReadOnly()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(350))
+            .AddDirectorySelectBox<Material>(x => x.ReplacingMaterialId, "Использованный материал", select =>
+                select
+                    .SetDataSource(GetMaterials)
+                    .EnableEditor<IMaterialEditor>()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(350))
+            .AddIntergerTextBox<long>(x => x.Quantity, "Количество", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150))
+            .AddDirectorySelectBox<OurEmployee>(x => x.EmployeeId, "Исполнитель", select =>
+                select
+                    .SetDataSource(GetEmployees)
+                    .EnableEditor<IOurEmployeeEditor>()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(350))
+            .AddCurrencyTextBox(x => x.Salary, "Зарплата", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150))
+            .AddCheckBox(x => x.DoubleRate, "Двойная плата", check =>
+                check
+                    .AllowThreeState()
+                    .SetHeaderWidth(headerWidth));
     }
 
     private static IEnumerable<CalculationOperation>? GetCalculationOperation(Guid calculationId)
@@ -206,6 +156,96 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
                 );
 
             return op;
+        }
+
+        return null;
+    }
+
+    private void LotOrderChanged(LotOrder? newValue) 
+    {
+        if (IsCreating && newValue != null)
+        {
+            var operations = EditorControls.GetControl<IDirectorySelectBoxControl<CalculationOperation>>(x => x.OperationId);
+            operations.SetDataSource(() => GetCalculationOperation(newValue.CalculationId));
+        }
+
+        EditorControls.GetControl<ITextBoxControl>(x => x.GoodsName)
+                      .SetText(newValue?.GoodName);
+        EditorControls.GetControl<ITextBoxControl>(x => x.CalculationName)
+                      .SetText(newValue?.CalculationName);
+    }
+
+    private void LotOrderSelected(LotOrder? newValue)
+    {
+        var operations = EditorControls.GetControl<IDirectorySelectBoxControl<CalculationOperation>>(x => x.OperationId);
+        if (newValue != null)
+        {
+            operations.SetDataSource(() => GetCalculationOperation(newValue.CalculationId));
+        }
+        else
+        {
+            if (operations is IDataSourceControl source)
+            {
+                source.RemoveDataSource();
+            }
+        }
+    }
+
+    private void OperationChanged(CalculationOperation? newValue)
+    {
+        var using_material = EditorControls.GetControl<ITextBoxControl>(x => x.MaterialName);
+        if (newValue?.MaterialName == null && newValue?.MaterialId != null)
+        {
+            var repo = Services.Provider.GetService<IMaterialRepository>();
+            using_material.SetText(repo!.GetById(newValue.MaterialId.Value, false).ItemName);
+        }
+        else
+        {
+            using_material.SetText(newValue?.MaterialName);
+        }
+
+        EditorControls.GetControl(x => x.ReplacingMaterialId)
+                      .SetEnabled(newValue?.MaterialId != null);
+    }
+
+    private IEnumerable<CalculationOperation>? GetCalculationOperations()
+    {
+        return IsCreating ? null : GetCalculationOperation(Document.CalculationId);
+    }
+
+    private IEnumerable<LotOrder>? GetLotOrders()
+    {
+        var repo_orders = Services.Provider.GetService<IProductionOrderRepository>();
+        var repo_lots = Services.Provider.GetService<IProductionLotRepository>();
+        if (repo_orders == null || repo_lots == null)
+        {
+            return null;
+        }
+
+        var orders = repo_orders.GetAllValid(callback: query =>
+            query
+                .Distinct()
+                .Select("production_order.*")
+                .Select("c.item_name as contractor_name")
+                .Join("contractor as c", "c.id", "production_order.contractor_id")
+                .Join("production_lot as pl", "pl.owner_id", "production_order.id")
+                .WhereTrue("production_order.carried_out")
+                .WhereTrue("pl.carried_out")
+            ).Select(x => new LotOrder(x));
+
+        if (orders.Any())
+        {
+            var lots = repo_lots.GetAllValid(callback: query =>
+                query
+                    .Select("production_lot.*")
+                    .Select("g.item_name as goods_name")
+                    .Select("c.code as calculation_name")
+                    .WhereTrue("production_lot.carried_out")
+                    .Join("calculation as c", "c.id", "production_lot.calculation_id")
+                    .Join("goods as g", "g.id", "c.owner_id")
+                ).Select(x => new LotOrder(x));
+
+            return orders.Union(lots);
         }
 
         return null;

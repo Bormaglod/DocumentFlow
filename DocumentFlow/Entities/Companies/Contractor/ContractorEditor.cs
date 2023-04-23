@@ -33,80 +33,79 @@ namespace DocumentFlow.Entities.Companies;
 public class ContractorEditor : Editor<Contractor>, IContractorEditor
 {
     private const int headerWidth = 190;
-    private const string tag = "Subjects";
 
     public ContractorEditor(IContractorRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         EditorControls
-            .CreateTextBox(x => x.Code, "Наименование", (text) =>
+            .AddTextBox(x => x.Code, "Наименование", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(400)
                     .DefaultAsValue())
-            .CreateDirectorySelectBox<Contractor>(x => x.ParentId, "Группа", (select) =>
+            .AddDirectorySelectBox<Contractor>(x => x.ParentId, "Группа", (select) =>
                 select
                     .Required()
                     .ShowOnlyFolder()
                     .SetDataSource(repository.GetOnlyFolders)
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(400))
-            .CreateTextBox(x => x.ItemName, "Короткое наименование", (text) =>
+            .AddTextBox(x => x.ItemName, "Короткое наименование", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(500))
-            .CreateTextBox(x => x.FullName, "Полное наименование", (text) =>
+            .AddTextBox(x => x.FullName, "Полное наименование", (text) =>
                 text
                     .Multiline()
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(500))
-            .CreateChoice<SubjectsCivilLow>(x => x.SubjectCivilLow, "Субъект права", (choice) =>
+            .AddChoice<SubjectsCivilLow>(x => x.SubjectCivilLow, "Субъект права", (choice) =>
                 choice
                     .SetChoiceValues(Contractor.Subjects)
-                    .ManualValueChanged(UpdateVisibility)
+                    .ChoiceSelected(UpdateVisibility)
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200))
-            .CreateMaskedTextBox<decimal>(x => x.Inn, "ИНН", (text) =>
+            .AddMaskedTextBox<decimal>(x => x.Inn, "ИНН", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200))
-            .CreateMaskedTextBox<decimal>(x => x.Kpp, "КПП", (text) =>
+            .AddMaskedTextBox<decimal>(x => x.Kpp, "КПП", (text) =>
                 text
                     .SetMask("#### ## ###")
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200)
-                    .SetTag(tag))
-            .CreateMaskedTextBox<decimal>(x => x.Ogrn, "ОГРН", (text) =>
+                    .Raise())
+            .AddMaskedTextBox<decimal>(x => x.Ogrn, "ОГРН", (text) =>
                 text
                     .SetMask("# ## ## ## ##### #")
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200)
-                    .SetTag(tag))
-            .CreateMaskedTextBox<decimal>(x => x.Okpo, "ОКПО", (text) =>
+                    .Raise())
+            .AddMaskedTextBox<decimal>(x => x.Okpo, "ОКПО", (text) =>
                 text
                     .SetMask("## ##### #")
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200)
-                    .SetTag(tag))
-            .CreateComboBox<Okopf>(x => x.OkopfId, "ОКОПФ", (combo) =>
+                    .Raise())
+            .AddComboBox<Okopf>(x => x.OkopfId, "ОКОПФ", (combo) =>
                 combo
                     .SetDataSource(GetOkopfs)
                     .EnableEditor<IOkopfEditor>()
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(450)
-                    .SetTag(tag))
-            .CreateDirectorySelectBox<Person>(x => x.PersonId, "Физ. лицо", (select) =>
+                    .Raise())
+            .AddDirectorySelectBox<Person>(x => x.PersonId, "Физ. лицо", (select) =>
                 select
                     .SetDataSource(GetPeople)
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(300)
-                    .SetTag(tag))
-            .CreateComboBox<Account>(x => x.AccountId, "Расчётный счёт", (combo) =>
+                    .Raise())
+            .AddComboBox<Account>(x => x.AccountId, "Расчётный счёт", (combo) =>
                 combo
                     .SetDataSource(GetAccounts)
                     .EnableEditor<IAccountEditor>()
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(450)
-                    .SetTag(tag));
+                    .Raise());
     }
 
     protected override void RegisterNestedBrowsers()
@@ -119,7 +118,7 @@ public class ContractorEditor : Editor<Contractor>, IContractorEditor
         RegisterNestedBrowser<IEmployeeBrowser, Employee>();
     }
 
-    protected override void DoAfterRefreshData() => UpdateVisibility(EditorControls.GetControl<IChoiceControl<SubjectsCivilLow>>("SubjectCivilLow").Value);
+    protected override void DoAfterRefreshData() => UpdateVisibility(EditorControls.GetControl<IChoiceControl<SubjectsCivilLow>>("SubjectCivilLow").SelectedValue);
 
     private void UpdateVisibility(SubjectsCivilLow? subj)
     {
@@ -132,7 +131,7 @@ public class ContractorEditor : Editor<Contractor>, IContractorEditor
             legal_entity = subj == SubjectsCivilLow.LegalEntity;
         }
 
-        foreach (var control in EditorControls.GetControls<IControl>().Where(x => x.Tag == tag))
+        foreach (var control in EditorControls.GetControls<IControl>().Where(x => x.IsRaised))
         {
             control.SetVisible(legal_entity.HasValue && legal_entity.Value);
         }

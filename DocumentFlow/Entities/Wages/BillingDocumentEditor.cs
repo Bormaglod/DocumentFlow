@@ -11,9 +11,9 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
 
 using Humanizer;
@@ -25,10 +25,8 @@ namespace DocumentFlow.Entities.Wages;
 public class BillingDocumentEditor<T> : DocumentEditor<T>
     where T : BillingDocument, new()
 {
-    private readonly DfChoice<short> month;
-    private readonly DfIntegerTextBox<int> year;
-
-    public BillingDocumentEditor(IDocumentRepository<T> repository, IPageManager pageManager) : base(repository, pageManager, true)
+    public BillingDocumentEditor(IDocumentRepository<T> repository, IPageManager pageManager) 
+        : base(repository, pageManager, true)
     {
         var months = new Dictionary<short, string>();
         for (short i = 1; i < 13; i++)
@@ -36,28 +34,44 @@ public class BillingDocumentEditor<T> : DocumentEditor<T>
             months.Add(i, CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i).Humanize());
         }
 
-        month = CreateChoice(x => x.BillingMonth, "Расчётный период: месяц", 170, 200, choices: months);
-        month.Width = 370;
-        month.Dock = DockStyle.Left;
-
-        year = CreateIntegerTextBox<int>(x => x.BillingYear, "год", 50, 100);
-        year.Width = 300;
-        year.Dock = DockStyle.Left;
-        year.HeaderTextAlign = ContentAlignment.MiddleRight;
-        year.NumberGroupSeparator = string.Empty;
-
-        var panel_calc_range = new Panel()
-        {
-            Dock = DockStyle.Top,
-            Height = 32
-        };
-
-        panel_calc_range.Controls.AddRange(new Control[] { year, month });
-
-        AddControls(new Control[] { panel_calc_range });
+        EditorControls
+            .AddPanel(panel =>
+                panel
+                    .SetHeight(32)
+                    .SetDock(DockStyle.Top)
+                    .AddControls(controls =>
+                        controls
+                            .AddChoice<short>(x => x.BillingMonth, "Расчётный период: месяц", choice =>
+                                choice
+                                    .SetChoiceValues(months)
+                                    .SetHeaderWidth(170)
+                                    .SetEditorWidth(200)
+                                    .SetWidth(370)
+                                    .SetDock(DockStyle.Left))
+                            .AddIntergerTextBox<int>(x => x.BillingYear, "год", text =>
+                                text
+                                    .SetNumberGroupSeparator(string.Empty)
+                                    .SetHeaderWidth(50)
+                                    .SetWidth(300)
+                                    .SetDock(DockStyle.Left)
+                                    .SetHeaderTextAlign(ContentAlignment.MiddleRight))));
     }
 
-    protected int BillingYear => year.NumericValue == null ? DateTime.Now.Year : year.NumericValue.Value;
+    protected int BillingYear
+    {
+        get
+        {
+            var year = EditorControls.GetControl<IIntegerTextBoxControl<int>>(x => x.BillingYear);
+            return year.NumericValue == null ? DateTime.Now.Year : year.NumericValue.Value;
+        }
+    }
 
-    protected short BilingMonth => month.ChoiceValue == null ? Convert.ToInt16(DateTime.Now.Year) : month.ChoiceValue.Value;
+    protected short BilingMonth
+    {
+        get
+        {
+            var month = EditorControls.GetControl<IChoiceControl<short>>(x => x.BillingMonth);
+            return month.SelectedValue == null ? Convert.ToInt16(DateTime.Now.Year) : month.SelectedValue.Value;
+        }
+    }
 }

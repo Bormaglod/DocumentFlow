@@ -66,7 +66,7 @@ public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, 
 
     public int MaxLength { get; set; }
 
-    public override void ClearValue() => TextBox.Text = default(T).ToString();
+    public override void ClearSelectedValue() => TextBox.Text = default(T).ToString();
 
     protected override T GetValueTextBox() => (T)Convert.ChangeType(TextBox.Text.Trim(), typeof(T));
 

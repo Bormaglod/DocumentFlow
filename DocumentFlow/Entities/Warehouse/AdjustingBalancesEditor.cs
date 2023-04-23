@@ -21,11 +21,15 @@ public class AdjustingBalancesEditor : DocumentEditor<AdjustingBalances>, IAdjus
 {
     public AdjustingBalancesEditor(IAdjustingBalancesRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        AddControls(new Control[]
-        {
-            CreateDirectorySelectBox<Material, IMaterialEditor>(x => x.MaterialId, "Материал", 100, 400, data: GetMaterials),
-            CreateNumericTextBox(x => x.Quantity, "Количество", 100, 200, digits: 3)
-        });
+        EditorControls
+            .AddDirectorySelectBox<Material>(x => x.MaterialId, "Материал", select =>
+                select
+                    .SetDataSource(GetMaterials)
+                    .SetEditorWidth(400))
+            .AddNumericTextBox(x => x.Quantity, "Количество", text =>
+                text
+                    .SetNumberDecimalDigits(3)
+                    .SetEditorWidth(200));
     }
 
     private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetAllValid();

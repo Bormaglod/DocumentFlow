@@ -22,6 +22,7 @@
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -33,11 +34,11 @@ namespace DocumentFlow.Controls.Editors;
 public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl, IAccess, IComboBoxControl<T>
     where T : class, IDocumentInfo
 {
-    private bool requird = false;
+    private bool required = false;
     private bool lockManual = false;
-    private Action<T>? open;
-    private Action<T?>? valueChanged;
-    private Action<T?>? valueSelected;
+    private OpenDialog<T>? open;
+    private ControlValueChanged<T?>? valueChanged;
+    private ControlValueChanged<T?>? valueSelected;
 
     public DfComboBox(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
     {
@@ -47,21 +48,6 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
 
         buttonOpen.Visible = false;
         panelSeparator3.Visible = false;
-    }
-
-    public event EventHandler<SelectedValueChanged<T>>? ValueChanged;
-    public event EventHandler<SelectedValueChanged<T>>? ManualValueChange;
-
-    public bool Required
-    {
-        get => requird;
-
-        set
-        {
-            requird = value;
-            panelSeparator1.Visible = !value;
-            buttonDelete.Visible = !value;
-        }
     }
 
     public bool ReadOnly
@@ -94,17 +80,6 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
         }
     }
 
-    public Action<T>? OpenAction
-    {
-        get => open;
-        set
-        {
-            open = value;
-            buttonOpen.Visible = open != null;
-            panelSeparator3.Visible = open != null;
-        }
-    }
-
     #region IBindingControl interface
 
     public object? Value
@@ -116,7 +91,7 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
                 return selectedItem.Id;
             }
 
-            if (Required)
+            if (required)
             {
                 throw new ArgumentException($"Значение поля [{Header}] должно быть иметь значение.");
             }
@@ -133,13 +108,13 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
                 return;
             }
 
-            ClearValue();
+            ClearSelectedValue();
         }
     }
 
     #endregion
 
-    public void ClearValue() => Selected = null;
+    public void ClearSelectedValue() => Selected = null;
 
     protected override void ClearItems() => comboBoxAdv1.Items.Clear();
 
@@ -147,11 +122,9 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
 
     private void OnValueChanged(T? value)
     {
-        ValueChanged?.Invoke(this, new SelectedValueChanged<T>(value));
         valueChanged?.Invoke(value);
         if (!lockManual)
         {
-            ManualValueChange?.Invoke(this, new SelectedValueChanged<T>(value));
             valueSelected?.Invoke(value);
         }
     }
@@ -176,7 +149,7 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
         }
     }
 
-    private void ButtonDelete_Click(object sender, EventArgs e) => ClearValue();
+    private void ButtonDelete_Click(object sender, EventArgs e) => ClearSelectedValue();
 
     private void ButtonOpen_Click(object sender, EventArgs e)
     {
@@ -187,6 +160,15 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
     }
 
     #region IComboBoxControl interface
+
+    IComboBoxControl<T> IComboBoxControl<T>.Required()
+    {
+        required = true;
+        panelSeparator1.Visible = false;
+        buttonDelete.Visible = false;
+
+        return this;
+    }
 
     IComboBoxControl<T> IComboBoxControl<T>.ReadOnly()
     {
@@ -199,13 +181,15 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
         var pageManager = Services.Provider.GetService<IPageManager>();
         if (pageManager != null)
         {
-            OpenAction = pageManager.ShowEditor<E, T>;
+            open = pageManager.ShowEditor<E, T>;
+            buttonOpen.Visible = true;
+            panelSeparator3.Visible = true;
         }
 
         return this;
     }
 
-    IComboBoxControl<T> IComboBoxControl<T>.SetDataSource(Func<IEnumerable<T>?> func, DataRefreshMethod refreshMethod, Guid? selectValue)
+    IComboBoxControl<T> IComboBoxControl<T>.SetDataSource(GettingDataSource<T> func, DataRefreshMethod refreshMethod, Guid? selectValue)
     {
         RefreshMethod = refreshMethod;
         SetDataSource(func);
@@ -217,13 +201,13 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
         return this;
     }
 
-    IComboBoxControl<T> IComboBoxControl<T>.ItemChanged(Action<T?> action)
+    IComboBoxControl<T> IComboBoxControl<T>.ItemChanged(ControlValueChanged<T?> action)
     {
         valueChanged = action;
         return this;
     }
 
-    IComboBoxControl<T> IComboBoxControl<T>.ItemSelected(Action<T?> action)
+    IComboBoxControl<T> IComboBoxControl<T>.ItemSelected(ControlValueChanged<T?> action)
     {
         valueSelected = action;
         return this;

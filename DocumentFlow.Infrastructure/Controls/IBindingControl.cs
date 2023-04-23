@@ -17,5 +17,5 @@ public interface IBindingControl
     string PropertyName { get; }
     bool AllowSaving { get; set; }
     object? Value { get; set; }
-    void ClearValue();
+    void ClearSelectedValue();
 }

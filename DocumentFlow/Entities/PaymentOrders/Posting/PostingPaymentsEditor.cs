@@ -41,12 +41,12 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Balances.Initial;
 using DocumentFlow.Entities.PurchaseRequestLib;
 using DocumentFlow.Entities.Waybills;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -59,61 +59,73 @@ namespace DocumentFlow.Entities.PaymentOrders.Posting;
 public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPaymentsEditor
 {
     private readonly IPageManager pageManager;
-    private readonly DfDocumentSelectBox<DebtDocument> document;
 
     public PostingPaymentsEditor(IPostingPaymentsRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
         this.pageManager = pageManager;
 
-        document = CreateDocumentSelectBox(x => x.DocumentId, "Документ", 150, 400, required: true, open: OpenDocument, disableCurrent: true, data: GetDocuments);
-        var contractor = CreateTextBox(x => x.ContractorName, "Контрагент", 150, 400, enabled: false);
-        var amount = CreateCurrencyTextBox(x => x.TransactionAmount, "Сумма операции", 150, 200, defaultAsNull: false);
-
-        document.Columns += (sender, e) => CreateColumns(e.Columns);
-
-        document.ValueChanged += (sender, e) =>
-        {
-            if (document.SelectedItem != null)
-            {
-                contractor.Value = document.SelectedItem.ContractorName ?? string.Empty;
-            }
-        };
-
-        document.ManualValueChange += (sender, e) =>
-        {
-            if (e.NewValue != null) 
-            {
-                var por = Services.Provider.GetService<IPaymentOrderRepository>();
-                decimal balance = por!.GetPaymentBalance(OwnerId);
-
-                decimal newAmount = e.NewValue.FullCost - e.NewValue.Paid;
-                if (newAmount > balance) 
-                { 
-                    newAmount = balance;
-                }
-
-                amount.NumericValue = newAmount;
-            }
-            else
-            {
-                amount.NumericValue = 0;
-            }
-        };
-
-        AddControls(new Control[]
-        {
-            document,
-            contractor,
-            amount
-        });
+        EditorControls
+            .AddDocumentSelectBox<DebtDocument>(x => x.DocumentId, "Документ", select =>
+                select
+                    .Required()
+                    .SetDataSource(GetDocuments)
+                    .EnableEditor(OpenDocument)
+                    .CreateColumns(CreatePaymentsColumns)
+                    .DocumentChanged(DocumentPaymentChanged)
+                    .DocumentSelected(DocumentPaymentSelected)
+                    .DisableCurrentItem()
+                    .SetHeaderWidth(150)
+                    .SetEditorWidth(400))
+            .AddTextBox(x => x.ContractorName, "Контрагент", text =>
+                text
+                    .SetHeaderWidth(150)
+                    .SetEditorWidth(400)
+                    .Disable())
+            .AddCurrencyTextBox(x => x.TransactionAmount, "Сумма операции", text =>
+                text
+                    .SetHeaderWidth(150)
+                    .SetEditorWidth(200)
+                    .DefaultAsValue());
     }
 
     protected override void DoBeforeSave()
     {
         base.DoBeforeSave();
+        var document = EditorControls.GetControl<IDocumentSelectBoxControl<DebtDocument>>(x => x.DocumentId);
         if (document.SelectedItem != null)
         {
             Document.TableName = document.SelectedItem.TableName;
+        }
+    }
+
+    private void DocumentPaymentChanged(DebtDocument? newValue)
+    {
+        var contractor = EditorControls.GetControl<ITextBoxControl>(x => x.ContractorName);
+        if (newValue != null)
+        {
+            contractor.SetText(newValue.ContractorName ?? string.Empty);
+        }
+    }
+
+    private void DocumentPaymentSelected(DebtDocument? newValue)
+    {
+        var amount = EditorControls.GetControl<ICurrencyTextBoxControl>(x => x.TransactionAmount);
+        if (newValue != null)
+        {
+            var por = Services.Provider.GetService<IPaymentOrderRepository>();
+            decimal balance = por!.GetPaymentBalance(OwnerId);
+
+            decimal newAmount = newValue.FullCost - newValue.Paid;
+            if (newAmount > balance)
+            {
+                newAmount = balance;
+            }
+
+            amount.NumericValue = newAmount;
+        }
+        else
+        {
+            amount.NumericValue = 0;
         }
     }
 
@@ -195,7 +207,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
         return null;
     }
 
-    private static void CreateColumns(Columns columns)
+    private static void CreatePaymentsColumns(IList<GridColumn> columns)
     {
         var document_name = new GridTextColumn()
         {

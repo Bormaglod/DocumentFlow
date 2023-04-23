@@ -27,7 +27,7 @@ public partial class DfCurrencyTextBox : BaseNumericTextBox<decimal, CurrencyTex
         TextBox.DecimalValueChanged += CurrencyTextBox_DecimalValueChanged;
     }
 
-    public override void ClearValue() => TextBox.Text = string.Empty;
+    public override void ClearSelectedValue() => TextBox.Text = string.Empty;
 
     protected override decimal GetValueTextBox() => TextBox.DecimalValue;
 

@@ -19,16 +19,16 @@ internal class InitialBalanceGoodsEditor : DocumentEditor<InitialBalanceGoods>, 
         : base(repository, pageManager, true) 
     {
         EditorControls
-            .CreateDirectorySelectBox<Goods>(x => x.ReferenceId, "Продукция", (select) =>
+            .AddDirectorySelectBox<Goods>(x => x.ReferenceId, "Продукция", (select) =>
                 select
                     .SetDataSource(GetGoods)
-                    .Editor<IGoodsEditor>()
+                    .EnableEditor<IGoodsEditor>()
                     .SetEditorWidth(400))
-            .CreateNumericTextBox(x => x.Amount, "Количество", (text) =>
+            .AddNumericTextBox(x => x.Amount, "Количество", (text) =>
                 text
                     .SetNumberDecimalDigits(3)
                     .SetEditorWidth(200))
-            .CreateCurrencyTextBox(x => x.OperationSumma, "Сумма");
+            .AddCurrencyTextBox(x => x.OperationSumma, "Сумма");
     }
 
     private IEnumerable<Goods> GetGoods() => Services.Provider.GetService<IGoodsRepository>()!.GetAllValid(callback: query =>

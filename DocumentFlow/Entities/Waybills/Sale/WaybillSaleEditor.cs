@@ -15,22 +15,14 @@
 
 using DocumentFlow.Entities.PaymentOrders.Documents;
 using DocumentFlow.Infrastructure;
-using DocumentFlow.Infrastructure.Data;
-
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentFlow.Entities.Waybills;
 
-public class WaybillSaleEditor : WaybillEditor<WaybillSale, WaybillSalePrice>, IWaybillSaleEditor
+public class WaybillSaleEditor : WaybillEditor<WaybillSale, WaybillSalePrice, IWaybillSalePriceRepository>, IWaybillSaleEditor
 {
     public WaybillSaleEditor(IWaybillSaleRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         RegisterReport(new WaybillSaleReport());
-    }
-
-    protected override IOwnedRepository<long, WaybillSalePrice> GetDetailsRepository()
-    {
-        return Services.Provider.GetService<IWaybillSalePriceRepository>()!;
     }
 
     protected override void DoAfterRefreshData()

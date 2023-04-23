@@ -5,29 +5,79 @@
 // Date: 08.11.2021
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Infrastructure.Controls;
+
+using Microsoft.Extensions.DependencyInjection;
+
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfPanel : UserControl
+public partial class DfPanel<T> : UserControl, IContainer<T>
+    where T : class, new()
 {
+    private readonly IControls<T> controls;
+
     public DfPanel()
     {
         InitializeComponent();
 
         Dock = DockStyle.Top;
         Font = new Font("Segoe UI", 10, FontStyle.Regular, GraphicsUnit.Point);
+
+        controls = Services.Provider.GetService<IControls<T>>()!;
+        controls.Container = panelControls.Controls;
+
+        panelHeader.Visible = false;
+        panelControls.Padding = new Padding(0);
     }
 
-    public string Header { get => labelHeader.Text; set => labelHeader.Text = value; }
+    #region IContainer<T> interface
 
-    public void AddControls(IList<Control> controls)
+    IControls<T> IContainer<T>.Controls => controls;
+
+    IContainer<T> IContainer<T>.HideHeader()
     {
-        SuspendLayout();
-        for (int i = controls.Count - 1; i >= 0; i--)
-        {
-            controls[i].TabIndex = i;
-            panelControls.Controls.Add(controls[i]);
-        }
-
-        ResumeLayout(false);
+        panelHeader.Visible = false;
+        panelControls.Padding = new Padding(0);
+        return this;
     }
+
+    IContainer<T> IContainer<T>.ShowHeader(string title)
+    {
+        panelHeader.Visible = true;
+        panelControls.Padding = new Padding(0, 10, 0, 0);
+        labelHeader.Text = title;
+        return this;
+    }
+
+    IContainer<T> IContainer<T>.AddControls(Action<IControls<T>> controls)
+    {
+        controls(this.controls);
+        return this;
+    }
+
+    IContainer<T> IContainer<T>.SetDock(DockStyle dockStyle)
+    {
+        Dock = dockStyle;
+        return this;
+    }
+
+    IContainer<T> IContainer<T>.SetHeight(int height)
+    {
+        Height = height;
+        return this;
+    }
+
+    IContainer<T> IContainer<T>.SetVisible(bool visible)
+    {
+        Visible = visible;
+        return this;
+    }
+
+    IContainer<T> IContainer<T>.SetName(string name)
+    {
+        Name = name;
+        return this;
+    }
+
+    #endregion
 }

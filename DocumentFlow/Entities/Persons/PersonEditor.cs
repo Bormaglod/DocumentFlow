@@ -22,27 +22,27 @@ public class PersonEditor : Editor<Person>, IPersonEditor
     public PersonEditor(IPersonRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         EditorControls
-            .CreateTextBox(x => x.ItemName, "Фамилия И.О.", (text) =>
+            .AddTextBox(x => x.ItemName, "Фамилия И.О.", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(250))
-            .CreateTextBox(x => x.Surname, "Фамилия", (text) =>
+            .AddTextBox(x => x.Surname, "Фамилия", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200))
-            .CreateTextBox(x => x.FirstName, "Имя", (text) =>
+            .AddTextBox(x => x.FirstName, "Имя", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200))
-            .CreateTextBox(x => x.MiddleName, "Отчество", (text) =>
+            .AddTextBox(x => x.MiddleName, "Отчество", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200))
-            .CreateTextBox(x => x.Phone, "Телефон", (text) =>
+            .AddTextBox(x => x.Phone, "Телефон", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200))
-            .CreateTextBox(x => x.Email, "Эл. почта", (text) =>
+            .AddTextBox(x => x.Email, "Эл. почта", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(300));

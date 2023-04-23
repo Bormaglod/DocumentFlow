@@ -26,6 +26,7 @@
 
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Controls.Editors;
@@ -36,9 +37,9 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
     private readonly List<T> items = new();
     private T? selectedItem;
     private bool requird = false;
-    private Action<T>? open;
-    private Action<T?, T?>? valueChanged;
-    private Action<T?, T?>? valueSelected;
+    private OpenDialog<T>? open;
+    private ControlValueChanged<T?>? valueChanged;
+    private ControlValueChanged<T?>? valueSelected;
 
     public SelectBox(string property, string header, int headerWidth = default, int editorWidth = default) 
         : base(property)
@@ -50,10 +51,6 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
         buttonOpen.Visible = false;
         panelSeparator3.Visible = false;
     }
-
-    public event EventHandler<ChangeDataEventArgs<T>>? ValueChanged;
-
-    public event EventHandler<ChangeDataEventArgs<T>>? ManualValueChange;
 
     public bool Required
     {
@@ -78,7 +75,7 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
         }
     }
 
-    public Action<T>? OpenAction
+    public OpenDialog<T>? OpenAction
     {
         get => open;
         set
@@ -112,7 +109,6 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
         {
             if (value is Guid id)
             {
-                T? oldValue = selectedItem;
                 selectedItem = items.FirstOrDefault(x => x.Id == id);
                 if (selectedItem == null && RefreshMethod == DataRefreshMethod.OnOpen) 
                 {
@@ -120,7 +116,7 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
                 }
 
                 textValue.Text = selectedItem?.ToString();
-                OnValueChanged(oldValue, selectedItem);
+                OnValueChanged(selectedItem);
             }
             else
             {
@@ -148,7 +144,7 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
 
     public IEnumerable<T> Items => items;
 
-    public void ClearValue()
+    public void ClearSelectedValue()
     {
         textValue.Text = string.Empty;
         selectedItem = null;
@@ -156,9 +152,8 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
 
     public void ClearCurrent()
     {
-        T? oldValue = selectedItem;
-        ClearValue();
-        OnValueChanged(oldValue, null);
+        ClearSelectedValue();
+        OnValueChanged(null);
     }
 
     protected override void DoRefreshDataSource(IEnumerable<T> data) => items.AddRange(data);
@@ -167,23 +162,15 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
 
     protected virtual void OnSelect() { }
 
-    protected void SetValueChangedAction(Action<T?, T?>? action) => valueChanged = action;
+    protected void SetValueChangedAction(ControlValueChanged<T?>? action) => valueChanged = action;
 
-    protected void SetValueSelectedAction(Action<T?, T?>? action) => valueSelected = action;
+    protected void SetValueSelectedAction(ControlValueChanged<T?>? action) => valueSelected = action;
 
     protected void SetTextValue(string text) => textValue.Text = text;
 
-    protected void OnValueChanged(T? oldValue, T? newValue)
-    {
-        ValueChanged?.Invoke(this, new ChangeDataEventArgs<T>(oldValue, newValue));
-        valueChanged?.Invoke(oldValue, newValue);
-    }
+    protected void OnValueChanged(T? newValue) => valueChanged?.Invoke(newValue);
 
-    protected void OnManualValueChanged(T? oldValue, T? newValue)
-    {
-        ManualValueChange?.Invoke(this, new ChangeDataEventArgs<T>(oldValue, newValue));
-        valueSelected?.Invoke(oldValue, newValue);
-    }
+    protected void OnValueSelected(T? newValue) => valueSelected?.Invoke(newValue);
 
     private void ButtonDelete_Click(object sender, EventArgs e) => ClearCurrent();
 

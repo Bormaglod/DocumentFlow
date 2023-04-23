@@ -9,7 +9,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Data;
@@ -22,49 +21,45 @@ public class DocumentEditor<T> : Editor<T>
     where T: class, IBaseDocument, new()
 {
     public DocumentEditor(IRepository<Guid, T> repository, IPageManager pageManager, bool generateStandardHeader) : base(repository, pageManager) 
-    { 
-        if (generateStandardHeader)
+    {
+        if (!generateStandardHeader)
         {
-            DocumentNumberControl = CreateIntegerTextBox<int>(x => x.DocumentNumber, "Номер", 60, 100);
-            DocumentNumberControl.Dock = DockStyle.Left;
-            DocumentNumberControl.Width = 165;
-
-            var document_date = CreateDateTimePicker(x => x.DocumentDate, "от", 25, 170, format: DateTimePickerFormat.Custom, required: true);
-            document_date.CustomFormat = "dd.MM.yyyy HH:mm:ss";
-            document_date.Dock = DockStyle.Left;
-            document_date.Width = 200;
-
-            var organization = CreateComboBox<Organization>(x => x.OrganizationId, "Организация", 100, 200, data: GetOrganizations);
-            organization.Dock = DockStyle.Left;
-            organization.Width = 305;
-
-            var panel_header = new Panel()
-            {
-                Dock = DockStyle.Top,
-                Height = 32
-            };
-
-            panel_header.Controls.AddRange(new Control[] { organization, document_date, DocumentNumberControl });
-
-            var line = new DfLine();
-
-            AddControls(new Control[]
-            {
-                panel_header,
-                line
-            });
+            return;
         }
-    }
 
-    virtual protected DfIntegerTextBox<int>? DocumentNumberControl { get; } = null;
+        EditorControls
+            .AddPanel((panel) =>
+                panel
+                    .SetDock(DockStyle.Top)
+                    .SetHeight(32)
+                    .AddControls((controls) =>
+                        controls
+                            .AddIntergerTextBox(x => x.DocumentNumber, "Номер", (text) =>
+                                text
+                                    .SetHeaderWidth(60)
+                                    .SetDock(DockStyle.Left)
+                                    .SetWidth(165))
+                            .AddDateTimePicker(x => x.DocumentDate, "от", (date) =>
+                                date
+                                    .SetCustomFormat("dd.MM.yyyy HH:mm:ss")
+                                    .SetHeaderWidth(25)
+                                    .SetEditorWidth(170)
+                                    .SetDock(DockStyle.Left)
+                                    .SetWidth(200))
+                            .AddComboBox<Organization>(x => x.OrganizationId, "Организация", (combo) =>
+                                combo
+                                    .SetDataSource(GetOrganizations)
+                                    .SetEditorWidth(200)
+                                    .SetDock(DockStyle.Left)
+                                    .SetWidth(305))))
+            .AddLine();
+    }
 
     protected override void DoAfterRefreshData()
     {
         base.DoAfterRefreshData();
-        if (DocumentNumberControl != null)
-        {
-            DocumentNumberControl.Enabled = Document.Id != Guid.Empty;
-        }
+        EditorControls.GetControl(x => x.DocumentNumber)
+                      .SetEnabled(Document.Id != Guid.Empty);
     }
 
     protected override void DoCreatedDocument(T document)

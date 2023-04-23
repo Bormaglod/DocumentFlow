@@ -16,61 +16,60 @@
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Core.Reflection;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
+
+using System.Linq.Expressions;
 
 namespace DocumentFlow.Controls.Editors;
 
 public class DfDirectorySelectBox<T> : SelectBox<T>, IDirectorySelectBoxControl<T>
     where T : class, IDirectory
 {
+    private IReadOnlyDictionary<string, string>? columns;
+    private string? nameColumn;
+    private Guid? rootIdentifier = null;
+    private bool showOnlyFolder = false;
+    private bool removeEmptyFolders = false;
+
     public DfDirectorySelectBox(string property, string header, int headerWidth = default, int editorWidth = default)
         : base(property, header, headerWidth, editorWidth)
     {
     }
 
-    public Guid? RootIdentifier { get; set; } = null;
-
-    public bool ShowOnlyFolder { get; set; } = false;
-
-    public bool RemoveEmptyFolders { get; set; } = false;
-
-    public string? NameColumn { get; set; }
-
-    public IReadOnlyDictionary<string, string>? Columns { get; set; }
-
     protected override void OnSelect()
     {
-        SelectDirectoryForm<T> form = new(RootIdentifier, ShowOnlyFolder, RemoveEmptyFolders);
-        if (Columns != null && Columns.Count > 0)
+        SelectDirectoryForm<T> form = new(rootIdentifier, showOnlyFolder, removeEmptyFolders);
+        if (columns != null && columns.Count > 0)
         {
-            var nameColumn = NameColumn;
-            nameColumn ??= Columns.First().Key;
+            var name = nameColumn;
+            name ??= columns.First().Key;
 
-            form.SetColumns(nameColumn, Columns);
+            form.SetColumns(name, columns);
         }
 
         form.AddItems(Items);
         form.SelectedItem = SelectedItem;
         if (form.ShowDialog() == DialogResult.OK)
         {
-            T? oldValue = SelectedItem;
             SelectedItem = form.SelectedItem;
 
             SetTextValue(SelectedItem?.ToString() ?? string.Empty);
 
-            OnValueChanged(oldValue, SelectedItem);
-            OnManualValueChanged(oldValue, SelectedItem);
+            OnValueChanged(SelectedItem);
+            OnValueSelected(SelectedItem);
         }
     }
 
     #region IDirectorySelectBoxControl interface
 
-    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.Editor<E>(bool openById)
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.EnableEditor<E>(bool openById)
     {
         var pageManager = Services.Provider.GetService<IPageManager>()!;
         if (openById)
@@ -85,27 +84,27 @@ public class DfDirectorySelectBox<T> : SelectBox<T>, IDirectorySelectBoxControl<
         return this;
     }
 
-    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.ReadOnly()
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.ReadOnly(bool value)
     {
-        ReadOnly = true;
+        ReadOnly = value;
         return this;
     }
 
-    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.SetRootIdentifier(Guid id)
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.SetRootIdentifier(Guid? id)
     {
-        RootIdentifier = id;
+        rootIdentifier = id;
         return this;
     }
 
     IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.ShowOnlyFolder()
     {
-        ShowOnlyFolder = true;
+        showOnlyFolder = true;
         return this;
     }
 
     IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.RemoveEmptyFolders()
     {
-        RemoveEmptyFolders = true;
+        removeEmptyFolders = true;
         return this;
     }
 
@@ -115,22 +114,29 @@ public class DfDirectorySelectBox<T> : SelectBox<T>, IDirectorySelectBoxControl<
         return this;
     }
 
-    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.SetDataSource(Func<IEnumerable<T>?> func, DataRefreshMethod refreshMethod)
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.SetDataSource(GettingDataSource<T> func, DataRefreshMethod refreshMethod)
     {
         RefreshMethod = refreshMethod;
         SetDataSource(func);
         return this;
     }
 
-    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.DirectoryChanged(Action<T?, T?> action)
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.DirectoryChanged(ControlValueChanged<T?> action)
     {
         SetValueChangedAction(action);
         return this;
     }
 
-    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.DirectorySelected(Action<T?, T?> action)
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.DirectorySelected(ControlValueChanged<T?> action)
     {
         SetValueSelectedAction(action);
+        return this;
+    }
+
+    IDirectorySelectBoxControl<T> IDirectorySelectBoxControl<T>.SetColumns(Expression<Func<T, object?>> columnName, IReadOnlyDictionary<string, string> columns)
+    {
+        nameColumn = columnName.ToMember().Name;
+        this.columns = columns;
         return this;
     }
 

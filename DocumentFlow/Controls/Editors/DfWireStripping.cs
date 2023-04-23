@@ -10,26 +10,22 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Core;
-using DocumentFlow.Entities.Operations;
 using DocumentFlow.Infrastructure.Controls;
-
-using Syncfusion.Windows.Forms.Tools;
+using DocumentFlow.Infrastructure.Controls.Core;
 
 namespace DocumentFlow.Controls.Editors;
 
-public enum StrippingPlace { Left, Right }
-
-public partial class DfWireStripping : BaseControl, IBindingControl, IAccess
+public partial class DfWireStripping : BaseControl, IBindingControl, IAccess, IWireStrippingControl
 {
-    public DfWireStripping(string header, StrippingPlace place, int headerWidth = default)
-        : base(place.ToString())
+    private ControlValueChanged<Stripping>? valueChanged;
+
+    public DfWireStripping(string property, string header, int headerWidth = default)
+        : base(property)
     {
         InitializeComponent();
         SetLabelControl(label1, header, headerWidth);
         SetNestedControl(panel1);
     }
-
-    public event EventHandler? ValueChanged;
 
     public bool ReadOnly
     {
@@ -41,7 +37,7 @@ public partial class DfWireStripping : BaseControl, IBindingControl, IAccess
         }
     }
 
-    public void ClearValue()
+    public void ClearSelectedValue()
     {
         textBoxCleaning.DecimalValue = 0;
         textBoxSweep.IntegerValue = 0;
@@ -49,7 +45,7 @@ public partial class DfWireStripping : BaseControl, IBindingControl, IAccess
 
     public object? Value
     {
-        get => new Stripping() { Cleaning = textBoxCleaning.DecimalValue, Sweep = Convert.ToInt32(textBoxSweep.IntegerValue) };
+        get => Stripping;
         set
         {
             if (value is Stripping stripping)
@@ -59,7 +55,19 @@ public partial class DfWireStripping : BaseControl, IBindingControl, IAccess
         }
     }
 
-    private void TextBoxCleaning_DecimalValueChanged(object sender, EventArgs e) => ValueChanged?.Invoke(this, e);
+    private Stripping Stripping => new() { Cleaning = textBoxCleaning.DecimalValue, Sweep = Convert.ToInt32(textBoxSweep.IntegerValue) };
 
-    private void TextBoxSweep_IntegerValueChanged(object sender, EventArgs e) => ValueChanged?.Invoke(this, e);
+    private void TextBoxCleaning_DecimalValueChanged(object sender, EventArgs e) => valueChanged?.Invoke(Stripping);
+
+    private void TextBoxSweep_IntegerValueChanged(object sender, EventArgs e) => valueChanged?.Invoke(Stripping);
+
+    #region IWireStrippingControl interface
+
+    IWireStrippingControl IWireStrippingControl.StrippingChanged(ControlValueChanged<Stripping> action)
+    {
+        valueChanged = action;
+        return this;
+    }
+
+    #endregion
 }

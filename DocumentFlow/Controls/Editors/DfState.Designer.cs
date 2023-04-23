@@ -30,10 +30,10 @@ namespace DocumentFlow.Controls.Editors
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.labelState = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.labelStateValue = new System.Windows.Forms.Label();
             this.buttonAction = new Syncfusion.WinForms.Controls.SfButton();
+            this.labelState = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -50,16 +50,6 @@ namespace DocumentFlow.Controls.Editors
             this.panel1.Padding = new System.Windows.Forms.Padding(0, 5, 0, 7);
             this.panel1.Size = new System.Drawing.Size(827, 37);
             this.panel1.TabIndex = 1;
-            // 
-            // labelState
-            // 
-            this.labelState.Dock = System.Windows.Forms.DockStyle.Left;
-            this.labelState.Location = new System.Drawing.Point(0, 5);
-            this.labelState.Name = "labelState";
-            this.labelState.Size = new System.Drawing.Size(130, 25);
-            this.labelState.TabIndex = 0;
-            this.labelState.Text = "Состояние";
-            this.labelState.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // panel2
             // 
@@ -93,6 +83,17 @@ namespace DocumentFlow.Controls.Editors
             this.buttonAction.TabIndex = 3;
             this.buttonAction.Text = "Утвердить";
             this.buttonAction.UseVisualStyleBackColor = true;
+            this.buttonAction.Click += new System.EventHandler(this.ButtonAction_Click);
+            // 
+            // labelState
+            // 
+            this.labelState.Dock = System.Windows.Forms.DockStyle.Left;
+            this.labelState.Location = new System.Drawing.Point(0, 5);
+            this.labelState.Name = "labelState";
+            this.labelState.Size = new System.Drawing.Size(130, 25);
+            this.labelState.TabIndex = 0;
+            this.labelState.Text = "Состояние";
+            this.labelState.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // DfState
             // 

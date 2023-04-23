@@ -11,31 +11,23 @@
 
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfDateTimePicker : BaseControl, IBindingControl, IAccess
+public partial class DfDateTimePicker : BaseControl, IBindingControl, IAccess, IDateTimePickerControl
 {
+    private ControlValueChanged<DateTime?>? dateChanged;
+
     public DfDateTimePicker(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
     {
         InitializeComponent();
         SetLabelControl(label1, header, headerWidth);
         SetNestedControl(datePickerAdv, editorWidth);
 
-        if (editorWidth == default)
-        {
-            EditorFitToSize = true;
-        }
-        else
-        {
-            EditorWidth = editorWidth;
-        }
-
         Value = DateTime.Now;
         Required = true;
     }
-
-    public event EventHandler? ValueChanged;
 
     public bool Required { get => !datePickerAdv.ShowCheckBox; set => datePickerAdv.ShowCheckBox = !value; }
 
@@ -87,7 +79,7 @@ public partial class DfDateTimePicker : BaseControl, IBindingControl, IAccess
 
     public DateTimePickerFormat Format { get => datePickerAdv.Format; set => datePickerAdv.Format = value; }
 
-    public void ClearValue()
+    public void ClearSelectedValue()
     {
         datePickerAdv.ResetText();
         if (datePickerAdv.ShowCheckBox)
@@ -96,7 +88,9 @@ public partial class DfDateTimePicker : BaseControl, IBindingControl, IAccess
         }
     }
 
-    private void DatePickerAdv_ValueChanged(object sender, EventArgs e) => ValueChanged?.Invoke(this, e);
+    private void OnDateChanged() => dateChanged?.Invoke((DateTime?)Value);
+
+    private void DatePickerAdv_ValueChanged(object sender, EventArgs e) => OnDateChanged();
 
     private void DatePickerAdv_CheckBoxCheckedChanged(object sender, EventArgs e)
     {
@@ -105,6 +99,43 @@ public partial class DfDateTimePicker : BaseControl, IBindingControl, IAccess
             datePickerAdv.ShowDropButton = datePickerAdv.Checked;
         }
 
-        ValueChanged?.Invoke(this, e); 
+        OnDateChanged();
     }
+
+    #region IDateTimePickerControl interface
+
+    DateTime? IDateTimePickerControl.Value => (DateTime?)Value;
+
+    IDateTimePickerControl IDateTimePickerControl.DateChanged(ControlValueChanged<DateTime?> action)
+    {
+        dateChanged = action;
+        return this;
+    }
+
+    IDateTimePickerControl IDateTimePickerControl.ReadOnly()
+    {
+        ReadOnly = true;
+        return this;
+    }
+
+    IDateTimePickerControl IDateTimePickerControl.NotRequired()
+    {
+        Required = false;
+        return this;
+    }
+
+    IDateTimePickerControl IDateTimePickerControl.SetFormat(DateTimePickerFormat format)
+    {
+        Format = format; 
+        return this;
+    }
+
+    IDateTimePickerControl IDateTimePickerControl.SetCustomFormat(string format)
+    {
+        Format = DateTimePickerFormat.Custom;
+        CustomFormat = format;
+        return this;
+    }
+
+    #endregion
 }

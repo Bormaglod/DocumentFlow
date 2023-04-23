@@ -22,35 +22,20 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Controls.Core;
 
-public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl
+public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl, IDataSourceControl<I, T>
     where T : class, IIdentifier<I>
     where I : struct, IComparable
 {
-    private Func<IEnumerable<T>?>? dataSource;
+    private GettingDataSource<T>? dataSource;
 
     public DataSourceControl(string property) : base(property) { }
 
     public DataRefreshMethod RefreshMethod { get; set; } = DataRefreshMethod.OnLoad;
-
-    public Func<IEnumerable<T>?>? DataSourceFunc
-    {
-        get => dataSource;
-        set
-        {
-            if (value == null)
-            {
-                RemoveDataSource();
-            }
-            else
-            {
-                SetDataSource(value);
-            }
-        }
-    }
 
     public virtual T? GetDocument(I id)
     {
@@ -65,7 +50,9 @@ public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl
         return null;
     }
 
-    public void SetDataSource(Func<IEnumerable<T>?> func)
+    #region IDataSourceControl interface
+
+    public void SetDataSource(GettingDataSource<T> func)
     {
         dataSource = func;
         if (RefreshMethod == DataRefreshMethod.Immediately)
@@ -80,7 +67,24 @@ public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl
         ClearItems();
     }
 
-    #region IDataSourceControl interface
+    public void Select(I? id)
+    {
+        if (this is IBindingControl binding)
+        {
+            binding.Value = id;
+        }
+    }
+
+    public void RefreshDataSource(T? selectedValue)
+    {
+        RefreshDataSource(selectedValue?.Id);
+    }
+
+    public void RefreshDataSource(I? selectedValue)
+    {
+        RefreshDataSource();
+        Select(selectedValue);
+    }
 
     public void RefreshDataSource()
     {
@@ -92,6 +96,15 @@ public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl
             {
                 DoRefreshDataSource(data);
             }
+        }
+    }
+
+    public void RefreshDataSource(Guid? selectValue)
+    {
+        RefreshDataSource();
+        if (this is IBindingControl bindingControl) 
+        { 
+            bindingControl.Value = selectValue;
         }
     }
 

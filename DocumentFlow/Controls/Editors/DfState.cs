@@ -12,12 +12,14 @@
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfState : BaseControl, IBindingControl, IAccess
+public partial class DfState : BaseControl, IBindingControl, IAccess, IStateControl
 {
     private CalculationState state;
+    private ControlValueChanged<CalculationState>? stateChanged;
 
     public DfState(string property, string header, int headerWidth = default) : base(property)
     {
@@ -25,10 +27,6 @@ public partial class DfState : BaseControl, IBindingControl, IAccess
         SetLabelControl(labelState, header, headerWidth);
         SetNestedControl(panel2);
     }
-
-    public event EventHandler? ValueChanged;
-
-    public CalculationState StateValue { get => state; }
 
     public bool ReadOnly
     {
@@ -58,11 +56,23 @@ public partial class DfState : BaseControl, IBindingControl, IAccess
 
             buttonAction.Visible = state != CalculationState.Expired;
             buttonAction.Text = state == CalculationState.Prepare ? "Утвердить" : "В архив";
-            ValueChanged?.Invoke(this, EventArgs.Empty);
+            stateChanged?.Invoke(state);
         }
     }
 
-    public void ClearValue() => Value = CalculationState.Prepare;
+    public void ClearSelectedValue() => Value = CalculationState.Prepare;
 
     private void ButtonAction_Click(object sender, EventArgs e) => Value = state == CalculationState.Prepare ? CalculationState.Approved : CalculationState.Expired;
+
+    #region IStateControl interface
+
+    CalculationState IStateControl.Current => state;
+
+    IStateControl IStateControl.StateChanged(ControlValueChanged<CalculationState> action)
+    {
+        stateChanged = action;
+        return this;
+    }
+
+    #endregion
 }

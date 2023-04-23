@@ -22,15 +22,15 @@ public class MeasurementEditor : Editor<Measurement>, IMeasurementEditor
     public MeasurementEditor(IMeasurementRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         EditorControls
-            .CreateTextBox(x => x.Code, "Код", (text) =>
+            .AddTextBox(x => x.Code, "Код", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .DefaultAsValue())
-            .CreateTextBox(x => x.ItemName, "Наименование", (text) =>
+            .AddTextBox(x => x.ItemName, "Наименование", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(400))
-            .CreateTextBox(x => x.Abbreviation, "Сокр. наименование", (text) =>
+            .AddTextBox(x => x.Abbreviation, "Сокр. наименование", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(400));

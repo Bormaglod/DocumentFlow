@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 16.01.2022
@@ -8,6 +8,7 @@
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,47 +20,58 @@ public class ContractEditor : Editor<Contract>, IContractEditor
 
     public ContractEditor(IContractRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        var contractor_name = CreateTextBox(x => x.ContractorName, "Контрагент", headerWidth, 400, enabled: false);
-        var type = CreateChoice(x => x.ContractorType, "Вид договора", headerWidth, 200, choices: Contract.ContractorTypes);
-        var code = CreateTextBox(x => x.Code, "Номер договора", headerWidth, 200, defaultAsNull: false);
-        var name = CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400);
-        var date = CreateDateTimePicker(x => x.DocumentDate, "Дата договора", headerWidth, 200, format: DateTimePickerFormat.Short);
-        var tax_payer = CreateToggleButton(x => x.TaxPayer, "Плательщик НДС", headerWidth);
-        var signatory = CreateDirectorySelectBox<Employee>(x => x.SignatoryId, "Подпись контрагента", headerWidth, 400);
-        var org_signatory = CreateDirectorySelectBox<Employee>(x => x.OrgSignatoryId, "Подпись организации", headerWidth, 400);
-        var date_start = CreateDateTimePicker(x => x.DateStart, "Начало действия", headerWidth, 200, format: DateTimePickerFormat.Short);
-        var date_end = CreateDateTimePicker(x => x.DateEnd, "Окончание действия", headerWidth, 200, required: false, format: DateTimePickerFormat.Short);
-        var is_default = CreateToggleButton(x => x.IsDefault, "Основной", headerWidth);
-
-        signatory.SetDataSource(() =>
-        {
-            var emps = Services.Provider.GetService<IEmployeeRepository>();
-            if (signatory.SelectedItem != null)
-            {
-                return emps!.GetByOwner(signatory.SelectedItem.Id, OwnerId, callback: q => q.WhereFalse("employee.deleted"));
-            }
-            else
-            {
-                return emps!.GetByOwner(OwnerId, callback: q => q.WhereFalse("employee.deleted"));
-            }
-        });
-
-        org_signatory.SetDataSource(() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllValid());
-
-        AddControls(new Control[]
-        {
-            contractor_name,
-            type,
-            code,
-            name,
-            date,
-            tax_payer,
-            signatory,
-            org_signatory,
-            date_start,
-            date_end,
-            is_default
-        });
+        EditorControls
+            .AddTextBox(x => x.ContractorName, "Контрагент", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400)
+                    .Disable())
+            .AddChoice<ContractorType>(x => x.ContractorType, "Вид договора", choice =>
+                choice
+                    .SetChoiceValues(Contract.ContractorTypes)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddTextBox(x => x.Code, "Номер договора", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200)
+                    .DefaultAsValue())
+            .AddTextBox(x => x.ItemName, "Наименование", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddDateTimePicker(x => x.DocumentDate, "Дата договора", date =>
+                date
+                    .SetFormat(DateTimePickerFormat.Short)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddToggleButton(x => x.TaxPayer, "Плательщик НДС", toggle =>
+                toggle
+                    .SetHeaderWidth(headerWidth))
+            .AddDirectorySelectBox<Employee>(x => x.SignatoryId, "Подпись контрагента", select =>
+                select
+                    .SetDataSource(GetEmployees)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddDirectorySelectBox<OurEmployee>(x => x.OrgSignatoryId, "Подпись организации", select =>
+                select
+                    .SetDataSource(GetOurEmployees)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddDateTimePicker(x => x.DateStart, "Начало действия", date =>
+                date
+                    .SetFormat(DateTimePickerFormat.Short)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddDateTimePicker(x => x.DateEnd, "Окончание действия", date =>
+                date
+                    .SetFormat(DateTimePickerFormat.Short)
+                    .NotRequired()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddToggleButton(x => x.IsDefault, "Основной", toggle =>
+                toggle
+                    .SetHeaderWidth(headerWidth));
     }
 
     protected override void RegisterNestedBrowsers()
@@ -67,4 +79,20 @@ public class ContractEditor : Editor<Contract>, IContractEditor
         base.RegisterNestedBrowsers();
         RegisterNestedBrowser<IContractApplicationBrowser, ContractApplication>();
     }
+
+    private IEnumerable<Employee> GetEmployees()
+    {
+        var emps = Services.Provider.GetService<IEmployeeRepository>();
+        var signatory = EditorControls.GetControl<IDirectorySelectBoxControl<Employee>>(x => x.SignatoryId);
+        if (signatory.SelectedItem != null)
+        {
+            return emps!.GetByOwner(signatory.SelectedItem.Id, OwnerId, callback: q => q.WhereFalse("employee.deleted"));
+        }
+        else
+        {
+            return emps!.GetByOwner(OwnerId, callback: q => q.WhereFalse("employee.deleted"));
+        }
+    }
+
+    private IEnumerable<OurEmployee> GetOurEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllValid();
 }

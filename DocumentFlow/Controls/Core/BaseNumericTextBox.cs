@@ -15,6 +15,7 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 
 using Syncfusion.Windows.Forms.Tools;
 
@@ -27,6 +28,8 @@ abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingCo
     private T numericValue;
     private readonly C textBox;
     private bool lockChangeValue = false;
+    private ControlValueChanged<T>? valueChanged;
+    private ControlValueCleared? valueCleared;
 
     public BaseNumericTextBox(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
     {
@@ -47,8 +50,6 @@ abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingCo
 
         SetNumericValue(default);
     }
-
-    public event EventHandler? ValueChanged;
 
     public C TextBox => textBox;
 
@@ -84,13 +85,23 @@ abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingCo
 
     #endregion
 
-    abstract public void ClearValue();
+    abstract public void ClearSelectedValue();
 
     protected abstract void UpdateTextControl(T value);
 
     protected abstract T GetValueTextBox();
 
-    private void OnValueChange() => ValueChanged?.Invoke(this, EventArgs.Empty);
+    private void OnValueChange()
+    {
+        if (NumericValue == null)
+        {
+            valueCleared?.Invoke();
+        }
+        else
+        {
+            valueChanged?.Invoke(NumericValue.Value);
+        }
+    }
 
     protected void UpdateNumericValue()
     {
@@ -133,6 +144,37 @@ abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingCo
     IBaseNumericTextBoxControl<T> IBaseNumericTextBoxControl<T>.ReadOnly()
     {
         ReadOnly = true;
+        return this;
+    }
+
+    IBaseNumericTextBoxControl<T> IBaseNumericTextBoxControl<T>.Initial(T value)
+    {
+        NumericValue = value;
+        return this;
+    }
+
+    IBaseNumericTextBoxControl<T> IBaseNumericTextBoxControl<T>.ShowSuffix(string suffix)
+    {
+        ShowSuffix = true;
+        SuffixText = suffix;
+        return this;
+    }
+
+    IBaseNumericTextBoxControl<T> IBaseNumericTextBoxControl<T>.HideSuffix()
+    {
+        ShowSuffix = false;
+        return this;
+    }
+
+    IBaseNumericTextBoxControl<T> IBaseNumericTextBoxControl<T>.ValueChanged(ControlValueChanged<T> action)
+    {
+        valueChanged = action;
+        return this;
+    }
+
+    IBaseNumericTextBoxControl<T> IBaseNumericTextBoxControl<T>.ValueCleared(ControlValueCleared action)
+    {
+        valueCleared = action;
         return this;
     }
 

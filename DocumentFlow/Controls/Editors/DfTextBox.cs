@@ -14,11 +14,14 @@
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Core;
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 
 namespace DocumentFlow.Controls.Editors;
 
 public partial class DfTextBox : BaseControl, IBindingControl, IAccess, ITextBoxControl
 {
+    private ControlValueChanged<string?>? textChanged;
+
     public DfTextBox(string property, string header, int headerWidth = default, int editorWidth = default) 
         : base(property)
     {
@@ -28,8 +31,6 @@ public partial class DfTextBox : BaseControl, IBindingControl, IAccess, ITextBox
 
         Dock = DockStyle.Top;
     }
-
-    public event EventHandler? ValueChanged;
 
     public bool ReadOnly
     {
@@ -53,11 +54,19 @@ public partial class DfTextBox : BaseControl, IBindingControl, IAccess, ITextBox
         }
     }
 
-    public void ClearValue() => textBoxExt.Text = string.Empty;
+    public void ClearSelectedValue() => textBoxExt.Text = string.Empty;
 
-    private void TextBoxExt_TextChanged(object sender, EventArgs e) => ValueChanged?.Invoke(this, e);
+    private void TextBoxExt_TextChanged(object sender, EventArgs e) => textChanged?.Invoke(Value?.ToString());
 
     #region ITextBoxControl interface
+
+    string? ITextBoxControl.Text => Value?.ToString();
+
+    ITextBoxControl ITextBoxControl.TextChanged(ControlValueChanged<string?> action)
+    {
+        textChanged = action;
+        return this;
+    }
 
     ITextBoxControl ITextBoxControl.ReadOnly()
     {
@@ -69,6 +78,12 @@ public partial class DfTextBox : BaseControl, IBindingControl, IAccess, ITextBox
     {
         Multiline = true;
         Height = height;
+        return this;
+    }
+
+    ITextBoxControl ITextBoxControl.SetText(string? text)
+    {
+        Value = text;
         return this;
     }
 

@@ -23,37 +23,49 @@
 
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Renderers;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Infrastructure.Dialogs;
+using Microsoft.Extensions.DependencyInjection;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.DataGrid.Events;
 
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Data.Common;
 using System.Reflection;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataSource, IAccess
+public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataSource, IAccess, IDataGridControl<T>
     where T : IEntity<long>, IEntityClonable, ICloneable, new()
 {
     private ObservableCollection<T>? list;
     private Guid? ownerId;
-    private readonly IOwnedRepository<long, T> repository;
+    private IOwnedRepository<long, T>? repository;
     private readonly List<T> deleted = new();
     private readonly List<T> created = new();
     private readonly List<T> updated = new();
 
-    public DfDataGrid(IOwnedRepository<long, T> content) 
-        : base(string.Empty)
+    private DataGridGenerateColumn? autoGeneratingColumn;
+
+    private DataGridOperation<T>? dataCreate;
+    private DataGridUpdateOperation<T>? dataUpdate;
+    private DataGridOperation<T>? dataRemove;
+    private DataGridOperation<T>? dataCopy;
+
+    private IDataGridDialog<T>? dialog;
+
+    public DfDataGrid() : base(string.Empty)
     {
         InitializeComponent();
         SetLabelControl(labelHeader, string.Empty);
         SetNestedControl(gridMain);
-
-        repository = content;
 
         gridMain.CellRenderers.Remove("TableSummary");
         gridMain.CellRenderers.Add("TableSummary", new CustomGridTableSummaryRenderer());
@@ -61,11 +73,10 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
         labelHeader.Visible = false;
     }
 
-    public event AutoGeneratingColumnEventHandler? AutoGeneratingColumn;
-    public event EventHandler<DataCreateEventArgs<T>>? DataCreate;
-    public event EventHandler<DataEditEventArgs<T>>? DataEdit;
-    public event EventHandler<DataDeleteEventArgs<T>>? DataDelete;
-    public event EventHandler<DataCopyEventArgs<T>>? DataCopy;
+    public DfDataGrid(IOwnedRepository<long, T> content) : this()
+    {
+        repository = content;
+    }
 
     public bool ReadOnly
     {
@@ -83,9 +94,14 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
     #region IDataSourceControl interface
 
+    public void RemoveDataSource()
+    {
+        gridMain.DataSource = null;
+    }
+
     public void RefreshDataSource()
     {
-        if (ownerId != null)
+        if (ownerId != null && repository != null)
         {
             list = new ObservableCollection<T>(repository.GetByOwner(ownerId));
         }
@@ -107,6 +123,11 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
     public void UpdateData(IDbTransaction transaction)
     {
+        if (repository == null)
+        {
+            return;
+        }
+
         if (ownerId == null)
         {
             throw new ArgumentNullException(nameof(ownerId), "Не определено значение owner_id.");
@@ -198,6 +219,46 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
         HeaderVisible = !string.IsNullOrEmpty(Header);
     }
 
+    private bool CreateDialog(T creatingData)
+    {
+        if (dialog != null)
+        {
+            return dialog.Create(creatingData);
+        }
+
+        return false;
+    }
+
+    private DataOperationResult EditDialog(T editingData)
+    {
+        if (dialog != null)
+        {
+            return dialog.Edit(editingData) ? DataOperationResult.Update : DataOperationResult.Cancel;
+        }
+
+        return DataOperationResult.Cancel;
+    }
+
+    private bool CopyDialog(T copiedData)
+    {
+        if (dialog != null)
+        {
+            return dialog.Edit(copiedData);
+        }
+
+        return false;
+    }
+
+    private bool RemoveDialog(T removingData)
+    {
+        if (dialog != null && dialog is IDataGridDialogExt<T> removeDialog)
+        {
+            return removeDialog.Remove(removingData);
+        }
+
+        return false;
+    }
+
     private void Edit()
     {
         if (!toolStrip1.Enabled)
@@ -205,15 +266,16 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
             return;
         }
 
-        if (DataEdit != null && gridMain.SelectedItem is T item && list != null)
+        if (dataUpdate != null && gridMain.SelectedItem is T item && list != null)
         {
-            DataEditEventArgs<T> eventArgs = new((T)item.Clone());
-            DataEdit(this, eventArgs);
-            if (!eventArgs.Cancel)
-            {
-                list[list.IndexOf(item)] = eventArgs.EditingData;
+            var editingData = (T)item.Clone();
+            var res = dataUpdate(editingData);
 
-                if (eventArgs.Rule == RuleChange.Update)
+            if (res != DataOperationResult.Cancel)
+            {
+                list[list.IndexOf(item)] = editingData;
+
+                if (res == DataOperationResult.Update)
                 {
                     if (item.Id != 0)
                     {
@@ -222,7 +284,7 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
                             updated.Remove(item);
                         }
 
-                        updated.Add(eventArgs.EditingData);
+                        updated.Add(editingData);
                     }
                 }
                 else
@@ -244,8 +306,8 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
                         // Запись существует физически, добавим её к удаляемым
                         deleted.Add(item);
 
-                        eventArgs.EditingData.Id = 0;
-                        created.Add(eventArgs.EditingData);
+                        editingData.Id = 0;
+                        created.Add(editingData);
                     }
                 }
             }
@@ -254,14 +316,13 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
     private void ButtonCreate_Click(object sender, EventArgs e)
     {
-        if (DataCreate != null && list != null)
+        if (dataCreate != null && list != null)
         {
-            DataCreateEventArgs<T> eventArgs = new(new T());
-            DataCreate(this, eventArgs);
-            if (!eventArgs.Cancel)
+            var creatingData = new T();
+            if (dataCreate(creatingData))
             {
-                list.Add(eventArgs.CreatingData);
-                created.Add(eventArgs.CreatingData);
+                list.Add(creatingData);
+                created.Add(creatingData);
             }
         }
     }
@@ -274,10 +335,13 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
         {
             if (MessageBox.Show("Вы действительно хотите удалить запись?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                DataDeleteEventArgs<T> eventArgs = new(item);
-                DataDelete?.Invoke(this, eventArgs);
+                bool res = true;
+                if (dataRemove != null)
+                {
+                    res = dataRemove(item);
+                }
 
-                if (!eventArgs.Cancel)
+                if (res)
                 {
                     bool last = list.IndexOf(item) == list.Count - 1;
                     list.Remove(item);
@@ -308,14 +372,13 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
     private void ButtonCopy_Click(object sender, EventArgs e)
     {
-        if (gridMain.SelectedItem is T item && list != null)
+        if (dataCopy != null && gridMain.SelectedItem is T item && list != null)
         {
-            DataCopyEventArgs<T> eventArgs = new((T)item.Copy());
-            DataCopy?.Invoke(this, eventArgs);
-            if (!eventArgs.Cancel)
+            var copiedData = (T)item.Copy();
+            if (dataCopy(copiedData))
             {
-                list.Add(eventArgs.CopiedData);
-                created.Add(eventArgs.CopiedData);
+                list.Add(copiedData);
+                created.Add(copiedData);
             }
         }
     }
@@ -338,7 +401,158 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
     private void GridMain_CellDoubleClick(object sender, CellClickEventArgs e) => Edit();
 
-    private void GridMain_AutoGeneratingColumn(object sender, AutoGeneratingColumnArgs e) => AutoGeneratingColumn?.Invoke(this, e);
+    private void GridMain_AutoGeneratingColumn(object sender, AutoGeneratingColumnArgs e)
+    {
+        var prop = typeof(T).GetProperties().FirstOrDefault(p => p.Name == e.Column.MappingName);
+
+        if (prop != null)
+        {
+            var attr = prop.GetCustomAttribute<ColumnModeAttribute>();
+            if (attr != null)
+            {
+                if (attr.AutoSizeColumnsMode != AutoSizeColumnsMode.None)
+                {
+                    e.Column.AutoSizeColumnsMode = attr.AutoSizeColumnsMode;
+                }
+
+                if (attr.Width > 0)
+                {
+                    e.Column.Width = attr.Width;
+                }
+
+                e.Column.CellStyle.HorizontalAlignment = attr.Alignment;
+
+                switch (attr.Format)
+                {
+                    case ColumnFormat.Currency:
+                        if (e.Column is GridNumericColumn c)
+                        {
+                            c.FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency;
+                        }
+
+                        e.Column.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
+
+                        break;
+                    case ColumnFormat.Progress:
+                        var disp = prop.GetCustomAttribute<DisplayAttribute>();
+                        var header = disp?.Name ?? e.Column.MappingName;
+                        e.Column = new GridProgressBarColumn()
+                        {
+                            MappingName = e.Column.MappingName,
+                            HeaderText = header,
+                            Maximum = 100,
+                            Minimum = 0,
+                            ValueMode = ProgressBarValueMode.Percentage
+                        };
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        if (autoGeneratingColumn != null)
+        {
+            e.Cancel = autoGeneratingColumn(e.Column);
+        }
+    }
 
     private void ButtonRefresh_Click(object sender, EventArgs e) => RefreshDataSource();
+
+    #region IDataGridControl interface
+
+    IDataGridControl<T> IDataGridControl<T>.AutoGeneratingColumn(DataGridGenerateColumn action)
+    {
+        autoGeneratingColumn = action;
+        return this;
+    }
+
+    IDataGridControl<T> IDataGridControl<T>.SetHeader(string header)
+    {
+        Header = header;
+        return this;
+    }
+
+    IDataGridControl<T> IDataGridControl<T>.SetRepository<R>()
+    {
+        repository = Services.Provider.GetService<R>()!;
+        return this;
+    }
+
+    IDataGridControl<T> IDataGridControl<T>.Dialog<D>()
+    {
+        dialog = Services.Provider.GetService<D>();
+
+        dataCreate = CreateDialog;
+        dataUpdate = EditDialog;
+        dataCopy = CopyDialog;
+
+        if (dialog is IDataGridDialogExt<T>)
+        {
+            dataRemove = RemoveDialog;
+        }
+
+        return this;
+    }
+
+    IDataGridControl<T> IDataGridControl<T>.GridSummaryRow(VerticalPosition position, DataGridSummaryRow<T> summaryRow)
+    {
+        gridMain.TableSummaryRows.Clear();
+        var tableSummaryRow = new GridTableSummaryRow()
+        {
+            Name = "TableRowSummary",
+            ShowSummaryInRow = false,
+            Position = position
+        };
+
+        gridMain.TableSummaryRows.Add(tableSummaryRow);
+
+        var summary = new DataGridSummary<T>(tableSummaryRow);
+        summaryRow(summary);
+
+        return this;
+    }
+
+    IDataGridControl<T> IDataGridControl<T>.DoCreate(DataGridOperation<T> func)
+    {
+        dataCreate = func;
+        return this;
+    }
+
+    IDataGridControl<T> IDataGridControl<T>.DoUpdate(DataGridUpdateOperation<T> func)
+    {
+        dataUpdate = func;
+        return this;
+    }
+
+    IDataGridControl<T> IDataGridControl<T>.DoRemove(DataGridOperation<T> func)
+    {
+        dataRemove = func;
+        return this;
+    }
+
+    IDataGridControl<T> IDataGridControl<T>.DoCopy(DataGridOperation<T> func)
+    {
+        dataCopy = func;
+        return this;
+    }
+
+    IDataGridControl<T> IDataGridControl<T>.AddCommand(string text, Image image, DataGridCommand<T> action)
+    {
+        toolStripSeparatorCustom1.Visible = true;
+        toolStripSeparatorCustom2.Visible = true;
+
+        ToolStripButton button = new(text, image, (sender, e) => action(this))
+        {
+            DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
+            TextImageRelation = TextImageRelation.ImageBeforeText
+        };
+
+        toolStrip1.Items.Add(button);
+
+        return this;
+    }
+
+    #endregion
 }

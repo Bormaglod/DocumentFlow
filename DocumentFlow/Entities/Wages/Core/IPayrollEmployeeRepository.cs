@@ -14,7 +14,7 @@ using DocumentFlow.Infrastructure.Data;
 namespace DocumentFlow.Entities.Wages.Core;
 
 public interface IPayrollEmployeeRepository<T> : IOwnedRepository<long, T>
-    where T : IWageEmployee
+    where T : WageEmployee
 {
 
 }

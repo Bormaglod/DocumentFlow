@@ -9,7 +9,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure;
@@ -19,28 +18,69 @@ namespace DocumentFlow.Entities.Operations;
 
 public class CuttingEditor : Editor<Cutting>, ICuttingEditor
 {
-    private ICuttingRepository repository;
+    private readonly ICuttingRepository repository;
     private const int headerWidth = 190;
 
     public CuttingEditor(ICuttingRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         this.repository = repository;
 
-        AddControls(new Control[]
-        {
-            CreateTextBox(x => x.Code, "Код", headerWidth, 100, defaultAsNull: false),
-            CreateTextBox(x => x.ItemName, "Наименование", headerWidth, 400),
-            CreateDirectorySelectBox<Cutting>(x => x.ParentId, "Группа", headerWidth, 400, showOnlyFolder: true, data: repository.GetOnlyFolders),
-            CreateChoice(x => x.ProgramNumber, "Программа", headerWidth, 150, data: GetChoices),
-            CreateIntegerTextBox<int>(x => x.SegmentLength, "Длина провода", headerWidth, 100, defaultAsNull: false),
-            new DfWireStripping("Зачистка слева", StrippingPlace.Left, headerWidth),
-            new DfWireStripping("Зачистка справа", StrippingPlace.Right, headerWidth),
-            CreateIntegerTextBox<int>(x => x.Produced, "Выработка", headerWidth, 100, defaultAsNull: false, enabled: false),
-            CreateIntegerTextBox<int>(x => x.ProdTime, "Время выработки, сек.", headerWidth, 100, defaultAsNull: false, enabled: false),
-            CreateIntegerTextBox<int>(x => x.ProductionRate, "Норма выработка, ед./час", headerWidth, 100, defaultAsNull: false, enabled: false),
-            CreateDateTimePicker(x => x.DateNorm, "Дата нормирования", headerWidth, 150, required: false),
-            CreateNumericTextBox(x => x.Salary, "Зарплата, руб.", headerWidth, 100, defaultAsNull: false, enabled: false)
-        });
+        EditorControls
+            .AddTextBox(x => x.Code, "Код", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue())
+            .AddTextBox(x => x.ItemName, "Наименование", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddDirectorySelectBox<Cutting>(x => x.ParentId, "Группа", select =>
+                select
+                    .ShowOnlyFolder()
+                    .SetDataSource(repository.GetOnlyFolders)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400))
+            .AddChoice<int>(x => x.ProgramNumber, "Программа", choice =>
+                choice
+                    .SetDataSource(GetChoices)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150))
+            .AddIntergerTextBox<int>(x => x.SegmentLength, "Длина провода", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue())
+            .AddWireStripping(x => x.Left, "Зачистка слева", strip =>
+                strip
+                    .SetHeaderWidth(headerWidth))
+            .AddWireStripping(x => x.Right, "Зачистка справа", strip =>
+                strip
+                    .SetHeaderWidth(headerWidth))
+            .AddIntergerTextBox<int>(x => x.Produced, "Выработка", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue()
+                    .Disable())
+            .AddIntergerTextBox<int>(x => x.ProdTime, "Время выработки, сек.", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue()
+                    .Disable())
+            .AddIntergerTextBox<int>(x => x.ProductionRate, "Норма выработка, ед./час", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue()
+                    .Disable())
+            .AddDateTimePicker(x => x.DateNorm, "Дата нормирования", date =>
+                date
+                    .NotRequired()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150))
+            .AddNumericTextBox(x => x.Salary, "Зарплата, руб.", text =>
+                text
+                    .SetNumberDecimalDigits(4)
+                    .SetHeaderWidth(headerWidth)
+                    .DefaultAsValue()
+                    .Disable());
     }
 
     protected override void RegisterNestedBrowsers()

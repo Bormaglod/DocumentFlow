@@ -16,7 +16,7 @@ using Syncfusion.Windows.Forms.Tools;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfIntegerTextBox<T> : BaseNumericTextBox<T, IntegerTextBox>, IAccess
+public partial class DfIntegerTextBox<T> : BaseNumericTextBox<T, IntegerTextBox>, IAccess, IIntegerTextBoxControl<T>
     where T : struct, IComparable<T>
 {
     public DfIntegerTextBox(string property, string header, int headerWidth = default, int editorWidth = default) :
@@ -38,11 +38,21 @@ public partial class DfIntegerTextBox<T> : BaseNumericTextBox<T, IntegerTextBox>
 
     public int[] NumberGroupSizes { get => TextBox.NumberGroupSizes; set => TextBox.NumberGroupSizes = value; }
 
-    public override void ClearValue() => TextBox.Text = string.Empty;
+    public override void ClearSelectedValue() => TextBox.Text = string.Empty;
 
     protected override T GetValueTextBox() => (T)Convert.ChangeType(TextBox.IntegerValue, typeof(T));
 
     protected override void UpdateTextControl(T value) => TextBox.IntegerValue = (long)Convert.ChangeType(value, typeof(long));
 
     private void IntegerTextBox_IntegerValueChanged(object? sender, EventArgs e) => UpdateNumericValue();
+
+    #region IIntegerTextBoxControl<T> interface
+
+    IIntegerTextBoxControl<T> IIntegerTextBoxControl<T>.SetNumberGroupSeparator(string groupSeparator)
+    {
+        NumberGroupSeparator = groupSeparator;
+        return this;
+    }
+
+    #endregion
 }

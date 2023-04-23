@@ -11,20 +11,12 @@
 
 using DocumentFlow.Entities.PaymentOrders.Documents;
 using DocumentFlow.Infrastructure;
-using DocumentFlow.Infrastructure.Data;
-
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentFlow.Entities.Waybills;
 
-public class WaybillReceiptEditor : WaybillEditor<WaybillReceipt, WaybillReceiptPrice>, IWaybillReceiptEditor
+public class WaybillReceiptEditor : WaybillEditor<WaybillReceipt, WaybillReceiptPrice, IWaybillReceiptPriceRepository>, IWaybillReceiptEditor
 {
     public WaybillReceiptEditor(IWaybillReceiptRepository repository, IPageManager pageManager) : base(repository, pageManager) { }
-
-    protected override IOwnedRepository<long, WaybillReceiptPrice> GetDetailsRepository()
-    {
-        return Services.Provider.GetService<IWaybillReceiptPriceRepository>()!;
-    }
 
     protected override void DoAfterRefreshData()
     {

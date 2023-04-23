@@ -23,16 +23,16 @@ internal class InitialBalanceMaterialEditor : DocumentEditor<InitialBalanceMater
         : base(repository, pageManager, true) 
     {
         EditorControls
-            .CreateDirectorySelectBox<Material>(x => x.ReferenceId, "Материал", (select) =>
+            .AddDirectorySelectBox<Material>(x => x.ReferenceId, "Материал", (select) =>
                 select
                     .SetDataSource(GetMaterials)
-                    .Editor<IMaterialEditor>()
+                    .EnableEditor<IMaterialEditor>()
                     .SetEditorWidth(400))
-            .CreateNumericTextBox(x => x.Amount, "Количество", (text) =>
+            .AddNumericTextBox(x => x.Amount, "Количество", (text) =>
                 text
                     .SetNumberDecimalDigits(3)
                     .SetEditorWidth(200))
-            .CreateCurrencyTextBox(x => x.OperationSumma, "Сумма");
+            .AddCurrencyTextBox(x => x.OperationSumma, "Сумма");
     }
 
     private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetAllValid();

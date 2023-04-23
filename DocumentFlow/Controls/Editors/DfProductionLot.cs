@@ -46,7 +46,7 @@ using System.Text.RegularExpressions;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSourceControl
+public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSourceControl, IProductionLotControl
 {
     [GeneratedRegex("^Employees\\[(\\d+)\\].+$")]
     private static partial Regex EmployeeRegex();
@@ -184,6 +184,11 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
     }
 
     #region IDataSourceControl interface
+
+    public void RemoveDataSource()
+    {
+        gridContent.DataSource = null;
+    }
 
     public void RefreshDataSource()
     {
@@ -336,23 +341,16 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                 }
             }
 
-            OperationsPerformedForm form = new(ownerId.Value)
-            {
-                Operation = oper?.Operation,
-                Employee = emp
-            };
+            OperationsPerformedDialog form = new(ownerId.Value);
+            form.Initialize(new { OperationId = oper?.Operation.Id, EmployeeId = emp?.Id });
 
-            if (form.ShowDialog() == DialogResult.OK && form.Employee != null && form.Operation != null)
+            var res = form.ShowDialog() == DialogResult.OK;
+            var employee = form.Employee;
+            var operation = form.Operation;
+
+            if (res && employee != null && operation != null)
             {
-                var op = new OperationsPerformed()
-                {
-                    OwnerId = ownerId,
-                    EmployeeId = form.Employee.Id,
-                    OperationId = form.Operation.Id,
-                    ReplacingMaterialId = form.ReplacingMaterial?.Id,
-                    Quantity = form.Quantity,
-                    DoubleRate = form.DoubleRate
-                };
+                var op = form.Get();
 
                 var repo = Services.Provider.GetService<IOperationsPerformedRepository>();
                 if (repo != null)
@@ -365,7 +363,7 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                         CurrentApplicationContext.Context.App.SendNotify("operations_performed", op, MessageAction.Add);
 
                         // поучим сводную информацию - количество выполненных операций указанным сотрудником
-                        var summary = repo.GetSummary(ownerId.Value, form.Operation, form.Employee);
+                        var summary = repo.GetSummary(ownerId.Value, operation, employee);
                         if (summary != null && gridContent.DataSource is IList<OperationInfo> list)
                         {
                             // если сотрудник ещё ны был задействован для выполнения данной операции,
@@ -373,10 +371,10 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                             // добавляем колонку с сотрудником в таблицу
                             if (employees.FirstOrDefault(x => x.Id == op.EmployeeId) == null)
                             {
-                                employees.Add(form.Employee);
+                                employees.Add(employee);
                                 foreach (var item in list)
                                 {
-                                    item.AddEmployee(form.Employee);
+                                    item.AddEmployee(employee);
                                 }
 
                                 CreateColumnEmployee(employees.Count - 1, insertToEnd: true);

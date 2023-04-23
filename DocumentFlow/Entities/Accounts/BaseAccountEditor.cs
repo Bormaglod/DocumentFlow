@@ -29,22 +29,22 @@ public abstract class BaseAccountEditor<T> : Editor<T>
     public BaseAccountEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         EditorControls
-            .CreateTextBox(x => x.CompanyName, "Контрагент", (textBox) =>
+            .AddTextBox(x => x.CompanyName, "Контрагент", textBox =>
                 textBox
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(120)
                     .Disable())
-            .CreateTextBox(x => x.ItemName, "Наименование", (textBox) =>
+            .AddTextBox(x => x.ItemName, "Наименование", textBox =>
                 textBox
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(500))
-            .CreateMaskedTextBox<decimal>(x => x.AccountValue, "Номер счета", (textBox) => 
+            .AddMaskedTextBox<decimal>(x => x.AccountValue, "Номер счета", textBox => 
                 textBox
                     .SetMask("### ## ### # #### #######")
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(400)
                     .DefaultAsValue())
-            .CreateComboBox<Bank>(x => x.BankId, "Банк", (combo) => 
+            .AddComboBox<Bank>(x => x.BankId, "Банк", combo => 
                 combo
                     .SetDataSource(GetBanks)
                     .SetHeaderWidth(headerWidth)

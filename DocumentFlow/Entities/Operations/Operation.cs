@@ -21,7 +21,7 @@ public class Operation : Directory
     public int ProdTime { get; set; }
     public int ProductionRate { get; set; }
     public Guid TypeId { get; set; }
-    public string? TypeNme { get; protected set; }
+    public string? TypeName { get; protected set; }
     public decimal Salary { get; set; }
     public bool OperationUsing { get; protected set; }
     public DateTime? DateNorm { get; set; }

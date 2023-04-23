@@ -5,9 +5,9 @@
 // Date: 28.01.2023
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,43 +17,45 @@ public class PayrollPaymentEditor : DocumentEditor<PayrollPayment>, IPayrollPaym
 {
     public PayrollPaymentEditor(IPayrollPaymentRepository repository, IPageManager pageManager) : base(repository, pageManager, true)
     {
-        var payment_number = CreateTextBox(x => x.PaymentNumber, "Номер пл. ордера", 150, 100);
-        payment_number.Dock = DockStyle.Left;
-        payment_number.Width = 250;
+        EditorControls
+            .AddPanel(panel =>
+                panel
+                    .SetDock(DockStyle.Top)
+                    .SetHeight(32)
+                    .AddControls(controls =>
+                        controls
+                            .AddTextBox(x => x.PaymentNumber, "Номер пл. ордера", text =>
+                                text
+                                    .SetHeaderWidth(150)
+                                    .SetDock(DockStyle.Left)
+                                    .SetWidth(250))
+                            .AddDateTimePicker(x => x.DateOperation, "от", date => 
+                                date
+                                    .SetCustomFormat("dd.MM.yyyy")
+                                    .SetDock(DockStyle.Left)
+                                    .SetWidth(200)
+                                    .SetHeaderTextAlign(ContentAlignment.MiddleCenter))))
+            .AddDocumentSelectBox<Payroll>(x => x.OwnerId, "Платёжная ведомость", select =>
+                select
+                    .SetDataSource(GetPayrolls)
+                    .EnableEditor<IPayrollEditor>()
+                    .CreateColumns(BasePayroll.CreateGridColumns)
+                    .SetHeaderWidth(150)
+                    .SetEditorWidth(400))
+            .AddCurrencyTextBox(x => x.TransactionAmount, "Сумма", text =>
+                text
+                    .SetHeaderWidth(150)
+                    .SetEditorWidth(200)
+                    .DefaultAsValue());
+    }
 
-        var date_operation = CreateDateTimePicker(x => x.DateOperation, "от", 25, 100, format: DateTimePickerFormat.Custom, required: true);
-        date_operation.CustomFormat = "dd.MM.yyyy";
-        date_operation.Dock = DockStyle.Left;
-        date_operation.Width = 200;
-        date_operation.HeaderTextAlign = ContentAlignment.MiddleCenter;
-
-        var panel_pp = new Panel()
+    private void PayrollSelected(Payroll? oldValue, Payroll? newValue)
+    {
+        if (newValue != null)
         {
-            Dock = DockStyle.Top,
-            Height = 32
-        };
-
-        panel_pp.Controls.AddRange(new Control[] { date_operation, payment_number });
-
-        var payroll = CreateDocumentSelectBox<Payroll, IPayrollEditor>(x => x.OwnerId, "Платёжная ведомость", 150, 400, data: GetPayrolls);
-        var transaction = CreateCurrencyTextBox(x => x.TransactionAmount, "Сумма", 150, 200, defaultAsNull: false);
-
-        payroll.Columns += (sender, e) => BasePayroll.CreateGridColumns(e.Columns);
-
-        payroll.ManualValueChange += (sender, e) =>
-        {
-            if (e.NewValue != null)
-            {
-                transaction.NumericValue = e.NewValue.Wage;
-            }
-        };
-
-        AddControls(new Control[]
-        {
-            panel_pp,
-            payroll,
-            transaction
-        });
+            var transaction = EditorControls.GetControl<ICurrencyTextBoxControl>(x => x.TransactionAmount);
+            transaction.NumericValue = newValue.Wage;
+        }
     }
 
     private IEnumerable<Payroll> GetPayrolls() => Services.Provider.GetService<IPayrollRepository>()!.GetAllDefault();

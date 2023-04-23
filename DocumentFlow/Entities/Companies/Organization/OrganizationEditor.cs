@@ -21,22 +21,69 @@ public class OrganizationEditor : Editor<Organization>, IOrganizationEditor
 
     public OrganizationEditor(IOrganizationRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        AddControls(new Control[]
-        {
-            CreateTextBox(x => x.Code, "Наименование", headerWidth, 400, defaultAsNull: false),
-            CreateTextBox(x => x.ItemName, "Короткое наименование", headerWidth, 500),
-            CreateMultilineTextBox(x => x.FullName, "Полное наименование", headerWidth, 500),
-            CreateMaskedTextBox<decimal>(x => x.Inn, "ИНН", headerWidth, 200, mask: "#### ##### #"),
-            CreateMaskedTextBox<decimal>(x => x.Kpp, "КПП", headerWidth, 200, mask: "#### ## ###"),
-            CreateMaskedTextBox<decimal>(x => x.Ogrn, "ОГРН", headerWidth, 200, mask: "# ## ## ## ##### #"),
-            CreateMaskedTextBox<decimal>(x => x.Okpo, "ОКПО", headerWidth, 200, mask: "## ##### #"),
-            CreateComboBox(x => x.OkopfId, "ОКОПФ", headerWidth, 450, data: GetOkopfs),
-            CreateComboBox(x => x.AccountId, "Расчётный счёт", headerWidth, 450, data: GetAccounts),
-            CreateMultilineTextBox(x => x.Address, "Адрес", headerWidth, 500),
-            CreateTextBox(x => x.Phone, "Телефон", headerWidth, 250),
-            CreateTextBox(x => x.Email, "Эл. почта", headerWidth, 250),
-            CreateToggleButton(x => x.DefaultOrg, "Основная организация", headerWidth)
-        });
+        EditorControls
+            .AddTextBox(x => x.Code, "Наименование", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400)
+                    .DefaultAsValue())
+            .AddTextBox(x => x.ItemName, "Короткое наименование", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(500))
+            .AddTextBox(x => x.FullName, "Полное наименование", (text) =>
+                text
+                    .Multiline()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(500))
+            .AddMaskedTextBox<decimal>(x => x.Inn, "ИНН", (text) =>
+                text
+                    .SetMask("#### ##### #")
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddMaskedTextBox<decimal>(x => x.Kpp, "КПП", (text) =>
+                text
+                    .SetMask("#### ## ###")
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddMaskedTextBox<decimal>(x => x.Ogrn, "ОГРН", (text) =>
+                text
+                    .SetMask("# ## ## ## ##### #")
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddMaskedTextBox<decimal>(x => x.Okpo, "ОКПО", (text) =>
+                text
+                    .SetMask("## ##### #")
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddComboBox<Okopf>(x => x.OkopfId, "ОКОПФ", (combo) =>
+                combo
+                    .SetDataSource(GetOkopfs)
+                    .EnableEditor<IOkopfEditor>()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(450))
+            .AddComboBox<OurAccount>(x => x.AccountId, "Расчётный счёт", (combo) =>
+                combo
+                    .SetDataSource(GetAccounts)
+                    .EnableEditor<IOurAccountEditor>()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(450))
+            .AddTextBox(x => x.Address, "Адрес", (text) =>
+                text
+                    .Multiline()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(500))
+            .AddTextBox(x => x.Phone, "Телефон", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(250))
+            .AddTextBox(x => x.Email, "Эл. почта", (text) =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(250))
+            .AddToggleButton(x => x.DefaultOrg, "Основная организация", (toggle) => 
+                toggle
+                    .SetHeaderWidth(headerWidth));
     }
 
     protected override void RegisterNestedBrowsers()

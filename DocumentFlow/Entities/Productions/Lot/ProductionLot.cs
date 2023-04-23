@@ -65,7 +65,7 @@ public class ProductionLot : AccountingDocument
         _ => throw new NotImplementedException()
     };
 
-    public static void CreateGridColumns(Columns columns)
+    public static void CreateGridColumns(IList<GridColumn> columns)
     {
         var doc_date = new GridDateTimeColumn()
         {

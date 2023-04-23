@@ -14,16 +14,18 @@
 
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 using DocumentFlow.Infrastructure.Data;
 
 using Syncfusion.Windows.Forms.Tools;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, IDataSourceControl, IAccess
+public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, IDataSourceControl, IAccess, IMultiSelectionComboBoxControl
 {
     private readonly List<IItem> items = new();
-    private Func<IEnumerable<IItem>?>? dataSource;
+    private GettingDataSource<IItem>? dataSource;
+    private MultiSelectValueChanged? valueChanged;
 
     public DfMultiSelectionComboBox(string property, string header, int headerWidth = default, int editorWidth = default) 
         : base(property)
@@ -37,8 +39,6 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
         multiSelectionComboBox1.ValueMember = "Code";
         multiSelectionComboBox1.VisualItemInputMode = VisualItemInputMode.ValueMemberMode;
     }
-
-    public event EventHandler? ValueChanged;
 
     public bool ReadOnly
     {
@@ -62,7 +62,7 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
         {
             if (value == null)
             {
-                ClearValue();
+                ClearSelectedValue();
             }
             else
             {
@@ -77,9 +77,12 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
         }
     }
 
-    public void SetDataSource(Func<IEnumerable<IItem>?> func) => dataSource = func;
-
     #region IDataSourceControl interface
+
+    public void RemoveDataSource()
+    {
+        multiSelectionComboBox1.DataSource = null;
+    }
 
     public void RefreshDataSource()
     {
@@ -99,7 +102,23 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
 
     #endregion
 
-    public void ClearValue() => multiSelectionComboBox1.VisualItems.Clear();
+    public void ClearSelectedValue() => multiSelectionComboBox1.VisualItems.Clear();
 
-    private void MultiSelectionComboBox1_SelectedItemCollectionChanged(object sender, SelectedItemCollectionChangedArgs e) => ValueChanged?.Invoke(this, e);
+    private void MultiSelectionComboBox1_SelectedItemCollectionChanged(object sender, SelectedItemCollectionChangedArgs e) => valueChanged?.Invoke(e.Action, e.SelectedItems);
+
+    #region IMultiSelectionComboBoxControl interface
+
+    IMultiSelectionComboBoxControl IMultiSelectionComboBoxControl.SetDataSource(GettingDataSource<IItem> func)
+    {
+        dataSource = func;
+        return this;
+    }
+
+    IMultiSelectionComboBoxControl IMultiSelectionComboBoxControl.ValueChanged(MultiSelectValueChanged action)
+    {
+        valueChanged = action;
+        return this;
+    }
+
+    #endregion
 }

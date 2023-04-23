@@ -15,7 +15,10 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
+
+using Syncfusion.WinForms.DataGrid.Enums;
 
 using System.ComponentModel.DataAnnotations;
 
@@ -27,27 +30,35 @@ public abstract class ProductPrice : Entity<long>, ICloneable, IEntityClonable
     public Guid ReferenceId { get; set; }
 
     [Display(Name = "Материал / Изделие", Order = 1)]
+    [ColumnMode(AutoSizeColumnsMode = AutoSizeColumnsMode.Fill)]
     public string ProductName { get; protected set; } = string.Empty;
 
     [Display(Name = "Артикул", Order = 100)]
+    [ColumnMode(AutoSizeColumnsMode = AutoSizeColumnsMode.AllCells)]
     public string Code { get; protected set; } = string.Empty;
 
     [Display(Name = "Количество", Order = 200)]
+    [ColumnMode(Width = 100, Alignment = HorizontalAlignment.Right)]
     public decimal Amount { get; set; }
 
     [Display(Name = "Цена", Order = 300)]
+    [ColumnMode(Format = ColumnFormat.Currency, Width = 100)]
     public decimal Price { get; set; }
 
     [Display(Name = "Сумма", Order = 400)]
+    [ColumnMode(Format = ColumnFormat.Currency, Width = 140)]
     public decimal ProductCost { get; set; }
 
     [Display(Name = "%НДС", Order = 500)]
+    [ColumnMode(Width = 80, Alignment = HorizontalAlignment.Center)]
     public int Tax { get; set; }
 
     [Display(Name = "НДС", Order = 600)]
+    [ColumnMode(Format = ColumnFormat.Currency, Width = 140)]
     public decimal TaxValue { get; set; }
 
     [Display(Name = "Всего с НДС", Order = 700)]
+    [ColumnMode(Format = ColumnFormat.Currency, Width = 140)]
     public decimal FullCost { get; set; }
 
     public object Clone() => MemberwiseClone();

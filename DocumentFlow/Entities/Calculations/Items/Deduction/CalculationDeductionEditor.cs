@@ -21,26 +21,26 @@ public class CalculationDeductionEditor : Editor<CalculationDeduction>, ICalcula
     public CalculationDeductionEditor(ICalculationDeductionRepository repository, IPageManager pageManager) : base(repository, pageManager)
     {
         EditorControls
-            .CreateTextBox(x => x.CalculationName, "Калькуляция", (text) =>
+            .AddTextBox(x => x.CalculationName, "Калькуляция", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(300)
                     .Disable())
-            .CreateComboBox<Deduction>(x => x.ItemId, "Удержание", (combo) =>
+            .AddComboBox<Deduction>(x => x.ItemId, "Удержание", (combo) =>
                 combo
                     .ItemChanged(DeductionItemChanged)
                     .ItemSelected(DeductionItemSelected)
                     .SetDataSource(GetDeductions)
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(400))
-            .CreateCurrencyTextBox(x => x.Price, "Сумма с которой произв. удерж.", (box) =>
+            .AddCurrencyTextBox(x => x.Price, "Сумма с которой произв. удерж.", (box) =>
                 box
                     .Disable()
                     .SetVisible(false)
                     .DefaultAsValue()
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(150))
-            .CreatePercentTextBox(x => x.Value, "Процент", (box) =>
+            .AddPercentTextBox(x => x.Value, "Процент", (box) =>
                 box
                     .SetPercentDecimalDigits(2)
                     .Disable()
@@ -48,7 +48,7 @@ public class CalculationDeductionEditor : Editor<CalculationDeduction>, ICalcula
                     .DefaultAsValue()
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(150))
-            .CreateCurrencyTextBox(x => x.ItemCost, "Сумма удержания", (box) =>
+            .AddCurrencyTextBox(x => x.ItemCost, "Сумма удержания", (box) =>
                 box
                     .SetVisible(false)
                     .DefaultAsValue()

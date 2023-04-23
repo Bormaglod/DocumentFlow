@@ -16,31 +16,20 @@
 
 using DocumentFlow.Controls.Core;
 using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Infrastructure.Controls.Core;
 
-namespace DocumentFlow.Controls.Editor;
+namespace DocumentFlow.Controls.Editors;
 
 public partial class DfCheckBox : BaseControl, IBindingControl, IAccess, ICheckBoxControl
 {
-    public DfCheckBox(string property, string header, int headerWidth = default, bool allowThreeState = false) 
+    private ControlValueChanged<bool>? checkChanged;
+
+    public DfCheckBox(string property, string header, int headerWidth = default) 
         : base(property)
     {
         InitializeComponent();
         SetLabelControl(label1, header, headerWidth);
         SetNestedControl(checkBoxAdv1);
-
-        AllowThreeState = allowThreeState;
-        if (allowThreeState)
-        {
-            checkBoxAdv1.CheckState = CheckState.Indeterminate;
-        }
-    }
-
-    public event EventHandler? ValueChanged;
-
-    public bool Checked
-    {
-        get => checkBoxAdv1.Checked;
-        set => checkBoxAdv1.Checked = value;
     }
 
     public bool ReadOnly
@@ -49,17 +38,19 @@ public partial class DfCheckBox : BaseControl, IBindingControl, IAccess, ICheckB
         set => checkBoxAdv1.Enabled = !value;
     }
 
-    public bool AllowThreeState { get => checkBoxAdv1.Tristate; set => checkBoxAdv1.Tristate = value; }
-
     public object? Value
     {
-        get => checkBoxAdv1.CheckState == CheckState.Indeterminate ? null : Checked;
+        get => checkBoxAdv1.CheckState == CheckState.Indeterminate ? null : checkBoxAdv1.Checked;
         set => checkBoxAdv1.CheckState = value == null ? CheckState.Indeterminate : (((bool?)value).Value ? CheckState.Checked : CheckState.Unchecked);
     }
 
-    public void ClearValue() => checkBoxAdv1.CheckState = AllowThreeState ? CheckState.Indeterminate : CheckState.Unchecked;
+    private bool AllowThreeState { get => checkBoxAdv1.Tristate; set => checkBoxAdv1.Tristate = value; }
 
-    private void CheckBoxAdv1_CheckedChanged(object sender, EventArgs e) => ValueChanged?.Invoke(this, e);
+    #region IBindingControl interface
+
+    void IBindingControl.ClearSelectedValue() => checkBoxAdv1.CheckState = AllowThreeState ? CheckState.Indeterminate : CheckState.Unchecked;
+
+    #endregion
 
     #region ICheckBoxControl interface
 
@@ -72,8 +63,17 @@ public partial class DfCheckBox : BaseControl, IBindingControl, IAccess, ICheckB
     ICheckBoxControl ICheckBoxControl.AllowThreeState()
     {
         AllowThreeState = true;
+        checkBoxAdv1.CheckState = CheckState.Indeterminate;
+        return this;
+    }
+
+    ICheckBoxControl ICheckBoxControl.CheckChanged(ControlValueChanged<bool> action)
+    {
+        checkChanged = action;
         return this;
     }
 
     #endregion
+
+    private void CheckBoxAdv1_CheckedChanged(object sender, EventArgs e) => checkChanged?.Invoke(checkBoxAdv1.Checked);
 }

@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Controls;
 
 namespace DocumentFlow.Entities.Wages;
 
@@ -13,5 +14,10 @@ public class Wage1cEditor : BasePayrollEditor<Wage1c, Wage1cEmployee, IWage1cEmp
 {
     public Wage1cEditor(IWage1cRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
+    }
+
+    protected override void PopulateDataGrid(IDataGridControl<Wage1cEmployee> grid)
+    {
+        throw new NotImplementedException();
     }
 }

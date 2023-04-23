@@ -10,7 +10,10 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
+using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
+
+using Syncfusion.WinForms.DataGrid.Enums;
 
 using System.ComponentModel.DataAnnotations;
 
@@ -21,15 +24,19 @@ public class PriceApproval: Entity<long>, ICloneable, IEntityClonable
     [Display(AutoGenerateField = false)]
     public Guid ProductId { get; set; }
 
+    [Display(Name = "Материал / Изделие")]
+    [ColumnMode(AutoSizeColumnsMode = AutoSizeColumnsMode.Fill)]
     public string ProductName { get; protected set; } = string.Empty;
 
     [Display(AutoGenerateField = false)]
     public Guid? MeasurementId { get; protected set; }
 
     [Display(Name = "Ед. изм.")]
+    [ColumnMode(Width = 100)]
     public string MeasurementName { get; protected set; } = string.Empty;
 
     [Display(Name = "Цена")]
+    [ColumnMode(Format = ColumnFormat.Currency, Width = 100)]
     public decimal Price { get; set; }
 
     public object Clone() => MemberwiseClone();

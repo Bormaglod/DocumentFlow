@@ -19,9 +19,12 @@ namespace DocumentFlow.Entities.Wages;
 
 public class BasePayroll : BillingDocument
 {
+    /// <summary>
+    /// Возвращает сумму заработной платы расчитанной в 1с.
+    /// </summary>
     public decimal Wage { get; protected set; }
 
-    public static void CreateGridColumns(Columns columns)
+    public static void CreateGridColumns(IList<GridColumn> columns)
     {
         var billing_range = new GridTextColumn()
         {

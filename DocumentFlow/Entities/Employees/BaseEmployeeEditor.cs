@@ -29,15 +29,37 @@ public class BaseEmployeeEditor<T> : Editor<T>
 
     public BaseEmployeeEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager) 
     {
-        AddControls(new Control[]
-        {
-            CreateTextBox(x => x.OwnerName, "Организация", headerWidth, 400, enabled: false),
-            CreateDirectorySelectBox<Person, IPersonEditor>(x => x.PersonId, "Сотрудник", headerWidth, 300, data: GetPeople),
-            CreateDirectorySelectBox<Okpdtr, IOkpdtrEditor>(x => x.PostId, "Должность", headerWidth, 300, data: GetPosts),
-            CreateTextBox(x => x.Phone, "Телефон", headerWidth, 200),
-            CreateTextBox(x => x.Email, "Эл. почта", headerWidth, 200),
-            CreateChoice(x => x.JobRole, "Роль", headerWidth, 150, choices: Employee.Roles)
-        });
+        EditorControls
+            .AddTextBox(x => x.OwnerName, "Организация", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(400)
+                    .Disable())
+            .AddDirectorySelectBox<Person>(x => x.PersonId, "Сотрудник", select =>
+                select
+                    .SetDataSource(GetPeople)
+                    .EnableEditor<IPersonEditor>()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300))
+            .AddDirectorySelectBox<Okpdtr>(x => x.PostId, "Должность", select =>
+                select
+                    .SetDataSource(GetPosts)
+                    .EnableEditor<IOkpdtrEditor>()
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300))
+            .AddTextBox(x => x.Phone, "Телефон", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddTextBox(x => x.Email, "Эл. почта", text =>
+                text
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(200))
+            .AddChoice<JobRole>(x => x.JobRole, "Роль", choice =>
+                choice
+                    .SetChoiceValues(Employee.Roles)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(150));
     }
 
     private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));

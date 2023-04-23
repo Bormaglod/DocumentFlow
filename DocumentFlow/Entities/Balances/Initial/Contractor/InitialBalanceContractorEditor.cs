@@ -32,25 +32,25 @@ internal class InitialBalanceContractorEditor : DocumentEditor<InitialBalanceCon
             : base(repository, pageManager, true)
     {
         EditorControls
-            .CreateDirectorySelectBox<Contractor>(x => x.ReferenceId, "Контрагент", (select) =>
+            .AddDirectorySelectBox<Contractor>(x => x.ReferenceId, "Контрагент", (select) =>
                 select
-                    .Editor<IContractorEditor>()
+                    .EnableEditor<IContractorEditor>()
                     .SetDataSource(GetContractors)
                     .DirectoryChanged(ContractorChanged)
                     .SetEditorWidth(400))
-            .CreateComboBox<Contract>(x => x.ContractId, "Договор", (combo) =>
+            .AddComboBox<Contract>(x => x.ContractId, "Договор", (combo) =>
                 combo
                     .SetEditorWidth(400))
-            .CreateChoice<decimal>(x => x.Amount, "Долг", (choice) =>
+            .AddChoice<decimal>(x => x.Amount, "Долг", (choice) =>
                 choice
                     .SetChoiceValues(debtChoice)
                     .SetEditorWidth(200))
-            .CreateCurrencyTextBox(x => x.OperationSumma, "Сумма");
+            .AddCurrencyTextBox(x => x.OperationSumma, "Сумма");
     }
 
     private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetAllValid();
 
-    private void ContractorChanged(Contractor? oldValue, Contractor? newValue)
+    private void ContractorChanged(Contractor? newValue)
     {
         var repo = Services.Provider.GetService<IContractRepository>();
         var contract = EditorControls.GetControl<IComboBoxControl<Contract>>("ContractId");

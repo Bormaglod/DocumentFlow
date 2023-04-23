@@ -33,6 +33,7 @@ public class OperationsPerformedNestedBrowser : BaseOperationsPerformedBrowser, 
         Toolbar.IconSize = ButtonIconSize.Small;
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 80, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
         var operation = CreateText(x => x.OperationName, "Операция", hidden: false);
         var employee = CreateText(x => x.EmployeeName, "Исполнитель", width: 200);
@@ -48,7 +49,7 @@ public class OperationsPerformedNestedBrowser : BaseOperationsPerformedBrowser, 
         operation.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         quantity.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
-        AddColumns(new GridColumn[] { id, date, operation, employee, material, quantity, salary, double_rate });
+        AddColumns(new GridColumn[] { id, number, date, operation, employee, material, quantity, salary, double_rate });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [date] = ListSortDirection.Ascending

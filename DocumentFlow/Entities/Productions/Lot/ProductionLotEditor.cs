@@ -15,7 +15,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Entities.Calculations;
@@ -34,81 +33,40 @@ namespace DocumentFlow.Entities.Productions.Lot;
 
 public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLotEditor
 {
-    private readonly IPageManager pageManager;
     private readonly int headerWidth = 100;
 
-    public ProductionLotEditor(IProductionLotRepository repository, IPageManager pageManager) : base(repository, pageManager, true)
+    public ProductionLotEditor(IProductionLotRepository repository, IPageManager pageManager) 
+        : base(repository, pageManager, true)
     {
-        this.pageManager = pageManager;
-
-        var order = CreateDocumentSelectBox<ProductionOrder, IProductionOrderEditor>(x => x.OwnerId, "Заказ", headerWidth, 300, data: GetOrders);
-        var calc = CreateChoice<Guid>(x => x.CalculationId, "Изделие", headerWidth, 500, refreshMethod: DataRefreshMethod.Immediately);
-        var quantity = CreateNumericTextBox(x => x.Quantity, "Количество", headerWidth, 100, digits: 3);
-        var performed = new DfProductionLot() { Dock = DockStyle.Fill };
-
-        order.Columns += (sender, e) => ProductionOrder.CreateGridColumns(e.Columns);
-        order.ValueChanged += (sender, e) =>
-        {
-            if (e.NewValue != null)
-            {
-                var repo = Services.Provider.GetService<IProductionOrderRepository>();
-                var list = repo!.GetList(e.NewValue);
-                calc.SetDataSource(() =>
-                {
-                    return list.Select(x => new Choice<Guid>(x.CalculationId, x.ProductName));
-                });
-
-                calc.Value = Document.CalculationId;
-            }
-            else
-            {
-                calc.ClearValue();
-            }
-        };
-
-        calc.ValueChanged += (sender, e) =>
-        {
-            if (e.Value == null)
-            {
-                quantity.ShowSuffix = false;
-            }
-            else
-            {
-                var repoCalc = Services.Provider.GetService<ICalculationRepository>();
-                var calculation = repoCalc!.GetById(e.Value.Value, fullInformation: false);
-
-                var repoGoods = Services.Provider.GetService<IGoodsRepository>();
-                if (calculation.OwnerId != null)
-                {
-                    var goods = repoGoods!.GetById(calculation.OwnerId.Value, fullInformation: false);
-                    if (goods.MeasurementId != null)
-                    {
-                        var repoMeas = Services.Provider.GetService<IMeasurementRepository>();
-                        var meas = repoMeas!.GetById(goods.MeasurementId.Value);
-
-                        quantity.ShowSuffix = true;
-                        quantity.SuffixText = meas.Abbreviation ?? meas.ItemName ?? meas.Code;
-                    }
-                }
-            }
-        };
-
-        AddControls(new Control[]
-        {
-            order,
-            calc,
-            quantity,
-            performed
-        });
+        EditorControls
+            .AddDocumentSelectBox<ProductionOrder>(x => x.OwnerId, "Заказ", select =>
+                select
+                    .EnableEditor<IProductionOrderEditor>()
+                    .SetDataSource(GetOrders)
+                    .CreateColumns(ProductionOrder.CreateGridColumns)
+                    .DocumentChanged(OrderChanged)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(300))
+            .AddChoice<Guid>(x => x.CalculationId, "Изделие", choice =>
+                choice
+                    .ChoiceChanged(CalculationChanged)
+                    .SetHeaderWidth(headerWidth)
+                    .SetEditorWidth(500))
+            .AddNumericTextBox(x => x.Quantity, "Количество", text =>
+                text
+                    .SetNumberDecimalDigits(3)
+                    .SetHeaderWidth(headerWidth))
+            .AddProductionLot(lot => lot.SetDock(DockStyle.Fill));
 
         Toolbar.Add("Изделие", Resources.icons8_goods_16, Resources.icons8_goods_30, () =>
         {
-            if (calc.ChoiceValue != null)
+            var calc = EditorControls.GetControl<IChoiceControl<Guid>>(x => x.CalculationId);
+            if (calc.SelectedValue != null)
             {
                 var repo = Services.Provider.GetService<ICalculationRepository>();
                 if (repo != null)
                 {
-                    var c = repo.GetById(calc.ChoiceValue.Value, false);
+                    var c = repo.GetById(calc.SelectedValue.Value, false);
                     if (c.OwnerId != null)
                     {
                         pageManager.ShowEditor<IGoodsEditor>(c.OwnerId.Value);
@@ -119,9 +77,10 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
 
         Toolbar.Add("Калькуляция", Resources.icons8_calculation_16, Resources.icons8_calculation_30, () =>
         {
-            if (calc.ChoiceValue != null)
+            var calc = EditorControls.GetControl<IChoiceControl<Guid>>(x => x.CalculationId);
+            if (calc.SelectedValue != null)
             {
-                pageManager.ShowEditor<ICalculationEditor>(calc.ChoiceValue.Value);
+                pageManager.ShowEditor<ICalculationEditor>(calc.SelectedValue.Value);
             }
         });
     }
@@ -140,5 +99,52 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
             .WhereFalse("production_order.deleted")
             .WhereTrue("production_order.carried_out")
             .WhereFalse("production_order.closed"));
+    }
+
+    private void OrderChanged(ProductionOrder? newValue)
+    {
+        var calc = EditorControls.GetControl<IChoiceControl<Guid>>(x => x.CalculationId);
+        if (newValue != null)
+        {
+            var repo = Services.Provider.GetService<IProductionOrderRepository>();
+            var list = repo!.GetList(newValue);
+            calc.SetDataSource(() =>
+            {
+                return list.Select(x => new Choice<Guid>(x.CalculationId, x.ProductName));
+            }, DataRefreshMethod.Immediately);
+
+            calc.SelectedValue = Document.CalculationId;
+        }
+        else
+        {
+            calc.ClearSelectedValue();
+        }
+    }
+
+    private void CalculationChanged(Guid? value)
+    {
+        var quantity = EditorControls.GetControl<INumericTextBoxControl>(x => x.Quantity);
+        if (value == null)
+        {
+            quantity.HideSuffix();
+        }
+        else
+        {
+            var repoCalc = Services.Provider.GetService<ICalculationRepository>();
+            var calculation = repoCalc!.GetById(value.Value, fullInformation: false);
+
+            var repoGoods = Services.Provider.GetService<IGoodsRepository>();
+            if (calculation.OwnerId != null)
+            {
+                var goods = repoGoods!.GetById(calculation.OwnerId.Value, fullInformation: false);
+                if (goods.MeasurementId != null)
+                {
+                    var repoMeas = Services.Provider.GetService<IMeasurementRepository>();
+                    var meas = repoMeas!.GetById(goods.MeasurementId.Value);
+
+                    quantity.ShowSuffix(meas.Abbreviation ?? meas.ItemName ?? meas.Code);
+                }
+            }
+        }
     }
 }

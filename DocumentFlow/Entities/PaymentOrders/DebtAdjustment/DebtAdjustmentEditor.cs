@@ -5,8 +5,6 @@
 // Date: 25.12.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Waybills;
@@ -23,64 +21,75 @@ namespace DocumentFlow.Entities.PaymentOrders;
 
 public class DebtAdjustmentEditor : DocumentEditor<DebtAdjustment>, IDebtAdjustmentEditor
 {
-    private readonly IPageManager pageManager;
-    private readonly DfDocumentSelectBox<WaybillReceipt> document_debt;
-    private readonly DfDocumentSelectBox<WaybillReceipt> document_credit;
-    private readonly DfCurrencyTextBox amount;
-
     public DebtAdjustmentEditor(IDebtAdjustmentRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        this.pageManager = pageManager;
+        EditorControls
+            .AddDirectorySelectBox<Contractor>(x => x.ContractorId, "Контрагент", select =>
+                select
+                    .SetDataSource(GetContractors)
+                    .SetHeaderWidth(190)
+                    .SetEditorWidth(400))
+            .AddDocumentSelectBox<WaybillReceipt>(x => x.DocumentDebtId, "Документ (долг контрагента)", select =>
+                select
+                    .Required()
+                    .CreateColumns(CreateDocumentColumns)
+                    .EnableEditor<IWaybillReceiptEditor>(true)
+                    .SetDataSource(GetWaybillReceiptsDebt, DataRefreshMethod.OnOpen)
+                    .DocumentSelected(WaybillReceiptSelected)
+                    .SetHeaderWidth(190)
+                    .SetEditorWidth(400))
+            .AddDocumentSelectBox<WaybillReceipt>(x => x.DocumentCreditId, "Документ (долг организации)", select =>
+                select
+                    .Required()
+                    .CreateColumns(CreateDocumentColumns)
+                    .EnableEditor<IWaybillReceiptEditor>(true)
+                    .SetDataSource(GetWaybillReceiptsCredit, DataRefreshMethod.OnOpen)
+                    .DocumentSelected(WaybillReceiptSelected)
+                    .SetHeaderWidth(190)
+                    .SetEditorWidth(400))
+            .AddCurrencyTextBox(x => x.TransactionAmount, "Сумма", text =>
+                text
+                    .SetHeaderWidth(190)
+                    .SetEditorWidth(200)
+                    .DefaultAsValue());
+    }
 
-        var contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 190, 400, data: GetContractors);
+    private IEnumerable<WaybillReceipt> GetWaybillReceiptsDebt()
+    {
+        var contractor = EditorControls.GetControl<IDirectorySelectBoxControl<Contractor>>();
+        var id = contractor.SelectedItem?.Id ?? Document.ContractorId;
+        var repo = Services.Provider.GetService<IWaybillReceiptRepository>()!;
+        return repo
+            .GetByContractor(id)
+            .Where(x => x.FullCost < x.Paid);
+    }
 
-        document_debt = CreateDocumentSelectBox<WaybillReceipt, IWaybillReceiptEditor>(x => x.DocumentDebtId, "Документ (долг контрагента)", 190, 400, required: true, refreshMethod: DataRefreshMethod.OnOpen, openById: true);
-        document_credit = CreateDocumentSelectBox<WaybillReceipt, IWaybillReceiptEditor>(x => x.DocumentCreditId, "Документ (долг организации)", 190, 400, required: true, refreshMethod: DataRefreshMethod.OnOpen, openById: true);
-        amount = CreateCurrencyTextBox(x => x.TransactionAmount, "Сумма", 190, 200, defaultAsNull: false);
-
-        document_debt.SetDataSource(() =>
-        {
-            Guid? c = contractor.SelectedItem?.Id ?? Document.ContractorId;
-            var wrr = Services.Provider.GetService<IWaybillReceiptRepository>();
-            return wrr!.GetByContractor(c).Where(x => x.FullCost < x.Paid);
-        });
-
-        document_credit.SetDataSource(() =>
-        {
-            Guid? c = contractor.SelectedItem?.Id ?? Document.ContractorId;
-            var wrr = Services.Provider.GetService<IWaybillReceiptRepository>();
-            return wrr!.GetByContractor(c).Where(x => x.FullCost > x.Paid);
-        });
-
-        document_debt.Columns += (sender, e) => CreateColumns(e.Columns);
-        document_credit.Columns += (sender, e) => CreateColumns(e.Columns);
-
-        document_debt.ManualValueChange += Document_ManualValueChange;
-        document_credit.ManualValueChange += Document_ManualValueChange;
-
-        AddControls(new Control[]
-        {
-            contractor,
-            document_debt,
-            document_credit,
-            amount
-        });
+    private IEnumerable<WaybillReceipt> GetWaybillReceiptsCredit()
+    {
+        var contractor = EditorControls.GetControl<IDirectorySelectBoxControl<Contractor>>();
+        var id = contractor.SelectedItem?.Id ?? Document.ContractorId;
+        var repo = Services.Provider.GetService<IWaybillReceiptRepository>()!;
+        return repo
+            .GetByContractor(id)
+            .Where(x => x.FullCost > x.Paid);
     }
 
     private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetAll();
 
-    private void Document_ManualValueChange(object? sender, ChangeDataEventArgs<WaybillReceipt> e)
+    private void WaybillReceiptSelected(WaybillReceipt? value)
     {
+        var document_debt = EditorControls.GetControl<IDocumentSelectBoxControl<WaybillReceipt>>(x => x.DocumentDebtId);
+        var document_credit = EditorControls.GetControl<IDocumentSelectBoxControl<WaybillReceipt>>(x => x.DocumentCreditId);
         if (document_debt.SelectedItem != null && document_credit.SelectedItem != null)
         {
             var debt = document_debt.SelectedItem.Paid - document_debt.SelectedItem.FullCost;
             var credit = document_credit.SelectedItem.FullCost - document_credit.SelectedItem.Paid;
 
-            amount.NumericValue = Math.Min(debt, credit);
+            EditorControls.GetControl<ICurrencyTextBoxControl>(x => x.TransactionAmount).NumericValue = Math.Min(debt, credit);
         }
     }
 
-    private static void CreateColumns(Columns columns)
+    private static void CreateDocumentColumns(IList<GridColumn> columns)
     {
         var document_contract = new GridTextColumn()
         {

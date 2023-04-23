@@ -119,6 +119,7 @@
             this.datePickerAdv.Size = new System.Drawing.Size(221, 25);
             this.datePickerAdv.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
             this.datePickerAdv.TabIndex = 0;
+            this.datePickerAdv.Value = new System.DateTime(2023, 4, 12, 21, 3, 26, 118);
             this.datePickerAdv.CheckBoxCheckedChanged += new System.EventHandler(this.DatePickerAdv_CheckBoxCheckedChanged);
             this.datePickerAdv.ValueChanged += new System.EventHandler(this.DatePickerAdv_ValueChanged);
             // 

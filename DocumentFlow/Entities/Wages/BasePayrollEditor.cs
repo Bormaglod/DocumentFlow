@@ -13,76 +13,38 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
+using DocumentFlow.Dialogs.Infrastructure;
 using DocumentFlow.Entities.Wages.Core;
-using DocumentFlow.Entities.Wages.Dialogs;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 
 namespace DocumentFlow.Entities.Wages;
 
-public class BasePayrollEditor<T, P, E> : BillingDocumentEditor<T>
+public abstract class BasePayrollEditor<T, P, E> : BillingDocumentEditor<T>
     where T : BasePayroll, new()
-    where P : IWageEmployee, new()
+    where P : WageEmployee, new()
     where E : IPayrollEmployeeRepository<P>
 {
     public BasePayrollEditor(IDocumentRepository<T> repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         var repo = Services.Provider.GetService<E>();
-        EmployeeRows = new DfDataGrid<P>(repo!) { Dock = DockStyle.Fill };
 
-        EmployeeRows.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("Wage", SummaryColumnFormat.Currency, SelectOptions.All);
-
-        EmployeeRows.AutoGeneratingColumn += (sender, args) =>
-        {
-            switch (args.Column.MappingName)
-            {
-                case "EmployeeName":
-                    args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
-                    break;
-                case "IncomeItemName":
-                    args.Column.Width = 250;
-                    break;
-                case "Wage":
-                    if (args.Column is GridNumericColumn c)
-                    {
-                        c.FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency;
-                    }
-
-                    args.Column.Width = 150;
-                    args.Column.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
-
-                    break;
-            }
-        };
-
-        EmployeeRows.DataCreate += (sender, args) =>
-        {
-            args.Cancel = FormEmployeePayroll.Create(args.CreatingData) == DialogResult.Cancel;
-        };
-
-        EmployeeRows.DataEdit += (sender, args) =>
-        {
-            args.Cancel = FormEmployeePayroll.Edit(args.EditingData) == DialogResult.Cancel;
-        };
-
-        EmployeeRows.DataCopy += (sender, args) =>
-        {
-            args.Cancel = FormEmployeePayroll.Edit(args.CopiedData) == DialogResult.Cancel;
-        };
-
-        AddControls(new Control[]
-        {
-            EmployeeRows
-        });
+        EditorControls
+            .AddDataGrid<P>(grid =>
+                grid
+                    .SetRepository<E>()
+                    .GridSummaryRow(VerticalPosition.Bottom, row =>
+                        row
+                            .AsSummary(x => x.Wage, SummaryColumnFormat.Currency, SelectOptions.All))
+                    .Dialog<IWageEmployeeDialog<P>>()
+                    .AddCommand("Заполнить", Properties.Resources.icons8_incoming_data_16, PopulateDataGrid)
+                    .SetDock(DockStyle.Fill));
     }
 
-    protected DfDataGrid<P> EmployeeRows { get; }
+    protected abstract void PopulateDataGrid(IDataGridControl<P> grid);
 }

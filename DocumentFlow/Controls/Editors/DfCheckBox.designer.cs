@@ -1,4 +1,4 @@
-﻿namespace DocumentFlow.Controls.Editor
+﻿namespace DocumentFlow.Controls.Editors
 {
     partial class DfCheckBox
     {

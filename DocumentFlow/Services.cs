@@ -24,6 +24,7 @@
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Infrastructure.Dialogs;
 using DocumentFlow.Infrastructure.Settings;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -93,6 +94,9 @@ public static class Services
                         .WithTransientLifetime()
                     .AddClasses(classes => classes.AssignableTo<ICard>())
                         .AsImplementedInterfaces()
+                        .WithTransientLifetime()
+                    .AddClasses(classes => classes.AssignableTo(typeof(IDataGridDialog<>)))
+                        .AsMatchingInterface()
                         .WithTransientLifetime()
                 );
 

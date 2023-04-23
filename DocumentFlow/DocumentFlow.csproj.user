@@ -19,6 +19,9 @@
     <Compile Update="Controls\Core\BaseNumericTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Core\SelectBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfCheckBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -34,7 +37,16 @@
     <Compile Update="Controls\Editors\DfDateTimePicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Editors\DfDirectorySelectBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfDocumentSelectBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfIntegerTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfLabel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfMaskedTextBox.cs">
@@ -97,12 +109,6 @@
     <Compile Update="Controls\Editors\DfComboBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Editors\DfDirectorySelectBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfDocumentSelectBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Controls\Editors\DfLine.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -151,7 +157,7 @@
     <Compile Update="Entities\Equipments\EquipmentBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Operations\Dialogs\GoodsSelectForm.cs">
+    <Compile Update="Dialogs\GoodsSelectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Dialogs\GroupEditorForm.cs">
@@ -160,7 +166,7 @@
     <Compile Update="Dialogs\MessageChoiceForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Dialogs\OperationsPerformedForm.cs">
+    <Compile Update="Dialogs\OperationsPerformedDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Dialogs\PreviewReportForm.cs">
@@ -271,6 +277,9 @@
     <Compile Update="Entities\Productions\Finished\FinishedGoodsNestedEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Dialogs\WageEmployeeDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Entities\Wages\GrossPayrols\GrossPayrollBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -293,6 +302,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Wages\Wages1c\Wage1cEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Entities\Waybills\Receipt\WaybillReceiptEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Waybills\Receipt\WaybillReceiptFilter.cs">
@@ -382,7 +394,7 @@
     <Compile Update="Entities\Companies\ContractApplication\ContractApplicationEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Companies\ContractApplication\Dialogs\FormPriceApproval.cs">
+    <Compile Update="Dialogs\PriceApprovalDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Entities\Companies\Contractor\ContractorBrowser.cs">
@@ -481,7 +493,7 @@
     <Compile Update="Entities\Persons\PersonEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Productions\Dialogs\FormMaterialQuantity.cs">
+    <Compile Update="Dialogs\MaterialQuantityDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Entities\Productions\Lot\ProductionLotEditor.cs">
@@ -520,13 +532,10 @@
     <Compile Update="Entities\Products\Material\MaterialEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Products\Dialogs\FormProductPrice.cs">
+    <Compile Update="Dialogs\ProductPriceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Entities\Waybills\Receipt\WaybillReceiptBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Waybills\Receipt\WaybillReceiptEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Entities\Waybills\Sale\WaybillSaleBrowser.cs">

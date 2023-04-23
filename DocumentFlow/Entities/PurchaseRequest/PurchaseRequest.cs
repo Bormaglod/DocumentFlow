@@ -88,7 +88,7 @@ public class PurchaseRequest : ShipmentDocument
 
     public static string StateFromValue(PurchaseState state) => state.ToString().Humanize(LetterCasing.LowerCase);
 
-    public static void CreateGridColumns(Columns columns)
+    public static void CreateGridColumns(IList<GridColumn> columns)
     {
         var doc_date = new GridDateTimeColumn()
         {

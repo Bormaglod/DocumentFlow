@@ -14,19 +14,15 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Dialogs.Infrastructure;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Productions.Order;
 using DocumentFlow.Entities.Productions.Processing;
-using DocumentFlow.Entities.Productions.Returns.Dialogs;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
-
-using Syncfusion.WinForms.DataGrid.Enums;
 
 namespace DocumentFlow.Entities.Productions.Returns;
 
@@ -34,132 +30,116 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
 {
     public ReturnMaterialsEditor(IReturnMaterialsRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        var contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 80, 400);
-        var contract = CreateDirectorySelectBox<Contract, IContractEditor>(x => x.ContractId, "Договор", 80, 400);
-        var order = CreateDocumentSelectBox<ProductionOrder, IProductionOrderEditor>(x => x.OwnerId, "Заказ", 80, 400, refreshMethod: DataRefreshMethod.OnOpen);
+        EditorControls
+            .AddDirectorySelectBox<Contractor>(x => x.ContractorId, "Контрагент", select =>
+                select
+                    .SetDataSource(GetContractors)
+                    .EnableEditor<IContractorEditor>()
+                    .DirectoryChanged(ContractorChanged)
+                    .SetHeaderWidth(80)
+                    .SetEditorWidth(400))
+            .AddDirectorySelectBox<Contract>(x => x.ContractId, "Договор", select =>
+                select
+                    .SetDataSource(GetContracts)
+                    .EnableEditor<IContractEditor>()
+                    .DirectoryChanged(ContractChanged)
+                    .SetHeaderWidth(80)
+                    .SetEditorWidth(400))
+            .AddDocumentSelectBox<ProductionOrder>(x => x.OwnerId, "Заказ", select => 
+                select
+                    .SetDataSource(GetOrders, DataRefreshMethod.OnOpen)
+                    .CreateColumns(ProductionOrder.CreateGridColumns)
+                    .SetHeaderWidth(80)
+                    .SetEditorWidth(400))
+            .AddDataGrid<ReturnMaterialsRows>(grid =>
+                grid
+                    .SetRepository<IReturnMaterialsRowsRepository>()
+                    .Dialog<IMaterialQuantityDialog>()
+                    .AddCommand("Заполнить", Properties.Resources.icons8_incoming_data_16, PopulateCommand)
+                    .SetDock(DockStyle.Fill));
+    }
 
-        order.SetDataSource(() =>
+    private IEnumerable<ProductionOrder>? GetOrders()
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        var repo = Services.Provider.GetService<IProductionOrderRepository>();
+        if (repo != null && contract.SelectedItem != null)
         {
-            var repo = Services.Provider.GetService<IProductionOrderRepository>();
-            if (repo != null && contract.SelectedItem != null)
-            {
-                return repo.GetWithReturnMaterial(contract.SelectedItem);
-            }
+            return repo.GetWithReturnMaterial(contract.SelectedItem);
+        }
 
-            return null;
-        });
+        return null;
+    }
 
-        order.Columns += (sender, e) => ProductionOrder.CreateGridColumns(e.Columns);
-
-        var rowRepo = Services.Provider.GetService<IReturnMaterialsRowsRepository>()!;
-        var details = new DfDataGrid<ReturnMaterialsRows>(rowRepo) { Dock = DockStyle.Fill };
-
-        details.AddCommand("Заполнить", Properties.Resources.icons8_incoming_data_16, (sender, e) =>
+    private IEnumerable<Contractor>? GetContractors()
+    {
+        var repo = Services.Provider.GetService<IContractorRepository>();
+        if (repo != null)
         {
-            if (MessageBox.Show("Перед заполнением таблица будет очищена. Продолжить?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
-            {
-                return;
-            }
+            return repo.GetSuppliers();
+        }
 
-            if (order.SelectedItem != null)
-            {
-                var repo = Services.Provider.GetService<IWaybillProcessingRepository>();
-                if (repo != null)
-                {
-                    var m = repo.GetReturnMaterials(order.SelectedItem);
-                    details.Fill(m);
-                }
-            }
-        });
+        return null;
+    }
 
-        contractor.ValueChanged += (sender, e) =>
+    private IEnumerable<Contract>? GetContracts()
+    {
+        var contractor = EditorControls.GetControl<IDirectorySelectBoxControl<Contractor>>(x => x.ContractorId);
+        if (contractor.SelectedItem != null)
         {
-            contract.RefreshDataSource();
-            contract.Value = Document.ContractId;
-
-            if (contract.Value != null)
-            {
-                order.RefreshDataSource();
-                order.Value = Document.OwnerId;
-            }
-        };
-
-        contractor.SetDataSource(() =>
-        {
-            var repo = Services.Provider.GetService<IContractorRepository>();
+            var repo = Services.Provider.GetService<IContractRepository>();
             if (repo != null)
             {
-                return repo.GetSuppliers();
+                return repo.GetSuppliers(contractor.SelectedItem.Id);
             }
+        }
 
-            return null;
-        });
+        return null;
+    }
 
-        contract.SetDataSource(() =>
+    private void ContractorChanged(Contractor? _)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        if (contract is IDataSourceControl<Guid, Contract> contractSource)
         {
-            if (contractor.SelectedItem != null)
+            contractSource.RefreshDataSource(Document.ContractId);
+        }
+
+        if (contract.SelectedItem != null)
+        {
+            var order = EditorControls.GetControl<IDocumentSelectBoxControl<ProductionOrder>>();
+            if (order is IDataSourceControl<Guid, ProductionOrder> orderSource)
             {
-                var repo = Services.Provider.GetService<IContractRepository>();
-                if (repo != null)
-                {
-                    return repo.GetSuppliers(contractor.SelectedItem.Id);
-                }
+                orderSource.RefreshDataSource(Document.OwnerId);
             }
+        }
+    }
 
-            return null;
-        });
-
-        contract.ValueChanged += (sender, e) =>
+    private void ContractChanged(Contract? newValue)
+    {
+        var order = EditorControls.GetControl<IDocumentSelectBoxControl<ProductionOrder>>();
+        if (order is IDataSourceControl<Guid, ProductionOrder> orderSource)
         {
-            if (e.NewValue != e.OldValue)
+            orderSource.RefreshDataSource(Document.OwnerId);
+        }
+    }
+
+    private void PopulateCommand(IDataGridControl<ReturnMaterialsRows> grid)
+    {
+        if (MessageBox.Show("Перед заполнением таблица будет очищена. Продолжить?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+        {
+            return;
+        }
+
+        var order = EditorControls.GetControl<IDocumentSelectBoxControl<ProductionOrder>>();
+        if (order.SelectedItem != null)
+        {
+            var repo = Services.Provider.GetService<IWaybillProcessingRepository>();
+            if (repo != null)
             {
-                order.RefreshDataSource();
-                order.Value = Document.OwnerId;
+                var m = repo.GetReturnMaterials(order.SelectedItem);
+                grid.Fill(m);
             }
-        };
-
-        details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("ProductCost", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("TaxValue", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("FullCost", SummaryColumnFormat.Currency, SelectOptions.All);
-
-        details.AutoGeneratingColumn += (sender, args) =>
-        {
-            switch (args.Column.MappingName)
-            {
-                case "Id":
-                    args.Cancel = true;
-                    break;
-                case "MaterialName":
-                    args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
-                    break;
-                case "Quantity":
-                    args.Column.Width = 100;
-                    break;
-            }
-        };
-
-        details.DataCreate += (sender, args) =>
-        {
-            args.Cancel = FormMaterialQuantity.Create(args.CreatingData) == DialogResult.Cancel;
-        };
-
-        details.DataEdit += (sender, args) =>
-        {
-            args.Cancel = FormMaterialQuantity.Edit(args.EditingData) == DialogResult.Cancel;
-        };
-
-        details.DataCopy += (sender, args) =>
-        {
-            args.Cancel = FormMaterialQuantity.Edit(args.CopiedData) == DialogResult.Cancel;
-        };
-
-        AddControls(new Control[]
-        {
-            contractor,
-            contract,
-            order,
-            details
-        });
+        }
     }
 }

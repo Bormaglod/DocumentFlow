@@ -22,22 +22,22 @@ public class BankEditor : Editor<Bank>, IBankEditor
     public BankEditor(IBankRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         EditorControls
-            .CreateTextBox(x => x.ItemName, "Наименование", (text) =>
+            .AddTextBox(x => x.ItemName, "Наименование", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(400))
-            .CreateMaskedTextBox<decimal>(x => x.Bik, "БИК", (text) =>
+            .AddMaskedTextBox<decimal>(x => x.Bik, "БИК", (text) =>
                 text
                     .SetMask("## ## ## ###")
                     .SetHeaderWidth(headerWidth)
                     .DefaultAsValue())
-            .CreateMaskedTextBox<decimal>(x => x.Account, "Корр. счёт", (text) =>
+            .AddMaskedTextBox<decimal>(x => x.Account, "Корр. счёт", (text) =>
                 text
                     .SetMask("### ## ### # ######## ###")
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(180)
                     .DefaultAsValue())
-            .CreateTextBox(x => x.Town, "Город", (text) =>
+            .AddTextBox(x => x.Town, "Город", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(400)

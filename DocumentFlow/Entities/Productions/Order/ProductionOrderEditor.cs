@@ -16,11 +16,10 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Dialogs;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Productions.Lot;
-using DocumentFlow.Entities.Products.Dialogs;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 
@@ -33,106 +32,35 @@ namespace DocumentFlow.Entities.Productions.Order;
 
 public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductionOrderEditor
 {
-    private readonly DfDirectorySelectBox<Contractor> contractor;
-
     public ProductionOrderEditor(IProductionOrderRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
-        contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 80, 400, data: GetCustomers);
-        var contract = CreateDirectorySelectBox<Contract, IContractEditor>(x => x.ContractId, "Договор", 80, 400);
-        var details = new DfDataGrid<ProductionOrderPrice>(Services.Provider.GetService<IProductionOrderPriceRepository>()!)
-        {
-            Dock = DockStyle.Fill
-        };
-
-        contractor.ValueChanged += (sender, args) =>
-        {
-            contract.RefreshDataSource();
-            contract.Value = contract.Items.FirstOrDefault(x => x.IsDefault)?.Id;
-        };
-
-        contract.SetDataSource(() =>
-        {
-            if (contractor.SelectedItem != null)
-            {
-                var repo = Services.Provider.GetService<IContractRepository>();
-                return repo!.GetCustomers(contractor.SelectedItem.Id);
-            }
-
-            return null;
-        });
-
-        details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("ProductCost", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("TaxValue", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("FullCost", SummaryColumnFormat.Currency, SelectOptions.All);
-
-        details.AutoGeneratingColumn += (sender, args) =>
-        {
-            switch (args.Column.MappingName)
-            {
-                case "Id":
-                case "Code":
-                    args.Cancel = true;
-                    break;
-                case "ProductName":
-                    args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
-                    break;
-                case "CalculationName":
-                    args.Column.Width = 150;
-                    break;
-                case "Amount":
-                    args.Column.Width = 100;
-                    break;
-                case "Price":
-                    UpdateCurrencyColumn(args.Column, 100);
-                    break;
-                case "ProductCost":
-                    UpdateCurrencyColumn(args.Column, 140);
-                    break;
-                case "Tax":
-                    args.Column.Width = 80;
-                    args.Column.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
-                    break;
-                case "TaxValue":
-                    UpdateCurrencyColumn(args.Column, 140);
-                    break;
-                case "FullCost":
-                    UpdateCurrencyColumn(args.Column, 140);
-                    break;
-                case "CompleteStatus":
-                    args.Column = new GridProgressBarColumn()
-                    {
-                        MappingName = args.Column.MappingName,
-                        HeaderText = "Выполнено",
-                        Maximum = 100,
-                        Minimum = 0,
-                        ValueMode = ProgressBarValueMode.Percentage
-                    };
-                    break;
-            }
-        };
-
-        details.DataCreate += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<ProductionOrderPrice>.Create(args.CreatingData, contract.SelectedItem, true) == DialogResult.Cancel;
-        };
-
-        details.DataEdit += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<ProductionOrderPrice>.Edit(args.EditingData, contract.SelectedItem, true) == DialogResult.Cancel;
-        };
-
-        details.DataCopy += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<ProductionOrderPrice>.Edit(args.CopiedData, contract.SelectedItem, true) == DialogResult.Cancel;
-        };
-
-        AddControls(new Control[]
-        {
-            contractor,
-            contract,
-            details
-        });
+        EditorControls
+            .AddDirectorySelectBox<Contractor>(x => x.ContractorId, "Контрагент", select =>
+                select
+                    .SetDataSource(GetCustomers)
+                    .EnableEditor<IContractorEditor>()
+                    .DirectoryChanged(ContractorChanged)
+                    .SetHeaderWidth(80)
+                    .SetEditorWidth(400))
+            .AddDirectorySelectBox<Contract>(x => x.ContractId, "Договор", select =>
+                select
+                    .SetDataSource(GetContracts)
+                    .EnableEditor<IContractEditor>()
+                    .SetHeaderWidth(80)
+                    .SetEditorWidth(400))
+            .AddDataGrid<ProductionOrderPrice>(grid =>
+                grid
+                    .SetRepository<IProductionOrderPriceRepository>()
+                    .GridSummaryRow(VerticalPosition.Bottom, row =>
+                        row
+                            .AsSummary(x => x.ProductCost, SummaryColumnFormat.Currency, SelectOptions.All)
+                            .AsSummary(x => x.TaxValue, SummaryColumnFormat.Currency, SelectOptions.All)
+                            .AsSummary(x => x.FullCost, SummaryColumnFormat.Currency, SelectOptions.All))
+                    .AutoGeneratingColumn(AutoGenerateColumn)
+                    .DoCreate(DataCreate)
+                    .DoUpdate(DataUpdate)
+                    .DoCopy(DataCopy)
+                    .SetDock(DockStyle.Fill));
     }
 
     protected override void RegisterNestedBrowsers()
@@ -141,16 +69,64 @@ public class ProductionOrderEditor : DocumentEditor<ProductionOrder>, IProductio
         RegisterNestedBrowser<IProductionLotNestedBrowser, ProductionLot>();
     }
 
-    private IEnumerable<Contractor> GetCustomers() => Services.Provider.GetService<IContractorRepository>()!.GetCustomers();
-
-    private static void UpdateCurrencyColumn(GridColumn column, int width)
+    private bool DataCreate(ProductionOrderPrice data)
     {
-        if (column is GridNumericColumn c)
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>();
+        ProductionOrderPriceDialog form = new(contract.SelectedItem);
+        return form.Create(data);
+    }
+
+    private DataOperationResult DataUpdate(ProductionOrderPrice data) 
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>();
+        ProductionOrderPriceDialog form = new(contract.SelectedItem);
+        if (form.Edit(data))
         {
-            c.FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency;
+            return DataOperationResult.Update;
+        }
+        else
+        {
+            return DataOperationResult.Cancel;
+        }
+    }
+
+    private bool DataCopy(ProductionOrderPrice data)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>();
+        ProductionOrderPriceDialog form = new(contract.SelectedItem);
+        return form.Edit(data);
+    }
+
+    private bool AutoGenerateColumn(GridColumn column)
+    {
+        return column.MappingName switch
+        {
+            "Code" => true,
+            _ => false,
+        };
+    }
+
+    private void ContractorChanged(Contractor? _)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>();
+        if (contract is IDataSourceControl<Guid, Contract> source)
+        {
+            
+            source.RefreshDataSource(Document?.ContractId ?? contract.Items.FirstOrDefault(x => x.IsDefault)?.Id);
+        }
+    }
+
+    private IEnumerable<Contract>? GetContracts()
+    {
+        var contractor = EditorControls.GetControl<IDirectorySelectBoxControl<Contractor>>();
+        if (contractor.SelectedItem != null)
+        {
+            var repo = Services.Provider.GetService<IContractRepository>();
+            return repo!.GetCustomers(contractor.SelectedItem.Id);
         }
 
-        column.Width = width;
-        column.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
+        return null;
     }
+
+    private IEnumerable<Contractor> GetCustomers() => Services.Provider.GetService<IContractorRepository>()!.GetCustomers();
 }

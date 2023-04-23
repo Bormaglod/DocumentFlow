@@ -41,13 +41,11 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Dialogs;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Entities.Products.Core;
-using DocumentFlow.Entities.Products.Dialogs;
 using DocumentFlow.Entities.PurchaseRequestLib;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
@@ -55,265 +53,275 @@ using DocumentFlow.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 
 using System.Reflection;
 
 namespace DocumentFlow.Entities.Waybills;
 
-public abstract class WaybillEditor<T, P> : DocumentEditor<T>
+public abstract class WaybillEditor<T, P, R> : DocumentEditor<T>
     where T : Waybill, new()
     where P : ProductPrice, new()
+    where R : IOwnedRepository<long, P>
 {
-    private readonly DfDirectorySelectBox<Contractor> contractor;
-    private readonly DfDirectorySelectBox<Contract> contract;
-    private readonly Panel upd_panel;
-    private readonly Panel invoice_panel;
-    private readonly DfToggleButton upd;
-    private readonly DfPanel doc1c;
-    private readonly Label invoice_text;
-    private readonly DfTextBox waybill_number;
-    private readonly DfDateTimePicker waybill_date;
+    private readonly IRepository<Guid, T> repository;
 
     public WaybillEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager, true)
     {
-        contractor = CreateDirectorySelectBox<Contractor, IContractorEditor>(x => x.ContractorId, "Контрагент", 120, 400);
-        contract = CreateDirectorySelectBox<Contract, IContractEditor>(x => x.ContractId, "Договор", 120, 400);
+        this.repository = repository;
 
-        waybill_number = CreateTextBox(x => x.WaybillNumber, "Накладная №", 110, 120);
-        waybill_number.Dock = DockStyle.Left;
-        waybill_number.Width = 235;
+        EditorControls
+            .AddDirectorySelectBox<Contractor>(x => x.ContractorId, "Контрагент", select =>
+                select
+                    .EnableEditor<IContractorEditor>()
+                    .SetDataSource(GetContractors)
+                    .DirectoryChanged(ContractorValueChanged)
+                    .SetHeaderWidth(120)
+                    .SetEditorWidth(400))
+            .AddDirectorySelectBox<Contract>(x => x.ContractId, "Договор", select =>
+                select
+                    .EnableEditor<IContractEditor>()
+                    .SetDataSource(GetContracts)
+                    .DirectoryChanged(ContractValueChanged)
+                    .SetHeaderWidth(120)
+                    .SetEditorWidth(400))
+            .If(typeof(T) == typeof(WaybillReceipt), controls =>
+                controls
+                    .AddDocumentSelectBox<PurchaseRequest>(x => x.OwnerId, "Заявка на покупку", select =>
+                        select
+                            .SetDataSource(GetPurchaseRequests, DataRefreshMethod.OnOpen)
+                            .CreateColumns(PurchaseRequest.CreateGridColumns)
+                            .DocumentChanged(PurchaseChanged)
+                            .DocumentSelected(PurchaseSelected)
+                            .SetHeaderWidth(120)
+                            .SetEditorWidth(400)))
+            .AddPanel(panel =>
+                panel
+                    .SetName("Doc1C")
+                    .ShowHeader("Докуметы 1С")
+                    .SetHeight(144)
+                    .SetDock(DockStyle.Bottom)
+                    .SetVisible(false)
+                    .AddControls(controls =>
+                        controls
+                            .AddPanel(panel =>
+                                panel
+                                    .SetHeight(32)
+                                    .AddControls(controls =>
+                                        controls
+                                            .AddTextBox(x => x.WaybillNumber, "Накладная №", text =>
+                                                text
+                                                    .TextChanged(WaybillNumberChanged)
+                                                    .SetHeaderWidth(110)
+                                                    .SetEditorWidth(120)
+                                                    .SetDock(DockStyle.Left)
+                                                    .SetWidth(235))
+                                            .AddDateTimePicker(x => x.WaybillDate, "от", date =>
+                                                date
+                                                    .DateChanged(WaybillDateChanged)
+                                                    .SetFormat(DateTimePickerFormat.Short)
+                                                    .SetHeaderWidth(25)
+                                                    .SetEditorWidth(170)
+                                                    .SetDock(DockStyle.Left)
+                                                    .SetWidth(200))))
+                            .AddPanel(panel =>
+                                panel
+                                    .SetName("Invoice")
+                                    .SetHeight(32)
+                                    .AddControls(controls =>
+                                        controls
+                                            .AddTextBox(x => x.InvoiceNumber, "Счёт-фактура №", text =>
+                                                text
+                                                    .SetHeaderWidth(110)
+                                                    .SetEditorWidth(120)
+                                                    .SetDock(DockStyle.Left)
+                                                    .SetWidth(235))
+                                            .AddDateTimePicker(x => x.InvoiceDate, "от", date =>
+                                                date
+                                                    .SetFormat(DateTimePickerFormat.Short)
+                                                    .SetHeaderWidth(25)
+                                                    .SetEditorWidth(170)
+                                                    .SetDock(DockStyle.Left)
+                                                    .SetWidth(200))))
+                            .AddPanel(panel =>
+                                panel
+                                    .SetName("UPD")
+                                    .SetHeight(32)
+                                    .AddControls(controls =>
+                                        controls
+                                            .AddToggleButton(x => x.Upd, "УПД", toggle =>
+                                                toggle
+                                                    .ToggleChanged(UpdValueChanged)
+                                                    .SetHeaderWidth(40)
+                                                    .SetDock(DockStyle.Left)
+                                                    .SetWidth(130))
+                                            .AddLabel(string.Empty, label =>
+                                                label
+                                                    .SetDock(DockStyle.Fill))))))
+            .AddDataGrid<P>(grid =>
+                grid
+                    .SetRepository<R>()
+                    .GridSummaryRow(VerticalPosition.Bottom, row =>
+                        row
+                            .AsSummary(x => x.ProductCost, SummaryColumnFormat.Currency, SelectOptions.All)
+                            .AsSummary(x => x.TaxValue, SummaryColumnFormat.Currency, SelectOptions.All)
+                            .AsSummary(x => x.FullCost, SummaryColumnFormat.Currency, SelectOptions.All))
+                    .DoCreate(DataCreate)
+                    .DoUpdate(DataEdit)
+                    .DoCopy(DataCopy)
+                    .SetDock(DockStyle.Fill)); ;
+    }
 
-        waybill_date = CreateDateTimePicker(x => x.WaybillDate, "от", 25, 170, format: DateTimePickerFormat.Short);
-        waybill_date.Dock = DockStyle.Left;
-        waybill_date.Width = 200;
+    private void PurchaseChanged(PurchaseRequest? newValue)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        contract.SetEnabled(newValue == null);
+    }
 
-        var waybill_panel = CreatePanel(new Control[] { waybill_date, waybill_number });
-
-        var invoice_number = CreateTextBox(x => x.InvoiceNumber, "Счёт-фактура №", 110, 120);
-        invoice_number.Dock = DockStyle.Left;
-        invoice_number.Width = 235;
-
-        var invoice_date = CreateDateTimePicker(x => x.InvoiceDate, "от", 25, 170, format: DateTimePickerFormat.Short);
-        invoice_date.Dock = DockStyle.Left;
-        invoice_date.Width = 200;
-
-        invoice_panel = CreatePanel(new Control[] { invoice_date, invoice_number });
-
-        invoice_text = new Label() { Padding = new(10, 0, 0, 0), AutoSize = true, Dock = DockStyle.Left };
-        upd = CreateToggleButton(x => x.Upd, "УПД", 40);
-        upd.Dock = DockStyle.Left;
-        upd.Width = 130;
-
-        upd_panel = CreatePanel(new Control[] { invoice_text, upd });
-
-        doc1c = new DfPanel()
+    private void PurchaseSelected(PurchaseRequest? newValue)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        if (MessageBox.Show("Заполнить таблицу по данным заявки?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
         {
-            Header = "Докуметы 1С",
-            Height = 144,
-            Dock = DockStyle.Bottom,
-            Padding = new Padding(0, 10, 0, 0),
-            Visible = false
-        };
-
-        doc1c.AddControls(new Control[] { waybill_panel, invoice_panel, upd_panel });
-
-        var details = new DfDataGrid<P>(GetDetailsRepository()) { Dock = DockStyle.Fill };
-
-        contractor.ValueChanged += ContractorValueChanged;
-        contractor.SetDataSource(() =>
-        {
-            var repo = Services.Provider.GetService<IContractorRepository>();
-            if (repo != null)
+            if (contract is IDataSourceControl<Guid, Contract> contractSource)
             {
-                return typeof(T) == typeof(WaybillSale) ? repo.GetCustomers() : repo.GetSuppliers();
+                contractSource.Select(newValue?.ContractId);
             }
 
-            return null;
-        });
-
-        contract.ValueChanged += ContractValueChanged;
-        contract.SetDataSource(() =>
-        {
-            if (contractor.SelectedItem != null)
+            if (IsCreating)
             {
-                var repo = Services.Provider.GetService<IContractRepository>();
-                if (repo != null)
+                if (MessageBox.Show("Перед заполнением документ должен быть записан. Записать?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    return typeof(T) == typeof(WaybillSale) ?
-                        repo.GetCustomers(contractor.SelectedItem.Id) :
-                        repo.GetSuppliers(contractor.SelectedItem.Id);
+                    Save();
+                }
+                else
+                {
+                    return;
                 }
             }
-
-            return null;
-        });
-
-        waybill_number.ValueChanged += (sender, e) => UpdateInvoiceText();
-        waybill_date.ValueChanged += (sender, e) => UpdateInvoiceText();
-        upd.ValueChanged += UpdValueChanged;
-
-        details.CreateTableSummaryRow(VerticalPosition.Bottom)
-            .AsSummary("ProductCost", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("TaxValue", SummaryColumnFormat.Currency, SelectOptions.All)
-            .AsSummary("FullCost", SummaryColumnFormat.Currency, SelectOptions.All);
-
-        details.AutoGeneratingColumn += (sender, args) =>
-        {
-            switch (args.Column.MappingName)
+            if (repository is IWaybillReceiptRepository repo && Document is WaybillReceipt doc)
             {
-                case "Id":
-                    args.Cancel = true;
-                    break;
-                case "ProductName":
-                    args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
-                    break;
-                case "Code":
-                    args.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.AllCells;
-                    break;
-                case "Amount":
-                    args.Column.Width = 100;
-                    break;
-                case "Price":
-                    UpdateCurrencyColumn(args.Column, 100);
-                    break;
-                case "ProductCost":
-                    UpdateCurrencyColumn(args.Column, 140);
-                    break;
-                case "Tax":
-                    args.Column.Width = 80;
-                    args.Column.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
-                    break;
-                case "TaxValue":
-                    UpdateCurrencyColumn(args.Column, 140);
-                    break;
-                case "FullCost":
-                    UpdateCurrencyColumn(args.Column, 140);
-                    break;
+                repo.FillProductListFromPurchaseRequest(doc, newValue);
+
+                var details = EditorControls.GetControl<IDataGridControl<P>>();
+                if (details is IDataSourceControl detailSource)
+                {
+                    detailSource.RefreshDataSource();
+                }
+                
             }
-        };
+        }
+    }
 
-        details.DataCreate += (sender, args) =>
+    private bool DataCreate(P data)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        ProductPriceDialog<P> form = new(contract.SelectedItem);
+        return form.Create(data);
+    }
+
+    private DataOperationResult DataEdit(P data)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+
+        ProductPriceDialog<P> form = new(contract.SelectedItem);
+        if (form.Edit(data))
         {
-            args.Cancel = FormProductPrice<P>.Create(args.CreatingData, contract.SelectedItem) == DialogResult.Cancel;
-        };
-
-        details.DataEdit += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<P>.Edit(args.EditingData, contract.SelectedItem) == DialogResult.Cancel;
-
             var attr = typeof(P).GetCustomAttribute<ProductContentAttribute>();
             if (attr != null && attr.Content == ProductContent.All)
             {
-                args.Rule = RuleChange.DeleteAndInsert;
-            }
-        };
-
-        details.DataCopy += (sender, args) =>
-        {
-            args.Cancel = FormProductPrice<P>.Edit(args.CopiedData, contract.SelectedItem) == DialogResult.Cancel;
-        };
-
-        List<Control> controls = new()
-        {
-            contractor,
-            contract
-        };
-
-        if (typeof(T) == typeof(WaybillReceipt))
-        {
-            var purchase = CreateDocumentSelectBox<PurchaseRequest, IPurchaseRequestEditor>(x => x.OwnerId, "Заявка на покупку", 120, 400, refreshMethod: DataRefreshMethod.OnOpen);
-            purchase.SetDataSource(() =>
-            {
-                if (contractor.SelectedItem != null)
-                {
-                    var repo = Services.Provider.GetService<IPurchaseRequestRepository>();
-                    return repo!.GetByContractor(contractor.SelectedItem.Id);
-                }
-
-                return null;
-            });
-
-            purchase.Columns += (sender, e) => PurchaseRequest.CreateGridColumns(e.Columns);
-
-            purchase.ValueChanged += (sender, e) => contract.Enabled = e.NewValue == null;
-
-            purchase.ManualValueChange += (sender, e) =>
-            {
-                if (MessageBox.Show("Заполнить таблицу по данным заявки?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    contract.Value = e.NewValue?.ContractId;
-
-                    if (IsCreating)
-                    {
-                        if (MessageBox.Show("Перед заполнением документ должен быть записан. Записать?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                        {
-                            Save();
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                    if (repository is IWaybillReceiptRepository repo && Document is WaybillReceipt doc)
-                    {
-                        repo.FillProductListFromPurchaseRequest(doc, e.NewValue);
-                        details.RefreshDataSource();
-                    }
-                }
-            };
-
-            controls.Add(purchase);
-        }
-
-        controls.AddRange(new Control[]
-        {
-            details,
-            doc1c
-        });
-
-        AddControls(controls);
-
-        details.BringToFront();
-    }
-
-    protected abstract IOwnedRepository<long, P> GetDetailsRepository();
-
-    private static void UpdateCurrencyColumn(GridColumn column, int width)
-    {
-        if (column is GridNumericColumn c)
-        {
-            c.FormatMode = Syncfusion.WinForms.Input.Enums.FormatMode.Currency;
-        }
-
-        column.Width = width;
-        column.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
-    }
-
-    private void ContractorValueChanged(object? sender, EventArgs e)
-    {
-        contract.RefreshDataSource();
-        contract.Value = Document.ContractId;
-    }
-
-    private void ContractValueChanged(object? sender, EventArgs e)
-    {
-        if (contract.SelectedItem == null)
-        {
-            doc1c.Visible = false;
-        }
-        else
-        {
-            bool taxPayer = contract.SelectedItem.TaxPayer;
-            upd_panel.Visible = taxPayer;
-            if (taxPayer)
-            {
-                invoice_panel.Visible = !upd.ToggleValue;
+                return DataOperationResult.DeleteAndInsert;
             }
             else
             {
-                invoice_panel.Visible = false;
+                return DataOperationResult.Update;
+            }
+        }
+        else
+        {
+            return DataOperationResult.Cancel;
+        }
+    }
+
+    private bool DataCopy(P data)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        ProductPriceDialog<P> form = new(contract.SelectedItem);
+        return form.Edit(data);
+    }
+
+    private IEnumerable<Contractor>? GetContractors()
+    {
+        var repo = Services.Provider.GetService<IContractorRepository>();
+        if (repo != null)
+        {
+            return typeof(T) == typeof(WaybillSale) ? repo.GetCustomers() : repo.GetSuppliers();
+        }
+
+        return null;
+    }
+
+    private IEnumerable<PurchaseRequest>? GetPurchaseRequests() 
+    {
+        var contractor = EditorControls.GetControl<IDirectorySelectBoxControl<Contractor>>(x => x.ContractorId);
+        if (contractor.SelectedItem != null)
+        {
+            var repo = Services.Provider.GetService<IPurchaseRequestRepository>();
+            return repo!.GetByContractor(contractor.SelectedItem.Id);
+        }
+
+        return null;
+    }
+
+    private IEnumerable<Contract>? GetContracts()
+    {
+        var contractor = EditorControls.GetControl<IDirectorySelectBoxControl<Contractor>>(x => x.ContractorId);
+        if (contractor.SelectedItem != null)
+        {
+            var repo = Services.Provider.GetService<IContractRepository>();
+            if (repo != null)
+            {
+                return typeof(T) == typeof(WaybillSale) ?
+                    repo.GetCustomers(contractor.SelectedItem.Id) :
+                    repo.GetSuppliers(contractor.SelectedItem.Id);
+            }
+        }
+
+        return null;
+    }
+
+    private void ContractorValueChanged(Contractor? value)
+    {
+        var contract = EditorControls.GetControl<IDirectorySelectBoxControl<Contract>>(x => x.ContractId);
+        if (contract is IDataSourceControl<Guid, Contract> source) 
+        {
+            source.RefreshDataSource(Document.ContractId);
+        }
+    }
+
+    private void ContractValueChanged(Contract? value)
+    {
+        var doc1c = EditorControls.GetContainer("Doc1C");
+        var invoice_panel = EditorControls.GetContainer("Invoice");
+        var upd_panel = EditorControls.GetContainer("UPD");
+
+        var upd = EditorControls.GetControl<IToggleButtonControl>(x => x.Upd);
+
+        if (value == null)
+        {
+            doc1c.SetVisible(false);
+        }
+        else
+        {
+            bool taxPayer = value.TaxPayer;
+            upd_panel.SetVisible(taxPayer);
+            if (taxPayer)
+            {
+                invoice_panel.SetVisible(!upd.ToggleValue);
+            }
+            else
+            {
+                invoice_panel.SetVisible(false);
             }
 
             int height = 80;
@@ -326,30 +334,41 @@ public abstract class WaybillEditor<T, P> : DocumentEditor<T>
                 }
             }
 
-            doc1c.Height = height;
-
-            doc1c.Visible = taxPayer || contract.SelectedItem.ContractorType == ContractorType.Seller;
+            doc1c.SetHeight(height);
+            doc1c.SetVisible(taxPayer || value.ContractorType == ContractorType.Seller);
         }
     }
 
-    private void UpdValueChanged(object? sender, EventArgs e)
+    private void UpdValueChanged(bool value)
     {
-        invoice_panel.Visible = !upd.ToggleValue;
-        invoice_text.Visible = upd.ToggleValue;
-        doc1c.Height = upd.ToggleValue ? 112 : 144;
+        EditorControls.GetContainer("Invoice").SetVisible(!value);
+        EditorControls.GetContainer("Doc1C").SetHeight(value ? 112 : 144);
 
-        UpdateInvoiceText();
+        EditorControls.GetControl<ILabelControl>().SetVisible(value);
+
+        if (value)
+        {
+            var waybill_date = EditorControls.GetControl<IDateTimePickerControl>(x => x.WaybillDate);
+            var number = EditorControls.GetControl<ITextBoxControl>(x => x.WaybillNumber).Text;
+            UpdateInvoiceText(number, waybill_date.Value);
+        }
     }
 
-    private void UpdateInvoiceText()
+    private void WaybillNumberChanged(string? number)
     {
-        if (waybill_number.Value == null || waybill_date.Value == null)
-        {
-            invoice_text.Text = $"Счёт-фактура №? от ?";
-        }
-        else
-        {
-            invoice_text.Text = $"Счёт-фактура №{waybill_number.Value} от {waybill_date.Value:d}";
-        }
+        var waybill_date = EditorControls.GetControl<IDateTimePickerControl>(x => x.WaybillDate);
+        UpdateInvoiceText(number, waybill_date.Value);
+    }
+
+    private void WaybillDateChanged(DateTime? date)
+    {
+        var number = EditorControls.GetControl<ITextBoxControl>(x => x.WaybillNumber).Text;
+        UpdateInvoiceText(number, date);
+    }
+
+    private void UpdateInvoiceText(string? number, DateTime? date)
+    {
+        string text = $"Счёт-фактура №{number ?? "?"} от {(date == null ? "?" : date.Value.ToString("d"))}";
+        EditorControls.GetControl<ILabelControl>().SetText(text);
     }
 }
