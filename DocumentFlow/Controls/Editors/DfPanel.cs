@@ -11,6 +11,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentFlow.Controls.Editors;
 
+/// <summary>
+/// Эта панель состоит из 2-х частей:
+///   - заголовок (высота 28px)
+///   - панель контролов (с отступом в 10px, если заголовок установлен и 0px - если нет)
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public partial class DfPanel<T> : UserControl, IContainer<T>
     where T : class, new()
 {

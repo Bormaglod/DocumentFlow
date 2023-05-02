@@ -12,6 +12,9 @@
 //  - в табличную часть добавлена кнопка "Заполнить"
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.5.2
+//  - уточнена высота панели Doc1C
+//  - переписан метод AutoGenerateColumn
 //
 //-----------------------------------------------------------------------
 
@@ -59,7 +62,7 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
                 panel
                     .SetName("Doc1C")
                     .ShowHeader("Докуметы")
-                    .SetHeight(80)
+                    .SetHeight(70)
                     .SetDock(DockStyle.Bottom)
                     .SetVisible(false)
                     .AddControls(controls =>
@@ -133,27 +136,11 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
 
     private bool AutoGenerateColumn(GridColumn column)
     {
-        switch (column.MappingName)
+        return column.MappingName switch
         {
-            case "ProductName":
-                column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
-                break;
-            case "Code":
-                column.AutoSizeColumnsMode = AutoSizeColumnsMode.AllCells;
-                break;
-            case "Amount":
-                column.Width = 100;
-                break;
-            case "Id":
-            case "Price":
-            case "ProductCost":
-            case "Tax":
-            case "TaxValue":
-            case "FullCost":
-                return true;
-        }
-
-        return false;
+            "Price" or "ProductCost" or "Tax" or "TaxValue" or "FullCost" => true,
+            _ => false,
+        };
     }
 
     private IEnumerable<ProductionOrder> GetOrders()
