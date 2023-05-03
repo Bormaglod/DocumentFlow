@@ -11,11 +11,15 @@
 //    которого вызывается метод ShowStartPage из MainForm
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.3
+//  - LoginForm и MainForm получаем теперь с использованием службы сервисов
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentFlow;
 
@@ -40,10 +44,10 @@ public class CurrentApplicationContext : ApplicationContext
 
         context = this;
 
-        loginForm = new LoginForm();
+        loginForm = Services.Provider.GetService<LoginForm>()!;
         loginForm.FormClosed += FormClosed;
 
-        mainForm = new MainForm();
+        mainForm = Services.Provider.GetService<MainForm>()!;
         mainForm.FormClosed += FormClosed;
 
         loginForm.Show();

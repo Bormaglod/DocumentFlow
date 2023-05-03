@@ -6,6 +6,9 @@
 //
 // Версия 2023.1.24
 //  - перенесено из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
+// Версия 2023.5.3
+//  - добавлено свойство ConnectionName
+//  - добавлено свойство ConnectionString
 //
 //-----------------------------------------------------------------------
 
@@ -16,6 +19,8 @@ namespace DocumentFlow.Infrastructure.Data
     public interface IDatabase
     {
         string CurrentUser { get; }
+        string ConnectionName { get; set; }
+        string ConnectionString { get; }
         IDbConnection OpenConnection();
         IDbConnection OpenConnection(string userName, string password);
         void Login(string userName, string password);

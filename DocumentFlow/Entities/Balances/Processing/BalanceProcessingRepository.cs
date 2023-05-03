@@ -10,6 +10,8 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 // Версия 2023.1.29
 //  - добавлен метод GetRemainders
+// Версия 2023.5.3
+//  - в запрос добавлены поля i.contractor_id и i.reference_id
 //
 //-----------------------------------------------------------------------
 
@@ -47,6 +49,7 @@ public class BalanceProcessingRepository : OwnedRepository<Guid, BalanceProcessi
             .From("q_wpp as i")
             .With("q_wpp", q_wpp)
             .With("q_wpw", q_wpw)
+            .Select("i.{contractor_id, reference_id}")
             .Select("m.item_name as material_name")
             .Select("c.item_name as contractor_name")
             .Select("i.income_material as income")

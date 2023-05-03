@@ -18,6 +18,9 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.4.2
 //  - добавлен интерфейс IControls<>
+// Версия 2023.5.3
+//  - добавлен класс LoginForm и MainForm
+//  - добавлен интерфейс IAbout
 //
 //-----------------------------------------------------------------------
 
@@ -101,6 +104,9 @@ public static class Services
                 );
 
         services.AddSingleton<IPageManager>(c => new PageManager(CurrentApplicationContext.Context.TabPages));
+        services.AddTransient<LoginForm>();
+        services.AddTransient<MainForm>();
+        services.AddTransient<IAbout, AboutForm>();
 
         serviceProvider = services.BuildServiceProvider();
     }

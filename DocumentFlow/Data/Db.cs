@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.24
 //  - IDatabase перенесён из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
+// Версия 2023.5.3
+//  - удалены все статические элементы
 //
 //-----------------------------------------------------------------------
 
@@ -25,12 +27,12 @@ public class Database : IDatabase
     private readonly string default_user = "guest";
     private readonly string default_password = "guest";
 
-    private static string connectionName = string.Empty;
-    private static string currentUser = string.Empty;
+    private string connectionName = string.Empty;
+    private string currentUser = string.Empty;
 
-    public static string ConnectionString { get; private set; } = string.Empty;
+    public string ConnectionString { get; private set; } = string.Empty;
 
-    public static string ConnectionName 
+    public string ConnectionName 
     {
         get => connectionName;
         set
@@ -88,7 +90,7 @@ public class Database : IDatabase
         conn.Execute("login", commandType: CommandType.StoredProcedure);
     }
 
-    private static void CreateConnectionString(string userName, string password)
+    private void CreateConnectionString(string userName, string password)
     {
         currentUser = userName;
 

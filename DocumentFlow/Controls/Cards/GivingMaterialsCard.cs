@@ -6,10 +6,16 @@
 //
 // Версия 2023.2.4
 //  - из конструктора убран вызов RefreshCard
+// Версия 2023.5.3
+//  - добавлены пункты меню "Открыть материал" и "Открыть контрагента" и
+//    реализован соответствующий функционал
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Entities.Balances;
+using DocumentFlow.Entities.Companies;
+using DocumentFlow.Entities.Products;
+using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +30,8 @@ public partial class GivingMaterialsCard : UserControl, ICard
     public GivingMaterialsCard()
     {
         InitializeComponent();
+
+        gridMaterials.RecordContextMenu = contextRecordMenu;
     }
 
     public int Index => 3;
@@ -43,7 +51,7 @@ public partial class GivingMaterialsCard : UserControl, ICard
 
     private void GridMaterials_AutoGeneratingColumn(object sender, AutoGeneratingColumnArgs e)
     {
-        switch (e.Column.MappingName) 
+        switch (e.Column.MappingName)
         {
             case "MaterialName":
                 e.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
@@ -57,6 +65,24 @@ public partial class GivingMaterialsCard : UserControl, ICard
             default:
                 e.Cancel = true;
                 break;
+        }
+    }
+
+    private void MenuOpenMaterial_Click(object sender, EventArgs e)
+    {
+        if (gridMaterials.CurrentItem is BalanceProcessing balance)
+        {
+            var pages = Services.Provider.GetService<IPageManager>()!;
+            pages.ShowEditor<IMaterialEditor>(balance.ReferenceId);
+        }
+    }
+
+    private void MenuOpenContractor_Click(object sender, EventArgs e)
+    {
+        if (gridMaterials.CurrentItem is BalanceProcessing balance)
+        {
+            var pages = Services.Provider.GetService<IPageManager>()!;
+            pages.ShowEditor<IContractorEditor>(balance.ContractorId);
         }
     }
 }

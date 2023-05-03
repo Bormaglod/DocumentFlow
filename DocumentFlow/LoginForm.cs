@@ -9,14 +9,15 @@
 //    определяющий необходимость показа стартовой страницы
 // Версия 2023.1.24
 //  - IDatabase перенесён из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
+// Версия 2023.5.3
+//  - в конструктор добавлены параметры IDatabase и IUserAliasRepository
+//    и соответственно исправлена логика работы
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
 using DocumentFlow.Data.Infrastructure;
 using DocumentFlow.Infrastructure.Data;
-
-using Microsoft.Extensions.DependencyInjection;
 
 using Npgsql;
 
@@ -28,10 +29,15 @@ namespace DocumentFlow;
 public partial class LoginForm : Form
 {
     private string prevDatabaseName = string.Empty;
+    private readonly IDatabase database;
+    private readonly IUserAliasRepository users;
 
-    public LoginForm()
+    public LoginForm(IDatabase database, IUserAliasRepository users)
     {
         InitializeComponent();
+
+        this.database = database;
+        this.users = users;
 
         if (string.IsNullOrEmpty(Properties.Settings.Default.LastConnectedDatabase))
         {
@@ -74,8 +80,7 @@ public partial class LoginForm : Form
         {
             try
             {
-                var database = Services.Provider.GetService<IDatabase>();
-                database!.Login(userName, textPassword.Text);
+                database.Login(userName, textPassword.Text);
             }
             catch (PostgresException ex)
             {
@@ -105,18 +110,17 @@ public partial class LoginForm : Form
 
     private void ComboDatabase_SelectedValueChanged(object sender, EventArgs e)
     {
-        Database.ConnectionName = comboDatabase.SelectedItem?.ToString() ?? string.Empty;
-        if (string.IsNullOrEmpty(Database.ConnectionName))
+        database.ConnectionName = comboDatabase.SelectedItem?.ToString() ?? string.Empty;
+        if (string.IsNullOrEmpty(database.ConnectionName))
         {
             return;
         }
 
-        var users = Services.Provider.GetService<IUserAliasRepository>();
-        var list = users!.GetUsers();
+        var list = users.GetUsers();
         comboUsers.DataSource = list;
 
 #if DEBUG
-        comboUsers.SelectedItem = list!.FirstOrDefault(u => u.PgName == "postgres");
+        comboUsers.SelectedItem = list.FirstOrDefault(u => u.PgName == "postgres");
         if (File.Exists("password.txt"))
         {
             textPassword.Text = File.ReadLines("password.txt").First();

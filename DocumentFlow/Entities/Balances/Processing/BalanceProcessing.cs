@@ -10,6 +10,8 @@
 //  - добавлен атрибут Display для свойств
 //  - добавлено подавление предупреждения IDE1006 о необходимости
 //    писать слова с прописных символов
+// Версия 2023.5.3
+//  - добавлено свойство ContractorId
 //
 //-----------------------------------------------------------------------
 
@@ -21,6 +23,9 @@ public class BalanceProcessing : BalanceProduct
 {
     [Display(Name = "Материал", Order = 100)]
     public string MaterialName { get; protected set; } = string.Empty;
+
+    [Display(AutoGenerateField = false)]
+    public Guid ContractorId { get; protected set; }
 
     [Display(Name = "Контрагент", Order = 200)]
     public string ContractorName { get; protected set; } = string.Empty;

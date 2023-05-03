@@ -28,47 +28,78 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.gridMaterials = new Syncfusion.WinForms.DataGrid.SfDataGrid();
-            ((System.ComponentModel.ISupportInitialize)(this.gridMaterials)).BeginInit();
-            this.SuspendLayout();
+            gridMaterials = new Syncfusion.WinForms.DataGrid.SfDataGrid();
+            contextRecordMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
+            menuOpenMaterial = new ToolStripMenuItem();
+            menuOpenContractor = new ToolStripMenuItem();
+            ((System.ComponentModel.ISupportInitialize)gridMaterials).BeginInit();
+            contextRecordMenu.SuspendLayout();
+            SuspendLayout();
             // 
             // gridMaterials
             // 
-            this.gridMaterials.AccessibleName = "Table";
-            this.gridMaterials.AllowEditing = false;
-            this.gridMaterials.AllowGrouping = false;
-            this.gridMaterials.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridMaterials.HeaderRowHeight = 28;
-            this.gridMaterials.Location = new System.Drawing.Point(6, 6);
-            this.gridMaterials.Name = "gridMaterials";
-            this.gridMaterials.NavigationMode = Syncfusion.WinForms.DataGrid.Enums.NavigationMode.Row;
-            this.gridMaterials.RowHeight = 26;
-            this.gridMaterials.Size = new System.Drawing.Size(402, 196);
-            this.gridMaterials.Style.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
-            this.gridMaterials.Style.CellStyle.Font.Size = 8F;
-            this.gridMaterials.Style.CheckBoxStyle.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
-            this.gridMaterials.Style.CheckBoxStyle.CheckedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
-            this.gridMaterials.Style.CheckBoxStyle.IndeterminateBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
-            this.gridMaterials.Style.HyperlinkStyle.DefaultLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
-            this.gridMaterials.Style.RowHeaderStyle.Font.Size = 8F;
-            this.gridMaterials.TabIndex = 0;
-            this.gridMaterials.AutoGeneratingColumn += new Syncfusion.WinForms.DataGrid.Events.AutoGeneratingColumnEventHandler(this.GridMaterials_AutoGeneratingColumn);
+            gridMaterials.AccessibleName = "Table";
+            gridMaterials.AllowEditing = false;
+            gridMaterials.AllowGrouping = false;
+            gridMaterials.Dock = DockStyle.Fill;
+            gridMaterials.HeaderRowHeight = 28;
+            gridMaterials.Location = new Point(6, 6);
+            gridMaterials.Name = "gridMaterials";
+            gridMaterials.NavigationMode = Syncfusion.WinForms.DataGrid.Enums.NavigationMode.Row;
+            gridMaterials.RowHeight = 26;
+            gridMaterials.Size = new Size(402, 196);
+            gridMaterials.Style.BorderColor = Color.FromArgb(204, 204, 204);
+            gridMaterials.Style.CellStyle.Font.Size = 8F;
+            gridMaterials.Style.CheckBoxStyle.CheckedBackColor = Color.FromArgb(0, 120, 215);
+            gridMaterials.Style.CheckBoxStyle.CheckedBorderColor = Color.FromArgb(0, 120, 215);
+            gridMaterials.Style.CheckBoxStyle.IndeterminateBorderColor = Color.FromArgb(0, 120, 215);
+            gridMaterials.Style.HyperlinkStyle.DefaultLinkColor = Color.FromArgb(0, 120, 215);
+            gridMaterials.Style.RowHeaderStyle.Font.Size = 8F;
+            gridMaterials.TabIndex = 0;
+            gridMaterials.AutoGeneratingColumn += GridMaterials_AutoGeneratingColumn;
+            // 
+            // contextRecordMenu
+            // 
+            contextRecordMenu.DropShadowEnabled = false;
+            contextRecordMenu.Items.AddRange(new ToolStripItem[] { menuOpenMaterial, menuOpenContractor });
+            contextRecordMenu.MetroColor = Color.FromArgb(204, 236, 249);
+            contextRecordMenu.Name = "contextRecordMenu";
+            contextRecordMenu.Size = new Size(192, 70);
+            contextRecordMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
+            contextRecordMenu.ThemeName = "Metro";
+            // 
+            // menuOpenMaterial
+            // 
+            menuOpenMaterial.Name = "menuOpenMaterial";
+            menuOpenMaterial.Size = new Size(191, 22);
+            menuOpenMaterial.Text = "Открыть материал";
+            menuOpenMaterial.Click += MenuOpenMaterial_Click;
+            // 
+            // menuOpenContractor
+            // 
+            menuOpenContractor.Name = "menuOpenContractor";
+            menuOpenContractor.Size = new Size(191, 22);
+            menuOpenContractor.Text = "Открыть контрагента";
+            menuOpenContractor.Click += MenuOpenContractor_Click;
             // 
             // GivingMaterialsCard
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.gridMaterials);
-            this.Name = "GivingMaterialsCard";
-            this.Padding = new System.Windows.Forms.Padding(6);
-            this.Size = new System.Drawing.Size(414, 208);
-            ((System.ComponentModel.ISupportInitialize)(this.gridMaterials)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(gridMaterials);
+            Name = "GivingMaterialsCard";
+            Padding = new Padding(6);
+            Size = new Size(414, 208);
+            ((System.ComponentModel.ISupportInitialize)gridMaterials).EndInit();
+            contextRecordMenu.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         #endregion
 
         private Syncfusion.WinForms.DataGrid.SfDataGrid gridMaterials;
+        private Syncfusion.Windows.Forms.Tools.ContextMenuStripEx contextRecordMenu;
+        private ToolStripMenuItem menuOpenMaterial;
+        private ToolStripMenuItem menuOpenContractor;
     }
 }

@@ -14,6 +14,9 @@
 // Версия 2023.4.2
 //  - создание элементов управления в конструкторе реализовано с 
 //    помощью свойства EditorControls
+// Версия 2023.5.3
+//  - поле person_id отображалось для юр. лица, а надо для физ. лица - 
+//    исправлено
 //
 //-----------------------------------------------------------------------
 
@@ -58,29 +61,29 @@ public class ContractorEditor : Editor<Contractor>, IContractorEditor
                     .Multiline()
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(500))
-            .AddChoice<SubjectsCivilLow>(x => x.SubjectCivilLow, "Субъект права", (choice) =>
+            .AddChoice(x => x.SubjectCivilLow, "Субъект права", (choice) =>
                 choice
                     .SetChoiceValues(Contractor.Subjects)
                     .ChoiceSelected(UpdateVisibility)
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200))
-            .AddMaskedTextBox<decimal>(x => x.Inn, "ИНН", (text) =>
+            .AddMaskedTextBox(x => x.Inn, "ИНН", (text) =>
                 text
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200))
-            .AddMaskedTextBox<decimal>(x => x.Kpp, "КПП", (text) =>
+            .AddMaskedTextBox(x => x.Kpp, "КПП", (text) =>
                 text
                     .SetMask("#### ## ###")
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200)
                     .Raise())
-            .AddMaskedTextBox<decimal>(x => x.Ogrn, "ОГРН", (text) =>
+            .AddMaskedTextBox(x => x.Ogrn, "ОГРН", (text) =>
                 text
                     .SetMask("# ## ## ## ##### #")
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(200)
                     .Raise())
-            .AddMaskedTextBox<decimal>(x => x.Okpo, "ОКПО", (text) =>
+            .AddMaskedTextBox(x => x.Okpo, "ОКПО", (text) =>
                 text
                     .SetMask("## ##### #")
                     .SetHeaderWidth(headerWidth)
@@ -98,7 +101,7 @@ public class ContractorEditor : Editor<Contractor>, IContractorEditor
                     .SetDataSource(GetPeople)
                     .SetHeaderWidth(headerWidth)
                     .SetEditorWidth(300)
-                    .Raise())
+                    .Raise(1))
             .AddComboBox<Account>(x => x.AccountId, "Расчётный счёт", (combo) =>
                 combo
                     .SetDataSource(GetAccounts)
@@ -133,7 +136,7 @@ public class ContractorEditor : Editor<Contractor>, IContractorEditor
 
         foreach (var control in EditorControls.GetControls<IControl>().Where(x => x.IsRaised))
         {
-            control.SetVisible(legal_entity.HasValue && legal_entity.Value);
+            control.SetVisible((legal_entity.HasValue && legal_entity.Value) == (control.GetRaisedGroup() == 0));
         }
     }
 

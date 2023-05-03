@@ -15,6 +15,10 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // ¬ерси€ 2023.2.12
 //  - исправлены мелкие ошибки
+// ¬ерси€ 2023.5.3
+//  - вызов AboutForm теперь осуществл€етс€ через сервис и интерфейс IAbout
+//  - в конструктор добавлены параметры IDatabase и соответственно
+//    исправлена логика работы
 //
 //-----------------------------------------------------------------------
 
@@ -62,9 +66,13 @@ public partial class MainForm : Form, IHostApp, ITabPages
     private readonly ConcurrentQueue<NotifyMessage> notifies = new();
 #endif
 
-    public MainForm()
+    private readonly IDatabase database;
+
+    public MainForm(IDatabase database)
     {
         InitializeComponent();
+
+        this.database = database;
 
         tabControlAdv1.TabPages.Clear();
 
@@ -213,7 +221,7 @@ public partial class MainForm : Form, IHostApp, ITabPages
     private void Listener()
     {
 
-        using var conn = new NpgsqlConnection(Database.ConnectionString);
+        using var conn = new NpgsqlConnection(database.ConnectionString);
         conn.Open();
         conn.Notification += (o, e) =>
         {
@@ -319,7 +327,7 @@ public partial class MainForm : Form, IHostApp, ITabPages
 
         splitContainer1.SplitterDistance = settings.PanelMenuWidth;
 
-        Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{Database.ConnectionName}>";
+        Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
 
 #if USE_LISTENER
         if (settings.UseDataNotification)
@@ -371,8 +379,5 @@ public partial class MainForm : Form, IHostApp, ITabPages
         }
     }
 
-    private void TreeMenuAbout_Click(object sender, EventArgs e)
-    {
-        AboutForm.ShowWindow();
-    }
+    private void TreeMenuAbout_Click(object sender, EventArgs e) => Services.Provider.GetService<IAbout>()!.ShowWindow();
 }

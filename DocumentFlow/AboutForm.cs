@@ -3,22 +3,24 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.06.2020
+//
+// Версия 2023.5.3
+//  - в конструктор добавлены параметры IDatabase и соответственно
+//    исправлена логика работы
+//
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow;
-
-using DocumentFlow.Data;
+using DocumentFlow.Infrastructure;
+using DocumentFlow.Infrastructure.Data;
 
 using Syncfusion.WinForms.ListView.Events;
 
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
 
-public partial class AboutForm : Form
+namespace DocumentFlow;
+
+public partial class AboutForm : Form, IAbout
 {
     class Lib
     {
@@ -35,7 +37,7 @@ public partial class AboutForm : Form
 
     private readonly List<Lib> libs = new();
 
-    private AboutForm()
+    public AboutForm(IDatabase database)
     {
         InitializeComponent();
         labelVersion.Text = string.Format(labelVersion.Text, Assembly.GetExecutingAssembly().GetName().Version);
@@ -57,14 +59,10 @@ public partial class AboutForm : Form
         }
 
         listLibs.DataSource = libs.OrderBy(x => x.Name);
-        labelDatabase.Text = string.Format(labelDatabase.Text, Database.ConnectionName);
+        labelDatabase.Text = string.Format(labelDatabase.Text, database.ConnectionName);
     }
 
-    public static void ShowWindow()
-    {
-        var form = new AboutForm();
-        form.ShowDialog();
-    }
+    public void ShowWindow() => ShowDialog();
 
     private void ListLibs_SelectionChanged(object sender, ItemSelectionChangedEventArgs e)
     {
