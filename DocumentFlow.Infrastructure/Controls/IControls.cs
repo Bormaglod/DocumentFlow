@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.04.2022
+//
+// Версия 2023.5.5
+//  - добавлен метод SetHeaderWidth
+//  - добавлен метод SetEditorWidth
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Infrastructure.Controls.Core;
@@ -41,6 +46,8 @@ public interface IControls<T> : IControls
         where P : struct, IComparable;
 
     IControl GetControl(Expression<Func<T, object?>> memberExpression);
+    IControls<T> SetHeaderWidth(int width);
+    IControls<T> SetEditorWidth(int width);
     IControls<T> Select(Expression<Func<T, object?>> memberExpression);
     IControls<T> If(bool condition, Action<IControls<T>> trueAction, Action<IControls<T>>? falseAction = null);
     IControls<T> AddCheckBox(Expression<Func<T, object?>> memberExpression, string header, Action<ICheckBoxControl>? props = null);

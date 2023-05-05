@@ -8,6 +8,8 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.4.2
 //  - добавлено наследование от ITextBoxControl
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -22,12 +24,12 @@ public partial class DfTextBox : BaseControl, IBindingControl, IAccess, ITextBox
 {
     private ControlValueChanged<string?>? textChanged;
 
-    public DfTextBox(string property, string header, int headerWidth = default, int editorWidth = default) 
+    public DfTextBox(string property, string header) 
         : base(property)
     {
         InitializeComponent();
-        SetLabelControl(label1, header, headerWidth);
-        SetNestedControl(textBoxExt, editorWidth);
+        SetLabelControl(label1, header);
+        SetNestedControl(textBoxExt);
 
         Dock = DockStyle.Top;
     }

@@ -6,6 +6,14 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.5
+//  - методы SetNestedControl и SetLabelControl лишились параметров
+//    editorWidth и headerWidth соответственно.
+//  - у свойств HeaderWidth и EditorWidth удалён метод set и изменён тип
+//    на int? - свойства будет возвращать null, если не установлено
+//    значение с помощью метода SetHeaderWidth или SetEditorWidth 
+//    соответственно
+// - добавлен метод GetDefaultEditorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -20,6 +28,8 @@ public abstract partial class BaseControl : UserControl, IControl
 
     private bool raise = false;
     private int groupRaise = 0;
+    private bool inheritedHeaderWidth = true;
+    private bool inheritedEditorWidth = true;
 
     public BaseControl(string property)
     {
@@ -48,18 +58,6 @@ public abstract partial class BaseControl : UserControl, IControl
             {
                 label.Text = value;
                 OnHeaderChanged();
-            }
-        }
-    }
-
-    public int HeaderWidth
-    {
-        get => label?.Width ?? 0;
-        set
-        {
-            if (label != null)
-            {
-                label.Width = value;
             }
         }
     }
@@ -100,18 +98,6 @@ public abstract partial class BaseControl : UserControl, IControl
         }
     }
 
-    public int EditorWidth 
-    { 
-        get => control?.Width ?? 0;
-        set
-        {
-            if (control != null)
-            {
-                control.Width = value;
-            }
-        }
-    }
-
     public bool EditorFitToSize
     {
         get => control != null && control.Dock == DockStyle.Fill;
@@ -124,19 +110,15 @@ public abstract partial class BaseControl : UserControl, IControl
         }
     }
 
-    protected void SetNestedControl(Control control, int editorWidth = default)
-    {
-        this.control = control;
+    protected virtual int GetDefaultEditorWidth() => 100;
 
-        EditorWidth = editorWidth == default ? 100 : editorWidth;
-    }
+    protected void SetNestedControl(Control control) => this.control = control;
 
-    protected void SetLabelControl(Label label, string header, int headerWidth = default)
+    protected void SetLabelControl(Label label, string header)
     {
         this.label = label;
 
         Header = header;
-        HeaderWidth = headerWidth == default ? 100 : headerWidth;
     }
 
     protected override void SetVisibleCore(bool value)
@@ -148,6 +130,32 @@ public abstract partial class BaseControl : UserControl, IControl
     protected virtual void OnHeaderChanged() { }
 
     #region IControl interface
+
+    int? IControl.HeaderWidth
+    {
+        get
+        {
+            if (inheritedHeaderWidth)
+            {
+                return null;
+            }
+
+            return label?.Width ?? 0;
+        }
+    }
+
+    int? IControl.EditorWidth
+    {
+        get
+        {
+            if (inheritedEditorWidth)
+            {
+                return null;
+            }
+
+            return control?.Width ?? 0;
+        }
+    }
 
     bool IControl.IsRaised => raise;
 
@@ -196,15 +204,36 @@ public abstract partial class BaseControl : UserControl, IControl
         return this;
     }
 
+    IControl IControl.SetDefaultEditorWidth()
+    {
+        IControl c = this;
+        if (control != null)
+        {
+            c.SetEditorWidth(GetDefaultEditorWidth());
+        }
+
+        return c;
+    }
+
     IControl IControl.SetHeaderWidth(int width)
     {
-        HeaderWidth = width;
+        if (label != null)
+        {
+            label.Width = width;
+            inheritedHeaderWidth = false;
+        }
+
         return this;
     }
 
     IControl IControl.SetEditorWidth(int width)
     {
-        EditorWidth = width;
+        if (control != null)
+        {
+            control.Width = width;
+            inheritedEditorWidth = false;
+        }
+
         return this;
     }
 

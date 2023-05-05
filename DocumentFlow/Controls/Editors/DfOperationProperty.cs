@@ -8,6 +8,8 @@
 //  - добавлен метод RefreshDataSourceOnLoad
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -34,12 +36,12 @@ public partial class DfOperationProperty : BaseControl, IDataSourceControl, IGri
     private readonly List<CalculationOperationProperty> created = new();
     private readonly List<CalculationOperationProperty> updated = new();
 
-    public DfOperationProperty(string header, int headerWidth = default, int editorWidth = default) 
+    public DfOperationProperty(string header) 
         : base(string.Empty)
     {
         InitializeComponent();
-        SetLabelControl(label1, header, headerWidth);
-        SetNestedControl(panel1, editorWidth);
+        SetLabelControl(label1, header);
+        SetNestedControl(panel1);
 
         Dock = DockStyle.Top;
     }

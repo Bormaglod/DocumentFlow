@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.5
+//  - из параметров конструктора удалён headerWidth
 //
 //-----------------------------------------------------------------------
 
@@ -21,10 +23,10 @@ public partial class DfState : BaseControl, IBindingControl, IAccess, IStateCont
     private CalculationState state;
     private ControlValueChanged<CalculationState>? stateChanged;
 
-    public DfState(string property, string header, int headerWidth = default) : base(property)
+    public DfState(string property, string header) : base(property)
     {
         InitializeComponent();
-        SetLabelControl(labelState, header, headerWidth);
+        SetLabelControl(labelState, header);
         SetNestedControl(panel2);
     }
 

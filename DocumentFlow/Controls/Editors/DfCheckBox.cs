@@ -11,6 +11,8 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.4.2
 //  - добавлено наследование от ICheckBoxControl
+// Версия 2023.5.5
+//  - из параметров конструктора удалён headerWidth
 //
 //-----------------------------------------------------------------------
 
@@ -24,11 +26,11 @@ public partial class DfCheckBox : BaseControl, IBindingControl, IAccess, ICheckB
 {
     private ControlValueChanged<bool>? checkChanged;
 
-    public DfCheckBox(string property, string header, int headerWidth = default) 
+    public DfCheckBox(string property, string header) 
         : base(property)
     {
         InitializeComponent();
-        SetLabelControl(label1, header, headerWidth);
+        SetLabelControl(label1, header);
         SetNestedControl(checkBoxAdv1);
     }
 

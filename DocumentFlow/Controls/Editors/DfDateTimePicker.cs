@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -19,11 +21,11 @@ public partial class DfDateTimePicker : BaseControl, IBindingControl, IAccess, I
 {
     private ControlValueChanged<DateTime?>? dateChanged;
 
-    public DfDateTimePicker(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
+    public DfDateTimePicker(string property, string header) : base(property)
     {
         InitializeComponent();
-        SetLabelControl(label1, header, headerWidth);
-        SetNestedControl(datePickerAdv, editorWidth);
+        SetLabelControl(label1, header);
+        SetNestedControl(datePickerAdv);
 
         Value = DateTime.Now;
         Required = true;

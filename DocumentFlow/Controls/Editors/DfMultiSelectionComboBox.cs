@@ -9,6 +9,8 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -27,12 +29,12 @@ public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, ID
     private GettingDataSource<IItem>? dataSource;
     private MultiSelectValueChanged? valueChanged;
 
-    public DfMultiSelectionComboBox(string property, string header, int headerWidth = default, int editorWidth = default) 
+    public DfMultiSelectionComboBox(string property, string header) 
         : base(property)
     {
         InitializeComponent();
-        SetLabelControl(label1, header, headerWidth);
-        SetNestedControl(multiSelectionComboBox1, editorWidth);
+        SetLabelControl(label1, header);
+        SetNestedControl(multiSelectionComboBox1);
 
         multiSelectionComboBox1.Style = MultiSelectionComboBoxStyle.Office2016Colorful;
         multiSelectionComboBox1.DisplayMember = "ItemName";

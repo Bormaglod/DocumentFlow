@@ -11,6 +11,8 @@
 //    значении Value == null) приводил к ошибке
 // Версия 2023.4.2
 //  - добавлено наследование от IMaskedTextBoxControl
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -26,8 +28,8 @@ public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, 
 {
     private bool lockText = false;
 
-    public DfMaskedTextBox(string property, string header, int headerWidth = default, int editorWidth = default, string? mask = null) :
-        base(property, header, headerWidth, editorWidth)
+    public DfMaskedTextBox(string property, string header, string? mask = null) :
+        base(property, header)
     {
         InitializeComponent();
 

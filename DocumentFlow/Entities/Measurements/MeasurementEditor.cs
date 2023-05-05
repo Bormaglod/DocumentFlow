@@ -7,6 +7,9 @@
 // Версия 2023.4.2
 //  - создание элементов управления в конструкторе реализовано с 
 //    помощью свойства EditorControls
+// Версия 2023.5.5
+//  - уствановка SetHeaderWidth перенесена из элементов управления в
+//    IControls
 //
 //-----------------------------------------------------------------------
 
@@ -17,22 +20,15 @@ namespace DocumentFlow.Entities.Measurements;
 
 public class MeasurementEditor : Editor<Measurement>, IMeasurementEditor
 {
-    private const int headerWidth = 140;
-
     public MeasurementEditor(IMeasurementRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         EditorControls
-            .AddTextBox(x => x.Code, "Код", (text) =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .DefaultAsValue())
-            .AddTextBox(x => x.ItemName, "Наименование", (text) =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(400))
-            .AddTextBox(x => x.Abbreviation, "Сокр. наименование", (text) =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(400));
+            .SetHeaderWidth(140)
+            .SetEditorWidth(400)
+            .AddTextBox(x => x.Code, "Код", text => text
+                .SetDefaultEditorWidth()
+                .DefaultAsValue())
+            .AddTextBox(x => x.ItemName, "Наименование")
+            .AddTextBox(x => x.Abbreviation, "Сокр. наименование");
     }
 }

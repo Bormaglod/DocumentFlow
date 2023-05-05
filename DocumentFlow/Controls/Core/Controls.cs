@@ -3,6 +3,13 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.04.2022
+//
+// Версия 2023.5.5
+//  - добавлен метод SetHeaderWidth
+//  - добавлен метод SetEditorWidth
+//  - в методе AddControl реализована установка значения HeaderWidth и 
+//    EditorWidth
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Editors;
@@ -13,7 +20,6 @@ using DocumentFlow.Infrastructure.Data;
 
 using System.Collections;
 using System.Linq.Expressions;
-using System.Windows.Forms;
 
 namespace DocumentFlow.Controls.Core;
 
@@ -21,6 +27,8 @@ public class Controls<T> : IControls<T>
     where T : class, new()
 {
     private int tabIndex = 0;
+    private int? headerWidth;
+    private int? editorWidth;
 
     public IList? Container { get; set; }
     public IEditorPage? EditorPage { get; set; }
@@ -180,6 +188,18 @@ public class Controls<T> : IControls<T>
         AddControl(choice);
 
         return choice;
+    }
+
+    public IControls<T> SetHeaderWidth(int width)
+    {
+        headerWidth = width;
+        return this;
+    }
+
+    public IControls<T> SetEditorWidth(int width)
+    {
+        editorWidth = width;
+        return this;
     }
 
     public IControls<T> Select(Expression<Func<T, object?>> memberExpression)
@@ -474,6 +494,24 @@ public class Controls<T> : IControls<T>
     private IControls<T> AddControl(IControl control)
     {
         tabIndex += 10;
+
+        
+        if (!control.HeaderWidth.HasValue && headerWidth.HasValue) 
+        {
+            control.SetHeaderWidth(headerWidth.Value);
+        }
+
+        if (!control.EditorWidth.HasValue)
+        {
+            if (editorWidth.HasValue)
+            {
+                control.SetEditorWidth(editorWidth.Value);
+            }
+            else
+            {
+                control.SetDefaultEditorWidth();
+            }
+        }
 
         Container?.Add(control);
 

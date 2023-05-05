@@ -21,6 +21,8 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -41,12 +43,12 @@ public partial class SelectBox<T> : DataSourceControl<Guid, T>, IBindingControl,
     private ControlValueChanged<T?>? valueChanged;
     private ControlValueChanged<T?>? valueSelected;
 
-    public SelectBox(string property, string header, int headerWidth = default, int editorWidth = default) 
+    public SelectBox(string property, string header) 
         : base(property)
     {
         InitializeComponent();
-        SetLabelControl(label1, header, headerWidth);
-        SetNestedControl(panelEdit, editorWidth);
+        SetLabelControl(label1, header);
+        SetNestedControl(panelEdit);
 
         buttonOpen.Visible = false;
         panelSeparator3.Visible = false;

@@ -16,6 +16,8 @@
 // Версия 2023.4.2
 //  - добавлено наследование от IComboBoxControl
 //  - тип универсального параметра T изменен на IDocumentInfo
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -40,11 +42,11 @@ public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl
     private ControlValueChanged<T?>? valueChanged;
     private ControlValueChanged<T?>? valueSelected;
 
-    public DfComboBox(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
+    public DfComboBox(string property, string header) : base(property)
     {
         InitializeComponent();
-        SetLabelControl(label1, header, headerWidth);
-        SetNestedControl(panelEdit, editorWidth);
+        SetLabelControl(label1, header);
+        SetNestedControl(panelEdit);
 
         buttonOpen.Visible = false;
         panelSeparator3.Visible = false;

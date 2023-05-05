@@ -12,6 +12,8 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.4.2
 //  - добавлено наследование от IChoiceControl
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -34,11 +36,11 @@ public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingCon
     private ControlValueChanged<T?>? choiceChanged;
     private ControlValueChanged<T?>? choiceSelected;
 
-    public DfChoice(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
+    public DfChoice(string property, string header) : base(property)
     {
         InitializeComponent();
-        SetLabelControl(label1, header, headerWidth);
-        SetNestedControl(panelEdit, editorWidth);
+        SetLabelControl(label1, header);
+        SetNestedControl(panelEdit);
     }
 
     public bool ReadOnly

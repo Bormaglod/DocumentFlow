@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -19,8 +21,8 @@ namespace DocumentFlow.Controls.Editors;
 public partial class DfIntegerTextBox<T> : BaseNumericTextBox<T, IntegerTextBox>, IAccess, IIntegerTextBoxControl<T>
     where T : struct, IComparable<T>
 {
-    public DfIntegerTextBox(string property, string header, int headerWidth = default, int editorWidth = default) :
-        base(property, header, headerWidth, editorWidth)
+    public DfIntegerTextBox(string property, string header) :
+        base(property, header)
     {
         InitializeComponent();
 

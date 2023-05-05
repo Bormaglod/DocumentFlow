@@ -6,6 +6,9 @@
 //
 // Версия 2023.1.27
 //  - добавлено поле without_distrib
+// Версия 2023.5.5
+//  - уствановка SetHeaderWidth перенесена из элементов управления в
+//    IControls
 //
 //-----------------------------------------------------------------------
 
@@ -23,42 +26,30 @@ public class PaymentOrderEditor : DocumentEditor<PaymentOrder>, IPaymentOrderEdi
     public PaymentOrderEditor(IPaymentOrderRepository repository, IPageManager pageManager) : base(repository, pageManager, true) 
     {
         EditorControls
-            .AddPanel((panel) =>
-                panel
-                    .SetDock(DockStyle.Top)
-                    .SetHeight(32)
-                    .AddControls((controls) => 
-                        controls
-                            .AddTextBox(x => x.PaymentNumber, "Номер пл. ордера", (text) =>
-                                text
-                                    .SetHeaderWidth(120)
-                                    .SetDock(DockStyle.Left)
-                                    .SetWidth(220))
-                            .AddDateTimePicker(x => x.DateOperation, "от", (date) =>
-                                date
-                                    .SetCustomFormat("dd.MM.yyyy")
-                                    .SetHeaderWidth(25)
-                                    .SetDock(DockStyle.Left)
-                                    .SetWidth(200)
-                                    .SetHeaderTextAlign(ContentAlignment.MiddleCenter))))
-            .AddDirectorySelectBox<Contractor>(x => x.ContractorId, "Контрагент", (select) =>
-                select
-                    .SetDataSource(GetContractors)
-                    .SetHeaderWidth(120)
-                    .SetEditorWidth(400))
-            .AddChoice<PaymentDirection>(x => x.PaymentDirection, "Тип платежа", (choice) =>
-                choice
-                    .SetChoiceValues(PaymentOrder.Directions)
-                    .SetHeaderWidth(120)
-                    .SetEditorWidth(200))
-            .AddCurrencyTextBox(x => x.TransactionAmount, "Сумма", (text) =>
-                text
-                    .SetHeaderWidth(120)
-                    .SetEditorWidth(200)
-                    .DefaultAsValue())
-            .AddCheckBox(x => x.WithoutDistrib, "Не распределять", (check) =>
-                check
-                    .SetHeaderWidth(120));
+            .SetHeaderWidth(120)
+            .SetEditorWidth(200)
+            .AddPanel(panel => panel
+                .SetDock(DockStyle.Top)
+                .SetHeight(32)
+                .AddControls(controls => controls
+                    .AddTextBox(x => x.PaymentNumber, "Номер пл. ордера", text => text
+                        .SetHeaderWidth(120)
+                        .SetDock(DockStyle.Left)
+                        .SetWidth(220))
+                    .AddDateTimePicker(x => x.DateOperation, "от", date => date
+                        .SetCustomFormat("dd.MM.yyyy")
+                        .SetHeaderWidth(25)
+                        .SetDock(DockStyle.Left)
+                        .SetWidth(200)
+                        .SetHeaderTextAlign(ContentAlignment.MiddleCenter))))
+            .AddDirectorySelectBox<Contractor>(x => x.ContractorId, "Контрагент", select => select
+                .SetDataSource(GetContractors)
+                .SetEditorWidth(400))
+            .AddChoice<PaymentDirection>(x => x.PaymentDirection, "Тип платежа", choice => choice
+                .SetChoiceValues(PaymentOrder.Directions))
+            .AddCurrencyTextBox(x => x.TransactionAmount, "Сумма", text => text
+                .DefaultAsValue())
+            .AddCheckBox(x => x.WithoutDistrib, "Не распределять");
     }
 
     protected override void RegisterNestedBrowsers()

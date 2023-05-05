@@ -11,6 +11,8 @@
 //  - добавлены свойства SuffixText и ShowSuffix
 // Версия 2023.4.8
 //  - добавлено наследование от INumericTextBox
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -31,7 +33,7 @@ abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingCo
     private ControlValueChanged<T>? valueChanged;
     private ControlValueCleared? valueCleared;
 
-    public BaseNumericTextBox(string property, string header, int headerWidth = default, int editorWidth = default) : base(property)
+    public BaseNumericTextBox(string property, string header) : base(property)
     {
         InitializeComponent();
 
@@ -41,8 +43,8 @@ abstract public partial class BaseNumericTextBox<T, C> : BaseControl, IBindingCo
             Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point)
         };
 
-        SetLabelControl(label1, header, headerWidth);
-        SetNestedControl(textBox, editorWidth);
+        SetLabelControl(label1, header);
+        SetNestedControl(textBox);
 
         Controls.Add(textBox);
         textBox.BringToFront();

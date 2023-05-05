@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.5
+//  - из параметров конструктора удалён headerWidth
 //
 //-----------------------------------------------------------------------
 
@@ -21,11 +23,11 @@ public partial class DfToggleButton : BaseControl, IBindingControl, IAccess, ITo
 {
     private ControlValueChanged<bool>? changed;
 
-    public DfToggleButton(string property, string header, int headerWidth = default) : base(property)
+    public DfToggleButton(string property, string header) : base(property)
     {
         InitializeComponent();
-        SetLabelControl(label1, header, headerWidth);
-        SetNestedControl(toggleButton1, 90);
+        SetLabelControl(label1, header);
+        SetNestedControl(toggleButton1);
     }
 
     public bool ToggleValue

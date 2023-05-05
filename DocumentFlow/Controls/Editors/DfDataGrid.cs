@@ -18,6 +18,8 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.2.6
 //  - добавлено свойство Header
+// Версия 2023.5.5
+//  - удалён конструктор с параметром content
 //
 //-----------------------------------------------------------------------
 
@@ -28,6 +30,7 @@ using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Controls.Core;
 using DocumentFlow.Infrastructure.Data;
 using DocumentFlow.Infrastructure.Dialogs;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using Syncfusion.WinForms.DataGrid;
@@ -37,7 +40,6 @@ using Syncfusion.WinForms.DataGrid.Events;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Data.Common;
 using System.Reflection;
 
 namespace DocumentFlow.Controls.Editors;
@@ -71,11 +73,6 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
         gridMain.CellRenderers.Add("TableSummary", new CustomGridTableSummaryRenderer());
 
         labelHeader.Visible = false;
-    }
-
-    public DfDataGrid(IOwnedRepository<long, T> content) : this()
-    {
-        repository = content;
     }
 
     public bool ReadOnly

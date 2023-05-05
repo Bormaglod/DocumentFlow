@@ -3,18 +3,25 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.04.2022
+//
+// Версия 2023.5.5
+//  - добавлено свойство HeaderWidth
+//  - добавлено свойство EditorWidth
+//  - добавлен метод SetDefaultEditorWidth
+//
 //-----------------------------------------------------------------------
-
-using DocumentFlow.Infrastructure.Data;
 
 namespace DocumentFlow.Infrastructure.Controls;
 
 public interface IControl
 {
     string PropertyName { get; }
+    int? HeaderWidth { get; }
+    int? EditorWidth { get; }
     bool IsRaised { get; }
     int GetRaisedGroup();
     IControl SetHeaderTextAlign(ContentAlignment alignment);
+    IControl SetDefaultEditorWidth();
     IControl SetHeaderWidth(int width);
     IControl SetEditorWidth(int width);
     IControl SetDock(DockStyle dockStyle);

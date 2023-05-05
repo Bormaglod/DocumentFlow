@@ -9,6 +9,8 @@
 //  - изменен вызов конструктора SelectDocumentForm
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -28,8 +30,8 @@ public class DfDocumentSelectBox<T> : SelectBox<T>, IDocumentSelectBoxControl<T>
     private CreateColumns? createColumns;
     private bool disableCurrentItem = false;
 
-    public DfDocumentSelectBox(string property, string header, int headerWidth = default, int editorWidth = default) 
-        : base(property, header, headerWidth, editorWidth)
+    public DfDocumentSelectBox(string property, string header) 
+        : base(property, header)
     {
 
     }

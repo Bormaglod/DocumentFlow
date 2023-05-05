@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.5
+//  - из параметров конструктора удалён headerWidth
 //
 //-----------------------------------------------------------------------
 
@@ -19,11 +21,11 @@ public partial class DfWireStripping : BaseControl, IBindingControl, IAccess, IW
 {
     private ControlValueChanged<Stripping>? valueChanged;
 
-    public DfWireStripping(string property, string header, int headerWidth = default)
+    public DfWireStripping(string property, string header)
         : base(property)
     {
         InitializeComponent();
-        SetLabelControl(label1, header, headerWidth);
+        SetLabelControl(label1, header);
         SetNestedControl(panel1);
     }
 

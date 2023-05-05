@@ -13,6 +13,8 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 // Версия 2023.4.2
 //  - добавлено наследование от IDirectorySelectBoxControl
+// Версия 2023.5.5
+//  - из параметров конструктора удалены headerWidth и editorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -38,8 +40,8 @@ public class DfDirectorySelectBox<T> : SelectBox<T>, IDirectorySelectBoxControl<
     private bool showOnlyFolder = false;
     private bool removeEmptyFolders = false;
 
-    public DfDirectorySelectBox(string property, string header, int headerWidth = default, int editorWidth = default)
-        : base(property, header, headerWidth, editorWidth)
+    public DfDirectorySelectBox(string property, string header)
+        : base(property, header)
     {
     }
 
