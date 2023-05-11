@@ -11,6 +11,11 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+// Версия 2023.5.11
+//  - корректировка ширины некоторых колонок
+//  - изменен формат колонки OrderDate
+//  - не формировался заголовок "Заказ" для колонок OrderDate и
+//    OrderNumber. Исправлено
 //
 //-----------------------------------------------------------------------
 
@@ -36,8 +41,8 @@ public class ReturnMaterialsBrowser : Browser<ReturnMaterials>, IReturnMaterials
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
-        var order_date = CreateDateTime(x => x.OrderDate, "Дата", width: 150);
-        var order_number = CreateNumeric(x => x.OrderNumber, "Номер", width: 100);
+        var order_date = CreateDateTime(x => x.OrderDate, "Дата", width: 80, format: "dd.MM.yyyy");
+        var order_number = CreateNumeric(x => x.OrderNumber, "Номер", width: 80);
         var contractor = CreateText(x => x.ContractorName, "Контрагент");
         var contract = CreateText(x => x.ContractName, "Договор", width: 200, visible: false);
 
@@ -50,7 +55,7 @@ public class ReturnMaterialsBrowser : Browser<ReturnMaterials>, IReturnMaterials
             [number] = ListSortDirection.Ascending
         });
 
-        CreateStackedColumns("Заказ", new string[] { "order_date", "order_number" });
+        CreateStackedColumns("Заказ", new GridColumn[] { order_date, order_number });
 
         MoveToEnd();
     }

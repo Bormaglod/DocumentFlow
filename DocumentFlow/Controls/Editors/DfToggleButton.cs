@@ -8,6 +8,8 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.5.5
 //  - из параметров конструктора удалён headerWidth
+// Версия 2023.5.11
+//  - добавлен метод GetDefaultEditorWidth
 //
 //-----------------------------------------------------------------------
 
@@ -49,6 +51,8 @@ public partial class DfToggleButton : BaseControl, IBindingControl, IAccess, ITo
     }
 
     public void ClearSelectedValue() => toggleButton1.ToggleState = ToggleButtonState.Inactive;
+
+    protected override int GetDefaultEditorWidth() => 90;
 
     private void ToggleButton1_ToggleStateChanged(object sender, ToggleStateChangedEventArgs e) => changed?.Invoke(ToggleValue);
 

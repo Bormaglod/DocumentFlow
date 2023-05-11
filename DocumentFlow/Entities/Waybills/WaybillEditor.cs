@@ -71,105 +71,85 @@ public abstract class WaybillEditor<T, P, R> : DocumentEditor<T>
         this.repository = repository;
 
         EditorControls
-            .AddDirectorySelectBox<Contractor>(x => x.ContractorId, "Контрагент", select =>
-                select
-                    .EnableEditor<IContractorEditor>()
-                    .SetDataSource(GetContractors)
-                    .DirectoryChanged(ContractorValueChanged)
+            .AddDirectorySelectBox<Contractor>(x => x.ContractorId, "Контрагент", select => select
+                .EnableEditor<IContractorEditor>()
+                .SetDataSource(GetContractors)
+                .DirectoryChanged(ContractorValueChanged)
+                .SetHeaderWidth(120)
+                .SetEditorWidth(400))
+            .AddDirectorySelectBox<Contract>(x => x.ContractId, "Договор", select => select
+                .EnableEditor<IContractEditor>()
+                .SetDataSource(GetContracts)
+                .DirectoryChanged(ContractValueChanged)
+                .SetHeaderWidth(120)
+                .SetEditorWidth(400))
+            .If(typeof(T) == typeof(WaybillReceipt), controls => controls
+                .AddDocumentSelectBox<PurchaseRequest>(x => x.OwnerId, "Заявка на покупку", select => select
+                    .SetDataSource(GetPurchaseRequests, DataRefreshMethod.OnOpen)
+                    .CreateColumns(PurchaseRequest.CreateGridColumns)
+                    .DocumentChanged(PurchaseChanged)
+                    .DocumentSelected(PurchaseSelected)
                     .SetHeaderWidth(120)
-                    .SetEditorWidth(400))
-            .AddDirectorySelectBox<Contract>(x => x.ContractId, "Договор", select =>
-                select
-                    .EnableEditor<IContractEditor>()
-                    .SetDataSource(GetContracts)
-                    .DirectoryChanged(ContractValueChanged)
-                    .SetHeaderWidth(120)
-                    .SetEditorWidth(400))
-            .If(typeof(T) == typeof(WaybillReceipt), controls =>
-                controls
-                    .AddDocumentSelectBox<PurchaseRequest>(x => x.OwnerId, "Заявка на покупку", select =>
-                        select
-                            .SetDataSource(GetPurchaseRequests, DataRefreshMethod.OnOpen)
-                            .CreateColumns(PurchaseRequest.CreateGridColumns)
-                            .DocumentChanged(PurchaseChanged)
-                            .DocumentSelected(PurchaseSelected)
-                            .SetHeaderWidth(120)
-                            .SetEditorWidth(400)))
-            .AddPanel(panel =>
-                panel
-                    .SetName("Doc1C")
-                    .ShowHeader("Докуметы 1С")
-                    .SetHeight(144)
-                    .SetDock(DockStyle.Bottom)
-                    .SetVisible(false)
-                    .AddControls(controls =>
-                        controls
-                            .AddPanel(panel =>
-                                panel
-                                    .SetHeight(32)
-                                    .AddControls(controls =>
-                                        controls
-                                            .AddTextBox(x => x.WaybillNumber, "Накладная №", text =>
-                                                text
-                                                    .TextChanged(WaybillNumberChanged)
-                                                    .SetHeaderWidth(110)
-                                                    .SetEditorWidth(120)
-                                                    .SetDock(DockStyle.Left)
-                                                    .SetWidth(235))
-                                            .AddDateTimePicker(x => x.WaybillDate, "от", date =>
-                                                date
-                                                    .DateChanged(WaybillDateChanged)
-                                                    .SetFormat(DateTimePickerFormat.Short)
-                                                    .SetHeaderWidth(25)
-                                                    .SetEditorWidth(170)
-                                                    .SetDock(DockStyle.Left)
-                                                    .SetWidth(200))))
-                            .AddPanel(panel =>
-                                panel
-                                    .SetName("Invoice")
-                                    .SetHeight(32)
-                                    .AddControls(controls =>
-                                        controls
-                                            .AddTextBox(x => x.InvoiceNumber, "Счёт-фактура №", text =>
-                                                text
-                                                    .SetHeaderWidth(110)
-                                                    .SetEditorWidth(120)
-                                                    .SetDock(DockStyle.Left)
-                                                    .SetWidth(235))
-                                            .AddDateTimePicker(x => x.InvoiceDate, "от", date =>
-                                                date
-                                                    .SetFormat(DateTimePickerFormat.Short)
-                                                    .SetHeaderWidth(25)
-                                                    .SetEditorWidth(170)
-                                                    .SetDock(DockStyle.Left)
-                                                    .SetWidth(200))))
-                            .AddPanel(panel =>
-                                panel
-                                    .SetName("UPD")
-                                    .SetHeight(32)
-                                    .AddControls(controls =>
-                                        controls
-                                            .AddToggleButton(x => x.Upd, "УПД", toggle =>
-                                                toggle
-                                                    .ToggleChanged(UpdValueChanged)
-                                                    .SetHeaderWidth(40)
-                                                    .SetDock(DockStyle.Left)
-                                                    .SetWidth(130))
-                                            .AddLabel(string.Empty, label =>
-                                                label
-                                                    .SetDock(DockStyle.Fill))))))
-            .AddDataGrid<P>(grid =>
-                grid
-                    .SetRepository<R>()
-                    .GridSummaryRow(VerticalPosition.Bottom, row =>
-                        row
-                            .AsSummary(x => x.ProductCost, SummaryColumnFormat.Currency, SelectOptions.All)
-                            .AsSummary(x => x.TaxValue, SummaryColumnFormat.Currency, SelectOptions.All)
-                            .AsSummary(x => x.FullCost, SummaryColumnFormat.Currency, SelectOptions.All))
-                    .DoCreate(DataCreate)
-                    .DoUpdate(DataEdit)
-                    .DoCopy(DataCopy)
-                    .SetDock(DockStyle.Fill)); ;
+                    .SetEditorWidth(400)))
+            .AddPanel(panel => panel
+                .SetName("Doc1C")
+                .ShowHeader("Докуметы 1С")
+                .SetHeight(144)
+                .SetDock(DockStyle.Bottom)
+                .SetVisible(false)
+                .AddControls(controls => controls
+                    .AddPanel(panel => panel
+                        .SetHeight(32)
+                        .AddControls(controls => controls
+                            .AddTextBox(x => x.WaybillNumber, "Накладная №", text => text
+                                .TextChanged(WaybillNumberChanged)
+                                .SetHeaderWidth(110)
+                                .SetEditorWidth(120)
+                                .SetDock(DockStyle.Left)
+                                .SetWidth(235))
+                            .AddDateTimePicker(x => x.WaybillDate, "от", date => date
+                                .DateChanged(WaybillDateChanged)
+                                .SetFormat(DateTimePickerFormat.Short)
+                                .SetHeaderWidth(25)
+                                .SetEditorWidth(170)
+                                .SetDock(DockStyle.Left)
+                                .SetWidth(200))))
+                    .AddPanel(panel => panel
+                        .SetName("Invoice")
+                        .SetHeight(32)
+                        .AddControls(controls => controls
+                            .AddTextBox(x => x.InvoiceNumber, "Счёт-фактура №", text => text
+                                .SetHeaderWidth(110)
+                                .SetEditorWidth(120)
+                                .SetDock(DockStyle.Left)
+                                .SetWidth(235))
+                            .AddDateTimePicker(x => x.InvoiceDate, "от", date => date
+                                .SetFormat(DateTimePickerFormat.Short)
+                                .SetHeaderWidth(25)
+                                .SetEditorWidth(170)
+                                .SetDock(DockStyle.Left)
+                                .SetWidth(200))))
+                    .AddPanel(panel => panel
+                        .SetName("UPD")
+                        .SetHeight(32)
+                        .AddControls(controls => controls
+                            .AddToggleButton(x => x.Upd, "УПД", toggle => toggle
+                                .ToggleChanged(UpdValueChanged)
+                                .SetHeaderWidth(40)
+                                .SetDock(DockStyle.Left)
+                                .SetWidth(130))
+                            .AddLabel(string.Empty, label => label
+                                .SetDock(DockStyle.Fill))))))
+            .AddDataGrid<P>(grid => grid
+                .SetRepository<R>()
+                .GridSummaryRow(VerticalPosition.Bottom, row => row
+                    .AsSummary(x => x.ProductCost, SummaryColumnFormat.Currency, SelectOptions.All)
+                    .AsSummary(x => x.TaxValue, SummaryColumnFormat.Currency, SelectOptions.All)
+                    .AsSummary(x => x.FullCost, SummaryColumnFormat.Currency, SelectOptions.All))
+                .DoCreate(DataCreate)
+                .DoUpdate(DataEdit)
+                .DoCopy(DataCopy)
+                .SetDock(DockStyle.Fill));
     }
 
     private void PurchaseChanged(PurchaseRequest? newValue)
