@@ -15,6 +15,8 @@
 // Версия 2023.5.2
 //  - уточнена высота панели Doc1C
 //  - переписан метод AutoGenerateColumn
+// Версия 2023.5.17
+//  - изменена ширина поля WaybillDate
 //
 //-----------------------------------------------------------------------
 
@@ -28,7 +30,6 @@ using DocumentFlow.Infrastructure.Controls;
 using Microsoft.Extensions.DependencyInjection;
 
 using Syncfusion.WinForms.DataGrid;
-using Syncfusion.WinForms.DataGrid.Enums;
 
 namespace DocumentFlow.Entities.Productions.Processing;
 
@@ -77,9 +78,9 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
                                 text
                                     .SetFormat(DateTimePickerFormat.Short)
                                     .SetHeaderWidth(25)
-                                    .SetEditorWidth(170)
+                                    .SetEditorWidth(95)
                                     .SetDock(DockStyle.Left)
-                                    .SetWidth(200))))
+                                    .SetWidth(120))))
             .AddDataGrid<WaybillProcessingPrice>(grid =>
                 grid
                     .SetRepository<IWaybillProcessingPriceRepository>()

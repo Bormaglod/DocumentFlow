@@ -38,6 +38,10 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.17
+//  - изменена ширина поля WaybillDate и InvoiceDate
+//  - в поле OwnerId (Заявка на покупку) добавлена кнопка для просмотра
+//    заявки
 //
 //-----------------------------------------------------------------------
 
@@ -87,6 +91,7 @@ public abstract class WaybillEditor<T, P, R> : DocumentEditor<T>
                 .AddDocumentSelectBox<PurchaseRequest>(x => x.OwnerId, "Заявка на покупку", select => select
                     .SetDataSource(GetPurchaseRequests, DataRefreshMethod.OnOpen)
                     .CreateColumns(PurchaseRequest.CreateGridColumns)
+                    .EnableEditor<IPurchaseRequestEditor>()
                     .DocumentChanged(PurchaseChanged)
                     .DocumentSelected(PurchaseSelected)
                     .SetHeaderWidth(120)
@@ -111,9 +116,9 @@ public abstract class WaybillEditor<T, P, R> : DocumentEditor<T>
                                 .DateChanged(WaybillDateChanged)
                                 .SetFormat(DateTimePickerFormat.Short)
                                 .SetHeaderWidth(25)
-                                .SetEditorWidth(170)
+                                .SetEditorWidth(95)
                                 .SetDock(DockStyle.Left)
-                                .SetWidth(200))))
+                                .SetWidth(120))))
                     .AddPanel(panel => panel
                         .SetName("Invoice")
                         .SetHeight(32)
@@ -126,9 +131,9 @@ public abstract class WaybillEditor<T, P, R> : DocumentEditor<T>
                             .AddDateTimePicker(x => x.InvoiceDate, "от", date => date
                                 .SetFormat(DateTimePickerFormat.Short)
                                 .SetHeaderWidth(25)
-                                .SetEditorWidth(170)
+                                .SetEditorWidth(95)
                                 .SetDock(DockStyle.Left)
-                                .SetWidth(200))))
+                                .SetWidth(120))))
                     .AddPanel(panel => panel
                         .SetName("UPD")
                         .SetHeight(32)

@@ -20,6 +20,8 @@
 //  - добавлено свойство Header
 // Версия 2023.5.5
 //  - удалён конструктор с параметром content
+// Версия 2023.5.17
+//  - удалены методы CreateTableSummaryRow и AddCommand
 //
 //-----------------------------------------------------------------------
 
@@ -153,20 +155,6 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
 
     #endregion
 
-    public void AddCommand(string text, Image image, EventHandler onClick)
-    {
-        toolStripSeparatorCustom1.Visible = true;
-        toolStripSeparatorCustom2.Visible = true;
-
-        ToolStripButton button = new(text, image, onClick)
-        {
-            DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
-            TextImageRelation = TextImageRelation.ImageBeforeText
-        };
-
-        toolStrip1.Items.Add(button);
-    }
-
     public void Fill(IEnumerable<T> rows)
     {
         if (ownerId == null)
@@ -194,21 +182,6 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
             list.Add(row);
             created.Add(row);
         }
-    }
-
-    public ISummary CreateTableSummaryRow(VerticalPosition position)
-    {
-        gridMain.TableSummaryRows.Clear();
-        var tableSummaryRow = new GridTableSummaryRow()
-        {
-            Name = "TableRowSummary",
-            ShowSummaryInRow = false,
-            Position = position
-        };
-
-        gridMain.TableSummaryRows.Add(tableSummaryRow);
-
-        return new SummaryRowData(tableSummaryRow, null);
     }
 
     protected override void OnHeaderChanged()

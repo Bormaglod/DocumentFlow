@@ -34,12 +34,12 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 // Версия 2023.3.14
 //  - GetAllMaterials заменен на GetAllValid
+// Версия 2023.5.17
+//  - элементы, которые исключаются из редактирование сделаны невидимыми
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Entities.Calculations;
 using DocumentFlow.Entities.Companies;
-using DocumentFlow.Entities.Productions.Order;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Entities.Products.Core;
 using DocumentFlow.Infrastructure.Controls;
@@ -118,34 +118,34 @@ public partial class ProductPriceDialog<P> : Form
                 .SetHeaderWidth(120)
                 .DefaultAsValue()
                 .EditorFitToSize()
-                .If(excludePrice, c => c.Disable()));
+                .If(excludePrice, c => c.SetVisible(false)));
         cost = controls.CreateCurrencyTextBox(x => x.ProductCost, "Сумма", text =>
             text
                 .ValueChanged(CostValueChanged)
                 .SetHeaderWidth(120)
                 .DefaultAsValue()
                 .EditorFitToSize()
-                .If(excludePrice, c => c.Disable()));
+                .If(excludePrice, c => c.SetVisible(false)));
         tax = controls.CreateChoice<int>(x => x.Tax, "НДС%", choice =>
             choice
                 .SetChoiceValues(Product.Taxes, true)
                 .ChoiceChanged(TaxChanged)
                 .SetHeaderWidth(120)
                 .EditorFitToSize()
-                .If(excludePrice, c => c.Disable()));
+                .If(excludePrice, c => c.SetVisible(false)));
         taxValue = controls.CreateCurrencyTextBox(x => x.TaxValue, "НДС", text =>
             text
                 .ValueChanged(TaxValueChanged)
                 .SetHeaderWidth(120)
                 .DefaultAsValue()
                 .EditorFitToSize()
-                .If(excludePrice, c => c.Disable()));
+                .If(excludePrice, c => c.SetVisible(false)));
         fullCost = controls.CreateCurrencyTextBox(x => x.FullCost, "Всего с НДС", text =>
             text
                 .SetHeaderWidth(120)
                 .DefaultAsValue()
                 .EditorFitToSize()
-                .If(excludePrice, c => c.Disable()));
+                .If(excludePrice, c => c.SetVisible(false)));
 
         Height = 330;
 

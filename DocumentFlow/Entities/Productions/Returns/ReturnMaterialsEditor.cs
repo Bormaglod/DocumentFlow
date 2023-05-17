@@ -11,6 +11,8 @@
 //  - изменён критерий отбора заказов
 // Версия 2023.1.22
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.17
+//  - в поле OwnerId (Заказ) добавлена кнопка для просмотра заказа
 //
 //-----------------------------------------------------------------------
 
@@ -48,6 +50,7 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
             .AddDocumentSelectBox<ProductionOrder>(x => x.OwnerId, "Заказ", select => 
                 select
                     .SetDataSource(GetOrders, DataRefreshMethod.OnOpen)
+                    .EnableEditor<IProductionOrderEditor>()
                     .CreateColumns(ProductionOrder.CreateGridColumns)
                     .SetHeaderWidth(80)
                     .SetEditorWidth(400))
