@@ -94,5 +94,5 @@ public class ContractEditor : Editor<Contract>, IContractEditor
         }
     }
 
-    private IEnumerable<OurEmployee> GetOurEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllValid();
+    private IEnumerable<OurEmployee> GetOurEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetListExisting();
 }

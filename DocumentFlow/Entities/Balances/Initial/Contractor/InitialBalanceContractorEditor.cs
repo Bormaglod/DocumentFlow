@@ -48,7 +48,7 @@ internal class InitialBalanceContractorEditor : DocumentEditor<InitialBalanceCon
             .AddCurrencyTextBox(x => x.OperationSumma, "Сумма");
     }
 
-    private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetAllValid();
+    private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetListExisting();
 
     private void ContractorChanged(Contractor? newValue)
     {

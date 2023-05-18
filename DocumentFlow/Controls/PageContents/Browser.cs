@@ -459,7 +459,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
         {
             IDirectoryRepository<T> directoryRepository => directoryRepository.GetByParent(ParentId, filter),
             IOwnedRepository<Guid, T> ownedRepository => ownedRepository.GetByOwner(OwnerDocument, filter),
-            _ => repository.GetAllDefault(filter),
+            _ => repository.GetListUserDefined(filter),
         };
 
         try
@@ -702,7 +702,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     {
         if (gridContent.DataSource is IList<T> list)
         {
-            T loadedRow = repository.GetById(row.Id);
+            T loadedRow = repository.Get(row.Id);
             list[list.IndexOf(row)] = loadedRow;
         }
     }
@@ -1054,7 +1054,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             try
             {
                 func(row);
-                list[list.IndexOf(row)] = repository.GetById(row.Id);
+                list[list.IndexOf(row)] = repository.Get(row.Id);
             }
             catch (RepositoryException e)
             {
@@ -1220,7 +1220,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
             switch (e.Action)
             {
                 case MessageAction.Add:
-                    T addingDoc = (T?)e.Document ?? repository.GetById(e.ObjectId);
+                    T addingDoc = (T?)e.Document ?? repository.Get(e.ObjectId);
                     AddRow(list, addingDoc);
 
                     break;
@@ -1247,7 +1247,7 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
                     switch (e.Destination)
                     {
                         case MessageDestination.Object:
-                            T refreshDoc = (T?)e.Document ?? repository.GetById(e.ObjectId);
+                            T refreshDoc = (T?)e.Document ?? repository.Get(e.ObjectId);
                             var row = list.Cast<T>().FirstOrDefault(x => x.Id == refreshDoc.Id);
                             if (row != null)
                             {

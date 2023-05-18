@@ -45,7 +45,7 @@ public class BalanceProcessingRepository : OwnedRepository<Guid, BalanceProcessi
             .Join("waybill_processing as wp", "wp.id", "wpw.waybill_processing_id")
             .GroupBy("wp.contractor_id", "wpw.material_id");
 
-        return GetBaseQuery(conn)
+        return GetQuery(conn)
             .From("q_wpp as i")
             .With("q_wpp", q_wpp)
             .With("q_wpw", q_wpw)
@@ -64,7 +64,7 @@ public class BalanceProcessingRepository : OwnedRepository<Guid, BalanceProcessi
             .ToList();
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         Query m = new Query("waybill_processing_price as wpp")
             .Distinct()

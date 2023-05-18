@@ -74,7 +74,7 @@ public class DebtAdjustmentEditor : DocumentEditor<DebtAdjustment>, IDebtAdjustm
             .Where(x => x.FullCost > x.Paid);
     }
 
-    private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetAll();
+    private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetList();
 
     private void WaybillReceiptSelected(WaybillReceipt? value)
     {

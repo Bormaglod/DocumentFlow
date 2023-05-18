@@ -22,7 +22,7 @@ public class ProductionOrderPriceRepository : OwnedRepository<long, ProductionOr
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("production_order_price.*")

@@ -51,5 +51,5 @@ public abstract class BaseAccountEditor<T> : Editor<T>
                     .SetEditorWidth(400));
     }
 
-    private IEnumerable<Bank> GetBanks() => Services.Provider.GetService<IBankRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+    private IEnumerable<Bank> GetBanks() => Services.Provider.GetService<IBankRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
 }

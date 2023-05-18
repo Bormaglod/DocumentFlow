@@ -121,14 +121,14 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
     private IEnumerable<Material> GetCrossMaterials()
     {
         var repo = Services.Provider.GetService<IMaterialRepository>();
-        return repo!.GetAllValid(callback: query => query
+        return repo!.GetListExisting(callback: query => query
             .OrderBy("item_name")
             .WhereNull("owner_id")
             .When(Document.Id != Guid.Empty, q => q
                 .WhereNot("id", Document.Id)));
     }
 
-    private IEnumerable<Wire> GetWires() => Services.Provider.GetService<IWireRepository>()!.GetAllValid();
+    private IEnumerable<Wire> GetWires() => Services.Provider.GetService<IWireRepository>()!.GetListExisting();
 
-    private IEnumerable<Measurement> GetMeasurements() => Services.Provider.GetService<IMeasurementRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+    private IEnumerable<Measurement> GetMeasurements() => Services.Provider.GetService<IMeasurementRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
 }

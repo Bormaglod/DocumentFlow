@@ -29,7 +29,7 @@ public class InitialBalanceContractorRepository : DocumentRepository<InitialBala
 
     public IReadOnlyList<InitialBalanceContractor> GetByContractor(Guid? contractorId, BalanceCategory category)
     {
-        return GetAllDefault(callback: q => q
+        return GetListUserDefined(callback: q => q
             .Where("reference_id", contractorId)
             .When(
                 category == BalanceCategory.Debet, 
@@ -38,7 +38,7 @@ public class InitialBalanceContractorRepository : DocumentRepository<InitialBala
             );
     }
     
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var p = new Query("posting_payments_balance")
             .Select("document_id")

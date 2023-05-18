@@ -23,7 +23,7 @@ public class AccountRepository : OwnedRepository<Guid, Account>, IAccountReposit
         ExcludeField(x => x.ParentId);
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("account.*")

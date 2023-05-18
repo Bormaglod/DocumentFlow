@@ -22,7 +22,7 @@ public class MaterialUsageRepository : OwnedRepository<Guid, MaterialUsage>, IMa
 
     protected override Query GetQueryOwner(Query query, Guid owner_id) => query.Where($"item_id", owner_id);
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query.From("calculation_material as cm")
             .Select("c.id")

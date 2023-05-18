@@ -50,7 +50,7 @@ public class GrossPayrollRepository : DocumentRepository<GrossPayroll>, IGrossPa
 
     public void CalculateEmployeeWages(GrossPayroll grossPayroll) => CalculateEmployeeWages(grossPayroll.Id);
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var q = new Query("gross_payroll_employee as gpe")
             .Select("gpe.owner_id")

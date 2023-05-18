@@ -18,7 +18,7 @@ public class PayrollRepository : DocumentRepository<Payroll>, IPayrollRepository
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var q = new Query("payroll_employee as pe")
             .Select("pe.owner_id")

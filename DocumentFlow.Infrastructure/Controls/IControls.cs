@@ -7,6 +7,8 @@
 // Версия 2023.5.5
 //  - добавлен метод SetHeaderWidth
 //  - добавлен метод SetEditorWidth
+// Версия 2023.5.18
+//  - в метод AddLine добавлен параметр props
 //
 //-----------------------------------------------------------------------
 
@@ -75,7 +77,7 @@ public interface IControls<T> : IControls
     IControls<T> AddDataGrid<P>(Action<IDataGridControl<P>>? props = null)
         where P : IEntity<long>, IEntityClonable, ICloneable, new();
     IControls<T> AddPanel(Action<IContainer<T>>? props = null);
-    IControls<T> AddLine();
+    IControls<T> AddLine(Action<ILineControl>? props = null);
     IControls<T> AddWireStripping(Expression<Func<T, Stripping>> memberExpression, string header, Action<IWireStrippingControl>? props = null);
     IControls<T> AddProductionLot(Action<IProductionLotControl>? props = null);
     IControls<T> AddLabel(string header, Action<ILabelControl>? props = null);

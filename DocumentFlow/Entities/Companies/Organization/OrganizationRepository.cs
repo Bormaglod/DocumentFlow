@@ -28,13 +28,13 @@ public class OrganizationRepository : Repository<Guid, Organization>, IOrganizat
     public Organization GetMain()
     {
         using var conn = Database.OpenConnection();
-        return GetBaseQuery(conn)
+        return GetQuery(conn)
             .WhereTrue("default_org")
             .Get<Organization>()
             .First();
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("organization.*")

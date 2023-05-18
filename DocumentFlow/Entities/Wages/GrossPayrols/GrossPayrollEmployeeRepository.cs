@@ -31,7 +31,7 @@ public class GrossPayrollEmployeeRepository : OwnedRepository<long, GrossPayroll
     public IReadOnlyList<GrossPayrollEmployee> GetSummaryWage(GrossPayroll payroll)
     {
         using var conn = Database.OpenConnection();
-        return GetBaseQuery(conn, "gpe")
+        return GetQuery(conn, "gpe")
             .Select("oe.id as employee_id")
             .Select("oe.item_name as employee_name")
             .SelectRaw("sum(gpe.wage) as wage")
@@ -42,7 +42,7 @@ public class GrossPayrollEmployeeRepository : OwnedRepository<long, GrossPayroll
             .ToList();
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter = null)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter = null)
     {
         return query
             .Select("gross_payroll_employee.*")

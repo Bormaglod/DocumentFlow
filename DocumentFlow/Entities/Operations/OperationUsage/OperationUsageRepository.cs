@@ -22,7 +22,7 @@ public class OperationUsageRepository : OwnedRepository<Guid, OperationUsage>, I
 
     protected override Query GetQueryOwner(Query query, Guid owner_id) => query.Where($"item_id", owner_id);
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query.From("calculation_operation as co")
             .Select("c.id")

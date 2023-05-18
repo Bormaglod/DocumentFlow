@@ -23,7 +23,7 @@ public class ReportCardRepository : DocumentRepository<ReportCard>, IReportCardR
         ExcludeField(x => x.OwnerId);
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var q = new Query("report_card_employee as rce")
             .Select("rce.owner_id")

@@ -110,7 +110,7 @@ public class BaseCalculationOperationEditor<T> : Editor<T>
     private IEnumerable<CalculationOperation> GetCalcOperations()
     {
         var repo = Services.Provider.GetService<ICalculationOperationRepository>();
-        return repo!.GetAllValid(callback: q =>
+        return repo!.GetListExisting(callback: q =>
         {
             return q
                 .Select("id", "code")
@@ -126,11 +126,11 @@ public class BaseCalculationOperationEditor<T> : Editor<T>
     {
         if (IsCuttingOperation)
         {
-            return Services.Provider.GetService<ICuttingRepository>()!.GetAllValid(callback: q => q.OrderBy("segment_length"));
+            return Services.Provider.GetService<ICuttingRepository>()!.GetListExisting(callback: q => q.OrderBy("segment_length"));
         }
         else
         {
-            return Services.Provider.GetService<IOperationRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+            return Services.Provider.GetService<IOperationRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
         }
     }
 
@@ -146,9 +146,9 @@ public class BaseCalculationOperationEditor<T> : Editor<T>
         }
     }
 
-    private IEnumerable<Equipment> GetEquipments() => Services.Provider.GetService<IEquipmentRepository>()!.GetAllValid(callback: q => q.WhereFalse("is_tools"));
+    private IEnumerable<Equipment> GetEquipments() => Services.Provider.GetService<IEquipmentRepository>()!.GetListExisting(callback: q => q.WhereFalse("is_tools"));
 
-    private IEnumerable<Equipment> GetTools() => Services.Provider.GetService<IEquipmentRepository>()!.GetAllValid(callback: q => q.WhereTrue("is_tools"));
+    private IEnumerable<Equipment> GetTools() => Services.Provider.GetService<IEquipmentRepository>()!.GetListExisting(callback: q => q.WhereTrue("is_tools"));
 
     private void OperationSelected(Operation? newValue)
     {

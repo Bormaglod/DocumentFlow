@@ -72,7 +72,7 @@ public partial class GoodsSelectDialog : Form, IGoodsSelectDialog
     private IEnumerable<Goods>? GetGoods()
     {
         var repo = Services.Provider.GetService<IGoodsRepository>();
-        return repo?.GetAllValid(callback: query => query.OrderByDesc("is_folder").OrderBy("code"));
+        return repo?.GetListExisting(callback: query => query.OrderByDesc("is_folder").OrderBy("code"));
     }
 
     private void SaveControlData(OperationGoods operationGoods)

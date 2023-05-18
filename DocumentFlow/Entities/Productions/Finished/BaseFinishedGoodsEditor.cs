@@ -67,11 +67,11 @@ public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
         else
         {
             var repoGoods = Services.Provider.GetService<IGoodsRepository>();
-            var goods = repoGoods!.GetById(newValue.Id, fullInformation: false);
+            var goods = repoGoods!.Get(newValue.Id, fullInformation: false);
             if (goods.MeasurementId != null)
             {
                 var repoMeas = Services.Provider.GetService<IMeasurementRepository>();
-                var meas = repoMeas!.GetById(goods.MeasurementId.Value);
+                var meas = repoMeas!.Get(goods.MeasurementId.Value);
 
                 quantity.ShowSuffix(meas.Abbreviation ?? meas.ItemName ?? meas.Code);
             }
@@ -99,10 +99,10 @@ public class BaseFinishedGoodsEditor : DocumentEditor<FinishedGoods>
     private IEnumerable<ProductionLot> GetLots()
     {
         var repo = Services.Provider.GetService<IProductionLotRepository>();
-        return repo!.GetAllDefault(callback: q => q
+        return repo!.GetListUserDefined(callback: q => q
             .WhereFalse("production_lot.deleted")
             .WhereTrue("production_lot.carried_out"));
     }
 
-    private IEnumerable<Goods> GetGoods() => Services.Provider.GetService<IGoodsRepository>()!.GetAllValid();
+    private IEnumerable<Goods> GetGoods() => Services.Provider.GetService<IGoodsRepository>()!.GetListExisting();
 }

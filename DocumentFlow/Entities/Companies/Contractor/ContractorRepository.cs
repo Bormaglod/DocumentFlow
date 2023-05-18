@@ -35,7 +35,7 @@ public class ContractorRepository : DirectoryRepository<Contractor>, IContractor
     private IReadOnlyList<Contractor> GetContractorByType(ContractorType type)
     {
         using var conn = Database.OpenConnection();
-        return GetDefaultQuery(conn)
+        return GetUserDefinedQuery(conn)
             .Distinct()
             .LeftJoin("contract as c", "c.owner_id", "contractor.id")
             .WhereFalse("contractor.deleted")
@@ -47,7 +47,7 @@ public class ContractorRepository : DirectoryRepository<Contractor>, IContractor
             .ToList();
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("contractor.*")

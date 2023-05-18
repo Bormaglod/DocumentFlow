@@ -29,13 +29,13 @@ public class PriceApprovalRepository : OwnedRepository<long, PriceApproval>, IPr
     public PriceApproval? GetPrice(ContractApplication contractApplication, Product product)
     {
         using var conn = Database.OpenConnection();
-        var query = GetDefaultQuery(conn)
+        var query = GetUserDefinedQuery(conn)
             .Where("price_approval.owner_id", contractApplication.Id)
             .Where("price_approval.product_id", product.Id);
         return query.FirstOrDefault<PriceApproval>();
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("price_approval.*")

@@ -140,9 +140,9 @@ public class ContractorEditor : Editor<Contractor>, IContractorEditor
         }
     }
 
-    private IEnumerable<Okopf> GetOkopfs() => Services.Provider.GetService<IOkopfRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+    private IEnumerable<Okopf> GetOkopfs() => Services.Provider.GetService<IOkopfRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
 
     private IEnumerable<Account> GetAccounts() => Services.Provider.GetService<IAccountRepository>()!.GetByOwner(Document.AccountId, Id);
 
-    private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+    private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
 }

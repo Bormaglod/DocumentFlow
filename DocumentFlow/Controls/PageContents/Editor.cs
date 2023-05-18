@@ -366,8 +366,8 @@ public partial class Editor<T> : UserControl, IEditorPage
         dateTimeUpdate.Value = entity.DateUpdated;
 
         var users = Services.Provider.GetService<IUserAliasRepository>();
-        textAuthor.Text = users!.GetById(entity.UserCreatedId).Name;
-        textEditor.Text = users!.GetById(entity.UserUpdatedId).Name;
+        textAuthor.Text = users!.Get(entity.UserCreatedId).Name;
+        textEditor.Text = users!.Get(entity.UserUpdatedId).Name;
 
         UpdateText(entity);
     }
@@ -415,7 +415,7 @@ public partial class Editor<T> : UserControl, IEditorPage
     {
         if (id != null && id != Guid.Empty)
         {
-            document = repository.GetById(id.Value);
+            document = repository.Get(id.Value);
             RefreshInfo(document);
             RefreshDocumentRefs(id);
         }

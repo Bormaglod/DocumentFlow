@@ -42,7 +42,7 @@ namespace DocumentFlow.Controls.Filters
 
             var orgs = Services.Provider.GetService<IOrganizationRepository>();
 
-            var list = orgs!.GetAll();
+            var list = orgs!.GetList();
             comboOrg.DataSource = list;
             comboOrg.SelectedItem = list.FirstOrDefault(x => x.DefaultOrg);
         }

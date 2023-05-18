@@ -62,7 +62,7 @@ public class BaseEmployeeEditor<T> : Editor<T>
                     .SetEditorWidth(150));
     }
 
-    private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+    private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
 
-    private IEnumerable<Okpdtr> GetPosts() => Services.Provider.GetService<IOkpdtrRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+    private IEnumerable<Okpdtr> GetPosts() => Services.Provider.GetService<IOkpdtrRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
 }

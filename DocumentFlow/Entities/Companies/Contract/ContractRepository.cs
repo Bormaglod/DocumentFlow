@@ -34,7 +34,7 @@ public class ContractRepository : OwnedRepository<Guid, Contract>, IContractRepo
 
     public IReadOnlyList<Contract> Get(Contractor contractor) => GetByOwner(contractor.Id, callback: q => q.WhereFalse("contract.deleted"));
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("contract.*")

@@ -37,5 +37,5 @@ internal class InitialBalanceEmployeeEditor : DocumentEditor<InitialBalanceEmplo
                     .SetEditorWidth(200));
     }
 
-    private IEnumerable<OurEmployee> GetEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllValid();
+    private IEnumerable<OurEmployee> GetEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetListExisting();
 }

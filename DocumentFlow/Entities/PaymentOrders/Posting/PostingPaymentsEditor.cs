@@ -136,7 +136,7 @@ public class PostingPaymentsEditor : DocumentEditor<PostingPayments>, IPostingPa
         if (OwnerId != null)
         {
             var payments = Services.Provider.GetService<IPaymentOrderRepository>();
-            var p = payments!.GetById(OwnerId.Value);
+            var p = payments!.Get(OwnerId.Value);
 
             if (p.PaymentDirection == PaymentDirection.Expense)
             {

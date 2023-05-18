@@ -103,11 +103,11 @@ public partial class PriceApprovalDialog : Form, IPriceApprovalDialog
         var goods = Services.Provider.GetService<IGoodsRepository>();
 
         return materials!
-            .GetAllValid(callback: q => q.OrderBy("item_name"))
+            .GetListExisting(callback: q => q.OrderBy("item_name"))
             .OfType<Product>()
             .Union(
                 goods!
-                .GetAllValid(callback: q => q.OrderBy("item_name"))
+                .GetListExisting(callback: q => q.OrderBy("item_name"))
                 .OfType<Product>()
             );
     }

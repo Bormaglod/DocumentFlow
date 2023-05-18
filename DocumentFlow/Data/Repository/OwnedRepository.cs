@@ -30,20 +30,17 @@ public abstract class OwnedRepository<Key, T> : Repository<Key, T>, IOwnedReposi
     {
         if (owner_id == null)
         {
-            return GetAllDefault(filter, callback);
+            return GetListUserDefined(filter, callback);
         }
 
         using var conn = Database.OpenConnection();
-        Query query = GetQueryOwner(GetDefaultQuery(conn, filter), owner_id.Value);
+        Query query = GetQueryOwner(GetUserDefinedQuery(conn, filter), owner_id.Value);
         if (callback != null)
         {
             query = callback(query);
         }
 
-        var res1 = query.Get<T>();
-        var res2 = res1.ToList();
-
-        return res2;
+        return query.Get<T>().ToList();
     }
 
     public IReadOnlyList<T> GetByOwner(Key? id, Guid? owner_id, IFilter? filter = null, Func<Query, Query>? callback = null, bool useBaseQuery = false)
@@ -54,17 +51,17 @@ public abstract class OwnedRepository<Key, T> : Repository<Key, T>, IOwnedReposi
         {
             if (useBaseQuery)
             {
-                return id == null ? Get(GetBaseQuery(conn), callback) : new[] { GetById(id.Value) };
+                return id == null ? GetList(GetQuery(conn), callback) : new[] { Get(id.Value) };
             }
             else
             {
-                return id == null ? GetAllDefault(filter) : new[] { GetById(id.Value) };
+                return id == null ? GetListUserDefined(filter) : new[] { Get(id.Value) };
             }
         }
 
         Query query = useBaseQuery ?
-            GetQueryOwner(GetBaseQuery(conn), owner_id.Value) :
-            GetQueryOwner(GetDefaultQuery(conn, filter), owner_id.Value);
+            GetQueryOwner(GetQuery(conn), owner_id.Value) :
+            GetQueryOwner(GetUserDefinedQuery(conn, filter), owner_id.Value);
 
         return OwnedRepository<Key, T>.GetList(query, id, callback);
     }

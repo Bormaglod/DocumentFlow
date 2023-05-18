@@ -83,5 +83,5 @@ public class PayrollEditor : DocumentEditor<Payroll>, IPayrollEditor
         }
     }
 
-    private IEnumerable<GrossPayroll> GetGrosses() => Services.Provider.GetService<IGrossPayrollRepository>()!.GetAllDefault();
+    private IEnumerable<GrossPayroll> GetGrosses() => Services.Provider.GetService<IGrossPayrollRepository>()!.GetListUserDefined();
 }

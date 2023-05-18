@@ -24,7 +24,7 @@ public class WaybillReceiptPriceRepository : OwnedRepository<long, WaybillReceip
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("waybill_receipt_price.*")

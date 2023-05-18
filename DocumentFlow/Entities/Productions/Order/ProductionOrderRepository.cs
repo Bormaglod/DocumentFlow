@@ -69,7 +69,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .SelectRaw("sum(full_cost) as full_cost")
             .GroupBy("owner_id");
 
-        return GetBaseQuery(conn, "po")
+        return GetQuery(conn, "po")
             .With("rm_waybills", rm)
             .Select("po.*")
             .Select("c.item_name as contractor_name")
@@ -91,7 +91,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
     public IReadOnlyList<T> GetOnlyGivingMaterials<T>(ProductionOrder order) where T : ProductPrice
     {
         using var conn = Database.OpenConnection();
-        return GetBaseQuery(conn, "po")
+        return GetQuery(conn, "po")
             .Select("cm.item_id as reference_id")
             .Select("m.code")
             .Select("m.item_name as product_name")
@@ -107,7 +107,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .ToList();
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var d = new Query("production_order_price")
             .Select("owner_id")

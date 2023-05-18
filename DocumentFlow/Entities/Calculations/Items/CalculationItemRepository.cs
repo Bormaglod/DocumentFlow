@@ -27,7 +27,7 @@ public class CalculationItemRepository<T> : OwnedRepository<Guid, T>
     public decimal GetSumItemCost(Guid owner_id)
     {
         using var conn = Database.OpenConnection();
-        return GetBaseQuery(conn)
+        return GetQuery(conn)
             .AsSum("item_cost")
             .Where("owner_id", owner_id)
             .Get<decimal>()

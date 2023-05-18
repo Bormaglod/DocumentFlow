@@ -23,7 +23,7 @@ public class DebtAdjustmentRepository : DocumentRepository<DebtAdjustment>, IDeb
         ExcludeField(x => x.OwnerId);
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var price = GetSum("waybill_receipt_price", "owner_id", "full_cost");
         var pay = GetSum("posting_payments_receipt", "document_id", "transaction_amount");

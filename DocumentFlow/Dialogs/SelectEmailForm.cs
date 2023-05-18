@@ -77,14 +77,14 @@ public partial class SelectEmailForm : Form
     public static bool ShowWindow(Guid? documentId, string title, string file)
     {
         var orgRepo = Services.Provider.GetService<IOrganizationRepository>();
-        var orgs = orgRepo!.GetAllValid(
+        var orgs = orgRepo!.GetListExisting(
             callback: q => q
                 .WhereNotNull("item_name")
                 .WhereNotNull("email"))
             .Select(x => new EmailAddress(x.ItemName!, x.Email!));
 
         var ourEmpRepo = Services.Provider.GetService<IOurEmployeeRepository>();
-        var ourEmps = ourEmpRepo!.GetAllValid(
+        var ourEmps = ourEmpRepo!.GetListExisting(
             callback: q => q
                 .WhereNotNull("item_name")
                 .WhereNotNull("email"))
@@ -93,7 +93,7 @@ public partial class SelectEmailForm : Form
         var from = orgs.Concat(ourEmps);
 
         var empRepo = Services.Provider.GetService<IEmployeeRepository>();
-        var to = empRepo!.GetAllDefault(
+        var to = empRepo!.GetListUserDefined(
             callback: q => q
                 .WhereFalse("employee.deleted")
                 .WhereNotNull("employee.item_name")

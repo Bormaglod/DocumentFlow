@@ -25,7 +25,7 @@ public class FinishedGoodsRepository : DocumentRepository<FinishedGoods>, IFinis
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("finished_goods.*")

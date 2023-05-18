@@ -147,7 +147,7 @@ public class WaybillProcessingEditor : DocumentEditor<WaybillProcessing>, IWaybi
     private IEnumerable<ProductionOrder> GetOrders()
     {
         var repo = Services.Provider.GetService<IProductionOrderRepository>();
-        return repo!.GetAllDefault(callback: q => q
+        return repo!.GetListUserDefined(callback: q => q
             .WhereFalse("production_order.deleted")
             .WhereTrue("carried_out")
             .WhereFalse("closed"));

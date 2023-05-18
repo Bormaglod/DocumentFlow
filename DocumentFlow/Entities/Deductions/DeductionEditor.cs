@@ -60,5 +60,5 @@ public class DeductionEditor : Editor<Deduction>, IDeductionEditor
                       .ForEach(c => c.SetVisible(c.GetRaisedGroup() == 1 ? baseDeduction == BaseDeduction.Person : baseDeduction != BaseDeduction.Person));
     }
 
-    private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+    private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
 }

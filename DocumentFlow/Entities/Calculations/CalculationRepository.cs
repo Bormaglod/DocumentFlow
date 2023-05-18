@@ -31,7 +31,7 @@ public class CalculationRepository : OwnedRepository<Guid, Calculation>, ICalcul
         ExcludeField(x => x.ParentId);
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var materials = new Query("calculation_material as cm")
             .Select("cm.owner_id")
@@ -58,7 +58,7 @@ public class CalculationRepository : OwnedRepository<Guid, Calculation>, ICalcul
     public IReadOnlyList<Calculation> GetApproved(Goods goods)
     {
         using var conn = Database.OpenConnection();
-        return GetBaseQuery(conn)
+        return GetQuery(conn)
             .Select("id", "code as item_name")
             .Where("id", goods.CalculationId)
             .OrWhere(q => q

@@ -22,7 +22,7 @@ public class BalanceEmployeeRepository : OwnedRepository<Guid, BalanceEmployee>,
 {
     public BalanceEmployeeRepository(IDatabase database) : base(database) { }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("balance_employee.*")

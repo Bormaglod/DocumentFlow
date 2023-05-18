@@ -24,7 +24,7 @@ public class DeductionRepository : Repository<Guid, Deduction>, IDeductionReposi
         ExcludeField(x => x.OwnerId);
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("*")

@@ -33,7 +33,7 @@ public class PaymentOrderRepository : DocumentRepository<PaymentOrder>, IPayment
     public decimal GetPaymentBalance(PaymentOrder order)
     {
         using var conn = Database.OpenConnection();
-        var balance = GetBaseQuery(conn)
+        var balance = GetQuery(conn)
             .SelectRaw("sum(pp.transaction_amount)")
             .Join("posting_payments as pp", "pp.owner_id", "payment_order.id")
             .GroupBy("pp.owner_id")
@@ -51,7 +51,7 @@ public class PaymentOrderRepository : DocumentRepository<PaymentOrder>, IPayment
         }
 
         using var conn = Database.OpenConnection();
-        return GetBaseQuery(conn)
+        return GetQuery(conn)
             .SelectRaw("payment_order.transaction_amount - coalesce(sum(pp.transaction_amount), 0)")
             .LeftJoin("posting_payments as pp", q => q.WhereColumns("pp.owner_id", "=", "payment_order.id").WhereTrue("pp.carried_out"))
             .GroupBy("payment_order.id")
@@ -59,7 +59,7 @@ public class PaymentOrderRepository : DocumentRepository<PaymentOrder>, IPayment
             .First<decimal>();
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("payment_order.*")

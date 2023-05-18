@@ -56,7 +56,7 @@ public class CalculationDeductionEditor : Editor<CalculationDeduction>, ICalcula
                     .SetEditorWidth(150));
     }
 
-    private IEnumerable<Deduction> GetDeductions() => Services.Provider.GetService<IDeductionRepository>()!.GetAllValid();
+    private IEnumerable<Deduction> GetDeductions() => Services.Provider.GetService<IDeductionRepository>()!.GetListExisting();
 
     private void DeductionItemChanged(Deduction? deduction)
     {

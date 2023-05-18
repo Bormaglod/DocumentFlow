@@ -127,7 +127,7 @@ public abstract class DataSourceControl<I, T> : BaseControl, IDataSourceControl,
         var repo = Services.Provider.GetService(type);
         if (repo != null && repo is IRepository<I, T> tr)
         {
-            return tr.GetById(id, fullInformation: false);
+            return tr.Get(id, fullInformation: false);
         }
 
         return null;

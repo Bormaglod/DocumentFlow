@@ -25,7 +25,7 @@ public class UserAliasRepository : Repository<Guid, UserAlias>, IUserAliasReposi
     public IReadOnlyList<UserAlias> GetUsers()
     {
         using var conn = Database.OpenConnection();
-        return GetDefaultQuery(conn)
+        return GetUserDefinedQuery(conn)
             .WhereFalse("is_system")
 #if DEBUG
             .OrWhere("pg_name", "postgres")

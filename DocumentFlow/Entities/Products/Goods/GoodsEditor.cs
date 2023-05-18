@@ -113,5 +113,5 @@ public class GoodsEditor : Editor<Goods>, IGoodsEditor
 
     private IEnumerable<Calculation> GetCalculations() => Services.Provider.GetService<ICalculationRepository>()!.GetApproved(Document);
 
-    private IEnumerable<Measurement> GetMeasurements() => Services.Provider.GetService<IMeasurementRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+    private IEnumerable<Measurement> GetMeasurements() => Services.Provider.GetService<IMeasurementRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
 }

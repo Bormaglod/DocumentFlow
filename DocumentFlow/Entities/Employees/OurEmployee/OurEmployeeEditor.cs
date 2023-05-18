@@ -37,5 +37,5 @@ public class OurEmployeeEditor : BaseEmployeeEditor<OurEmployee>, IOurEmployeeEd
         RegisterNestedBrowser<IBalanceEmployeeBrowser, BalanceEmployee>();
     }
 
-    private IEnumerable<IItem> GetItems() => Services.Provider.GetService<IIncomeItemRepository>()!.GetAllDefault();
+    private IEnumerable<IItem> GetItems() => Services.Provider.GetService<IIncomeItemRepository>()!.GetListUserDefined();
 }

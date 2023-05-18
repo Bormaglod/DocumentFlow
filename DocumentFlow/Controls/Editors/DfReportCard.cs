@@ -227,7 +227,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
         if (repo != null)
         {
             SelectDirectoryForm<OurEmployee> form = new(null, false, true);
-            form.AddItems(repo.GetAllValid());
+            form.AddItems(repo.GetListExisting());
             if (form.ShowDialog() == DialogResult.OK && form.SelectedItem != null && list != null)
             {
                 var emp = new ReportCardEmployee(form.SelectedItem, Year, Month);
@@ -243,7 +243,7 @@ public partial class DfReportCard : BaseControl, IDataSourceControl, IGridDataSo
         if (repo != null && gridContent.SelectedItem is ReportCardEmployee emp)
         {
             SelectDirectoryForm<OurEmployee> form = new(null, false, true);
-            form.AddItems(repo.GetAllValid());
+            form.AddItems(repo.GetListExisting());
             form.SelectedValue = emp.EmployeeId;
             if (form.ShowDialog() == DialogResult.OK && form.SelectedItem != null && list != null)
             {

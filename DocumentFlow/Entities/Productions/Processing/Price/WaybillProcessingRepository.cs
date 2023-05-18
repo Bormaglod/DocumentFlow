@@ -27,7 +27,7 @@ public class WaybillProcessingPriceRepository : OwnedRepository<long, WaybillPro
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var wpp = new Query("waybill_processing_writeoff")
             .Select("waybill_processing_id")

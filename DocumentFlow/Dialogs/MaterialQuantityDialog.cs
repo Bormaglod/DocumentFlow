@@ -88,7 +88,7 @@ public partial class MaterialQuantityDialog : Form, IMaterialQuantityDialog
         row.Quantity = Quantity.NumericValue.GetValueOrDefault();
     }
 
-    private IEnumerable<Material>? GetMaterials() => Services.Provider.GetService<IMaterialRepository>()?.GetAllValid();
+    private IEnumerable<Material>? GetMaterials() => Services.Provider.GetService<IMaterialRepository>()?.GetListExisting();
 
     private void ButtonOk_Click(object sender, EventArgs e)
     {

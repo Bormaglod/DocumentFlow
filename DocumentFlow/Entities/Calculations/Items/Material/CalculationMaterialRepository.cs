@@ -32,10 +32,10 @@ public class CalculationMaterialRepository : CalculationItemRepository<Calculati
 
     public IReadOnlyList<CalculationMaterial> GetOnlyGivingMaterials(Calculation calculation)
     {
-        return GetAllDefault(callback: q => q.WhereTrue("calculation_material.is_giving"));
+        return GetListUserDefined(callback: q => q.WhereTrue("calculation_material.is_giving"));
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("calculation_material.*")

@@ -120,7 +120,7 @@ public partial class OperationsPerformedDialog : Form
             return null;
         }
 
-        var lot = repoLot.GetById(lotId);
+        var lot = repoLot.Get(lotId);
 
         var repo = Services.Provider.GetService<ICalculationOperationRepository>();
         if (repo == null)
@@ -128,7 +128,7 @@ public partial class OperationsPerformedDialog : Form
             return null;
         }
 
-        var op = repo.GetAllValid(callback: query =>
+        var op = repo.GetListExisting(callback: query =>
             query
                 .Select("calculation_operation.*")
                 .Select("m.item_name as material_name")
@@ -140,9 +140,9 @@ public partial class OperationsPerformedDialog : Form
         return op;
     }
 
-    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetAllValid();
+    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetListExisting();
 
-    private IEnumerable<OurEmployee> GetOurEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllValid();
+    private IEnumerable<OurEmployee> GetOurEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetListExisting();
 
     private void ButtonOk_Click(object sender, EventArgs e)
     {

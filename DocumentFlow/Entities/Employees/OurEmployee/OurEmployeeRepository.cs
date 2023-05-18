@@ -37,7 +37,7 @@ public class OurEmployeeRepository : Repository<Guid, OurEmployee>, IOurEmployee
         throw new DbAccessException($"Отсутствует доступ к таблице {"employee_wages"}");
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("our_employee.*")

@@ -40,7 +40,7 @@ public class WaybillProcessingRepository : DocumentRepository<WaybillProcessing>
             .SelectRaw("sum(amount) as written_off")
             .GroupBy("waybill_processing_id", "material_id");
 
-        return GetBaseQuery(conn, "wp")
+        return GetQuery(conn, "wp")
             .Select("wpp.reference_id as material_id")
             .Select("m.item_name as material_name")
             .SelectRaw("sum(wpp.amount - coalesce(wpw.written_off, 0)) as quantity")
@@ -56,7 +56,7 @@ public class WaybillProcessingRepository : DocumentRepository<WaybillProcessing>
             .ToList();
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var q = new Query("waybill_processing_price")
             .Select("owner_id")

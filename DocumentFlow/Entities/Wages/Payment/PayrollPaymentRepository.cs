@@ -18,7 +18,7 @@ public class PayrollPaymentRepository : DocumentRepository<PayrollPayment>, IPay
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("payroll_payment.*")

@@ -20,7 +20,7 @@ public class PostingPaymentsRepository : DocumentRepository<PostingPayments>, IP
 {
     public PostingPaymentsRepository(IDatabase database) : base(database) { }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query.FromRaw("posting_payments()");
     }

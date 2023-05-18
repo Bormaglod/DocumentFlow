@@ -146,7 +146,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         var repo = Services.Provider.GetService<ICalculationOperationRepository>();
         if (repo != null)
         {
-            var op = repo.GetAllValid(callback: query =>
+            var op = repo.GetListExisting(callback: query =>
                 query
                     .Select("calculation_operation.*")
                     .Select("m.item_name as material_name")
@@ -197,7 +197,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         if (newValue?.MaterialName == null && newValue?.MaterialId != null)
         {
             var repo = Services.Provider.GetService<IMaterialRepository>();
-            using_material.SetText(repo!.GetById(newValue.MaterialId.Value, false).ItemName);
+            using_material.SetText(repo!.Get(newValue.MaterialId.Value, false).ItemName);
         }
         else
         {
@@ -222,7 +222,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
             return null;
         }
 
-        var orders = repo_orders.GetAllValid(callback: query =>
+        var orders = repo_orders.GetListExisting(callback: query =>
             query
                 .Distinct()
                 .Select("production_order.*")
@@ -235,7 +235,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
 
         if (orders.Any())
         {
-            var lots = repo_lots.GetAllValid(callback: query =>
+            var lots = repo_lots.GetListExisting(callback: query =>
                 query
                     .Select("production_lot.*")
                     .Select("g.item_name as goods_name")
@@ -251,7 +251,7 @@ public class BaseOperationsPerformedEditor : Editor<OperationsPerformed>
         return null;
     }
 
-    private IEnumerable<OurEmployee> GetEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllValid();
+    private IEnumerable<OurEmployee> GetEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetListExisting();
 
-    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetAllValid();
+    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetListExisting();
 }

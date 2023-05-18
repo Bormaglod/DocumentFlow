@@ -34,7 +34,7 @@ public class ContractApplicationRepository : OwnedRepository<Guid, ContractAppli
     public IReadOnlyList<ContractApplication> GetCurrents(Contract contract)
     {
         using var conn = Database.OpenConnection();
-        var query = GetDefaultQuery(conn)
+        var query = GetUserDefinedQuery(conn)
             .Where("c.id", contract.Id)
             .WhereDate("contract_application.date_start", "<=", DateTime.Now)
             .Where(q => q
@@ -44,7 +44,7 @@ public class ContractApplicationRepository : OwnedRepository<Guid, ContractAppli
         return query.Get<ContractApplication>().ToList();
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("contract_application.*")

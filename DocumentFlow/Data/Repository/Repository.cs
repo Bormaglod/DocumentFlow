@@ -29,6 +29,15 @@
 //  - перенесено из DocumentFlow.Data.Core в DocumentFlow.Data.Repositiry
 // Версия 2023.3.27
 //  - рефакторинг методов ExcludeField
+// Версия 2023.5.18
+//  - метод GetAll переименован в GetList
+//  - метод Get(Query, Func<Query, Query>?) переименован в GetList
+//  - метод GetQueryFilters переименован в ApplyFilters
+//  - методы GetDefaultQuery переименованы в GetUserDefinedQuery
+//  - метод GetBaseQuery переименован в GetQuery
+//  - метод GetAllDefault переименован в GetListUserDefined
+//  - метод GetAllValid переименован в GetListExisting
+//  - методы GetById переименованы в Get
 //
 //-----------------------------------------------------------------------
 
@@ -109,15 +118,15 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
     protected IDatabase Database { get; }
 
-    public T GetById(Key id, bool fullInformation = true)
+    public T Get(Key id, bool fullInformation = true)
     {
         using var conn = Database.OpenConnection();
-        return GetById(id, conn, fullInformation);
+        return Get(id, conn, fullInformation);
     }
 
-    public T GetById(Key id, IDbConnection connection, bool fullInformation = true)
+    public T Get(Key id, IDbConnection connection, bool fullInformation = true)
     {
-        Query query = fullInformation ? GetDefaultQuery(connection) : GetBaseQuery(connection);
+        Query query = fullInformation ? GetUserDefinedQuery(connection) : GetQuery(connection);
 
         T res = query.Where(q => q.Where($"{GetTableName(query)}.id", id)).FirstOrDefault<T>();
         if (res != null)
@@ -132,7 +141,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
     {
         using var conn = Database.OpenConnection();
 
-        var query = GetBaseQuery(conn);
+        var query = GetQuery(conn);
         if (callback != null)
         {
             query = callback(query);
@@ -141,25 +150,25 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
         return query.First<T>();
     }
 
-    public IReadOnlyList<T> GetAll(Func<Query, Query>? callback = null)
+    public IReadOnlyList<T> GetList(Func<Query, Query>? callback = null)
     {
         using var conn = Database.OpenConnection();
-        return Get(GetBaseQuery(conn), callback);
+        return GetList(GetQuery(conn), callback);
     }
 
-    public IReadOnlyList<T> GetAllDefault(IFilter? filter = null, Func<Query, Query>? callback = null)
+    public IReadOnlyList<T> GetListUserDefined(IFilter? filter = null, Func<Query, Query>? callback = null)
     {
         using var conn = Database.OpenConnection();
-        return Get(GetDefaultQuery(conn, filter), callback);
+        return GetList(GetUserDefinedQuery(conn, filter), callback);
     }
 
-    public IReadOnlyList<T> GetAllValid(Func<Query, Query>? callback = null)
+    public IReadOnlyList<T> GetListExisting(Func<Query, Query>? callback = null)
     {
         using var conn = Database.OpenConnection();
 
-        var query = GetBaseQuery(conn);
+        var query = GetQuery(conn);
 
-        return Get(query.WhereFalse($"{GetTableName(query)}.deleted"), callback);
+        return GetList(query.WhereFalse($"{GetTableName(query)}.deleted"), callback);
     }
 
     public T Add()
@@ -185,7 +194,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
         var conn = transaction.Connection;
         Key id = conn.QuerySingle<Key>(sql, transaction: transaction);
-        return GetById(id);
+        return Get(id);
     }
 
     public T Add(T entity)
@@ -212,7 +221,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
         var conn = transaction.Connection;
         if (conn != null)
         {
-            return GetById(id, conn);
+            return Get(id, conn);
         }
 
         throw new NullReferenceException(nameof(conn));
@@ -243,7 +252,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
         if (conn != null)
         {
             Key id = conn.QuerySingle<Key>(sql, original, transaction: transaction);
-            T copy = GetById(id, conn);
+            T copy = Get(id, conn);
 
             CopyNestedRows(original, copy, transaction);
 
@@ -487,7 +496,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
         list.Remove(memberExpression.ToMember().Name);
     }
 
-    protected virtual Query GetDefaultQuery(Query query, IFilter? filter = null) => query;
+    protected virtual Query GetUserDefinedQuery(Query query, IFilter? filter = null) => query;
 
     protected Query GetView(IDbConnection conn, string viewName)
     {
@@ -503,7 +512,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
             .ToList();
     }
 
-    protected Query GetBaseQuery(IDbConnection conn, string? alias = null)
+    protected Query GetQuery(IDbConnection conn, string? alias = null)
     {
         var factory = new QueryFactory(conn, new PostgresCompiler());
         return factory.Query(GetTableName() + (alias == null ?
@@ -511,12 +520,12 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
             $" as {alias}"));
     }
 
-    protected Query GetDefaultQuery(IDbConnection conn, IFilter? filter = null) =>
-        GetQueryFilters(GetDefaultQuery(GetBaseQuery(conn), filter), filter);
+    protected Query GetUserDefinedQuery(IDbConnection conn, IFilter? filter = null) =>
+        ApplyFilters(GetUserDefinedQuery(GetQuery(conn), filter), filter);
 
     protected static string GetTableName(Query query) => query.Clauses.OfType<FromClause>().FirstOrDefault()?.Alias ?? GetTableName();
 
-    protected static IReadOnlyList<T> Get(Query query, Func<Query, Query>? callback = null)
+    protected static IReadOnlyList<T> GetList(Query query, Func<Query, Query>? callback = null)
     {
         if (callback != null)
         {
@@ -573,7 +582,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
     private static string GetTableName() => typeof(T).Name.Underscore();
 
-    private static Query GetQueryFilters(Query query, IFilter? filter = null)
+    private static Query ApplyFilters(Query query, IFilter? filter = null)
     {
         if (filter != null)
         {

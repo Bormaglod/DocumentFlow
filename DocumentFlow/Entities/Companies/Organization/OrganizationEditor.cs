@@ -93,7 +93,7 @@ public class OrganizationEditor : Editor<Organization>, IOrganizationEditor
         RegisterNestedBrowser<IOrgEmployeeBrowser, OurEmployee>();
     }
 
-    private IEnumerable<Okopf> GetOkopfs() => Services.Provider.GetService<IOkopfRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+    private IEnumerable<Okopf> GetOkopfs() => Services.Provider.GetService<IOkopfRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
 
     private IEnumerable<OurAccount> GetAccounts() => Services.Provider.GetService<IOurAccountRepository>()!.GetByOwner(Document.AccountId, Id);
 }

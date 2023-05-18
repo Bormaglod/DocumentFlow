@@ -35,5 +35,5 @@ internal class InitialBalanceMaterialEditor : DocumentEditor<InitialBalanceMater
             .AddCurrencyTextBox(x => x.OperationSumma, "Сумма");
     }
 
-    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetAllValid();
+    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetListExisting();
 }

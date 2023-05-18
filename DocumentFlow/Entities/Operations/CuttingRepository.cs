@@ -25,7 +25,7 @@ public class CuttingRepository : DirectoryRepository<Cutting>, ICuttingRepositor
         ExcludeField(x => x.OwnerId);
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter) => query.From("cuttings");
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter) => query.From("cuttings");
 
     public IReadOnlyList<int> GetAvailableProgram(int? includeProgram)
     {

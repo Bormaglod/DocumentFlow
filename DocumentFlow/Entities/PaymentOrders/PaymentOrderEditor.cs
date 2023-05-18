@@ -58,5 +58,5 @@ public class PaymentOrderEditor : DocumentEditor<PaymentOrder>, IPaymentOrderEdi
         RegisterNestedBrowser<IPostingPaymentsBrowser, PostingPayments>();
     }
 
-    private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetAll();
+    private IEnumerable<Contractor> GetContractors() => Services.Provider.GetService<IContractorRepository>()!.GetList();
 }

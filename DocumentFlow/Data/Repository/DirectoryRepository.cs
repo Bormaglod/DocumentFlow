@@ -35,7 +35,7 @@ public abstract class DirectoryRepository<T> : OwnedRepository<Guid, T>, IDirect
     public IReadOnlyList<T> GetByParent(Guid? parent_id, IFilter? filter = null)
     {
         using var conn = Database.OpenConnection();
-        var query = GetDefaultQuery(conn, filter);
+        var query = GetUserDefinedQuery(conn, filter);
         var table = GetTableName(query);
 
         return query
@@ -51,7 +51,7 @@ public abstract class DirectoryRepository<T> : OwnedRepository<Guid, T>, IDirect
     public IReadOnlyList<T> GetOnlyFolders()
     {
         using var conn = Database.OpenConnection();
-        return GetBaseQuery(conn)
+        return GetQuery(conn)
             .WhereTrue("is_folder")
             .WhereFalse("deleted")
             .OrderBy("item_name")

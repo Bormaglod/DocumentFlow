@@ -36,7 +36,7 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         if (filter is IBalanceSheetFilter f)
         {

@@ -35,7 +35,7 @@ public class ProductionLotRepository : DocumentRepository<ProductionLot>, IProdu
     public IReadOnlyList<ProductionLotOperation> GetOperations(Guid lot_id)
     {
         using var conn = Database.OpenConnection();
-        var query = GetBaseQuery(conn)
+        var query = GetQuery(conn)
             .Select("co.*")
             .SelectRaw("production_lot.quantity * co.repeats as quantity_by_lot")
             .Join("calculation_operation as co", "co.owner_id", "production_lot.calculation_id")
@@ -61,7 +61,7 @@ public class ProductionLotRepository : DocumentRepository<ProductionLot>, IProdu
         }
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var goods_time = new Query("calculation_operation as co")
             .Select("co.owner_id as calc_id")

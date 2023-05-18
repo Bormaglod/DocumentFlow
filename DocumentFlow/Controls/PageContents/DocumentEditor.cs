@@ -68,5 +68,5 @@ public class DocumentEditor<T> : Editor<T>
         document.SetOrganization(Services.Provider.GetService<IOrganizationRepository>()!.GetMain().Id);
     }
 
-    private IEnumerable<Organization> GetOrganizations() => Services.Provider.GetService<IOrganizationRepository>()!.GetAll();
+    private IEnumerable<Organization> GetOrganizations() => Services.Provider.GetService<IOrganizationRepository>()!.GetList();
 }

@@ -69,13 +69,13 @@ public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWay
 
     public IReadOnlyList<WaybillReceipt> GetByContractor(Guid? contractorId)
     {
-        return GetAllDefault(callback: q => q
+        return GetListUserDefined(callback: q => q
             .WhereTrue("waybill_receipt.carried_out")
             .WhereFalse("waybill_receipt.deleted")
             .Where("waybill_receipt.contractor_id", contractorId));
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var q = new Query("waybill_receipt_price")
             .Select("owner_id")

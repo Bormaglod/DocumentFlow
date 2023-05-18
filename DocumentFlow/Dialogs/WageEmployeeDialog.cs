@@ -82,7 +82,7 @@ public partial class WageEmployeeDialog<T> : Form, IWageEmployeeDialog<T>
         return false;
     }
 
-    private IEnumerable<OurEmployee> GetOurEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetAllDefault();
+    private IEnumerable<OurEmployee> GetOurEmployees() => Services.Provider.GetService<IOurEmployeeRepository>()!.GetListUserDefined();
 
     private void SaveControlData(T dest)
     {

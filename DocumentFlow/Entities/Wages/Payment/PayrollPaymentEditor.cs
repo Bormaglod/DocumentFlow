@@ -58,5 +58,5 @@ public class PayrollPaymentEditor : DocumentEditor<PayrollPayment>, IPayrollPaym
         }
     }
 
-    private IEnumerable<Payroll> GetPayrolls() => Services.Provider.GetService<IPayrollRepository>()!.GetAllDefault();
+    private IEnumerable<Payroll> GetPayrolls() => Services.Provider.GetService<IPayrollRepository>()!.GetListUserDefined();
 }

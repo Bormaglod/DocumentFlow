@@ -214,7 +214,7 @@ public partial class ProductionOrderPriceDialog : Form
     private IEnumerable<Product> GetProducts()
     {
         var goods = Services.Provider.GetService<IGoodsRepository>();
-        return goods!.GetAllValid(callback: query => query.OrderByDesc("is_folder").OrderBy("code"));
+        return goods!.GetListExisting(callback: query => query.OrderByDesc("is_folder").OrderBy("code"));
     }
 
     private IEnumerable<Calculation>? GetCalculations()

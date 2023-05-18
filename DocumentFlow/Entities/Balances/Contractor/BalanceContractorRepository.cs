@@ -31,7 +31,7 @@ public class BalanceContractorRepository : OwnedRepository<Guid, BalanceContract
 {
     public BalanceContractorRepository(IDatabase database) : base(database) { }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("balance_contractor.*")
@@ -51,7 +51,7 @@ public class BalanceContractorRepository : OwnedRepository<Guid, BalanceContract
     {
         using var conn = Database.OpenConnection();
 
-        var query = GetBaseQuery(conn)
+        var query = GetQuery(conn)
             .Select("c.id")
             .SelectRaw("c.code as contractor_name")
             .SelectRaw("sum(operation_summa * amount) as debt")
@@ -68,7 +68,7 @@ public class BalanceContractorRepository : OwnedRepository<Guid, BalanceContract
     {
         using var conn = Database.OpenConnection();
 
-        var query = GetBaseQuery(conn)
+        var query = GetQuery(conn)
             .Select("c.id")
             .SelectRaw("c.code as contractor_name")
             .SelectRaw("abs(sum(operation_summa * amount)) as debt")

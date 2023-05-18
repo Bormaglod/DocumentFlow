@@ -25,5 +25,5 @@ public class OperationRepository : DirectoryRepository<Operation>, IOperationRep
         ExcludeField(x => x.OwnerId);
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter) => query.From("operations");
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter) => query.From("operations");
 }

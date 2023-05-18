@@ -49,7 +49,7 @@ public class ReportCardEmployeeRepository : OwnedRepository<long, ReportCardEmpl
 
     public void PopulateReportCard(ReportCard reportCard) => PopulateReportCard(reportCard.Id);
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter = null)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter = null)
     {
         return query
             .Select("report_card_employee.*")

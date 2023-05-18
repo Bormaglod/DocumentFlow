@@ -22,7 +22,7 @@ internal class InitialBalanceEmployeeRepository : DocumentRepository<InitialBala
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("initial_balance_employee.*")

@@ -22,7 +22,7 @@ public class Wage1cEmployeeRepository : OwnedRepository<long, Wage1cEmployee>, I
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter = null)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter = null)
     {
         return query
             .Select("wage1c_employee.*")

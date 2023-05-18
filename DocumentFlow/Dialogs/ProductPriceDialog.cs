@@ -36,6 +36,9 @@
 //  - GetAllMaterials заменен на GetAllValid
 // Версия 2023.5.17
 //  - элементы, которые исключаются из редактирование сделаны невидимыми
+// Версия 2023.5.18
+//  - вывод материалов/изделий сортируется теперь для всех вариантов,
+//    а не только для материалов
 //
 //-----------------------------------------------------------------------
 
@@ -272,18 +275,23 @@ public partial class ProductPriceDialog<P> : Form
             goods = Services.Provider.GetService<IGoodsRepository>();
         }
 
+        IEnumerable<Product> prods;
         if (materials == null)
         {
-            return goods!.GetAllValid(callback: query => query.OrderByDesc("is_folder").OrderBy("code"));
+            prods = goods!.GetListExisting();
         }
         else if (goods == null)
         {
-            return materials!.GetAllValid();
+            prods = materials!.GetListExisting();
         }
         else
         {
-            return materials!.GetAllValid().OfType<Product>().Union(goods!.GetAllValid());
+            prods = materials!.GetListExisting().OfType<Product>().Union(goods!.GetListExisting());
         }
+
+        return prods
+            .OrderByDescending(x => x.IsFolder)
+            .ThenBy(x => x.ItemName);
     }
 
     private void ButtonOk_Click(object sender, EventArgs e)

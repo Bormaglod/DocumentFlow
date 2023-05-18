@@ -72,7 +72,7 @@ namespace DocumentFlow.Dialogs
                 else
                 {
                     var newId = repository.AddFolder(parent_id, textCode.Text, textName.Text);
-                    editableDir = repository.GetById(newId);
+                    editableDir = repository.Get(newId);
                 }
             }
             catch (Exception e)

@@ -25,7 +25,7 @@ public class IncomeItemRepository : Repository<Guid, IncomeItem>, IIncomeItemRep
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("id", "code")

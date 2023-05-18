@@ -85,5 +85,5 @@ public class OperationEditor : Editor<Operation>, IOperationEditor
         RegisterNestedBrowser<IOperationUsageBrowser, OperationUsage>();
     }
 
-    private IEnumerable<OperationType> GetTypes() => Services.Provider.GetService<IOperationTypeRepository>()!.GetAllValid(callback: q => q.OrderBy("item_name"));
+    private IEnumerable<OperationType> GetTypes() => Services.Provider.GetService<IOperationTypeRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
 }

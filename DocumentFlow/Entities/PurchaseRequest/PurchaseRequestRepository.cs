@@ -48,7 +48,7 @@ public class PurchaseRequestRepository : DocumentRepository<PurchaseRequest>, IP
 
     public IReadOnlyList<PurchaseRequest> GetByContractor(Guid? contractorId)
     {
-        return GetAllDefault(callback: q => q
+        return GetListUserDefined(callback: q => q
             .WhereTrue("carried_out")
             .WhereFalse("deleted")
             .Where("contractor_id", contractorId));
@@ -56,14 +56,14 @@ public class PurchaseRequestRepository : DocumentRepository<PurchaseRequest>, IP
 
     public IReadOnlyList<PurchaseRequest> GetByContractor(Guid? contractorId, PurchaseState? state)
     {
-        return GetAllDefault(callback: q => q
+        return GetListUserDefined(callback: q => q
             .WhereTrue("carried_out")
             .WhereFalse("deleted")
             .When(state != null, q => q.WhereRaw($"state = '{PurchaseRequest.StateFromValue(state!.Value)}'::purchase_state"))
             .Where("contractor_id", contractorId));
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter) => query.From("purchase_request_receipt");
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter) => query.From("purchase_request_receipt");
    
     protected override void CopyNestedRows(PurchaseRequest from, PurchaseRequest to, IDbTransaction transaction)
     {

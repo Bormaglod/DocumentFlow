@@ -33,7 +33,7 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository
         ExcludeField(x => x.OwnerId);
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         query = query
             .Select("goods.*")
@@ -80,7 +80,7 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository
                 return;
             }
 
-            var calc = calcRepo.GetById(from.CalculationId.Value, transaction.Connection, false);
+            var calc = calcRepo.Get(from.CalculationId.Value, transaction.Connection, false);
             calc.OwnerId = to.Id;
             calc.CalculationState = CalculationState.Prepare;
 

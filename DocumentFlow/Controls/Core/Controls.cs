@@ -9,6 +9,8 @@
 //  - добавлен метод SetEditorWidth
 //  - в методе AddControl реализована установка значения HeaderWidth и 
 //    EditorWidth
+// Версия 2023.5.18
+//  - в метод AddLine добавлен параметр props
 //
 //-----------------------------------------------------------------------
 
@@ -443,9 +445,11 @@ public class Controls<T> : IControls<T>
         return this;
     }
 
-    public IControls<T> AddLine()
+    public IControls<T> AddLine(Action<ILineControl>? props = null)
     {
         var line = new DfLine();
+
+        props?.Invoke(line);
         Container?.Add(line);
         line.BringToFront();
 

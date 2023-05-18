@@ -23,7 +23,7 @@ public class Wage1cRepository : DocumentRepository<Wage1c>, IWage1cRepository
         ExcludeField(x => x.OwnerId);
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var q = new Query("wage1c_employee as we")
             .Select("we.owner_id")

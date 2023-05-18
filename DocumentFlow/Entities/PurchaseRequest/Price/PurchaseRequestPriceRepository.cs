@@ -24,7 +24,7 @@ public class PurchaseRequestPriceRepository : OwnedRepository<long, PurchaseRequ
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("purchase_request_price.*")

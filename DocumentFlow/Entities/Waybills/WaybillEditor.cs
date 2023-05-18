@@ -42,6 +42,8 @@
 //  - изменена ширина поля WaybillDate и InvoiceDate
 //  - в поле OwnerId (Заявка на покупку) добавлена кнопка для просмотра
 //    заявки
+// Версия 2023.5.18
+//  - добавлен разделитель между DataGrid и панелью "Докуметы 1С"
 //
 //-----------------------------------------------------------------------
 
@@ -145,6 +147,9 @@ public abstract class WaybillEditor<T, P, R> : DocumentEditor<T>
                                 .SetWidth(130))
                             .AddLabel(string.Empty, label => label
                                 .SetDock(DockStyle.Fill))))))
+            .AddLine(line => line
+                .SetDock(DockStyle.Bottom)
+                .SetColor(Color.White))
             .AddDataGrid<P>(grid => grid
                 .SetRepository<R>()
                 .GridSummaryRow(VerticalPosition.Bottom, row => row

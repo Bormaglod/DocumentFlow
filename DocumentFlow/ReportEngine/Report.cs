@@ -34,7 +34,7 @@ public abstract class Report<T> : IReport
 
     public Report()
     {
-        var r = Services.Provider.GetService<IReportRepository>()!.GetById(Id);
+        var r = Services.Provider.GetService<IReportRepository>()!.Get(Id);
         Name = r.Code;
         Title = r.Title;
         reportText = r.SchemaReport;

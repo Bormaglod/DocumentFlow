@@ -35,7 +35,7 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
         }
 
         using var conn = Database.OpenConnection();
-        var query = GetBaseQuery(conn)
+        var query = GetQuery(conn)
             .Distinct()
             .Select("e.id", "e.item_name")
             .Join("our_employee as e", "e.id", "operations_performed.employee_id")
@@ -59,7 +59,7 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
             .FirstOrDefault<OperationsPerformed>();
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         return query
             .Select("operations_performed.*")
@@ -86,7 +86,7 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
 
     private Query QuerySummary(IDbConnection conn, Guid lot_id)
     {
-        return GetBaseQuery(conn)
+        return GetQuery(conn)
             .Select("operations_performed.operation_id")
             .Select("co.code as operation_code")
             .SelectRaw("case when co.item_name is null then op.item_name else co.item_name end AS operation_name")

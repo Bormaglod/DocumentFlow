@@ -81,7 +81,7 @@ public class CalculationOperationRepository : CalculationItemRepository<Calculat
         transaction.Connection.Execute("delete from calculation_operation_property where id = :id", prop, transaction);
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var using_operations = new Query("calculation_operation as co")
             .SelectRaw("array_agg([co].[code])")

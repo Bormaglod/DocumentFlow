@@ -25,7 +25,7 @@ public class EmailRepository : Repository<long, Email>, IEmailRepository
     public Email? Get(string email)
     {
         using var conn = Database.OpenConnection();
-        return GetDefaultQuery(conn)
+        return GetUserDefinedQuery(conn)
             .Where("address", email)
             .FirstOrDefault<Email>();
     }

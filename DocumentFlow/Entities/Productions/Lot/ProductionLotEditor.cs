@@ -66,7 +66,7 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
                 var repo = Services.Provider.GetService<ICalculationRepository>();
                 if (repo != null)
                 {
-                    var c = repo.GetById(calc.SelectedValue.Value, false);
+                    var c = repo.Get(calc.SelectedValue.Value, false);
                     if (c.OwnerId != null)
                     {
                         pageManager.ShowEditor<IGoodsEditor>(c.OwnerId.Value);
@@ -95,7 +95,7 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
     private IEnumerable<ProductionOrder> GetOrders()
     {
         var repo = Services.Provider.GetService<IProductionOrderRepository>();
-        return repo!.GetAllDefault(callback: q => q
+        return repo!.GetListUserDefined(callback: q => q
             .WhereFalse("production_order.deleted")
             .WhereTrue("production_order.carried_out")
             .WhereFalse("production_order.closed"));
@@ -131,16 +131,16 @@ public class ProductionLotEditor : DocumentEditor<ProductionLot>, IProductionLot
         else
         {
             var repoCalc = Services.Provider.GetService<ICalculationRepository>();
-            var calculation = repoCalc!.GetById(value.Value, fullInformation: false);
+            var calculation = repoCalc!.Get(value.Value, fullInformation: false);
 
             var repoGoods = Services.Provider.GetService<IGoodsRepository>();
             if (calculation.OwnerId != null)
             {
-                var goods = repoGoods!.GetById(calculation.OwnerId.Value, fullInformation: false);
+                var goods = repoGoods!.Get(calculation.OwnerId.Value, fullInformation: false);
                 if (goods.MeasurementId != null)
                 {
                     var repoMeas = Services.Provider.GetService<IMeasurementRepository>();
-                    var meas = repoMeas!.GetById(goods.MeasurementId.Value);
+                    var meas = repoMeas!.Get(goods.MeasurementId.Value);
 
                     quantity.ShowSuffix(meas.Abbreviation ?? meas.ItemName ?? meas.Code);
                 }

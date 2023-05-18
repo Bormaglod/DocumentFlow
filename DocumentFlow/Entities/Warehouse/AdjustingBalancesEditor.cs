@@ -32,5 +32,5 @@ public class AdjustingBalancesEditor : DocumentEditor<AdjustingBalances>, IAdjus
                     .SetEditorWidth(200));
     }
 
-    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetAllValid();
+    private IEnumerable<Material> GetMaterials() => Services.Provider.GetService<IMaterialRepository>()!.GetListExisting();
 }

@@ -6,6 +6,11 @@
 //
 // Версия 2023.1.22
 //  - перенесено из DocumentFlow.Data.Infrastructure в DocumentFlow.Infrastructure.Data
+// Версия 2023.5.18
+//  - метод GetAll переименован в GetList
+//  - метод GetAllDefault переименован в GetListUserDefined
+//  - метод GetAllValid переименован в GetListExisting
+//  - методы GetById переименованы в Get
 //
 //-----------------------------------------------------------------------
 
@@ -21,9 +26,9 @@ public interface IRepository<Key, T>
     where Key : struct, IComparable
     where T : IIdentifier<Key>
 {
-    T GetById(Key id, bool fullInformation = true);
+    T Get(Key id, bool fullInformation = true);
 
-    T GetById(Key id, IDbConnection connection, bool fullInformation = true);
+    T Get(Key id, IDbConnection connection, bool fullInformation = true);
 
     T Get(Func<Query, Query>? callback = null);
 
@@ -31,7 +36,7 @@ public interface IRepository<Key, T>
     /// Возвращает записи указанной таблицы сформированной с помощью функции <see cref="GetBaseQuery"/>.
     /// </summary>
     /// <returns></returns>
-    IReadOnlyList<T> GetAll(Func<Query, Query>? callback = null);
+    IReadOnlyList<T> GetList(Func<Query, Query>? callback = null);
 
     /// <summary>
     /// Возвращает записи указанной таблицы сформированной с помощью функции <see cref="GetDefaultQuery"/>
@@ -39,7 +44,7 @@ public interface IRepository<Key, T>
     /// <param name="filters"></param>
     /// <param name="callback"></param>
     /// <returns></returns>
-    IReadOnlyList<T> GetAllDefault(IFilter? filter = null, Func<Query, Query>? callback = null);
+    IReadOnlyList<T> GetListUserDefined(IFilter? filter = null, Func<Query, Query>? callback = null);
 
     /// <summary>
     /// Возвращает записи указанной таблицы сформированной с помощью функции <see cref="GetBaseQuery"/>.
@@ -47,7 +52,7 @@ public interface IRepository<Key, T>
     /// </summary>
     /// <param name="callback"></param>
     /// <returns></returns>
-    IReadOnlyList<T> GetAllValid(Func<Query, Query>? callback = null);
+    IReadOnlyList<T> GetListExisting(Func<Query, Query>? callback = null);
     T Add();
     T Add(IDbTransaction transaction);
     T Add(T entity);

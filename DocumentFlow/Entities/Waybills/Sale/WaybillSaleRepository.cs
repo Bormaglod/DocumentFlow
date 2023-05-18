@@ -38,14 +38,14 @@ public class WaybillSaleRepository : DocumentRepository<WaybillSale>, IWaybillSa
 
     public IReadOnlyList<WaybillSale> GetByContractor(Guid? contractorId)
     {
-        return GetAllDefault(callback: q => q
+        return GetListUserDefined(callback: q => q
             .WhereTrue("waybill_sale.carried_out")
             .WhereFalse("waybill_sale.deleted")
             .Where("waybill_sale.contractor_id", contractorId)
             .OrderBy("waybill_sale.document_date", "waybill_sale.document_number"));
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var q = new Query("waybill_sale_price")
             .Select("owner_id")

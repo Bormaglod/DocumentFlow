@@ -24,7 +24,7 @@ public class MaterialRepository : ProductRepository<Material>, IMaterialReposito
 {
     public MaterialRepository(IDatabase database) : base(database) { }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         if (HasPrivilege("materials", Privilege.Select))
         {

@@ -31,7 +31,7 @@ internal class InitialBalanceGoodsEditor : DocumentEditor<InitialBalanceGoods>, 
             .AddCurrencyTextBox(x => x.OperationSumma, "Сумма");
     }
 
-    private IEnumerable<Goods> GetGoods() => Services.Provider.GetService<IGoodsRepository>()!.GetAllValid(callback: query =>
+    private IEnumerable<Goods> GetGoods() => Services.Provider.GetService<IGoodsRepository>()!.GetListExisting(callback: query =>
     {
         query
             .Select("goods.id")

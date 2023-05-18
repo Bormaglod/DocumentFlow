@@ -29,7 +29,7 @@ public class CalculationCuttingRepository : CalculationItemRepository<Calculatio
         conn.Execute("call make_prices_operations_relevant(:calculate_id)", new { calculate_id });
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter)
     {
         var using_operations = new Query("calculation_operation as co")
             .SelectRaw("array_agg([co].[code])")

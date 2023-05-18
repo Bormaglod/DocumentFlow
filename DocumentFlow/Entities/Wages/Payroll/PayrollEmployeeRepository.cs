@@ -18,7 +18,7 @@ public class PayrollEmployeeRepository : OwnedRepository<long, PayrollEmployee>,
     {
     }
 
-    protected override Query GetDefaultQuery(Query query, IFilter? filter = null)
+    protected override Query GetUserDefinedQuery(Query query, IFilter? filter = null)
     {
         return query
             .Select("payroll_employee.*")

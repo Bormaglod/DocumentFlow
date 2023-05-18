@@ -30,7 +30,7 @@ public abstract class DocumentRepository<T> : OwnedRepository<Guid, T>, IDocumen
     {
         var id = Create(entity);
         Accept(id);
-        return GetById(id);
+        return Get(id);
     }
 
     public void Accept(T entity) => Accept(entity.Id);
