@@ -2,12 +2,7 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 05.02.2023
-//
-// Версия 2023.5.20
-//  - добавлена реализация интерфейса IReferenceItem
-//  - удалены методы SetGoodsData и ClearGoodsData
-//
+// Date: 20.05.2023
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -18,15 +13,15 @@ using Syncfusion.WinForms.DataGrid.Enums;
 
 using System.ComponentModel.DataAnnotations;
 
-namespace DocumentFlow.Entities.Operations;
+namespace DocumentFlow.Entities.Products;
 
-public class OperationGoods : Entity<long>, IReferenceItem, ICloneable, IEntityClonable
+public class CompatiblePart : Entity<long>, IReferenceItem, ICloneable, IEntityClonable
 {
     [Display(AutoGenerateField = false)]
-    public Guid GoodsId { get; set; }
+    public Guid CompatibleId { get; set; }
 
     [Display(AutoGenerateField = false)]
-    public Guid ReferenceId => GoodsId;
+    public Guid ReferenceId => CompatibleId;
 
     [Display(Name = "Артикул")]
     [ColumnMode(Width = 150)]
@@ -41,14 +36,14 @@ public class OperationGoods : Entity<long>, IReferenceItem, ICloneable, IEntityC
     public object Copy()
     {
         var copy = Clone();
-        ((OperationGoods)copy).Id = 0;
+        ((CompatiblePart)copy).Id = 0;
 
         return copy;
     }
 
     public void SetData(IDirectory directory)
     {
-        GoodsId = directory.Id;
+        CompatibleId = directory.Id;
         Code = directory.Code;
         Name = directory.ItemName ?? string.Empty;
     }

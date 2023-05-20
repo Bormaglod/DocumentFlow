@@ -22,6 +22,8 @@
 //  - удалён конструктор с параметром content
 // Версия 2023.5.17
 //  - удалены методы CreateTableSummaryRow и AddCommand
+// Версия 2023.5.20
+//  - корректировка логики изменения записи пользователем
 //
 //-----------------------------------------------------------------------
 
@@ -255,6 +257,15 @@ public partial class DfDataGrid<T> : BaseControl, IDataSourceControl, IGridDataS
                         }
 
                         updated.Add(editingData);
+                    }
+                    else
+                    {
+                        if (created.Contains(item))
+                        {
+                            created.Remove(item);
+                        }
+
+                        created.Add(editingData);
                     }
                 }
                 else

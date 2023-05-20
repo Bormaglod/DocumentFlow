@@ -8,12 +8,16 @@
 //  - добавлен поле "Дата нормирования"
 // Версия 2023.2.6
 //  - добавлено поле goods
+// Версия 2023.5.20
+//  - диалоговое окно реализующее интерфейс IGoodsSelectDialog заменено
+//    на IDirectorySelectDialog
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Dialogs.Infrastructure;
 using DocumentFlow.Entities.OperationTypes;
+using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -75,7 +79,7 @@ public class OperationEditor : Editor<Operation>, IOperationEditor
                 grid
                     .SetRepository<IOperationGoodsRepository>()
                     .SetHeader("Операция будет использоваться только при производстве этих изделий")
-                    .Dialog<IGoodsSelectDialog>()
+                    .Dialog<IDirectorySelectDialog<OperationGoods, Goods, IGoodsRepository>>()
                     .SetDock(DockStyle.Fill));
     }
 

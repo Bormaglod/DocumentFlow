@@ -151,14 +151,14 @@
     <Compile Update="Dialogs\ColumnCutomizeForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Dialogs\DirectorySelectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Dialogs\DocumentRefEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Entities\Equipments\EquipmentBrowser.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Dialogs\GoodsSelectDialog.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Update="Dialogs\GroupEditorForm.cs">
       <SubType>Form</SubType>

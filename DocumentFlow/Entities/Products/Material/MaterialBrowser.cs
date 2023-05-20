@@ -14,6 +14,8 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.5.20
+//  - добавлена колонка MaterialKindName
 //
 //-----------------------------------------------------------------------
 
@@ -46,13 +48,14 @@ public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
         var min_order = CreateNumeric(x => x.MinOrder, "Мин. заказ", 100, decimalDigits: 3);
         var ext_article = CreateText(x => x.ExtArticle, "Доп. артикул", 120);
         var cross = CreateText(x => x.CrossName, "Кросс-артикул", 120);
+        var kind = CreateText(x => x.MaterialKindName, "Тип материала", 100, visible: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         measurement.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
         vat.CellStyle.HorizontalAlignment = HorizontalAlignment.Center;
         min_order.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
-        AddColumns(new GridColumn[] { id, code, name, measurement, price, vat, weight, min_order, ext_article, cross });
+        AddColumns(new GridColumn[] { id, code, name, measurement, price, vat, weight, min_order, ext_article, cross, kind });
 
         if (repository.HasPrivilege("materials", Privilege.Select))
         {

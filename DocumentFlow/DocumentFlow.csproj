@@ -6,10 +6,10 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>2023.5.18</Version>
+		<Version>2023.5.20</Version>
 		<Company>Автоком</Company>
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
-		<Platforms>x64</Platforms>
+		<Platforms>AnyCPU</Platforms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<ApplicationIcon>workflow-enterprise.ico</ApplicationIcon>
 		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
@@ -81,6 +81,7 @@
 	  <Compile Update="Controls\ToolSplitItem.cs">
 	    <SubType>Component</SubType>
 	  </Compile>
+	  <Compile Update="Dialogs\DirectorySelectDialog.cs" />
 	  <Compile Update="Dialogs\ProductionOrderPriceDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>

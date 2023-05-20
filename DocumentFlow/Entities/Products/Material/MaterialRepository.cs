@@ -8,6 +8,8 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 // Версия 2023.3.14
 //  - метод GetAllMaterials удалён
+// Версия 2023.5.20
+//  - изменены запросы в методах GetMaterials и GetWires
 //
 //-----------------------------------------------------------------------
 
@@ -38,13 +40,7 @@ public class MaterialRepository : ProductRepository<Material>, IMaterialReposito
 
     public IReadOnlyList<Material> GetMaterials()
     {
-        string sql = @"
-            with recursive r as 
-            (
-                select * from material where parent_id is null and not deleted 
-                union 
-                select m.* from material m join r on r.id = m.parent_id and not m.deleted and r.id != '0525748e-e98c-4296-bd0e-dcacee7224f3'
-            ) select * from r order by item_name";
+        string sql = "select * from material where not deleted and material_kind != 'wire' order by item_name";
 
         using var conn = Database.OpenConnection();
         try
@@ -60,13 +56,7 @@ public class MaterialRepository : ProductRepository<Material>, IMaterialReposito
 
     public IReadOnlyList<Material> GetWires()
     {
-        string sql = @"
-            with recursive r as
-            (
-	            select * from material where id = '0525748e-e98c-4296-bd0e-dcacee7224f3' 
-                union 
-            	select m.* from material m join r on r.id = m.parent_id and not m.deleted
-            ) select * from r order by item_name";
+        string sql = "select * from material where not deleted and material_kind = 'wire' order by item_name";
 
         using var conn = Database.OpenConnection();
         try
