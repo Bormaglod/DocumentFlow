@@ -1,21 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Приложение к договору" ReportInfo.Version="1.0" ReportInfo.Created="06/19/2022 16:39:50" ReportInfo.Modified="07/06/2022 19:25:10" ReportInfo.CreatorVersion="2022.2.0.0">
+<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Приложение к договору" ReportInfo.Version="1.0" ReportInfo.Created="06/19/2022 16:39:50" ReportInfo.Modified="05/21/2023 11:18:29" ReportInfo.CreatorVersion="2022.2.0.0">
   <Dictionary>
-    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75V8pSBYJSAhu6xpmo2Dj8Ms=">
-      <TableDataSource Name="public_organization" Alias="contractor" DataType="System.Int32" Enabled="true" TableName="public.&quot;organization&quot;" SelectCommand="select &#13;&#10;	ca.item_name as specification,&#13;&#10;	c.code as contract_number,&#13;&#10;	c.document_date as contract_date,&#13;&#10;	c2.item_name as contractor_name,&#13;&#10;	e.item_name as signatory_person,&#13;&#10;	o.signatory_name as signatory_post&#13;&#10;from&#13;&#10;	contract_application ca &#13;&#10;	join contract c on c.id = ca.owner_id &#13;&#10;	join contractor c2 on c2.id = c.owner_id &#13;&#10;	left join employee e on e.id = c.signatory_id&#13;&#10;	left join okpdtr o on o.id = e.post_id&#13;&#10;where ca.id = :spec_id&#13;&#10;&#13;&#10;">
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75R+YSXUlhHeXVBD7gxZ+0Co=">
+      <TableDataSource Name="public_organization" Alias="contractor" DataType="System.Int32" Enabled="true" TableName="public.&quot;organization&quot;" SelectCommand="select &#13;&#10;	ca.item_name as specification,&#13;&#10;	ca.document_date,&#13;&#10;	ca.note,&#13;&#10;	c.code as contract_number,&#13;&#10;	c.document_date as contract_date,&#13;&#10;	c2.item_name as contractor_name,&#13;&#10;	e.item_name as signatory_person,&#13;&#10;	o.signatory_name as signatory_post&#13;&#10;from&#13;&#10;	contract_application ca &#13;&#10;	join contract c on c.id = ca.owner_id &#13;&#10;	join contractor c2 on c2.id = c.owner_id &#13;&#10;	left join employee e on e.id = c.signatory_id&#13;&#10;	left join okpdtr o on o.id = e.post_id&#13;&#10;where ca.id = :spec_id&#13;&#10;&#13;&#10;">
         <Column Name="specification" DataType="System.String"/>
         <Column Name="contract_number" DataType="System.String"/>
         <Column Name="contract_date" DataType="System.DateTime"/>
         <Column Name="contractor_name" DataType="System.String"/>
         <Column Name="signatory_person" DataType="System.String"/>
         <Column Name="signatory_post" DataType="System.String"/>
-        <CommandParameter Name="spec_id" DataType="40" Expression="[id]" DefaultValue="e4f07c66-516b-4402-9667-ea5b97632dc7"/>
+        <Column Name="document_date" DataType="System.DateTime"/>
+        <Column Name="note" DataType="System.String"/>
+        <CommandParameter Name="spec_id" DataType="40" Expression="[id]" DefaultValue="3a5f4b6f-404d-4b07-94c5-cc39fba8a3f5"/>
       </TableDataSource>
-      <TableDataSource Name="public_price_approval" DataType="System.Int32" Enabled="true" TableName="public.&quot;price_approval&quot;" SelectCommand="select &#13;&#10;	m.item_name as material_name,&#13;&#10;	m2.abbreviation as measurement_name,&#13;&#10;	pa.price&#13;&#10;from price_approval pa &#13;&#10;	join material m on m.id = pa.product_id &#13;&#10;	left join measurement m2 on m2.id = m.measurement_id &#13;&#10;where pa.owner_id = :spec_id">
+      <TableDataSource Name="public_price_approval" DataType="System.Int32" Enabled="true" TableName="public.&quot;price_approval&quot;" SelectCommand="select &#13;&#10;	coalesce(m.doc_name, m.item_name) as material_name,&#13;&#10;	m2.abbreviation as measurement_name,&#13;&#10;	pa.price&#13;&#10;from price_approval pa &#13;&#10;	join product m on m.id = pa.product_id &#13;&#10;	left join measurement m2 on m2.id = m.measurement_id &#13;&#10;where pa.owner_id = :spec_id">
         <Column Name="price" DataType="System.Decimal"/>
         <Column Name="material_name" DataType="System.String"/>
         <Column Name="measurement_name" DataType="System.String"/>
-        <CommandParameter Name="spec_id" DataType="40" Expression="[id]" DefaultValue="e4f07c66-516b-4402-9667-ea5b97632dc7"/>
+        <CommandParameter Name="spec_id" DataType="40" Expression="[id]" DefaultValue="3a5f4b6f-404d-4b07-94c5-cc39fba8a3f5"/>
       </TableDataSource>
       <TableDataSource Name="Table" Alias="organization" DataType="System.Int32" Enabled="true" SelectCommand="select &#13;&#10;	o.item_name as org_name,&#13;&#10;	oe.item_name as signatory_person,&#13;&#10;	okpdtr.signatory_name as signatory_post&#13;&#10;from organization o &#13;&#10;	left join our_employee oe on oe.owner_id = o.id and oe.j_role = 'director'::job_role&#13;&#10;	left join okpdtr on okpdtr.id = oe.post_id&#13;&#10;where o.default_org">
         <Column Name="org_name" DataType="System.String"/>
@@ -26,31 +28,39 @@
     <Parameter Name="id" DataType="System.String"/>
   </Dictionary>
   <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="20" FirstPageSource="15" OtherPagesSource="15" LastPageSource="15" Watermark.Font="Arial, 60pt">
-    <ReportTitleBand Name="ReportTitle1" Width="680.4" Height="245.7">
+    <ReportTitleBand Name="ReportTitle1" Width="680.4" Height="311.85">
       <TextObject Name="Text1" Width="103.95" Height="28.35" Text="УТВЕРЖДАЮ" Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text2" Top="28.35" Width="321.3" Height="28.35" Text="[contractor.contractor_name]" Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text3" Left="415.8" Width="113.4" Height="28.35" Text="УТВЕРЖДАЮ" Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text5" Top="56.7" Width="264.6" Height="28.35" Text="[contractor.signatory_post]_______________[contractor.signatory_person]" Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text6" Top="85.05" Width="226.8" Height="18.9" Text="&quot;____&quot;_________________20___г." Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text7" Top="141.75" Width="680.4" Height="18.9" Text="[contractor.specification]" HorzAlign="Center" Font="Times New Roman, 14pt, style=Bold"/>
-      <TextObject Name="Text8" Top="170.1" Width="680.4" Height="18.9" Text="к договору №[contractor.contract_number] от [Format(&quot;{0:d}&quot;, [contractor.contract_date])]" HorzAlign="Center" Font="Times New Roman, 14pt, style=Bold"/>
-      <TextObject Name="Text9" Top="207.9" Width="680.4" Height="18.9" Text="Исполнитель: [contractor.contractor_name]" Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text10" Top="226.8" Width="680.4" Height="18.9" Text="Заказчик: [organization.org_name]" Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text19" Left="415.8" Top="28.35" Width="264.6" Height="28.35" Text="[organization.org_name]" VertAlign="Center" Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text20" Left="415.8" Top="56.7" Width="264.6" Height="28.35" Text="[organization.signatory_post]_______________[organization.signatory_person]" Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text21" Left="415.8" Top="85.05" Width="226.8" Height="18.9" Text="&quot;____&quot;_________________20___г." Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text2" Top="28.35" Width="302.4" Height="28.35" Text="[contractor.signatory_post] [contractor.contractor_name]" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text3" Left="378" Width="113.4" Height="28.35" Text="УТВЕРЖДАЮ" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text6" Top="94.5" Width="226.8" Height="18.9" Text="[contractor.document_date]" Format="Date" Format.Format="D" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text7" Top="189" Width="680.4" Height="18.9" Text="[contractor.specification]" HorzAlign="Center" Font="Times New Roman, 14pt, style=Bold"/>
+      <TextObject Name="Text8" Top="217.35" Width="680.4" Height="18.9" Text="к договору №[contractor.contract_number] от [Format(&quot;{0:d}&quot;, [contractor.contract_date])]" HorzAlign="Center" Font="Times New Roman, 14pt, style=Bold"/>
+      <TextObject Name="Text9" Top="264.6" Width="680.4" Height="18.9" Text="Исполнитель: [contractor.contractor_name]" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text10" Top="283.5" Width="680.4" Height="18.9" Text="Заказчик: [organization.org_name]" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text19" Left="378" Top="28.35" Width="302.4" Height="28.35" Text="[organization.signatory_post] [organization.org_name]" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text22" Left="132.3" Top="66.15" Width="132.3" Height="18.9" Text="[contractor.signatory_person]" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text23" Top="66.15" Width="122.85" Height="18.9" Border.Lines="Bottom" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text24" Left="510.3" Top="66.15" Width="132.3" Height="18.9" Text="[organization.signatory_person]" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text25" Left="378" Top="66.15" Width="122.85" Height="18.9" Border.Lines="Bottom" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text26" Top="132.3" Width="94.5" Height="18.9" Text="М.П." Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text27" Left="378" Top="132.3" Width="94.5" Height="18.9" Text="М.П." Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text28" Left="378" Top="94.5" Width="226.8" Height="18.9" Text="[contractor.document_date]" Format="Date" Format.Format="D" Font="Times New Roman, 10pt"/>
     </ReportTitleBand>
-    <ColumnHeaderBand Name="ColumnHeader1" Top="249.7" Width="680.4" Height="37.8">
+    <ColumnHeaderBand Name="ColumnHeader1" Top="315.85" Width="680.4" Height="37.8">
       <TextObject Name="Text11" Width="56.7" Height="37.8" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="№ п/п" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt, style=Bold"/>
       <TextObject Name="Text12" Left="56.7" Width="453.6" Height="37.8" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="Наименование" VertAlign="Center" Font="Times New Roman, 10pt, style=Bold"/>
       <TextObject Name="Text13" Left="510.3" Width="94.5" Height="37.8" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="Ед. изм." HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt, style=Bold"/>
       <TextObject Name="Text14" Left="604.8" Width="75.6" Height="37.8" Border.Lines="All" CanGrow="true" Text="Цена без НДС, руб." HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt, style=Bold"/>
     </ColumnHeaderBand>
-    <DataBand Name="Data1" Top="291.5" Width="680.4" Height="18.9" DataSource="public_price_approval">
+    <DataBand Name="Data1" Top="357.65" Width="680.4" Height="18.9" CanGrow="true" DataSource="public_price_approval">
       <TextObject Name="Text15" Left="56.7" Width="453.6" Height="18.9" Border.Lines="All" CanGrow="true" Text="[public_price_approval.material_name]" VertAlign="Center" Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text16" Left="510.3" Width="94.5" Height="18.9" Border.Lines="All" CanGrow="true" Text="[public_price_approval.measurement_name]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
-      <TextObject Name="Text17" Left="604.8" Width="75.6" Height="18.9" Border.Lines="All" CanGrow="true" Text="[public_price_approval.price]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" WordWrap="false" Font="Times New Roman, 10pt" Trimming="EllipsisCharacter"/>
-      <TextObject Name="Text18" Width="56.7" Height="18.9" Border.Lines="All" CanGrow="true" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text16" Left="510.3" Width="94.5" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[public_price_approval.measurement_name]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text17" Left="604.8" Width="75.6" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[public_price_approval.price]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" WordWrap="false" Font="Times New Roman, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text18" Width="56.7" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
     </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="380.55" Width="680.4" Height="47.25" CanGrow="true">
+      <TextObject Name="Text29" Top="9.45" Width="94.5" Height="18.9" Text="[IIf([contractor.note]==&quot;&quot;,&quot;&quot;,&quot;Примечания:&quot;)]" Font="Times New Roman, 10pt, style=Bold"/>
+      <TextObject Name="Text30" Top="28.35" Width="680.4" Height="18.9" CanGrow="true" Text="[contractor.note]" Font="Times New Roman, 10pt"/>
+    </ReportSummaryBand>
   </ReportPage>
 </Report>

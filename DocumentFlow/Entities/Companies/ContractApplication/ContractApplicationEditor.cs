@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 16.01.2022
+//
+// Версия 2023.5.21
+//  - добавлено поле Note
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
@@ -13,45 +17,35 @@ namespace DocumentFlow.Entities.Companies;
 
 public class ContractApplicationEditor : Editor<ContractApplication>, IContractApplicationEditor
 {
-    private const int headerWidth = 170;
-
     public ContractApplicationEditor(IContractApplicationRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         EditorControls
-            .AddTextBox(x => x.ContractName, "Договор", text =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(400)
-                    .Disable())
-            .AddTextBox(x => x.Code, "Номер приложения", text =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200))
-            .AddTextBox(x => x.ItemName, "Наименование", text =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(400))
-            .AddDateTimePicker(x => x.DocumentDate, "Дата подписания", date =>
-                date
-                    .SetFormat(DateTimePickerFormat.Short)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200))
-            .AddDateTimePicker(x => x.DateStart, "Начало действия", date =>
-                date
-                    .SetFormat(DateTimePickerFormat.Short)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200))
-            .AddDateTimePicker(x => x.DateEnd, "Окончание действия", date =>
-                date
-                    .NotRequired()
-                    .SetFormat(DateTimePickerFormat.Short)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200))
-            .AddDataGrid<PriceApproval>(grid =>
-                grid
-                    .SetRepository<IPriceApprovalRepository>()
-                    .Dialog<IPriceApprovalDialog>()
-                    .SetDock(DockStyle.Fill));
+            .SetHeaderWidth(170)
+            .AddTextBox(x => x.ContractName, "Договор", text => text
+                .SetEditorWidth(400)
+                .Disable())
+            .AddTextBox(x => x.Code, "Номер приложения", text => text
+                .SetEditorWidth(200))
+            .AddTextBox(x => x.ItemName, "Наименование", text => text
+                .SetEditorWidth(400))
+            .AddDateTimePicker(x => x.DocumentDate, "Дата подписания", date => date
+                .SetFormat(DateTimePickerFormat.Short)
+                .SetEditorWidth(200))
+            .AddDateTimePicker(x => x.DateStart, "Начало действия", date => date
+                .SetFormat(DateTimePickerFormat.Short)
+                .SetEditorWidth(200))
+            .AddDateTimePicker(x => x.DateEnd, "Окончание действия", date => date
+                .NotRequired()
+                .SetFormat(DateTimePickerFormat.Short)
+                .SetEditorWidth(200))
+            .AddTextBox(x => x.Note, "Примечание", text => text
+                .Multiline()
+                .EditorFitToSize()
+                .SetDock(DockStyle.Bottom))
+            .AddDataGrid<PriceApproval>(grid => grid
+                .SetRepository<IPriceApprovalRepository>()
+                .Dialog<IPriceApprovalDialog>()
+                .SetDock(DockStyle.Fill));
 
         RegisterReport(new ContractApplicationReport());
     }

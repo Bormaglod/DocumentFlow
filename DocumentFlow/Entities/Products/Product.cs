@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.21
 //  - добавлено свойство Taxes
+// Версия 2023.5.21
+//  - добавлено свойство DocName
 //
 //-----------------------------------------------------------------------
 
@@ -22,6 +24,7 @@ public class Product : Directory
         [20] = "20%"
     };
 
+    public string? DocName { get; set; }
     public decimal Price { get; set; }
     public int Vat { get; set; }
     public Guid? MeasurementId { get; set; }

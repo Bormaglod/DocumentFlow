@@ -29,235 +29,220 @@ namespace DocumentFlow.Controls.Editors
         /// </summary>
         private void InitializeComponent()
         {
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.buttonCreate = new System.Windows.Forms.ToolStripButton();
-            this.buttonEdit = new System.Windows.Forms.ToolStripButton();
-            this.buttonDelete = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.buttonCopy = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparatorCustom1 = new System.Windows.Forms.ToolStripSeparator();
-            this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
-            this.gridMain = new Syncfusion.WinForms.DataGrid.SfDataGrid();
-            this.contextMenuStripEx1 = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
-            this.menuCopyToClipboard = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuCreate = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuCopy = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparatorCustom2 = new System.Windows.Forms.ToolStripSeparator();
-            this.labelHeader = new System.Windows.Forms.Label();
-            this.toolStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridMain)).BeginInit();
-            this.contextMenuStripEx1.SuspendLayout();
-            this.SuspendLayout();
+            toolStrip1 = new ToolStrip();
+            buttonCreate = new ToolStripButton();
+            buttonEdit = new ToolStripButton();
+            buttonDelete = new ToolStripButton();
+            toolStripSeparator1 = new ToolStripSeparator();
+            buttonCopy = new ToolStripButton();
+            toolStripSeparatorCustom1 = new ToolStripSeparator();
+            buttonRefresh = new ToolStripButton();
+            gridMain = new Syncfusion.WinForms.DataGrid.SfDataGrid();
+            contextMenuStripEx1 = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
+            menuCopyToClipboard = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
+            menuCreate = new ToolStripMenuItem();
+            menuEdit = new ToolStripMenuItem();
+            menuDelete = new ToolStripMenuItem();
+            toolStripSeparator3 = new ToolStripSeparator();
+            menuCopy = new ToolStripMenuItem();
+            toolStripSeparatorCustom2 = new ToolStripSeparator();
+            labelHeader = new Label();
+            toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gridMain).BeginInit();
+            contextMenuStripEx1.SuspendLayout();
+            SuspendLayout();
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.buttonCreate,
-            this.buttonEdit,
-            this.buttonDelete,
-            this.toolStripSeparator1,
-            this.buttonCopy,
-            this.toolStripSeparatorCustom1,
-            this.buttonRefresh});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 32);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(800, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
+            toolStrip1.Items.AddRange(new ToolStripItem[] { buttonCreate, buttonEdit, buttonDelete, toolStripSeparator1, buttonCopy, toolStripSeparatorCustom1, buttonRefresh });
+            toolStrip1.Location = new Point(0, 32);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new Size(800, 25);
+            toolStrip1.TabIndex = 0;
+            toolStrip1.Text = "toolStrip1";
             // 
             // buttonCreate
             // 
-            this.buttonCreate.Image = global::DocumentFlow.Properties.Resources.icons8_file_add_16;
-            this.buttonCreate.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonCreate.Name = "buttonCreate";
-            this.buttonCreate.Size = new System.Drawing.Size(70, 22);
-            this.buttonCreate.Text = "Создать";
-            this.buttonCreate.Click += new System.EventHandler(this.ButtonCreate_Click);
+            buttonCreate.Image = Properties.Resources.icons8_file_add_16;
+            buttonCreate.ImageTransparentColor = Color.Magenta;
+            buttonCreate.Name = "buttonCreate";
+            buttonCreate.Size = new Size(70, 22);
+            buttonCreate.Text = "Создать";
+            buttonCreate.Click += ButtonCreate_Click;
             // 
             // buttonEdit
             // 
-            this.buttonEdit.Image = global::DocumentFlow.Properties.Resources.icons8_file_edit_16;
-            this.buttonEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonEdit.Name = "buttonEdit";
-            this.buttonEdit.Size = new System.Drawing.Size(81, 22);
-            this.buttonEdit.Text = "Изменить";
-            this.buttonEdit.Click += new System.EventHandler(this.ButtonEdit_Click);
+            buttonEdit.Image = Properties.Resources.icons8_file_edit_16;
+            buttonEdit.ImageTransparentColor = Color.Magenta;
+            buttonEdit.Name = "buttonEdit";
+            buttonEdit.Size = new Size(81, 22);
+            buttonEdit.Text = "Изменить";
+            buttonEdit.Click += ButtonEdit_Click;
             // 
             // buttonDelete
             // 
-            this.buttonDelete.Image = global::DocumentFlow.Properties.Resources.icons8_file_delete_16;
-            this.buttonDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonDelete.Name = "buttonDelete";
-            this.buttonDelete.Size = new System.Drawing.Size(71, 22);
-            this.buttonDelete.Text = "Удалить";
-            this.buttonDelete.Click += new System.EventHandler(this.ButtonDelete_Click);
+            buttonDelete.Image = Properties.Resources.icons8_file_delete_16;
+            buttonDelete.ImageTransparentColor = Color.Magenta;
+            buttonDelete.Name = "buttonDelete";
+            buttonDelete.Size = new Size(71, 22);
+            buttonDelete.Text = "Удалить";
+            buttonDelete.Click += ButtonDelete_Click;
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 25);
             // 
             // buttonCopy
             // 
-            this.buttonCopy.Image = global::DocumentFlow.Properties.Resources.icons8_copy_edit_16;
-            this.buttonCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonCopy.Name = "buttonCopy";
-            this.buttonCopy.Size = new System.Drawing.Size(61, 22);
-            this.buttonCopy.Text = "Копия";
-            this.buttonCopy.ToolTipText = "Создать копированием";
-            this.buttonCopy.Click += new System.EventHandler(this.ButtonCopy_Click);
+            buttonCopy.Image = Properties.Resources.icons8_copy_edit_16;
+            buttonCopy.ImageTransparentColor = Color.Magenta;
+            buttonCopy.Name = "buttonCopy";
+            buttonCopy.Size = new Size(61, 22);
+            buttonCopy.Text = "Копия";
+            buttonCopy.ToolTipText = "Создать копированием";
+            buttonCopy.Click += ButtonCopy_Click;
             // 
             // toolStripSeparatorCustom1
             // 
-            this.toolStripSeparatorCustom1.Name = "toolStripSeparatorCustom1";
-            this.toolStripSeparatorCustom1.Size = new System.Drawing.Size(6, 25);
-            this.toolStripSeparatorCustom1.Visible = false;
+            toolStripSeparatorCustom1.Name = "toolStripSeparatorCustom1";
+            toolStripSeparatorCustom1.Size = new Size(6, 25);
+            toolStripSeparatorCustom1.Visible = false;
             // 
             // buttonRefresh
             // 
-            this.buttonRefresh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.buttonRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonRefresh.Image = global::DocumentFlow.Properties.Resources.icons8_refresh_16;
-            this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonRefresh.Name = "buttonRefresh";
-            this.buttonRefresh.Size = new System.Drawing.Size(23, 22);
-            this.buttonRefresh.Text = "Обновить";
-            this.buttonRefresh.Click += new System.EventHandler(this.ButtonRefresh_Click);
+            buttonRefresh.Alignment = ToolStripItemAlignment.Right;
+            buttonRefresh.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            buttonRefresh.Image = Properties.Resources.icons8_refresh_16;
+            buttonRefresh.ImageTransparentColor = Color.Magenta;
+            buttonRefresh.Name = "buttonRefresh";
+            buttonRefresh.Size = new Size(23, 22);
+            buttonRefresh.Text = "Обновить";
+            buttonRefresh.Click += ButtonRefresh_Click;
             // 
             // gridMain
             // 
-            this.gridMain.AccessibleName = "Table";
-            this.gridMain.AllowEditing = false;
-            this.gridMain.AllowGrouping = false;
-            this.gridMain.AllowResizingColumns = true;
-            this.gridMain.AllowTriStateSorting = true;
-            this.gridMain.ContextMenuStrip = this.contextMenuStripEx1;
-            this.gridMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridMain.LiveDataUpdateMode = Syncfusion.Data.LiveDataUpdateMode.AllowSummaryUpdate;
-            this.gridMain.Location = new System.Drawing.Point(0, 57);
-            this.gridMain.Name = "gridMain";
-            this.gridMain.NavigationMode = Syncfusion.WinForms.DataGrid.Enums.NavigationMode.Row;
-            this.gridMain.Size = new System.Drawing.Size(800, 143);
-            this.gridMain.Style.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
-            this.gridMain.Style.CheckBoxStyle.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
-            this.gridMain.Style.CheckBoxStyle.CheckedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
-            this.gridMain.Style.CheckBoxStyle.IndeterminateBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
-            this.gridMain.Style.HyperlinkStyle.DefaultLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(215)))));
-            this.gridMain.Style.ProgressBarStyle.ForegroundStyle = Syncfusion.WinForms.DataGrid.Enums.GridProgressBarStyle.Tube;
-            this.gridMain.Style.ProgressBarStyle.ProgressTextColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.gridMain.Style.ProgressBarStyle.TubeForegroundEndColor = System.Drawing.Color.White;
-            this.gridMain.Style.ProgressBarStyle.TubeForegroundStartColor = System.Drawing.Color.SkyBlue;
-            this.gridMain.TabIndex = 1;
-            this.gridMain.Text = "sfDataGrid1";
-            this.gridMain.AutoGeneratingColumn += new Syncfusion.WinForms.DataGrid.Events.AutoGeneratingColumnEventHandler(this.GridMain_AutoGeneratingColumn);
-            this.gridMain.CellDoubleClick += new Syncfusion.WinForms.DataGrid.Events.CellClickEventHandler(this.GridMain_CellDoubleClick);
+            gridMain.AccessibleName = "Table";
+            gridMain.AllowEditing = false;
+            gridMain.AllowGrouping = false;
+            gridMain.AllowResizingColumns = true;
+            gridMain.AllowTriStateSorting = true;
+            gridMain.ContextMenuStrip = contextMenuStripEx1;
+            gridMain.Dock = DockStyle.Fill;
+            gridMain.LiveDataUpdateMode = Syncfusion.Data.LiveDataUpdateMode.AllowSummaryUpdate;
+            gridMain.Location = new Point(0, 57);
+            gridMain.Name = "gridMain";
+            gridMain.NavigationMode = Syncfusion.WinForms.DataGrid.Enums.NavigationMode.Row;
+            gridMain.Size = new Size(800, 135);
+            gridMain.Style.BorderColor = Color.FromArgb(204, 204, 204);
+            gridMain.Style.CheckBoxStyle.CheckedBackColor = Color.FromArgb(0, 120, 215);
+            gridMain.Style.CheckBoxStyle.CheckedBorderColor = Color.FromArgb(0, 120, 215);
+            gridMain.Style.CheckBoxStyle.IndeterminateBorderColor = Color.FromArgb(0, 120, 215);
+            gridMain.Style.HyperlinkStyle.DefaultLinkColor = Color.FromArgb(0, 120, 215);
+            gridMain.Style.ProgressBarStyle.ForegroundStyle = Syncfusion.WinForms.DataGrid.Enums.GridProgressBarStyle.Tube;
+            gridMain.Style.ProgressBarStyle.ProgressTextColor = Color.FromArgb(68, 68, 68);
+            gridMain.Style.ProgressBarStyle.TubeForegroundEndColor = Color.White;
+            gridMain.Style.ProgressBarStyle.TubeForegroundStartColor = Color.SkyBlue;
+            gridMain.TabIndex = 1;
+            gridMain.Text = "sfDataGrid1";
+            gridMain.AutoGeneratingColumn += GridMain_AutoGeneratingColumn;
+            gridMain.CellDoubleClick += GridMain_CellDoubleClick;
             // 
             // contextMenuStripEx1
             // 
-            this.contextMenuStripEx1.DropShadowEnabled = false;
-            this.contextMenuStripEx1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuCopyToClipboard,
-            this.toolStripSeparator2,
-            this.menuCreate,
-            this.menuEdit,
-            this.menuDelete,
-            this.toolStripSeparator3,
-            this.menuCopy,
-            this.toolStripSeparatorCustom2});
-            this.contextMenuStripEx1.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(236)))), ((int)(((byte)(249)))));
-            this.contextMenuStripEx1.Name = "contextMenuStripEx1";
-            this.contextMenuStripEx1.Size = new System.Drawing.Size(182, 132);
-            this.contextMenuStripEx1.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
-            this.contextMenuStripEx1.ThemeName = "Metro";
+            contextMenuStripEx1.DropShadowEnabled = false;
+            contextMenuStripEx1.Items.AddRange(new ToolStripItem[] { menuCopyToClipboard, toolStripSeparator2, menuCreate, menuEdit, menuDelete, toolStripSeparator3, menuCopy, toolStripSeparatorCustom2 });
+            contextMenuStripEx1.MetroColor = Color.FromArgb(204, 236, 249);
+            contextMenuStripEx1.Name = "contextMenuStripEx1";
+            contextMenuStripEx1.Size = new Size(182, 132);
+            contextMenuStripEx1.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
+            contextMenuStripEx1.ThemeName = "Metro";
             // 
             // menuCopyToClipboard
             // 
-            this.menuCopyToClipboard.Image = global::DocumentFlow.Properties.Resources.icons8_copy_16;
-            this.menuCopyToClipboard.Name = "menuCopyToClipboard";
-            this.menuCopyToClipboard.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.menuCopyToClipboard.Size = new System.Drawing.Size(181, 22);
-            this.menuCopyToClipboard.Text = "Копировать";
-            this.menuCopyToClipboard.Click += new System.EventHandler(this.MenuCopyToClipboard_Click);
+            menuCopyToClipboard.Image = Properties.Resources.icons8_copy_16;
+            menuCopyToClipboard.Name = "menuCopyToClipboard";
+            menuCopyToClipboard.ShortcutKeys = Keys.Control | Keys.C;
+            menuCopyToClipboard.Size = new Size(181, 22);
+            menuCopyToClipboard.Text = "Копировать";
+            menuCopyToClipboard.Click += MenuCopyToClipboard_Click;
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(178, 6);
             // 
             // menuCreate
             // 
-            this.menuCreate.Image = global::DocumentFlow.Properties.Resources.icons8_file_add_16;
-            this.menuCreate.Name = "menuCreate";
-            this.menuCreate.Size = new System.Drawing.Size(181, 22);
-            this.menuCreate.Text = "Создать";
-            this.menuCreate.Click += new System.EventHandler(this.ButtonCreate_Click);
+            menuCreate.Image = Properties.Resources.icons8_file_add_16;
+            menuCreate.Name = "menuCreate";
+            menuCreate.Size = new Size(181, 22);
+            menuCreate.Text = "Создать";
+            menuCreate.Click += ButtonCreate_Click;
             // 
             // menuEdit
             // 
-            this.menuEdit.Image = global::DocumentFlow.Properties.Resources.icons8_file_edit_16;
-            this.menuEdit.Name = "menuEdit";
-            this.menuEdit.Size = new System.Drawing.Size(181, 22);
-            this.menuEdit.Text = "Изменить";
-            this.menuEdit.Click += new System.EventHandler(this.ButtonEdit_Click);
+            menuEdit.Image = Properties.Resources.icons8_file_edit_16;
+            menuEdit.Name = "menuEdit";
+            menuEdit.Size = new Size(181, 22);
+            menuEdit.Text = "Изменить";
+            menuEdit.Click += ButtonEdit_Click;
             // 
             // menuDelete
             // 
-            this.menuDelete.Image = global::DocumentFlow.Properties.Resources.icons8_file_delete_16;
-            this.menuDelete.Name = "menuDelete";
-            this.menuDelete.Size = new System.Drawing.Size(181, 22);
-            this.menuDelete.Text = "Удалить";
-            this.menuDelete.Click += new System.EventHandler(this.ButtonDelete_Click);
+            menuDelete.Image = Properties.Resources.icons8_file_delete_16;
+            menuDelete.Name = "menuDelete";
+            menuDelete.Size = new Size(181, 22);
+            menuDelete.Text = "Удалить";
+            menuDelete.Click += ButtonDelete_Click;
             // 
             // toolStripSeparator3
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(178, 6);
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(178, 6);
             // 
             // menuCopy
             // 
-            this.menuCopy.Image = global::DocumentFlow.Properties.Resources.icons8_copy_edit_16;
-            this.menuCopy.Name = "menuCopy";
-            this.menuCopy.Size = new System.Drawing.Size(181, 22);
-            this.menuCopy.Text = "Создать копию";
-            this.menuCopy.Click += new System.EventHandler(this.ButtonCopy_Click);
+            menuCopy.Image = Properties.Resources.icons8_copy_edit_16;
+            menuCopy.Name = "menuCopy";
+            menuCopy.Size = new Size(181, 22);
+            menuCopy.Text = "Создать копию";
+            menuCopy.Click += ButtonCopy_Click;
             // 
             // toolStripSeparatorCustom2
             // 
-            this.toolStripSeparatorCustom2.Name = "toolStripSeparatorCustom2";
-            this.toolStripSeparatorCustom2.Size = new System.Drawing.Size(178, 6);
-            this.toolStripSeparatorCustom2.Visible = false;
+            toolStripSeparatorCustom2.Name = "toolStripSeparatorCustom2";
+            toolStripSeparatorCustom2.Size = new Size(178, 6);
+            toolStripSeparatorCustom2.Visible = false;
             // 
             // labelHeader
             // 
-            this.labelHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelHeader.Location = new System.Drawing.Point(0, 0);
-            this.labelHeader.Name = "labelHeader";
-            this.labelHeader.Size = new System.Drawing.Size(800, 32);
-            this.labelHeader.TabIndex = 2;
-            this.labelHeader.Text = "Заголовок";
-            this.labelHeader.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            labelHeader.Dock = DockStyle.Top;
+            labelHeader.Location = new Point(0, 0);
+            labelHeader.Name = "labelHeader";
+            labelHeader.Size = new Size(800, 32);
+            labelHeader.TabIndex = 2;
+            labelHeader.Text = "Заголовок";
+            labelHeader.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // DfDataGrid
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.gridMain);
-            this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.labelHeader);
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Name = "DfDataGrid";
-            this.Size = new System.Drawing.Size(800, 200);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridMain)).EndInit();
-            this.contextMenuStripEx1.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(gridMain);
+            Controls.Add(toolStrip1);
+            Controls.Add(labelHeader);
+            Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
+            Name = "DfDataGrid";
+            Padding = new Padding(0, 0, 0, 8);
+            Size = new Size(800, 200);
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)gridMain).EndInit();
+            contextMenuStripEx1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

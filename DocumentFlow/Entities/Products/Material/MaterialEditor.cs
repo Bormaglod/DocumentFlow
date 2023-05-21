@@ -17,6 +17,8 @@
 //  - удалён метод ParentMaterialChanged
 //  - добавлен метод MaterialKindChanged
 //  - добавлена возможность установки совместимых деталей
+// Версия 2023.5.21
+//  - добавлено поле DocName
 //
 //-----------------------------------------------------------------------
 
@@ -40,12 +42,14 @@ public class MaterialEditor : Editor<Material>, IMaterialEditor
         this.repository = repository;
 
         EditorControls
-            .SetHeaderWidth(190)
+            .SetHeaderWidth(200)
             .AddTextBox(x => x.Code, "Код", text => text
                 .SetEditorWidth(180)
                 .DefaultAsValue())
             .AddTextBox(x => x.ItemName, "Наименование", text => text
-                .SetEditorWidth(400))
+                .SetEditorWidth(600))
+            .AddTextBox(x => x.DocName, "Наименование для документов", text => text
+                .SetEditorWidth(600))
             .AddDirectorySelectBox<Material>(x => x.ParentId, "Группа", select => select
                 .SetDataSource(repository.GetOnlyFolders)
                 .ShowOnlyFolder()

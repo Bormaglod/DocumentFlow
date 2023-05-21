@@ -11,6 +11,8 @@
 //  - в вызове SetChoiceValues использовано свойство Product.Taxes
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.5.21
+//  - добавлено поле DocName
 //
 //-----------------------------------------------------------------------
 
@@ -30,7 +32,6 @@ namespace DocumentFlow.Entities.Products;
 
 public class GoodsEditor : Editor<Goods>, IGoodsEditor
 {
-    private const int headerWidth = 190;
     private readonly IGoodsRepository repository;
 
     public GoodsEditor(IGoodsRepository repository, IPageManager pageManager) : base(repository, pageManager)
@@ -38,60 +39,43 @@ public class GoodsEditor : Editor<Goods>, IGoodsEditor
         this.repository = repository;
 
         EditorControls
-            .AddTextBox(x => x.Code, "Код", (text) =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(180)
-                    .DefaultAsValue())
-            .AddTextBox(x => x.ItemName, "Наименование", (text) =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(600))
-            .AddDirectorySelectBox<Goods>(x => x.ParentId, "Группа", (select) =>
-                select
-                    .ShowOnlyFolder()
-                    .SetDataSource(repository.GetOnlyFolders)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(400))
-            .AddComboBox<Measurement>(x => x.MeasurementId, "Единица измерения", (combo) =>
-                combo
-                    .EnableEditor<IMeasurementEditor>()
-                    .SetDataSource(GetMeasurements)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(250)
-                    .Raise())
-            .AddNumericTextBox(x => x.Weight, "Вес, г", (text) =>
-                text
-                    .SetNumberDecimalDigits(3)
-                    .SetHeaderWidth(headerWidth)
-                    .Raise())
-            .AddCurrencyTextBox(x => x.Price, "Цена без НДС", (text) =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(150)
-                    .DefaultAsValue())
-            .AddChoice<int>(x => x.Vat, "НДС", (choice) =>
-                choice
-                    .SetChoiceValues(Product.Taxes)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(150))
-            .If(repository.HasPrivilege(Privilege.Update), controls =>
-                controls.AddComboBox<Calculation>(x => x.CalculationId, "Калькуляция", (combo) =>
-                    combo
-                        .EnableEditor<ICalculationEditor>()
-                        .SetDataSource(GetCalculations)
-                        .SetHeaderWidth(headerWidth)
-                        .SetEditorWidth(400)))
-            .AddToggleButton(x => x.IsService, "Услуга", (toggle) =>
-                toggle
-                    .ToggleChanged(IsServiceChanged)
-                    .SetHeaderWidth(headerWidth))
-            .AddTextBox(x => x.Note, "Описание", (text) =>
-                text
-                    .Multiline()
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(500)
-                    .SetDock(DockStyle.Fill));
+            .SetHeaderWidth(200)
+            .AddTextBox(x => x.Code, "Код", text => text
+                .SetEditorWidth(180)
+                .DefaultAsValue())
+            .AddTextBox(x => x.ItemName, "Наименование", text => text
+                .SetEditorWidth(600))
+            .AddTextBox(x => x.DocName, "Наименование для документов", text => text
+                .SetEditorWidth(600))
+            .AddDirectorySelectBox<Goods>(x => x.ParentId, "Группа", select => select
+                .ShowOnlyFolder()
+                .SetDataSource(repository.GetOnlyFolders)
+                .SetEditorWidth(400))
+            .AddComboBox<Measurement>(x => x.MeasurementId, "Единица измерения", combo => combo
+                .EnableEditor<IMeasurementEditor>()
+                .SetDataSource(GetMeasurements)
+                .SetEditorWidth(250)
+                .Raise())
+            .AddNumericTextBox(x => x.Weight, "Вес, г", text => text
+                .SetNumberDecimalDigits(3)
+                .Raise())
+            .AddCurrencyTextBox(x => x.Price, "Цена без НДС", text => text
+                .SetEditorWidth(150)
+                .DefaultAsValue())
+            .AddChoice<int>(x => x.Vat, "НДС", choice => choice
+                .SetChoiceValues(Product.Taxes)
+                .SetEditorWidth(150))
+            .If(repository.HasPrivilege(Privilege.Update), controls => controls
+                .AddComboBox<Calculation>(x => x.CalculationId, "Калькуляция", combo => combo
+                    .EnableEditor<ICalculationEditor>()
+                    .SetDataSource(GetCalculations)
+                    .SetEditorWidth(400)))
+            .AddToggleButton(x => x.IsService, "Услуга", toggle => toggle
+                .ToggleChanged(IsServiceChanged))
+            .AddTextBox(x => x.Note, "Описание", text => text
+                .Multiline()
+                .SetEditorWidth(500)
+                .SetDock(DockStyle.Fill));
     }
 
     protected override void DoAfterRefreshData()
