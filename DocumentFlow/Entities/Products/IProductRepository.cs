@@ -8,6 +8,8 @@
 //  - добавлен метод GetAveragePrice(Guid, DateTime?)
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.5.31
+//  - добавлен метод GetRemainder(T, DateTime?) и GetRemainder(Guid, DateTime?)
 //
 //-----------------------------------------------------------------------
 
@@ -18,6 +20,8 @@ namespace DocumentFlow.Entities.Products;
 public interface IProductRepository<T> : IDirectoryRepository<T>
     where T: Product
 {
-    decimal GetAveragePrice(T product, DateTime? relevance_date = null);
-    decimal GetAveragePrice(Guid product_id, DateTime? relevance_date = null);
+    decimal GetAveragePrice(T product, DateTime? relevanceDate = null);
+    decimal GetAveragePrice(Guid productId, DateTime? relevanceDate = null);
+    decimal GetRemainder(T product, DateTime? actualDate = null);
+    decimal GetRemainder(Guid productId, DateTime? actualDate = null);
 }

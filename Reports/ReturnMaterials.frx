@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Name="Отчёт об использовании давальческих комплектующих" ReportInfo.Version="2023.5.29" ReportInfo.Created="05/28/2023 10:20:11" ReportInfo.Modified="05/29/2023 20:47:04" ReportInfo.CreatorVersion="2022.2.0.0">
+  <Dictionary>
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75QW6CPkJJkTHRTtDNA4h+kc=">
+      <TableDataSource Name="Table" Alias="report_header" DataType="System.Int32" Enabled="true" SelectCommand="select&#13;&#10;	c.code as contract_number,&#13;&#10;	c.item_name as contract_name,&#13;&#10;	c.document_date as contract_date,&#13;&#10;	c2.item_name as contractor_name,&#13;&#10;	rm.document_date,&#13;&#10;	oe.item_name as employee_name,&#13;&#10;	o.signatory_name as post_name,&#13;&#10;	o2.item_name as org_name&#13;&#10;from return_materials rm &#13;&#10;	join production_order po on po.id = rm.owner_id &#13;&#10;	join contractor c2 on c2.id = po.contractor_id&#13;&#10;	join contract c on c.id = po.contract_id&#13;&#10;	left join our_employee oe on oe.id = c.org_signatory_id &#13;&#10;	left join okpdtr o on o.id = oe.post_id &#13;&#10;	join organization o2 on o2.id = rm.organization_id&#13;&#10;where po.id = :order_id">
+        <Column Name="document_date" DataType="System.DateTime"/>
+        <Column Name="contract_number" DataType="System.String"/>
+        <Column Name="contract_name" DataType="System.String"/>
+        <Column Name="contract_date" DataType="System.DateTime"/>
+        <Column Name="contractor_name" DataType="System.String"/>
+        <Column Name="employee_name" DataType="System.String"/>
+        <Column Name="post_name" DataType="System.String"/>
+        <Column Name="org_name" DataType="System.String"/>
+        <CommandParameter Name="order_id" DataType="40" Expression="[id]" DefaultValue="2f9ea8cb-d677-44b6-8775-47ba4cb18e01"/>
+      </TableDataSource>
+      <TableDataSource Name="Table1" Alias="used_materials" DataType="System.Int32" Enabled="true" SelectCommand="with order_price as&#13;&#10;(&#13;&#10;	select &#13;&#10;		wp.owner_id as order_id,&#13;&#10;		wpp.reference_id as material_id,&#13;&#10;		sum(wpp.price) / count(wpp.id) as price&#13;&#10;	from waybill_processing wp &#13;&#10;		join waybill_processing_price wpp on wpp.owner_id = wp.id &#13;&#10;	group by wp.owner_id, wpp.reference_id&#13;&#10;)&#13;&#10;select &#13;&#10;	m.item_name,&#13;&#10;	m2.abbreviation,&#13;&#10;	sum(wpw.amount) as used_materials,&#13;&#10;	op.price,&#13;&#10;	sum(wpw.amount) * op.price as full_cost&#13;&#10;from waybill_processing wp &#13;&#10;	join waybill_processing_writeoff wpw on wp.id = wpw.waybill_processing_id and wpw.write_off != 'return'::write_off_method&#13;&#10;	join order_price op on op.order_id = wp.owner_id and op.material_id = wpw.material_id&#13;&#10;	join material m on m.id = wpw.material_id&#13;&#10;	join measurement m2 on m2.id = m.measurement_id &#13;&#10;where wp.owner_id = :order_id&#13;&#10;group by m.id, m2.abbreviation, op.price">
+        <Column Name="abbreviation" DataType="System.String"/>
+        <Column Name="item_name" DataType="System.String"/>
+        <Column Name="used_materials" DataType="System.Decimal"/>
+        <Column Name="full_cost" DataType="System.Decimal"/>
+        <Column Name="price" DataType="System.Decimal"/>
+        <CommandParameter Name="order_id" DataType="40" Expression="[id]" DefaultValue="2f9ea8cb-d677-44b6-8775-47ba4cb18e01"/>
+      </TableDataSource>
+      <TableDataSource Name="Table2" Alias="return_materials" DataType="System.Int32" Enabled="true" SelectCommand="with order_price as&#13;&#10;(&#13;&#10;	select &#13;&#10;		wp.owner_id as order_id,&#13;&#10;		wpp.reference_id as material_id,&#13;&#10;		sum(wpp.price) / count(wpp.id) as price&#13;&#10;	from waybill_processing wp &#13;&#10;		join waybill_processing_price wpp on wpp.owner_id = wp.id &#13;&#10;	group by wp.owner_id, wpp.reference_id&#13;&#10;)&#13;&#10;select &#13;&#10;	m.item_name,&#13;&#10;	m2.abbreviation,&#13;&#10;	sum(rmr.quantity) as return_materials,&#13;&#10;	op.price,&#13;&#10;	sum(rmr.quantity) * op.price as full_cost&#13;&#10;from return_materials rm &#13;&#10;	join return_materials_rows rmr on rmr.owner_id = rm.id&#13;&#10;	join order_price op on op.order_id = rm.owner_id and op.material_id = rmr.material_id&#13;&#10;	join material m on m.id = rmr.material_id&#13;&#10;	join measurement m2 on m2.id = m.measurement_id&#13;&#10;where rm.owner_id = :order_id&#13;&#10;group by m.id, m2.abbreviation, op.price">
+        <Column Name="item_name" DataType="System.String"/>
+        <Column Name="abbreviation" DataType="System.String"/>
+        <Column Name="return_materials" DataType="System.Decimal"/>
+        <Column Name="price" DataType="System.Decimal"/>
+        <Column Name="full_cost" DataType="System.Decimal"/>
+        <CommandParameter Name="order_id" DataType="40" Expression="[id]" DefaultValue="2f9ea8cb-d677-44b6-8775-47ba4cb18e01"/>
+      </TableDataSource>
+      <TableDataSource Name="Table3" Alias="completed" DataType="System.Int32" Enabled="true" SelectCommand="select&#13;&#10;	coalesce(g.doc_name, g.item_name) as goods_name,&#13;&#10;	m.abbreviation,&#13;&#10;	pop.price,&#13;&#10;	sum(pl.quantity) as quantity,&#13;&#10;	sum(pl.quantity) * pop.price as full_cost&#13;&#10;from production_order po &#13;&#10;	join production_order_price pop on pop.owner_id = po.id&#13;&#10;	join production_lot pl on pl.owner_id = po.id&#13;&#10;	join goods g on g.id = pop.reference_id&#13;&#10;	left join measurement m on m.id = g.measurement_id&#13;&#10;where po.id = :order_id and pl.state = 'completed'::lot_state &#13;&#10;group by 1, m.abbreviation, pop.price">
+        <Column Name="abbreviation" DataType="System.String"/>
+        <Column Name="price" DataType="System.Decimal"/>
+        <Column Name="quantity" DataType="System.Decimal"/>
+        <Column Name="full_cost" DataType="System.Decimal"/>
+        <Column Name="goods_name" DataType="System.String"/>
+        <CommandParameter Name="order_id" DataType="40" Expression="[id]" DefaultValue="2f9ea8cb-d677-44b6-8775-47ba4cb18e01"/>
+      </TableDataSource>
+    </PostgresDataConnection>
+    <Parameter Name="id" DataType="System.String"/>
+    <Total Name="used_materials_total" Expression="[used_materials.full_cost]" Evaluator="Data1" PrintOn="DataFooter1" IncludeInvisibleRows="true"/>
+    <Total Name="return_materials_total" Expression="[return_materials.full_cost]" Evaluator="Data2" PrintOn="DataFooter2"/>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="94.5">
+      <TextObject Name="Text1" Width="718.2" Height="18.9" Text="ОТЧЁТ" HorzAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text2" Top="18.9" Width="718.2" Height="37.8" Text="об использовании давальческих комплектующих в произведённых изделиях&#13;&#10;по договору № [report_header.contract_number] от [report_header.contract_date]" HorzAlign="Center" Font="Arial, 10pt">
+        <Formats>
+          <GeneralFormat/>
+          <DateFormat Format="D"/>
+        </Formats>
+      </TextObject>
+      <TextObject Name="Text3" Top="56.7" Width="113.4" Height="18.9" Text="г. Димитровград" Font="Arial, 10pt"/>
+      <TextObject Name="Text4" Left="576.45" Top="56.7" Width="141.75" Height="18.9" Text="[report_header.document_date]" Format="Date" Format.Format="D" HorzAlign="Right" Font="Arial, 10pt"/>
+      <TextObject Name="Text20" Left="-9450" Top="-9450" Width="718.2" Height="18.9" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="Давальческие комплектующие израсходованы" HorzAlign="Center" Font="Arial, 10pt, style=Bold"/>
+    </ReportTitleBand>
+    <DataBand Name="Data1" Top="187.55" Width="718.2" Height="18.9" DataSource="Table1">
+      <TextObject Name="Text12" Width="330.75" Height="18.9" Border.Lines="All" Text="[used_materials.item_name]" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text13" Left="330.75" Width="94.5" Height="18.9" Border.Lines="All" Text="[used_materials.abbreviation]" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text14" Left="425.25" Width="94.5" Height="18.9" Border.Lines="All" Text="[used_materials.used_materials]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="0" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text15" Left="519.75" Width="94.5" Height="18.9" Border.Lines="All" Text="[IIf([used_materials.price] == 0, &quot;-&quot;, [used_materials.price])]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text16" Left="614.25" Width="103.95" Height="18.9" Border.Lines="All" Text="[IIf([used_materials.full_cost] == 0, &quot;-&quot;, [used_materials.full_cost])]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <DataHeaderBand Name="DataHeader1" Top="98.5" Width="718.2" Height="85.05" CanGrow="true">
+        <TextObject Name="Text6" Top="28.35" Width="718.2" Height="18.9" Border.Lines="All" Text="Давальческие комплектующие израсходованы" HorzAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text8" Left="330.75" Top="47.25" Width="94.5" Height="37.8" Border.Lines="All" Text="Ед. изм." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text7" Top="47.25" Width="330.75" Height="37.8" Border.Lines="All" Text="Наименование" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text9" Left="425.25" Top="47.25" Width="94.5" Height="37.8" Border.Lines="All" Text="Кол-во" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text10" Left="519.75" Top="47.25" Width="94.5" Height="37.8" Border.Lines="All" Text="Цена без НДС, руб." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text11" Left="614.25" Top="47.25" Width="103.95" Height="37.8" Border.Lines="All" Text="Стоимость без НДС, руб." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text5" Width="718.2" Height="18.9" CanGrow="true" Text="Давальческие комплектующие, полученные от [report_header.contractor_name] в соответствии со спецификацией давальческих комплектующих к договору №[report_header.contract_number] от [report_header.contract_date] (далее - Договор) израсходованы:" Font="Arial, 10pt">
+          <Formats>
+            <GeneralFormat/>
+            <GeneralFormat/>
+            <DateFormat Format="D"/>
+          </Formats>
+        </TextObject>
+      </DataHeaderBand>
+      <DataFooterBand Name="DataFooter1" Top="210.45" Width="718.2" Height="18.9">
+        <TextObject Name="Text17" Width="614.25" Height="18.9" Border.Lines="All" Text="Итого:" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text18" Left="614.25" Width="103.95" Height="18.9" Border.Lines="All" Text="[IIf([used_materials_total] == 0, &quot;-&quot;, [used_materials_total])]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      </DataFooterBand>
+    </DataBand>
+    <DataBand Name="Data2" Top="341.3" Width="718.2" Height="18.9" DataSource="Table2">
+      <TextObject Name="Text27" Width="330.75" Height="18.9" Border.Lines="All" Text="[return_materials.item_name]" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text28" Left="330.75" Width="94.5" Height="18.9" Border.Lines="All" Text="[return_materials.abbreviation]" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text29" Left="425.25" Width="94.5" Height="18.9" Border.Lines="All" Text="[return_materials.return_materials]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="0" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text30" Left="519.75" Width="94.5" Height="18.9" Border.Lines="All" Text="[IIf([return_materials.price] == 0, &quot;-&quot;, [return_materials.price])]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text31" Left="614.25" Width="103.95" Height="18.9" Border.Lines="All" Text="[IIf([return_materials.full_cost] == 0, &quot;-&quot;, [return_materials.full_cost])]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <DataHeaderBand Name="DataHeader2" Top="233.35" Width="718.2" Height="103.95" CanGrow="true">
+        <TextObject Name="Text19" Top="18.9" Width="718.2" Height="18.9" CanGrow="true" Text="Давальческие комплектующие, полученные от [report_header.contractor_name] в соответствии со спецификацией давальческих комплектующих к Договору возвращены:" Font="Arial, 10pt">
+          <Formats>
+            <GeneralFormat/>
+            <GeneralFormat/>
+            <DateFormat Format="D"/>
+          </Formats>
+        </TextObject>
+        <TextObject Name="Text21" Top="47.25" Width="718.2" Height="18.9" Border.Lines="All" Text="Давальческие комплектующие возвращены" HorzAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text22" Left="330.75" Top="66.15" Width="94.5" Height="37.8" Border.Lines="All" Text="Ед. изм." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text23" Top="66.15" Width="330.75" Height="37.8" Border.Lines="All" Text="Наименование" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text24" Left="425.25" Top="66.15" Width="94.5" Height="37.8" Border.Lines="All" Text="Кол-во" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text25" Left="519.75" Top="66.15" Width="94.5" Height="37.8" Border.Lines="All" Text="Цена без НДС, руб." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text26" Left="614.25" Top="66.15" Width="103.95" Height="37.8" Border.Lines="All" Text="Стоимость без НДС, руб." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      </DataHeaderBand>
+      <DataFooterBand Name="DataFooter2" Top="364.2" Width="718.2" Height="18.9">
+        <TextObject Name="Text32" Width="614.25" Height="18.9" Border.Lines="All" Text="Итого:" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text33" Left="614.25" Width="103.95" Height="18.9" Border.Lines="All" Text="[IIf([return_materials_total] == 0, &quot;-&quot;, [return_materials_total])]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      </DataFooterBand>
+    </DataBand>
+    <DataBand Name="Data3" Top="495.05" Width="718.2" Height="18.9" CanGrow="true">
+      <TextObject Name="Text41" Width="330.75" Height="18.9" Border.Lines="All" CanGrow="true" Text="[completed.goods_name]" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text42" Left="330.75" Width="94.5" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[completed.abbreviation]" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text43" Left="425.25" Width="94.5" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[completed.quantity]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="0" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text44" Left="519.75" Width="94.5" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[IIf([completed.price] == 0, &quot;-&quot;, [completed.price])]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text45" Left="614.25" Width="103.95" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[IIf([completed.full_cost] == 0, &quot;-&quot;, [completed.full_cost])]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+      <DataHeaderBand Name="DataHeader3" Top="387.1" Width="718.2" Height="103.95">
+        <TextObject Name="Text34" Top="18.9" Width="718.2" Height="18.9" Text="В результате работ по Договору было изготовлено/выполнено услуг:" Font="Arial, 10pt"/>
+        <TextObject Name="Text35" Top="47.25" Width="718.2" Height="18.9" Border.Lines="All" Text="Изделия / услуги" HorzAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text36" Left="330.75" Top="66.15" Width="94.5" Height="37.8" Border.Lines="All" Text="Ед. изм." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text37" Top="66.15" Width="330.75" Height="37.8" Border.Lines="All" Text="Наименование" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text38" Left="425.25" Top="66.15" Width="94.5" Height="37.8" Border.Lines="All" Text="Кол-во" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text39" Left="519.75" Top="66.15" Width="94.5" Height="37.8" Border.Lines="All" Text="Цена без НДС, руб." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text40" Left="614.25" Top="66.15" Width="103.95" Height="37.8" Border.Lines="All" Text="Стоимость без НДС, руб." HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      </DataHeaderBand>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="517.95" Width="718.2" Height="236.25">
+      <TextObject Name="Text46" Top="37.8" Width="122.85" Height="18.9" Text="ОТ ЗАКАЗЧИКА" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text47" Left="359.1" Top="37.8" Width="151.2" Height="18.9" Text="ОТ ИСПОЛНИТЕЛЯ" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text48" Left="359.1" Top="56.7" Width="283.5" Height="18.9" Text="[report_header.post_name] [report_header.org_name]" Font="Arial, 10pt"/>
+      <TextObject Name="Text49" Left="359.1" Top="94.5" Width="141.75" Height="18.9" Border.Lines="Bottom" Font="Arial, 10pt"/>
+      <TextObject Name="Text50" Left="500.85" Top="94.5" Width="141.75" Height="18.9" Text="[report_header.employee_name]" Font="Arial, 10pt"/>
+      <TextObject Name="Text51" Top="94.5" Width="170.1" Height="18.9" Border.Lines="Bottom" Font="Arial, 10pt"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>

@@ -15,6 +15,9 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.2.23
 //  - добавлена ссылка на DocumentFlow.Core.Exceptions
+// Версия 2023.5.31
+//  - создание диалогового окна OperationsPerformedDialog реализовано
+//    с помощью сервиса и интерфейса IOperationsPerformedDialog
 //
 //-----------------------------------------------------------------------
 
@@ -22,7 +25,7 @@ using DocumentFlow.Controls.Core;
 using DocumentFlow.Controls.Renderers;
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Data.Core;
-using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Infrastructure;
 using DocumentFlow.Entities.Employees;
 using DocumentFlow.Entities.Productions.Lot;
 using DocumentFlow.Entities.Productions.Performed;
@@ -341,16 +344,15 @@ public partial class DfProductionLot : BaseControl, IGridDataSource, IDataSource
                 }
             }
 
-            OperationsPerformedDialog form = new(ownerId.Value);
-            form.Initialize(new { OperationId = oper?.Operation.Id, EmployeeId = emp?.Id });
+            var dialog = Services.Provider.GetService<IOperationsPerformedDialog>()!;
+            var res = dialog.Show(ownerId.Value, oper?.Operation.Id, emp?.Id);
 
-            var res = form.ShowDialog() == DialogResult.OK;
-            var employee = form.Employee;
-            var operation = form.Operation;
+            var employee = dialog.GetEmployee();
+            var operation = dialog.GetOperation();
 
             if (res && employee != null && operation != null)
             {
-                var op = form.Get();
+                var op = dialog.Get();
 
                 var repo = Services.Provider.GetService<IOperationsPerformedRepository>();
                 if (repo != null)

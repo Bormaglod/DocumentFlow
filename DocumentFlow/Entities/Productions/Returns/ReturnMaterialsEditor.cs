@@ -13,6 +13,8 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.5.17
 //  - в поле OwnerId (Заказ) добавлена кнопка для просмотра заказа
+// Версия 2023.5.31
+//  - добавлен отчёт "Отчёт об использовании давальческих комплектующих"
 //
 //-----------------------------------------------------------------------
 
@@ -21,6 +23,7 @@ using DocumentFlow.Dialogs.Infrastructure;
 using DocumentFlow.Entities.Companies;
 using DocumentFlow.Entities.Productions.Order;
 using DocumentFlow.Entities.Productions.Processing;
+using DocumentFlow.Entities.Productions.Reports;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 
@@ -60,6 +63,8 @@ public class ReturnMaterialsEditor : DocumentEditor<ReturnMaterials>, IReturnMat
                     .Dialog<IMaterialQuantityDialog>()
                     .AddCommand("Заполнить", Properties.Resources.icons8_incoming_data_16, PopulateCommand)
                     .SetDock(DockStyle.Fill));
+
+        RegisterReport(new ReturnMaterialsReport());
     }
 
     private IEnumerable<ProductionOrder>? GetOrders()

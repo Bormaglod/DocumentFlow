@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Спецификация" ReportInfo.Version="2022.07.24" ReportInfo.Created="06/25/2022 21:34:07" ReportInfo.Modified="07/24/2022 12:10:24" ReportInfo.CreatorVersion="2022.2.0.0">
+<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Спецификация" ReportInfo.Version="2023.5.29" ReportInfo.Created="06/25/2022 21:34:07" ReportInfo.Modified="05/29/2023 21:52:45" ReportInfo.CreatorVersion="2022.2.0.0">
   <Dictionary>
-    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75V42snlDSNoZVoETDUjfWqA=">
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75a3BLIj1l2tZEhtoqHbFJvQ=">
       <TableDataSource Name="Table" Alias="materials" DataType="System.Int32" Enabled="true" SelectCommand="with cte as &#13;&#10;(&#13;&#10;	select &#13;&#10;		m.item_name,&#13;&#10;		ms.code as measurement_code,&#13;&#10;		case ms.code&#13;&#10;			when '6' then 'мм'&#13;&#10;			else ms.abbreviation&#13;&#10;		end as measurement_name,&#13;&#10;		case ms.code&#13;&#10;			when '6' then co.material_amount * 1000&#13;&#10;			else co.material_amount&#13;&#10;		end as material_amount,&#13;&#10;		sum(co.repeats) as repeats,&#13;&#10;		grp.item_name as group_name,&#13;&#10;		case grp.id&#13;&#10;			when '17f8df70-2ad6-4d97-95db-6425cf3249f0' then 1 -- Наконечники и контакты&#13;&#10;			when '2d34202e-159d-467b-9e97-5a0bb5494fa4' then 2 -- Колодки&#13;&#10;			when '1e1ff796-a0a6-4958-8b8a-dd94ea322cfd' then 3 -- Трубка&#13;&#10;			when '0525748e-e98c-4296-bd0e-dcacee7224f3' then 4 -- Провод&#13;&#10;			else 5&#13;&#10;		end as grp_id,&#13;&#10;		c.program_number,&#13;&#10;		c.left_cleaning,&#13;&#10;		c.left_sweep,&#13;&#10;		c.right_cleaning,&#13;&#10;		c.right_sweep,&#13;&#10;		cop.property_value as material_size&#13;&#10;	from calculation_operation co&#13;&#10;		join material m on m.id = co.material_id&#13;&#10;		join measurement ms on ms.id = m.measurement_id&#13;&#10;		left join material grp on grp.id = m.parent_id&#13;&#10;		left join cutting c on c.id = co.item_id&#13;&#10;		left join calculation_operation_property cop on cop.operation_id = co.id&#13;&#10;		left join property p on p.id = cop.property_id and p.property_name = 'size'&#13;&#10;	where co.owner_id = :calc_id&#13;&#10;	group by m.item_name, co.material_amount, ms.code, ms.abbreviation, ms.code, grp.id, grp.item_name, c.program_number, c.left_cleaning, c.left_sweep, c.right_cleaning, c.right_sweep, cop.property_value&#13;&#10;	order by grp_id, m.item_name &#13;&#10;)&#13;&#10;select &#13;&#10;	cte.*,&#13;&#10;	case &#13;&#10;		when measurement_code in ('657', '796', '798', '625') then round(material_amount * repeats, 0) || ' ' || measurement_name&#13;&#10;		when measurement_code in ('051', '055') then coalesce(material_size, material_amount || ' ' || measurement_name) || ', ' || repeats || ' шт.'&#13;&#10;		else trim_scale(material_amount) || ' ' || measurement_name || ', ' || repeats || ' шт.'&#13;&#10;	end as material_quantity&#13;&#10;from cte">
         <Column Name="item_name" DataType="System.String"/>
         <Column Name="material_amount" DataType="System.Decimal"/>
@@ -33,8 +33,8 @@
       <TextObject Name="Text1" Width="122.85" Height="18.9" Text="Спецификация" Font="Consolas, 12pt, style=Bold"/>
       <TextObject Name="Text2" Top="28.35" Width="132.3" Height="18.9" Text="Наименование" Font="Consolas, 10pt"/>
       <TextObject Name="Text3" Top="47.25" Width="132.3" Height="18.9" Text="Артикул" Font="Consolas, 10pt"/>
-      <TextObject Name="Text4" Left="132.3" Top="47.25" Width="614.25" Height="18.9" IsIntersectedWithOtherObject="true" Text="[calculation.code]" Font="Consolas, 10pt"/>
-      <TextObject Name="Text5" Left="132.3" Top="28.35" Width="614.25" Height="18.9" IsIntersectedWithOtherObject="true" CanGrow="true" Text="[calculation.item_name]" Font="Consolas, 10pt"/>
+      <TextObject Name="Text4" Left="132.3" Top="47.25" Width="548.1" Height="18.9" Text="[calculation.code]" Font="Consolas, 10pt"/>
+      <TextObject Name="Text5" Left="132.3" Top="28.35" Width="548.1" Height="18.9" CanGrow="true" Text="[calculation.item_name]" Font="Consolas, 10pt"/>
       <TextObject Name="Text55" Left="132.3" Top="66.15" Width="141.75" Height="18.9" Text="[calculation.date_approval]" Format="Date" Format.Format="d" Font="Consolas, 10pt"/>
       <TextObject Name="Text56" Top="66.15" Width="132.3" Height="18.9" Text="Дата утверждения" Font="Consolas, 10pt"/>
     </ReportTitleBand>
@@ -44,7 +44,7 @@
       <DataHeaderBand Name="DataHeader2" Top="89.05" Width="680.4" Height="56.7">
         <TextObject Name="Text7" Top="37.8" Width="557.55" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Наименование" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
         <TextObject Name="Text8" Left="557.55" Top="37.8" Width="122.85" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Количество, шт." HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
-        <TextObject Name="Text6" Top="18.9" Width="718.2" Height="18.9" IsIntersectedWithOtherObject="true" Text="[materials.group_name]" Font="Consolas, 10pt"/>
+        <TextObject Name="Text6" Top="18.9" Width="718.2" Height="18.9" Text="[materials.group_name]" Font="Consolas, 10pt"/>
       </DataHeaderBand>
     </DataBand>
     <DataBand Name="Data2" Top="233.35" Width="680.4" Height="18.9" DataSource="Table" Filter="[materials.grp_id]==2">
@@ -53,7 +53,7 @@
       <DataHeaderBand Name="DataHeader1" Top="172.65" Width="680.4" Height="56.7">
         <TextObject Name="Text12" Left="557.55" Top="37.8" Width="122.85" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Количество, шт." HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
         <TextObject Name="Text13" Top="37.8" Width="557.55" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Наименование" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
-        <TextObject Name="Text14" Top="18.9" Width="718.2" Height="18.9" IsIntersectedWithOtherObject="true" Text="[materials.group_name]" Font="Consolas, 10pt"/>
+        <TextObject Name="Text14" Top="18.9" Width="718.2" Height="18.9" Text="[materials.group_name]" Font="Consolas, 10pt"/>
       </DataHeaderBand>
     </DataBand>
     <DataBand Name="Data3" Top="316.95" Width="680.4" Height="18.9" DataSource="Table" Filter="[materials.grp_id]==3">
@@ -64,7 +64,7 @@
         <TextObject Name="Text17" Top="37.8" Width="453.6" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Наименование" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
         <TextObject Name="Text18" Left="557.55" Top="37.8" Width="122.85" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Количество, шт." HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
         <TextObject Name="Text19" Left="453.6" Top="37.8" Width="103.95" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Длина, мм" HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
-        <TextObject Name="Text20" Top="18.9" Width="718.2" Height="18.9" IsIntersectedWithOtherObject="true" Text="[materials.group_name]" Font="Consolas, 10pt"/>
+        <TextObject Name="Text20" Top="18.9" Width="718.2" Height="18.9" Text="[materials.group_name]" Font="Consolas, 10pt"/>
       </DataHeaderBand>
     </DataBand>
     <DataBand Name="Data4" Top="457.25" Width="680.4" Height="18.9" DataSource="Table" Filter="[materials.grp_id]==4">
@@ -85,7 +85,7 @@
         <TextObject Name="Text29" Left="585.9" Top="85.05" Width="47.25" Height="28.35" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Длина" HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
         <TextObject Name="Text30" Left="538.65" Top="85.05" Width="47.25" Height="28.35" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Сдвиг" HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
         <TextObject Name="Text31" Left="491.4" Top="85.05" Width="47.25" Height="28.35" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Длина" HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
-        <TextObject Name="Text41" Top="18.9" Width="718.2" Height="18.9" IsIntersectedWithOtherObject="true" Text="[materials.group_name]" Font="Consolas, 10pt"/>
+        <TextObject Name="Text41" Top="18.9" Width="718.2" Height="18.9" Text="[materials.group_name]" Font="Consolas, 10pt"/>
         <TextObject Name="Text47" Left="491.4" Top="37.8" Width="189" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Зачистка" HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
         <TextObject Name="Text48" Left="491.4" Top="56.7" Width="94.5" Height="28.35" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Начало" HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
         <TextObject Name="Text49" Left="585.9" Top="56.7" Width="94.5" Height="28.35" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Конец" HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
@@ -95,7 +95,7 @@
       <TextObject Name="Text45" Width="500.85" Height="18.9" Border.Lines="All" Text="[materials.item_name]" VertAlign="Center" Font="Consolas, 10pt"/>
       <TextObject Name="Text54" Left="500.85" Width="179.55" Height="18.9" Border.Lines="All" Text="[materials.material_quantity]" HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt"/>
       <DataHeaderBand Name="DataHeader5" Top="480.15" Width="680.4" Height="56.7">
-        <TextObject Name="Text42" Top="18.9" Width="718.2" Height="18.9" IsIntersectedWithOtherObject="true" Text="[materials.group_name]" Font="Consolas, 10pt"/>
+        <TextObject Name="Text42" Top="18.9" Width="718.2" Height="18.9" Text="[materials.group_name]" Font="Consolas, 10pt"/>
         <TextObject Name="Text43" Top="37.8" Width="500.85" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Наименование" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
         <TextObject Name="Text44" Left="500.85" Top="37.8" Width="179.55" Height="18.9" Border.Lines="All" Fill.Color="WhiteSmoke" Text="Количество" HorzAlign="Center" VertAlign="Center" Font="Consolas, 10pt, style=Bold"/>
       </DataHeaderBand>

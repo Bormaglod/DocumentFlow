@@ -8,6 +8,8 @@
 //  - добавлен метод GetAveragePrice(Guid, DateTime?)
 // Версия 2023.1.24
 //  - IDatabase перенесён из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
+// Версия 2023.5.31
+//  - добавлен метод GetRemainder(T, DateTime?) и GetRemainder(Guid, DateTime?)
 //
 //-----------------------------------------------------------------------
 
@@ -23,17 +25,31 @@ public class ProductRepository<T> : DirectoryRepository<T>, IProductRepository<T
 {
     public ProductRepository(IDatabase database) : base(database) { }
 
-    public decimal GetAveragePrice(T product, DateTime? relevance_date = null) => GetAveragePrice(product.Id, relevance_date);
+    public decimal GetAveragePrice(T product, DateTime? relevanceDate = null) => GetAveragePrice(product.Id, relevanceDate);
 
-    public decimal GetAveragePrice(Guid product_id, DateTime? relevance_date = null)
+    public decimal GetAveragePrice(Guid productId, DateTime? relevanceDate = null)
     {
         using var conn = Database.OpenConnection();
         return conn.QuerySingle<decimal>(
             "select average_price(:product_id, :relevance_date)",
             new
             {
-                product_id,
-                relevance_date = relevance_date ?? DateTime.Now
+                product_id = productId,
+                relevance_date = relevanceDate ?? DateTime.Now
+            });
+    }
+
+    public decimal GetRemainder(T product, DateTime? actualDate = null) => GetRemainder(product.Id, actualDate);
+
+    public decimal GetRemainder(Guid productId, DateTime? actualDate = null)
+    {
+        using var conn = Database.OpenConnection();
+        return conn.QuerySingle<decimal>(
+            "select get_product_remainder(:product_id, :actual_date)",
+            new
+            {
+                product_id = productId,
+                actual_date = actualDate ?? DateTime.Now
             });
     }
 }

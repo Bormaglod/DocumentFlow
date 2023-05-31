@@ -21,9 +21,13 @@
 // Версия 2023.5.3
 //  - добавлен класс LoginForm и MainForm
 //  - добавлен интерфейс IAbout
+// Версия 2023.5.31
+//  - добавлен интерфейс IOperationsPerformedDialog
 //
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Infrastructure;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
 using DocumentFlow.Infrastructure.Data;
@@ -107,6 +111,7 @@ public static class Services
         services.AddTransient<LoginForm>();
         services.AddTransient<MainForm>();
         services.AddTransient<IAbout, AboutForm>();
+        services.AddTransient<IOperationsPerformedDialog, OperationsPerformedDialog>();
 
         serviceProvider = services.BuildServiceProvider();
     }
