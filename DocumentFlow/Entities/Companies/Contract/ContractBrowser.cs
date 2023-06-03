@@ -9,6 +9,8 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.6.3
+//  - добавлена колонка PaymentPeriod
 //
 //-----------------------------------------------------------------------
 
@@ -39,11 +41,12 @@ public class ContractBrowser : Browser<Contract>, IContractBrowser
         var c_type = CreateText(x => x.CTypeText, "Вид договора", width: 150);
         var date_start = CreateDateTime(x => x.DateStart, "Дата начала", width: 150, format: "dd.MM.yyyy");
         var date_end = CreateDateTime(x => x.DateEnd, "Дата окончания", width: 150, format: "dd.MM.yyyy");
+        var period = CreateNumeric(x => x.PaymentPeriod, "Срок оплаты, дней", width: 150, visible: false);
         var is_default = CreateBoolean(x => x.IsDefault, "Основной", width: 150);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 
-        AddColumns(new GridColumn[] { id, code, document_date, name, tax_payer, c_type, date_start, date_end, is_default });
+        AddColumns(new GridColumn[] { id, code, document_date, name, tax_payer, c_type, date_start, date_end, period, is_default });
 
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {

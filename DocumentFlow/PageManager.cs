@@ -12,6 +12,8 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.6.3
+//  - окно "Начальная страница" запрещено закрывать
 //
 //-----------------------------------------------------------------------
 
@@ -202,6 +204,7 @@ public class PageManager : IPageManager
             if (startPage != null)
             {
                 page = AddPage(startPage);
+                page.Closing += (_, e) => e.Cancel = true;
             }
         }
 

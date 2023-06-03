@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 16.01.2022
+//
+// Версия 2023.6.3
+//  - добавлено поле PaymentPeriod
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
@@ -16,62 +20,41 @@ namespace DocumentFlow.Entities.Companies;
 
 public class ContractEditor : Editor<Contract>, IContractEditor
 {
-    private const int headerWidth = 170;
-
     public ContractEditor(IContractRepository repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         EditorControls
-            .AddTextBox(x => x.ContractorName, "Контрагент", text =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(400)
-                    .Disable())
-            .AddChoice<ContractorType>(x => x.ContractorType, "Вид договора", choice =>
-                choice
-                    .SetChoiceValues(Contract.ContractorTypes)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200))
-            .AddTextBox(x => x.Code, "Номер договора", text =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200)
-                    .DefaultAsValue())
-            .AddTextBox(x => x.ItemName, "Наименование", text =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(400))
-            .AddDateTimePicker(x => x.DocumentDate, "Дата договора", date =>
-                date
-                    .SetFormat(DateTimePickerFormat.Short)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200))
-            .AddToggleButton(x => x.TaxPayer, "Плательщик НДС", toggle =>
-                toggle
-                    .SetHeaderWidth(headerWidth))
-            .AddDirectorySelectBox<Employee>(x => x.SignatoryId, "Подпись контрагента", select =>
-                select
-                    .SetDataSource(GetEmployees)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(400))
-            .AddDirectorySelectBox<OurEmployee>(x => x.OrgSignatoryId, "Подпись организации", select =>
-                select
-                    .SetDataSource(GetOurEmployees)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(400))
-            .AddDateTimePicker(x => x.DateStart, "Начало действия", date =>
-                date
-                    .SetFormat(DateTimePickerFormat.Short)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200))
-            .AddDateTimePicker(x => x.DateEnd, "Окончание действия", date =>
-                date
-                    .SetFormat(DateTimePickerFormat.Short)
-                    .NotRequired()
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200))
-            .AddToggleButton(x => x.IsDefault, "Основной", toggle =>
-                toggle
-                    .SetHeaderWidth(headerWidth));
+            .SetHeaderWidth(170)
+            .AddTextBox(x => x.ContractorName, "Контрагент", text => text
+                .SetEditorWidth(400)
+                .Disable())
+            .AddChoice<ContractorType>(x => x.ContractorType, "Вид договора", choice => choice
+                .SetChoiceValues(Contract.ContractorTypes)
+                .SetEditorWidth(200))
+            .AddTextBox(x => x.Code, "Номер договора", text => text
+                .SetEditorWidth(200)
+                .DefaultAsValue())
+            .AddTextBox(x => x.ItemName, "Наименование", text => text
+                .SetEditorWidth(400))
+            .AddDateTimePicker(x => x.DocumentDate, "Дата договора", date => date
+                .SetFormat(DateTimePickerFormat.Short)
+                .SetEditorWidth(200))
+            .AddToggleButton(x => x.TaxPayer, "Плательщик НДС")
+            .AddDirectorySelectBox<Employee>(x => x.SignatoryId, "Подпись контрагента", select => select
+                .SetDataSource(GetEmployees)
+                .SetEditorWidth(400))
+            .AddDirectorySelectBox<OurEmployee>(x => x.OrgSignatoryId, "Подпись организации", select => select
+                .SetDataSource(GetOurEmployees)
+                .SetEditorWidth(400))
+            .AddDateTimePicker(x => x.DateStart, "Начало действия", date => date
+                .SetFormat(DateTimePickerFormat.Short)
+                .SetEditorWidth(200))
+            .AddDateTimePicker(x => x.DateEnd, "Окончание действия", date => date
+                .SetFormat(DateTimePickerFormat.Short)
+                .NotRequired()
+                .SetEditorWidth(200))
+            .AddIntergerTextBox(x => x.PaymentPeriod, "Срок оплаты, дней", text => text
+                .SetEditorWidth(100))
+            .AddToggleButton(x => x.IsDefault, "Основной");
     }
 
     protected override void RegisterNestedBrowsers()

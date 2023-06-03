@@ -50,5 +50,8 @@
     <Setting Name="CardPadding" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
+    <Setting Name="CardRowValueWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">65</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

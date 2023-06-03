@@ -7,6 +7,8 @@
 // Версия 2023.1.21
 //  - поле ContractorTypes заменено на свойство и поменяло тип на
 //    IReadOnlyDictionary
+// Версия 2023.6.3
+//  - добавлено свойство PaymentPeriod
 //
 //-----------------------------------------------------------------------
 
@@ -45,6 +47,8 @@ public class Contract : Directory
 
     [EnumType("contractor_type")]
     public string CType { get; set; } = "buyer";
+
+    public short? PaymentPeriod { get; set; }
 
     public string CTypeText => ContractorTypes[ContractorType];
 

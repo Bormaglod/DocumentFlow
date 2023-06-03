@@ -5,7 +5,9 @@
 // Date: 06.11.2021
 //
 // Версия 2023.1.19
-//  - добавлено поле payment_exists
+//  - добавлено свойство PaymentExists
+// Версия 2023.6.3
+//  - добавлено свойство PaymentDate
 //
 //-----------------------------------------------------------------------
 
@@ -16,6 +18,8 @@ namespace DocumentFlow.Entities.Waybills;
 [Description("Реализация")]
 public class WaybillSale : Waybill
 {
+    public DateOnly? PaymentDate { get; protected set; }
+
     public bool? PaymentExists
     {
         get

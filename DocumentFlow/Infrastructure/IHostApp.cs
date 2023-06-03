@@ -9,7 +9,6 @@
 //
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Core;
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 

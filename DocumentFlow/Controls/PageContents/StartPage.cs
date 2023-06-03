@@ -27,8 +27,6 @@
 using DocumentFlow.Core.Exceptions;
 using DocumentFlow.Infrastructure.Controls;
 
-using Windows.Media.Devices;
-
 namespace DocumentFlow.Controls.PageContents;
 
 public partial class StartPage : UserControl, IStartPage

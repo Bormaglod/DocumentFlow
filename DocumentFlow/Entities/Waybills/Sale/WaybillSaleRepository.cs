@@ -15,6 +15,8 @@
 //  - добавлен метод GetByContractor
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.6.3
+//  - в выборку добавлено поле payment_date
 //
 //-----------------------------------------------------------------------
 
@@ -49,9 +51,9 @@ public class WaybillSaleRepository : DocumentRepository<WaybillSale>, IWaybillSa
     {
         var q = new Query("waybill_sale_price")
             .Select("owner_id")
-            .SelectRaw("sum([product_cost]) as [product_cost]")
-            .SelectRaw("sum([tax_value]) as [tax_value]")
-            .SelectRaw("sum([full_cost]) as [full_cost]")
+            .SelectRaw("sum(product_cost) as product_cost")
+            .SelectRaw("sum(tax_value) as tax_value")
+            .SelectRaw("sum(full_cost) as full_cost")
             .GroupBy("owner_id");
 
         var p = new Query("posting_payments_sale")
@@ -65,12 +67,11 @@ public class WaybillSaleRepository : DocumentRepository<WaybillSale>, IWaybillSa
             .Select("o.item_name as organization_name")
             .SelectRaw("case when c.item_name is null then c.code else c.item_name end as contractor_name")
             .Select("contract.tax_payer")
-            .SelectRaw("case [contract].[tax_payer] when true then 20 else 0 end as [tax]")
+            .SelectRaw("case contract.tax_payer when true then 20 else 0 end as tax")
             .Select("contract.item_name as contract_name")
-            .Select("d.product_cost")
-            .Select("d.tax_value")
-            .Select("d.full_cost")
+            .Select("d.{product_cost, tax_value, full_cost}")
             .Select("p.transaction_amount as paid")
+            .SelectRaw("waybill_sale.document_date::date + contract.payment_period as payment_date")
             .Join("organization as o", "o.id", "waybill_sale.organization_id")
             .Join("contractor as c", "c.id", "waybill_sale.contractor_id")
             .LeftJoin("contract", "contract.id", "waybill_sale.contract_id")

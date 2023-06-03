@@ -6,6 +6,8 @@
 //
 // Версия 2022.12.31
 //  - добавлен метод LinkLabelContractor_LinkClicked
+// Версия 2023.6.3
+//  - ширина значения устанавливается из файла параметров
 //
 //-----------------------------------------------------------------------
 
@@ -36,6 +38,7 @@ public partial class CardRow : UserControl
 
         linkLabelContractor.Text = contractor.ContractorName;
         labelAmount.Text = contractor.Debt.ToString("#,###.00", customProvider);
+        labelAmount.Width = Properties.Settings.Default.CardRowValueWidth;
 
         contractorId = contractor.Id;
     }
