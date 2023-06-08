@@ -13,10 +13,15 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.6.8
+//  - добавлена колонка MethodPriceName
+//  - добавлено контекстное меню "Тип цены" с соответствующими подпунктами
+//    и их реализация
 //
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
+using DocumentFlow.Dialogs;
 using DocumentFlow.Entities.Products;
 using DocumentFlow.Infrastructure;
 using DocumentFlow.Infrastructure.Controls;
@@ -25,8 +30,10 @@ using DocumentFlow.Properties;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
+using Syncfusion.WinForms.DataGrid.Styles;
 
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace DocumentFlow.Entities.Calculations;
 
@@ -37,13 +44,14 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn material_name = CreateText(x => x.MaterialName, "Материал", hidden: false);
-        GridNumericColumn amount = CreateNumeric(x => x.Amount, "Количество", width: 150, decimalDigits: 3);
-        GridNumericColumn price = CreateCurrency(x => x.Price, "Цена", width: 150);
-        GridNumericColumn item_cost = CreateCurrency(x => x.ItemCost, "Стоимость", width: 150);
-        GridNumericColumn weight = CreateNumeric(x => x.Weight, "Вес, г", width: 100, decimalDigits: 3);
-        GridCheckBoxColumn giving = CreateBoolean(x => x.IsGiving, "Давальческий", width: 150);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var material_name = CreateText(x => x.MaterialName, "Материал", hidden: false);
+        var amount = CreateNumeric(x => x.Amount, "Количество", width: 150, decimalDigits: 3);
+        var price = CreateCurrency(x => x.Price, "Цена", width: 150);
+        var method = CreateText(x => x.MethodPriceName, "Тип цены", width: 150);
+        var item_cost = CreateCurrency(x => x.ItemCost, "Стоимость", width: 150);
+        var weight = CreateNumeric(x => x.Weight, "Вес, г", width: 100, decimalDigits: 3);
+        var giving = CreateBoolean(x => x.IsGiving, "Давальческий", width: 150);
 
         CreateSummaryRow(VerticalPosition.Bottom)
             .AsCount(material_name, "Всего наименований: {?}")
@@ -55,7 +63,7 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
         amount.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
         weight.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
 
-        AddColumns(new GridColumn[] { id, material_name, amount, price, item_cost, weight, giving });
+        AddColumns(new GridColumn[] { id, material_name, amount, price, method, item_cost, weight, giving });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [material_name] = ListSortDirection.Ascending
@@ -93,7 +101,7 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
             }
         });
 
-        ContextMenu.Add("Давальческий/собственный материал", Resources.icons8_sell_16, (t) =>
+        ContextMenu.Add("Давальческий/собственный материал", Resources.icons8_sell_16, _ =>
         {
             if (CurrentDocument != null)
             {
@@ -103,16 +111,67 @@ public class CalculationMaterialBrowser : Browser<CalculationMaterial>, ICalcula
             }
         });
 
-        ContextMenu.Add("Используемый материал", Resources.icons8_goods_16, (_) => OpenMaterial(pageManager));
+        var menuPrice = ContextMenu.Add("Тип цены", addSeparator: false);
+
+        ContextMenu.Add("Средняя цена",
+                        _ => ChangePriceSettingMethod(repository, PriceSettingMethod.Average),
+                        menuPrice);
+
+        ContextMenu.Add("Цена из справочнка", 
+                        _ => ChangePriceSettingMethod(repository, PriceSettingMethod.Dictionary),
+                        menuPrice);
+
+        ContextMenu.Add("Установлена вручную",
+                        _ => ChangePriceSettingMethod(repository, PriceSettingMethod.Manual),
+                        menuPrice);
+
+        ContextMenu.Add("Используемый материал", Resources.icons8_goods_16, _ => OpenMaterial(pageManager));
     }
 
     protected override string HeaderText => "Материалы";
+
+    protected override void BrowserCellStyle(CalculationMaterial document, string column, CellStyleInfo style)
+    {
+        base.BrowserCellStyle(document, column, style);
+        if (column == "MethodPriceName")
+        {
+            style.TextColor = document.MethodPrice switch
+            {
+                PriceSettingMethod.Manual => Color.Red,
+                PriceSettingMethod.Dictionary => Color.Blue,
+                _ => Color.Black
+            };
+        }
+    }
 
     private void OpenMaterial(IPageManager pageManager)
     {
         if (CurrentDocument != null && CurrentDocument.ItemId != null)
         {
             pageManager.ShowEditor<IMaterialEditor>(CurrentDocument.ItemId.Value);
+        }
+    }
+
+    private void ChangePriceSettingMethod(ICalculationMaterialRepository repository, PriceSettingMethod method)
+    {
+        if (CurrentDocument != null)
+        {
+            if (CurrentDocument.IsGiving) 
+            {
+                MessageBox.Show("Материал является давальческим - тип цены установить невозможно.");
+                return;
+            }
+            if (method == PriceSettingMethod.Manual)
+            {
+                if (InputCurrencyDialog.ShowDialog(out decimal newPrice))
+                {
+                    CurrentDocument.Price = newPrice;
+                }
+            }
+
+            CurrentDocument.SetPriceSettingMethod(method);
+            repository.Update(CurrentDocument);
+            RefreshRow(CurrentDocument);
         }
     }
 }

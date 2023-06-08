@@ -157,6 +157,9 @@
     <Compile Update="Dialogs\DocumentRefEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Dialogs\InputCurrencyDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Dialogs\OperationsPerformedDialog.cs">
       <SubType>Form</SubType>
     </Compile>
