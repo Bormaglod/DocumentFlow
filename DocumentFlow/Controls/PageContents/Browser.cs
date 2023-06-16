@@ -83,6 +83,8 @@
 //    ShowPreviewRow
 // Версия 2023.2.23
 //  - добавлена ссылка на DocumentFlow.Core.Exceptions
+// Версия 2023.6.16
+//  - упрощено редактирование группы/папки в методе Edit
 //
 //-----------------------------------------------------------------------
 
@@ -976,17 +978,12 @@ public abstract partial class Browser<T> : UserControl, IBrowserPage
     private void Edit(T editableRow)
     {
         if (
-            gridContent.DataSource is IList<T> list &&
             editableRow is IDirectory dir && dir.IsFolder &&
             repository is IDirectoryRepository<T> repo)
         {
 
             var folderEditor = new GroupEditorForm<T>(repo, editableRow);
-            T? res = folderEditor.ShowFolderDialog();
-            if (res != default)
-            {
-                list[list.IndexOf(editableRow)] = res;
-            }
+            folderEditor.ShowFolderDialog();
         }
         else
         {

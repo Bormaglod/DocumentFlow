@@ -8,6 +8,8 @@
 //  - добавлены методы/свойства для поддержки поля state таблицы
 //    production_lot
 //  - добавлено свойство execute_percent
+// Версия 2022.6.16
+//  - Атрибут DataOperation заменен на AllowOperation
 //
 //-----------------------------------------------------------------------
 
@@ -41,7 +43,7 @@ public class ProductionLot : AccountingDocument
     public string CalculationName { get; protected set; } = string.Empty;
     public int ExecutePercent { get; protected set; }
 
-    [DataOperation(DataOperation.Add | DataOperation.Update)]
+    [AllowOperation(DataOperation.Add | DataOperation.Update)]
     [EnumType("lot_state")]
     public string State 
     {

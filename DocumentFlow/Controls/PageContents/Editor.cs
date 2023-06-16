@@ -22,6 +22,9 @@
 //  - добавлена ссылка на DocumentFlow.Core.Exceptions
 // Версия 2023.2.4
 //  - добавлено поле controls и его инициализация в конструкторе
+// Версия 2023.6.16
+//  - из метода Create класса DocumentRefEditorForm удалён параметр
+//    fileName
 //
 //-----------------------------------------------------------------------
 
@@ -582,7 +585,7 @@ public partial class Editor<T> : UserControl, IEditorPage
             return;
         }
 
-        if (DocumentRefEditorForm.Create(document.Id, out var refs, out var _))
+        if (DocumentRefEditorForm.Create(document.Id, out var refs))
         {
             var repo = Services.Provider.GetService<IDocumentRefsRepository>();
             if (repo != null)

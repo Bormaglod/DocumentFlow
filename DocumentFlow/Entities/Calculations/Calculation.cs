@@ -7,6 +7,9 @@
 // Версия 2023.1.21
 //  - поле StimulatingValues заменено на свойство и поменяло тип на
 //    IReadOnlyDictionary
+// Версия 2023.6.16
+//  - Атрибут Exclude заменен на AllowOperation(DataOperation.None)
+//  - Атрибут DataOperation заменен на AllowOperation
 //
 //-----------------------------------------------------------------------
 
@@ -36,7 +39,7 @@ public class Calculation : Directory
     public decimal Price { get; set; }
     public string? Note { get; set; }
 
-    [DataOperation(DataOperation.Add | DataOperation.Update)]
+    [AllowOperation(DataOperation.Add | DataOperation.Update)]
     [EnumType("calculation_state")]
     public string State { get; set; } = "prepare";
     public string StateName => StateNameFromValue(CalculationState);
@@ -64,14 +67,14 @@ public class Calculation : Directory
         _ => throw new NotImplementedException()
     };
 
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     public CalculationState CalculationState
     {
         get { return Enum.Parse<CalculationState>(State.Pascalize()); }
         set { State = value.ToString().Underscore(); }
     }
 
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     public StimulatingValue StimulatingValue
     {
         get { return Enum.Parse<StimulatingValue>(StimulType.Pascalize()); }

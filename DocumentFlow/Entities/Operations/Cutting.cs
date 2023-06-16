@@ -1,8 +1,12 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2021 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 03.10.2021
+//
+// Версия 2023.6.16
+//  - Атрибут Exclude заменен на AllowOperation(DataOperation.None)
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Core;
@@ -20,14 +24,14 @@ public class Cutting : Operation
     public int RightSweep { get; set; }
     public int? ProgramNumber { get; set; }
 
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     public Stripping Left 
     {
         get => new() { Cleaning = LeftCleaning, Sweep = LeftSweep };
         set => (LeftCleaning, LeftSweep) = (value.Cleaning, value.Sweep);
     }
 
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     public Stripping Right
     {
         get => new() { Cleaning = RightCleaning, Sweep = RightSweep };

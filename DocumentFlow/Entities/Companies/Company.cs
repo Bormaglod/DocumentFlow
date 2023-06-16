@@ -3,6 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.11.2021
+//
+// Версия 2022.6.16
+//  - Атрибут DataOperation заменен на AllowOperation
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
@@ -20,6 +24,6 @@ public class Company : Directory
     public Guid? OkopfId { get; set; }
     public string? OkopfName { get; protected set; }
 
-    [DataOperation(DataOperation.Add | DataOperation.Update)]
+    [AllowOperation(DataOperation.Add | DataOperation.Update)]
     public Guid? AccountId { get; set; }
 }

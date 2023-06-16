@@ -8,6 +8,8 @@
 //  - удалено свойство UseGetId
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.6.16
+//  - Атрибут Exclude заменен на AllowOperation(DataOperation.None)
 //
 //-----------------------------------------------------------------------
 
@@ -27,6 +29,6 @@ public class PostingPayments : AccountingDocument, IDiscriminator
     public string? DocumentName { get; protected set; }
     public string? ContractorName { get; protected set; }
 
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     public string TableName { get; set; } = string.Empty;
 }

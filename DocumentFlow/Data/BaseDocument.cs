@@ -6,6 +6,8 @@
 //
 // Версия 2023.3.17
 //  - перенесено из DocumentFlow.Data.Core в DocumentFlow.Data
+// Версия 2022.6.16
+//  - Атрибут DataOperation заменен на AllowOperation
 //
 //-----------------------------------------------------------------------
 
@@ -19,10 +21,10 @@ public class BaseDocument : DocumentInfo
 
     public string? OrganizationName { get; protected set; }
 
-    [DataOperation(DataOperation.Add | DataOperation.Update)]
+    [AllowOperation(DataOperation.Add | DataOperation.Update)]
     public DateTime? DocumentDate { get; set; }
 
-    [DataOperation(DataOperation.Add | DataOperation.Update)]
+    [AllowOperation(DataOperation.Add | DataOperation.Update)]
     public int? DocumentNumber { get; set; }
 
     public void SetOrganization(Guid orgId) => OrganizationId = orgId;

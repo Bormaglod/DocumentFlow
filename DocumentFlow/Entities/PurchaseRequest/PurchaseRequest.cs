@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.02.2022
@@ -16,6 +16,8 @@
 //  - добавлены поля receipt_payment и delivery_amount
 //  - изменился метод get для поля executed и оно теперь read-only
 //  - поле paid стало bool? и read-only
+// Версия 2023.6.16
+//  - Атрибут Exclude заменен на AllowOperation(DataOperation.None)
 //
 //-----------------------------------------------------------------------
 
@@ -66,11 +68,11 @@ public class PurchaseRequest : ShipmentDocument
     }
 
     [EnumType("purchase_state")]
-    [DataOperation(DataOperation.Add | DataOperation.Update)]
+    [AllowOperation(DataOperation.Add | DataOperation.Update)]
     public string State { get; set; } = "not active";
     public string StateName => StateNameFromValue(PurchaseState);
 
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     public PurchaseState PurchaseState
     {
         get { return Enum.Parse<PurchaseState>(State.Dehumanize()); }

@@ -6,6 +6,8 @@
 //
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.6.16
+//  - Атрибут Exclude заменен на AllowOperation(DataOperation.None)
 //
 //-----------------------------------------------------------------------
 
@@ -27,7 +29,7 @@ public class ReturnMaterialsRows : Entity<long>, ICloneable, IEntityClonable
     public Guid MaterialId { get; set; }
 
     [Display(Name = "Материал / Изделие", Order = 10)]
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     [ColumnMode(AutoSizeColumnsMode = AutoSizeColumnsMode.Fill)]
     public string MaterialName { get; set; } = string.Empty;
 

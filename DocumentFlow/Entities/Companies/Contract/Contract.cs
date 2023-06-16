@@ -9,6 +9,8 @@
 //    IReadOnlyDictionary
 // Версия 2023.6.3
 //  - добавлено свойство PaymentPeriod
+// Версия 2023.6.16
+//  - Атрибут Exclude заменен на AllowOperation(DataOperation.None)
 //
 //-----------------------------------------------------------------------
 
@@ -30,7 +32,7 @@ public class Contract : Directory
         [ContractorType.Buyer] = "С покупателем"
     };
 
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     public Guid OrganizationId { get; set; }
     public string? ContractorName { get; protected set; }
     public bool TaxPayer { get; set; }

@@ -12,6 +12,8 @@
 // Версия 2023.3.17
 //  - перенесено из DocumentFlow.Data.Core в DocumentFlow.Data
 //  - удален метод ImageToByteArray
+// Версия 2023.6.16
+//  - Атрибут Exclude заменен на AllowOperation(DataOperation.None)
 //
 //-----------------------------------------------------------------------
 
@@ -29,7 +31,7 @@ public abstract class Identifier<T> : INotifyPropertyChanged, IIdentifier<T>
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     [Display(AutoGenerateField = false)]
     public T Id { get; set; }
 

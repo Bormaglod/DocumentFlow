@@ -8,6 +8,8 @@
 //  - удалено свойство UseGetId
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.6.16
+//  - Атрибут Exclude заменен на AllowOperation(DataOperation.None)
 //
 //-----------------------------------------------------------------------
 
@@ -25,7 +27,7 @@ public class WaybillSalePrice : ProductPrice, IDiscriminator
 {
     string IDiscriminator.TableName { get => TableName; set => TableName = value; }
 
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     [Display(AutoGenerateField = false)]
     public string TableName { get; set; } = string.Empty;
 }

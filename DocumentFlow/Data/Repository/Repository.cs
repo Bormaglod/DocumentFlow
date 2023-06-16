@@ -38,6 +38,9 @@
 //  - метод GetAllDefault переименован в GetListUserDefined
 //  - метод GetAllValid переименован в GetListExisting
 //  - методы GetById переименованы в Get
+// Версия 2023.6.16
+//  - в связи с удалением атриубта ExcludeAttribute удалена его обработка
+//    в конструкторе
 //
 //-----------------------------------------------------------------------
 
@@ -77,13 +80,7 @@ public abstract class Repository<Key, T> : IRepository<Key, T>
 
         foreach (var prop in typeof(T).GetProperties().Where(p => p.SetMethod?.IsPublic ?? false))
         {
-            var exclude = prop.GetCustomAttribute<ExcludeAttribute>();
-            if (exclude != null)
-            {
-                continue;
-            }
-
-            var operation = prop.GetCustomAttribute<DataOperationAttribute>();
+            var operation = prop.GetCustomAttribute<AllowOperationAttribute>();
             if (operation == null)
             {
                 add.Add(prop.Name);

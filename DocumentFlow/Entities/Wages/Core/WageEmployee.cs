@@ -8,6 +8,8 @@
 //  - у свойство employee_name изменилась защита метода set с public на 
 //    protected
 //  - добавлен метод SetEmployeeName
+// Версия 2023.6.16
+//  - Атрибут Exclude заменен на AllowOperation(DataOperation.None)
 //
 //-----------------------------------------------------------------------
 
@@ -27,7 +29,7 @@ public class WageEmployee : Entity<long>, IEntityClonable, ICloneable
     public Guid EmployeeId { get; set; }
 
     [Display(Name = "Сотрудник", Order = 1)]
-    [Exclude]
+    [AllowOperation(DataOperation.None)]
     [ColumnMode(AutoSizeColumnsMode = AutoSizeColumnsMode.Fill)]
     public string EmployeeName { get; protected set; } = string.Empty;
 

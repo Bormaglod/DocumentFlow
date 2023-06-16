@@ -10,6 +10,9 @@
 // Версия 2023.2.6
 //  - удален метод CreateThumbnailImage, вместо него используется метод
 //    класса DocumentRefs.CreateThumbnailImage()
+// Версия 2023.6.16
+//  - удалены свойства FileName и FileNameWithPath
+//  - из метода Create удалён параметр fileName
 //
 //-----------------------------------------------------------------------
 
@@ -39,20 +42,16 @@ public partial class DocumentRefEditorForm : Form
         }
     }
 
-    public string FileName => Path.GetFileName(FileNameWithPath);
-
-    public string FileNameWithPath => fileNameWithPath;
-
-    public static bool Create(Guid owner, out DocumentRefs? document, out string fileName)
+    public static bool Create(Guid owner, out DocumentRefs? document)
     {
         DocumentRefEditorForm f = new();
         if (f.ShowDialog() == DialogResult.OK)
         {
-            var fileInfo = new FileInfo(f.FileNameWithPath);
+            var fileInfo = new FileInfo(f.fileNameWithPath);
             document = new DocumentRefs
             {
                 OwnerId = owner,
-                FileName = f.FileName,
+                FileName = Path.GetFileName(f.fileNameWithPath),
                 Note = f.textNote.Text,
                 FileLength = fileInfo.Length
             };
@@ -66,12 +65,10 @@ public partial class DocumentRefEditorForm : Form
                 document.CreateThumbnailImage();
             }
 
-            fileName = f.FileNameWithPath;
             return true;
         }
 
         document = null;
-        fileName = string.Empty;
         return false;
     }
 
@@ -98,7 +95,7 @@ public partial class DocumentRefEditorForm : Form
 
     private void ButtonOk_Click(object sender, EventArgs e)
     {
-        if (string.IsNullOrEmpty(FileNameWithPath))
+        if (string.IsNullOrEmpty(fileNameWithPath))
         {
             MessageBox.Show("Необходимо выбрать файл. Без файла - никак.....", "Файл", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             DialogResult = DialogResult.None;
@@ -110,7 +107,7 @@ public partial class DocumentRefEditorForm : Form
         if (openFileDialog1.ShowDialog() == DialogResult.OK)
         {
             fileNameWithPath = openFileDialog1.FileName;
-            textFileName.Text = FileName;
+            textFileName.Text = Path.GetFileName(fileNameWithPath);
         }
     }
 }
