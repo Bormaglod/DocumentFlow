@@ -20,6 +20,11 @@
 //    на поиск по id
 // Версия 2023.1.22
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+// Версия 2023.6.19
+//  - из метода AddItems удалена ненужная проверка на наличие элементов
+//    в списке items
+//  - исправлена ошибка в GetPropertyValue связанная с наименованием
+//    свойств
 //
 //-----------------------------------------------------------------------
 
@@ -102,12 +107,6 @@ public partial class SelectDirectoryForm<T> : Form
 
     public void AddItems(IEnumerable<T> items)
     {
-        T? obj = items.FirstOrDefault();
-        if (obj == null)
-        {
-            return;
-        }
-
         treeSelect.BeginUpdate();
         try
         {
@@ -180,8 +179,8 @@ public partial class SelectDirectoryForm<T> : Form
         {
             return prop.Name switch
             {
-                "code" => data.Code,
-                "item_name" => data.ItemName ?? string.Empty,
+                nameof(data.Code) => data.Code,
+                nameof(data.ItemName) => data.ItemName ?? string.Empty,
                 _ => prop.GetValue(data)?.ToString() ?? string.Empty
             };
         }

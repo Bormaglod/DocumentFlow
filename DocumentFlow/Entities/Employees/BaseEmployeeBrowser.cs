@@ -7,9 +7,14 @@
 // Версия 2023.1.8
 //  - в конструктор добавлен параметр settings
 // Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+//  - DocumentFlow.Data.Infrastructure перемещено в
+//    DocumentFlow.Infrastructure.Data
+//  - DocumentFlow.Settings.Infrastructure перемещено в
+//    DocumentFlow.Infrastructure.Settings
+//  - DocumentFlow.Controls.Infrastructure перемещено в
+//    DocumentFlow.Infrastructure.Controls
+// Версия 2023.6.19
+//  - столбец JRole заменён на EmployeeRoleName
 //
 //-----------------------------------------------------------------------
 
@@ -34,12 +39,12 @@ public abstract class BaseEmployeeBrowser<T> : Browser<T>
     {
         Toolbar.IconSize = ButtonIconSize.Small;
 
-        GridTextColumn id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        GridTextColumn name = CreateText(x => x.ItemName, "Сотрудник", hidden: false);
-        GridTextColumn post_name = CreateText(x => x.PostName, "Должность", width: 300);
-        GridTextColumn phone = CreateText(x => x.Phone, "Телефон", width: 250, visible: false);
-        GridTextColumn email = CreateText(x => x.Email, "Эл. почта", width: 250);
-        GridTextColumn j_role = CreateText(x => x.JRole, "Роль", width: 150, visible: false);
+        var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
+        var name = CreateText(x => x.ItemName, "Сотрудник", hidden: false);
+        var post_name = CreateText(x => x.PostName, "Должность", width: 300);
+        var phone = CreateText(x => x.Phone, "Телефон", width: 250, visible: false);
+        var email = CreateText(x => x.Email, "Эл. почта", width: 250);
+        var j_role = CreateText(x => x.EmployeeRoleName, "Роль", width: 150, visible: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

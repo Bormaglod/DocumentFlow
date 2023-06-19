@@ -7,6 +7,11 @@
 // Версия 2023.1.21
 //  - поле Roles заменено на свойство и поменяло тип на
 //    IReadOnlyDictionary
+// Версия 2023.6.19
+//  - удалены свойства JRole и JobRole, а ткже перечисление JobRole
+//  - добавлены свойства EmpRole и EmployeeRole, а также перечисление
+//    EmployeeRole
+//  - добавлено свойство EmployeeRoleName
 //
 //-----------------------------------------------------------------------
 
@@ -17,18 +22,18 @@ using Humanizer;
 
 namespace DocumentFlow.Entities.Employees;
 
-public enum JobRole { NotDefined, Director, ChiefAccountant, Employee, Worker }
+public enum EmployeeRole { NotDefined, Director, ChiefAccountant, Employee, Worker }
 
 [Description("Сотрудник")]
 public class Employee : Directory
 {
-    public static readonly Dictionary<JobRole, string> roles = new()
+    public static readonly Dictionary<EmployeeRole, string> roles = new()
     {
-        [JobRole.NotDefined] = "Не определена",
-        [JobRole.Director] = "Директор",
-        [JobRole.ChiefAccountant] = "Гл. бухгалтер",
-        [JobRole.Employee] = "Служащий",
-        [JobRole.Worker] = "Рабочий"
+        [EmployeeRole.NotDefined] = "Не определена",
+        [EmployeeRole.Director] = "Директор",
+        [EmployeeRole.ChiefAccountant] = "Гл. бухгалтер",
+        [EmployeeRole.Employee] = "Служащий",
+        [EmployeeRole.Worker] = "Рабочий"
     };
 
     public string? OwnerName { get; protected set; }
@@ -38,14 +43,16 @@ public class Employee : Directory
     public string? Phone { get; set; }
     public string? Email { get; set; }
 
-    [EnumType("job_role")]
-    public string JRole { get; set; } = "not defined";
+    [EnumType("employee_role")]
+    public string EmpRole { get; set; } = "not defined";
 
-    public JobRole JobRole
+    public EmployeeRole EmployeeRole
     {
-        get { return Enum.Parse<JobRole>(JRole.Pascalize()); }
-        protected set { JRole = value.ToString().Underscore(); }
+        get { return Enum.Parse<EmployeeRole>(EmpRole.Dehumanize()); }
+        protected set { EmpRole = value.ToString().Humanize(LetterCasing.LowerCase); }
     }
 
-    public static IReadOnlyDictionary<JobRole, string> Roles => roles;
+    public string EmployeeRoleName => roles[EmployeeRole];
+
+    public static IReadOnlyDictionary<EmployeeRole, string> Roles => roles;
 }

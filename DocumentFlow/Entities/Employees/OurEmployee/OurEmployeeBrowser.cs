@@ -7,7 +7,10 @@
 // Версия 2023.1.8
 //  - в конструктор добавлен параметр settings
 // Версия 2023.1.22
-//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
+//  - DocumentFlow.Settings.Infrastructure перемещено в
+//    DocumentFlow.Infrastructure.Settings
+// Версия 2023.6.19
+//  - столбец JRole заменён на EmployeeRoleName
 //
 //-----------------------------------------------------------------------
 
@@ -35,7 +38,7 @@ public class OurEmployeeBrowser : Browser<OurEmployee>, IOurEmployeeBrowser
         var org_name = CreateText(x => x.OwnerName, "Организация", width: 200);
         var phone = CreateText(x => x.Phone, "Телефон", width: 250, visible: false);
         var email = CreateText(x => x.Email, "Эл. почта", width: 250);
-        var j_role = CreateText(x => x.JRole, "Роль", width: 150, visible: false);
+        var j_role = CreateText(x => x.EmployeeRoleName, "Роль", width: 150, visible: false);
 
         name.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
 

@@ -8,7 +8,10 @@
 //  - расширены возможности полей person и post (добавлены кнопки для
 //    редактирования выбранных значений)
 // Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
+//  - DocumentFlow.Data.Infrastructure перемещено в
+//    DocumentFlow.Infrastructure.Data
+// Версия 2023.6.19
+//  - поле JobRole заменено на EmployeeRole
 //
 //-----------------------------------------------------------------------
 
@@ -25,41 +28,28 @@ namespace DocumentFlow.Entities.Employees;
 public class BaseEmployeeEditor<T> : Editor<T>
     where T : Employee, IDocumentInfo, new()
 {
-    private const int headerWidth = 120;
-
     public BaseEmployeeEditor(IRepository<Guid, T> repository, IPageManager pageManager) : base(repository, pageManager) 
     {
         EditorControls
-            .AddTextBox(x => x.OwnerName, "Организация", text =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(400)
-                    .Disable())
-            .AddDirectorySelectBox<Person>(x => x.PersonId, "Сотрудник", select =>
-                select
-                    .SetDataSource(GetPeople)
-                    .EnableEditor<IPersonEditor>()
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(300))
-            .AddDirectorySelectBox<Okpdtr>(x => x.PostId, "Должность", select =>
-                select
-                    .SetDataSource(GetPosts)
-                    .EnableEditor<IOkpdtrEditor>()
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(300))
-            .AddTextBox(x => x.Phone, "Телефон", text =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200))
-            .AddTextBox(x => x.Email, "Эл. почта", text =>
-                text
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(200))
-            .AddChoice<JobRole>(x => x.JobRole, "Роль", choice =>
-                choice
-                    .SetChoiceValues(Employee.Roles)
-                    .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(150));
+            .SetHeaderWidth(120)
+            .AddTextBox(x => x.OwnerName, "Организация", text => text
+                .SetEditorWidth(400)
+                .Disable())
+            .AddDirectorySelectBox<Person>(x => x.PersonId, "Сотрудник", select => select
+                .SetDataSource(GetPeople)
+                .EnableEditor<IPersonEditor>()
+                .SetEditorWidth(300))
+            .AddDirectorySelectBox<Okpdtr>(x => x.PostId, "Должность", select => select
+                .SetDataSource(GetPosts)
+                .EnableEditor<IOkpdtrEditor>()
+                .SetEditorWidth(300))
+            .AddTextBox(x => x.Phone, "Телефон", text => text
+                .SetEditorWidth(200))
+            .AddTextBox(x => x.Email, "Эл. почта", text => text
+                .SetEditorWidth(200))
+            .AddChoice<EmployeeRole>(x => x.EmployeeRole, "Роль", choice => choice
+                .SetChoiceValues(Employee.Roles)
+                .SetEditorWidth(150));
     }
 
     private IEnumerable<Person> GetPeople() => Services.Provider.GetService<IPersonRepository>()!.GetListExisting(callback: q => q.OrderBy("item_name"));
