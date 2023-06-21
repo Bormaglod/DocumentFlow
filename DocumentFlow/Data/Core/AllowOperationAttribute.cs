@@ -8,13 +8,20 @@
 //  - в перечисление DataOperation добавлен элемент None
 //  - класс переименован из DataOperationAttribute в
 //    AllowOperationAttribute
+// Версия 2023.6.21
+//  - перечисление DataOperation было некорректно объявлено. Исправлено
 //
 //-----------------------------------------------------------------------
 
 namespace DocumentFlow.Data.Core;
 
 [Flags]
-public enum DataOperation { None, Add, Update, Copy }
+public enum DataOperation { 
+    None    = 1, 
+    Add     = 2, 
+    Update  = 4, 
+    Copy    = 8
+}
 
 [AttributeUsage(AttributeTargets.Property)]
 public class AllowOperationAttribute : Attribute

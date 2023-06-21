@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Карта технолодического процесса" ReportInfo.Version="2022.07.24" ReportInfo.Created="06/20/2022 19:54:32" ReportInfo.Modified="07/24/2022 12:15:01" ReportInfo.CreatorVersion="2022.2.0.0">
+<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Карта технолодического процесса" ReportInfo.Author="Тепляшин С.В." ReportInfo.Version="2023.06.20" ReportInfo.Created="06/20/2022 19:54:32" ReportInfo.Modified="06/20/2023 12:36:49" ReportInfo.CreatorVersion="2022.2.0.0">
   <Dictionary>
-    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75Srm7Ru3dHV6yycOBImZKy0=">
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlqzYt4UjS5sRd7WCMx8bkZArZXbsPiGROxzM5V/9+AT0mKW8knT5YnAToH3QqwmQosAAC16bUcfc6wVwchVL325rZbdsX7/sBtfgCfegUrAjU=">
       <TableDataSource Name="public_calculation_operation" Alias="calculation_operation" DataType="System.Int32" Enabled="true" TableName="public.&quot;calculation_operation&quot;" SelectCommand="SELECT &#13;&#10;	co.code, &#13;&#10;	case co.tableoid::regclass::varchar&#13;&#10;		when 'calculation_cutting' then 'Резка провода'&#13;&#10;		else co.item_name&#13;&#10;	end as operation_name,&#13;&#10;	m.item_name as material_name, &#13;&#10;	m2.code as measurement_code,&#13;&#10;	case m2.code&#13;&#10;		when '6' then 'мм'&#13;&#10;		else m2.abbreviation&#13;&#10;	end as measurement_name,&#13;&#10;	case m2.code&#13;&#10;		when '6' then co.material_amount * 1000&#13;&#10;		else co.material_amount&#13;&#10;	end as material_amount,&#13;&#10;	e.item_name as equipment_name, &#13;&#10;	t.item_name as tools_name, &#13;&#10;	co.repeats,&#13;&#10;	round(60.0 / o.production_rate, 3) as norm_time,&#13;&#10;	c.program_number,&#13;&#10;	co.note,&#13;&#10;	e.serial_number as equipment_serial,&#13;&#10;	t.serial_number as tools_serial,&#13;&#10;	(select string_agg(p.title || ' ' || cop.property_value, '\r\n') from calculation_operation_property cop join property p on p.id = cop.property_id where cop.operation_id = co.id) as additional_info&#13;&#10;FROM &#13;&#10;	calculation_operation co &#13;&#10;	LEFT JOIN material m ON co.material_id = m.id &#13;&#10;	left join measurement m2 on m2.id = m.measurement_id&#13;&#10;	LEFT JOIN equipment e ON co.equipment_id = e.id &#13;&#10;	LEFT JOIN equipment t ON co.tools_id = t.id &#13;&#10;	JOIN operation o ON co.item_id = o.id &#13;&#10;	LEFT JOIN cutting c ON co.item_id = c.id&#13;&#10;where co.owner_id = :calc_id&#13;&#10;order by co.code ">
         <Column Name="code" DataType="System.String"/>
         <Column Name="material_amount" DataType="System.Decimal"/>
@@ -36,7 +36,7 @@
       <TextObject Name="Text4" Left="349.65" Width="330.75" Height="37.8" Border.Lines="All" Text="[calculation.item_name]" Padding="2, 2, 2, 2" Font="ГОСТ тип А, 11pt"/>
       <TextObject Name="Text5" Left="680.4" Width="94.5" Height="18.9" Border.Lines="All" Text="Артикул" Padding="2, 2, 2, 2" Font="ГОСТ тип А, 11pt"/>
       <TextObject Name="Text6" Left="774.9" Width="226.8" Height="18.9" Border.Lines="All" Text="[calculation.code]" Padding="2, 2, 2, 2" Font="ГОСТ тип А, 11pt"/>
-      <TextObject Name="Text7" Left="1001.7" Width="47.25" Height="37.8" Border.Lines="All" Text="Лист&#13;&#10;[Page]" Padding="2, 2, 2, 2" HorzAlign="Center" Font="ГОСТ тип А, 11pt"/>
+      <TextObject Name="Text7" Left="1001.7" Width="47.25" Height="37.8" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="Лист&#13;&#10;[Page]" Padding="2, 2, 2, 2" HorzAlign="Center" Font="ГОСТ тип А, 11pt"/>
       <TextObject Name="Text34" Left="680.4" Top="18.9" Width="94.5" Height="18.9" Border.Lines="All" Text="Дата утв." Padding="2, 2, 2, 2" Font="ГОСТ тип А, 11pt"/>
       <TextObject Name="Text35" Left="774.9" Top="18.9" Width="226.8" Height="18.9" Border.Lines="All" Text="[calculation.date_approval]" Padding="2, 2, 2, 2" Format="Date" Format.Format="d" Font="ГОСТ тип А, 11pt"/>
     </PageHeaderBand>
@@ -52,8 +52,8 @@
       <TextObject Name="Text17" Left="897.75" Width="37.8" Height="103.95" Border.Lines="All" Text="№ прогр." HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
       <TextObject Name="Text18" Left="935.55" Top="37.8" Width="37.8" Height="66.15" Border.Lines="All" Text="Вспом. на уст." HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
       <TextObject Name="Text19" Left="973.35" Top="37.8" Width="37.8" Height="66.15" Border.Lines="All" Text="Подгот. заключ." HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
-      <TextObject Name="Text20" Left="1011.15" Top="37.8" Width="37.8" Height="66.15" Border.Lines="All" Text="Штучное" HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
-      <TextObject Name="Text21" Left="935.55" Width="113.4" Height="37.8" Border.Lines="All" Text="Норма времени, мин" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text20" Left="1011.15" Top="37.8" Width="37.8" Height="66.15" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="Штучное" HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text21" Left="935.55" Width="113.4" Height="37.8" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="Норма времени, мин" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
       <TextObject Name="Text32" Left="481.95" Top="47.25" Width="37.8" Height="56.7" Border.Lines="All" Text="Ед. изм." HorzAlign="Center" VertAlign="Center" Angle="270" Font="ГОСТ тип А, 10pt"/>
     </ColumnHeaderBand>
     <DataBand Name="Data1" Top="149.75" Width="1047.06" Height="18.9" CanGrow="true" DataSource="public_calculation_operation">
@@ -67,7 +67,7 @@
       <TextObject Name="Text28" Left="897.75" Width="37.8" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[IIf([calculation_operation.program_number]==0,&quot;&quot;,[calculation_operation.program_number])]" Padding="2, 2, 2, 2" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
       <TextObject Name="Text29" Left="935.55" Width="37.8" Height="18.9" Border.Lines="All" GrowToBottom="true" Padding="2, 2, 2, 2" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
       <TextObject Name="Text30" Left="973.35" Width="37.8" Height="18.9" Border.Lines="All" GrowToBottom="true" Padding="2, 2, 2, 2" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
-      <TextObject Name="Text31" Left="1011.15" Width="37.8" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[calculation_operation.norm_time]" Padding="2, 2, 2, 2" Format="Number" Format.UseLocale="true" Format.DecimalDigits="3" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
+      <TextObject Name="Text31" Left="1011.15" Width="37.8" Height="18.9" Border.Lines="All" IsIntersectedWithOtherObject="true" GrowToBottom="true" Text="[calculation_operation.norm_time]" Padding="2, 2, 2, 2" Format="Number" Format.UseLocale="true" Format.DecimalDigits="3" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
       <TextObject Name="Text33" Left="481.95" Width="37.8" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[calculation_operation.measurement_name]" HorzAlign="Center" VertAlign="Center" Font="ГОСТ тип А, 10pt"/>
     </DataBand>
   </ReportPage>

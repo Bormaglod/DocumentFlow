@@ -6,6 +6,9 @@
 //
 // Версия 2023.6.16
 //  - Атрибут Exclude заменен на AllowOperation(DataOperation.None)
+// Версия 2023.6.21
+//  - свойству ProgramNumber добавлен атрибут не допускающий копирование
+//    этого свойства
 //
 //-----------------------------------------------------------------------
 
@@ -22,6 +25,8 @@ public class Cutting : Operation
     public int LeftSweep { get; set; }
     public decimal RightCleaning { get; set; }
     public int RightSweep { get; set; }
+
+    [AllowOperation(DataOperation.Add | DataOperation.Update)]
     public int? ProgramNumber { get; set; }
 
     [AllowOperation(DataOperation.None)]

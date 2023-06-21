@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Name="Отчёт об использовании давальческих комплектующих" ReportInfo.Version="2023.5.29" ReportInfo.Created="05/28/2023 10:20:11" ReportInfo.Modified="05/29/2023 20:47:04" ReportInfo.CreatorVersion="2022.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Name="Отчёт об использовании давальческих комплектующих" ReportInfo.Author="Тепляшин С.В." ReportInfo.Version="2023.6.20" ReportInfo.Created="05/28/2023 10:20:11" ReportInfo.Modified="06/20/2023 12:40:24" ReportInfo.CreatorVersion="2022.2.0.0">
   <Dictionary>
-    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75QW6CPkJJkTHRTtDNA4h+kc=">
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlqzYt4UjS5sRd7WCMx8bkZArZXbsPiGROxzM5V/9+AT0mKW8knT5YnAToH3QqwmQosAAC16bUcfc6wVwchVL325j3f8z69C+D2R///DxlUKJw=">
       <TableDataSource Name="Table" Alias="report_header" DataType="System.Int32" Enabled="true" SelectCommand="select&#13;&#10;	c.code as contract_number,&#13;&#10;	c.item_name as contract_name,&#13;&#10;	c.document_date as contract_date,&#13;&#10;	c2.item_name as contractor_name,&#13;&#10;	rm.document_date,&#13;&#10;	oe.item_name as employee_name,&#13;&#10;	o.signatory_name as post_name,&#13;&#10;	o2.item_name as org_name&#13;&#10;from return_materials rm &#13;&#10;	join production_order po on po.id = rm.owner_id &#13;&#10;	join contractor c2 on c2.id = po.contractor_id&#13;&#10;	join contract c on c.id = po.contract_id&#13;&#10;	left join our_employee oe on oe.id = c.org_signatory_id &#13;&#10;	left join okpdtr o on o.id = oe.post_id &#13;&#10;	join organization o2 on o2.id = rm.organization_id&#13;&#10;where po.id = :order_id">
         <Column Name="document_date" DataType="System.DateTime"/>
         <Column Name="contract_number" DataType="System.String"/>
@@ -53,7 +53,7 @@
       </TextObject>
       <TextObject Name="Text3" Top="56.7" Width="113.4" Height="18.9" Text="г. Димитровград" Font="Arial, 10pt"/>
       <TextObject Name="Text4" Left="576.45" Top="56.7" Width="141.75" Height="18.9" Text="[report_header.document_date]" Format="Date" Format.Format="D" HorzAlign="Right" Font="Arial, 10pt"/>
-      <TextObject Name="Text20" Left="-9450" Top="-9450" Width="718.2" Height="18.9" Border.Lines="All" IsIntersectedWithOtherObject="true" Text="Давальческие комплектующие израсходованы" HorzAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text20" Left="-9450" Top="-9450" Width="718.2" Height="18.9" Border.Lines="All" Text="Давальческие комплектующие израсходованы" HorzAlign="Center" Font="Arial, 10pt, style=Bold"/>
     </ReportTitleBand>
     <DataBand Name="Data1" Top="187.55" Width="718.2" Height="18.9" DataSource="Table1">
       <TextObject Name="Text12" Width="330.75" Height="18.9" Border.Lines="All" Text="[used_materials.item_name]" VertAlign="Center" Font="Arial, 10pt"/>

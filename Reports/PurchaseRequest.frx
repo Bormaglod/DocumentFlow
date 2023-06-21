@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Заявка на приобретение материалов" ReportInfo.Version="1.0" ReportInfo.Created="06/26/2022 13:49:45" ReportInfo.Modified="07/06/2022 19:25:43" ReportInfo.CreatorVersion="2022.2.0.0">
+<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Заявка на приобретение материалов" ReportInfo.Author="Тепляшин С.В." ReportInfo.Version="2023.6.20" ReportInfo.Created="06/26/2022 13:49:45" ReportInfo.Modified="06/20/2023 12:39:13" ReportInfo.CreatorVersion="2022.2.0.0">
   <Dictionary>
-    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75erJoSNfHonE0a+XIWlErQM=">
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlqzYt4UjS5sRd7WCMx8bkZArZXbsPiGROxzM5V/9+AT0mKW8knT5YnAToH3QqwmQosAAC16bUcfc6wVwchVL325mO0tDeh1vkzfNE/haU3KRA=">
       <TableDataSource Name="Table1" Alias="purchase_detail" DataType="System.Int32" Enabled="true" SelectCommand="select &#13;&#10;	m.item_name as material_name,&#13;&#10;	prp.amount,&#13;&#10;	ms.abbreviation &#13;&#10;from purchase_request_price prp &#13;&#10;	join material m on m.id = prp.reference_id&#13;&#10;	join measurement ms on ms.id = m.measurement_id&#13;&#10;where prp.owner_id = :doc_id">
         <Column Name="material_name" DataType="System.String"/>
         <Column Name="amount" DataType="System.Decimal"/>
         <Column Name="abbreviation" DataType="System.String"/>
-        <CommandParameter Name="doc_id" DataType="40" Expression="[id]" DefaultValue="758e7564-0963-4dec-bef4-bc0d0f583531"/>
+        <CommandParameter Name="doc_id" DataType="40" Expression="[id]" DefaultValue="637d5e00-9712-4d44-93f4-12781068b084"/>
       </TableDataSource>
-      <TableDataSource Name="Table" Alias="purchase_header" DataType="System.Int32" Enabled="true" SelectCommand="select&#13;&#10;	o.full_name as org_name,&#13;&#10;	o.inn,&#13;&#10;	o.kpp,&#13;&#10;	o.ogrn,&#13;&#10;	o.address,&#13;&#10;	o.email,&#13;&#10;	o.phone,&#13;&#10;	c.full_name as contractor_name,&#13;&#10;	pr.document_date,&#13;&#10;	pr.document_number,&#13;&#10;	pr.note,&#13;&#10;	oe.item_name as director_name,&#13;&#10;	oe.phone as director_phone,&#13;&#10;	okpdtr.signatory_name as director_post&#13;&#10;from purchase_request pr &#13;&#10;	join organization o on o.id = pr.organization_id&#13;&#10;	join our_employee oe on oe.owner_id = o.id and oe.j_role = 'director'::job_role&#13;&#10;	join okpdtr on okpdtr.id = oe.post_id&#13;&#10;	left join contractor c on c.id = pr.contractor_id&#13;&#10;where pr.id = :doc_id">
+      <TableDataSource Name="Table" Alias="purchase_header" DataType="System.Int32" Enabled="true" SelectCommand="select&#13;&#10;	o.full_name as org_name,&#13;&#10;	o.inn,&#13;&#10;	o.kpp,&#13;&#10;	o.ogrn,&#13;&#10;	o.address,&#13;&#10;	o.email,&#13;&#10;	o.phone,&#13;&#10;	c.full_name as contractor_name,&#13;&#10;	pr.document_date,&#13;&#10;	pr.document_number,&#13;&#10;	pr.note,&#13;&#10;	oe.item_name as director_name,&#13;&#10;	oe.phone as director_phone,&#13;&#10;	okpdtr.signatory_name as director_post&#13;&#10;from purchase_request pr &#13;&#10;	join organization o on o.id = pr.organization_id&#13;&#10;	join our_employee oe on oe.owner_id = o.id and oe.emp_role = 'director'::employee_role&#13;&#10;	join okpdtr on okpdtr.id = oe.post_id&#13;&#10;	left join contractor c on c.id = pr.contractor_id&#13;&#10;where pr.id = :doc_id">
         <Column Name="org_name" DataType="System.String"/>
         <Column Name="inn" DataType="System.Decimal"/>
         <Column Name="kpp" DataType="System.Decimal"/>
@@ -23,7 +23,7 @@
         <Column Name="director_phone" DataType="System.String"/>
         <Column Name="director_post" DataType="System.String"/>
         <Column Name="note" DataType="System.String"/>
-        <CommandParameter Name="doc_id" DataType="40" Expression="[id]" DefaultValue="758e7564-0963-4dec-bef4-bc0d0f583531"/>
+        <CommandParameter Name="doc_id" DataType="40" Expression="[id]" DefaultValue="637d5e00-9712-4d44-93f4-12781068b084"/>
       </TableDataSource>
     </PostgresDataConnection>
     <Parameter Name="id" DataType="System.String"/>
@@ -58,7 +58,7 @@
       </DataHeaderBand>
     </DataBand>
     <ReportSummaryBand Name="ReportSummary1" Top="342.75" Width="680.4" Height="141.75">
-      <TextObject Name="Text22" Top="28.35" Width="718.2" Height="18.9" Hyperlink.Expression="[purchase_header.email]" Hyperlink.OpenLinkInNewTab="true" IsIntersectedWithOtherObject="true" CanGrow="true" Text="Счёт для оплаты прошу выставить по эл. почте: [purchase_header.email]." HorzAlign="Justify" VertAlign="Center" Font="Times New Roman, 12pt">
+      <TextObject Name="Text22" Top="28.35" Width="718.2" Height="18.9" Hyperlink.Expression="[purchase_header.email]" Hyperlink.OpenLinkInNewTab="true" CanGrow="true" Text="Счёт для оплаты прошу выставить по эл. почте: [purchase_header.email]." HorzAlign="Justify" VertAlign="Center" Font="Times New Roman, 12pt">
         <Formats>
           <PercentFormat/>
           <TimeFormat/>

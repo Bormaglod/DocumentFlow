@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Приложение к договору" ReportInfo.Version="1.0" ReportInfo.Created="06/19/2022 16:39:50" ReportInfo.Modified="05/21/2023 11:18:29" ReportInfo.CreatorVersion="2022.2.0.0">
+<Report ScriptLanguage="CSharp" SmoothGraphics="true" ReportInfo.Name="Приложение к договору" ReportInfo.Author="Тепляшин С.В." ReportInfo.Version="2023.6.20" ReportInfo.Created="06/19/2022 16:39:50" ReportInfo.Modified="06/20/2023 12:36:12" ReportInfo.CreatorVersion="2022.2.0.0">
   <Dictionary>
-    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75R+YSXUlhHeXVBD7gxZ+0Co=">
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlqzYt4UjS5sRd7WCMx8bkZArZXbsPiGROxzM5V/9+AT0mKW8knT5YnAToH3QqwmQosAAC16bUcfc6wVwchVL325qRFT5N3iM4TwoWkkvTEvoU=">
       <TableDataSource Name="public_organization" Alias="contractor" DataType="System.Int32" Enabled="true" TableName="public.&quot;organization&quot;" SelectCommand="select &#13;&#10;	ca.item_name as specification,&#13;&#10;	ca.document_date,&#13;&#10;	ca.note,&#13;&#10;	c.code as contract_number,&#13;&#10;	c.document_date as contract_date,&#13;&#10;	c2.item_name as contractor_name,&#13;&#10;	e.item_name as signatory_person,&#13;&#10;	o.signatory_name as signatory_post&#13;&#10;from&#13;&#10;	contract_application ca &#13;&#10;	join contract c on c.id = ca.owner_id &#13;&#10;	join contractor c2 on c2.id = c.owner_id &#13;&#10;	left join employee e on e.id = c.signatory_id&#13;&#10;	left join okpdtr o on o.id = e.post_id&#13;&#10;where ca.id = :spec_id&#13;&#10;&#13;&#10;">
         <Column Name="specification" DataType="System.String"/>
         <Column Name="contract_number" DataType="System.String"/>
@@ -19,7 +19,7 @@
         <Column Name="measurement_name" DataType="System.String"/>
         <CommandParameter Name="spec_id" DataType="40" Expression="[id]" DefaultValue="3a5f4b6f-404d-4b07-94c5-cc39fba8a3f5"/>
       </TableDataSource>
-      <TableDataSource Name="Table" Alias="organization" DataType="System.Int32" Enabled="true" SelectCommand="select &#13;&#10;	o.item_name as org_name,&#13;&#10;	oe.item_name as signatory_person,&#13;&#10;	okpdtr.signatory_name as signatory_post&#13;&#10;from organization o &#13;&#10;	left join our_employee oe on oe.owner_id = o.id and oe.j_role = 'director'::job_role&#13;&#10;	left join okpdtr on okpdtr.id = oe.post_id&#13;&#10;where o.default_org">
+      <TableDataSource Name="Table" Alias="organization" DataType="System.Int32" Enabled="true" SelectCommand="select &#13;&#10;	o.item_name as org_name,&#13;&#10;	oe.item_name as signatory_person,&#13;&#10;	okpdtr.signatory_name as signatory_post&#13;&#10;from organization o &#13;&#10;	left join our_employee oe on oe.owner_id = o.id and oe.emp_role = 'director'::employee_role&#13;&#10;	left join okpdtr on okpdtr.id = oe.post_id&#13;&#10;where o.default_org">
         <Column Name="org_name" DataType="System.String"/>
         <Column Name="signatory_person" DataType="System.String"/>
         <Column Name="signatory_post" DataType="System.String"/>

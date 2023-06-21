@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Name="Накладная" ReportInfo.Version="2022.11.16" ReportInfo.Created="11/13/2022 12:33:16" ReportInfo.Modified="05/21/2023 11:19:17" ReportInfo.CreatorVersion="2022.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Name="Накладная" ReportInfo.Author="Тепляшин С.В." ReportInfo.Version="2023.6.20" ReportInfo.Created="11/13/2022 12:33:16" ReportInfo.Modified="06/20/2023 12:41:39" ReportInfo.CreatorVersion="2022.2.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,7 +58,7 @@ namespace FastReport
 }
 </ScriptText>
   <Dictionary>
-    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq3fSYenNTTu/4tdYcpdM0AU7kEddkU868xwdhAJUDWvSLUarLZHfcmf4zRz2E/8T+t3/FoEcc/veOXt+LWKf75efiyyfurYnz9PkFGau/aBw=">
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlqzYt4UjS5sRd7WCMx8bkZArZXbsPiGROxzM5V/9+AT0mKW8knT5YnAToH3QqwmQosAAC16bUcfc6wVwchVL325siEQJk2lUsf9Kg8xzggQkc=">
       <TableDataSource Name="waybill_sale" DataType="System.Int32" PropName="public_waybill_sale" Enabled="true" TableName="public.&quot;waybill_sale&quot;" SelectCommand="select&#13;&#10;	ws.*,&#13;&#10;	c.item_name as contractor_name,&#13;&#10;	c.inn as contractor_inn,&#13;&#10;	o.item_name as org_name,&#13;&#10;	o.inn as org_inn,&#13;&#10;	o.address as org_address&#13;&#10;from waybill_sale ws &#13;&#10;	left join contractor c on c.id = ws.contractor_id&#13;&#10;	join organization o on o.id = ws.organization_id&#13;&#10;where ws.id = :waybill_id">
         <Column Name="id" DataType="System.Guid"/>
         <Column Name="owner_id" DataType="System.Guid"/>
