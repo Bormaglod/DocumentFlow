@@ -10,6 +10,8 @@
 //  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.7.23
+//  - изображение стало отображаться с учётом его размеров и пропорций
 //
 //-----------------------------------------------------------------------
 
@@ -43,8 +45,6 @@ public abstract class ProductBrowser<T> : Browser<T>
             var b = graphics.ClipBounds;
             graphics.SetClip(bounds);
 
-            int x = bounds.X + 50;
-
             if (row.Documents == null)
             {
                 var docs = Services.Provider.GetService<IDocumentRefsRepository>();
@@ -54,12 +54,31 @@ public abstract class ProductBrowser<T> : Browser<T>
                 }
             }
 
+            int x = bounds.X + 50;
+            int imageHeight = 120;
+
             if (row.Documents != null)
             {
                 foreach (var t in row.Documents)
                 {
-                    var image = ImageHelper.Base64ToImage(t.Thumbnail!);
-                    var rect = new Rectangle(x, bounds.Y + 2, 120, 120);
+                    if (t.Thumbnail == null)
+                    {
+                        continue;
+                    }
+
+                    int imageWidth;
+
+                    var image = ImageHelper.Base64ToImage(t.Thumbnail);
+                    if (image.Width != image.Height)
+                    {
+                        imageWidth = imageHeight * image.Width / image.Height;
+                    }
+                    else
+                    {
+                        imageWidth = imageHeight;
+                    }
+
+                    var rect = new Rectangle(x, bounds.Y + 2, imageWidth, imageHeight);
 
                     graphics.DrawImage(image, rect);
 

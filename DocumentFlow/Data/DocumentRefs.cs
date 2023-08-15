@@ -13,6 +13,9 @@
 //    присваивалось null)
 // Версия 2023.3.17
 //  - перенесено из DocumentFlow.Data.Core в DocumentFlow.Data
+// Версия 2023.7.23
+//  - изображение для предпросмотра сохраняется в БД с учётом
+//    его пропорций
 //
 //-----------------------------------------------------------------------
 
@@ -53,7 +56,19 @@ public class DocumentRefs : Entity<long>, IDocumentRefs
         {
             using MemoryStream stream = new(FileContent);
             Image image = Image.FromStream(stream);
-            Image thumb = image.GetThumbnailImage(120, 120, () => false, IntPtr.Zero);
+
+            int width = 120;
+            int height = 120;
+            if (image.Width > image.Height)
+            {
+                height = 120 * image.Height / image.Width;
+            }
+            else if (image.Height > image.Width)
+            {
+                width = 120 * image.Width / image.Height;
+            }
+
+            Image thumb = image.GetThumbnailImage(width, height, () => false, IntPtr.Zero);
             Thumbnail = ImageHelper.ImageToBase64(thumb, ImageFormat.Bmp);
         }
         else

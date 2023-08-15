@@ -3,6 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 25.01.2022
+//
+// Версия 2023.7.23
+//  - поле DateApproval было доступно для редактирования в архивном
+//    состоянии калькуляции - исправлено.
+//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
@@ -73,7 +78,8 @@ public class CalculationEditor : Editor<Calculation>, ICalculationEditor
                 date
                     .NotRequired()
                     .SetHeaderWidth(headerWidth)
-                    .SetEditorWidth(150))
+                    .SetEditorWidth(150)
+                    .Raise())
             .AddTextBox(x => x.Note, "Полное наименование", (text) =>
                 text
                     .Multiline()

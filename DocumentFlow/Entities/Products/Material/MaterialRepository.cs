@@ -10,15 +10,17 @@
 //  - метод GetAllMaterials удалён
 // Версия 2023.5.20
 //  - изменены запросы в методах GetMaterials и GetWires
+// Версия 2023.7.23
+//  - изменены запросы в методах GetMaterials и GetWires (запрос
+//    теперь форомляется с помощью GetQuery
 //
 //-----------------------------------------------------------------------
-
-using Dapper;
 
 using DocumentFlow.Data.Core;
 using DocumentFlow.Infrastructure.Data;
 
 using SqlKata;
+using SqlKata.Execution;
 
 namespace DocumentFlow.Entities.Products;
 
@@ -40,12 +42,15 @@ public class MaterialRepository : ProductRepository<Material>, IMaterialReposito
 
     public IReadOnlyList<Material> GetMaterials()
     {
-        string sql = "select * from material where not deleted and material_kind != 'wire' order by item_name";
-
         using var conn = Database.OpenConnection();
         try
         {
-            return conn.Query<Material>(sql).ToList();
+            return GetQuery(conn)
+                .WhereFalse("deleted")
+                .WhereRaw("material_kind != 'wire'")
+                .OrderBy("item_name")
+                .Get<Material>()
+                .ToList();
         }
         catch (Exception e)
         {
@@ -56,12 +61,15 @@ public class MaterialRepository : ProductRepository<Material>, IMaterialReposito
 
     public IReadOnlyList<Material> GetWires()
     {
-        string sql = "select * from material where not deleted and material_kind = 'wire' order by item_name";
-
         using var conn = Database.OpenConnection();
         try
         {
-            return conn.Query<Material>(sql).ToList();
+            return GetQuery(conn)
+                .WhereFalse("deleted")
+                .WhereRaw("material_kind = 'wire'")
+                .OrderBy("item_name")
+                .Get<Material>()
+                .ToList();
         }
         catch (Exception e)
         {

@@ -9,6 +9,9 @@
 // Версия 2023.1.22
 //  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
+// Версия 2023.7.23
+//  - не происходило выделение цветом состояния калькуляции в методе
+//    BrowserCellStyle - исправлено
 //
 //-----------------------------------------------------------------------
 
@@ -71,7 +74,7 @@ public class CalculationBrowser : Browser<Calculation>, ICalculationBrowser
 
     protected override void BrowserCellStyle(Calculation document, string column, CellStyleInfo style)
     {
-        if (column == "state_name")
+        if (column == nameof(Calculation.StateName))
         {
             style.TextColor = document.CalculationState switch
             {
