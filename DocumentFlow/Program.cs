@@ -26,9 +26,6 @@ internal static class Program
             return;
         }
 
-        var loggerFactory = LoggerFactory.Create(builder => builder.AddNLog());
-        NpgsqlLoggingConfiguration.InitializeLogging(loggerFactory, parameterLoggingEnabled: true);
-
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         Dapper.SqlMapper.AddTypeHandler(new Data.Core.DapperSqlDateOnlyTypeHandler());

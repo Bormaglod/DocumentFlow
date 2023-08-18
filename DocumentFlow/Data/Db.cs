@@ -8,12 +8,21 @@
 //  - IDatabase перенесён из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
 // Версия 2023.5.3
 //  - удалены все статические элементы
+// Версия 2023.8.17
+//  - для подключения к БД используется NpgsqlDataSourceBuilder
+//  - добавлен метод CreateDataSource
+//  - метод CreateConnectionString больше не изменяет ConnectionString, в
+//    возвращает это значение
 //
 //-----------------------------------------------------------------------
 
 using Dapper;
 
 using DocumentFlow.Infrastructure.Data;
+
+using Microsoft.Extensions.Logging;
+
+using NLog.Extensions.Logging;
 
 using Npgsql;
 
@@ -24,6 +33,8 @@ namespace DocumentFlow.Data;
 
 public class Database : IDatabase
 {
+    private NpgsqlDataSource? dataSource;
+
     private readonly string default_user = "guest";
     private readonly string default_password = "guest";
 
@@ -46,7 +57,9 @@ public class Database : IDatabase
 
     public IDbConnection OpenConnection(string userName, string password)
     {
-        CreateConnectionString(userName, password);
+        ConnectionString = CreateConnectionString(userName, password);
+        dataSource = CreateDataSource(ConnectionString);
+
         return OpenConnection();
     }
 
@@ -54,17 +67,16 @@ public class Database : IDatabase
     {
         if (string.IsNullOrEmpty(ConnectionString))
         {
-            CreateConnectionString(default_user, default_password);
+            ConnectionString = CreateConnectionString(default_user, default_password);
         }
+
+        dataSource ??= CreateDataSource(ConnectionString);
 
         while (true)
         {
-            var conn = new NpgsqlConnection(ConnectionString);
-
             try
             {
-                conn.Open();
-                return conn;
+                return dataSource.OpenConnection();
             }
             catch (NpgsqlException e)
             {
@@ -90,7 +102,7 @@ public class Database : IDatabase
         conn.Execute("login", commandType: CommandType.StoredProcedure);
     }
 
-    private void CreateConnectionString(string userName, string password)
+    private string CreateConnectionString(string userName, string password)
     {
         currentUser = userName;
 
@@ -101,6 +113,17 @@ public class Database : IDatabase
             Password = password
         };
 
-        ConnectionString = builder.ConnectionString;
+        return builder.ConnectionString;
+    }
+
+    private static NpgsqlDataSource CreateDataSource(string connectionString)
+    {
+        var loggerFactory = LoggerFactory.Create(builder => builder.AddNLog());
+        NpgsqlLoggingConfiguration.InitializeLogging(loggerFactory, parameterLoggingEnabled: true);
+
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+        dataSourceBuilder
+            .UseLoggerFactory(loggerFactory);
+        return dataSourceBuilder.Build();
     }
 }
