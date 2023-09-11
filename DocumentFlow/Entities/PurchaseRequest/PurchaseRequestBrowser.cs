@@ -31,6 +31,9 @@
 //  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
 // Версия 2023.2.23
 //  - добавлена ссылка на DocumentFlow.Core.Exceptions
+// Версия 2023.9.11
+//  - исправлена ошибка при отображении состояния заказа - если заказ выполнен, то
+//    цвет содержимого колонки должен быть зелёным
 //
 //-----------------------------------------------------------------------
 
@@ -109,7 +112,7 @@ public class PurchaseRequestBrowser : Browser<PurchaseRequest>, IPurchaseRequest
             style.TextColor = Color.Red;
             style.Font.Strikeout = true;
         }
-        else if (document.PurchaseState == PurchaseState.Completed && column == "state_name")
+        else if (document.PurchaseState == PurchaseState.Completed && column == nameof(PurchaseRequest.StateName))
         {
             style.TextColor = Color.Green;
         }
