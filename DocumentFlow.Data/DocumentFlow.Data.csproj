@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Version>2023.7.10</Version>
+		<Company>Автоком</Company>
+		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
+		<Platforms>x64</Platforms>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<Version>$(VersionPrefix)2023.9.20</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Dapper" Version="2.0.151" />
+		<PackageReference Include="Humanizer.Core" Version="2.14.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
+		<PackageReference Include="Npgsql" Version="7.0.6" />
+		<PackageReference Include="SqlKata.Execution" Version="2.4.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DocumentFlow.Tools\DocumentFlow.Tools.csproj" />
+	</ItemGroup>
+
+</Project>

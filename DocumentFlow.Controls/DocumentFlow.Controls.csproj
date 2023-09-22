@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<Version>2023.7.10</Version>
+		<Company>Автоком</Company>
+		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
+		<Platforms>x64</Platforms>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<Version>$(VersionPrefix)2023.9.19</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Syncfusion.Tools.Windows" Version="20.4.0.48" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DocumentFlow.Tools\DocumentFlow.Tools.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="ComboBoxAdvImage.cs" />
+		<Compile Update="DecimalTextBox.cs" />
+		<Compile Update="Properties\Resources.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="SplitButton.cs">
+		  <SubType>Component</SubType>
+		</Compile>
+		<Compile Update="ToolButton.cs">
+		  <SubType>Component</SubType>
+		</Compile>
+		<Compile Update="ToolSplitItem.cs">
+		  <SubType>Component</SubType>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+</Project>
