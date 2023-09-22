@@ -3,30 +3,31 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.12.2022
-//
-// Версия 2022.12.31
-//  - реализован функционал
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.1.28
-//  - добавлено свойство Size
-// Версия 2023.2.4
-//  - из конструктора убран вызов RefreshCard
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Entities.Balances;
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Models;
+using DocumentFlow.Interfaces;
+using DocumentFlow.Settings;
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace DocumentFlow.Controls.Cards;
 
 public partial class CustomerCard : UserControl, ICard
 {
-    public CustomerCard()
+    private readonly IPageManager pageManager;
+    private readonly IBalanceContractorRepository repository;
+    private readonly StartPageSettings settings;
+
+    public CustomerCard(IPageManager pageManager, IBalanceContractorRepository repository, IOptions<LocalSettings> options)
     {
         InitializeComponent();
+
+        this.pageManager = pageManager;
+        this.repository = repository;
+
+        settings = options.Value.StartPage;
     }
 
     public int Index => 0;
@@ -39,18 +40,14 @@ public partial class CustomerCard : UserControl, ICard
     {
         Controls.Clear();
 
-        var balance = Services.Provider.GetService<IBalanceContractorRepository>();
-        if (balance != null)
+        var customers = repository.GetCustomersDebt(6);
+        int cnt = Math.Min(customers.Count, 6);
+        for (int i = 0; i < cnt; i++)
         {
-            var customers = balance.GetCustomersDebt(6);
-            int cnt = Math.Min(customers.Count, 6);
-            for (int i = 0; i < cnt; i++)
-            {
-                CardRow row = new(customers[i]);
-                Controls.Add(row);
+            CardRow row = new(pageManager, customers[i], settings);
+            Controls.Add(row);
 
-                row.BringToFront();
-            }
+            row.BringToFront();
         }
     }
 }

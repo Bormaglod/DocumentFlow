@@ -28,129 +28,115 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.datePickerAdv = new Syncfusion.Windows.Forms.Tools.DateTimePickerAdv();
-            this.label1 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.datePickerAdv)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.datePickerAdv.Calendar)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            datePickerAdv = new Syncfusion.Windows.Forms.Tools.DateTimePickerAdv();
+            ((System.ComponentModel.ISupportInitialize)datePickerAdv).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)datePickerAdv.Calendar).BeginInit();
+            SuspendLayout();
             // 
             // datePickerAdv
             // 
-            this.datePickerAdv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.datePickerAdv.Border3DStyle = System.Windows.Forms.Border3DStyle.Flat;
-            this.datePickerAdv.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(171)))), ((int)(((byte)(171)))));
-            this.datePickerAdv.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            datePickerAdv.BackColor = Color.FromArgb(255, 255, 255);
+            datePickerAdv.Border3DStyle = Border3DStyle.Flat;
+            datePickerAdv.BorderColor = Color.FromArgb(171, 171, 171);
+            datePickerAdv.BorderStyle = BorderStyle.FixedSingle;
             // 
             // 
             // 
-            this.datePickerAdv.Calendar.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(211)))), ((int)(((byte)(212)))));
-            this.datePickerAdv.Calendar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.datePickerAdv.Calendar.BottomHeight = 6;
-            this.datePickerAdv.Calendar.Culture = new System.Globalization.CultureInfo("ru-RU");
-            this.datePickerAdv.Calendar.DayNamesColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-            this.datePickerAdv.Calendar.DayNamesFont = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.datePickerAdv.Calendar.DaysColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.datePickerAdv.Calendar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.datePickerAdv.Calendar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.datePickerAdv.Calendar.GridBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.datePickerAdv.Calendar.GridLines = Syncfusion.Windows.Forms.Grid.GridBorderStyle.None;
-            this.datePickerAdv.Calendar.HeaderFont = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.datePickerAdv.Calendar.HeaderStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.datePickerAdv.Calendar.HeadForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.datePickerAdv.Calendar.HighlightColor = System.Drawing.Color.FromArgb(((int)(((byte)(205)))), ((int)(((byte)(230)))), ((int)(((byte)(247)))));
-            this.datePickerAdv.Calendar.InactiveMonthColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.datePickerAdv.Calendar.Iso8601CalenderFormat = false;
-            this.datePickerAdv.Calendar.Location = new System.Drawing.Point(0, 0);
-            this.datePickerAdv.Calendar.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
-            this.datePickerAdv.Calendar.Name = "monthCalendar";
+            datePickerAdv.Calendar.BorderColor = Color.FromArgb(209, 211, 212);
+            datePickerAdv.Calendar.BorderStyle = BorderStyle.FixedSingle;
+            datePickerAdv.Calendar.BottomHeight = 6;
+            datePickerAdv.Calendar.Culture = new System.Globalization.CultureInfo("ru-RU");
+            datePickerAdv.Calendar.DayNamesColor = Color.FromArgb(102, 102, 102);
+            datePickerAdv.Calendar.DayNamesFont = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
+            datePickerAdv.Calendar.DaysColor = Color.FromArgb(68, 68, 68);
+            datePickerAdv.Calendar.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
+            datePickerAdv.Calendar.ForeColor = Color.FromArgb(68, 68, 68);
+            datePickerAdv.Calendar.GridBackColor = Color.FromArgb(255, 255, 255);
+            datePickerAdv.Calendar.GridLines = Syncfusion.Windows.Forms.Grid.GridBorderStyle.None;
+            datePickerAdv.Calendar.HeaderFont = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
+            datePickerAdv.Calendar.HeaderStartColor = Color.FromArgb(240, 240, 240);
+            datePickerAdv.Calendar.HeadForeColor = Color.FromArgb(68, 68, 68);
+            datePickerAdv.Calendar.HighlightColor = Color.FromArgb(205, 230, 247);
+            datePickerAdv.Calendar.InactiveMonthColor = Color.FromArgb(68, 68, 68);
+            datePickerAdv.Calendar.Iso8601CalenderFormat = false;
+            datePickerAdv.Calendar.Location = new Point(0, 0);
+            datePickerAdv.Calendar.MetroColor = Color.FromArgb(22, 165, 220);
+            datePickerAdv.Calendar.Name = "monthCalendar";
             // 
             // 
             // 
-            this.datePickerAdv.Calendar.NoneButton.Appearance = Syncfusion.Windows.Forms.ButtonAppearance.Metro;
-            this.datePickerAdv.Calendar.NoneButton.AutoSize = true;
-            this.datePickerAdv.Calendar.NoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
-            this.datePickerAdv.Calendar.NoneButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.datePickerAdv.Calendar.NoneButton.KeepFocusRectangle = false;
-            this.datePickerAdv.Calendar.NoneButton.Location = new System.Drawing.Point(-40, 0);
-            this.datePickerAdv.Calendar.NoneButton.Margin = new System.Windows.Forms.Padding(3, 12, 3, 12);
-            this.datePickerAdv.Calendar.NoneButton.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.datePickerAdv.Calendar.NoneButton.Size = new System.Drawing.Size(155, 6);
-            this.datePickerAdv.Calendar.NoneButton.ThemeName = "Metro";
-            this.datePickerAdv.Calendar.NoneButton.UseVisualStyle = true;
-            this.datePickerAdv.Calendar.ScrollButtonSize = new System.Drawing.Size(24, 24);
-            this.datePickerAdv.Calendar.Size = new System.Drawing.Size(115, 74);
-            this.datePickerAdv.Calendar.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
-            this.datePickerAdv.Calendar.TabIndex = 0;
+            datePickerAdv.Calendar.NoneButton.Appearance = Syncfusion.Windows.Forms.ButtonAppearance.Metro;
+            datePickerAdv.Calendar.NoneButton.AutoSize = true;
+            datePickerAdv.Calendar.NoneButton.BackColor = Color.FromArgb(22, 165, 220);
+            datePickerAdv.Calendar.NoneButton.ForeColor = Color.FromArgb(68, 68, 68);
+            datePickerAdv.Calendar.NoneButton.KeepFocusRectangle = false;
+            datePickerAdv.Calendar.NoneButton.Location = new Point(-40, 0);
+            datePickerAdv.Calendar.NoneButton.Margin = new Padding(3, 12, 3, 12);
+            datePickerAdv.Calendar.NoneButton.MetroColor = Color.FromArgb(255, 255, 255);
+            datePickerAdv.Calendar.NoneButton.Size = new Size(155, 6);
+            datePickerAdv.Calendar.NoneButton.ThemeName = "Metro";
+            datePickerAdv.Calendar.NoneButton.UseVisualStyle = true;
+            datePickerAdv.Calendar.ScrollButtonSize = new Size(24, 24);
+            datePickerAdv.Calendar.Size = new Size(115, 74);
+            datePickerAdv.Calendar.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
+            datePickerAdv.Calendar.TabIndex = 0;
             // 
             // 
             // 
-            this.datePickerAdv.Calendar.TodayButton.Appearance = Syncfusion.Windows.Forms.ButtonAppearance.Metro;
-            this.datePickerAdv.Calendar.TodayButton.AutoSize = true;
-            this.datePickerAdv.Calendar.TodayButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
-            this.datePickerAdv.Calendar.TodayButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.datePickerAdv.Calendar.TodayButton.KeepFocusRectangle = false;
-            this.datePickerAdv.Calendar.TodayButton.Location = new System.Drawing.Point(0, 0);
-            this.datePickerAdv.Calendar.TodayButton.Margin = new System.Windows.Forms.Padding(10, 78, 10, 78);
-            this.datePickerAdv.Calendar.TodayButton.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.datePickerAdv.Calendar.TodayButton.Size = new System.Drawing.Size(-40, 6);
-            this.datePickerAdv.Calendar.TodayButton.ThemeName = "Metro";
-            this.datePickerAdv.Calendar.TodayButton.UseVisualStyle = true;
-            this.datePickerAdv.Calendar.WeekFont = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.datePickerAdv.CalendarMonthBackground = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.datePickerAdv.CalendarSize = new System.Drawing.Size(189, 176);
-            this.datePickerAdv.CalendarTitleBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.datePickerAdv.CalendarTitleForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.datePickerAdv.CalendarTrailingForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.datePickerAdv.Culture = new System.Globalization.CultureInfo("ru-RU");
-            this.datePickerAdv.CustomFormat = "dd.MM.yyyy HH:mm:ss";
-            this.datePickerAdv.Dock = System.Windows.Forms.DockStyle.Left;
-            this.datePickerAdv.DropDownImage = null;
-            this.datePickerAdv.DropDownNormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.datePickerAdv.DropDownPressedColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
-            this.datePickerAdv.DropDownSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(191)))), ((int)(((byte)(237)))));
-            this.datePickerAdv.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.datePickerAdv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.datePickerAdv.Location = new System.Drawing.Point(117, 0);
-            this.datePickerAdv.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(165)))), ((int)(((byte)(220)))));
-            this.datePickerAdv.MinValue = new System.DateTime(((long)(0)));
-            this.datePickerAdv.Name = "datePickerAdv";
-            this.datePickerAdv.NullString = "Не установлена";
-            this.datePickerAdv.Size = new System.Drawing.Size(221, 25);
-            this.datePickerAdv.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
-            this.datePickerAdv.TabIndex = 0;
-            this.datePickerAdv.Value = new System.DateTime(2023, 4, 12, 21, 3, 26, 118);
-            this.datePickerAdv.CheckBoxCheckedChanged += new System.EventHandler(this.DatePickerAdv_CheckBoxCheckedChanged);
-            this.datePickerAdv.ValueChanged += new System.EventHandler(this.DatePickerAdv_ValueChanged);
-            // 
-            // label1
-            // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(117, 25);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Text";
+            datePickerAdv.Calendar.TodayButton.Appearance = Syncfusion.Windows.Forms.ButtonAppearance.Metro;
+            datePickerAdv.Calendar.TodayButton.AutoSize = true;
+            datePickerAdv.Calendar.TodayButton.BackColor = Color.FromArgb(22, 165, 220);
+            datePickerAdv.Calendar.TodayButton.ForeColor = Color.FromArgb(68, 68, 68);
+            datePickerAdv.Calendar.TodayButton.KeepFocusRectangle = false;
+            datePickerAdv.Calendar.TodayButton.Location = new Point(0, 0);
+            datePickerAdv.Calendar.TodayButton.Margin = new Padding(10, 78, 10, 78);
+            datePickerAdv.Calendar.TodayButton.MetroColor = Color.FromArgb(255, 255, 255);
+            datePickerAdv.Calendar.TodayButton.Size = new Size(-40, 6);
+            datePickerAdv.Calendar.TodayButton.ThemeName = "Metro";
+            datePickerAdv.Calendar.TodayButton.UseVisualStyle = true;
+            datePickerAdv.Calendar.WeekFont = new Font("Verdana", 8F, FontStyle.Regular, GraphicsUnit.Point);
+            datePickerAdv.CalendarMonthBackground = Color.FromArgb(255, 255, 255);
+            datePickerAdv.CalendarSize = new Size(189, 176);
+            datePickerAdv.CalendarTitleBackColor = Color.FromArgb(240, 240, 240);
+            datePickerAdv.CalendarTitleForeColor = Color.FromArgb(68, 68, 68);
+            datePickerAdv.CalendarTrailingForeColor = Color.FromArgb(68, 68, 68);
+            datePickerAdv.Culture = new System.Globalization.CultureInfo("ru-RU");
+            datePickerAdv.CustomFormat = "dd.MM.yyyy HH:mm:ss";
+            datePickerAdv.Dock = DockStyle.Left;
+            datePickerAdv.DropDownImage = null;
+            datePickerAdv.DropDownNormalColor = Color.FromArgb(255, 255, 255);
+            datePickerAdv.DropDownPressedColor = Color.FromArgb(22, 165, 220);
+            datePickerAdv.DropDownSelectedColor = Color.FromArgb(71, 191, 237);
+            datePickerAdv.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
+            datePickerAdv.ForeColor = Color.FromArgb(68, 68, 68);
+            datePickerAdv.Location = new Point(100, 0);
+            datePickerAdv.MetroColor = Color.FromArgb(22, 165, 220);
+            datePickerAdv.MinValue = new DateTime(0L);
+            datePickerAdv.Name = "datePickerAdv";
+            datePickerAdv.NullString = "Не установлена";
+            datePickerAdv.Size = new Size(200, 25);
+            datePickerAdv.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
+            datePickerAdv.TabIndex = 1;
+            datePickerAdv.ThemeStyle.DisabledBorderColor = Color.FromArgb(225, 225, 225);
+            datePickerAdv.Value = new DateTime(2023, 7, 3, 13, 12, 18, 254);
+            datePickerAdv.CheckBoxCheckedChanged += DatePickerAdv_CheckBoxCheckedChanged;
             // 
             // DfDateTimePicker
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.datePickerAdv);
-            this.Controls.Add(this.label1);
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.Name = "DfDateTimePicker";
-            this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 7);
-            this.Size = new System.Drawing.Size(360, 32);
-            ((System.ComponentModel.ISupportInitialize)(this.datePickerAdv.Calendar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.datePickerAdv)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(datePickerAdv);
+            Margin = new Padding(3, 5, 3, 5);
+            Name = "DfDateTimePicker";
+            Size = new Size(361, 32);
+            Controls.SetChildIndex(datePickerAdv, 0);
+            ((System.ComponentModel.ISupportInitialize)datePickerAdv.Calendar).EndInit();
+            ((System.ComponentModel.ISupportInitialize)datePickerAdv).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
         private Syncfusion.Windows.Forms.Tools.DateTimePickerAdv datePickerAdv;
-        private System.Windows.Forms.Label label1;
     }
 }

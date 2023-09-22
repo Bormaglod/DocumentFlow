@@ -3,14 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 14.07.2022
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Enums;
 using DocumentFlow.Dialogs;
-using DocumentFlow.Infrastructure.Data;
 
 using FluentDateTime;
 
@@ -18,57 +14,74 @@ namespace DocumentFlow.Controls;
 
 public partial class DateRangeControl : UserControl
 {
+    private bool dateFromEnabled = true;
+    private bool dateToEnabled = true;
+    private DateTime dateFrom = DateTime.Today.BeginningOfYear();
+    private DateTime dateTo = DateTime.Today.EndOfYear();
+
+    public event EventHandler? DateFromEnabledChanged;
+    public event EventHandler? DateToEnabledChanged;
+    public event EventHandler? DateFromChanged;
+    public event EventHandler? DateToChanged;
+
     public DateRangeControl()
     {
         InitializeComponent();
-
-        dateTimePickerFrom.Checked = true;
-        dateTimePickerTo.Checked = true;
-        dateTimePickerFrom.Value = DateTime.Today.BeginningOfYear();
-        dateTimePickerTo.Value = DateTime.Today.EndOfYear();
     }
 
-    public bool FromEnabled
+    public bool DateFromEnabled
     {
-        get => dateTimePickerFrom.Checked;
-        set => dateTimePickerFrom.Checked = value;
-    }
-    public bool ToEnabled
-    {
-        get => dateTimePickerTo.Checked;
-        set => dateTimePickerTo.Checked = value;
-    }
-
-    public DateTime? From
-    {
-        get => dateTimePickerFrom.Checked ? dateTimePickerFrom.Value.BeginningOfDay() : null;
+        get => dateFromEnabled;
         set
         {
-            if (value == null)
+            if (dateFromEnabled != value)
             {
-                dateTimePickerFrom.Checked = false;
-                dateTimePickerFrom.Value = DateTime.MinValue;
+                dateFromEnabled = value;
+                dateTimePickerFrom.Checked = value;
+                DateFromEnabledChanged?.Invoke(this, EventArgs.Empty);
             }
-            else
+        }
+    }
+    public bool DateToEnabled
+    {
+        get => dateToEnabled;
+        set
+        {
+            if (dateToEnabled != value)
             {
-                dateTimePickerFrom.Value = value.Value;
+                dateToEnabled = value;
+                dateTimePickerTo.Checked = value;
+                DateToEnabledChanged?.Invoke(this, EventArgs.Empty);
             }
         }
     }
 
-    public DateTime? To
+    public DateTime DateFrom
     {
-        get => dateTimePickerTo.Checked ? dateTimePickerTo.Value.EndOfDay() : null;
+        get => dateFrom;
         set
         {
-            if (value == null)
+            var valueDate = value.BeginningOfDay();
+            if (dateFrom != valueDate)
             {
-                dateTimePickerTo.Checked = false;
-                dateTimePickerTo.Value = DateTime.MaxValue;
+                dateFrom = valueDate;
+                dateTimePickerFrom.Value = valueDate;
+                DateFromChanged?.Invoke(this, EventArgs.Empty);
             }
-            else
+        }
+    }
+
+    public DateTime DateTo
+    {
+        get => dateTo;
+        set
+        {
+            var valueDate = value.EndOfDay();
+            if (dateTo != valueDate)
             {
-                dateTimePickerTo.Value = value.Value;
+                dateTo = valueDate;
+                dateTimePickerTo.Value = valueDate;
+                DateToChanged?.Invoke(this, EventArgs.Empty);
             }
         }
     }
@@ -78,29 +91,52 @@ public partial class DateRangeControl : UserControl
         switch (range)
         {
             case DateRange.CurrentDay:
-                (From, To) = (DateTime.Today.BeginningOfDay(), DateTime.Today.EndOfDay());
+                (DateFrom, DateTo) = (DateTime.Today.BeginningOfDay(), DateTime.Today.EndOfDay());
                 break;
             case DateRange.CurrentMonth:
-                (From, To) = (DateTime.Today.BeginningOfMonth(), DateTime.Today.EndOfMonth());
+                (DateFrom, DateTo) = (DateTime.Today.BeginningOfMonth(), DateTime.Today.EndOfMonth());
                 break;
             case DateRange.CurrentQuarter:
-                (From, To) = (DateTime.Today.BeginningOfQuarter(), DateTime.Today.EndOfQuarter());
+                (DateFrom, DateTo) = (DateTime.Today.BeginningOfQuarter(), DateTime.Today.EndOfQuarter());
                 break;
             case DateRange.CurrentYear:
-                (From, To) = (DateTime.Today.BeginningOfYear(), DateTime.Today.EndOfYear());
+                (DateFrom, DateTo) = (DateTime.Today.BeginningOfYear(), DateTime.Today.EndOfYear());
                 break;
             default:
                 break;
         }
+
+        DateFromEnabled = true;
+        DateToEnabled = true;
     }
 
     private void ButtonSelectDateRange_Click(object sender, EventArgs e)
     {
-        var win = new SelectDateRangeForm();
+        var win = new DateRangeDialog();
         if (win.ShowDialog() == DialogResult.OK)
         {
-            dateTimePickerFrom.Value = win.DateFrom;
-            dateTimePickerTo.Value = win.DateTo;
+            DateFrom = win.DateFrom;
+            DateTo = win.DateTo;
         }
+    }
+
+    private void DateTimePickerFrom_CheckBoxCheckedChanged(object sender, EventArgs e)
+    {
+        DateFromEnabled = dateTimePickerFrom.Checked;
+    }
+
+    private void DateTimePickerTo_CheckBoxCheckedChanged(object sender, EventArgs e)
+    {
+        DateToEnabled = dateTimePickerTo.Checked;
+    }
+
+    private void DateTimePickerFrom_ValueChanged(object sender, EventArgs e)
+    {
+        DateFrom = dateTimePickerFrom.Value.BeginningOfDay();
+    }
+
+    private void DateTimePickerTo_ValueChanged(object sender, EventArgs e)
+    {
+        DateTo = dateTimePickerTo.Value.EndOfDay();
     }
 }

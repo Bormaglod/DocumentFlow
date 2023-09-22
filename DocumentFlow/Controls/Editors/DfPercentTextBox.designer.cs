@@ -28,23 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            percentTextBox1 = new Syncfusion.Windows.Forms.Tools.PercentTextBox();
+            ((System.ComponentModel.ISupportInitialize)percentTextBox1).BeginInit();
+            SuspendLayout();
             // 
-            // L_PercentTextBox
+            // percentTextBox1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "L_PercentTextBox";
-            this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 7);
-            this.Size = new System.Drawing.Size(661, 32);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            percentTextBox1.BackGroundColor = Color.FromArgb(255, 255, 255);
+            percentTextBox1.BeforeTouchSize = new Size(100, 25);
+            percentTextBox1.BorderColor = Color.FromArgb(197, 197, 197);
+            percentTextBox1.BorderStyle = BorderStyle.FixedSingle;
+            percentTextBox1.Dock = DockStyle.Left;
+            percentTextBox1.ForeColor = Color.FromArgb(68, 68, 68);
+            percentTextBox1.Location = new Point(100, 0);
+            percentTextBox1.Name = "percentTextBox1";
+            percentTextBox1.PositiveColor = Color.FromArgb(68, 68, 68);
+            percentTextBox1.Size = new Size(100, 25);
+            percentTextBox1.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Office2016Colorful;
+            percentTextBox1.TabIndex = 2;
+            percentTextBox1.Text = "0,00 %";
+            percentTextBox1.ThemeName = "Office2016Colorful";
+            percentTextBox1.ZeroColor = Color.FromArgb(68, 68, 68);
+            // 
+            // DfPercentTextBox
+            // 
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(percentTextBox1);
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "DfPercentTextBox";
+            Size = new Size(389, 32);
+            Controls.SetChildIndex(percentTextBox1, 0);
+            ((System.ComponentModel.ISupportInitialize)percentTextBox1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Syncfusion.Windows.Forms.Tools.PercentTextBox percentTextBox1;
     }
 }

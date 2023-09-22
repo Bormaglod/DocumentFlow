@@ -3,14 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 19.06.2022
-//
-// Версия 2022.9.2
-//  - при попыткесохранить отчёт в уже существующий файл генерировалась
-//    ошибка - исправлено
-// Версия 2023.1.8
-//  - добавлен класс ZoomRegex
-//
 //-----------------------------------------------------------------------
+
+using DocumentFlow.Tools;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Syncfusion.Windows.Forms.PdfViewer;
 
@@ -19,36 +16,37 @@ using System.Text.RegularExpressions;
 
 namespace DocumentFlow.Dialogs;
 
+[Dialog]
 public partial class PreviewReportForm : Form
 {
     [GeneratedRegex("^(\\d+)\\s*%?$")]
     private static partial Regex ZoomRegex();
 
+    private readonly IServiceProvider services;
     private bool canZoom = true;
-    private readonly Guid? documentId;
-    private readonly string pdf;
+    private Guid? documentId;
+    private string? pdf;
 
-    protected PreviewReportForm(Guid? documentId, string pdf)
+    public PreviewReportForm(IServiceProvider services)
     {
         InitializeComponent();
+
+        this.services = services;
+    }
+
+    public void ShowReport(string pdf, string title) => ShowReport(null, pdf, title);
+
+    public void ShowReport(Guid? documentId, string pdf, string title)
+    {
+        Text = title;
 
         this.pdf = pdf;
         this.documentId = documentId;
 
         buttonSend.Enabled = documentId != null;
-    }
 
-    public static void ShowReport(string pdf, string title) => ShowReport(null, pdf, title);
-
-    public static void ShowReport(Guid? documentId, string pdf, string title)
-    {
-        var form = new PreviewReportForm(documentId, pdf)
-        {
-            Text = title
-        };
-
-        form.pdfDocumentView1.Load(pdf);
-        form.ShowDialog();
+        pdfDocumentView1.Load(pdf);
+        ShowDialog();
     }
 
     private void UpdateNavigationButtons()
@@ -192,9 +190,12 @@ public partial class PreviewReportForm : Form
 
     private void ButtonSave_Click(object sender, EventArgs e)
     {
-        if (savePdfDialog.ShowDialog() == DialogResult.OK)
+        if (!string.IsNullOrEmpty(pdf))
         {
-            File.Copy(pdf, savePdfDialog.FileName, true);
+            if (savePdfDialog.ShowDialog() == DialogResult.OK)
+            {
+                File.Copy(pdf, savePdfDialog.FileName, true);
+            }
         }
     }
 
@@ -209,6 +210,11 @@ public partial class PreviewReportForm : Form
 
     private void ButtonSend_Click(object sender, EventArgs e)
     {
-        SelectEmailForm.ShowWindow(documentId, Text, pdf);
+        if (!string.IsNullOrEmpty(pdf))
+        {
+            services
+                .GetRequiredService<EmailSendDialog>()
+                .ShowWindow(documentId, Text, pdf);
+        }
     }
 }

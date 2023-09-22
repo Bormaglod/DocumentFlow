@@ -28,58 +28,43 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBoxExt = new Syncfusion.Windows.Forms.Tools.TextBoxExt();
-            ((System.ComponentModel.ISupportInitialize)(this.textBoxExt)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoEllipsis = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(117, 25);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Text";
+            textBoxExt = new Syncfusion.Windows.Forms.Tools.TextBoxExt();
+            ((System.ComponentModel.ISupportInitialize)textBoxExt).BeginInit();
+            SuspendLayout();
             // 
             // textBoxExt
             // 
-            this.textBoxExt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.textBoxExt.BeforeTouchSize = new System.Drawing.Size(484, 25);
-            this.textBoxExt.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
-            this.textBoxExt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxExt.Dock = System.Windows.Forms.DockStyle.Left;
-            this.textBoxExt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.textBoxExt.Location = new System.Drawing.Point(117, 0);
-            this.textBoxExt.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.textBoxExt.Name = "textBoxExt";
-            this.textBoxExt.Size = new System.Drawing.Size(484, 25);
-            this.textBoxExt.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Office2016Colorful;
-            this.textBoxExt.TabIndex = 1;
-            this.textBoxExt.ThemeName = "Office2016Colorful";
-            this.textBoxExt.TextChanged += new System.EventHandler(this.TextBoxExt_TextChanged);
+            textBoxExt.BackColor = Color.FromArgb(255, 255, 255);
+            textBoxExt.BeforeTouchSize = new Size(484, 25);
+            textBoxExt.BorderColor = Color.FromArgb(197, 197, 197);
+            textBoxExt.BorderStyle = BorderStyle.FixedSingle;
+            textBoxExt.Dock = DockStyle.Left;
+            textBoxExt.ForeColor = Color.FromArgb(68, 68, 68);
+            textBoxExt.Location = new Point(90, 0);
+            textBoxExt.Margin = new Padding(3, 4, 3, 4);
+            textBoxExt.Name = "textBoxExt";
+            textBoxExt.Size = new Size(484, 25);
+            textBoxExt.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Office2016Colorful;
+            textBoxExt.TabIndex = 1;
+            textBoxExt.ThemeName = "Office2016Colorful";
             // 
             // DfTextBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.textBoxExt);
-            this.Controls.Add(this.label1);
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "DfTextBox";
-            this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 7);
-            this.Size = new System.Drawing.Size(716, 32);
-            ((System.ComponentModel.ISupportInitialize)(this.textBoxExt)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(textBoxExt);
+            Header = "Заголовок1";
+            HeaderWidth = 90;
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "DfTextBox";
+            Size = new Size(663, 32);
+            Controls.SetChildIndex(textBoxExt, 0);
+            ((System.ComponentModel.ISupportInitialize)textBoxExt).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private Syncfusion.Windows.Forms.Tools.TextBoxExt textBoxExt;
     }
 }

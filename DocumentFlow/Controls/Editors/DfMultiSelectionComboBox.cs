@@ -3,124 +3,111 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.11.2021
-//
-// Версия 2022.11.26
-//  - добавлен метод RefreshDataSourceOnLoad
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Controls.Core;
-using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Interfaces;
 
 using Syncfusion.Windows.Forms.Tools;
 
+using System.ComponentModel;
+using System.Data;
+
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfMultiSelectionComboBox : BaseControl, IBindingControl, IDataSourceControl, IAccess, IMultiSelectionComboBoxControl
+[ToolboxItem(true)]
+public partial class DfMultiSelectionComboBox : DfControl, IAccess
 {
-    private readonly List<IItem> items = new();
-    private GettingDataSource<IItem>? dataSource;
-    private MultiSelectValueChanged? valueChanged;
+    private List<string> selected = new();
+    private bool enabledEditor = true;
+    private bool lockAdd;
 
-    public DfMultiSelectionComboBox(string property, string header) 
-        : base(property)
+    public event EventHandler? SelectedItemsChanged;
+
+    public DfMultiSelectionComboBox()
     {
         InitializeComponent();
-        SetLabelControl(label1, header);
         SetNestedControl(multiSelectionComboBox1);
 
-        multiSelectionComboBox1.Style = MultiSelectionComboBoxStyle.Office2016Colorful;
         multiSelectionComboBox1.DisplayMember = "ItemName";
         multiSelectionComboBox1.ValueMember = "Code";
         multiSelectionComboBox1.VisualItemInputMode = VisualItemInputMode.ValueMemberMode;
     }
 
-    public bool ReadOnly
+    public bool EnabledEditor
     {
-        get => !multiSelectionComboBox1.Enabled;
-        set => multiSelectionComboBox1.Enabled = !value;
-    }
-
-    public object? Value
-    {
-        get
-        {
-            if (DefaultAsNull && multiSelectionComboBox1.VisualItems.Count == 0)
-            {
-                return null;
-            }
-
-            return multiSelectionComboBox1.VisualItems.OfType<VisualItem>().Select(x => x.Text).ToArray();
-        }
-
+        get => enabledEditor;
         set
         {
-            if (value == null)
+            if (enabledEditor != value) 
             {
-                ClearSelectedValue();
-            }
-            else
-            {
-                if (multiSelectionComboBox1.DataSource is IList<IItem> list && value is IEnumerable<string> values)
-                {
-                    list
-                        .Where(x => values.Contains(x.Code))
-                        .ToList()
-                        .ForEach(x => multiSelectionComboBox1.AddVisualItem(x.Code));
-                }
+                enabledEditor = value;
+                multiSelectionComboBox1.Enabled = value;
             }
         }
     }
 
-    #region IDataSourceControl interface
-
-    public void RemoveDataSource()
+    [Browsable(false)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public string[] SelectedItems
     {
-        multiSelectionComboBox1.DataSource = null;
-    }
-
-    public void RefreshDataSource()
-    {
-        items.Clear();
-        if (dataSource != null)
+        get => selected.ToArray();
+        set
         {
-            var ds = dataSource();
-            if (ds != null)
+            if (!selected.SequenceEqual(value))
             {
-                items.AddRange(ds);
-                multiSelectionComboBox1.DataSource = items;
+                selected = new List<string>(value);
+
+                lockAdd = true;
+                try
+                {
+                    multiSelectionComboBox1.SelectedItems.Clear();
+                    foreach (var item in DataSource.Where(x => selected.Contains(x.Code))) 
+                    {
+                        multiSelectionComboBox1.AddVisualItem(item.Code);
+
+                        var vi = multiSelectionComboBox1.VisualItems.OfType<VisualItem>().FirstOrDefault(x => x.Text == item.Code);
+                        if (vi != null)
+                        {
+                            vi.CloseButtonClicked += Visualitem_CloseButtonClicked;
+                        }
+                    }
+                }
+                finally
+                {
+                    lockAdd = false;
+                }
+
+                OnSelectedItemsChanged();
             }
         }
     }
 
-    public void RefreshDataSourceOnLoad() => RefreshDataSource();
-
-    #endregion
-
-    public void ClearSelectedValue() => multiSelectionComboBox1.VisualItems.Clear();
-
-    private void MultiSelectionComboBox1_SelectedItemCollectionChanged(object sender, SelectedItemCollectionChangedArgs e) => valueChanged?.Invoke(e.Action, e.SelectedItems);
-
-    #region IMultiSelectionComboBoxControl interface
-
-    IMultiSelectionComboBoxControl IMultiSelectionComboBoxControl.SetDataSource(GettingDataSource<IItem> func)
+    [Browsable(false)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public IEnumerable<IItem> DataSource
     {
-        dataSource = func;
-        return this;
+        get => (IEnumerable<IItem>)multiSelectionComboBox1.DataSource;
+        set => multiSelectionComboBox1.DataSource = value;
     }
 
-    IMultiSelectionComboBoxControl IMultiSelectionComboBoxControl.ValueChanged(MultiSelectValueChanged action)
+    protected void OnSelectedItemsChanged() => SelectedItemsChanged?.Invoke(this, EventArgs.Empty);
+
+    private void UpdateSelectedItems()
     {
-        valueChanged = action;
-        return this;
+        selected = new List<string>(multiSelectionComboBox1.VisualItems.OfType<VisualItem>().Select(x => x.Text));
+        OnSelectedItemsChanged();
     }
 
-    #endregion
+    private void Visualitem_CloseButtonClicked(object? sender, EventArgs e) => UpdateSelectedItems();
+
+    private void MultiSelectionComboBox1_VisualItemsCollectionChanged(object sender, VisualItemCollectionChangedArgs e)
+    {
+        if (lockAdd)
+        {
+            return;
+        }
+
+        UpdateSelectedItems();
+    }
 }

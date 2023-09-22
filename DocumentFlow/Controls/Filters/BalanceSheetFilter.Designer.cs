@@ -28,129 +28,155 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.comboView = new Syncfusion.WinForms.ListView.SfComboBox();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.dateRangeControl1 = new DocumentFlow.Controls.DateRangeControl();
-            this.label2 = new System.Windows.Forms.Label();
-            this.checkAmount = new Syncfusion.Windows.Forms.Tools.CheckBoxAdv();
-            this.checkSumma = new Syncfusion.Windows.Forms.Tools.CheckBoxAdv();
-            this.panel1 = new System.Windows.Forms.Panel();
-            ((System.ComponentModel.ISupportInitialize)(this.comboView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.checkAmount)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.checkSumma)).BeginInit();
-            this.SuspendLayout();
+            label1 = new Label();
+            comboView = new Syncfusion.WinForms.ListView.SfComboBox();
+            panel2 = new Panel();
+            dateRangeControl1 = new DateRangeControl();
+            label2 = new Label();
+            checkAmount = new Syncfusion.Windows.Forms.Tools.CheckBoxAdv();
+            checkSumma = new Syncfusion.Windows.Forms.Tools.CheckBoxAdv();
+            panel1 = new Panel();
+            checkGivingMaterial = new Syncfusion.Windows.Forms.Tools.CheckBoxAdv();
+            ((System.ComponentModel.ISupportInitialize)comboView).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)checkAmount).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)checkSumma).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)checkGivingMaterial).BeginInit();
+            SuspendLayout();
             // 
             // label1
             // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label1.Location = new System.Drawing.Point(4, 3);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(120, 24);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Вид номенклатуры";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            label1.Dock = DockStyle.Left;
+            label1.Location = new Point(4, 3);
+            label1.Name = "label1";
+            label1.Size = new Size(120, 24);
+            label1.TabIndex = 0;
+            label1.Text = "Вид номенклатуры";
+            label1.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // comboView
             // 
-            this.comboView.Dock = System.Windows.Forms.DockStyle.Left;
-            this.comboView.DropDownPosition = Syncfusion.WinForms.Core.Enums.PopupRelativeAlignment.Center;
-            this.comboView.DropDownStyle = Syncfusion.WinForms.ListView.Enums.DropDownStyle.DropDownList;
-            this.comboView.Location = new System.Drawing.Point(124, 3);
-            this.comboView.Name = "comboView";
-            this.comboView.Size = new System.Drawing.Size(206, 24);
-            this.comboView.Style.TokenStyle.CloseButtonBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.comboView.TabIndex = 2;
+            comboView.Dock = DockStyle.Left;
+            comboView.DropDownPosition = Syncfusion.WinForms.Core.Enums.PopupRelativeAlignment.Center;
+            comboView.DropDownStyle = Syncfusion.WinForms.ListView.Enums.DropDownStyle.DropDownList;
+            comboView.Location = new Point(124, 3);
+            comboView.Name = "comboView";
+            comboView.Size = new Size(206, 24);
+            comboView.Style.TokenStyle.CloseButtonBackColor = Color.FromArgb(255, 255, 255);
+            comboView.TabIndex = 2;
+            comboView.SelectedValueChanged += ComboView_SelectedValueChanged;
             // 
             // panel2
             // 
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel2.Location = new System.Drawing.Point(330, 3);
-            this.panel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(7, 24);
-            this.panel2.TabIndex = 16;
+            panel2.Dock = DockStyle.Left;
+            panel2.Location = new Point(330, 3);
+            panel2.Margin = new Padding(4, 3, 4, 3);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(7, 24);
+            panel2.TabIndex = 16;
             // 
             // dateRangeControl1
             // 
-            this.dateRangeControl1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.dateRangeControl1.From = new System.DateTime(2022, 1, 1, 0, 0, 0, 0);
-            this.dateRangeControl1.FromEnabled = true;
-            this.dateRangeControl1.Location = new System.Drawing.Point(579, 3);
-            this.dateRangeControl1.Name = "dateRangeControl1";
-            this.dateRangeControl1.Size = new System.Drawing.Size(413, 24);
-            this.dateRangeControl1.TabIndex = 17;
-            this.dateRangeControl1.To = new System.DateTime(2022, 12, 31, 23, 59, 59, 999);
-            this.dateRangeControl1.ToEnabled = true;
+            dateRangeControl1.DateFrom = new DateTime(2022, 1, 1, 0, 0, 0, 0);
+            dateRangeControl1.DateFromEnabled = true;
+            dateRangeControl1.DateTo = new DateTime(2022, 12, 31, 23, 59, 59, 999);
+            dateRangeControl1.DateToEnabled = true;
+            dateRangeControl1.Dock = DockStyle.Left;
+            dateRangeControl1.Location = new Point(680, 3);
+            dateRangeControl1.Name = "dateRangeControl1";
+            dateRangeControl1.Size = new Size(413, 24);
+            dateRangeControl1.TabIndex = 17;
+            dateRangeControl1.DateFromEnabledChanged += DateRangeControl1_DateFromEnabledChanged;
+            dateRangeControl1.DateToEnabledChanged += DateRangeControl1_DateToEnabledChanged;
+            dateRangeControl1.DateFromChanged += DateRangeControl1_DateFromChanged;
+            dateRangeControl1.DateToChanged += DateRangeControl1_DateToChanged;
             // 
             // label2
             // 
-            this.label2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label2.Location = new System.Drawing.Point(337, 3);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 24);
-            this.label2.TabIndex = 18;
-            this.label2.Text = "Показывать:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            label2.Dock = DockStyle.Left;
+            label2.Location = new Point(337, 3);
+            label2.Name = "label2";
+            label2.Size = new Size(82, 24);
+            label2.TabIndex = 18;
+            label2.Text = "Показывать:";
+            label2.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // checkAmount
             // 
-            this.checkAmount.BeforeTouchSize = new System.Drawing.Size(91, 24);
-            this.checkAmount.Checked = true;
-            this.checkAmount.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkAmount.Dock = System.Windows.Forms.DockStyle.Left;
-            this.checkAmount.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkAmount.Location = new System.Drawing.Point(419, 3);
-            this.checkAmount.Name = "checkAmount";
-            this.checkAmount.Size = new System.Drawing.Size(91, 24);
-            this.checkAmount.Style = Syncfusion.Windows.Forms.Tools.CheckBoxAdvStyle.Metro;
-            this.checkAmount.TabIndex = 19;
-            this.checkAmount.Text = "Количество";
-            this.checkAmount.ThemeName = "Metro";
-            this.checkAmount.ThemeStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            checkAmount.BeforeTouchSize = new Size(87, 24);
+            checkAmount.Checked = true;
+            checkAmount.CheckState = CheckState.Checked;
+            checkAmount.Dock = DockStyle.Left;
+            checkAmount.ForeColor = SystemColors.ControlText;
+            checkAmount.Location = new Point(419, 3);
+            checkAmount.Name = "checkAmount";
+            checkAmount.Size = new Size(87, 24);
+            checkAmount.Style = Syncfusion.Windows.Forms.Tools.CheckBoxAdvStyle.Metro;
+            checkAmount.TabIndex = 19;
+            checkAmount.Text = "Количество";
+            checkAmount.ThemeName = "Metro";
+            checkAmount.ThemeStyle.BackColor = Color.FromArgb(0, 0, 0, 0);
+            checkAmount.CheckedChanged += CheckAmount_CheckedChanged;
             // 
             // checkSumma
             // 
-            this.checkSumma.BeforeTouchSize = new System.Drawing.Size(62, 24);
-            this.checkSumma.Dock = System.Windows.Forms.DockStyle.Left;
-            this.checkSumma.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkSumma.Location = new System.Drawing.Point(510, 3);
-            this.checkSumma.Name = "checkSumma";
-            this.checkSumma.Size = new System.Drawing.Size(62, 24);
-            this.checkSumma.Style = Syncfusion.Windows.Forms.Tools.CheckBoxAdvStyle.Metro;
-            this.checkSumma.TabIndex = 20;
-            this.checkSumma.Text = "Сумму";
-            this.checkSumma.ThemeName = "Metro";
+            checkSumma.BeforeTouchSize = new Size(62, 24);
+            checkSumma.Dock = DockStyle.Left;
+            checkSumma.ForeColor = SystemColors.ControlText;
+            checkSumma.Location = new Point(506, 3);
+            checkSumma.Name = "checkSumma";
+            checkSumma.Size = new Size(62, 24);
+            checkSumma.Style = Syncfusion.Windows.Forms.Tools.CheckBoxAdvStyle.Metro;
+            checkSumma.TabIndex = 20;
+            checkSumma.Text = "Сумму";
+            checkSumma.ThemeName = "Metro";
+            checkSumma.CheckedChanged += CheckSumma_CheckedChanged;
             // 
             // panel1
             // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(572, 3);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(7, 24);
-            this.panel1.TabIndex = 21;
+            panel1.Dock = DockStyle.Left;
+            panel1.Location = new Point(673, 3);
+            panel1.Margin = new Padding(4, 3, 4, 3);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(7, 24);
+            panel1.TabIndex = 21;
+            // 
+            // checkGivingMaterial
+            // 
+            checkGivingMaterial.BeforeTouchSize = new Size(105, 24);
+            checkGivingMaterial.Checked = true;
+            checkGivingMaterial.CheckState = CheckState.Checked;
+            checkGivingMaterial.Dock = DockStyle.Left;
+            checkGivingMaterial.ForeColor = SystemColors.ControlText;
+            checkGivingMaterial.Location = new Point(568, 3);
+            checkGivingMaterial.Name = "checkGivingMaterial";
+            checkGivingMaterial.Size = new Size(105, 24);
+            checkGivingMaterial.Style = Syncfusion.Windows.Forms.Tools.CheckBoxAdvStyle.Metro;
+            checkGivingMaterial.TabIndex = 22;
+            checkGivingMaterial.Text = "Дав. материал";
+            checkGivingMaterial.ThemeName = "Metro";
+            checkGivingMaterial.CheckedChanged += CheckGivingMaterial_CheckedChanged;
             // 
             // BalanceSheetFilter
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.dateRangeControl1);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.checkSumma);
-            this.Controls.Add(this.checkAmount);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.comboView);
-            this.Controls.Add(this.label1);
-            this.Name = "BalanceSheetFilter";
-            this.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Size = new System.Drawing.Size(1153, 30);
-            ((System.ComponentModel.ISupportInitialize)(this.comboView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.checkAmount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.checkSumma)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(dateRangeControl1);
+            Controls.Add(panel1);
+            Controls.Add(checkGivingMaterial);
+            Controls.Add(checkSumma);
+            Controls.Add(checkAmount);
+            Controls.Add(label2);
+            Controls.Add(panel2);
+            Controls.Add(comboView);
+            Controls.Add(label1);
+            Name = "BalanceSheetFilter";
+            Padding = new Padding(4, 3, 4, 3);
+            Size = new Size(1153, 30);
+            ((System.ComponentModel.ISupportInitialize)comboView).EndInit();
+            ((System.ComponentModel.ISupportInitialize)checkAmount).EndInit();
+            ((System.ComponentModel.ISupportInitialize)checkSumma).EndInit();
+            ((System.ComponentModel.ISupportInitialize)checkGivingMaterial).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -163,5 +189,6 @@
         private Syncfusion.Windows.Forms.Tools.CheckBoxAdv checkAmount;
         private Syncfusion.Windows.Forms.Tools.CheckBoxAdv checkSumma;
         private Panel panel1;
+        private Syncfusion.Windows.Forms.Tools.CheckBoxAdv checkGivingMaterial;
     }
 }

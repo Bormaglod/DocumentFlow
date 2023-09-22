@@ -2,39 +2,69 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 19.12.2019
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
+// Date: 20.12.2019
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Controls.Interfaces;
 
-using Syncfusion.Windows.Forms.Tools;
+using System.ComponentModel;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfCurrencyTextBox : BaseNumericTextBox<decimal, CurrencyTextBox>, IAccess, ICurrencyTextBoxControl
+[ToolboxItem(true)]
+public partial class DfCurrencyTextBox : DfControl, IAccess
 {
-    public DfCurrencyTextBox(string property, string header) : base(property, header)
+    private decimal decimalValue;
+    private bool enabledEditor = true;
+    private int currencyDecimalDigits = 2;
+
+    public event EventHandler? DecimalValueChanged;
+
+    public DfCurrencyTextBox()
     {
         InitializeComponent();
+        SetNestedControl(currencyTextBox1);
 
-        TextBox.Style = TextBoxExt.theme.Office2016Colorful;
-        TextBox.DecimalValueChanged += CurrencyTextBox_DecimalValueChanged;
+        currencyTextBox1.DataBindings.Add(nameof(currencyTextBox1.DecimalValue), this, nameof(DecimalValue), false, DataSourceUpdateMode.OnPropertyChanged);
     }
 
-    public override void ClearSelectedValue() => TextBox.Text = string.Empty;
+    public decimal DecimalValue
+    {
+        get => decimalValue;
 
-    protected override decimal GetValueTextBox() => TextBox.DecimalValue;
+        set
+        {
+            if (decimalValue != value)
+            {
+                decimalValue = value;
+                DecimalValueChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
 
-    protected override void UpdateTextControl(decimal value) => TextBox.DecimalValue = value;
+    public bool EnabledEditor
+    {
+        get => enabledEditor;
+        set
+        {
+            if (enabledEditor != value)
+            {
+                enabledEditor = value;
+                currencyTextBox1.Enabled = value;
+            }
+        }
+    }
 
-    private void CurrencyTextBox_DecimalValueChanged(object? sender, EventArgs e) => UpdateNumericValue();
-
-    
+    public int CurrencyDecimalDigits
+    {
+        get => currencyDecimalDigits;
+        set
+        {
+            if (currencyDecimalDigits != value)
+            {
+                currencyDecimalDigits = value;
+                currencyTextBox1.CurrencyDecimalDigits = value;
+            }
+        }
+    }
 }

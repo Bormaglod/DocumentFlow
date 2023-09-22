@@ -3,58 +3,110 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 20.12.2019
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Controls.Interfaces;
 
-using Syncfusion.Windows.Forms.Tools;
+using System.ComponentModel;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfIntegerTextBox<T> : BaseNumericTextBox<T, IntegerTextBox>, IAccess, IIntegerTextBoxControl<T>
-    where T : struct, IComparable<T>
+[ToolboxItem(true)]
+public partial class DfIntegerTextBox : DfControl, IAccess
 {
-    public DfIntegerTextBox(string property, string header) :
-        base(property, header)
+    private long integerValue;
+    private bool enabledEditor = true;
+    private bool showSuffix = false;
+    private string suffix = "суффикс";
+    private string numberGroupSeparator = " ";
+    private int[] numberGroupSizes = new int[] { 3 };
+
+    public event EventHandler? IntegerValueChanged;
+
+    public DfIntegerTextBox()
     {
         InitializeComponent();
+        SetNestedControl(integerTextBox1);
 
-        TextBox.Style = TextBoxExt.theme.Office2016Colorful;
-        TextBox.IntegerValueChanged += IntegerTextBox_IntegerValueChanged;
+        integerTextBox1.DataBindings.Add(nameof(integerTextBox1.IntegerValue), this, nameof(IntegerValue), false, DataSourceUpdateMode.OnPropertyChanged);
     }
 
-    public long MinValue { get => TextBox.MinValue; set => TextBox.MinValue = value; }
-
-    public long MaxValue { get => TextBox.MaxValue; set => TextBox.MaxValue = value; }
-
-    public bool AllowLeadingZeros { get => TextBox.AllowLeadingZeros; set => TextBox.AllowLeadingZeros = value; }
-
-    public string NumberGroupSeparator { get => TextBox.NumberGroupSeparator; set => TextBox.NumberGroupSeparator = value; }
-
-    public int[] NumberGroupSizes { get => TextBox.NumberGroupSizes; set => TextBox.NumberGroupSizes = value; }
-
-    public override void ClearSelectedValue() => TextBox.Text = string.Empty;
-
-    protected override T GetValueTextBox() => (T)Convert.ChangeType(TextBox.IntegerValue, typeof(T));
-
-    protected override void UpdateTextControl(T value) => TextBox.IntegerValue = (long)Convert.ChangeType(value, typeof(long));
-
-    private void IntegerTextBox_IntegerValueChanged(object? sender, EventArgs e) => UpdateNumericValue();
-
-    #region IIntegerTextBoxControl<T> interface
-
-    IIntegerTextBoxControl<T> IIntegerTextBoxControl<T>.SetNumberGroupSeparator(string groupSeparator)
+    public long IntegerValue
     {
-        NumberGroupSeparator = groupSeparator;
-        return this;
+        get => integerValue;
+
+        set
+        {
+            if (integerValue != value)
+            {
+                integerValue = value;
+                IntegerValueChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
-    #endregion
+    public bool EnabledEditor
+    {
+        get => enabledEditor;
+        set
+        {
+            if (enabledEditor != value)
+            {
+                enabledEditor = value;
+                integerTextBox1.Enabled = value;
+            }
+        }
+    }
+
+    public bool ShowSuffix
+    {
+        get => showSuffix;
+        set
+        {
+            if (showSuffix != value)
+            {
+                showSuffix = value;
+                labelSuffix.Visible = value;
+            }
+        }
+    }
+
+    public string Suffix
+    {
+        get => suffix;
+        set
+        {
+            if (suffix != value)
+            {
+                suffix = value;
+                labelSuffix.Text = value;
+            }
+        }
+    }
+
+    public string NumberGroupSeparator
+    {
+        get => numberGroupSeparator;
+        set
+        {
+            if (numberGroupSeparator != value)
+            {
+                numberGroupSeparator = value;
+                integerTextBox1.NumberGroupSeparator = value;
+            }
+        }
+    }
+
+    public int[] NumberGroupSizes 
+    { 
+        get => numberGroupSizes; 
+        set
+        {
+            if (numberGroupSizes != value)
+            {
+                numberGroupSizes = value;
+                integerTextBox1.NumberGroupSizes = value;
+            }
+        }
+    }
 }

@@ -3,58 +3,54 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.06.2018
-//
-// Версия 2022.12.31
-//  - в вызов ShowMainForm добавлен параметр newDatabaseSelecting
-//    определяющий необходимость показа стартовой страницы
-// Версия 2023.1.24
-//  - IDatabase перенесён из DocumentFlow.Data в DocumentFlow.Infrastructure.Data
-// Версия 2023.5.3
-//  - в конструктор добавлены параметры IDatabase и IUserAliasRepository
-//    и соответственно исправлена логика работы
-//
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
-using DocumentFlow.Data.Infrastructure;
-using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Data.Interfaces;
+using DocumentFlow.Data.Interfaces.Repository;
+using DocumentFlow.Settings;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 using Npgsql;
 
-using System.Configuration;
 using System.IO;
 
 namespace DocumentFlow;
 
 public partial class LoginForm : Form
 {
-    private string prevDatabaseName = string.Empty;
     private readonly IDatabase database;
     private readonly IUserAliasRepository users;
+    private readonly IServiceProvider services;
+    private readonly AppSettings appSettings;
+    private readonly LocalSettings localSettings;
 
-    public LoginForm(IDatabase database, IUserAliasRepository users)
+    public LoginForm(IServiceProvider services, IDatabase database, IUserAliasRepository users, IOptions<AppSettings> oprions, IOptionsSnapshot<LocalSettings> settings)
     {
         InitializeComponent();
 
+        this.services = services;
         this.database = database;
         this.users = users;
 
-        if (string.IsNullOrEmpty(Properties.Settings.Default.LastConnectedDatabase))
+        appSettings = oprions.Value;
+        localSettings = settings.Value;
+    }
+
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        
+        foreach (var cs in appSettings.Connections)
         {
-            Properties.Settings.Default.Upgrade();
+            comboDatabase.Items.Add(cs.Name);
         }
 
-        var settings = ConfigurationManager.ConnectionStrings;
+        comboDatabase.SelectedItem = localSettings.Login.LastConnection;
 
-        if (settings != null)
-        {
-            foreach (ConnectionStringSettings cs in settings)
-            {
-                comboDatabase.Items.Add(cs.Name);
-            }
-
-            comboDatabase.SelectedItem = Properties.Settings.Default.LastConnectedDatabase;
-        }
+        textPassword.Select();
     }
 
     private void ButtonLogin_Click(object sender, EventArgs e)
@@ -73,8 +69,8 @@ public partial class LoginForm : Form
 
         string userName = comboUsers.SelectedItem is UserAlias c ? (c.PgName ?? string.Empty) : comboUsers.Text;
 
-        Properties.Settings.Default.PreviousUser = userName;
-        Properties.Settings.Default.LastConnectedDatabase = comboDatabase.SelectedItem.ToString();
+        localSettings.Login.PreviousUser = userName;
+        localSettings.Login.LastConnection = comboDatabase.SelectedItem.ToString() ?? string.Empty;
 
         if (!string.IsNullOrEmpty(userName))
         {
@@ -93,12 +89,10 @@ public partial class LoginForm : Form
                     throw;
             }
 
-            Properties.Settings.Default.Save();
+            localSettings.Save();
 
-            bool newDatabaseSelecting = prevDatabaseName != comboDatabase.SelectedItem.ToString();
-            prevDatabaseName = comboDatabase.SelectedItem.ToString() ?? string.Empty;
-
-            CurrentApplicationContext.Context.ShowMainForm(newDatabaseSelecting);
+            var context = services.GetRequiredService<CurrentApplicationContext>();
+            context.ShowMainForm();
         }
     }
 
@@ -120,13 +114,17 @@ public partial class LoginForm : Form
         comboUsers.DataSource = list;
 
 #if DEBUG
-        comboUsers.SelectedItem = list.FirstOrDefault(u => u.PgName == "postgres");
         if (File.Exists("password.txt"))
         {
-            textPassword.Text = File.ReadLines("password.txt").First();
+            var user = File.ReadLines("password.txt").First().Split(':', StringSplitOptions.TrimEntries);
+            comboUsers.SelectedItem = list.FirstOrDefault(u => u.PgName == user[0]);
+            textPassword.Text = user[1];
         }
 #else
-        comboUsers.SelectedItem = list.FirstOrDefault(u => u.PgName == Properties.Settings.Default.PreviousUser);
+        if (localSettings != null) 
+        {
+            comboUsers.SelectedItem = list.FirstOrDefault(u => u.PgName == localSettings.Login.PreviousUser);
+        }
 #endif
     }
 }

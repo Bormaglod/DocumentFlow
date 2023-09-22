@@ -3,28 +3,31 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 31.12.2022
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.1.28
-//  - добавлено свойство Size
-// Версия 2023.2.4
-//  - из конструктора убран вызов RefreshCard
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Entities.Balances;
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Models;
+using DocumentFlow.Interfaces;
+using DocumentFlow.Settings;
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace DocumentFlow.Controls.Cards;
 
 public partial class SupplierCard : UserControl, ICard
 {
-    public SupplierCard()
+    private readonly IPageManager pageManager;
+    private readonly IBalanceContractorRepository repository;
+    private readonly StartPageSettings settings;
+
+    public SupplierCard(IPageManager pageManager, IBalanceContractorRepository repository, IOptions<LocalSettings> options)
     {
         InitializeComponent();
+
+        this.pageManager = pageManager;
+        this.repository = repository;
+
+        settings = options.Value.StartPage;
     }
 
     public int Index => 1;
@@ -37,18 +40,14 @@ public partial class SupplierCard : UserControl, ICard
     {
         Controls.Clear();
 
-        var balance = Services.Provider.GetService<IBalanceContractorRepository>();
-        if (balance != null)
+        var suppliers = repository.GetSuppliersDebt(6);
+        int cnt = Math.Min(suppliers.Count, 6);
+        for (int i = 0; i < cnt; i++)
         {
-            var suppliers = balance.GetSuppliersDebt(6);
-            int cnt = Math.Min(suppliers.Count, 6);
-            for (int i = 0; i < cnt; i++)
-            {
-                CardRow row = new(suppliers[i]);
-                Controls.Add(row);
+            CardRow row = new(pageManager, suppliers[i], settings);
+            Controls.Add(row);
 
-                row.BringToFront();
-            }
+            row.BringToFront();
         }
     }
 }

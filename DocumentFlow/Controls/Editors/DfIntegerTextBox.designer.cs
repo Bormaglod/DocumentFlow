@@ -1,6 +1,6 @@
 ﻿namespace DocumentFlow.Controls.Editors
 {
-    partial class DfIntegerTextBox<T>
+    partial class DfIntegerTextBox
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -28,21 +28,58 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            integerTextBox1 = new Syncfusion.Windows.Forms.Tools.IntegerTextBox();
+            labelSuffix = new Label();
+            ((System.ComponentModel.ISupportInitialize)integerTextBox1).BeginInit();
+            SuspendLayout();
             // 
-            // L_IntegerTextBox
+            // integerTextBox1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "L_IntegerTextBox";
-            this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 7);
-            this.Size = new System.Drawing.Size(389, 32);
-            this.ResumeLayout(false);
-
+            integerTextBox1.BackGroundColor = Color.FromArgb(255, 255, 255);
+            integerTextBox1.BeforeTouchSize = new Size(100, 25);
+            integerTextBox1.BorderColor = Color.FromArgb(197, 197, 197);
+            integerTextBox1.BorderStyle = BorderStyle.FixedSingle;
+            integerTextBox1.Dock = DockStyle.Left;
+            integerTextBox1.ForeColor = Color.FromArgb(68, 68, 68);
+            integerTextBox1.IntegerValue = 0L;
+            integerTextBox1.Location = new Point(100, 0);
+            integerTextBox1.Name = "integerTextBox1";
+            integerTextBox1.PositiveColor = Color.FromArgb(68, 68, 68);
+            integerTextBox1.Size = new Size(100, 25);
+            integerTextBox1.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Office2016Colorful;
+            integerTextBox1.TabIndex = 0;
+            integerTextBox1.ThemeName = "Office2016Colorful";
+            integerTextBox1.ZeroColor = Color.FromArgb(68, 68, 68);
+            // 
+            // labelSuffix
+            // 
+            labelSuffix.AutoSize = true;
+            labelSuffix.Dock = DockStyle.Left;
+            labelSuffix.Location = new Point(200, 0);
+            labelSuffix.Name = "labelSuffix";
+            labelSuffix.Size = new Size(59, 17);
+            labelSuffix.TabIndex = 1;
+            labelSuffix.Text = "Суффикс";
+            labelSuffix.Visible = false;
+            // 
+            // DfIntegerTextBox
+            // 
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(labelSuffix);
+            Controls.Add(integerTextBox1);
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "DfIntegerTextBox";
+            Size = new Size(389, 32);
+            Controls.SetChildIndex(integerTextBox1, 0);
+            Controls.SetChildIndex(labelSuffix, 0);
+            ((System.ComponentModel.ISupportInitialize)integerTextBox1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+        private Syncfusion.Windows.Forms.Tools.IntegerTextBox integerTextBox1;
+        private Label labelSuffix;
     }
 }

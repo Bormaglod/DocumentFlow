@@ -3,24 +3,19 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 13.02.2022
-//
-// Версия 2022.9.3
-//  - тема отчёта теперь формируется с использованием описания
-//    класса (DescriptionAttribute)
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.ReportEngine.Infrastructure перемещено в DocumentFlow.Infrastructure.ReportEngine
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data.Infrastructure;
+using DocumentFlow.Data.Interfaces;
+using DocumentFlow.Data.Interfaces.Repository;
+using DocumentFlow.Data.Tools;
 using DocumentFlow.Dialogs;
-using DocumentFlow.Infrastructure.Data;
-using DocumentFlow.Infrastructure.ReportEngine;
+using DocumentFlow.Interfaces;
+using DocumentFlow.Settings;
 
 using FastReport;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 using System.Reflection;
 
@@ -29,12 +24,15 @@ namespace DocumentFlow.ReportEngine;
 public abstract class Report<T> : IReport
     where T : IDocumentInfo
 {
+    private readonly IServiceProvider services;
     private readonly Report report = new();
     private readonly string? reportText;
 
-    public Report()
+    public Report(IServiceProvider services)
     {
-        var r = Services.Provider.GetService<IReportRepository>()!.Get(Id);
+        this.services = services;
+
+        var r = services.GetRequiredService<IReportRepository>().Get(Id);
         Name = r.Code;
         Title = r.Title;
         reportText = r.SchemaReport;
@@ -63,18 +61,27 @@ public abstract class Report<T> : IReport
             string header = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
             report.LoadFromString(header + reportText);
             SetParameterValues(entity);
+
+            var db = services.GetRequiredService<IDatabase>();
+
+            var conn = report.Dictionary.Connections[0];
+            conn.ConnectionString = db.ConnectionString;
             report.Prepare();
         }
     }
 
     private void ShowReport(T entity)
     {
-        string file = BaseReport.CreatePdfDocument(report);
+        var ls = services.GetRequiredService<IOptions<LocalSettings>>().Value;
 
-        var attr = typeof(T).GetCustomAttribute<Data.Core.DescriptionAttribute>();
+        string file = BaseReport.CreatePdfDocument(report, ls.Report.Resolution);
+
+        var attr = typeof(T).GetCustomAttribute<EntityNameAttribute>();
         string title = $"{attr?.Name ?? string.Empty} {entity?.ToString() ?? string.Empty}";
 
-        PreviewReportForm.ShowReport(entity?.Id, file, title);
+        services
+            .GetRequiredService<PreviewReportForm>()
+            .ShowReport(entity?.Id, file, title);
     }
 
     void IReport.Show(IDocumentInfo document)

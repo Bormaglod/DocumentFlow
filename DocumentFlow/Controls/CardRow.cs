@@ -3,19 +3,12 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.12.2022
-//
-// Версия 2022.12.31
-//  - добавлен метод LinkLabelContractor_LinkClicked
-// Версия 2023.6.3
-//  - ширина значения устанавливается из файла параметров
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Entities.Balances;
-using DocumentFlow.Entities.Companies;
-using DocumentFlow.Infrastructure;
-
-using Microsoft.Extensions.DependencyInjection;
+using DocumentFlow.Data.Models;
+using DocumentFlow.Interfaces;
+using DocumentFlow.Settings;
+using DocumentFlow.ViewModels;
 
 using System.Globalization;
 
@@ -24,10 +17,13 @@ namespace DocumentFlow.Controls;
 public partial class CardRow : UserControl
 {
     private readonly Guid contractorId;
+    private readonly IPageManager pageManager;
 
-    public CardRow(ContractorDebt contractor)
+    public CardRow(IPageManager pageManager, CurrentBalanceContractor contractor, StartPageSettings settings)
     {
         InitializeComponent();
+
+        this.pageManager = pageManager;
 
         Dock = DockStyle.Top;
 
@@ -38,13 +34,13 @@ public partial class CardRow : UserControl
 
         linkLabelContractor.Text = contractor.ContractorName;
         labelAmount.Text = contractor.Debt.ToString("#,###.00", customProvider);
-        labelAmount.Width = Properties.Settings.Default.CardRowValueWidth;
+        labelAmount.Width = settings.CardRowValueWidth;
 
         contractorId = contractor.Id;
     }
 
     private void LinkLabelContractor_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        Services.Provider.GetService<IPageManager>()?.ShowEditor<IContractorEditor>(contractorId);
+        pageManager.ShowAssociateEditor<IContractorBrowser>(contractorId);
     }
 }

@@ -2,52 +2,97 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 19.12.2019
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
+// Date: 20.12.2019
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Controls.Interfaces;
 
-using Syncfusion.Windows.Forms.Tools;
+using System.ComponentModel;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfNumericTextBox : BaseNumericTextBox<decimal, DecimalTextBox>, IAccess, INumericTextBoxControl
+[ToolboxItem(true)]
+public partial class DfNumericTextBox : DfControl, IAccess
 {
-    public DfNumericTextBox(string property, string header) :
-        base(property, header)
+    private decimal decimalValue;
+    private bool enabledEditor = true;
+    private int numberDecimalDigits = 2;
+    private bool showSuffix = false;
+    private string suffix = "суффикс";
+
+    public event EventHandler? DecimalValueChanged;
+
+    public DfNumericTextBox()
     {
         InitializeComponent();
+        SetNestedControl(decimalTextBox1);
 
-        NumberDecimalDigits = 0;
-
-        TextBox.Style = TextBoxExt.theme.Office2016Colorful;
-        TextBox.DecimalValueChanged += DecimalText_DecimalValueChanged;
+        decimalTextBox1.DataBindings.Add(nameof(decimalTextBox1.DecimalValue), this, nameof(DecimalValue), false, DataSourceUpdateMode.OnPropertyChanged);
     }
 
-    public int NumberDecimalDigits { get => TextBox.NumberDecimalDigits; set => TextBox.NumberDecimalDigits = value; }
-
-    public override void ClearSelectedValue() => TextBox.Text = string.Empty;
-
-    protected override decimal GetValueTextBox() => TextBox.DecimalValue;
-
-    protected override void UpdateTextControl(decimal value) => TextBox.DecimalValue = value;
-
-    private void DecimalText_DecimalValueChanged(object? sender, EventArgs e) => UpdateNumericValue();
-
-    #region INumericTextBoxControl interface
-
-    INumericTextBoxControl INumericTextBoxControl.SetNumberDecimalDigits(int digits)
+    public decimal DecimalValue
     {
-        NumberDecimalDigits = digits;
-        return this;
+        get => decimalValue;
+
+        set
+        {
+            if (decimalValue != value)
+            {
+                decimalValue = value;
+                DecimalValueChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
-    #endregion
+    public bool EnabledEditor
+    {
+        get => enabledEditor;
+        set
+        {
+            if (enabledEditor != value)
+            {
+                enabledEditor = value;
+                decimalTextBox1.Enabled = value;
+            }
+        }
+    }
+
+    public int NumberDecimalDigits
+    {
+        get => numberDecimalDigits;
+        set
+        {
+            if (numberDecimalDigits != value)
+            {
+                numberDecimalDigits = value;
+                decimalTextBox1.NumberDecimalDigits = value;
+            }
+        }
+    }
+
+    public bool ShowSuffix
+    {
+        get => showSuffix;
+        set
+        {
+            if (showSuffix != value)
+            {
+                showSuffix = value;
+                labelSuffix.Visible = value;
+            }
+        }
+    }
+
+    public string Suffix
+    {
+        get => suffix;
+        set
+        {
+            if (suffix != value)
+            {
+                suffix = value;
+                labelSuffix.Text = value;
+            }
+        }
+    }
 }

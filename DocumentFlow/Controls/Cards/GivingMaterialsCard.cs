@@ -3,22 +3,12 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 29.01.2023
-//
-// Версия 2023.2.4
-//  - из конструктора убран вызов RefreshCard
-// Версия 2023.5.3
-//  - добавлены пункты меню "Открыть материал" и "Открыть контрагента" и
-//    реализован соответствующий функционал
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Entities.Balances;
-using DocumentFlow.Entities.Companies;
-using DocumentFlow.Entities.Products;
-using DocumentFlow.Infrastructure;
-using DocumentFlow.Infrastructure.Controls;
-
-using Microsoft.Extensions.DependencyInjection;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Models;
+using DocumentFlow.Interfaces;
+using DocumentFlow.ViewModels;
 
 using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.DataGrid.Events;
@@ -27,9 +17,15 @@ namespace DocumentFlow.Controls.Cards;
 
 public partial class GivingMaterialsCard : UserControl, ICard
 {
-    public GivingMaterialsCard()
+    private readonly IPageManager pageManager;
+    private readonly IBalanceProcessingRepository repository;
+
+    public GivingMaterialsCard(IPageManager pageManager, IBalanceProcessingRepository repository)
     {
         InitializeComponent();
+
+        this.pageManager = pageManager;
+        this.repository = repository;
 
         gridMaterials.RecordContextMenu = contextRecordMenu;
     }
@@ -42,24 +38,20 @@ public partial class GivingMaterialsCard : UserControl, ICard
 
     public void RefreshCard()
     {
-        var balance = Services.Provider.GetService<IBalanceProcessingRepository>();
-        if (balance != null)
-        {
-            gridMaterials.DataSource = balance.GetRemainders();
-        }
+        gridMaterials.DataSource = repository.GetRemainders();
     }
 
     private void GridMaterials_AutoGeneratingColumn(object sender, AutoGeneratingColumnArgs e)
     {
         switch (e.Column.MappingName)
         {
-            case "MaterialName":
+            case nameof(BalanceProcessing.MaterialName):
                 e.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                 break;
-            case "ContractorName":
+            case nameof(BalanceProcessing.ContractorName):
                 e.Column.Width = 140;
                 break;
-            case "Remainder":
+            case nameof(BalanceProcessing.Remainder):
                 e.Column.Width = 80;
                 break;
             default:
@@ -72,8 +64,7 @@ public partial class GivingMaterialsCard : UserControl, ICard
     {
         if (gridMaterials.CurrentItem is BalanceProcessing balance)
         {
-            var pages = Services.Provider.GetService<IPageManager>()!;
-            pages.ShowEditor<IMaterialEditor>(balance.ReferenceId);
+            pageManager.ShowAssociateEditor<IMaterialBrowser>(balance.ReferenceId);
         }
     }
 
@@ -81,8 +72,7 @@ public partial class GivingMaterialsCard : UserControl, ICard
     {
         if (gridMaterials.CurrentItem is BalanceProcessing balance)
         {
-            var pages = Services.Provider.GetService<IPageManager>()!;
-            pages.ShowEditor<IContractorEditor>(balance.ContractorId);
+            pageManager.ShowAssociateEditor<IContractorBrowser>(balance.ContractorId);
         }
     }
 }

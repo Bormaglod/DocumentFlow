@@ -3,15 +3,11 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 24.03.2018
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Controls.Tools;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Properties;
 
 using Syncfusion.Data;
@@ -31,73 +27,45 @@ namespace DocumentFlow.Controls.Renderers
 
         protected override void OnRender(Graphics paint, Rectangle cellRect, string cellValue, CellStyleInfo style, DataColumnBase column, RowColumnIndex rowColumnIndex)
         {
-            if (grid.View == null)
-                return;
+            paint.PaintCellBackground(cellRect, style);
 
-            bool topLevel = grid.View.TopLevelGroup == null || grid.View.TopLevelGroup.Groups.Count == 0;
-            int cnt = (topLevel ? grid.View.Records.Count : grid.View.TopLevelGroup?.DisplayElements.Count ?? 0) + grid.StackedHeaderRows.Count;
-
-            int rowIndex = grid.ShowPreviewRow && rowColumnIndex.RowIndex > 0 ? 
-                (rowColumnIndex.RowIndex - 1) / 2 + 1 : 
-                rowColumnIndex.RowIndex;
-
-            if (rowIndex > grid.StackedHeaderRows.Count && rowIndex <= cnt)
+            var entry = grid.GetRecordEntryAtRowIndex(rowColumnIndex.RowIndex);
+            if (entry is not RecordEntry rowData)
             {
-                RecordEntry? rowData;
-                
-                int row = rowIndex - 1 - grid.StackedHeaderRows.Count;
-                if (topLevel)
+                return;
+            }
+
+            if (rowData.Data is not IDocumentInfo rowView)
+            {
+                return;
+            }
+
+            Image? image = headerImage?.Get(rowView); ;
+
+            if (image == null)
+            {
+                if (rowData.Data is IDirectory dir && dir.IsFolder)
                 {
-                    rowData = grid.View.Records[row];
+                    image = rowView.Deleted ? Resources.icons8_folder_delete_16 : Resources.icons8_folder_16;
                 }
                 else
                 {
-                    rowData = grid.View.TopLevelGroup?.DisplayElements[row] as RecordEntry;
-                }
-
-                if (rowData == null)
-                    return;
-
-                if (rowData.Data is IDocumentInfo rowView)
-                {
-                    Image? image = null;
-
-                    if (headerImage != null)
+                    if (rowView.Deleted)
                     {
-                        image = headerImage.Get(rowView);
+                        image = Resources.icons8_document_delete_16;
                     }
-
-                    if (image == null)
+                    else
                     {
-                        if (rowData.Data is IDirectory dir && dir.IsFolder)
-                        {
-                            image = rowView.Deleted ? Resources.icons8_folder_delete_16 : Resources.icons8_folder_16;
-                        }
-                        else
-                        {
-                            if (rowView.Deleted)
-                            {
-                                image = Resources.icons8_document_delete_16;
-                            }
-                            else
-                            {
-                                image = (rowData.Data is IAccountingDocument doc && doc.CarriedOut) 
-                                    ? (doc.ReCarriedOut ? Resources.icons8_document_warn_check_16 : Resources.icons8_document_check_16)
-                                    : Resources.icons8_document_16;
-                            }
-                        }
+                        image = (rowData.Data is IAccountingDocument doc && doc.CarriedOut)
+                            ? (doc.ReCarriedOut ? Resources.icons8_document_warn_check_16 : Resources.icons8_document_check_16)
+                            : Resources.icons8_document_16;
                     }
-
-                    int x = (cellRect.Width - image.Width) / 2 - 1;
-                    int y = (cellRect.Height - image.Height) / 2 - 1;
-                    paint.DrawImage(image, new Rectangle(x + cellRect.X, y + cellRect.Y, image.Width, image.Height));
                 }
             }
 
-            if (rowIndex > cnt)
-            {
-                paint.FillRectangle(new SolidBrush(style.BackColor), cellRect);
-            }
+            int x = (cellRect.Width - image.Width) / 2 - 1;
+            int y = (cellRect.Height - image.Height) / 2 - 1;
+            paint.DrawImage(image, new Rectangle(x + cellRect.X, y + cellRect.Y, image.Width, image.Height));
         }
     }
 }

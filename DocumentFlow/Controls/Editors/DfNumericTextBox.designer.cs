@@ -28,22 +28,60 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            decimalTextBox1 = new DecimalTextBox();
+            labelSuffix = new Label();
+            ((System.ComponentModel.ISupportInitialize)decimalTextBox1).BeginInit();
+            SuspendLayout();
             // 
-            // L_NumericTextBox
+            // decimalTextBox1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "L_NumericTextBox";
-            this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 7);
-            this.Size = new System.Drawing.Size(719, 32);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            decimalTextBox1.BackGroundColor = Color.FromArgb(255, 255, 255);
+            decimalTextBox1.BeforeTouchSize = new Size(100, 25);
+            decimalTextBox1.BorderColor = Color.FromArgb(197, 197, 197);
+            decimalTextBox1.BorderStyle = BorderStyle.FixedSingle;
+            decimalTextBox1.DecimalValue = new decimal(new int[] { 0, 0, 0, 0 });
+            decimalTextBox1.Dock = DockStyle.Left;
+            decimalTextBox1.ForeColor = Color.FromArgb(68, 68, 68);
+            decimalTextBox1.Location = new Point(100, 0);
+            decimalTextBox1.Name = "decimalTextBox1";
+            decimalTextBox1.PositiveColor = Color.FromArgb(68, 68, 68);
+            decimalTextBox1.Size = new Size(100, 25);
+            decimalTextBox1.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Office2016Colorful;
+            decimalTextBox1.TabIndex = 1;
+            decimalTextBox1.Text = "0,00";
+            decimalTextBox1.ThemeName = "Office2016Colorful";
+            decimalTextBox1.ZeroColor = Color.FromArgb(68, 68, 68);
+            // 
+            // labelSuffix
+            // 
+            labelSuffix.AutoSize = true;
+            labelSuffix.Dock = DockStyle.Left;
+            labelSuffix.Location = new Point(200, 0);
+            labelSuffix.Name = "labelSuffix";
+            labelSuffix.Size = new Size(59, 17);
+            labelSuffix.TabIndex = 2;
+            labelSuffix.Text = "Суффикс";
+            labelSuffix.Visible = false;
+            // 
+            // DfNumericTextBox
+            // 
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(labelSuffix);
+            Controls.Add(decimalTextBox1);
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "DfNumericTextBox";
+            Size = new Size(389, 32);
+            Controls.SetChildIndex(decimalTextBox1, 0);
+            Controls.SetChildIndex(labelSuffix, 0);
+            ((System.ComponentModel.ISupportInitialize)decimalTextBox1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private DecimalTextBox decimalTextBox1;
+        private Label labelSuffix;
     }
 }

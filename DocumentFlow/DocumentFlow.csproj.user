@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <_LastSelectedProfileId>C:\Projects\DocumentFlow.version 6\DocumentFlow\Properties\PublishProfiles\registry.hub.docker.com_autokom.pubxml</_LastSelectedProfileId>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Update="AboutForm.cs">
       <SubType>Form</SubType>
@@ -10,25 +7,106 @@
     <Compile Update="Controls\CardPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\CardRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Cards\ApplicatorCard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Cards\CustomerCard.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Cards\GivingMaterialsCard.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Cards\SupplierCard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Cards\WageCard.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Core\BaseNumericTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Core\SelectBox.cs">
+    <Compile Update="Controls\DateRangeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfCheckBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Editors\DfDocumentSelectBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfPropertyList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Filters\BalanceContractorFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Filters\BalanceSheetFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Filters\DocumentFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Filters\WaybillReceiptFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\PageContents\StartPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Dialogs\InputCurrencyDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DateRangeDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\OperationsPerformedDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\ProductPriceDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\SelectDayDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\EmailSendDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\PreviewReportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DirectoryDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DocumentDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\WageEmployeeDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Accounts\BaseAccountBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Accounts\BaseAccountEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Accounts\Contractors\AccountBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Accounts\Contractors\AccountEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Accounts\Our\OurAccountBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Accounts\Our\OurAccountEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Breadcrumb.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfChoice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Editors\DfComboBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfCurrencyTextBox.cs">
@@ -43,28 +121,19 @@
     <Compile Update="Controls\Editors\DfDirectorySelectBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Editors\DfDocumentSelectBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Controls\Editors\DfIntegerTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfLabel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfMaskedTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Editors\DfMultiSelectionComboBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfNumericTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Editors\DfPercentTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfProductionLot.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfState.cs">
+    <Compile Update="Controls\Editors\DfSelectBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfTextBox.cs">
@@ -73,484 +142,271 @@
     <Compile Update="Controls\Editors\DfToggleButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Editors\DfWireStripping.cs">
+    <Compile Update="Controls\Navigator.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Filters\BalanceContractorFilter.cs">
+    <Compile Update="Controls\EditorPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Filters\BalanceSheetFilter.cs">
+    <Compile Update="Controls\PageContents\BrowserPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\CardRow.cs">
+    <Compile Update="Controls\PageContents\EditorPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Cards\SupplierCard.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\ComboBoxAdvImage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Controls\Core\BaseControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Core\DataSourceControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Cards\CustomerCard.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\DateRangeControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\DecimalTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Controls\Filters\DocumentFilter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfComboBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfLine.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfMultiSelectionComboBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfOperationProperty.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfReportCard.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\PageContents\Browser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\PageContents\DocumentEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\PageContents\Editor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\PageContents\StartPage.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\PictureContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Controls\TablessControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Dialogs\BrowserCustomizationForm.cs">
+    <Compile Update="Dialogs\DirectoryItemDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Dialogs\ColumnCutomizeForm.cs">
+    <Compile Update="Dialogs\DocumentRefDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Dialogs\DirectorySelectDialog.cs">
+    <Compile Update="Dialogs\GroupDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Dialogs\DocumentRefEditorForm.cs">
+    <Compile Update="Dialogs\MessageChoiceDialog.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\InputCurrencyDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\OperationsPerformedDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Entities\Equipments\EquipmentBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Dialogs\GroupEditorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\MessageChoiceForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\PreviewReportForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\SelectDirectoryForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\SelectDateRangeForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\SelectDayValueForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\SelectDocumentForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\SelectEmailForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Controls\SettingPages\BrowserColumnsPage.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Companies\Contractor\ContractorEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Operations\CuttingEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\PaymentOrders\PaymentOrderEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\PaymentOrders\Posting\PostingPaymentsEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Finished\BaseFinishedGoodsBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Lot\BaseProductionLotBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Lot\ProductionLotBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Lot\ProductionLotFilter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Lot\ProductionLotNestedBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Order\ProductionOrderBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Order\ProductionOrderEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Performed\BaseOperationsPerformedBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Performed\BaseOperationsPerformedEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Performed\OperationsPerformedEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Performed\OperationsPerformedNestedEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Processing\WaybillProcessingBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Processing\WaybillProcessingEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\PurchaseRequest\PurchaseRequestBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\PurchaseRequest\PurchaseRequestEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\PurchaseRequest\PurchaseRequestFilter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\BasePayrollBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\BasePayrollEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\BillingDocumentBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\BillingDocumentEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Finished\BaseFinishedGoodsEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Finished\FinishedGoodsBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Finished\FinishedGoodsEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Finished\FinishedGoodsNestedBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Finished\FinishedGoodsNestedEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Dialogs\WageEmployeeDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\GrossPayrols\GrossPayrollBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\GrossPayrols\GrossPayrollEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\Payroll\PayrollBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\Payroll\PayrollEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\ReportCards\ReportCardBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\ReportCards\ReportCardEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\Wages1c\Wage1cBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Wages\Wages1c\Wage1cEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Waybills\Receipt\WaybillReceiptEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Waybills\Receipt\WaybillReceiptFilter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Waybills\Receipt\WaybillReceiptNestedBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Dialogs\SettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Entities\Accounts\BaseAccountBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Accounts\BaseAccountEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Accounts\Contractors\AccountBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Accounts\Contractors\AccountEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Accounts\Our\OurAccountBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Accounts\Our\OurAccountEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Balances\BalanceBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Balances\Contractor\BalanceContractorBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Balances\Goods\BalanceGoodsBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Balances\Material\BalanceMaterialBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Balances\BalanceProductBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Banks\BankBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Banks\BankEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Calculations\CalculationBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Calculations\CalculationEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Calculations\Items\BaseCalculationOperationEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Calculations\Items\Cutting\CalculationCuttingBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Calculations\Items\Cutting\CalculationCuttingEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Calculations\Items\Deduction\CalculationDeductionBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Calculations\Items\Deduction\CalculationDeductionEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Dialogs\PropertyForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Entities\Calculations\Items\Material\CalculationMaterialBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Calculations\Items\Operation\CalculationOperationBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Calculations\Items\Operation\CalculationOperationEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Companies\ContractApplication\ContractApplicationBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Entities\Companies\ContractApplication\ContractApplicationEditor.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Dialogs\PriceApprovalDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Entities\Companies\Contractor\ContractorBrowser.cs">
+    <Compile Update="ViewModels\Balances\BalanceBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Companies\Contract\ContractBrowser.cs">
+    <Compile Update="ViewModels\Balances\Contractors\BalanceContractorBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Companies\Contract\ContractEditor.cs">
+    <Compile Update="ViewModels\Balances\Employees\BalanceEmployeeBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Companies\Organization\OrganizationBrowser.cs">
+    <Compile Update="ViewModels\Balances\Goods\BalanceGoodsBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Companies\Organization\OrganizationEditor.cs">
+    <Compile Update="ViewModels\Balances\Materials\BalanceMaterialBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Deductions\DeductionBrowser.cs">
+    <Compile Update="ViewModels\Balances\Processings\BalanceProcessingBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Deductions\DeductionEditor.cs">
+    <Compile Update="ViewModels\Balances\Products\BalanceProductBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Employees\BaseEmployeeBrowser.cs">
+    <Compile Update="ViewModels\Banks\BankBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Employees\BaseEmployeeEditor.cs">
+    <Compile Update="ViewModels\Banks\BankEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Employees\Employee\EmployeeBrowser.cs">
+    <Compile Update="ViewModels\Calculations\CalculationBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Employees\Employee\EmployeeEditor.cs">
+    <Compile Update="ViewModels\Calculations\CalculationEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Employees\OrgEmployee\OrgEmployeeBrowser.cs">
+    <Compile Update="ViewModels\Calculations\Items\Cuttings\CalculationCuttingBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Employees\OrgEmployee\OrgEmployeeEditor.cs">
+    <Compile Update="ViewModels\Calculations\Items\Deductions\CalculationDeductionBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Employees\OurEmployee\OurEmployeeBrowser.cs">
+    <Compile Update="ViewModels\Calculations\Items\Materials\CalculationMaterialBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Employees\OurEmployee\OurEmployeeEditor.cs">
+    <Compile Update="ViewModels\Calculations\Items\Operations\CalculationOperationBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Equipments\EquipmentEditor.cs">
+    <Compile Update="ViewModels\Calculations\Items\Operations\CalculationOperationEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Measurements\MeasurementBrowser.cs">
+    <Compile Update="ViewModels\Calculations\MaterialUsage\MaterialUsageBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Measurements\MeasurementEditor.cs">
+    <Compile Update="ViewModels\Companies\ContractApplication\ContractApplicationBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\OkopfLib\OkopfBrowser.cs">
+    <Compile Update="ViewModels\Companies\ContractApplication\ContractApplicationEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\OkopfLib\OkopfEditor.cs">
+    <Compile Update="ViewModels\Companies\Contractors\ContractorBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\OkpdtrLib\OkpdtrBrowser.cs">
+    <Compile Update="ViewModels\Companies\Contractors\ContractorEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\OkpdtrLib\OkpdtrEditor.cs">
+    <Compile Update="ViewModels\Companies\Contracts\ContractBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Operations\CuttingBrowser.cs">
+    <Compile Update="ViewModels\Companies\Contracts\ContractEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Operations\OperationBrowser.cs">
+    <Compile Update="ViewModels\Companies\Customers\CustomerBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Operations\OperationEditor.cs">
+    <Compile Update="ViewModels\Companies\Organizations\OrganizationBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\OperationTypes\OperationTypeBrowser.cs">
+    <Compile Update="ViewModels\Companies\Organizations\OrganizationEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\OperationTypes\OperationTypeEditor.cs">
+    <Compile Update="ViewModels\Deductions\DeductionBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\PaymentOrders\Documents\DocumentPaymentBrowser.cs">
+    <Compile Update="ViewModels\Deductions\DeductionEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\PaymentOrders\PaymentOrderBrowser.cs">
+    <Compile Update="ViewModels\Employees\BaseEmployeeBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\PaymentOrders\Posting\PostingPaymentsBrowser.cs">
+    <Compile Update="ViewModels\Employees\BaseEmployeeEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Persons\PersonBrowser.cs">
+    <Compile Update="ViewModels\Employees\Employees\EmployeeBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Persons\PersonEditor.cs">
+    <Compile Update="ViewModels\Employees\Employees\EmployeeEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Dialogs\MaterialQuantityDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Entities\Productions\Lot\ProductionLotEditor.cs">
+    <Compile Update="ViewModels\Employees\OrgEmployees\OrgEmployeeBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Productions\Performed\OperationsPerformedBrowser.cs">
+    <Compile Update="ViewModels\Employees\OurEmployees\OurEmployeeBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Productions\Performed\OperationsPerformedNestedBrowser.cs">
+    <Compile Update="ViewModels\Employees\OurEmployees\OurEmployeeEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Productions\Returns\ReturnMaterialsBrowser.cs">
+    <Compile Update="ViewModels\Equipments\EquipmentBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Productions\Returns\ReturnMaterialsEditor.cs">
+    <Compile Update="ViewModels\Equipments\EquipmentEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Warehouse\BalanceSheet\BalanceSheetBrowser.cs">
+    <Compile Update="ViewModels\InitialBalance\Contractor\InitialBalanceContractorBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Products\Contractors\CustomerBrowser.cs">
+    <Compile Update="ViewModels\InitialBalance\Employee\InitialBalanceEmployeeBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Products\Goods\GoodsBrowser.cs">
+    <Compile Update="ViewModels\InitialBalance\Goods\InitialBalanceGoodsBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Products\Goods\GoodsEditor.cs">
+    <Compile Update="ViewModels\InitialBalance\Material\InitialBalanceMaterialBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Products\MaterialUsage\MaterialUsageBrowser.cs">
+    <Compile Update="ViewModels\InitialBalance\Material\InitialBalanceMaterialEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Products\Material\MaterialBrowser.cs">
+    <Compile Update="ViewModels\LegalForms\OkopfBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Products\Material\MaterialEditor.cs">
+    <Compile Update="ViewModels\LegalForms\OkopfEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Dialogs\ProductPriceDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Entities\Waybills\Receipt\WaybillReceiptBrowser.cs">
+    <Compile Update="ViewModels\Measurements\MeasurementBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Waybills\Sale\WaybillSaleBrowser.cs">
+    <Compile Update="ViewModels\Measurements\MeasurementEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Waybills\Sale\WaybillSaleEditor.cs">
+    <Compile Update="ViewModels\Operations\CuttingBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Waybills\WaybillBrowser.cs">
+    <Compile Update="ViewModels\Operations\CuttingEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Entities\Waybills\WaybillEditor.cs">
+    <Compile Update="ViewModels\Operations\OperationBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Operations\OperationEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Operations\Types\OperationTypeBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Operations\Types\OperationTypeEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Operations\Usage\OperationUsageBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\PaymentOrders\PaymentOrderBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\PaymentOrders\PaymentOrderEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\PaymentOrders\Posting\PostingPaymentsBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\PaymentOrders\Posting\PostingPaymentsEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Persons\PersonBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Persons\PersonEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Finished\BaseFinishedGoodsBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Finished\FinishedGoodsBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Finished\FinishedGoodsEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Filters\ProductionLotFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Finished\FinishedGoodsNestedBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Lot\BaseProductionLotBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Lot\ProductionLotBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Lot\ProductionLotEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Lot\ProductionLotNestedBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Order\ProductionOrderBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Performed\BaseOperationsPerformedBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Performed\OperationsPerformedBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Performed\OperationsPerformedEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Performed\OperationsPerformedNestedBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Products\Goods\GoodsBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Products\Goods\GoodsEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Products\Materials\MaterialBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Products\Materials\MaterialEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Products\ProductBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Products\Wires\WireBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Products\Wires\WireEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="LoginForm.cs">
@@ -559,7 +415,67 @@
     <Compile Update="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Settings\Page\MarginsPanel.cs">
+    <Compile Update="ViewModels\Professions\OkpdtrBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Professions\OkpdtrEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\PurchaseRequest\PurchaseRequestBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\PurchaseRequest\PurchaseRequestEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Filters\PurchaseRequestFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Wages\BasePayrollBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Wages\BillingDocumentBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Wages\GrossPayrols\GrossPayrollBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Wages\GrossPayrols\GrossPayrollEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Wages\Payment\PayrollPaymentBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Wages\Payment\PayrollPaymentEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Wages\Payroll\PayrollBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Wages\Wages1c\Wage1cBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Warehouse\AdjustingBalances\AdjustingBalancesBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Warehouse\AdjustingBalances\AdjustingBalancesEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Warehouse\BalanceSheet\BalanceSheetBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Waybills\Receipt\WaybillReceiptBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Waybills\Receipt\WaybillReceiptNestedBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Waybills\Sale\WaybillSaleBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Waybills\Sale\WaybillSaleEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Waybills\WaybillBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>

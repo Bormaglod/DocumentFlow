@@ -3,17 +3,10 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 31.12.2022
-//
-// Версия 2023.1.19
-//  - удалён метод RefreshPanel
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.2.4
-//  - добавлено автоматическое обновление карты при создании
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Settings;
 
 namespace DocumentFlow.Controls;
 
@@ -21,7 +14,7 @@ public partial class CardPanel : UserControl
 {
     private readonly ICard card;
 
-    public CardPanel(ICard card, Size cardSize)
+    public CardPanel(ICard card, StartPageSettings settings)
     {
         InitializeComponent();
 
@@ -35,12 +28,9 @@ public partial class CardPanel : UserControl
             control.BringToFront();
         }
 
-        var cardPadding = Properties.Settings.Default.CardPadding;
         Size = new Size(
-            cardSize.Width * card.Size.Width + cardPadding * (card.Size.Width - 1),
-            cardSize.Height * card.Size.Height + cardPadding * (card.Size.Height - 1));
-
-        card.RefreshCard();
+            settings.CardSize.Width * card.Size.Width + settings.CardPadding * (card.Size.Width - 1),
+            settings.CardSize.Height * card.Size.Height + settings.CardPadding * (card.Size.Height - 1));
 
         this.card = card;
     }

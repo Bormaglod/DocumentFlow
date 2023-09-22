@@ -3,137 +3,155 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.11.2021
-//
-// Версия 2022.12.6
-//  - добавлено свойство OwnerIdentifier
-// Версия 2022.12.17
-//  - добавлен метод CreateQuery(string tableName);
-// Версия 2023.1.8
-//  - добавлен метод Configure и WriteConfigure (реализация метода
-//    интерфейса IBalanceContractorFilter
-// Версия 2023.1.15
-//  - DocumentFilterData переименован в DocumentFilterSettings
-// Версия 2023.1.17
-//  - namespace заменен с DocumentFlow.Controls на DocumentFlow.Controls.Filters
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Entities.Companies;
-using DocumentFlow.Infrastructure.Data;
-using DocumentFlow.Infrastructure.Settings;
+using DocumentFlow.Data.Enums;
+using DocumentFlow.Data.Interfaces.Filters;
+using DocumentFlow.Data.Models;
+using DocumentFlow.Settings;
+
+using FluentDateTime;
 
 using Humanizer;
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 using SqlKata;
 
-namespace DocumentFlow.Controls.Filters
+using System.ComponentModel;
+
+namespace DocumentFlow.Controls.Filters;
+
+[ToolboxItem(false)]
+public partial class DocumentFilter : UserControl, IDocumentFilter
 {
-    public partial class DocumentFilter : UserControl, IDocumentFilter
+    private readonly DocumentFilterSettings settings;
+
+    public DocumentFilter(IOrganizationRepository orgs)
     {
-        public DocumentFilter()
+        InitializeComponent();
+
+        var list = orgs.GetList();
+
+        comboOrg.DataSource = list;
+        comboOrg.SelectedItem = list.FirstOrDefault(x => x.DefaultOrg);
+
+        settings = new DocumentFilterSettings()
         {
-            InitializeComponent();
-
-            var orgs = Services.Provider.GetService<IOrganizationRepository>();
-
-            var list = orgs!.GetList();
-            comboOrg.DataSource = list;
-            comboOrg.SelectedItem = list.FirstOrDefault(x => x.DefaultOrg);
-        }
-
-        public Guid? OwnerIdentifier { get; set; }
-
-        public bool DateFromEnabled 
-        {
-            get => dateRangeControl1.FromEnabled;
-            set => dateRangeControl1.FromEnabled = value;
-        }
-
-        public bool DateToEnabled 
-        {
-            get => dateRangeControl1.ToEnabled;
-            set => dateRangeControl1.ToEnabled = value;
-        }
-
-        public DateTime? DateFrom 
-        {
-            get => dateRangeControl1.From;
-            set => dateRangeControl1.From = value;
-        }
-
-        public DateTime? DateTo 
-        {
-            get => dateRangeControl1.To;
-            set => dateRangeControl1.To = value;
-        }
-
-        public Control Control => this;
-
-        public void Configure(IAppSettings appSettings)
-        {
-            var data = appSettings.Get<DocumentFilterSettings>("filter");
-            
-            DateFromEnabled = data.DateFromEnabled;
-            DateToEnabled = data.DateToEnabled;
-            DateFrom = data.DateFrom;
-            DateTo = data.DateTo;
-        }
-
-        public void WriteConfigure(IAppSettings appSettings)
-        {
-            DocumentFilterSettings data = new()
-            {
-                DateFromEnabled = DateFromEnabled,
-                DateToEnabled = DateToEnabled,
-                DateFrom = DateFrom,
-                DateTo = DateTo
-            };
-
-            appSettings.Write("filter", data);
-        }
-
-        public void SetDateRange(DateRange range) => dateRangeControl1.SetRange(range);
-
-        public Query? CreateQuery<T>() => CreateQuery(typeof(T).Name.Underscore());
-
-        public virtual Query? CreateQuery(string tableName)
-        {
-            var query = new Query();
-            if (comboOrg.SelectedItem is Organization org)
-            {
-                query.Where($"{tableName}.organization_id", org.Id);
-            }
-
-            if (DateFromEnabled || DateToEnabled)
-            {
-                if (DateFrom == null)
-                {
-                    query.Where($"{tableName}.document_date", "<=", DateTo);
-                }
-                else if (DateTo == null)
-                {
-                    query.Where($"{tableName}.document_date", ">=", DateFrom);
-                }
-                else
-                {
-                    query.WhereBetween($"{tableName}.document_date", DateFrom, DateTo);
-                }
-            }
-
-            if (query.Clauses.Count > 0)
-            {
-                return query;
-            }
-
-            return null;
-        }
-
-        private void ButtonClearOrg_Click(object sender, EventArgs e) => comboOrg.SelectedIndex = -1;
+            DateFromEnabled = true,
+            DateFrom = DateTime.Today.FirstDayOfYear(),
+            DateToEnabled = true,
+            DateTo = DateTime.Today.EndOfYear()
+        };
     }
+
+    public Guid? OwnerId { get; set; }
+
+    public bool DateFromEnabled
+    {
+        get => settings.DateFromEnabled;
+        set
+        {
+            if (settings.DateFromEnabled != value)
+            {
+                settings.DateFromEnabled = value;
+                dateRangeControl1.DateFromEnabled = value;
+            }
+        }
+    }
+
+    public bool DateToEnabled
+    {
+        get => settings.DateToEnabled;
+        set
+        {
+            if (settings.DateToEnabled != value)
+            {
+                settings.DateToEnabled = value;
+                dateRangeControl1.DateToEnabled = value;
+            }
+        }
+    }
+
+    public DateTime DateFrom
+    {
+        get => settings.DateFrom;
+        set
+        {
+            if (settings.DateFrom != value)
+            {
+                settings.DateFrom = value;
+                dateRangeControl1.DateFrom = value;
+            }
+        }
+    }
+
+    public DateTime DateTo
+    {
+        get => settings.DateTo;
+        set
+        {
+            if (settings.DateTo != value)
+            {
+                settings.DateTo = value;
+                dateRangeControl1.DateTo = value;
+            }
+        }
+    }
+
+    public object? Settings => settings;
+
+    public void SetDateRange(DateRange range) => dateRangeControl1.SetRange(range);
+
+    public Query? CreateQuery<T>() => CreateQuery(typeof(T).Name.Underscore());
+
+    public virtual Query? CreateQuery(string tableName)
+    {
+        var query = new Query();
+        if (comboOrg.SelectedItem is Organization org)
+        {
+            query.Where($"{tableName}.organization_id", org.Id);
+        }
+
+        if (DateFromEnabled || DateToEnabled)
+        {
+            if (DateToEnabled && DateFromEnabled)
+            {
+                query.WhereBetween($"{tableName}.document_date", DateFrom, DateTo);
+            }
+            else if (DateToEnabled)
+            {
+                query.Where($"{tableName}.document_date", "<=", DateTo);
+            }
+            else if (DateFromEnabled)
+            {
+                query.Where($"{tableName}.document_date", ">=", DateFrom);
+            }
+        }
+
+        if (query.Clauses.Count > 0)
+        {
+            return query;
+        }
+
+        return null;
+    }
+
+    public void SettingsLoaded()
+    {
+        dateRangeControl1.DateFrom = settings.DateFrom;
+        dateRangeControl1.DateTo = settings.DateTo;
+        dateRangeControl1.DateFromEnabled = settings.DateFromEnabled;
+        dateRangeControl1.DateToEnabled = settings.DateToEnabled;
+    }
+
+    private void ButtonClearOrg_Click(object sender, EventArgs e) => comboOrg.SelectedIndex = -1;
+
+    private void DateRangeControl1_DateFromChanged(object sender, EventArgs e) => settings.DateFrom = dateRangeControl1.DateFrom;
+
+    private void DateRangeControl1_DateToChanged(object sender, EventArgs e) => settings.DateTo = dateRangeControl1.DateTo;
+
+    private void DateRangeControl1_DateFromEnabledChanged(object sender, EventArgs e) => settings.DateFromEnabled = dateRangeControl1.DateFromEnabled;
+
+    private void DateRangeControl1_DateToEnabledChanged(object sender, EventArgs e) => settings.DateToEnabled = dateRangeControl1.DateToEnabled;
 }

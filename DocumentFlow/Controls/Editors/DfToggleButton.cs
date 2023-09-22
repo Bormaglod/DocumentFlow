@@ -3,66 +3,64 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 03.10.2021
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.5.5
-//  - из параметров конструктора удалён headerWidth
-// Версия 2023.5.11
-//  - добавлен метод GetDefaultEditorWidth
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Controls.Core;
+using DocumentFlow.Controls.Interfaces;
 
 using Syncfusion.Windows.Forms.Tools;
 
+using System.ComponentModel;
+
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfToggleButton : BaseControl, IBindingControl, IAccess, IToggleButtonControl
+[ToolboxItem(true)]
+public partial class DfToggleButton : DfControl, IAccess
 {
-    private ControlValueChanged<bool>? changed;
+    private bool enabledEditor = true;
+    private bool state;
 
-    public DfToggleButton(string property, string header) : base(property)
+    public event EventHandler? ToggleValueChanged;
+
+    public DfToggleButton()
     {
         InitializeComponent();
-        SetLabelControl(label1, header);
         SetNestedControl(toggleButton1);
+    }
+
+    public bool EnabledEditor
+    {
+        get => enabledEditor;
+        set
+        {
+            if (enabledEditor != value)
+            {
+                enabledEditor = value;
+                toggleButton1.Enabled = value;
+            }
+        }
     }
 
     public bool ToggleValue
     {
-        get => toggleButton1.ToggleState == ToggleButtonState.Active;
-        set => toggleButton1.ToggleState = ((bool?)value ?? false) ? ToggleButtonState.Active : ToggleButtonState.Inactive;
+        get => state;
+        set
+        {
+            if (state != value)
+            {
+                state = value;
+                toggleButton1.ToggleState = value ? ToggleButtonState.Active : ToggleButtonState.Inactive;
+                ToggleValueChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
-    public bool ReadOnly
+    private void SetState(bool value) 
     {
-        get => !toggleButton1.Enabled;
-        set => toggleButton1.Enabled = !value;
+        
     }
 
-    public object? Value
+    private void ToggleButton1_ToggleStateChanged(object sender, ToggleStateChangedEventArgs e)
     {
-        get => ToggleValue;
-        set => ToggleValue = ((bool?)value ?? false);
+        ToggleValue = e.ToggleState == ToggleButtonState.Active;
     }
-
-    public void ClearSelectedValue() => toggleButton1.ToggleState = ToggleButtonState.Inactive;
-
-    protected override int GetDefaultEditorWidth() => 90;
-
-    private void ToggleButton1_ToggleStateChanged(object sender, ToggleStateChangedEventArgs e) => changed?.Invoke(ToggleValue);
-
-    #region IToggleButtonControl interface
-
-    IToggleButtonControl IToggleButtonControl.ToggleChanged(ControlValueChanged<bool> action)
-    {
-        changed = action;
-        return this;
-    }
-
-    #endregion
 }

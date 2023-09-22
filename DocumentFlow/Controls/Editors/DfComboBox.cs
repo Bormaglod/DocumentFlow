@@ -3,217 +3,163 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 19.12.2019
-//
-// Версия 2022.8.29
-//  - добавлена кнопка для открытия нового окна
-//  - добавлено свойство OpenAction
-//  - свойство SelectedItem типа Guid? переименовано в SelectedValue
-//  - добавлено свойство SelecredItem типа T?
-//  - удалён метод SetSelectedItem
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.4.2
-//  - добавлено наследование от IComboBoxControl
-//  - тип универсального параметра T изменен на IDocumentInfo
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure;
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Controls.Core;
-using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Controls.Events;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Interfaces;
 
-using Microsoft.Extensions.DependencyInjection;
+using Syncfusion.WinForms.Core.Enums;
+using Syncfusion.WinForms.ListView.Events;
 
-using Syncfusion.Windows.Forms.Tools;
+using System.ComponentModel;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfComboBox<T> : DataSourceControl<Guid, T>, IBindingControl, IAccess, IComboBoxControl<T>
-    where T : class, IDocumentInfo
+[ToolboxItem(true)]
+public partial class DfComboBox : DfControl, IAccess
 {
-    private bool required = false;
-    private bool lockManual = false;
-    private OpenDialog<T>? open;
-    private ControlValueChanged<T?>? valueChanged;
-    private ControlValueChanged<T?>? valueSelected;
+    private Guid selectedItem;
+    private bool enabledEditor = true;
+    private bool showDeleteButton = true;
+    private bool showOpenButton = true;
+    private string displayMember = nameof(IDirectory.ItemName);
 
-    public DfComboBox(string property, string header) : base(property)
+    private Guid? currentItem;
+
+    public event EventHandler? DeleteButtonClick;
+    public event EventHandler<DocumentSelectedEventArgs>? OpenButtonClick;
+    public event EventHandler? SelectedItemChanged;
+    public event EventHandler<DocumentSelectedEventArgs>? DocumentSelectedChanged;
+
+    public DfComboBox()
     {
         InitializeComponent();
-        SetLabelControl(label1, header);
         SetNestedControl(panelEdit);
 
-        buttonOpen.Visible = false;
-        panelSeparator3.Visible = false;
+        comboBox.DisplayMember = displayMember;
+        comboBox.ValueMember = nameof(IDirectory.Id);
+
+        comboBox.DataBindings.Add(nameof(comboBox.SelectedValue), this, nameof(SelectedItem), true, DataSourceUpdateMode.OnPropertyChanged);
     }
 
-    public bool ReadOnly
+    public bool EnabledEditor
     {
-        get => comboBoxAdv1.ReadOnly;
+        get => enabledEditor;
         set
         {
-            comboBoxAdv1.ReadOnly = value;
-            buttonDelete.Enabled = !value;
-        }
-    }
-
-    public Guid? SelectedValue => (Guid?)Value;
-
-    public T? Selected
-    {
-        get => comboBoxAdv1.SelectedItem as T;
-
-        private set
-        {
-            lockManual = true;
-            try
+            if (enabledEditor != value)
             {
-                comboBoxAdv1.SelectedItem = value;
-            }
-            finally
-            {
-                lockManual = false;
+                enabledEditor = value;
+                comboBox.Enabled = value;
+                buttonDelete.Enabled = value;
             }
         }
     }
 
-    #region IBindingControl interface
-
-    public object? Value
+    public bool ShowDeleteButton
     {
-        get
-        {
-            if (comboBoxAdv1.SelectedItem != null && comboBoxAdv1.SelectedItem is T selectedItem)
-            {
-                return selectedItem.Id;
-            }
-
-            if (required)
-            {
-                throw new ArgumentException($"Значение поля [{Header}] должно быть иметь значение.");
-            }
-
-            return null;
-        }
-
+        get => showDeleteButton;
         set
         {
-            if (value is Guid id)
+            if (showDeleteButton != value)
             {
-                T? identifier = comboBoxAdv1.Items.OfType<T>().FirstOrDefault(x => x.Id.CompareTo(id) == 0);
-                Selected = identifier;
-                return;
-            }
-
-            ClearSelectedValue();
-        }
-    }
-
-    #endregion
-
-    public void ClearSelectedValue() => Selected = null;
-
-    protected override void ClearItems() => comboBoxAdv1.Items.Clear();
-
-    protected override void DoRefreshDataSource(IEnumerable<T> data) => comboBoxAdv1.Items.AddRange(data.ToArray());
-
-    private void OnValueChanged(T? value)
-    {
-        valueChanged?.Invoke(value);
-        if (!lockManual)
-        {
-            valueSelected?.Invoke(value);
-        }
-    }
-
-    private void ComboBoxAdv1_SelectedIndexChanging(object sender, SelectedIndexChangingArgs e)
-    {
-        if (e.NewIndex == e.PrevIndex)
-        {
-            return;
-        }
-
-        if (e.NewIndex == -1)
-        {
-            OnValueChanged(null);
-        }
-        else
-        {
-            if (comboBoxAdv1.Items[e.NewIndex] is T value)
-            {
-                OnValueChanged(value);
+                showDeleteButton = value;
+                panelDelete.Visible = value;
             }
         }
     }
 
-    private void ButtonDelete_Click(object sender, EventArgs e) => ClearSelectedValue();
+    public bool ShowOpenButton
+    {
+        get => showOpenButton;
+        set
+        {
+            if (showOpenButton != value)
+            {
+                showOpenButton = value;
+                panelOpen.Visible = value;
+            }
+        }
+    }
+
+    [Browsable(false)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public Guid SelectedItem
+    {
+        get => selectedItem;
+        set
+        {
+            if (selectedItem != value)
+            {
+                selectedItem = value;
+                OnSelectedItemChanged();
+            }
+        }
+    }
+
+    [Browsable(false)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public IEnumerable<IDirectory> DataSource
+    {
+        get => (IEnumerable<IDirectory>)comboBox.DataSource;
+        set => comboBox.DataSource = value;
+    }
+
+    [Browsable(false)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public IDocumentInfo SelectedDocument
+    {
+        get => (IDocumentInfo)comboBox.SelectedItem;
+    }
+
+    public string DisplayMember
+    {
+        get => displayMember;
+        set
+        {
+            displayMember = value;
+            comboBox.DisplayMember = displayMember;
+        }
+    }
+
+    public void Clear() => comboBox.DataSource = null;
+
+    public void UpdateValue() => comboBox.DataBindings[nameof(comboBox.SelectedValue)].ReadValue();
+
+    public void OnSelectedItemChanged() => SelectedItemChanged?.Invoke(this, EventArgs.Empty);
+
+    private void ButtonDelete_Click(object sender, EventArgs e)
+    {
+        if (SelectedItem != Guid.Empty)
+        {
+            SelectedItem = Guid.Empty;
+            comboBox.SelectedIndex = -1;
+            DeleteButtonClick?.Invoke(this, EventArgs.Empty);
+        }
+    }
 
     private void ButtonOpen_Click(object sender, EventArgs e)
     {
-        if (open != null && Selected != null)
+        if (SelectedItem != Guid.Empty)
         {
-            open(Selected);
+            OpenButtonClick?.Invoke(this, new DocumentSelectedEventArgs(SelectedDocument));
         }
     }
 
-    #region IComboBoxControl interface
-
-    IComboBoxControl<T> IComboBoxControl<T>.Required()
+    private void ComboBox_DropDownClosed(object sender, DropDownClosedEventArgs e)
     {
-        required = true;
-        panelSeparator1.Visible = false;
-        buttonDelete.Visible = false;
-
-        return this;
-    }
-
-    IComboBoxControl<T> IComboBoxControl<T>.ReadOnly()
-    {
-        ReadOnly = true;
-        return this;
-    }
-
-    IComboBoxControl<T> IComboBoxControl<T>.EnableEditor<E>()
-    {
-        var pageManager = Services.Provider.GetService<IPageManager>();
-        if (pageManager != null)
+        if (e.DropDownCloseAction == PopupCloseAction.Done)
         {
-            open = pageManager.ShowEditor<E, T>;
-            buttonOpen.Visible = true;
-            panelSeparator3.Visible = true;
+            if (currentItem != SelectedItem)
+            {
+                DocumentSelectedChanged?.Invoke(this, new DocumentSelectedEventArgs(SelectedDocument));
+            }
         }
-
-        return this;
     }
 
-    IComboBoxControl<T> IComboBoxControl<T>.SetDataSource(GettingDataSource<T> func, DataRefreshMethod refreshMethod, Guid? selectValue)
+    private void ComboBox_DropDownOpened(object sender, EventArgs e)
     {
-        RefreshMethod = refreshMethod;
-        SetDataSource(func);
-        if (selectValue != null)
-        {
-            Value = selectValue;
-        }
-
-        return this;
+        currentItem = SelectedItem;
     }
-
-    IComboBoxControl<T> IComboBoxControl<T>.ItemChanged(ControlValueChanged<T?> action)
-    {
-        valueChanged = action;
-        return this;
-    }
-
-    IComboBoxControl<T> IComboBoxControl<T>.ItemSelected(ControlValueChanged<T?> action)
-    {
-        valueSelected = action;
-        return this;
-    }
-
-    #endregion
 }

@@ -3,106 +3,23 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 18.01.2022
-//
-// Версия 2022.8.20
-//  - скорректирован порядок обхода элементов управления
-// Версия 2022.11.26
-//  - параметр autoRefresh метода SetDataSource в классе
-//    DataSourceControl был удален. Вместо него используется свойство
-//    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
-// Версия 2023.2.6
-//  - исправлена орфографическая ошибка
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Dialogs.Infrastructure;
-using DocumentFlow.Entities.Companies;
-using DocumentFlow.Entities.Products;
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Tools;
+using DocumentFlow.Data.Models;
 
-using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DocumentFlow.Dialogs;
 
-public partial class PriceApprovalDialog : Form, IPriceApprovalDialog
+[Dialog]
+public partial class PriceApprovalDialog : Form
 {
-    private readonly IControls<PriceApproval> controls;
-
-    public PriceApprovalDialog(IControls<PriceApproval> controls)
+    public PriceApprovalDialog(IMaterialRepository materials, IGoodsRepository goods)
     {
         InitializeComponent();
 
-        this.controls = controls;
-
-        controls.Container = Controls;
-        controls
-            .AddDirectorySelectBox<Product>(x => x.ProductId, "Материал / Изделие", select =>
-                select
-                    .SetDataSource(GetProducts, DataRefreshMethod.Immediately)
-                    .EditorFitToSize()
-                    .SetHeaderWidth(150))
-            .AddCurrencyTextBox(x => x.Price, "Цена", text =>
-                text
-                    .EditorFitToSize()
-                    .SetHeaderWidth(150)
-                    .DefaultAsValue());
-    }
-
-    public bool Create(PriceApproval priceApproval)
-    {
-        if (ShowDialog() == DialogResult.OK)
-        {
-            SaveControlData(priceApproval);
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool Edit(PriceApproval priceApproval)
-    {
-        var product = controls.GetControl<IDirectorySelectBoxControl<Product>>();
-        var price = controls.GetControl<ICurrencyTextBoxControl>();
-
-        if (product is IDataSourceControl<Guid, Product> source) 
-        {
-            source.Select(priceApproval.ProductId);
-        }
-        
-        price.NumericValue = priceApproval.Price;
-        if (ShowDialog() == DialogResult.OK)
-        {
-            SaveControlData(priceApproval);
-            return true;
-        }
-
-        return false;
-    }
-
-    private void SaveControlData(PriceApproval priceApproval)
-    {
-        var product = controls.GetControl<IDirectorySelectBoxControl<Product>>();
-        var price = controls.GetControl<ICurrencyTextBoxControl>();
-
-        if (product.SelectedItem != null)
-        {
-            priceApproval.ProductId = product.SelectedItem.Id;
-        }
-
-        if (price.NumericValue != null)
-        {
-            priceApproval.Price = price.NumericValue.Value;
-        }
-
-        priceApproval.SetProductName(product.ValueText);
-    }
-
-    private IEnumerable<Product> GetProducts()
-    {
-        var materials = Services.Provider.GetService<IMaterialRepository>();
-        var goods = Services.Provider.GetService<IGoodsRepository>();
-
-        return materials!
+        selectProduct.DataSource = materials
             .GetListExisting(callback: q => q.OrderBy("item_name"))
             .OfType<Product>()
             .Union(
@@ -112,11 +29,51 @@ public partial class PriceApprovalDialog : Form, IPriceApprovalDialog
             );
     }
 
+    public bool Create([MaybeNullWhen(false)] out PriceApproval priceApproval)
+    {
+        if (ShowDialog() == DialogResult.OK)
+        {
+            Product product = (Product)selectProduct.SelectedDocument;
+            priceApproval = new PriceApproval()
+            {
+                ProductId = product.Id,
+                Price = textPrice.DecimalValue,
+                ProductName = product.ItemName ?? string.Empty,
+                MeasurementId = product.MeasurementId,
+                MeasurementName = product.MeasurementName ?? string.Empty
+            };
+
+            return true;
+        }
+
+        priceApproval = default;
+        return false;
+    }
+
+    public bool Edit(PriceApproval priceApproval)
+    {
+        selectProduct.SelectedItem = priceApproval.ProductId;
+        textPrice.DecimalValue = priceApproval.Price;
+        
+        if (ShowDialog() == DialogResult.OK)
+        {
+            Product product = (Product)selectProduct.SelectedDocument;
+
+            priceApproval.ProductId = product.Id;
+            priceApproval.Price = textPrice.DecimalValue;
+            priceApproval.ProductName = product.ItemName ?? string.Empty;
+            priceApproval.MeasurementId = product.MeasurementId;
+            priceApproval.MeasurementName = product.MeasurementName ?? string.Empty;
+
+            return true;
+        }
+
+        return false;
+    }
+
     private void ButtonOk_Click(object sender, EventArgs e)
     {
-        var product = controls.GetControl<IDirectorySelectBoxControl<Product>>();
-
-        if (product.SelectedItem == null)
+        if (selectProduct.SelectedItem == Guid.Empty)
         {
             MessageBox.Show("Необходимо выбрать материал/изделие.", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Error);
             DialogResult = DialogResult.None;

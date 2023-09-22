@@ -3,34 +3,23 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 13.07.2022
-//
-// Версия 2022.12.6
-//  - добавлено свойство OwnerIdentifier
-// Версия 2022.12.17
-//  - добавлен метод CreateQuery(string tableName);
-// Версия 2023.1.8
-//  - добавлен метод Configure и WriteConfigure (реализация метода
-//    интерфейса IBalanceContractorFilter
-// Версия 2023.1.9
-//  - изменился способ адресации пути в json
-// Версия 2023.1.15
-//  - BalanceSheetFilterData переименован в BalanceSheetFilterSettings
-// Версия 2023.1.17
-//  - namespace заменен с DocumentFlow.Controls на DocumentFlow.Controls.Filters
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure.Data;
-using DocumentFlow.Infrastructure.Settings;
+using DocumentFlow.Data.Enums;
+using DocumentFlow.Data.Interfaces.Filters;
+using DocumentFlow.Settings;
+
+using FluentDateTime;
+
+using Microsoft.Extensions.Configuration;
 
 using SqlKata;
 
+using System.ComponentModel;
+
 namespace DocumentFlow.Controls.Filters;
 
+[ToolboxItem(false)]
 public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
 {
     private class ViewInfo
@@ -49,6 +38,8 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
 
     private readonly List<ViewInfo> list;
 
+    private readonly BalanceSheetFilterSettings settings;
+
     public BalanceSheetFilter()
     {
         InitializeComponent();
@@ -60,98 +51,156 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
 
         comboView.DataSource = list;
 
-        Content = BalanceSheetContent.Material;
+        settings = new BalanceSheetFilterSettings()
+        {
+            DateFromEnabled = true,
+            DateFrom = DateTime.Today.FirstDayOfYear(),
+            DateToEnabled = true,
+            DateTo = DateTime.Today.EndOfYear(),
+            AmountVisible = true,
+            SummaVisible = true,
+            Content = BalanceSheetContent.Material,
+            ShowGivingMaterial = true
+        };
     }
 
-    public Guid? OwnerIdentifier { get; set; }
+    public Guid? OwnerId { get; set; }
 
-    public BalanceSheetContent Content
+    public bool DateFromEnabled
     {
-        get
-        {
-            if (comboView.SelectedItem is ViewInfo view)
-            {
-                return view.View;
-            }
-
-            throw new Exception("Непредвиденная ошибка.");
-        }
-
+        get => settings.DateFromEnabled;
         set
         {
-            var newValue = list.First(x => x.View == value);
-            comboView.SelectedItem = newValue;
+            if (settings.DateFromEnabled != value)
+            {
+                settings.DateFromEnabled = value;
+                dateRangeControl1.DateFromEnabled = value;
+            }
+        }
+    }
+
+    public bool DateToEnabled
+    {
+        get => settings.DateToEnabled;
+        set
+        {
+            if (settings.DateToEnabled != value)
+            {
+                settings.DateToEnabled = value;
+                dateRangeControl1.DateToEnabled = value;
+            }
+        }
+    }
+
+    public DateTime DateFrom
+    {
+        get => settings.DateFrom;
+        set
+        {
+            if (settings.DateFrom != value)
+            {
+                settings.DateFrom = value;
+                dateRangeControl1.DateFrom = value;
+            }
+        }
+    }
+
+    public DateTime DateTo
+    {
+        get => settings.DateTo;
+        set
+        {
+            if (settings.DateTo != value)
+            {
+                settings.DateTo = value;
+                dateRangeControl1.DateTo = value;
+            }
         }
     }
 
     public bool AmountVisible
     {
-        get => checkAmount.Checked;
-        set => checkAmount.Checked = value;
+        get => settings.AmountVisible;
+        set
+        {
+            if (settings.AmountVisible != value)
+            {
+                settings.AmountVisible = value;
+                checkAmount.Checked = value;
+            }
+        }
     }
 
     public bool SummaVisible
     {
-        get => checkSumma.Checked;
-        set => checkSumma.Checked = value;
-    }
-
-    public bool DateFromEnabled
-    {
-        get => dateRangeControl1.FromEnabled;
-        set => dateRangeControl1.FromEnabled = value;
-    }
-    public bool DateToEnabled
-    {
-        get => dateRangeControl1.ToEnabled;
-        set => dateRangeControl1.ToEnabled = value;
-    }
-
-    public DateTime? DateFrom
-    {
-        get => dateRangeControl1.From;
-        set => dateRangeControl1.From = value;
-    }
-
-    public DateTime? DateTo
-    {
-        get => dateRangeControl1.To;
-        set => dateRangeControl1.To = value;
-    }
-
-    public void Configure(IAppSettings appSettings)
-    {
-        var data = appSettings.Get<BalanceSheetFilterSettings>("#/balance_sheet/filter");
-        
-        DateFromEnabled = data.DateFromEnabled;
-        DateToEnabled = data.DateToEnabled;
-        DateFrom = data.DateFrom;
-        DateTo = data.DateTo;
-        Content = data.Content;
-        AmountVisible = data.AmountVisible;
-        SummaVisible = data.SummaVisible;
-    }
-
-    public void WriteConfigure(IAppSettings appSettings)
-    {
-        BalanceSheetFilterSettings data = new()
+        get => settings.SummaVisible;
+        set
         {
-            DateFromEnabled = DateFromEnabled,
-            DateToEnabled = DateToEnabled,
-            DateFrom = DateFrom,
-            DateTo = DateTo,
-            Content = Content,
-            AmountVisible = AmountVisible,
-            SummaVisible = SummaVisible
-        };
-
-        appSettings.Write("#/balance_sheet/filter", data);
+            if (settings.SummaVisible != value)
+            {
+                settings.SummaVisible = value;
+                checkSumma.Checked = value;
+            }
+        }
     }
+
+    public BalanceSheetContent Content
+    {
+        get => settings.Content;
+        set
+        {
+            if (settings.Content != value)
+            {
+                settings.Content = value;
+                comboView.SelectedItem = list.First(x => x.View == value);
+            }
+        }
+    }
+
+    public bool ShowGivingMaterial 
+    {
+        get => settings.ShowGivingMaterial;
+        set
+        {
+            if (settings.ShowGivingMaterial != value)
+            {
+                settings.ShowGivingMaterial = value;
+                checkGivingMaterial.Checked = value;
+            }
+        }
+    }
+
+    public object? Settings => settings;
 
     public void SetDateRange(DateRange range) => dateRangeControl1.SetRange(range);
-
-    public Control Control => this;
-
     public Query? CreateQuery<T>() => null;
     public Query? CreateQuery(string tableName) => null;
+
+    public void SettingsLoaded()
+    {
+        dateRangeControl1.DateFrom = settings.DateFrom;
+        dateRangeControl1.DateTo = settings.DateTo;
+        dateRangeControl1.DateFromEnabled = settings.DateFromEnabled;
+        dateRangeControl1.DateToEnabled = settings.DateToEnabled;
+        checkAmount.Checked = settings.AmountVisible;
+        checkSumma.Checked = settings.SummaVisible;
+        comboView.SelectedItem = list.First(x => x.View == settings.Content);
+        checkGivingMaterial.Checked = settings.ShowGivingMaterial;
+    }
+
+    private void DateRangeControl1_DateFromChanged(object sender, EventArgs e) => settings.DateFrom = dateRangeControl1.DateFrom;
+
+    private void DateRangeControl1_DateToChanged(object sender, EventArgs e) => settings.DateTo = dateRangeControl1.DateTo;
+
+    private void DateRangeControl1_DateFromEnabledChanged(object sender, EventArgs e) => settings.DateFromEnabled = dateRangeControl1.DateFromEnabled;
+
+    private void DateRangeControl1_DateToEnabledChanged(object sender, EventArgs e) => settings.DateToEnabled = dateRangeControl1.DateToEnabled;
+
+    private void CheckAmount_CheckedChanged(object sender, EventArgs e) => settings.AmountVisible = checkAmount.Checked;
+
+    private void CheckSumma_CheckedChanged(object sender, EventArgs e) => settings.SummaVisible = checkSumma.Checked;
+
+    private void ComboView_SelectedValueChanged(object sender, EventArgs e) => settings.Content = ((ViewInfo)comboView.SelectedItem).View;
+
+    private void CheckGivingMaterial_CheckedChanged(object sender, EventArgs e) => settings.ShowGivingMaterial = checkGivingMaterial.Checked;
 }

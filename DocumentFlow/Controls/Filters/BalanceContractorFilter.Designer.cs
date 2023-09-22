@@ -76,7 +76,7 @@
             this.toolButton1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
             this.toolButton1.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.toolButton1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.toolButton1.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Delete;
+            this.toolButton1.Kind = DocumentFlow.Controls.Enums.ToolButtonKind.Delete;
             this.toolButton1.Location = new System.Drawing.Point(410, 3);
             this.toolButton1.Name = "toolButton1";
             this.toolButton1.Size = new System.Drawing.Size(24, 24);

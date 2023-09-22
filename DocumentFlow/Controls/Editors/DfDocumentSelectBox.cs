@@ -3,121 +3,88 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 06.02.2022
-//
-// Версия 2022.12.24
-//  - добавлено свойство DisableCurrentItem
-//  - изменен вызов конструктора SelectDocumentForm
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Controls.Events;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Dialogs;
-using DocumentFlow.Infrastructure;
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Controls.Core;
-using DocumentFlow.Infrastructure.Data;
 
-using Microsoft.Extensions.DependencyInjection;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DocumentFlow.Controls.Editors;
 
-public class DfDocumentSelectBox<T> : SelectBox<T>, IDocumentSelectBoxControl<T>
-    where T : class, IAccountingDocument
+[ToolboxItem(true)]
+public class DfDocumentSelectBox : DfSelectBox
 {
-    private CreateColumns? createColumns;
-    private bool disableCurrentItem = false;
+    private IEnumerable<IBaseDocument>? dataSource;
 
-    public DfDocumentSelectBox(string property, string header) 
-        : base(property, header)
+    public event EventHandler<DocumentDialogColumnsEventArgs>? DocumentDialogColumns;
+    public event EventHandler<DataSourceLoadEventArgs>? DataSourceOnLoad;
+
+    public DfDocumentSelectBox() 
     {
-
     }
 
-    protected override void OnSelect()
+    [Browsable(false)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public IEnumerable<IBaseDocument>? DataSource
     {
-        SelectDocumentForm<T> form = new(Items.ToList(), SelectedItem, disableCurrentItem);
-
-        form.Columns.Clear();
-        createColumns?.Invoke(form.Columns);
-        if (form.ShowDialog() == DialogResult.OK)
+        get
         {
-            SelectedItem = form.SelectedItem;
+            if (dataSource == null)
+            {
+                LoadDataSource();
+            }
 
-            SetTextValue(SelectedItem?.ToString() ?? string.Empty);
-
-            OnValueChanged(SelectedItem);
-            OnValueSelected(SelectedItem);
-        }
-    }
-
-    #region IDocumentSelectBoxControl<T> interface
-
-    IDocumentSelectBoxControl<T> IDocumentSelectBoxControl<T>.CreateColumns(CreateColumns action)
-    {
-        createColumns = action;
-        return this;
-    }
-
-    IDocumentSelectBoxControl<T> IDocumentSelectBoxControl<T>.EnableEditor<E>(bool openById)
-    {
-        var pageManager = Services.Provider.GetService<IPageManager>()!;
-        if (openById)
-        {
-            OpenAction = (t) => pageManager.ShowEditor<E>(t.Id);
-        }
-        else
-        {
-            OpenAction = pageManager.ShowEditor<E, T>;
+            return dataSource;
         }
 
-        return this;
+        set => dataSource = value?.Order();
     }
 
-    IDocumentSelectBoxControl<T> IDocumentSelectBoxControl<T>.EnableEditor(OpenDialog<T> action)
+    public bool DisableCurrentItem { get; set; } = false;
+
+    protected override IDocumentInfo? GetDocument(Guid id)
     {
-        OpenAction = action;
-        return this;
+        ArgumentNullException.ThrowIfNull(DataSource);
+
+        return DataSource.FirstOrDefault(x => x.Id == id);
     }
 
-    IDocumentSelectBoxControl<T> IDocumentSelectBoxControl<T>.ReadOnly(bool value)
+    protected override bool SelectItem([MaybeNullWhen(false)] out IDocumentInfo documentInfo)
     {
-        ReadOnly = value;
-        return this;
+        var dialog = new DocumentDialog()
+        {
+            DisableCurrentItem = DisableCurrentItem,
+            CurrentItem = SelectedItem == Guid.Empty ? null : (IBaseDocument)SelectedDocument
+        };
+
+        DocumentDialogColumns?.Invoke(this, new DocumentDialogColumnsEventArgs(dialog.Columns));
+
+        LoadDataSource();
+        if (dataSource != null)
+        {
+            dialog.SetDataSource(dataSource);
+        }
+
+        if (dialog.ShowDialog() == DialogResult.OK && dialog.SelectedDocumentItem != null)
+        {
+            documentInfo = dialog.SelectedDocumentItem;
+            return true;
+        }
+
+        documentInfo = null;
+        return false;
     }
 
-    IDocumentSelectBoxControl<T> IDocumentSelectBoxControl<T>.Required()
+    private void LoadDataSource()
     {
-        Required = true;
-        return this;
+        if (DataSourceOnLoad != null)
+        {
+            var args = new DataSourceLoadEventArgs(SelectedItem);
+            DataSourceOnLoad(this, args);
+            dataSource = args.Values?.OfType<IBaseDocument>().Order();
+        }
     }
-
-    IDocumentSelectBoxControl<T> IDocumentSelectBoxControl<T>.DisableCurrentItem()
-    {
-        disableCurrentItem = true;
-        return this;
-    }
-
-    IDocumentSelectBoxControl<T> IDocumentSelectBoxControl<T>.SetDataSource(GettingDataSource<T> func, DataRefreshMethod refreshMethod)
-    {
-        RefreshMethod = refreshMethod;
-        SetDataSource(func);
-        return this;
-    }
-
-    IDocumentSelectBoxControl<T> IDocumentSelectBoxControl<T>.DocumentChanged(ControlValueChanged<T?> action)
-    {
-        SetValueChangedAction(action);
-        return this;
-    }
-
-    IDocumentSelectBoxControl<T> IDocumentSelectBoxControl<T>.DocumentSelected(ControlValueChanged<T?> action)
-    {
-        SetValueSelectedAction(action);
-        return this;
-    }
-
-    #endregion
 }

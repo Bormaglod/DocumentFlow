@@ -3,46 +3,33 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 06.12.2022
-//
-// Версия 2022.12.17
-//  - добавлен метод CreateQuery(string tableName);
-// Версия 2023.1.8
-//  - добавлен метод Configure и WriteConfigure (реализация метода
-//    интерфейса IBalanceContractorFilter
-// Версия 2023.1.17
-//  - namespace заменен с DocumentFlow.Controls на DocumentFlow.Controls.Filters
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.Settings.Infrastructure перемещено в DocumentFlow.Infrastructure.Settings
-// Версия 2023.2.23
-//  - класс BalanceContractorFilterData переименован в BalanceContractorFilterSettings
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Entities.Companies;
-using DocumentFlow.Infrastructure.Data;
-using DocumentFlow.Infrastructure.Settings;
+using DocumentFlow.Data.Models;
 
 using Humanizer;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using SqlKata;
+using Microsoft.Extensions.Configuration;
+using System.ComponentModel;
+using DocumentFlow.Data.Interfaces.Filters;
 
 namespace DocumentFlow.Controls.Filters;
 
+[ToolboxItem(false)]
 public partial class BalanceContractorFilter : UserControl, IBalanceContractorFilter
 {
+    private readonly IContractRepository contracts;
     private Guid? ownerId;
-    private BalanceContractorFilterSettings? filterData;
 
-    public BalanceContractorFilter()
+    public BalanceContractorFilter(IContractRepository contracts)
     {
         InitializeComponent();
+
+        this.contracts = contracts;
     }
 
-    public Guid? OwnerIdentifier 
+    public Guid? OwnerId
     {
         get => ownerId;
         set
@@ -50,8 +37,7 @@ public partial class BalanceContractorFilter : UserControl, IBalanceContractorFi
             ownerId = value;
             if (ownerId != null) 
             {
-                var c = Services.Provider.GetService<IContractRepository>();
-                var list = c!.GetByOwner(ownerId, this);
+                var list = contracts.GetByOwner(ownerId, this);
                 sfComboBox1.DataSource = list;
             }
             else
@@ -92,70 +78,7 @@ public partial class BalanceContractorFilter : UserControl, IBalanceContractorFi
         }
     }
 
-    public Control Control => this;
-
-    public void Configure(IAppSettings appSettings)
-    {
-        if (OwnerIdentifier == null)
-        {
-            return;
-        }
-
-        filterData = appSettings.Get<BalanceContractorFilterSettings>("filter");
-        ContractIdentifier = filterData.GetContract(OwnerIdentifier.Value);
-    }
-
-    public void WriteConfigure(IAppSettings appSettings)
-    {
-        if (OwnerIdentifier == null)
-        {
-            return;
-        }
-
-        if (filterData == null)
-        {
-            if (ContractIdentifier != null)
-            {
-                filterData = new()
-                {
-                    ContractIdentifiers = new Dictionary<Guid, Guid?>()
-                    {
-                        [OwnerIdentifier.Value] = ContractIdentifier
-                    }
-                };
-            }
-        }
-        else
-        {
-            filterData.ContractIdentifiers ??= new Dictionary<Guid, Guid?>();
-
-            if (filterData.ContractIdentifiers.ContainsKey(OwnerIdentifier.Value))
-            {
-                if (ContractIdentifier == null)
-                {
-                    filterData.ContractIdentifiers.Remove(OwnerIdentifier.Value);
-                }
-                else
-                {
-                    filterData.ContractIdentifiers[OwnerIdentifier.Value] = ContractIdentifier;
-                }
-            }
-            else
-            {
-                if (ContractIdentifier != null)
-                {
-                    filterData.ContractIdentifiers.Add(OwnerIdentifier.Value, ContractIdentifier);
-                }
-            }
-
-            if (filterData.ContractIdentifiers.Count == 0)
-            {
-                filterData.ContractIdentifiers = null;
-            }
-        }
-
-        appSettings.Write("filter", filterData);
-    }
+    public object? Settings => null;
 
     public Query? CreateQuery<T>() => CreateQuery(typeof(T).Name.Underscore());
 
@@ -169,6 +92,10 @@ public partial class BalanceContractorFilter : UserControl, IBalanceContractorFi
         }
 
         return null;
+    }
+
+    public void SettingsLoaded()
+    {
     }
 
     private void ToolButton1_Click(object sender, EventArgs e) => sfComboBox1.SelectedIndex = -1;

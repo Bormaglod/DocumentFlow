@@ -1,6 +1,8 @@
-﻿namespace DocumentFlow.Controls.Editors
+﻿using DocumentFlow.Controls.Interfaces;
+
+namespace DocumentFlow.Controls.Editors
 {
-    partial class DfComboBox<T>
+    partial class DfComboBox
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -28,145 +30,126 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.comboBoxAdv1 = new Syncfusion.Windows.Forms.Tools.ComboBoxAdv();
-            this.panelEdit = new System.Windows.Forms.Panel();
-            this.panelSeparator1 = new System.Windows.Forms.Panel();
-            this.buttonDelete = new DocumentFlow.Controls.ToolButton();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panelSeparator3 = new System.Windows.Forms.Panel();
-            this.buttonOpen = new DocumentFlow.Controls.ToolButton();
-            ((System.ComponentModel.ISupportInitialize)(this.comboBoxAdv1)).BeginInit();
-            this.panelEdit.SuspendLayout();
-            this.panel1.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoEllipsis = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(100, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Text";
-            // 
-            // comboBoxAdv1
-            // 
-            this.comboBoxAdv1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.comboBoxAdv1.BeforeTouchSize = new System.Drawing.Size(143, 23);
-            this.comboBoxAdv1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBoxAdv1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxAdv1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.comboBoxAdv1.Location = new System.Drawing.Point(0, 0);
-            this.comboBoxAdv1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.comboBoxAdv1.Name = "comboBoxAdv1";
-            this.comboBoxAdv1.Size = new System.Drawing.Size(143, 23);
-            this.comboBoxAdv1.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
-            this.comboBoxAdv1.TabIndex = 2;
-            this.comboBoxAdv1.ThemeName = "Office2016Colorful";
-            this.comboBoxAdv1.SelectedIndexChanging += new Syncfusion.Windows.Forms.Tools.SelectedIndexChangingHandler(this.ComboBoxAdv1_SelectedIndexChanging);
+            panelEdit = new Panel();
+            comboBox = new Syncfusion.WinForms.ListView.SfComboBox();
+            panelDelete = new Panel();
+            buttonDelete = new ToolButton();
+            panelOpen = new Panel();
+            buttonOpen = new ToolButton();
+            panelEdit.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)comboBox).BeginInit();
+            panelDelete.SuspendLayout();
+            panelOpen.SuspendLayout();
+            SuspendLayout();
             // 
             // panelEdit
             // 
-            this.panelEdit.Controls.Add(this.comboBoxAdv1);
-            this.panelEdit.Controls.Add(this.panelSeparator1);
-            this.panelEdit.Controls.Add(this.buttonDelete);
-            this.panelEdit.Controls.Add(this.panelSeparator3);
-            this.panelEdit.Controls.Add(this.buttonOpen);
-            this.panelEdit.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panelEdit.Location = new System.Drawing.Point(100, 0);
-            this.panelEdit.Name = "panelEdit";
-            this.panelEdit.Size = new System.Drawing.Size(201, 23);
-            this.panelEdit.TabIndex = 3;
+            panelEdit.Controls.Add(comboBox);
+            panelEdit.Controls.Add(panelDelete);
+            panelEdit.Controls.Add(panelOpen);
+            panelEdit.Dock = DockStyle.Left;
+            panelEdit.Location = new Point(100, 0);
+            panelEdit.Name = "panelEdit";
+            panelEdit.Size = new Size(300, 25);
+            panelEdit.TabIndex = 3;
             // 
-            // panelSeparator1
+            // comboBox
             // 
-            this.panelSeparator1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelSeparator1.Location = new System.Drawing.Point(143, 0);
-            this.panelSeparator1.Name = "panelSeparator1";
-            this.panelSeparator1.Size = new System.Drawing.Size(5, 23);
-            this.panelSeparator1.TabIndex = 4;
+            comboBox.Dock = DockStyle.Fill;
+            comboBox.DropDownPosition = Syncfusion.WinForms.Core.Enums.PopupRelativeAlignment.Center;
+            comboBox.DropDownStyle = Syncfusion.WinForms.ListView.Enums.DropDownStyle.DropDownList;
+            comboBox.Location = new Point(0, 0);
+            comboBox.Name = "comboBox";
+            comboBox.Size = new Size(240, 25);
+            comboBox.Style.EditorStyle.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
+            comboBox.Style.ReadOnlyEditorStyle.BackColor = Color.White;
+            comboBox.Style.ReadOnlyEditorStyle.BorderColor = Color.FromArgb(197, 197, 197);
+            comboBox.Style.ReadOnlyEditorStyle.DisabledBackColor = Color.White;
+            comboBox.Style.ReadOnlyEditorStyle.DisabledBorderColor = Color.FromArgb(197, 197, 197);
+            comboBox.Style.ReadOnlyEditorStyle.DisabledForeColor = Color.FromArgb(152, 152, 152);
+            comboBox.Style.ReadOnlyEditorStyle.FocusedBorderColor = Color.FromArgb(150, 150, 150);
+            comboBox.Style.ReadOnlyEditorStyle.FocusedCuesColor = Color.FromArgb(68, 68, 68);
+            comboBox.Style.TokenStyle.CloseButtonBackColor = Color.FromArgb(255, 255, 255);
+            comboBox.TabIndex = 7;
+            comboBox.DropDownOpened += ComboBox_DropDownOpened;
+            comboBox.DropDownClosed += ComboBox_DropDownClosed;
+            // 
+            // panelDelete
+            // 
+            panelDelete.Controls.Add(buttonDelete);
+            panelDelete.Dock = DockStyle.Right;
+            panelDelete.Location = new Point(240, 0);
+            panelDelete.Name = "panelDelete";
+            panelDelete.Size = new Size(30, 25);
+            panelDelete.TabIndex = 5;
             // 
             // buttonDelete
             // 
-            this.buttonDelete.BackClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(255)))));
-            this.buttonDelete.BackColor = System.Drawing.Color.White;
-            this.buttonDelete.BackHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
-            this.buttonDelete.BorderClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(209)))), ((int)(((byte)(255)))));
-            this.buttonDelete.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
-            this.buttonDelete.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
-            this.buttonDelete.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonDelete.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Delete;
-            this.buttonDelete.Location = new System.Drawing.Point(148, 0);
-            this.buttonDelete.Name = "buttonDelete";
-            this.buttonDelete.Size = new System.Drawing.Size(23, 23);
-            this.buttonDelete.TabIndex = 3;
-            this.buttonDelete.TabStop = false;
-            this.buttonDelete.Text = "toolButton2";
-            this.buttonDelete.Click += new System.EventHandler(this.ButtonDelete_Click);
+            buttonDelete.BackClickedColor = Color.FromArgb(204, 232, 255);
+            buttonDelete.BackColor = Color.White;
+            buttonDelete.BackHoveredColor = Color.FromArgb(229, 243, 255);
+            buttonDelete.BorderClickedColor = Color.FromArgb(153, 209, 255);
+            buttonDelete.BorderColor = Color.FromArgb(217, 217, 217);
+            buttonDelete.BorderHoveredColor = Color.FromArgb(204, 232, 235);
+            buttonDelete.Dock = DockStyle.Right;
+            buttonDelete.Kind = Enums.ToolButtonKind.Delete;
+            buttonDelete.Location = new Point(5, 0);
+            buttonDelete.Name = "buttonDelete";
+            buttonDelete.Size = new Size(25, 25);
+            buttonDelete.TabIndex = 3;
+            buttonDelete.TabStop = false;
+            buttonDelete.Text = "toolButton2";
+            buttonDelete.Click += ButtonDelete_Click;
             // 
-            // panel1
+            // panelOpen
             // 
-            this.panel1.Controls.Add(this.panelEdit);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(363, 23);
-            this.panel1.TabIndex = 4;
-            // 
-            // panelSeparator3
-            // 
-            this.panelSeparator3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelSeparator3.Location = new System.Drawing.Point(171, 0);
-            this.panelSeparator3.Name = "panelSeparator3";
-            this.panelSeparator3.Size = new System.Drawing.Size(5, 23);
-            this.panelSeparator3.TabIndex = 8;
+            panelOpen.Controls.Add(buttonOpen);
+            panelOpen.Dock = DockStyle.Right;
+            panelOpen.Location = new Point(270, 0);
+            panelOpen.Name = "panelOpen";
+            panelOpen.Size = new Size(30, 25);
+            panelOpen.TabIndex = 6;
             // 
             // buttonOpen
             // 
-            this.buttonOpen.BackClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(255)))));
-            this.buttonOpen.BackColor = System.Drawing.Color.White;
-            this.buttonOpen.BackHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
-            this.buttonOpen.BorderClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(209)))), ((int)(((byte)(255)))));
-            this.buttonOpen.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
-            this.buttonOpen.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
-            this.buttonOpen.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonOpen.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Open;
-            this.buttonOpen.Location = new System.Drawing.Point(176, 0);
-            this.buttonOpen.Name = "buttonOpen";
-            this.buttonOpen.Size = new System.Drawing.Size(25, 23);
-            this.buttonOpen.TabIndex = 9;
-            this.buttonOpen.TabStop = false;
-            this.buttonOpen.Text = "toolButton1";
-            this.buttonOpen.Click += new System.EventHandler(this.ButtonOpen_Click);
+            buttonOpen.BackClickedColor = Color.FromArgb(204, 232, 255);
+            buttonOpen.BackColor = Color.White;
+            buttonOpen.BackHoveredColor = Color.FromArgb(229, 243, 255);
+            buttonOpen.BorderClickedColor = Color.FromArgb(153, 209, 255);
+            buttonOpen.BorderColor = Color.FromArgb(217, 217, 217);
+            buttonOpen.BorderHoveredColor = Color.FromArgb(204, 232, 235);
+            buttonOpen.Dock = DockStyle.Right;
+            buttonOpen.Kind = Enums.ToolButtonKind.Open;
+            buttonOpen.Location = new Point(5, 0);
+            buttonOpen.Name = "buttonOpen";
+            buttonOpen.Size = new Size(25, 25);
+            buttonOpen.TabIndex = 9;
+            buttonOpen.TabStop = false;
+            buttonOpen.Text = "toolButton1";
+            buttonOpen.Click += ButtonOpen_Click;
             // 
             // DfComboBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.panel1);
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "DfComboBox";
-            this.Size = new System.Drawing.Size(363, 32);
-            ((System.ComponentModel.ISupportInitialize)(this.comboBoxAdv1)).EndInit();
-            this.panelEdit.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(panelEdit);
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "DfComboBox";
+            Size = new Size(500, 32);
+            Controls.SetChildIndex(panelEdit, 0);
+            panelEdit.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)comboBox).EndInit();
+            panelDelete.ResumeLayout(false);
+            panelOpen.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
-        private Syncfusion.Windows.Forms.Tools.ComboBoxAdv comboBoxAdv1;
-        private System.Windows.Forms.Panel panelEdit;
+        private Panel panelEdit;
         private ToolButton buttonDelete;
-        private System.Windows.Forms.Panel panelSeparator1;
-        private System.Windows.Forms.Panel panel1;
-        private Panel panelSeparator3;
         private ToolButton buttonOpen;
+        private Panel panelDelete;
+        private Panel panelOpen;
+        private Syncfusion.WinForms.ListView.SfComboBox comboBox;
     }
 }

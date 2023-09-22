@@ -1,4 +1,6 @@
-﻿namespace DocumentFlow.Controls
+﻿using DocumentFlow.Controls.Interfaces;
+
+namespace DocumentFlow.Controls
 {
     partial class Breadcrumb
     {
@@ -59,7 +61,7 @@
             this.buttonHome.BorderColor = System.Drawing.Color.White;
             this.buttonHome.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonHome.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonHome.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Home;
+            this.buttonHome.Kind = DocumentFlow.Controls.Enums.ToolButtonKind.Home;
             this.buttonHome.Location = new System.Drawing.Point(0, 0);
             this.buttonHome.Name = "buttonHome";
             this.buttonHome.Size = new System.Drawing.Size(23, 23);
@@ -76,7 +78,7 @@
             this.buttonRefresh.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
             this.buttonRefresh.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonRefresh.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonRefresh.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Refresh;
+            this.buttonRefresh.Kind = DocumentFlow.Controls.Enums.ToolButtonKind.Refresh;
             this.buttonRefresh.Location = new System.Drawing.Point(747, 0);
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(25, 25);
@@ -94,7 +96,7 @@
             this.buttonUp.BorderHoveredColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
             this.buttonUp.Dock = System.Windows.Forms.DockStyle.Left;
             this.buttonUp.Enabled = false;
-            this.buttonUp.Kind = DocumentFlow.Infrastructure.Controls.ToolButtonKind.Up;
+            this.buttonUp.Kind = DocumentFlow.Controls.Enums.ToolButtonKind.Up;
             this.buttonUp.Location = new System.Drawing.Point(0, 0);
             this.buttonUp.Name = "buttonUp";
             this.buttonUp.Size = new System.Drawing.Size(25, 25);

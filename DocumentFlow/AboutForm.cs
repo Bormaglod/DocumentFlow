@@ -3,15 +3,9 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 07.06.2020
-//
-// Версия 2023.5.3
-//  - в конструктор добавлены параметры IDatabase и соответственно
-//    исправлена логика работы
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Infrastructure;
-using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Data.Interfaces;
 
 using Syncfusion.WinForms.ListView.Events;
 
@@ -20,7 +14,7 @@ using System.Reflection;
 
 namespace DocumentFlow;
 
-public partial class AboutForm : Form, IAbout
+public partial class AboutForm : Form
 {
     class Lib
     {

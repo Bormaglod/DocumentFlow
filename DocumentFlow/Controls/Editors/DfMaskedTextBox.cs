@@ -3,101 +3,153 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 19.12.2019
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.1.25
-//  - изменены функции ClearValue и GetValueTextBox вызов которых (при
-//    значении Value == null) приводил к ошибке
-// Версия 2023.4.2
-//  - добавлено наследование от IMaskedTextBoxControl
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Controls.Interfaces;
 
-using Syncfusion.Windows.Forms.Tools;
+using System.ComponentModel;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfMaskedTextBox<T> : BaseNumericTextBox<T, MaskedEditBox>, IAccess, IMaskedTextBoxControl<T>
-    where T : struct, IComparable<T>
+[ToolboxItem(true)]
+public partial class DfMaskedTextBox : DfControl, IAccess
 {
-    private bool lockText = false;
+    private bool leadingZero;
+    private decimal decimalValue;
+    private bool enabledEditor = true;
+    private bool showSuffix = true;
+    private string mask = string.Empty;
+    private char promptCharacter = ' ';
+    private string suffix = "суффикс";
 
-    public DfMaskedTextBox(string property, string header, string? mask = null) :
-        base(property, header)
+    public event EventHandler? RequiredValueChanged;
+
+    public DfMaskedTextBox()
     {
         InitializeComponent();
+        SetNestedControl(textBox);
 
-        Mask = mask ?? string.Empty;
+        var binding = new Binding(nameof(textBox.Text), this, nameof(DecimalValue))
+        {
+            FormattingEnabled = true,
+            DataSourceUpdateMode = DataSourceUpdateMode.OnPropertyChanged
+        };
 
-        TextBox.Style = TextBoxExt.theme.Office2016Colorful;
-        TextBox.TextChanged += MaskedEditBox_TextChanged;
+        textBox.DataBindings.Add(binding);
+    }
+
+    public bool EnabledEditor
+    {
+        get => enabledEditor;
+        set
+        {
+            if (enabledEditor != value)
+            {
+                enabledEditor = value;
+                textBox.Enabled = value;
+            }
+        }
+    }
+
+    public bool ShowSuffix
+    {
+        get => showSuffix;
+        set
+        {
+            if (showSuffix != value)
+            {
+                showSuffix = value;
+                labelSuffix.Visible = value;
+            }
+        }
+    }
+
+    public string Suffix
+    {
+        get => suffix;
+        set
+        {
+            if (suffix != value) 
+            { 
+                suffix = value;
+                labelSuffix.Text = value;
+            }
+        }
     }
 
     public string Mask
     {
-        get => TextBox.Mask;
+        get => mask;
         set
         {
-            T? saved = (T?)Value;
-            lockText = true;
-            try
+            if (mask != value)
             {
-                TextBox.Mask = value;
-                Value = saved;
+                mask = value;
+                textBox.Mask = value;
+                textBox.Text = decimalValue.ToString();
             }
-            finally
-            {
-                lockText = false;
-            }
-
-            MaxLength = TextBox.Mask.Count(x => x != ' ');
         }
     }
 
     public char PromptCharacter
     {
-        get => TextBox.PromptCharacter;
-        set => TextBox.PromptCharacter = value;
+        get => promptCharacter;
+        set
+        {
+            if (promptCharacter != value)
+            {
+                promptCharacter = value;
+                textBox.PromptCharacter = value;
+            }
+        }
+    }
+
+    public decimal DecimalValue
+    {
+        get => decimalValue;
+
+        set
+        {
+            if (decimalValue != value)
+            {
+                int index = textBox.SelectionStart;
+                decimalValue = value;
+                RequiredValueChanged?.Invoke(this, EventArgs.Empty);
+                textBox.SelectionStart = index;
+            }
+        }
+    }
+
+    public bool LeadingZero
+    {
+        get => leadingZero;
+
+        set
+        {
+            if (leadingZero != value)
+            {
+                leadingZero = value;
+                var binding = textBox.DataBindings[nameof(textBox.Text)];
+                if (leadingZero)
+                {
+                    binding.Format += ConvertDecimal;
+                }
+                else
+                {
+                    binding.Format -= ConvertDecimal;
+                }
+            }
+        }
     }
 
     public int MaxLength { get; set; }
 
-    public override void ClearSelectedValue() => TextBox.Text = default(T).ToString();
-
-    protected override T GetValueTextBox() => (T)Convert.ChangeType(TextBox.Text.Trim(), typeof(T));
-
-    protected override void UpdateTextControl(T value)
+    private void ConvertDecimal(object? sender, ConvertEventArgs e)
     {
-        string res = value.ToString() ?? string.Empty;
-        if (MaxLength > 0)
+        if (e.DesiredType == typeof(string))
         {
-            res = res.PadLeft(MaxLength, '0');
-        }
-
-        TextBox.Text = res;
-    }
-
-    private void MaskedEditBox_TextChanged(object? sender, EventArgs e)
-    {
-        if (!lockText)
-        {
-            UpdateNumericValue();
+            e.Value ??= 0;
+            e.Value = ((decimal)e.Value).ToString().PadLeft(MaxLength, '0');
         }
     }
-
-    #region IMaskedTextBoxControl interface
-
-    IMaskedTextBoxControl<T> IMaskedTextBoxControl<T>.SetMask(string mask)
-    {
-        Mask = mask;
-        return this;
-    }
-
-    #endregion
 }

@@ -31,21 +31,9 @@
             Syncfusion.Windows.Forms.Tools.ActiveStateCollection activeStateCollection1 = new Syncfusion.Windows.Forms.Tools.ActiveStateCollection();
             Syncfusion.Windows.Forms.Tools.InactiveStateCollection inactiveStateCollection1 = new Syncfusion.Windows.Forms.Tools.InactiveStateCollection();
             Syncfusion.Windows.Forms.Tools.SliderCollection sliderCollection1 = new Syncfusion.Windows.Forms.Tools.SliderCollection();
-            label1 = new Label();
             toggleButton1 = new Syncfusion.Windows.Forms.Tools.ToggleButton();
             ((System.ComponentModel.ISupportInitialize)toggleButton1).BeginInit();
             SuspendLayout();
-            // 
-            // label1
-            // 
-            label1.AutoEllipsis = true;
-            label1.Dock = DockStyle.Left;
-            label1.Location = new Point(0, 0);
-            label1.Margin = new Padding(4, 0, 4, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(40, 24);
-            label1.TabIndex = 1;
-            label1.Text = "УПД";
             // 
             // toggleButton1
             // 
@@ -62,10 +50,10 @@
             inactiveStateCollection1.ForeColor = Color.FromArgb(80, 80, 80);
             inactiveStateCollection1.HoverColor = Color.FromArgb(255, 255, 255);
             toggleButton1.InactiveState = inactiveStateCollection1;
-            toggleButton1.Location = new Point(40, 0);
+            toggleButton1.Location = new Point(100, 0);
             toggleButton1.MinimumSize = new Size(52, 23);
             toggleButton1.Name = "toggleButton1";
-            toggleButton1.Size = new Size(90, 24);
+            toggleButton1.Size = new Size(90, 25);
             sliderCollection1.BackColor = Color.FromArgb(255, 255, 255);
             sliderCollection1.BorderColor = Color.FromArgb(171, 171, 171);
             sliderCollection1.HoverColor = Color.FromArgb(255, 255, 255);
@@ -83,19 +71,15 @@
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(toggleButton1);
-            Controls.Add(label1);
-            Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
             Margin = new Padding(4, 3, 4, 3);
             Name = "DfToggleButton";
-            Padding = new Padding(0, 0, 0, 8);
-            Size = new Size(130, 32);
+            Size = new Size(200, 32);
+            Controls.SetChildIndex(toggleButton1, 0);
             ((System.ComponentModel.ISupportInitialize)toggleButton1).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private Syncfusion.Windows.Forms.Tools.ToggleButton toggleButton1;
     }
 }

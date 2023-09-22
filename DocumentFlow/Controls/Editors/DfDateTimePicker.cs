@@ -3,141 +3,118 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 21.10.2020
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Controls.Core;
+using DocumentFlow.Controls.Interfaces;
+
+using System.ComponentModel;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfDateTimePicker : BaseControl, IBindingControl, IAccess, IDateTimePickerControl
+[ToolboxItem(true)]
+public partial class DfDateTimePicker : DfControl, IAccess
 {
-    private ControlValueChanged<DateTime?>? dateChanged;
+    private DateTime dateTime = DateTime.Now;
+    private bool isNull;
+    private bool required;
+    private bool enabledEditor = true;
+    private string customFormat = "dd.MM.yyyy HH:mm:ss";
+    private DateTimePickerFormat format = DateTimePickerFormat.Long;
 
-    public DfDateTimePicker(string property, string header) : base(property)
+    public event EventHandler? DateTimeValueChanged;
+    public event EventHandler? BindableValueChanged;
+
+    public DfDateTimePicker()
     {
         InitializeComponent();
-        SetLabelControl(label1, header);
         SetNestedControl(datePickerAdv);
 
-        Value = DateTime.Now;
-        Required = true;
+        datePickerAdv.DataBindings.Add(nameof(datePickerAdv.BindableValue), this, nameof(BindableValue), false, DataSourceUpdateMode.OnPropertyChanged);
     }
 
-    public bool Required { get => !datePickerAdv.ShowCheckBox; set => datePickerAdv.ShowCheckBox = !value; }
-
-    public bool ReadOnly
+    public bool Required
     {
-        get => datePickerAdv.ReadOnly;
-        set => datePickerAdv.ReadOnly = !value;
-    }
+        get => required;
 
-    #region IBindingControl interface
-
-    public object? Value
-    {
-        get
-        {
-            if (!datePickerAdv.ShowCheckBox || datePickerAdv.Checked)
-            {
-                return datePickerAdv.Value;
-            }
-            else
-            {
-                return null;
-            }
-        }
         set
         {
-            if (value == null)
+            if (required != value)
             {
-                if (datePickerAdv.ShowCheckBox)
-                {
-                    datePickerAdv.Checked = false;
-                }
-            }
-            else
-            {
-                if (datePickerAdv.ShowCheckBox)
-                {
-                    datePickerAdv.Checked = true;
-                }
-
-                datePickerAdv.Value = (DateTime)value;
+                required = value;
+                datePickerAdv.ShowCheckBox = !required;
             }
         }
     }
 
-    #endregion
-
-    public string CustomFormat { get => datePickerAdv.CustomFormat; set => datePickerAdv.CustomFormat = value; }
-
-    public DateTimePickerFormat Format { get => datePickerAdv.Format; set => datePickerAdv.Format = value; }
-
-    public void ClearSelectedValue()
+    public bool EnabledEditor
     {
-        datePickerAdv.ResetText();
-        if (datePickerAdv.ShowCheckBox)
+        get => enabledEditor;
+        set
         {
-            datePickerAdv.Checked = false;
+            if (enabledEditor != value)
+            {
+                enabledEditor = value;
+                datePickerAdv.Enabled = value;
+            }
         }
     }
 
-    private void OnDateChanged() => dateChanged?.Invoke((DateTime?)Value);
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public DateTime BindableValue
+    {
+        get => dateTime;
+        set => DateTimeValue = value;
+    }
 
-    private void DatePickerAdv_ValueChanged(object sender, EventArgs e) => OnDateChanged();
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public DateTime DateTimeValue
+    {
+        get => isNull ? DateTime.MinValue : dateTime;
+
+        set
+        {
+            if (dateTime != value)
+            {
+                isNull = value == default;
+                dateTime = isNull ? DateTime.Now : value;
+
+                datePickerAdv.Checked = !isNull;
+
+                DateTimeValueChanged?.Invoke(this, EventArgs.Empty);
+                BindableValueChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+
+    public string CustomFormat
+    {
+        get => customFormat;
+        set
+        {
+            if (customFormat != value)
+            {
+                customFormat = value;
+                datePickerAdv.CustomFormat = value;
+            }
+        }
+    }
+
+    public DateTimePickerFormat Format
+    {
+        get => format;
+        set
+        {
+            if (format != value)
+            {
+                format = value;
+                datePickerAdv.Format = value;
+            }
+        }
+    }
 
     private void DatePickerAdv_CheckBoxCheckedChanged(object sender, EventArgs e)
     {
-        if (datePickerAdv.ShowCheckBox)
-        {
-            datePickerAdv.ShowDropButton = datePickerAdv.Checked;
-        }
-
-        OnDateChanged();
+        isNull = !datePickerAdv.Checked;
+        DateTimeValueChanged?.Invoke(this, EventArgs.Empty);
     }
-
-    #region IDateTimePickerControl interface
-
-    DateTime? IDateTimePickerControl.Value => (DateTime?)Value;
-
-    IDateTimePickerControl IDateTimePickerControl.DateChanged(ControlValueChanged<DateTime?> action)
-    {
-        dateChanged = action;
-        return this;
-    }
-
-    IDateTimePickerControl IDateTimePickerControl.ReadOnly()
-    {
-        ReadOnly = true;
-        return this;
-    }
-
-    IDateTimePickerControl IDateTimePickerControl.NotRequired()
-    {
-        Required = false;
-        return this;
-    }
-
-    IDateTimePickerControl IDateTimePickerControl.SetFormat(DateTimePickerFormat format)
-    {
-        Format = format; 
-        return this;
-    }
-
-    IDateTimePickerControl IDateTimePickerControl.SetCustomFormat(string format)
-    {
-        Format = DateTimePickerFormat.Custom;
-        CustomFormat = format;
-        return this;
-    }
-
-    #endregion
 }

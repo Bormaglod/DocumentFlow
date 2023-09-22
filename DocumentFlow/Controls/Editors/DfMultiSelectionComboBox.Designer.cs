@@ -1,4 +1,6 @@
-﻿namespace DocumentFlow.Controls.Editors
+﻿using Syncfusion.Windows.Forms.Tools;
+
+namespace DocumentFlow.Controls.Editors
 {
     partial class DfMultiSelectionComboBox
     {
@@ -29,57 +31,51 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DfMultiSelectionComboBox));
-            this.label1 = new System.Windows.Forms.Label();
-            this.multiSelectionComboBox1 = new Syncfusion.Windows.Forms.Tools.MultiSelectionComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.multiSelectionComboBox1)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoEllipsis = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(117, 25);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Text";
+            multiSelectionComboBox1 = new Syncfusion.Windows.Forms.Tools.MultiSelectionComboBox();
+            ((System.ComponentModel.ISupportInitialize)multiSelectionComboBox1).BeginInit();
+            SuspendLayout();
             // 
             // multiSelectionComboBox1
             // 
-            this.multiSelectionComboBox1.AutoSizeMode = Syncfusion.Windows.Forms.Tools.AutoSizeModes.None;
-            this.multiSelectionComboBox1.BackColor = System.Drawing.Color.White;
-            this.multiSelectionComboBox1.BeforeTouchSize = new System.Drawing.Size(500, 26);
-            this.multiSelectionComboBox1.ButtonStyle = Syncfusion.Windows.Forms.ButtonAppearance.Metro;
-            this.multiSelectionComboBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.multiSelectionComboBox1.FlatBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
-            this.multiSelectionComboBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.multiSelectionComboBox1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.multiSelectionComboBox1.Location = new System.Drawing.Point(117, 0);
-            this.multiSelectionComboBox1.Name = "multiSelectionComboBox1";
-            this.multiSelectionComboBox1.Size = new System.Drawing.Size(500, 26);
-            this.multiSelectionComboBox1.TabIndex = 2;
-            this.multiSelectionComboBox1.ThemeName = "Metro";
-            this.multiSelectionComboBox1.UseVisualStyle = true;
-            this.multiSelectionComboBox1.SelectedItemCollectionChanged += new Syncfusion.Windows.Forms.Tools.SelectedItemCollectionChangedHandler(this.MultiSelectionComboBox1_SelectedItemCollectionChanged);
+            multiSelectionComboBox1.AutoSizeMode = Syncfusion.Windows.Forms.Tools.AutoSizeModes.None;
+            multiSelectionComboBox1.BackColor = Color.FromArgb(255, 255, 255);
+            multiSelectionComboBox1.BeforeTouchSize = new Size(361, 26);
+            multiSelectionComboBox1.ButtonStyle = Syncfusion.Windows.Forms.ButtonAppearance.Office2016Colorful;
+            multiSelectionComboBox1.DataSource = resources.GetObject("multiSelectionComboBox1.DataSource");
+            multiSelectionComboBox1.Dock = DockStyle.Left;
+            multiSelectionComboBox1.FlatBorderColor = Color.FromArgb(197, 197, 197);
+            multiSelectionComboBox1.FlatStyle = FlatStyle.Flat;
+            multiSelectionComboBox1.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
+            multiSelectionComboBox1.GroupHeaderBackColor = Color.FromArgb(197, 197, 197);
+            multiSelectionComboBox1.GroupHeaderForeColor = Color.FromArgb(68, 68, 68);
+            multiSelectionComboBox1.Location = new Point(75, 0);
+            multiSelectionComboBox1.MetroColor = Color.FromArgb(197, 197, 197);
+            multiSelectionComboBox1.Name = "multiSelectionComboBox1";
+            multiSelectionComboBox1.SelectionStart = 23;
+            multiSelectionComboBox1.Size = new Size(361, 26);
+            multiSelectionComboBox1.Style = Syncfusion.Windows.Forms.Tools.MultiSelectionComboBoxStyle.Office2016Colorful;
+            multiSelectionComboBox1.TabIndex = 1;
+            multiSelectionComboBox1.ThemeName = "Office2016Colorful";
+            multiSelectionComboBox1.TickColor = Color.FromArgb(150, 150, 150);
+            multiSelectionComboBox1.UseVisualStyle = true;
+            multiSelectionComboBox1.VisualItemBackColor = Color.FromArgb(225, 225, 225);
+            multiSelectionComboBox1.VisualItemSelectionColor = Color.FromArgb(155, 202, 239);
+            multiSelectionComboBox1.VisualItemSelectionForeColor = Color.FromArgb(255, 255, 255);
+            multiSelectionComboBox1.VisualItemsCollectionChanged += MultiSelectionComboBox1_VisualItemsCollectionChanged;
             // 
             // DfMultiSelectionComboBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.Controls.Add(this.multiSelectionComboBox1);
-            this.Controls.Add(this.label1);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.MinimumSize = new System.Drawing.Size(0, 32);
-            this.Name = "DfMultiSelectionComboBox";
-            this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 7);
-            this.Size = new System.Drawing.Size(858, 32);
-            ((System.ComponentModel.ISupportInitialize)(this.multiSelectionComboBox1)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(multiSelectionComboBox1);
+            Name = "DfMultiSelectionComboBox";
+            Controls.SetChildIndex(multiSelectionComboBox1, 0);
+            ((System.ComponentModel.ISupportInitialize)multiSelectionComboBox1).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
         private Syncfusion.Windows.Forms.Tools.MultiSelectionComboBox multiSelectionComboBox1;
     }
 }

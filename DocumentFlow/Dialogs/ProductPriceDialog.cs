@@ -3,95 +3,132 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 12.11.2021
-//
-// Версия 2022.8.17
-//  - из-за изменения видимости методов set для полей product_name и code
-//    класса ProductPrice произведена замена инициализации этих полей
-//    с помощью метода SetProductInfo
-// Версия 2022.8.18
-//  - диалоговое окно "Изделие" видно в панели задач #49. Исправлено.
-// Версия 2022.8.19
-//  - выбор изделий дополнен столбцом с артикулом
-//  - добавлена возможность выбора цены из договора
-// Версия 2022.8.20
-//  - скорректирован порядок обхода элементов управления
-// Версия 2022.8.29
-//  - скорректирован порядок обхода элементов управления
-//  - рефакторинг
-// Версия 2022.11.26
-//  - параметр autoRefresh метода SetDataSource в классе
-//    DataSourceControl был удален. Вместо него используется свойство
-//    RefreshMethod этого класса в значении DataRefreshMethod.Immediately
-// Версия 2023.1.15
-//  - добавлена обработка атрибута ProductExcludingPriceAttribute
-// Версия 2023.1.21
-//  - для установки значения калькуляции в классе ProductionOrderPrice
-//    необходимо использовать метод SetCalculation
-//  - в выборку калькуляций добавлено поле code
-//  - добавлено использование Product.Taxes
-//  - ArgumentNullException заменен на Exception с текстом
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-// Версия 2023.3.14
-//  - GetAllMaterials заменен на GetAllValid
-// Версия 2023.5.17
-//  - элементы, которые исключаются из редактирование сделаны невидимыми
-// Версия 2023.5.18
-//  - вывод материалов/изделий сортируется теперь для всех вариантов,
-//    а не только для материалов
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Entities.Companies;
-using DocumentFlow.Entities.Products;
-using DocumentFlow.Entities.Products.Core;
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Data;
-
-using Humanizer;
+using DocumentFlow.Controls.Events;
+using DocumentFlow.Data.Interfaces;
+using DocumentFlow.Data.Models;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace DocumentFlow.Dialogs;
 
-public partial class ProductPriceDialog<P> : Form
-    where P : ProductPrice, new()
+[Dialog]
+public partial class ProductPriceDialog : Form
 {
-    private readonly IDirectorySelectBoxControl<Product> product;
-    private readonly INumericTextBoxControl amount;
-    private readonly ICurrencyTextBoxControl price;
-    private readonly ICurrencyTextBoxControl cost;
-    private readonly IChoiceControl<int> tax;
-    private readonly ICurrencyTextBoxControl taxValue;
-    private readonly ICurrencyTextBoxControl fullCost;
+    private bool includePrice;
+    private ProductContent content;
+    private bool canCalculate = false;
+    private IProductCalculation? productCalculation = null;
 
-    private readonly IControls<P> controls;
+    private readonly IServiceProvider services;
 
-    private readonly Contract? contract;
-    private readonly bool excludePrice;
-    private readonly ProductContent content;
-
-    private readonly IReadOnlyDictionary<string, string> columns = new Dictionary<string, string>
-    {
-        ["Code"] = "Артикул",
-        ["ItemName"] = "Наименование"
-    };
-
-    public ProductPriceDialog(Contract? contract)
+    public ProductPriceDialog(IServiceProvider services)
     {
         InitializeComponent();
 
-        controls = Services.Provider.GetService<IControls<P>>()!;
-        controls.Container = Controls;
+        this.services = services;
 
-        this.contract = contract;
+        choiceVat.From(Product.Taxes);
 
-        content = typeof(P).GetCustomAttribute<ProductContentAttribute>()?.Content ?? throw new Exception($"Использование FormProductPrice с типом {typeof(P).Name} возиожно только при условии наличия у этого типа атрибута ProductContentAttribute");
-        excludePrice = typeof(P).GetCustomAttribute<ProductExcludingPriceAttribute>() != null;
+        selectProduct.SetColumns<Product>(nameof(Product.Code), new Dictionary<string, string>
+        {
+            ["Code"] = "Артикул",
+            ["ItemName"] = "Наименование"
+        });
+    }
 
-        var productHeader = content switch
+    public Contract? Contract { get; set; }
+
+    public bool WithCalculation { get; set; } = false;
+
+    public bool Create<T>([MaybeNullWhen(false)] out T product) where T : ProductPrice?, new()
+    {
+        UpdateControls(typeof(T));
+
+        canCalculate = true;
+        if (ShowDialog() == DialogResult.OK)
+        {
+            if (!int.TryParse(choiceVat.ChoiceValue, out var vat))
+            {
+                vat = 0;
+            }
+
+            product = new T()
+            {
+                ReferenceId = selectProduct.SelectedItem,
+                Amount = textAmount.DecimalValue,
+                Price = textPrice.DecimalValue,
+                ProductCost = textSumma.DecimalValue,
+                Tax = vat,
+                TaxValue = textVat.DecimalValue,
+                FullCost = textFullSumma.DecimalValue
+            };
+
+            product.SetProductInfo((Product)selectProduct.SelectedDocument);
+
+            if (WithCalculation && product is IProductCalculation calculation)
+            {
+                calculation.SetCalculation((Calculation)selectCalc.SelectedDocument);
+            }
+
+            return true;
+        }
+
+        product = default;
+        return false;
+    }
+
+    public bool Edit<T>(T product) where T : ProductPrice
+    {
+        UpdateControls(typeof(T));
+
+        if (WithCalculation && product is IProductCalculation calculation)
+        {
+            productCalculation = calculation;
+        }
+
+        selectProduct.SelectedItem = product.ReferenceId;
+        textAmount.DecimalValue = product.Amount;
+        textPrice.DecimalValue = product.Price;
+        textSumma.DecimalValue = product.ProductCost;
+        choiceVat.ChoiceValue = product.Tax.ToString();
+        textVat.DecimalValue = product.TaxValue;
+        textFullSumma.DecimalValue = product.FullCost;
+
+        if (productCalculation != null)
+        {
+            selectCalc.SelectedItem = productCalculation.CalculationId;
+        }
+
+        canCalculate = true;
+        if (ShowDialog() == DialogResult.OK)
+        {
+            product.ReferenceId = selectProduct.SelectedItem;
+            product.Amount = textAmount.DecimalValue;
+            product.Price = textPrice.DecimalValue;
+            product.ProductCost = textSumma.DecimalValue;
+            product.Tax = Convert.ToInt32(choiceVat.ChoiceValue);
+            product.TaxValue = textVat.DecimalValue;
+            product.FullCost = textFullSumma.DecimalValue;
+            product.SetProductInfo((Product)selectProduct.SelectedDocument);
+
+            productCalculation?.SetCalculation((Calculation)selectCalc.SelectedDocument);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private void UpdateControls(Type productType)
+    {
+        content = productType.GetCustomAttribute<ProductContentAttribute>()?.Content ?? throw new Exception($"Использование ProductPriceDialog с типом {productType.Name} возможно только при условии наличия у этого типа атрибута ProductContentAttribute");
+        selectProduct.Header = content switch
         {
             ProductContent.Materials => "Материал",
             ProductContent.Goods => "Товар",
@@ -99,165 +136,39 @@ public partial class ProductPriceDialog<P> : Form
             _ => throw new NotImplementedException()
         };
 
-        product = controls.CreateDirectorySelectBox<Product>(x => x.ReferenceId, productHeader, select =>
-            select
-                .SetDataSource(GetProducts, DataRefreshMethod.Immediately)
-                .DirectoryChanged(ProductChanged)
-                .Required()
-                .SetColumns(x => x.Code, columns)
-                .EditorFitToSize()
-                .SetHeaderWidth(120));
+        includePrice = productType.GetCustomAttribute<ProductExcludingPriceAttribute>() == null;
 
-        amount = controls.CreateNumericTextBox(x => x.Amount, "Количество", text =>
-            text
-                .SetNumberDecimalDigits(3)
-                .ValueChanged(AmountOrPriceChanged)
-                .SetHeaderWidth(120)
-                .DefaultAsValue()
-                .EditorFitToSize());
-        price = controls.CreateCurrencyTextBox(x => x.Price, "Цена", text =>
-            text
-                .ValueChanged(AmountOrPriceChanged)
-                .SetHeaderWidth(120)
-                .DefaultAsValue()
-                .EditorFitToSize()
-                .If(excludePrice, c => c.SetVisible(false)));
-        cost = controls.CreateCurrencyTextBox(x => x.ProductCost, "Сумма", text =>
-            text
-                .ValueChanged(CostValueChanged)
-                .SetHeaderWidth(120)
-                .DefaultAsValue()
-                .EditorFitToSize()
-                .If(excludePrice, c => c.SetVisible(false)));
-        tax = controls.CreateChoice<int>(x => x.Tax, "НДС%", choice =>
-            choice
-                .SetChoiceValues(Product.Taxes, true)
-                .ChoiceChanged(TaxChanged)
-                .SetHeaderWidth(120)
-                .EditorFitToSize()
-                .If(excludePrice, c => c.SetVisible(false)));
-        taxValue = controls.CreateCurrencyTextBox(x => x.TaxValue, "НДС", text =>
-            text
-                .ValueChanged(TaxValueChanged)
-                .SetHeaderWidth(120)
-                .DefaultAsValue()
-                .EditorFitToSize()
-                .If(excludePrice, c => c.SetVisible(false)));
-        fullCost = controls.CreateCurrencyTextBox(x => x.FullCost, "Всего с НДС", text =>
-            text
-                .SetHeaderWidth(120)
-                .DefaultAsValue()
-                .EditorFitToSize()
-                .If(excludePrice, c => c.SetVisible(false)));
+        textPrice.Visible = includePrice;
+        textSumma.Visible = includePrice;
+        choiceVat.Visible = includePrice;
+        textVat.Visible = includePrice;
+        textFullSumma.Visible = includePrice;
 
-        Height = 330;
+        selectCalc.Visible = WithCalculation;
 
-        if (excludePrice) 
+        int k = 0;
+        if (!includePrice)
         {
-            Height -= 160;
-        }
-    }
-
-    public bool Create(P productPrice)
-    {
-        UpdateControls();
-        if (ShowDialog() == DialogResult.OK)
-        {
-            SaveControlData(productPrice);
-            return true;
+            k += 5;
         }
 
-        return false;
-    }
-
-    public bool Edit(P productPrice)
-    {
-        UpdateControls();
-        controls.Initialize(productPrice);
-
-        if (ShowDialog() == DialogResult.OK)
+        if (!WithCalculation)
         {
-            SaveControlData(productPrice);
-            return true;
+            k++;
         }
 
-        return false;
-    }
+        Height -= k * 32;
+        MinimumSize = new Size(350, 362 - k * 32);
 
-    private void SaveControlData(P dest)
-    {
-        dest.ReferenceId = product.SelectedItem?.Id ?? Guid.Empty;
-        dest.Amount = amount.NumericValue.GetValueOrDefault();
-        dest.Price = price.NumericValue.GetValueOrDefault();
-        dest.ProductCost = cost.NumericValue.GetValueOrDefault();
-        dest.Tax = tax.SelectedValue.GetValueOrDefault();
-        dest.TaxValue = taxValue.NumericValue.GetValueOrDefault();
-        dest.FullCost = fullCost.NumericValue.GetValueOrDefault();
-        dest.SetProductInfo(product.SelectedItem);
-        if (dest is IDiscriminator discriminator && product.SelectedItem != null)
-        {
-            discriminator.TableName = product.SelectedItem.GetType().Name.Underscore();
-        }
-    }
+        selectProduct.DataSource = GetProducts();
 
-    private void UpdateControls()
-    {
-        bool isTaxPayer = contract != null && contract.TaxPayer;
-        tax.SetEnabled(isTaxPayer);
-        taxValue.SetEnabled(isTaxPayer);
+        bool isTaxPayer = Contract != null && Contract.TaxPayer;
+        choiceVat.Enabled = isTaxPayer;
+        textVat.Enabled = isTaxPayer;
         if (isTaxPayer)
         {
-            tax.SelectedValue = 20;
+            choiceVat.ChoiceValue = "20";
         }
-    }
-
-    private void AmountOrPriceChanged(decimal _) => cost.NumericValue = price.NumericValue * amount.NumericValue;
-
-    private void CostValueChanged(decimal _) => TaxChanged();
-
-    private void TaxChanged(int? _) => TaxChanged();
-
-    private void TaxValueChanged(decimal value) => fullCost.NumericValue = cost.NumericValue + taxValue.NumericValue;
-
-    private void TaxChanged() => taxValue.NumericValue = cost.NumericValue * tax.SelectedValue / 100;
-
-    private void ProductChanged(Product? product)
-    {
-        if (excludePrice)
-        {
-            return;
-        }
-
-        decimal avgPrice = 0;
-
-        if (product is Material material)
-        {
-            var repo = Services.Provider.GetService<IMaterialRepository>();
-            if (repo != null)
-            {
-                avgPrice = repo.GetAveragePrice(material);
-            }
-        }
-        else if (product is Goods goods && contract != null)
-        {
-            var repo = Services.Provider.GetService<IContractApplicationRepository>();
-            var priceRepo = Services.Provider.GetService<IPriceApprovalRepository>();
-            if (repo != null && priceRepo != null)
-            {
-                var apps = repo.GetCurrents(contract);
-                foreach (var app in apps)
-                {
-                    var p = priceRepo.GetPrice(app, goods);
-                    if (p != null)
-                    {
-                        avgPrice = p.Price;
-                        break;
-                    }
-                }
-            }
-        }
-
-        price.NumericValue = avgPrice == 0 ? (product?.Price ?? 0) : avgPrice;
     }
 
     private IEnumerable<Product> GetProducts()
@@ -267,12 +178,12 @@ public partial class ProductPriceDialog<P> : Form
 
         if (content == ProductContent.Materials || content == ProductContent.All)
         {
-            materials = Services.Provider.GetService<IMaterialRepository>();
+            materials = services.GetRequiredService<IMaterialRepository>();
         }
 
         if (content == ProductContent.Goods || content == ProductContent.All)
         {
-            goods = Services.Provider.GetService<IGoodsRepository>();
+            goods = services.GetRequiredService<IGoodsRepository>();
         }
 
         IEnumerable<Product> prods;
@@ -294,17 +205,116 @@ public partial class ProductPriceDialog<P> : Form
             .ThenBy(x => x.ItemName);
     }
 
+    private void UpdateTaxValue()
+    {
+        if (canCalculate)
+        {
+            if (!int.TryParse(choiceVat.ChoiceValue, out var vat))
+            {
+                vat = 0;
+            }
+
+            textVat.DecimalValue = textSumma.DecimalValue * vat / 100;
+        }
+    }
+
     private void ButtonOk_Click(object sender, EventArgs e)
     {
-        if (product.SelectedItem == null)
+        string text = string.Empty;
+
+        if (selectProduct.SelectedItem == Guid.Empty)
         {
-            MessageBox.Show("Выберите изделие/материал", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            text = "Выберите изделие/материал";
+        }
+        else if (selectCalc.SelectedItem == Guid.Empty && WithCalculation)
+        {
+            text = "Выберите калькуляцию";
+        }
+        else if (textAmount.DecimalValue <= 0)
+        {
+            text = "Количество должно быть больше 0";
+        }
+
+        if (!string.IsNullOrEmpty(text))
+        {
+            MessageBox.Show(text, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             DialogResult = DialogResult.None;
         }
-        else if (amount.NumericValue <= 0)
+    }
+
+    private void SelectProduct_DocumentSelectedChanged(object sender, DocumentSelectedEventArgs e)
+    {
+        if (!includePrice)
         {
-            MessageBox.Show("Количество должно быть больше 0", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            DialogResult = DialogResult.None;
+            return;
         }
+
+        decimal avgPrice = 0;
+
+        if (e.Document is Material material)
+        {
+            var repo = services.GetRequiredService<IMaterialRepository>();
+            if (repo != null)
+            {
+                avgPrice = repo.GetAveragePrice(material);
+            }
+        }
+        else if (e.Document is Goods goods && Contract != null)
+        {
+            var repo = services.GetRequiredService<IContractApplicationRepository>();
+            var priceRepo = services.GetRequiredService<IPriceApprovalRepository>();
+            if (repo != null && priceRepo != null)
+            {
+                var apps = repo.GetCurrents(Contract);
+                foreach (var app in apps)
+                {
+                    var p = priceRepo.GetPrice(app, goods);
+                    if (p != null)
+                    {
+                        avgPrice = p.Price;
+                        break;
+                    }
+                }
+            }
+        }
+
+        textPrice.DecimalValue = avgPrice == 0 ? ((Product)e.Document).Price : avgPrice;
+    }
+
+    private void AmountOrPriceChanged(object sender, EventArgs e)
+    {
+        if (canCalculate)
+        {
+            textSumma.DecimalValue = textPrice.DecimalValue * textAmount.DecimalValue;
+        }
+    }
+
+    private void CostOrTaxChanged(object sender, EventArgs e)
+    {
+        if (canCalculate)
+        {
+            textFullSumma.DecimalValue = textSumma.DecimalValue + textVat.DecimalValue;
+        }
+
+        UpdateTaxValue();
+    }
+
+    private void ChoiceVat_ChoiceValueChanged(object sender, EventArgs e)
+    {
+        UpdateTaxValue();
+    }
+
+    private void SelectProduct_SelectedItemChanged(object sender, EventArgs e)
+    {
+        var calcRepo = services.GetRequiredService<ICalculationRepository>();
+        selectCalc.DataSource = calcRepo.GetByOwner(
+            productCalculation?.CalculationId,
+            selectProduct.SelectedItem,
+            userDefindedQuery: true,
+            callback: q => q
+                .Select("calculation.{id, code}")
+                .SelectRaw("calculation.code || ' от ' || calculation.date_approval as item_name")
+                .WhereRaw("calculation.state = 'approved'::calculation_state")
+                .OrderBy("calculation.code"));
     }
 }

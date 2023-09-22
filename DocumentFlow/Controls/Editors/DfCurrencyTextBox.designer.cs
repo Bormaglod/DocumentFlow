@@ -28,21 +28,46 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            currencyTextBox1 = new Syncfusion.Windows.Forms.Tools.CurrencyTextBox();
+            ((System.ComponentModel.ISupportInitialize)currencyTextBox1).BeginInit();
+            SuspendLayout();
             // 
-            // L_CurrencyTextBox
+            // currencyTextBox1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "L_CurrencyTextBox";
-            this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 7);
-            this.Size = new System.Drawing.Size(407, 32);
-            this.ResumeLayout(false);
-
+            currencyTextBox1.BackGroundColor = Color.FromArgb(255, 255, 255);
+            currencyTextBox1.BeforeTouchSize = new Size(100, 25);
+            currencyTextBox1.BorderColor = Color.FromArgb(197, 197, 197);
+            currencyTextBox1.BorderStyle = BorderStyle.FixedSingle;
+            currencyTextBox1.DecimalValue = new decimal(new int[] { 0, 0, 0, 131072 });
+            currencyTextBox1.Dock = DockStyle.Left;
+            currencyTextBox1.ForeColor = Color.FromArgb(68, 68, 68);
+            currencyTextBox1.Location = new Point(75, 0);
+            currencyTextBox1.Name = "currencyTextBox1";
+            currencyTextBox1.PositiveColor = Color.FromArgb(68, 68, 68);
+            currencyTextBox1.Size = new Size(100, 25);
+            currencyTextBox1.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Office2016Colorful;
+            currencyTextBox1.TabIndex = 1;
+            currencyTextBox1.Text = "0,00 ₽";
+            currencyTextBox1.ThemeName = "Office2016Colorful";
+            currencyTextBox1.ZeroColor = Color.FromArgb(68, 68, 68);
+            // 
+            // DfCurrencyTextBox
+            // 
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(currencyTextBox1);
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "DfCurrencyTextBox";
+            Size = new Size(389, 32);
+            Controls.SetChildIndex(currencyTextBox1, 0);
+            ((System.ComponentModel.ISupportInitialize)currencyTextBox1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Syncfusion.Windows.Forms.Tools.CurrencyTextBox currencyTextBox1;
     }
 }

@@ -5,10 +5,8 @@
 // Date: 04.02.2023
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Entities.Employees;
-using DocumentFlow.Infrastructure.Controls;
-
-using Microsoft.Extensions.DependencyInjection;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Models;
 
 using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.DataGrid.Events;
@@ -17,9 +15,13 @@ namespace DocumentFlow.Controls.Cards;
 
 public partial class WageCard : UserControl, ICard
 {
-    public WageCard()
+    private readonly IOurEmployeeRepository repository;
+
+    public WageCard(IOurEmployeeRepository repository)
     {
         InitializeComponent();
+
+        this.repository = repository;
     }
 
     public int Index => 4;
@@ -30,22 +32,18 @@ public partial class WageCard : UserControl, ICard
 
     public void RefreshCard()
     {
-        var emp = Services.Provider.GetService<IOurEmployeeRepository>();
-        if (emp != null)
-        {
-            gridEmps.DataSource = emp.GetWages();
-        }
+        gridEmps.DataSource = repository.GetWages();
     }
 
     private void GridEmps_AutoGeneratingColumn(object sender, AutoGeneratingColumnArgs e)
     {
         switch (e.Column.MappingName)
         {
-            case "EmployeeName":
+            case nameof(EmployeeWageBalance.EmployeeName):
                 e.Column.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
                 break;
-            case "BeginingBalance":
-            case "EndingBalance":
+            case nameof(EmployeeWageBalance.BeginingBalance):
+            case nameof(EmployeeWageBalance.EndingBalance):
                 e.Column.Width = 120;
                 break;
             default:

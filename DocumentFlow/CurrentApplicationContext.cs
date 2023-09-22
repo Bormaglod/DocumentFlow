@@ -3,21 +3,9 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.07.2022
-//
-// Версия 2022.8.17
-//  - рефакторинг
-// Версия 2022.12.31
-//  - в ShowMainForm добавлен параметр showStartPage с помощью
-//    которого вызывается метод ShowStartPage из MainForm
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.5.3
-//  - LoginForm и MainForm получаем теперь с использованием службы сервисов
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Infrastructure;
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,37 +13,22 @@ namespace DocumentFlow;
 
 public class CurrentApplicationContext : ApplicationContext
 {
-    private static CurrentApplicationContext? context;
+    private readonly IServiceProvider services;
     private readonly LoginForm loginForm;
     private readonly MainForm mainForm;
 
-    public static CurrentApplicationContext Context
+    public CurrentApplicationContext(IServiceProvider services)
     {
-        get
-        {
-            context ??= new();
-            return context;
-        }
-    }
+        this.services = services;
 
-    public CurrentApplicationContext()
-    {
-        Services.ConfigureServices();
-
-        context = this;
-
-        loginForm = Services.Provider.GetService<LoginForm>()!;
+        loginForm = services.GetRequiredService<LoginForm>();
         loginForm.FormClosed += FormClosed;
 
-        mainForm = Services.Provider.GetService<MainForm>()!;
+        mainForm = services.GetRequiredService<MainForm>();
         mainForm.FormClosed += FormClosed;
 
         loginForm.Show();
     }
-
-    public ITabPages TabPages => mainForm;
-
-    public IHostApp App => mainForm;
 
     public void ShowLoginForm()
     {
@@ -63,14 +36,13 @@ public class CurrentApplicationContext : ApplicationContext
         loginForm.Show();
     }
 
-    public void ShowMainForm(bool showStartPage)
+    public void ShowMainForm()
     {
         loginForm.Hide();
 
-        if (showStartPage)
-        {
-            DocumentFlow.MainForm.ShowStartPage();
-        }
+        services
+            .GetRequiredService<IPageManager>()
+            .ShowStartPage();
 
         mainForm.Show();
     }

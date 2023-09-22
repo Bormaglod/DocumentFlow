@@ -3,53 +3,68 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 20.12.2019
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Controls.Interfaces;
 
-using Syncfusion.Windows.Forms.Tools;
+using System.ComponentModel;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfPercentTextBox : BaseNumericTextBox<decimal, PercentTextBox>, IAccess, IPercentTextBoxControl
+[ToolboxItem(true)]
+public partial class DfPercentTextBox : DfControl, IAccess
 {
-    public DfPercentTextBox(string property, string header) :
-        base(property, header)
+    private decimal percentValue;
+    private bool enabledEditor = true;
+    private int numberDecimalDigits = 2;
+
+    public event EventHandler? PercentValueChanged;
+
+    public DfPercentTextBox()
     {
         InitializeComponent();
+        SetNestedControl(percentTextBox1);
 
-        TextBox.Style = TextBoxExt.theme.Office2016Colorful;
-        TextBox.DoubleValueChanged += PercentTextBox_DoubleValueChanged;
+        percentTextBox1.DataBindings.Add(nameof(percentTextBox1.PercentValue), this, nameof(PercentValue), true, DataSourceUpdateMode.OnPropertyChanged);
     }
 
-    public int PercentDecimalDigits { get => TextBox.PercentDecimalDigits; set => TextBox.PercentDecimalDigits = value; }
-
-    public double MaxValue { get => TextBox.MaxValue; set => TextBox.MaxValue = value; }
-
-    public double MinValue { get => TextBox.MinValue; set => TextBox.MinValue = value; }
-
-    public override void ClearSelectedValue() => TextBox.PercentValue = 0;
-
-    protected override decimal GetValueTextBox() => Convert.ToDecimal(TextBox.DoubleValue) * 100;
-
-    protected override void UpdateTextControl(decimal value) => TextBox.DoubleValue = Convert.ToDouble(value) / 100;
-
-    private void PercentTextBox_DoubleValueChanged(object? sender, EventArgs e) => UpdateNumericValue();
-
-    #region IPercentTextBoxControl interface
-
-    IPercentTextBoxControl IPercentTextBoxControl.SetPercentDecimalDigits(int digits)
+    public decimal PercentValue
     {
-        PercentDecimalDigits = digits;
-        return this;
+        get => percentValue;
+
+        set
+        {
+            if (percentValue != value)
+            {
+                percentValue = value;
+                PercentValueChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
-    #endregion
+    public bool EnabledEditor
+    {
+        get => enabledEditor;
+        set
+        {
+            if (enabledEditor != value)
+            {
+                enabledEditor = value;
+                percentTextBox1.Enabled = value;
+            }
+        }
+    }
+
+    public int NumberDecimalDigits
+    {
+        get => numberDecimalDigits;
+        set
+        {
+            if (numberDecimalDigits != value)
+            {
+                numberDecimalDigits = value;
+                percentTextBox1.PercentDecimalDigits = value;
+            }
+        }
+    }
 }

@@ -5,7 +5,7 @@
 // Date: 27.06.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Core;
+using DocumentFlow.Tools;
 
 using FastReport;
 using FastReport.Export.Image;
@@ -20,7 +20,7 @@ namespace DocumentFlow.ReportEngine;
 
 public class BaseReport
 {
-    public static string CreatePdfDocument(Report report)
+    public static string CreatePdfDocument(Report report, int reportResolution)
     {
         ImageExport exp = new();
 
@@ -33,7 +33,7 @@ public class BaseReport
         }
 
         exp.ImageFormat = ImageExportFormat.Png;
-        exp.Resolution = Properties.Settings.Default.ReportResolution;
+        exp.Resolution = reportResolution;
         exp.Export(report, Path.Combine(path, Guid.NewGuid() + ".png"));
 
         var pdfFile = Path.Combine(path, Guid.NewGuid() + ".pdf");

@@ -3,91 +3,68 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 04.12.2019
-//
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.4.2
-//  - добавлено наследование от ITextBoxControl
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Core;
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Controls.Core;
+using DocumentFlow.Controls.Interfaces;
+
+using System.ComponentModel;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfTextBox : BaseControl, IBindingControl, IAccess, ITextBoxControl
+[ToolboxItem(true)]
+public partial class DfTextBox : DfControl, IAccess
 {
-    private ControlValueChanged<string?>? textChanged;
+    private bool enabledEditor = true;
+    private bool multiline = false;
+    private string text = string.Empty;
 
-    public DfTextBox(string property, string header) 
-        : base(property)
+    public event EventHandler? TextValueChanged;
+
+    public DfTextBox()
     {
         InitializeComponent();
-        SetLabelControl(label1, header);
         SetNestedControl(textBoxExt);
 
-        Dock = DockStyle.Top;
+        textBoxExt.DataBindings.Add(nameof(textBoxExt.Text), this, nameof(TextValue), false, DataSourceUpdateMode.OnPropertyChanged);
     }
 
-    public bool ReadOnly
+    public bool EnabledEditor
     {
-        get => textBoxExt.ReadOnly;
-        set => textBoxExt.ReadOnly = value;
-    }
-
-    public object? Value
-    {
-        get => DefaultAsNull ? textBoxExt.Text.NullIfEmpty() : textBoxExt.Text;
-        set => textBoxExt.Text = value == null ? string.Empty : value.ToString();
-    }
-
-    public bool Multiline 
-    { 
-        get => textBoxExt.Multiline;
+        get => enabledEditor;
         set
-        { 
-            textBoxExt.Multiline = value;
-            textBoxExt.ScrollBars = value ? ScrollBars.Vertical : ScrollBars.None;
+        {
+            if (enabledEditor != value) 
+            { 
+                enabledEditor = value;
+                textBoxExt.Enabled = value;
+            }
         }
     }
 
-    public void ClearSelectedValue() => textBoxExt.Text = string.Empty;
-
-    private void TextBoxExt_TextChanged(object sender, EventArgs e) => textChanged?.Invoke(Value?.ToString());
-
-    #region ITextBoxControl interface
-
-    string? ITextBoxControl.Text => Value?.ToString();
-
-    ITextBoxControl ITextBoxControl.TextChanged(ControlValueChanged<string?> action)
+    public bool Multiline
     {
-        textChanged = action;
-        return this;
+        get => multiline;
+        set
+        {
+            if (multiline != value) 
+            { 
+                multiline = value;
+                textBoxExt.Multiline = value;
+                textBoxExt.ScrollBars = value ? ScrollBars.Vertical : ScrollBars.None;
+            }
+        }
     }
 
-    ITextBoxControl ITextBoxControl.ReadOnly()
+    public string TextValue
     {
-        ReadOnly = true;
-        return this;
+        get => text;
+        set
+        {
+            if (text != value)
+            {
+                text = value;
+                TextValueChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
-
-    ITextBoxControl ITextBoxControl.Multiline(int height)
-    {
-        Multiline = true;
-        Height = height;
-        return this;
-    }
-
-    ITextBoxControl ITextBoxControl.SetText(string? text)
-    {
-        Value = text;
-        return this;
-    }
-
-    #endregion
 }

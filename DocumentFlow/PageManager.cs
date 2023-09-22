@@ -3,76 +3,51 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.07.2022
-//
-// Версия 2022.8.28
-//  - добавлен метод Get(TabPageAdv)
-// Версия 2022.12.31
-//  - в методе Get вызов ContainsKey заменен на TryGetValue
-//  - добавлен метод ShowStartPage
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.6.3
-//  - окно "Начальная страница" запрещено закрывать
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Infrastructure;
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Tools;
+using DocumentFlow.Data.Interfaces;
+using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 
 using Npgsql;
 
-using Syncfusion.Windows.Forms.Tools;
+using System.Reflection;
 
 namespace DocumentFlow;
 
 public class PageManager : IPageManager
 {
     private readonly Dictionary<Type, Type> editors = new();
-    private readonly Dictionary<TabPageAdv, IPage> pages = new();
-    private readonly Stack<TabPageAdv> historyPages = new();
-    private readonly ITabPages tabPages;
+    private readonly List<IPage> pages = new();
 
-    public PageManager(ITabPages pages)
+    private readonly IServiceProvider services;
+
+    public PageManager(IServiceProvider services)
     {
-        tabPages = pages;
+        this.services = services;
 
-        Type browserType = typeof(IBrowser<>);
-        Type editorType = typeof(IEditor<,>);
         var types = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(assembly => assembly.GetTypes())
-            .Where(p => p.IsInterface)
-            .Where(p => p.GetInterfaces().Any(i => i.IsGenericType && editorType == i.GetGenericTypeDefinition()));
+            .Where(p => p.IsInterface && p.GetInterface(nameof(IBrowserPage)) != null);
 
-        foreach (var type in types)
+        foreach (var browserType in types)
         {
-            var interfaces = type.GetInterfaces();
-            foreach (var item in interfaces.Where(i => i.IsGenericType))
+            var attr = browserType.GetCustomAttribute<EntityEditorAttribute>();
+            if (attr != null)
             {
-                var t = item.GenericTypeArguments.FirstOrDefault(t => t.GetInterfaces().Any(i => i.IsGenericType && browserType == i.GetGenericTypeDefinition()));
-                if (t != null)
-                {
-                    editors.Add(t, type);
-                    break;
-                }
+                editors.Add(browserType, attr.EditorType);
             }
         }
     }
 
-    public IPage? Get(TabPageAdv page) => pages.TryGetValue(page, out IPage? value) ? value : null;
-
-    public void AddToHistory(TabPageAdv page) => historyPages.Push(page);
-
-    public void ClosePage(IPage page) => OnPageClose(page, removePageControl: true);
-
-    public void OnPageClosing()
+    public void NotifyMainFormClosing()
     {
         foreach (var item in pages)
         {
-            item.Value.OnPageClosing();
+            item.NotifyPageClosing();
         }
     }
 
@@ -80,16 +55,19 @@ public class PageManager : IPageManager
 
     public void ShowBrowser(Type browserType)
     {
-        var page = pages.FirstOrDefault(p => p.Value.GetType().GetInterface(browserType.Name) != null).Key;
+        var docking = services.GetRequiredService<IDockingManager>();
+
+        var page = pages.FirstOrDefault(p => p.GetType().GetInterface(browserType.Name) != null);
         if (page == null)
         {
             try
             {
-                var browser = Services.Provider.GetService(browserType);
+                var browser = services.GetRequiredService(browserType);
                 if (browser is IBrowserPage browserPage)
                 {
-                    browserPage.Refresh();
-                    page = AddPage(browserPage);
+                    browserPage.UpdatePage();
+                    pages.Add(browserPage);
+                    docking.Activate(browserPage);
                 }
             }
             catch (PostgresException e)
@@ -103,193 +81,133 @@ public class PageManager : IPageManager
                     throw;
                 }
             }
-
         }
-
-        if (page != null)
+        else
         {
-            tabPages.Selected = page;
+            docking.Activate(page);
         }
     }
 
-    public void ShowEditor<E>(Guid id)
-        where E : IEditorPage
+    public void ShowEditor<E>(IDocumentInfo document) where E : IEditor => ShowEditor(typeof(E), document);
+
+    public void ShowEditor(Type editorType, IDocumentInfo document)
     {
-        var editor = Services.Provider.GetService<E>();
-        if (editor != null)
+        Guid? parent = null;
+        if (document is IDirectory directory)
         {
-            ShowEditor(editor, id);
+            parent = directory.ParentId;
         }
+
+        ShowEditor(editorType, document.Id, document.OwnerId, parent, document.Deleted);
     }
 
-    public void ShowEditor<E, T>(T document)
-        where E : IEditorPage
-        where T : IDocumentInfo
+    public void ShowEditor(Type editorType, Guid id) => ShowEditor(editorType, id, null, null, false);
+
+    public void ShowAssociateEditor<B>(IDocumentInfo document)
+        where B : IBrowserPage
     {
-        ShowEditor<E>(document.Id);
+        Guid? parent = null;
+        if (document is IDirectory directory)
+        {
+            parent = directory.ParentId;
+        }
+
+        ShowAssociateEditor(typeof(B), document.Id, document.OwnerId, parent, document.Deleted);
     }
 
-    public void ShowEditor(Type editorType, Guid id)
+    public void ShowAssociateEditor<B>(Guid id)
+        where B : IBrowserPage
     {
-        var editor = Services.Provider.GetService(editorType);
-        if (editor is IEditorPage page)
-        {
-            ShowEditor(page, id);
-        }
+        ShowAssociateEditor(typeof(B), id, null, null, false);
     }
 
-    public void ShowEditor(IEditorPage editorPage, Guid objectId)
-    {
-        TabPageAdv? page = pages.FirstOrDefault(p => (p.Value as IEditorPage)?.Id == objectId).Key;
-
-        if (page == null && editorPage is Control control)
-        {
-            editorPage.SetEntityParameters(objectId, null, null, false);
-            page = AddPage(editorPage);
-        }
-
-        if (page != null)
-        {
-            tabPages.Selected = page;
-        }
-    }
-
-    public void ShowEditor(Type browserType, Guid? objectId, Guid? owner_id, Guid? parentId, bool readOnly)
+    public void ShowAssociateEditor(Type browserType, Guid? objectId, Guid? ownerId, Guid? parentId, bool readOnly)
     {
         if (editors.ContainsKey(browserType))
         {
-            TabPageAdv? page = null;
-            if (objectId != null)
-            {
-                page = pages.FirstOrDefault(p => p.Value.GetType().GetInterface(editors[browserType].Name) != null && (p.Value as IEditorPage)?.Id == objectId).Key;
-            }
+            Type editorType = editors[browserType];
+            ShowEditor(editorType, objectId, ownerId, parentId, readOnly);
+        }
+    }
 
-            if (page == null)
+    private void ShowEditor(Type editorType, Guid? objectId, Guid? ownerId, Guid? parentId, bool readOnly)
+    {
+        IEditorPage? page = null;
+        if (objectId != null)
+        {
+            page = pages
+                .OfType<IEditorPage>()
+                .Where(p => p.Editor.GetType().GetInterface(editorType.Name) != null)
+                .FirstOrDefault(p => p.Editor.DocumentInfo.Id == objectId);
+        }
+
+        var docking = services.GetRequiredService<IDockingManager>();
+        if (page == null)
+        {
+            try
             {
-                try
+                page = services.GetRequiredService<IEditorPage>();
+
+                var editor = services.GetRequiredService(editorType);
+
+                if (editor is IDocumentEditor documentEditor && ownerId != null)
                 {
-                    var editor = Services.Provider.GetService(editors[browserType]);
-                    if (editor is Control control && editor is IEditorPage editorPage)
-                    {
-                        editorPage.SetEntityParameters(objectId, owner_id, parentId, readOnly);
-                        page = AddPage(editorPage);
-                    }
+                    documentEditor.OwnerId = ownerId;
                 }
-                catch (PostgresException e)
+
+                if (editor is IDirectoryEditor directoryEditor && parentId != null)
                 {
-                    if (e.SqlState == "42501")
+                    directoryEditor.ParentId = parentId;
+                }
+
+                if (editor is IEditor e)
+                {
+                    e.EnabledEditor = !readOnly;
+                    page.Editor = e;
+                    if (objectId != null)
                     {
-                        MessageBox.Show("Доступ запрещен", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        page.RefreshPage(objectId.Value);
                     }
                     else
                     {
-                        throw;
+                        page.CreatePage();
                     }
                 }
-            }
 
-            if (page != null)
-            {
-                tabPages.Selected = page;
+                pages.Add(page);
+                docking.Activate(page);
             }
+            catch (PostgresException e)
+            {
+                if (e.SqlState == "42501")
+                {
+                    MessageBox.Show("Доступ запрещен", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+        else
+        {
+            page.RefreshPage();
+            docking.Activate(page);
         }
     }
 
     public void ShowStartPage()
     {
-        var page = pages.FirstOrDefault(p => p.Value is IStartPage).Key;
+        var page = pages.OfType<IStartPage>().FirstOrDefault();
         if (page == null)
         {
-            var startPage = Services.Provider.GetService<IStartPage>();
-            if (startPage != null)
-            {
-                page = AddPage(startPage);
-                page.Closing += (_, e) => e.Cancel = true;
-            }
-        }
+            page = services.GetRequiredService<IStartPage>();
+            pages.Add(page);
 
-        if (page != null)
-        {
-            tabPages.Selected = page;
+            var docking = services.GetRequiredService<IDockingManager>();
+            docking.Activate(page);
         }
     }
 
-    private TabPageAdv AddPage(IPage newPage)
-    {
-        if (newPage is Control control)
-        {
-            control.Dock = DockStyle.Fill;
-            control.TextChanged += PageTextChanged;
-
-            TabPageAdv? page = new(newPage.Text);
-            page.Closed += PageClosed;
-            page.Closing += PageClosing;
-
-            page.Controls.Add(control);
-
-            tabPages.Add(page);
-
-            pages.Add(page, newPage);
-
-            return page;
-        }
-
-        throw new ArrayTypeMismatchException("Параметр newPage должен наследоваться от Control");
-    }
-
-    private void PageTextChanged(object? sender, EventArgs e)
-    {
-        if (sender is IPage page)
-        {
-            var tab = pages.FirstOrDefault(p => p.Value == page).Key;
-            if (tab != null)
-            {
-                tab.Text = page.Text;
-            }
-        }
-    }
-
-    private void PageClosed(object? sender, EventArgs e)
-    {
-        if (sender is TabPageAdv page && pages.ContainsKey(page))
-        {
-            OnPageClose(pages[page], page);
-        }
-    }
-
-    private void PageClosing(object sender, TabPageAdvClosingEventArgs args)
-    {
-        if (historyPages.Count > 0)
-        {
-            if (historyPages.Peek() == args.TabPageAdv)
-            {
-                historyPages.Pop();
-            }
-        }
-    }
-
-    private void OnPageClose(IPage page, TabPageAdv? pageControl = null, bool removePageControl = false)
-    {
-        if (pageControl == null)
-        {
-            pageControl = pages.FirstOrDefault(p => p.Value == page).Key;
-            if (pageControl == null)
-            {
-                return;
-            }
-        }
-
-        page.OnPageClosing();
-
-        pages.Remove(pageControl);
-        if (removePageControl)
-        {
-            tabPages.Remove(pageControl);
-        }
-
-        if (historyPages.Count > 0)
-        {
-            tabPages.Selected = historyPages.Pop();
-        }
-    }
+    public void ShowAbout() => services.GetRequiredService<AboutForm>().ShowDialog();
 }

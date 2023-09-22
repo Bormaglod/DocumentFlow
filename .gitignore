@@ -266,5 +266,5 @@ packages
 /DocumentFlow.Export
 /DocumentFlow.ReportExport
 /DocumentFlow.Setup
-/DocumentFlow.Install
+/DocumentFlow.Install/*.exe
 /DocumentFlow.RestAPI/vendor

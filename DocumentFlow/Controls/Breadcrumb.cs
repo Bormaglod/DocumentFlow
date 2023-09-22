@@ -3,19 +3,12 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 08.06.2018
-//
-// Версия 2022.8.18
-//  - Нажатие на кнопку "Домой" в строке выбора приводит к ошибке.
-//    Исправлено.
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Controls.Core;
-using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Controls.Enums;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Interfaces;
+using DocumentFlow.Tools;
 
 using System.ComponentModel;
 
@@ -45,17 +38,12 @@ public partial class Breadcrumb : UserControl, IBreadcrumb
 
     public void Push(IDirectory directory)
     {
-        if (directory is not IIdentifier<Guid> entity)
-        {
-            return;
-        }
-
         SplitButton crumb = new()
         {
             Text = directory.ItemName,
             BorderColor = Color.White,
             Dock = DockStyle.Left,
-            Identifier = entity.Id
+            Identifier = directory.Id
         };
 
         panelCrumbs.Controls.Add(crumb);
@@ -84,7 +72,7 @@ public partial class Breadcrumb : UserControl, IBreadcrumb
             return null;
         }
 
-        Guid directory = dirs.Pop().Identifier;
+        var directory = dirs.Pop().Identifier;
         SplitButton? button = panelCrumbs.Controls.Cast<SplitButton>().FirstOrDefault(c => c.Identifier == directory);
         if (button != null)
         {

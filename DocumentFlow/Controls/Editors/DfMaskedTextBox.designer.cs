@@ -1,6 +1,6 @@
 ﻿namespace DocumentFlow.Controls.Editors
 {
-    partial class DfMaskedTextBox<T>
+    partial class DfMaskedTextBox
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -28,21 +28,55 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            textBox = new Syncfusion.Windows.Forms.Tools.MaskedEditBox();
+            labelSuffix = new Label();
+            ((System.ComponentModel.ISupportInitialize)textBox).BeginInit();
+            SuspendLayout();
             // 
-            // L_MaskedTextBox
+            // textBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "L_MaskedTextBox";
-            this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 7);
-            this.Size = new System.Drawing.Size(719, 32);
-            this.ResumeLayout(false);
-
+            textBox.BackColor = Color.FromArgb(255, 255, 255);
+            textBox.BeforeTouchSize = new Size(200, 25);
+            textBox.BorderColor = Color.FromArgb(197, 197, 197);
+            textBox.BorderStyle = BorderStyle.FixedSingle;
+            textBox.Dock = DockStyle.Left;
+            textBox.ForeColor = Color.FromArgb(68, 68, 68);
+            textBox.Location = new Point(100, 0);
+            textBox.Name = "textBox";
+            textBox.Size = new Size(200, 25);
+            textBox.Style = Syncfusion.Windows.Forms.Tools.TextBoxExt.theme.Office2016Colorful;
+            textBox.TabIndex = 1;
+            textBox.ThemeName = "Office2016Colorful";
+            // 
+            // labelSuffix
+            // 
+            labelSuffix.AutoSize = true;
+            labelSuffix.Dock = DockStyle.Left;
+            labelSuffix.Location = new Point(300, 0);
+            labelSuffix.Name = "labelSuffix";
+            labelSuffix.Size = new Size(59, 17);
+            labelSuffix.TabIndex = 2;
+            labelSuffix.Text = "Суффикс";
+            // 
+            // DfMaskedTextBox
+            // 
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(labelSuffix);
+            Controls.Add(textBox);
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "DfMaskedTextBox";
+            Size = new Size(719, 32);
+            Controls.SetChildIndex(textBox, 0);
+            Controls.SetChildIndex(labelSuffix, 0);
+            ((System.ComponentModel.ISupportInitialize)textBox).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Syncfusion.Windows.Forms.Tools.MaskedEditBox textBox;
+        private Label labelSuffix;
     }
 }

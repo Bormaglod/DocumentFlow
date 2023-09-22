@@ -3,55 +3,36 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 30.12.2022
-//
-// Версия 2022.12.31
-//  - наследование от IPage заменено на IStartPage
-//  - реализован весь функционал
-// Версия 2023.1.19
-//  - добавлена кнопка "Обновить"
-//  - карты переместились на panelCards
-//  - RefreshPage обновляет карты напрямую, а не через CardPanel
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.1.28
-//  - немного оптимизации
-// Версия 2023.1.29
-//  - реализована логика для размещения карточек произвольного размера
-// Версия 2023.2.4
-//  - добавлена обработка исключения DbAccessException - если карточка
-//    генерирует его (у пользователя нет каких-то прав), то она не 
-//    будет добавлятся
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Core.Exceptions;
-using DocumentFlow.Infrastructure.Controls;
+using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Exceptions;
+using DocumentFlow.Settings;
+
+using Microsoft.Extensions.Options;
 
 namespace DocumentFlow.Controls.PageContents;
 
 public partial class StartPage : UserControl, IStartPage
 {
-    private readonly Size cardSize;
     private readonly IEnumerable<ICard> cards;
-    private readonly int cardPadding;
+    private readonly StartPageSettings settings;
 
-    public StartPage(IEnumerable<ICard> cards)
+    public StartPage(IEnumerable<ICard> cards, IOptions<LocalSettings> options)
     {
         InitializeComponent();
 
         this.cards = cards;
-
+        settings = options.Value.StartPage;
         Text = "Начальная страница";
-        cardSize = Properties.Settings.Default.CardSize;
-        cardPadding = Properties.Settings.Default.CardPadding;
 
-        foreach (var card in cards)
+        foreach (var card in cards.OrderBy(x => x.Index))
         {
             try
             {
-                panelCards.Controls.Add(new CardPanel(card, cardSize));
+                panelCards.Controls.Add(new CardPanel(card, settings));
             }
-            catch (DbAccessException)
+            catch (RepositoryException)
             {
             }
         }
@@ -59,7 +40,10 @@ public partial class StartPage : UserControl, IStartPage
         UpdateCardControlLayout();
     }
 
-    public void OnPageClosing() { }
+
+    public void NotifyPageClosing()
+    {
+    }
 
     public void RefreshPage()
     {
@@ -69,20 +53,26 @@ public partial class StartPage : UserControl, IStartPage
         }
     }
 
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        RefreshPage();
+    }
+
     private void UpdateCardControlLayout()
     {
-        Point pos = new(cardPadding, cardPadding);
+        Point pos = new(settings.CardPadding, settings.CardPadding);
 
         List<CardPanel> placed = new();
         foreach (var card in cards.OrderBy(x => x.Index))
         {
-            if (card is Control cardControl && cardControl.Parent is CardPanel cardPanel) 
+            if (card is Control cardControl && cardControl.Parent is CardPanel cardPanel)
             {
-                if (pos.X != cardPadding)
+                if (pos.X != settings.CardPadding)
                 {
                     if (pos.X + cardPanel.Width > panelCards.Width)
                     {
-                        pos = new(cardPadding, pos.Y + cardSize.Height + cardPadding);
+                        pos = new(settings.CardPadding, pos.Y + settings.CardSize.Height + settings.CardPadding);
                     }
                 }
 
@@ -119,12 +109,12 @@ public partial class StartPage : UserControl, IStartPage
 
     private Point NextPosition(CardPanel panel, Point p)
     {
-        int xPos = p.X + cardSize.Width + cardPadding;
+        int xPos = p.X + settings.CardSize.Width + settings.CardPadding;
         int yPos = p.Y;
         if (xPos + panel.Width > panelCards.Width)
         {
-            xPos = cardPadding;
-            yPos += cardSize.Height + cardPadding;
+            xPos = settings.CardPadding;
+            yPos += settings.CardSize.Height + settings.CardPadding;
         }
 
         return new Point(xPos, yPos);

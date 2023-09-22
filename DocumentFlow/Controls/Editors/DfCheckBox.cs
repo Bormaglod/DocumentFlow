@@ -3,79 +3,111 @@
 // Contacts: <sergio.teplyashin@gmail.com>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 02.12.2022
-//
-// Версия 2022.12.3
-//  - добавлен параметр allowThreeState в конструктор и иниуиализация
-//    checkBoxAdv1 в не нём
-// Версия 2023.1.22
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.4.2
-//  - добавлено наследование от ICheckBoxControl
-// Версия 2023.5.5
-//  - из параметров конструктора удалён headerWidth
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Controls.Core;
+using DocumentFlow.Controls.Interfaces;
+
+using System.ComponentModel;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfCheckBox : BaseControl, IBindingControl, IAccess, ICheckBoxControl
+[ToolboxItem(true)]
+public partial class DfCheckBox : DfControl, IAccess
 {
-    private ControlValueChanged<bool>? checkChanged;
+    private bool enabledEditor = true;
+    private bool allowThreeState = false;
+    private bool? checkValue = null;
 
-    public DfCheckBox(string property, string header) 
-        : base(property)
+    public event EventHandler? CheckValueChanged;
+
+    public DfCheckBox()
     {
         InitializeComponent();
-        SetLabelControl(label1, header);
         SetNestedControl(checkBoxAdv1);
+
+        var binding = new Binding(nameof(checkBoxAdv1.CheckState), this, nameof(CheckValue))
+        {
+            FormattingEnabled = true,
+            DataSourceUpdateMode = DataSourceUpdateMode.OnPropertyChanged
+        };
+
+        binding.Format += BoolToCheckState;
+        binding.Parse += CheckStateToBool;
+
+        checkBoxAdv1.DataBindings.Add(binding);
     }
 
-    public bool ReadOnly
+    public bool EnabledEditor
     {
-        get => !checkBoxAdv1.Enabled;
-        set => checkBoxAdv1.Enabled = !value;
+        get => enabledEditor;
+        set
+        {
+            if (enabledEditor != value)
+            {
+                enabledEditor = value;
+                checkBoxAdv1.Enabled = value;
+            }
+        }
     }
 
-    public object? Value
+    public bool? CheckValue
     {
-        get => checkBoxAdv1.CheckState == CheckState.Indeterminate ? null : checkBoxAdv1.Checked;
-        set => checkBoxAdv1.CheckState = value == null ? CheckState.Indeterminate : (((bool?)value).Value ? CheckState.Checked : CheckState.Unchecked);
+        get => checkValue;
+        set
+        {
+            if (checkValue != value)
+            {
+                checkValue = value;
+                CheckValueChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
-    private bool AllowThreeState { get => checkBoxAdv1.Tristate; set => checkBoxAdv1.Tristate = value; }
-
-    #region IBindingControl interface
-
-    void IBindingControl.ClearSelectedValue() => checkBoxAdv1.CheckState = AllowThreeState ? CheckState.Indeterminate : CheckState.Unchecked;
-
-    #endregion
-
-    #region ICheckBoxControl interface
-
-    ICheckBoxControl ICheckBoxControl.ReadOnly()
+    public bool AllowThreeState
     {
-        ReadOnly = true;
-        return this;
+        get => allowThreeState;
+        set
+        {
+            if (allowThreeState != value)
+            {
+                allowThreeState = value;
+                checkBoxAdv1.Tristate = value;
+            }
+        }
     }
 
-    ICheckBoxControl ICheckBoxControl.AllowThreeState()
+    private void BoolToCheckState(object? sender, ConvertEventArgs arg)
     {
-        AllowThreeState = true;
-        checkBoxAdv1.CheckState = CheckState.Indeterminate;
-        return this;
+        if (arg.DesiredType == typeof(CheckState))
+        {
+            var boolValue = (bool?)arg.Value;
+            if (boolValue == null)
+            {
+                arg.Value = allowThreeState ? CheckState.Indeterminate : CheckState.Unchecked;
+            }
+            else
+            {
+                arg.Value = boolValue.Value ? CheckState.Checked : CheckState.Unchecked;
+            }
+        }
     }
 
-    ICheckBoxControl ICheckBoxControl.CheckChanged(ControlValueChanged<bool> action)
+    private void CheckStateToBool(object? sender, ConvertEventArgs arg)
     {
-        checkChanged = action;
-        return this;
+        if (arg.DesiredType == typeof(bool?))
+        {
+            var state = CheckState.Unchecked;
+            if (arg.Value != null)
+            {
+                state = (CheckState)arg.Value;
+            }
+
+            arg.Value = state switch
+            {
+                CheckState.Checked => true,
+                CheckState.Unchecked => false,
+                _ => allowThreeState ? null : false
+            };
+        }
     }
-
-    #endregion
-
-    private void CheckBoxAdv1_CheckedChanged(object sender, EventArgs e) => checkChanged?.Invoke(checkBoxAdv1.Checked);
 }

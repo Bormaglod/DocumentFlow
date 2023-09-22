@@ -3,218 +3,189 @@
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 19.12.2019
-//
-// Версия 2023.1.21
-//  - в методе SetChoiceValues у параметра keyValues заменен тип с
-//    IDictionary на IReadOnlyDictionary
-// Версия 2023.1.22
-//  - DocumentFlow.Data.Infrastructure перемещено в DocumentFlow.Infrastructure.Data
-//  - DocumentFlow.Controls.Infrastructure перемещено в DocumentFlow.Infrastructure.Controls
-// Версия 2023.4.2
-//  - добавлено наследование от IChoiceControl
-// Версия 2023.5.5
-//  - из параметров конструктора удалены headerWidth и editorWidth
-//
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Core;
-using DocumentFlow.Data.Core;
-using DocumentFlow.Infrastructure.Controls;
-using DocumentFlow.Infrastructure.Controls.Core;
-using DocumentFlow.Infrastructure.Data;
+using DocumentFlow.Controls.Interfaces;
 
-using Syncfusion.Windows.Forms.Tools;
+using Humanizer;
+
+using System.ComponentModel;
+using System.Reflection;
+using System.Collections;
 
 namespace DocumentFlow.Controls.Editors;
 
-public partial class DfChoice<T> : DataSourceControl<T, IChoice<T>>, IBindingControl, IAccess, IChoiceControl<T>
-    where T : struct, IComparable
-{
-    private readonly List<IChoice<T>> choices = new();
-    private bool required = false;
-    private bool lockManual = false;
-    private ControlValueChanged<T?>? choiceChanged;
-    private ControlValueChanged<T?>? choiceSelected;
+public enum KeyGenerationMethod 
+{ 
+    PostgresEnumValue, 
+    EnumValue, 
+    IntegerValue 
+}
 
-    public DfChoice(string property, string header) : base(property)
+[ToolboxItem(true)]
+public partial class DfChoice : DfControl, IAccess
+{
+    private bool enabledEditor = true;
+    private bool showDeleteButton = true;
+
+    public event EventHandler? DeleteButtonClick;
+
+    private class ChoiceItem
+    {
+        public ChoiceItem(string key, string name)
+        {
+            Key = key;
+            Name = name;
+        }
+
+        public string Key { get; set; }
+        public string Name { get; set; }
+    }
+
+    private string choiceValue = string.Empty;
+
+    public event EventHandler? ChoiceValueChanged;
+
+    public DfChoice()
     {
         InitializeComponent();
-        SetLabelControl(label1, header);
         SetNestedControl(panelEdit);
+
+        comboBox.DisplayMember = "Name";
+        comboBox.ValueMember = "Key";
+
+        comboBox.DataBindings.Add(nameof(comboBox.SelectedValue), this, nameof(ChoiceValue), false, DataSourceUpdateMode.OnPropertyChanged);
     }
 
-    public bool ReadOnly
+    [Browsable(false)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public string ChoiceValue
     {
-        get => comboBoxAdv1.ReadOnly;
+        get => choiceValue;
         set
         {
-            comboBoxAdv1.ReadOnly = value;
-            buttonDelete.Enabled = !value;
+            if (choiceValue != value)
+            {
+                choiceValue = value;
+                ChoiceValueChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 
-    public T? SelectedValue { get => (T?)Value; set => Value = value; }
-
-    #region IBindingControl interface
-
-    public object? Value
+    public bool EnabledEditor
     {
-        get
+        get => enabledEditor;
+        set
         {
-            if (comboBoxAdv1.SelectedItem != null && comboBoxAdv1.SelectedItem is IChoice<T> selectedItem)
+            if (enabledEditor != value) 
             {
-                return selectedItem.Id;
+                enabledEditor = value;
+                comboBox.Enabled = value;
+                buttonDelete.Enabled = value;
+            }
+        }
+    }
+
+    public bool ShowDeleteButton
+    {
+        get => showDeleteButton;
+        set
+        {
+            if (showDeleteButton != value) 
+            { 
+                showDeleteButton = value;
+                panelDelete.Visible = value;
+            }
+        }
+    }
+
+    public void FromEnum<T>(KeyGenerationMethod method) where T : Enum
+    {
+        var dataSource = new List<ChoiceItem>();
+
+        Type type = typeof(T);
+        foreach (var item in type.GetFields())
+        {
+            var attr = item.GetCustomAttribute<DescriptionAttribute>();
+            if (attr == null)
+            {
+                continue;
             }
 
-            if (DefaultAsNull)
+            string key = method switch
             {
-                if (required)
+                KeyGenerationMethod.PostgresEnumValue => item.Name.Humanize(LetterCasing.LowerCase),
+                KeyGenerationMethod.EnumValue => item.Name,
+                KeyGenerationMethod.IntegerValue => Convert.ToInt32(Enum.Parse(type, item.Name)).ToString(),
+                _ => throw new NotImplementedException()
+            };
+
+            ChoiceItem choice = new(key, attr.Description);
+            dataSource.Add(choice);
+        }
+
+        comboBox.DataSource = dataSource;
+    }
+
+    public void From(IEnumerable values)
+    {
+        var dataSource = new List<ChoiceItem>();
+
+        var dictTypes = new Dictionary<Type, (PropertyInfo Key, PropertyInfo Value)>();
+
+        foreach (var item in values)
+        {
+            var type = item.GetType();
+            if (type.Name.StartsWith("KeyValuePair"))
+            {
+                if (!dictTypes.TryGetValue(type, out var info))
                 {
-                    throw new ArgumentException($"Значение поля [{Header}] должно быть иметь значение.");
+                    var propKey = type.GetProperty("Key");
+                    if (propKey == null)
+                    {
+                        continue;
+                    }
+
+                    info.Key = propKey;
+
+                    var propValue = type.GetProperty("Value");
+                    if (propValue == null)
+                    {
+                        continue;
+                    }
+
+                    info.Value = propValue;
+
+                    dictTypes.Add(type, info);
                 }
 
-                return null;
-            }
+                var key = info.Key.GetValue(item)?.ToString() ?? throw new NullReferenceException();
+                var value = info.Value!.GetValue(item)?.ToString() ?? throw new NullReferenceException();
 
-            return default;
-        }
-
-        set
-        {
-            if (value is T id)
-            {
-                SetSelectedItem(id);
-                return;
-            }
-
-            ClearSelectedValue();
-        }
-    }
-
-    #endregion
-
-    public void SetChoiceValues(IReadOnlyDictionary<T, string> keyValues, bool autoRefresh = false)
-    {
-        choices.Clear();
-        foreach (var item in keyValues)
-        {
-            choices.Add(new Choice<T>(item.Key, item.Value));
-        }
-
-        SetDataSource(GetChoiceItems);
-
-        if (autoRefresh)
-        {
-            RefreshDataSource();
-        }
-    }
-
-    public void ClearSelectedValue() => SetSelectedItem(null);
-
-    protected override void DoRefreshDataSource(IEnumerable<IChoice<T>> data)
-    {
-        foreach (var item in data)
-        {
-            comboBoxAdv1.Items.Add(item);
-        }
-    }
-
-    protected override void ClearItems() => comboBoxAdv1.Items.Clear();
-
-    private void SetSelectedItem(T? item)
-    {
-        lockManual = true;
-        try
-        {
-            if (item == null)
-            {
-                comboBoxAdv1.SelectedItem = null;
+                dataSource.Add(new ChoiceItem(key, value));
             }
             else
             {
-                var selected = comboBoxAdv1.Items.OfType<IChoice<T>>().FirstOrDefault(x => x.Id.CompareTo(item) == 0);
-                comboBoxAdv1.SelectedItem = selected;
+                var key = item.ToString();
+                if (key == null)
+                {
+                    continue;
+                }
+
+                dataSource.Add(new ChoiceItem(key, key));
             }
         }
-        finally
+
+        comboBox.DataSource = dataSource;
+    }
+
+    private void ButtonDelete_Click(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrEmpty(ChoiceValue))
         {
-            lockManual = false;
+            ChoiceValue = string.Empty;
+            comboBox.SelectedIndex = -1;
+            DeleteButtonClick?.Invoke(this, EventArgs.Empty);
         }
     }
-
-    private IEnumerable<IChoice<T>> GetChoiceItems() => choices;
-
-    private void OnValueChanged(T? value)
-    {
-        choiceChanged?.Invoke(value);
-        if (!lockManual)
-        {
-            choiceSelected?.Invoke(value);
-        }
-    }
-
-    private void ComboBoxAdv1_SelectedIndexChanging(object sender, SelectedIndexChangingArgs e)
-    {
-        if (e.NewIndex == e.PrevIndex)
-        {
-            return;
-        }
-
-        if (e.NewIndex == -1)
-        {
-            OnValueChanged(null);
-        }
-        else
-        {
-            if (comboBoxAdv1.Items[e.NewIndex] is IChoice<T> value)
-            {
-                OnValueChanged(value.Id);
-            }
-        }
-    }
-
-    private void ButtonDelete_Click(object sender, EventArgs e) => ClearSelectedValue();
-
-    #region IChoiceControl interface
-
-    IChoiceControl<T> IChoiceControl<T>.ReadOnly()
-    {
-        ReadOnly = true;
-        return this;
-    }
-
-    IChoiceControl<T> IChoiceControl<T>.Required()
-    {
-        required = true;
-        panelSeparator1.Visible = false;
-        buttonDelete.Visible = false;
-        return this;
-    }
-
-    IChoiceControl<T> IChoiceControl<T>.SetChoiceValues(IReadOnlyDictionary<T, string> keyValues, bool autoRefresh)
-    {
-        SetChoiceValues(keyValues, autoRefresh);
-        return this;
-    }
-
-    IChoiceControl<T> IChoiceControl<T>.SetDataSource(GettingDataSource<IChoice<T>> func, DataRefreshMethod refreshMethod)
-    {
-        RefreshMethod = refreshMethod;
-        SetDataSource(func);
-        return this;
-    }
-
-    IChoiceControl<T> IChoiceControl<T>.ChoiceChanged(ControlValueChanged<T?> action)
-    {
-        choiceChanged = action;
-        return this;
-    }
-
-    IChoiceControl<T> IChoiceControl<T>.ChoiceSelected(ControlValueChanged<T?> action)
-    {
-        choiceSelected = action;
-        return this;
-    }
-
-    #endregion
 }
