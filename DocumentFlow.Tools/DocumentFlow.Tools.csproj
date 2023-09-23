@@ -5,7 +5,6 @@
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
 	  <UseWindowsForms>true</UseWindowsForms>
-	  <Version>2023.7.10</Version>
 	  <Company>Автоком</Company>
 	  <Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
 	  <Platforms>x64</Platforms>

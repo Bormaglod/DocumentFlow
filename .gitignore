@@ -268,4 +268,4 @@ packages
 /DocumentFlow.Setup
 /DocumentFlow.Install/*.exe
 /DocumentFlow.RestAPI/vendor
-/DocumentFlow.ExportDocumentRefs/DocumentFlow.ExportDocumentRefs.csproj
+/DocumentFlow.ExportDocumentRefs

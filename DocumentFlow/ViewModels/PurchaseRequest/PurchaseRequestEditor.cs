@@ -43,6 +43,8 @@ public partial class PurchaseRequestEditor : EditorPanel, IPurchaseRequestEditor
 
     public override void RegisterNestedBrowsers()
     {
+        EditorPage.RegisterNestedBrowser<IDocumentPaymentBrowser>();
+        EditorPage.RegisterNestedBrowser<IWaybillReceiptNestedBrowser>();
     }
 
     protected override void RegisterReports()

@@ -328,6 +328,9 @@
     <Compile Update="ViewModels\Operations\Usage\OperationUsageBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="ViewModels\PaymentOrders\Documents\DocumentPaymentBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="ViewModels\PaymentOrders\PaymentOrderBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>

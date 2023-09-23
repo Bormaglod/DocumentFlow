@@ -32,6 +32,7 @@ public class ProductionLotNestedBrowser : BaseProductionLotBrowser, IProductionL
         var quantity = CreateNumeric(x => x.Quantity, "Количество", width: 150, hidden: false, decimalDigits: 3);
         var state = CreateText(x => x.StateName, "Состояние", width: 150);
         var execute_percent = CreateProgress(x => x.ExecutePercent, "Выполнено", 100);
+        var sold = CreateBoolean(x => x.Sold, "Реализовано", 100);
 
         goods.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
         quantity.CellStyle.HorizontalAlignment = HorizontalAlignment.Right;
@@ -40,7 +41,7 @@ public class ProductionLotNestedBrowser : BaseProductionLotBrowser, IProductionL
         CreateSummaryRow(VerticalPosition.Bottom)
             .AsSummary(quantity);
 
-        AddColumns(new GridColumn[] { id, date, number, goods, calculation, quantity, state, execute_percent });
+        AddColumns(new GridColumn[] { id, date, number, goods, calculation, quantity, state, sold, execute_percent });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [date] = ListSortDirection.Ascending,

@@ -43,6 +43,7 @@ public partial class WaybillReceiptEditor : EditorPanel, IWaybillReceiptEditor
 
     public override void RegisterNestedBrowsers()
     {
+        EditorPage.RegisterNestedBrowser<IDocumentPaymentBrowser>();
     }
 
     protected WaybillReceipt Waybill { get; set; } = null!;

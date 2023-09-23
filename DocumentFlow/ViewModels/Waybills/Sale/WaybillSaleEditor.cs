@@ -44,6 +44,7 @@ public partial class WaybillSaleEditor : EditorPanel, IWaybillSaleEditor
 
     public override void RegisterNestedBrowsers()
     {
+        EditorPage.RegisterNestedBrowser<IDocumentPaymentBrowser>();
     }
 
     public void AddGoodsFromLot()

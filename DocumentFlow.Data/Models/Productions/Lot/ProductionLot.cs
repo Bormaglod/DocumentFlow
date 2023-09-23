@@ -20,7 +20,11 @@ public class ProductionLot : AccountingDocument
     private Guid calculationId;
     private decimal quantity;
     private string state = "created";
+    private bool? sold;
 
+    /// <summary>
+    /// Возвращает или устанавливает идентификатор калькуляции используемой для изготовления партии.
+    /// </summary>
     public Guid CalculationId 
     { 
         get => calculationId; 
@@ -34,6 +38,9 @@ public class ProductionLot : AccountingDocument
         }
     }
 
+    /// <summary>
+    /// Возвращает или устанавливает количество изделий в партии.
+    /// </summary>
     public decimal Quantity 
     { 
         get => quantity; 
@@ -47,6 +54,9 @@ public class ProductionLot : AccountingDocument
         }
     }
 
+    /// <summary>
+    /// Возвращает или устанавливает значение состояния партии (значение должно быть строковым представлением типа lot_state из Postgresql).
+    /// </summary>
     [DenyCopying]
     [EnumType("lot_state")]
     public string State
@@ -57,6 +67,22 @@ public class ProductionLot : AccountingDocument
             if (state != value) 
             {
                 state = value;
+                NotifyPropertyChanged();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Возвращает или устанавливает флаг определяющий, что партия реализована (если партия реализована частично - то NULL).
+    /// </summary>
+    public bool? Sold 
+    { 
+        get => sold; 
+        set
+        {
+            if (sold != value) 
+            { 
+                sold = value;
                 NotifyPropertyChanged();
             }
         }
