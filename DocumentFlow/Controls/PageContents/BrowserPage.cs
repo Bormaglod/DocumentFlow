@@ -1391,11 +1391,11 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
 
     private void DocumenuMenuItem_Click(object? sender, EventArgs e)
     {
-        if (sender is ToolStripMenuItem menuItem && menuItem.Tag is DocumentRefs doc)
+        if (sender is ToolStripMenuItem menuItem && menuItem.Tag is DocumentRefs doc && CurrentDocument != null && doc.S3object != null)
         {
             try
             {
-                FileHelper.OpenFile(doc);
+                FileHelper.OpenFile(services, doc.FileName, CurrentDocument.GetType().Name.Underscore(), doc.S3object);
             }
             catch (Exception ex)
             {

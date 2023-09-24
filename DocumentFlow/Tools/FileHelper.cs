@@ -5,8 +5,11 @@
 // Date: 26.06.2022
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Interfaces;
+
 using System.Diagnostics;
 using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentFlow.Tools;
 
@@ -26,24 +29,21 @@ public static class FileHelper
         }
     }
 
-    public static void OpenFile(Data.DocumentRefs doc)
+    public static void OpenFile(IServiceProvider services, string fileName, string bucket, string s3object)
     {
         DeleteTempFiles("DocumentRefs");
-        if (doc.FileName != null && doc.FileContent != null)
+        string path = Path.Combine(Path.GetTempPath(), "DocumentFlow", "DocumentRefs");
+        if (!Directory.Exists(path))
         {
-            string path = Path.Combine(Path.GetTempPath(), "DocumentFlow", "DocumentRefs");
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            string file = Path.Combine(path, doc.FileName);
-            using (FileStream stream = new(file, FileMode.Create, FileAccess.Write))
-            {
-                stream.Write(doc.FileContent, 0, doc.FileContent.Length);
-            }
-
-            Process.Start(new ProcessStartInfo(file) { UseShellExecute = true });
+            Directory.CreateDirectory(path);
         }
+
+        string file = Path.Combine(path, fileName);
+        services
+           .GetRequiredService<IS3Object>()
+           .GetObject(bucket, s3object, file)
+           .Wait();
+
+        Process.Start(new ProcessStartInfo(file) { UseShellExecute = true });
     }
 }

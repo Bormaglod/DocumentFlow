@@ -5,12 +5,10 @@
 // Date: 18.08.2019
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Tools;
 using DocumentFlow.Data;
-using DocumentFlow.Settings;
+using DocumentFlow.Tools;
 
-using Microsoft.Extensions.Options;
-
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace DocumentFlow.Dialogs;
@@ -19,16 +17,17 @@ namespace DocumentFlow.Dialogs;
 public partial class DocumentRefDialog : Form
 {
     private string fileNameWithPath = string.Empty;
-    private readonly ThumbnailRowSettings settings;
 
-    public DocumentRefDialog(IOptions<LocalSettings> options)
+    public DocumentRefDialog()
     {
         InitializeComponent();
+   }
 
-        settings = options.Value.PreviewRows.ThumbnailRow;
-    }
+    public bool CreateThumbnailImage => checkBoxThumbnail.Checked;
 
-    public DocumentRefs? Create(Guid owner)
+    public string FileNameWithPath => fileNameWithPath;
+
+    public bool Create(Guid owner, [MaybeNullWhen(false)] out DocumentRefs document)
     {
         textFileName.Text = string.Empty;
         textNote.Text = string.Empty;
@@ -40,7 +39,7 @@ public partial class DocumentRefDialog : Form
         if (ShowDialog() == DialogResult.OK)
         {
             var fileInfo = new FileInfo(fileNameWithPath);
-            var document = new DocumentRefs
+            document = new DocumentRefs
             {
                 OwnerId = owner,
                 FileName = Path.GetFileName(fileNameWithPath),
@@ -48,19 +47,11 @@ public partial class DocumentRefDialog : Form
                 FileLength = fileInfo.Length
             };
 
-            using FileStream stream = new(fileInfo.FullName, FileMode.Open, FileAccess.Read);
-            document.FileContent = new byte[stream.Length];
-            stream.Read(document.FileContent, 0, document.FileContent.Length);
-
-            if (checkBoxThumbnail.Checked)
-            {
-                document.CreateThumbnailImage(settings.ImageSize);
-            }
-
-            return document;
+            return true;
         }
 
-        return null;
+        document = default;
+        return false;
     }
 
     public bool Edit(DocumentRefs refs)
@@ -73,19 +64,11 @@ public partial class DocumentRefDialog : Form
 
         textFileName.Enabled = false;
         buttonSelectFile.Enabled = false;
+        checkBoxThumbnail.Enabled = false;
 
         if (ShowDialog() == DialogResult.OK)
         {
             refs.Note = textNote.Text;
-            if (checkBoxThumbnail.Checked)
-            {
-                refs.CreateThumbnailImage(settings.ImageSize);
-            }
-            else
-            {
-                refs.Thumbnail = null;
-            }
-
             return true;
         }
 

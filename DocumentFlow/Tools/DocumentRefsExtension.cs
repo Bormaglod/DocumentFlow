@@ -14,12 +14,12 @@ namespace DocumentFlow.Tools;
 
 public static class DocumentRefsExtension
 {
-    public static void CreateThumbnailImage(this DocumentRefs document, int imageSize)
+    public static void CreateThumbnailImage(this DocumentRefs document, string fileName, int imageSize)
     {
         string[] images = { ".jpg", ".jpeg", ".png", ".bmp" };
-        if (images.Contains(Path.GetExtension(document.FileName)) && document.FileContent != null)
+        if (images.Contains(Path.GetExtension(fileName)))
         {
-            using MemoryStream stream = new(document.FileContent);
+            using FileStream stream = new(fileName, FileMode.Open, FileAccess.Read);
             Image image = Image.FromStream(stream);
 
             int width = imageSize;

@@ -16,18 +16,19 @@ using DocumentFlow.Data.Tools;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Properties;
+using DocumentFlow.Settings;
 using DocumentFlow.Tools;
 
 using Humanizer;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Events;
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 
 namespace DocumentFlow.Controls.PageContents;
 
@@ -50,15 +51,18 @@ public partial class EditorPage : UserControl, IEditorPage
     private readonly IToolBar toolBar;
     private readonly IServiceProvider services;
     private readonly IDockingManager dockingManager;
+    private readonly ThumbnailRowSettings settings;
 
     private IEditor? editor;
 
-    public EditorPage(IServiceProvider services, IDockingManager dockingManager)
+    public EditorPage(IServiceProvider services, IDockingManager dockingManager, IOptions<LocalSettings> options)
     {
         InitializeComponent();
 
         this.services = services;
         this.dockingManager = dockingManager;
+
+        settings = options.Value.PreviewRows.ThumbnailRow;
 
         toolBar = new PageToolBar(editorToolStrip1)
         {
@@ -409,9 +413,9 @@ public partial class EditorPage : UserControl, IEditorPage
 
     private void ButtonOpenDoc_Click(object sender, EventArgs e)
     {
-        if (gridDocuments.CurrentItem is DocumentRefs refs)
+        if (gridDocuments.CurrentItem is DocumentRefs refs && refs.S3object != null)
         {
-            FileHelper.OpenFile(refs);
+            FileHelper.OpenFile(services, refs.FileName, Editor.DocumentInfo.GetType().Name.Underscore(), refs.S3object);
         }
     }
 
@@ -419,14 +423,24 @@ public partial class EditorPage : UserControl, IEditorPage
     {
         if (Editor.DocumentInfo.Id == Guid.Empty)
         {
-            MessageBox.Show("Для добавления сопутствующих документов необъодимо сначала сохранить текущий", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Для добавления сопутствующих документов необходимо сначала сохранить текущий", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
         var dialog = services.GetRequiredService<DocumentRefDialog>();
-        var refs = dialog.Create(Editor.DocumentInfo.Id);
-        if (refs != null)
+        if (dialog.Create(Editor.DocumentInfo.Id, out var refs))
         {
+            refs.S3object = $"{refs.OwnerId}_{refs.FileName}";
+
+            services
+                .GetRequiredService<IS3Object>()
+                .PutObject(Editor.DocumentInfo.GetType().Name.Underscore(), refs.S3object, dialog.FileNameWithPath);
+
+            if (dialog.CreateThumbnailImage)
+            {
+                refs.CreateThumbnailImage(dialog.FileNameWithPath, settings.ImageSize);
+            }
+
             var res = services
                 .GetRequiredService<IDocumentRefsRepository>()
                 .Add(refs);
@@ -448,6 +462,13 @@ public partial class EditorPage : UserControl, IEditorPage
             {
                 var repo = services.GetRequiredService<IDocumentRefsRepository>();
                 repo.Wipe(refs);
+
+                if (!string.IsNullOrEmpty(refs.S3object))
+                {
+                    services
+                        .GetRequiredService<IS3Object>()
+                        .RemoveObject(Editor.DocumentInfo.GetType().Name.Underscore(), refs.S3object);
+                }
 
                 if (gridDocuments.DataSource is IList<DocumentRefs> list)
                 {
@@ -483,13 +504,15 @@ public partial class EditorPage : UserControl, IEditorPage
 
     private void ButtonSaveDoc_Click(object sender, EventArgs e)
     {
-        if (gridDocuments.CurrentItem is DocumentRefs refs && refs.FileName != null && refs.FileContent != null)
+        if (gridDocuments.CurrentItem is DocumentRefs refs && refs.FileName != null && refs.S3object != null)
         {
             saveFileDialog1.FileName = refs.FileName;
+            saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                using FileStream stream = new(saveFileDialog1.FileName, FileMode.Create, FileAccess.Write);
-                stream.Write(refs.FileContent, 0, refs.FileContent.Length);
+                services
+                    .GetRequiredService<IS3Object>()
+                    .GetObject(Editor.DocumentInfo.GetType().Name.Underscore(), refs.S3object, saveFileDialog1.FileName);
             }
         }
     }

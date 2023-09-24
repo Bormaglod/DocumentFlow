@@ -95,6 +95,7 @@ internal static class Program
         services.AddSingleton<IHostApp>(x => x.GetRequiredService<MainForm>());
         services.AddSingleton<IPageManager, PageManager>();
         services.AddTransient<IBreadcrumb, Breadcrumb>();
+        services.AddTransient<IS3Object, S3Object>();
 
         services.Scan(scan => scan
             .FromEntryAssembly()

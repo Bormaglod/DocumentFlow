@@ -28,5 +28,5 @@ public class DocumentRefs : Entity<long>
     public bool ThumbnailExist => !string.IsNullOrEmpty(Thumbnail);
 
     [Display(AutoGenerateField = false)]
-    public byte[]? FileContent { get; set; }
+    public string? S3object { get; set; }
 }

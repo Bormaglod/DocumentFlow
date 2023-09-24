@@ -9,6 +9,7 @@ using DocumentFlow.Data;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Settings;
+using DocumentFlow.Settings.Authentification;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Npgsql;
 
 using System.IO;
+using System.Text.Json;
 
 namespace DocumentFlow;
 
@@ -114,11 +116,14 @@ public partial class LoginForm : Form
         comboUsers.DataSource = list;
 
 #if DEBUG
-        if (File.Exists("password.txt"))
+        if (File.Exists("passwords.json"))
         {
-            var user = File.ReadLines("password.txt").First().Split(':', StringSplitOptions.TrimEntries);
-            comboUsers.SelectedItem = list.FirstOrDefault(u => u.PgName == user[0]);
-            textPassword.Text = user[1];
+            var auth = JsonSerializer.Deserialize<AuthentificationInfo>(File.ReadAllText("passwords.json"));
+            if (auth != null) 
+            {
+                comboUsers.SelectedItem = list.FirstOrDefault(u => u.PgName == auth.Postgresql.Login);
+                textPassword.Text = auth.Postgresql.Password;
+            }
         }
 #else
         if (localSettings != null) 
