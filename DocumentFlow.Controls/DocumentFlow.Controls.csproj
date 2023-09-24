@@ -29,9 +29,7 @@
 		  <AutoGen>True</AutoGen>
 		  <DependentUpon>Resources.resx</DependentUpon>
 		</Compile>
-		<Compile Update="SplitButton.cs">
-		  <SubType>Component</SubType>
-		</Compile>
+		<Compile Update="SplitButton.cs" />
 		<Compile Update="ToolButton.cs">
 		  <SubType>Component</SubType>
 		</Compile>

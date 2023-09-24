@@ -166,9 +166,6 @@
     <Compile Update="Dialogs\MessageChoiceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Dialogs\PriceApprovalDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="ViewModels\Balances\BalanceBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
