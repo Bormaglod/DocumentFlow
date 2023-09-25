@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastReport.OpenSource.Data.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentFlow.ReportExport", "DocumentFlow.ReportExport\DocumentFlow.ReportExport.csproj", "{1F9C3288-E0D9-4AA3-AF0C-D19A04950206}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentFlow.ExportDocumentRefs", "DocumentFlow.ExportDocumentRefs\DocumentFlow.ExportDocumentRefs.csproj", "{5B4A25C0-6F8B-48F5-A3E1-294AF62006B2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.Ghostscript", "DocumentFlow.Ghostscript\DocumentFlow.Ghostscript.csproj", "{1B1553EB-0AD6-4769-BC4C-CD0B7F9B1100}"
 EndProject
 Global
@@ -95,14 +93,6 @@ Global
 		{1F9C3288-E0D9-4AA3-AF0C-D19A04950206}.Release|Any CPU.Build.0 = Release|x64
 		{1F9C3288-E0D9-4AA3-AF0C-D19A04950206}.Release|x64.ActiveCfg = Release|x64
 		{1F9C3288-E0D9-4AA3-AF0C-D19A04950206}.Release|x64.Build.0 = Release|x64
-		{5B4A25C0-6F8B-48F5-A3E1-294AF62006B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B4A25C0-6F8B-48F5-A3E1-294AF62006B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B4A25C0-6F8B-48F5-A3E1-294AF62006B2}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5B4A25C0-6F8B-48F5-A3E1-294AF62006B2}.Debug|x64.Build.0 = Debug|Any CPU
-		{5B4A25C0-6F8B-48F5-A3E1-294AF62006B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B4A25C0-6F8B-48F5-A3E1-294AF62006B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5B4A25C0-6F8B-48F5-A3E1-294AF62006B2}.Release|x64.ActiveCfg = Release|Any CPU
-		{5B4A25C0-6F8B-48F5-A3E1-294AF62006B2}.Release|x64.Build.0 = Release|Any CPU
 		{1B1553EB-0AD6-4769-BC4C-CD0B7F9B1100}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1B1553EB-0AD6-4769-BC4C-CD0B7F9B1100}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B1553EB-0AD6-4769-BC4C-CD0B7F9B1100}.Debug|x64.ActiveCfg = Debug|x64
