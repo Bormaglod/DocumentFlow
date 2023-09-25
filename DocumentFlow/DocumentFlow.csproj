@@ -13,7 +13,7 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
 		<NeutralLanguage>ru</NeutralLanguage>
-		<Version>$(VersionPrefix)2023.9.24</Version>
+		<Version>$(VersionPrefix)2023.9.25</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -71,6 +71,7 @@
 	  <ProjectReference Include="..\..\FastReport\FastReport.OpenSource\FastReport.OpenSource.csproj" />
 	  <ProjectReference Include="..\DocumentFlow.Controls\DocumentFlow.Controls.csproj" />
 	  <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj" />
+	  <ProjectReference Include="..\DocumentFlow.Ghostscript\DocumentFlow.Ghostscript.csproj" />
 	  <ProjectReference Include="..\DocumentFlow.Settings\DocumentFlow.Settings.csproj" />
 	  <ProjectReference Include="..\DocumentFlow.Tools\DocumentFlow.Tools.csproj" />
 	</ItemGroup>

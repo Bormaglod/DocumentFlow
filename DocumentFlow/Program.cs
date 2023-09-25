@@ -1,10 +1,10 @@
 using DocumentFlow.Controls;
-using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Tools;
+using DocumentFlow.Ghostscript.API;
 using DocumentFlow.Interfaces;
 using DocumentFlow.ReportEngine;
 using DocumentFlow.Settings;
@@ -44,6 +44,7 @@ internal static class Program
         FastReport.Utils.RegisteredObjects.AddConnection(typeof(FastReport.Data.PostgresDataConnection));
 
         ApplicationConfiguration.Initialize();
+        GhostScript.Initialize();
 
         var localSettings = Path.Combine(
 #if !DEBUG

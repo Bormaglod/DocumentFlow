@@ -130,6 +130,15 @@ public partial class EditorPage : UserControl, IEditorPage
         }
     }
 
+    private string BacketName
+    {
+        get
+        {
+            var name = Editor.DocumentInfo.GetType().Name.Underscore();
+            return name.Replace('_', '-');
+        }
+    }
+
     /// <summary>
     /// Метод вызывается для извещения странице о том, что она в самое ближайшее время
     /// будет закрыта.
@@ -415,7 +424,7 @@ public partial class EditorPage : UserControl, IEditorPage
     {
         if (gridDocuments.CurrentItem is DocumentRefs refs && refs.S3object != null)
         {
-            FileHelper.OpenFile(services, refs.FileName, Editor.DocumentInfo.GetType().Name.Underscore(), refs.S3object);
+            FileHelper.OpenFile(services, refs.FileName, BacketName, refs.S3object);
         }
     }
 
@@ -434,7 +443,7 @@ public partial class EditorPage : UserControl, IEditorPage
 
             services
                 .GetRequiredService<IS3Object>()
-                .PutObject(Editor.DocumentInfo.GetType().Name.Underscore(), refs.S3object, dialog.FileNameWithPath);
+                .PutObject(BacketName, refs.S3object, dialog.FileNameWithPath);
 
             if (dialog.CreateThumbnailImage)
             {
@@ -467,7 +476,7 @@ public partial class EditorPage : UserControl, IEditorPage
                 {
                     services
                         .GetRequiredService<IS3Object>()
-                        .RemoveObject(Editor.DocumentInfo.GetType().Name.Underscore(), refs.S3object);
+                        .RemoveObject(BacketName, refs.S3object);
                 }
 
                 if (gridDocuments.DataSource is IList<DocumentRefs> list)
@@ -512,7 +521,7 @@ public partial class EditorPage : UserControl, IEditorPage
             {
                 services
                     .GetRequiredService<IS3Object>()
-                    .GetObject(Editor.DocumentInfo.GetType().Name.Underscore(), refs.S3object, saveFileDialog1.FileName);
+                    .GetObject(BacketName, refs.S3object, saveFileDialog1.FileName);
             }
         }
     }

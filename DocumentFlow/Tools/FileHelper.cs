@@ -7,17 +7,32 @@
 
 using DocumentFlow.Interfaces;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using System.Diagnostics;
 using System.IO;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentFlow.Tools;
 
 public static class FileHelper
 {
+    public static string GetTempPath(string category) => Path.Combine(Path.GetTempPath(), "DocumentFlow", category);
+
+    public static string PrepareTempPath(string category)
+    {
+        DeleteTempFiles(category);
+        string path = GetTempPath("DocumentRefs");
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        return path;
+    }
+
     public static void DeleteTempFiles(string category)
     {
-        string path = Path.Combine(Path.GetTempPath(), "DocumentFlow", category);
+        string path = GetTempPath(category);
         if (Directory.Exists(path))
         {
             var di = new DirectoryInfo(path);
@@ -31,13 +46,7 @@ public static class FileHelper
 
     public static void OpenFile(IServiceProvider services, string fileName, string bucket, string s3object)
     {
-        DeleteTempFiles("DocumentRefs");
-        string path = Path.Combine(Path.GetTempPath(), "DocumentFlow", "DocumentRefs");
-        if (!Directory.Exists(path))
-        {
-            Directory.CreateDirectory(path);
-        }
-
+        string path = PrepareTempPath("DocumentRefs");
         string file = Path.Combine(path, fileName);
         services
            .GetRequiredService<IS3Object>()

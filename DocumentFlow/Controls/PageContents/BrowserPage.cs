@@ -1395,7 +1395,8 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         {
             try
             {
-                FileHelper.OpenFile(services, doc.FileName, CurrentDocument.GetType().Name.Underscore(), doc.S3object);
+                var name = CurrentDocument.GetType().Name.Underscore();
+                FileHelper.OpenFile(services, doc.FileName, name.Replace('_', '-'), doc.S3object);
             }
             catch (Exception ex)
             {
