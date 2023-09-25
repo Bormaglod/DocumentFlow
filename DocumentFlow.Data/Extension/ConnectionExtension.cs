@@ -8,13 +8,16 @@
 using Dapper;
 
 using DocumentFlow.Data.Enums;
+using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Tools;
 
 using Humanizer;
 
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace DocumentFlow.Data.Extension;
@@ -52,35 +55,14 @@ public static class ConnectionExtension
         return connection.InsertInternal(entity, transaction, commandTimeout);
     }
 
-    public static int Copy(this IDbConnection connection, object entity, IDbTransaction? transaction = null, int? commandTimeout = null)
+    public static bool Copy(this IDbConnection connection, object entity, [MaybeNullWhen(false)] out object copy, IDbTransaction? transaction = null, int? commandTimeout = null)
     {
-        if (entity is IEnumerable<object> entities)
+        if (entity is IEnumerable<object>)
         {
-            int rowsAffected = 0;
-
-            var entityGroups = entities.GroupBy(x => x.GetType());
-            foreach (var grp in entityGroups)
-            {
-                if (grp.Any())
-                {
-                    if (grp.First() is IDiscriminator entityGroup)
-                    {
-                        foreach (var d in grp.Cast<IDiscriminator>().GroupBy(x => x.Discriminator))
-                        {
-                            rowsAffected += connection.CopyInternal(d.ToList(), transaction, commandTimeout);
-                        }
-                    }
-                    else
-                    {
-                        rowsAffected += connection.CopyInternal(grp.ToList(), transaction, commandTimeout);
-                    }
-                }
-            }
-
-            return rowsAffected;
+            throw new RepositoryException("The entity parameter cannot be an enumeration.");
         }
 
-        return connection.CopyInternal(entity, transaction, commandTimeout);
+        return connection.CopyInternal(entity, out copy, transaction, commandTimeout);
     }
 
     public static bool Update(this IDbConnection connection, object entity, IDbTransaction? transaction = null, int? commandTimeout = null)
@@ -187,11 +169,12 @@ public static class ConnectionExtension
         return rowsAffected;
     }
 
-    private static int CopyInternal(this IDbConnection connection, object entity, IDbTransaction? transaction = null, int? commandTimeout = null)
+    private static bool CopyInternal(this IDbConnection connection, object entity, [MaybeNullWhen(false)] out object copy, IDbTransaction? transaction = null, int? commandTimeout = null)
     {
         if (IncorrectEntityType(entity, out Type type))
         {
-            return 0;
+            copy = null;
+            return false;
         }
 
         var name = EntityProperties.GetTableName(type);
@@ -210,24 +193,18 @@ public static class ConnectionExtension
 
         var cmd = $"insert into {name}{discriminator} ({fields}) values ({values}) returning {returning}";
 
-        int rowsAffected = 0;
-        if (entity is IEnumerable e)
+        var results = connection.QuerySingle(cmd, entity, transaction, commandTimeout);
+
+        copy = Activator.CreateInstance(type);
+
+        if (copy == null)
         {
-            foreach (var entityItem in e)
-            {
-                var results = connection.QuerySingle(cmd, entityItem, transaction, commandTimeout);
-                PopulateIdValue(entityItem, results, keyProperties);
-                rowsAffected++;
-            }
-        }
-        else
-        {
-            var results = connection.QuerySingle(cmd, entity, transaction, commandTimeout);
-            PopulateIdValue(entity, results, keyProperties);
-            rowsAffected = 1;
+            throw new RepositoryException($"Не удалось создать объект типа {type.Name}");
         }
 
-        return rowsAffected;
+        PopulateIdValue(copy, results, keyProperties);
+
+        return true;
     }
 
     private static int UpdateInternal(this IDbConnection connection, object entity, IDbTransaction? transaction = null, int? commandTimeout = null)

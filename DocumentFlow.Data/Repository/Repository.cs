@@ -66,14 +66,17 @@ public abstract class Repository<Key, T> : ReadOnlyRepository<Key, T>, IReposito
     {
         try
         {
-            connection.Copy(original, transaction);
-            transaction?.Commit();
+            if (connection.Copy(original, out var copy, transaction) && copy is T t)
+            {
+                t = Get(connection, t.Id);
+                CopyNestedRows(connection, original, t, transaction);
 
-            T copy = Get(original.Id);
+                transaction?.Commit();
 
-            CopyNestedRows(connection, original, copy, transaction);
+                return t;
+            }
 
-            return copy;
+            throw new RepositoryException($"Не удалость сделать копию документа с id = {{{original.Id}}}");
         }
         catch (Exception e)
         {
