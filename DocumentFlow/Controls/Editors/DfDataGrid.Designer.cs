@@ -35,7 +35,7 @@ namespace DocumentFlow.Controls.Editors
             buttonDelete = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
             buttonCopy = new ToolStripButton();
-            toolStripSeparatorCustom1 = new ToolStripSeparator();
+            toolStripButtonSeparatorCustom = new ToolStripSeparator();
             gridMain = new Syncfusion.WinForms.DataGrid.SfDataGrid();
             contextMenuStripEx1 = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             menuCopyToClipboard = new ToolStripMenuItem();
@@ -45,7 +45,7 @@ namespace DocumentFlow.Controls.Editors
             menuDelete = new ToolStripMenuItem();
             toolStripSeparator3 = new ToolStripSeparator();
             menuCopy = new ToolStripMenuItem();
-            toolStripSeparatorCustom2 = new ToolStripSeparator();
+            toolStripMenuSeparatorCustom = new ToolStripSeparator();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gridMain).BeginInit();
             contextMenuStripEx1.SuspendLayout();
@@ -53,7 +53,7 @@ namespace DocumentFlow.Controls.Editors
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { buttonCreate, buttonEdit, buttonDelete, toolStripSeparator1, buttonCopy, toolStripSeparatorCustom1 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { buttonCreate, buttonEdit, buttonDelete, toolStripSeparator1, buttonCopy, toolStripButtonSeparatorCustom });
             toolStrip1.Location = new Point(0, 25);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(800, 25);
@@ -102,11 +102,11 @@ namespace DocumentFlow.Controls.Editors
             buttonCopy.ToolTipText = "Создать копированием";
             buttonCopy.Click += ButtonCopy_Click;
             // 
-            // toolStripSeparatorCustom1
+            // toolStripButtonSeparatorCustom
             // 
-            toolStripSeparatorCustom1.Name = "toolStripSeparatorCustom1";
-            toolStripSeparatorCustom1.Size = new Size(6, 25);
-            toolStripSeparatorCustom1.Visible = false;
+            toolStripButtonSeparatorCustom.Name = "toolStripButtonSeparatorCustom";
+            toolStripButtonSeparatorCustom.Size = new Size(6, 25);
+            toolStripButtonSeparatorCustom.Visible = false;
             // 
             // gridMain
             // 
@@ -139,7 +139,7 @@ namespace DocumentFlow.Controls.Editors
             // contextMenuStripEx1
             // 
             contextMenuStripEx1.DropShadowEnabled = false;
-            contextMenuStripEx1.Items.AddRange(new ToolStripItem[] { menuCopyToClipboard, toolStripSeparator2, menuCreate, menuEdit, menuDelete, toolStripSeparator3, menuCopy, toolStripSeparatorCustom2 });
+            contextMenuStripEx1.Items.AddRange(new ToolStripItem[] { menuCopyToClipboard, toolStripSeparator2, menuCreate, menuEdit, menuDelete, toolStripSeparator3, menuCopy, toolStripMenuSeparatorCustom });
             contextMenuStripEx1.MetroColor = Color.FromArgb(204, 236, 249);
             contextMenuStripEx1.Name = "contextMenuStripEx1";
             contextMenuStripEx1.Size = new Size(182, 154);
@@ -197,11 +197,11 @@ namespace DocumentFlow.Controls.Editors
             menuCopy.Text = "Создать копию";
             menuCopy.Click += ButtonCopy_Click;
             // 
-            // toolStripSeparatorCustom2
+            // toolStripMenuSeparatorCustom
             // 
-            toolStripSeparatorCustom2.Name = "toolStripSeparatorCustom2";
-            toolStripSeparatorCustom2.Size = new Size(178, 6);
-            toolStripSeparatorCustom2.Visible = false;
+            toolStripMenuSeparatorCustom.Name = "toolStripMenuSeparatorCustom";
+            toolStripMenuSeparatorCustom.Size = new Size(178, 6);
+            toolStripMenuSeparatorCustom.Visible = false;
             // 
             // DfDataGrid
             // 
@@ -239,7 +239,7 @@ namespace DocumentFlow.Controls.Editors
         private ToolStripMenuItem menuDelete;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem menuCopy;
-        private ToolStripSeparator toolStripSeparatorCustom1;
-        private ToolStripSeparator toolStripSeparatorCustom2;
+        private ToolStripSeparator toolStripButtonSeparatorCustom;
+        private ToolStripSeparator toolStripMenuSeparatorCustom;
     }
 }

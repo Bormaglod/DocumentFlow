@@ -12,4 +12,5 @@ namespace DocumentFlow.Data.Models;
 public interface ICalculationRepository : IOwnedRepository<Guid, Calculation>
 {
     IReadOnlyList<Calculation> GetApproved(Goods goods);
+    IReadOnlyList<Calculation> GetApproved(Guid goodsId);
 }

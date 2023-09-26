@@ -37,6 +37,7 @@ public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
                 .AsSummary(x => x.ProductCost, SummaryColumnFormat.Currency, SelectOptions.All)
                 .AsSummary(x => x.TaxValue, SummaryColumnFormat.Currency, SelectOptions.All)
                 .AsSummary(x => x.FullCost, SummaryColumnFormat.Currency, SelectOptions.All));
+        gridContent.AddCommand("Изменить калькуляцию изделия", Properties.Resources.icons8_one_page_down_16, ChangeCalculation);
 
         Order.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
@@ -71,6 +72,21 @@ public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
             .GetList(callback: q => q.Where("id", Order.ContractId));
 
         gridContent.DataSource = Order.Prices;
+    }
+
+    private void ChangeCalculation()
+    {
+        if (gridContent.SelectedItem is ProductionOrderPrice item)
+        {
+            var dialog = services.GetRequiredService<DirectoryItemDialog>();
+
+            var newCalc = dialog.Get(services.GetRequiredService<ICalculationRepository>().GetApproved(item.ReferenceId), withColumns: false);
+            if (newCalc != null && newCalc.Id != item.CalculationId)
+            {
+                services.GetRequiredService<IProductionOrderRepository>().ChangeCalculation(Order, item.CalculationId, newCalc.Id);
+                item.SetCalculation(newCalc);
+            }
+        }
     }
 
     private void SelectContract_DataSourceOnLoad(object sender, DataSourceLoadEventArgs e)

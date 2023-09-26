@@ -34,19 +34,35 @@ public partial class DirectoryItemDialog : Form
         this.services = services;
     }
 
-    public T? Get<T, R>(Guid? selectedItem = null)
+    public T? Get<T>(IEnumerable<T> items, Guid? selectedItem = null, bool withColumns = true)
+        where T : class, IDirectory
+    {
+        return GetDirectoryItem(items, selectedItem, withColumns);
+    }
+
+    public T? Get<T, R>(Guid? selectedItem = null, bool withColumns = true)
         where T : class, IDirectory
         where R : IRepository<Guid, T>
     {
-        var attr = typeof(T).GetCustomAttribute<EntityNameAttribute>();
-        var title = attr == null ? typeof(T).Name : attr.Name;
-
         var items = services
             .GetRequiredService<R>()
             .GetListExisting(callback: query => query.OrderByDesc("is_folder")
             .OrderBy("code"));
 
-        selectBox.SetColumns<T>("Code", columns);
+        return GetDirectoryItem(items, selectedItem, withColumns);
+    }
+
+    private T? GetDirectoryItem<T>(IEnumerable<T> items, Guid? selectedItem, bool withColumns)
+        where T : class, IDirectory
+    {
+        var attr = typeof(T).GetCustomAttribute<EntityNameAttribute>();
+        var title = attr == null ? typeof(T).Name : attr.Name;
+
+        if (withColumns)
+        {
+            selectBox.SetColumns<T>("Code", columns);
+        }
+
         selectBox.DataSource = items;
         selectBox.Header = title;
 
@@ -67,7 +83,7 @@ public partial class DirectoryItemDialog : Form
     {
         if (selectBox.SelectedItem == Guid.Empty)
         {
-            MessageBox.Show("Необходимо выбрать изделие.", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Необходимо выбрать элемент справочника.", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Error);
             DialogResult = DialogResult.None;
         }
     }

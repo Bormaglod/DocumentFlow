@@ -7,9 +7,11 @@
 
 using Dapper;
 
+using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Repository;
+using DocumentFlow.Data.Tools;
 
 using SqlKata;
 using SqlKata.Execution;
@@ -109,6 +111,30 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .Where("po.id", order.Id)
             .Get<Goods>()
             .ToList();
+    }
+
+    public void ChangeCalculation(ProductionOrder order, Guid currentCalculationId, Guid newCalculationId)
+    {
+        using var conn = GetConnection();
+        using var transaction = conn.BeginTransaction();
+        try
+        {
+            conn.Execute("call change_calculation_in_order(:order_id, :current_calc_id, :new_calc_id)",
+                new 
+                { 
+                    order_id = order.Id, 
+                    current_calc_id = currentCalculationId, 
+                    new_calc_id = newCalculationId 
+                },
+                transaction);
+            
+            transaction.Commit();
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            throw new RepositoryException(ExceptionHelper.Message(e, CurrentDatabase), e);
+        }
     }
 
     protected override Query GetUserDefinedQuery(Query query, IFilter? filter)

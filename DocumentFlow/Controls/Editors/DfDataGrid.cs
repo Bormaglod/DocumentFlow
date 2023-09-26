@@ -36,10 +36,6 @@ public partial class DfDataGrid : DfControl, IAccess
     private Type? contentType;
     private bool enabledEditor = true;
 
-    public event EventHandler<DependentEntitySelectEventArgs>? CreateRow;
-
-    public event EventHandler<DependentEntitySelectEventArgs>? EditRow;
-
     public DfDataGrid()
     {
         InitializeComponent();
@@ -48,6 +44,9 @@ public partial class DfDataGrid : DfControl, IAccess
         gridMain.CellRenderers.Remove("TableSummary");
         gridMain.CellRenderers.Add("TableSummary", new CustomGridTableSummaryRenderer());
     }
+
+    public event EventHandler<DependentEntitySelectEventArgs>? CreateRow;
+    public event EventHandler<DependentEntitySelectEventArgs>? EditRow;
 
     public bool EnabledEditor
     {
@@ -86,6 +85,9 @@ public partial class DfDataGrid : DfControl, IAccess
         }
     }
 
+    [Browsable(false)]
+    public object SelectedItem => gridMain.SelectedItem;
+
     public void GridSummaryRow<T>(VerticalPosition position, DataGridSummaryRow<T> summaryRow) where T : Entity<long>
     {
         gridMain.TableSummaryRows.Clear();
@@ -104,8 +106,8 @@ public partial class DfDataGrid : DfControl, IAccess
 
     public void AddCommand(string text, Image image, Action action)
     {
-        toolStripSeparatorCustom1.Visible = true;
-        toolStripSeparatorCustom2.Visible = true;
+        toolStripButtonSeparatorCustom.Visible = true;
+        toolStripMenuSeparatorCustom.Visible = true;
 
         ToolStripButton button = new(text, image, (sender, e) => action())
         {
@@ -114,6 +116,55 @@ public partial class DfDataGrid : DfControl, IAccess
         };
 
         toolStrip1.Items.Add(button);
+
+        ToolStripMenuItem item = new(text, image, (sender, e) => action());
+        contextMenuStripEx1.Items.Add(item);
+    }
+
+    private List<(ToolStripDropDownButton, ToolStripMenuItem)> commands = new();
+
+    public int AddCommands(string text, Image image)
+    {
+        toolStripButtonSeparatorCustom.Visible = true;
+        toolStripMenuSeparatorCustom.Visible = true;
+
+        ToolStripDropDownButton button = new(text, image)
+        {
+            DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
+            TextImageRelation = TextImageRelation.ImageBeforeText
+        };
+
+        toolStrip1.Items.Add(button);
+
+        ToolStripMenuItem item = new(text, image);
+        contextMenuStripEx1.Items.Add(item);
+
+        var cmds = (button, item);
+        commands.Add(cmds);
+
+        return commands.IndexOf(cmds);
+    }
+
+    public void AddCommand(int commandIndex, string text, object data, Action<object> action)
+    {
+        var (button, item) = commands[commandIndex];
+
+        button.DropDownItems.Add(new ToolStripMenuItem(text, null, (sender, e) => { if (sender is ToolStripMenuItem tool) action(tool.Tag); })
+        {
+            Tag = data
+        });
+
+        item.DropDownItems.Add(new ToolStripMenuItem(text, null, (sender, e) => { if (sender is ToolStripMenuItem tool) action(tool.Tag); })
+        {
+            Tag = data
+        });
+    }
+
+    public void ClearCommands(int commandIndex)
+    {
+        var (button, item) = commands[commandIndex];
+        button.DropDownItems.Clear();
+        item.DropDownItems.Clear();
     }
 
     private void Edit()

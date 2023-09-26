@@ -52,13 +52,25 @@ public class CalculationRepository : OwnedRepository<Guid, Calculation>, ICalcul
     {
         using var conn = GetConnection();
         return GetQuery(conn)
-            .Select("id", "code as item_name")
+            .Select("id", "code", "code as item_name")
             .When(goods.CalculationId != null, q => q
                 .Where("id", goods.CalculationId))
             .OrWhere(q => q
                 .WhereFalse("deleted")
                 .WhereRaw("[state] = 'approved'::calculation_state")
                 .Where("owner_id", goods.Id))
+            .Get<Calculation>()
+            .ToList();
+    }
+
+    public IReadOnlyList<Calculation> GetApproved(Guid goodsId)
+    {
+        using var conn = GetConnection();
+        return GetQuery(conn)
+            .Select("id", "code", "code as item_name")
+            .WhereFalse("deleted")
+            .WhereRaw("[state] = 'approved'::calculation_state")
+            .Where("owner_id", goodsId)
             .Get<Calculation>()
             .ToList();
     }

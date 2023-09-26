@@ -18,6 +18,7 @@ public class ProductionOrderPrice : ProductPrice, IProductCalculation
 {
     private int completeStatus;
     private Guid calculationId;
+    private string calculationName = string.Empty;
 
     [Display(Name = "Выполнено", Order = 1000)]
     [ColumnMode(Format = ColumnFormat.Progress)]
@@ -50,8 +51,18 @@ public class ProductionOrderPrice : ProductPrice, IProductCalculation
 
     [Display(Name = "Калькуляция", Order = 20)]
     [ColumnMode(Width = 150)]
-    public string CalculationName { get; protected set; } = string.Empty;
-
+    public string CalculationName 
+    { 
+        get => calculationName; 
+        protected set
+        {
+            if (calculationName != value) 
+            { 
+                calculationName = value;
+                NotifyPropertyChanged();
+            }
+        }
+    }
     public void SetCalculation(Calculation calculation)
     {
         CalculationId = calculation.Id;

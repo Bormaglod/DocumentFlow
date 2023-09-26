@@ -27,7 +27,26 @@ public interface IProductionOrderRepository : IDocumentRepository<ProductionOrde
     /// <returns>Список давальческих материалов, которые потребуются для изготовления заказа order</returns>
     IReadOnlyList<T> GetOnlyGivingMaterials<T>(ProductionOrder order) where T : ProductPrice;
 
+    /// <summary>
+    /// Метод возвращает список активных заказов, т.е. не помеченных на удаление, проведённых и не закрытых.
+    /// </summary>
+    /// <returns>Список активных заказов.</returns>
     IReadOnlyList<ProductionOrder> GetActiveOrders();
 
+    /// <summary>
+    /// Метод возвращает список изделий из заказа указанного в параметре order.
+    /// </summary>
+    /// <param name="order">Заказ на изготовление.</param>
+    /// <returns>Список изделий из заказа указанного в параметре order.</returns>
     IReadOnlyList<Goods> GetGoods(ProductionOrder order);
+
+    /// <summary>
+    /// Метод заменяет указанную калькуляцию в заказе и во всех выполненных работах. Перепроведение документов не производится 
+    /// (изменяется только стоимость работы, если изменилась цена работы в калькуляции). Применять только для идентичных, 
+    /// по составу работ, калькуляций.
+    /// </summary>
+    /// <param name="order">Заказ на изготовление.</param>
+    /// <param name="currentCalculationId">Идентификатор калькуляции, которая будет замещаяться.</param>
+    /// <param name="newCalculationId">Идентификатор калькуляции, которая будет использоваться вместо currentCalculationId.</param>
+    void ChangeCalculation(ProductionOrder order, Guid currentCalculationId, Guid newCalculationId);
 }
