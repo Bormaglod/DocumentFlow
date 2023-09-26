@@ -1578,7 +1578,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
                 },
                 2);
 
-            if (res == 1)
+            if (res == 0)
             {
                 if (gridContent.SelectedItem is T row)
                 {
@@ -1601,7 +1601,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
                     }
                 }
             }
-            else if (res == 2)
+            else if (res == 1)
             {
                 if (repository is IDirectoryRepository<T> repoDir)
                 {
