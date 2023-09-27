@@ -34,6 +34,7 @@ public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
 
         gridContent.GridSummaryRow<ProductionOrderPrice>(VerticalPosition.Bottom, summary =>
             summary
+                .AsSummary(x => x.Amount, SummaryColumnFormat.None, SelectOptions.All)
                 .AsSummary(x => x.ProductCost, SummaryColumnFormat.Currency, SelectOptions.All)
                 .AsSummary(x => x.TaxValue, SummaryColumnFormat.Currency, SelectOptions.All)
                 .AsSummary(x => x.FullCost, SummaryColumnFormat.Currency, SelectOptions.All));

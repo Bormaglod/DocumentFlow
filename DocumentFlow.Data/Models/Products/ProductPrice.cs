@@ -52,7 +52,7 @@ public abstract class ProductPrice : Entity<long>, ICopyable, IDependentEntity
     public string MeasurementName { get; protected set; } = string.Empty;
 
     [Display(Name = "Количество", Order = 200)]
-    [ColumnMode(Width = 100, Alignment = HorizontalAlignment.Right)]
+    [ColumnMode(Width = 100, Alignment = HorizontalAlignment.Right, DecimalDigits = 3)]
     public decimal Amount 
     { 
         get => amount; 

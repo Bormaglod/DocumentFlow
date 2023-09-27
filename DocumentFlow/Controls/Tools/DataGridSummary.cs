@@ -76,10 +76,6 @@ public class DataGridSummary<T> : IDataGridSummary<T>
         }
 
         gridSummaryRow.SummaryColumns.Add(summaryColumn);
-        /*if (groupSummaryRow != null)
-        {
-            groupSummaryRow.SummaryColumns.Add(summaryColumn);
-        }*/
 
         return this;
     }

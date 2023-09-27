@@ -5,13 +5,14 @@
 // Date: 25.08.2023
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data;
+using DocumentFlow.Data.Models;
+
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.Input.Enums;
-using DocumentFlow.Data.Models;
+
 using System.Globalization;
-using DocumentFlow.Data;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DocumentFlow.Tools;
 

@@ -22,6 +22,7 @@ using Syncfusion.WinForms.Input.Enums;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Reflection;
 
 using SE = Syncfusion.WinForms.DataGrid.Enums;
@@ -270,52 +271,63 @@ public partial class DfDataGrid : DfControl, IAccess
         }
 
         var prop = contentType.GetProperties().FirstOrDefault(p => p.Name == e.Column.MappingName);
-
-        if (prop != null)
+        if (prop == null)
         {
-            var attr = prop.GetCustomAttribute<ColumnModeAttribute>();
-            if (attr != null)
-            {
-                if (attr.AutoSizeColumnsMode != Data.Enums.AutoSizeColumnsMode.None)
+            return;
+        }
+
+        var attr = prop.GetCustomAttribute<ColumnModeAttribute>();
+        if (attr == null)
+        {
+            return;
+        }
+
+        if (attr.AutoSizeColumnsMode != Data.Enums.AutoSizeColumnsMode.None)
+        {
+            e.Column.AutoSizeColumnsMode = (SE.AutoSizeColumnsMode)(int)attr.AutoSizeColumnsMode;
+        }
+
+        if (attr.Width > 0)
+        {
+            e.Column.Width = attr.Width;
+        }
+
+        e.Column.CellStyle.HorizontalAlignment = (System.Windows.Forms.HorizontalAlignment)(int)attr.Alignment;
+
+        switch (attr.Format)
+        {
+            case ColumnFormat.Currency:
+                if (e.Column is GridNumericColumn c)
                 {
-                    e.Column.AutoSizeColumnsMode = (SE.AutoSizeColumnsMode)(int)attr.AutoSizeColumnsMode;
+                    c.FormatMode = FormatMode.Currency;
                 }
 
-                if (attr.Width > 0)
+                e.Column.CellStyle.HorizontalAlignment = System.Windows.Forms.HorizontalAlignment.Right;
+
+                break;
+            case ColumnFormat.Progress:
+                var disp = prop.GetCustomAttribute<DisplayAttribute>();
+                var header = disp?.Name ?? e.Column.MappingName;
+                e.Column = new GridProgressBarColumn()
                 {
-                    e.Column.Width = attr.Width;
-                }
+                    MappingName = e.Column.MappingName,
+                    HeaderText = header,
+                    Maximum = 100,
+                    Minimum = 0,
+                    ValueMode = ProgressBarValueMode.Percentage
+                };
 
-                e.Column.CellStyle.HorizontalAlignment = (System.Windows.Forms.HorizontalAlignment)(int)attr.Alignment;
+                break;
+            default:
+                break;
+        }
 
-                switch (attr.Format)
-                {
-                    case ColumnFormat.Currency:
-                        if (e.Column is GridNumericColumn c)
-                        {
-                            c.FormatMode = FormatMode.Currency;
-                        }
-
-                        e.Column.CellStyle.HorizontalAlignment = System.Windows.Forms.HorizontalAlignment.Right;
-
-                        break;
-                    case ColumnFormat.Progress:
-                        var disp = prop.GetCustomAttribute<DisplayAttribute>();
-                        var header = disp?.Name ?? e.Column.MappingName;
-                        e.Column = new GridProgressBarColumn()
-                        {
-                            MappingName = e.Column.MappingName,
-                            HeaderText = header,
-                            Maximum = 100,
-                            Minimum = 0,
-                            ValueMode = ProgressBarValueMode.Percentage
-                        };
-
-                        break;
-                    default:
-                        break;
-                }
-            }
+        if (e.Column is GridNumericColumn numericColumn && attr.DecimalDigits != -1)
+        {
+            NumberFormatInfo numericFormat = (NumberFormatInfo)Application.CurrentCulture.NumberFormat.Clone();
+            numericFormat.NumberDecimalDigits = attr.DecimalDigits;
+            
+            numericColumn.NumberFormatInfo = numericFormat;
         }
     }
 }

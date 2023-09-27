@@ -16,4 +16,5 @@ public class ColumnModeAttribute : Attribute
     public int Width { get; set; } = 0;
     public ColumnFormat Format { get; set; } = ColumnFormat.Default;
     public HorizontalAlignment Alignment { get; set; } = HorizontalAlignment.Left;
+    public int DecimalDigits { get; set; } = -1;
 }
