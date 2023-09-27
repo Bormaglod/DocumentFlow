@@ -13,7 +13,10 @@ using DocumentFlow.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
+using NLog;
+using NLog.Extensions.Logging;
 using System.IO;
 
 namespace DocumentFlow;
@@ -77,6 +80,12 @@ internal static class Program
             .ConfigureServices((context, services) =>
             {
                 ConfigureServices(context.Configuration, services);
+            })
+            .ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                logging.AddNLog();
             })
             .Build();
 

@@ -441,9 +441,8 @@ public partial class EditorPage : UserControl, IEditorPage
         {
             refs.S3object = $"{refs.OwnerId}_{refs.FileName}";
 
-            services
-                .GetRequiredService<IS3Object>()
-                .PutObject(BacketName, refs.S3object, dialog.FileNameWithPath);
+            using var s3 = services.GetRequiredService<IS3Object>();
+            s3.PutObject(BacketName, refs.S3object, dialog.FileNameWithPath);
 
             if (dialog.CreateThumbnailImage)
             {
@@ -474,9 +473,8 @@ public partial class EditorPage : UserControl, IEditorPage
 
                 if (!string.IsNullOrEmpty(refs.S3object))
                 {
-                    services
-                        .GetRequiredService<IS3Object>()
-                        .RemoveObject(BacketName, refs.S3object);
+                    using var s3 = services.GetRequiredService<IS3Object>();
+                    s3.RemoveObject(BacketName, refs.S3object);
                 }
 
                 if (gridDocuments.DataSource is IList<DocumentRefs> list)
@@ -519,9 +517,8 @@ public partial class EditorPage : UserControl, IEditorPage
             saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                services
-                    .GetRequiredService<IS3Object>()
-                    .GetObject(BacketName, refs.S3object, saveFileDialog1.FileName);
+                using var s3 = services.GetRequiredService<IS3Object>();
+                s3.GetObject(BacketName, refs.S3object, saveFileDialog1.FileName);
             }
         }
     }

@@ -7,7 +7,7 @@
 
 namespace DocumentFlow.Interfaces;
 
-public interface IS3Object
+public interface IS3Object : IDisposable
 {
     Task GetObject(string bucketName, string objectName, string fileName);
     Task PutObject(string bucketName, string objectName, string fileName);

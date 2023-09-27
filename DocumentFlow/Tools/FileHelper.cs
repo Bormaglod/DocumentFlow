@@ -48,10 +48,9 @@ public static class FileHelper
     {
         string path = PrepareTempPath("DocumentRefs");
         string file = Path.Combine(path, fileName);
-        services
-           .GetRequiredService<IS3Object>()
-           .GetObject(bucket, s3object, file)
-           .Wait();
+
+        using var s3 = services.GetRequiredService<IS3Object>();
+        s3.GetObject(bucket, s3object, file).Wait();
 
         Process.Start(new ProcessStartInfo(file) { UseShellExecute = true });
     }
