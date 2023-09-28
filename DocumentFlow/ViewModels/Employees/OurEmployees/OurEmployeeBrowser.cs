@@ -19,7 +19,7 @@ public class OurEmployeeBrowser : BaseEmployeeBrowser<OurEmployee>, IOurEmployee
     public OurEmployeeBrowser(IServiceProvider services, IPageManager pageManager, IOurEmployeeRepository repository, IConfiguration configuration) 
         : base(services, pageManager, repository, configuration) 
     {
-        AllowGrouping();
+        CreateGrouping();
     }
 
     protected override GridColumn[] GetColumnsAfter(string mappingName)

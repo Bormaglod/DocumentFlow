@@ -25,8 +25,6 @@ public class OperationsPerformedBrowser : BaseOperationsPerformedBrowser, IOpera
     public OperationsPerformedBrowser(IServiceProvider services, IPageManager pageManager, IOperationsPerformedRepository repository, IConfiguration configuration, IDocumentFilter filter)
         : base(services, pageManager, repository, configuration, filter: filter)
     {
-        AllowGrouping();
-
         filter.SetDateRange(DateRange.CurrentDay);
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
@@ -46,10 +44,6 @@ public class OperationsPerformedBrowser : BaseOperationsPerformedBrowser, IOpera
             .AsSummary(quantity)
             .AsSummary(salary, SummaryColumnFormat.Currency);
 
-        CreateGroups()
-            .Add(order_name)
-            .Add(goods);
-
         operation.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.Fill;
         quantity.CellStyle.HorizontalAlignment = System.Windows.Forms.HorizontalAlignment.Right;
 
@@ -58,5 +52,19 @@ public class OperationsPerformedBrowser : BaseOperationsPerformedBrowser, IOpera
         {
             [date] = ListSortDirection.Ascending
         });
+
+        CreateGrouping()
+            .Add(order_name)
+            .Add(goods)
+            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
+            {
+                var op = (OperationsPerformed)o;
+                if (op.DocumentDate.HasValue)
+                {
+                    return op.DocumentDate.Value.ToShortDateString();
+                }
+
+                return "NONE";
+            });
     }
 }

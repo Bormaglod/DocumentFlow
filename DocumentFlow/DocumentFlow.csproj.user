@@ -49,8 +49,14 @@
     <Compile Update="Controls\Filters\WaybillReceiptFilter.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\PageContents\BrowserPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\PageContents\StartPage.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Dialogs\GroupColumnsDialog.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="Dialogs\InputCurrencyDialog.cs">
       <SubType>Form</SubType>
@@ -149,9 +155,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\EditorPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\PageContents\BrowserPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\PageContents\EditorPage.cs">

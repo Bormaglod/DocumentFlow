@@ -28,8 +28,6 @@ public abstract class WaybillBrowser<T> : BrowserPage<T>
     public WaybillBrowser(IServiceProvider services, IPageManager pageManager, IRepository<Guid, T> repository, IConfiguration configuration, IDocumentFilter? filter = null)
         : base(services, pageManager, repository, configuration, filter: filter)
     {
-        AllowGrouping();
-
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
@@ -60,6 +58,18 @@ public abstract class WaybillBrowser<T> : BrowserPage<T>
         });
 
         CreateStackedColumns("Счёт-фактура", new GridColumn[] { invoice_date, invoice_number });
+
+        CreateGrouping()
+            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
+            {
+                var op = (T)o;
+                if (op.DocumentDate.HasValue)
+                {
+                    return op.DocumentDate.Value.ToShortDateString();
+                }
+
+                return "NONE";
+            });
 
         MoveToEnd();
     }

@@ -42,8 +42,6 @@ public abstract class ProductBrowser<T> : BrowserPage<T>
         IOptions<LocalSettings> options)
         : base(services, pageManager, repository, configuration, rowHeaderImage, navigator)
     {
-        AllowGrouping();
-
         this.documentRefs = documentRefs;
 
         settings = options.Value.PreviewRows.ThumbnailRow;
@@ -66,6 +64,8 @@ public abstract class ProductBrowser<T> : BrowserPage<T>
         {
             [name] = ListSortDirection.Ascending
         });
+
+        CreateGrouping();
     }
 
     protected override void OnLoad(EventArgs e)

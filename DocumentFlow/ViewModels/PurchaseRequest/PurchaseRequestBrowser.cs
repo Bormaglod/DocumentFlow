@@ -31,8 +31,6 @@ public class PurchaseRequestBrowser : BrowserPage<PurchaseRequest>, IPurchaseReq
     public PurchaseRequestBrowser(IServiceProvider services, IPageManager pageManager, IPurchaseRequestRepository repository, IConfiguration configuration, IPurchaseRequestFilter filter)
         : base(services, pageManager, repository, configuration, filter: filter)
     {
-        AllowGrouping();
-
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
@@ -69,6 +67,18 @@ public class PurchaseRequestBrowser : BrowserPage<PurchaseRequest>, IPurchaseReq
             ContextMenu.CreateItem("Отменить заказ", (s, e) => SetStatePurchaseRequest(repository.Cancel)),
             ContextMenu.CreateItem("Завершить заказ", (s, e) => SetStatePurchaseRequest(repository.Complete)),
         });
+
+        CreateGrouping()
+            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
+            {
+                var op = (PurchaseRequest)o;
+                if (op.DocumentDate.HasValue)
+                {
+                    return op.DocumentDate.Value.ToShortDateString();
+                }
+
+                return "NONE";
+            });
 
         MoveToEnd();
     }

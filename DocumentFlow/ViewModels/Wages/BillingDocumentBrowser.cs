@@ -26,8 +26,6 @@ public abstract class BillingDocumentBrowser<T> : BrowserPage<T>
     public BillingDocumentBrowser(IServiceProvider services, IPageManager pageManager, IDocumentRepository<T> repository, IConfiguration configuration, IDocumentFilter? filter = null)
         : base(services, pageManager, repository, configuration, filter: filter)
     {
-        AllowGrouping();
-
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
@@ -41,5 +39,17 @@ public abstract class BillingDocumentBrowser<T> : BrowserPage<T>
         {
             [billing_range] = ListSortDirection.Ascending
         });
+
+        CreateGrouping()
+            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
+            {
+                var op = (T)o;
+                if (op.DocumentDate.HasValue)
+                {
+                    return op.DocumentDate.Value.ToShortDateString();
+                }
+
+                return "NONE";
+            }); ;
     }
 }

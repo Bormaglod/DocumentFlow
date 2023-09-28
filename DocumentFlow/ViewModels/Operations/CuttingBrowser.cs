@@ -24,8 +24,6 @@ public class CuttingBrowser : BrowserPage<Cutting>, ICuttingBrowser
     public CuttingBrowser(IServiceProvider services, IPageManager pageManager, ICuttingRepository repository, IConfiguration configuration, IBreadcrumb navigator) 
         : base(services, pageManager, repository, configuration, navigator: navigator)
     {
-        AllowGrouping();
-
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.Code, "Код", width: 150, visible: false);
         var name = CreateText(x => x.ItemName, "Наименование", hidden: false);
@@ -59,5 +57,7 @@ public class CuttingBrowser : BrowserPage<Cutting>, ICuttingBrowser
         {
             [name] = ListSortDirection.Ascending
         });
+
+        CreateGrouping();
     }
 }

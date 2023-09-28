@@ -24,8 +24,6 @@ public class OperationBrowser : BrowserPage<Operation>, IOperationBrowser
     public OperationBrowser(IServiceProvider services, IPageManager pageManager, IOperationRepository repository, IConfiguration configuration, IBreadcrumb navigator) 
         : base(services, pageManager, repository, configuration, navigator: navigator) 
     {
-        AllowGrouping();
-
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.Code, "Код", width: 150);
         var name = CreateText(x => x.ItemName, "Наименование", hidden: false);
@@ -48,5 +46,7 @@ public class OperationBrowser : BrowserPage<Operation>, IOperationBrowser
         {
             [name] = ListSortDirection.Ascending
         });
+
+        CreateGrouping();
     }
 }

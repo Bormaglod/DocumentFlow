@@ -42,8 +42,6 @@ public class BalanceSheetBrowser : BrowserPage<BalanceSheet>, IBalanceSheetBrows
     public BalanceSheetBrowser(IServiceProvider services, IPageManager pageManager, IBalanceSheetRepository repository, IConfiguration configuration, IBalanceSheetFilter filter)
         : base(services, pageManager, repository, configuration, filter: filter) 
     {
-        AllowGrouping();
-
         this.filter = filter;
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
@@ -103,7 +101,7 @@ public class BalanceSheetBrowser : BrowserPage<BalanceSheet>, IBalanceSheetBrows
             [name] = ListSortDirection.Ascending
         });
 
-        CreateGroups()
+        CreateGrouping()
             .Add(group_name);
     }
 

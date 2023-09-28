@@ -24,8 +24,6 @@ public class PayrollPaymentBrowser : BrowserPage<PayrollPayment>, IPayrollPaymen
     public PayrollPaymentBrowser(IServiceProvider services, IPageManager pageManager, IPayrollPaymentRepository repository, IConfiguration configuration, IDocumentFilter filter)
         : base(services, pageManager, repository, configuration, filter: filter)
     {
-        AllowGrouping();
-
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
@@ -45,6 +43,18 @@ public class PayrollPaymentBrowser : BrowserPage<PayrollPayment>, IPayrollPaymen
             [number] = ListSortDirection.Ascending
         });
 
-        this.CreateStackedColumns("Платёжная ведомость", new GridColumn[] { payroll_date, payroll_number });
+        CreateStackedColumns("Платёжная ведомость", new GridColumn[] { payroll_date, payroll_number });
+
+        CreateGrouping()
+            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
+            {
+                var op = (PayrollPayment)o;
+                if (op.DocumentDate.HasValue)
+                {
+                    return op.DocumentDate.Value.ToShortDateString();
+                }
+
+                return "NONE";
+            });
     }
 }

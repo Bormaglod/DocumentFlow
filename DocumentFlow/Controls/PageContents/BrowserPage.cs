@@ -135,6 +135,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
     private readonly IToolBar toolBar;
     private readonly IContextMenu contextMenu;
     private readonly IEnumerable<ICreationBased>? creations;
+    private GroupColumnCollection? groupColumnCollection;
 
     private ShowToolTipMethod? showToolTip;
     private BrowserSettings settings;
@@ -212,8 +213,8 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
     }
 
     public IToolBar ToolBar => toolBar;
-
     public IContextMenu ContextMenu => contextMenu;
+    public IGroupColumnCollection? GroupColumnCollection => groupColumnCollection;
 
     public ShowToolTipMethod? ShowToolTip
     {
@@ -343,7 +344,31 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
     public void NotifyPageClosing()
     {
         UpdateSettingsColumn();
+        if (groupColumnCollection != null)
+        {
+            var groups = new List<GroupSettings>();
+            foreach (var grp in groupColumnCollection.SelectedGroups)
+            {
+                groups.Add(new GroupSettings()
+                {
+                    Order = grp.Order,
+                    Name = grp.Name
+                });
+            }
+
+            settings.Groups = groups;
+        }
+
         settings.Save(GetType().Name, filter);
+    }
+
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        if (settings.Groups != null && groupColumnCollection != null)
+        {
+            groupColumnCollection.SetSelectedGroups(settings.Groups.OrderBy(x => x.Order).Select(x => x.Name));
+        }
     }
 
     protected virtual void DoBeforeRefreshPage() { }
@@ -538,10 +563,13 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
 
     protected virtual void ConfigureColumns() { }
 
-    protected void AllowGrouping()
+    protected IGroupColumnCollection CreateGrouping()
     {
         gridContent.AllowGrouping = true;
         gridContent.ShowGroupDropArea = true;
+
+        groupColumnCollection = new GroupColumnCollection(gridContent);
+        return groupColumnCollection;
     }
 
     protected void RefreshGrid() => gridContent.Refresh();
@@ -573,12 +601,6 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         }
 
         return new SummaryRowData(tableSummaryRow, groupSummaryRow);
-    }
-
-    protected IGroupColumnCollection CreateGroups()
-    {
-        gridContent.GroupColumnDescriptions.Clear();
-        return new GroupColumnCollection(gridContent);
     }
 
     protected void ClearStackedRows() => gridContent.StackedHeaderRows.Clear();
@@ -1714,7 +1736,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
             if (column is GridUnboundColumn)
             {
                 continue;
-            }    
+            }
 
             float w = Units.Millimeters * (float)column.ActualWidth * width / widthColumns;
 
@@ -1823,6 +1845,18 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         {
             Clipboard.SetText(rec.Id.ToString());
             MessageBox.Show($"Идентификатор записи {{{rec.Id}}} скопирован в буфер обмена.", "Идентификатор скопирован", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+    }
+
+    private void MenuGroupsSettings_Click(object sender, EventArgs e)
+    {
+        if (groupColumnCollection != null)
+        {
+            var dialog = new GroupColumnsDialog(groupColumnCollection);
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                groupColumnCollection.SetSelectedGroups(dialog.Selected);
+            }
         }
     }
 }

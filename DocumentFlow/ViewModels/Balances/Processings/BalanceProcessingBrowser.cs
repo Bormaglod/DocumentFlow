@@ -15,6 +15,8 @@ using Syncfusion.WinForms.DataGrid.Enums;
 
 using System.ComponentModel;
 
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace DocumentFlow.ViewModels;
 
 public class BalanceProcessingBrowser : BalanceBrowser<BalanceProcessing>, IBalanceProcessingBrowser
@@ -22,8 +24,6 @@ public class BalanceProcessingBrowser : BalanceBrowser<BalanceProcessing>, IBala
     public BalanceProcessingBrowser(IServiceProvider services, IPageManager pageManager, IBalanceProcessingRepository repository, IConfiguration configuration) 
         : base(services, pageManager, repository, configuration) 
     {
-        AllowGrouping();
-
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.DocumentTypeName, "Документ", hidden: false);
         var doc_date = CreateDateTime(x => x.DocumentDate, "Дата", 150);
@@ -47,8 +47,18 @@ public class BalanceProcessingBrowser : BalanceBrowser<BalanceProcessing>, IBala
             [doc_date] = ListSortDirection.Descending
         });
 
-        CreateGroups()
-            .Add(material);
+        CreateGrouping()
+            .Add(material)
+            .Register(doc_date, "DateByDay", "По дням", (string ColumnName, object o) =>
+            {
+                var op = (BalanceProcessing)o;
+                if (op.DocumentDate.HasValue)
+                {
+                    return op.DocumentDate.Value.ToShortDateString();
+                }
+
+                return "NONE";
+            });
 
         AllowSorting = false;
     }

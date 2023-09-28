@@ -11,5 +11,9 @@ namespace DocumentFlow.Controls.Interfaces;
 
 public interface IGroupColumnCollection
 {
+    IReadOnlyList<IGroupColumn> AvailableGroups { get; }
+    IReadOnlyList<IGroupColumn> SelectedGroups { get; }
     IGroupColumnCollection Add(GridColumn column);
+    IGroupColumnCollection Add(string name);
+    IGroupColumnCollection Register(GridColumn column, string name, string description, Func<string, object, object> keySelector);
 }

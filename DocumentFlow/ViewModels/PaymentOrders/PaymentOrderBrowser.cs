@@ -25,8 +25,6 @@ public class PaymentOrderBrowser : BrowserPage<PaymentOrder>, IPaymentOrderBrows
     public PaymentOrderBrowser(IServiceProvider services, IPageManager pageManager, IPaymentOrderRepository repository, IConfiguration configuration, IDocumentFilter filter)
         : base(services, pageManager, repository, configuration, filter: filter)
     {
-        AllowGrouping();
-
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
@@ -51,6 +49,18 @@ public class PaymentOrderBrowser : BrowserPage<PaymentOrder>, IPaymentOrderBrows
             [date] = ListSortDirection.Ascending,
             [number] = ListSortDirection.Ascending
         });
+
+        CreateGrouping()
+            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
+            {
+                var op = (PaymentOrder)o;
+                if (op.DocumentDate.HasValue)
+                {
+                    return op.DocumentDate.Value.ToShortDateString();
+                }
+
+                return "NONE";
+            });
 
         MoveToEnd();
     }

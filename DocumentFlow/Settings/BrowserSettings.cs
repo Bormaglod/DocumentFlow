@@ -21,6 +21,9 @@ public class BrowserSettings
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<ColumnSettings>? Columns { get; set; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<GroupSettings>? Groups { get; set; }
+
     public ReportPageSettings Page { get; set; } = new();
 
     public void Save(string browserName, IFilter? filter = null)

@@ -23,8 +23,6 @@ public class AdjustingBalancesBrowser : BrowserPage<AdjustingBalances>, IAdjusti
     public AdjustingBalancesBrowser(IServiceProvider services, IPageManager pageManager, IAdjustingBalancesRepository repository, IConfiguration configuration)
         : base(services, pageManager, repository, configuration)
     {
-        AllowGrouping();
-
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);
         var number = CreateNumeric(x => x.DocumentNumber, "Номер", width: 100);
@@ -40,8 +38,18 @@ public class AdjustingBalancesBrowser : BrowserPage<AdjustingBalances>, IAdjusti
             [number] = ListSortDirection.Ascending
         });
 
-        CreateGroups()
-            .Add(material_name);
+        CreateGrouping()
+            .Add(material_name)
+            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
+            {
+                var op = (AdjustingBalances)o;
+                if (op.DocumentDate.HasValue)
+                {
+                    return op.DocumentDate.Value.ToShortDateString();
+                }
+
+                return "NONE";
+            });
 
         MoveToEnd();
     }
