@@ -10,6 +10,7 @@ using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 
@@ -56,15 +57,6 @@ public class OperationsPerformedBrowser : BaseOperationsPerformedBrowser, IOpera
         CreateGrouping()
             .Add(order_name)
             .Add(goods)
-            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
-            {
-                var op = (OperationsPerformed)o;
-                if (op.DocumentDate.HasValue)
-                {
-                    return op.DocumentDate.Value.ToShortDateString();
-                }
-
-                return "NONE";
-            });
+            .Register(date, "DateByDay", "По дням", GridGroupingHelper.DocumentByDay);
     }
 }

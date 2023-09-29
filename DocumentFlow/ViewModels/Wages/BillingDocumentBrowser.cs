@@ -10,6 +10,7 @@ using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 
@@ -41,15 +42,6 @@ public abstract class BillingDocumentBrowser<T> : BrowserPage<T>
         });
 
         CreateGrouping()
-            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
-            {
-                var op = (T)o;
-                if (op.DocumentDate.HasValue)
-                {
-                    return op.DocumentDate.Value.ToShortDateString();
-                }
-
-                return "NONE";
-            }); ;
+            .Register(date, "DateByDay", "По дням", GridGroupingHelper.DocumentByDay);
     }
 }

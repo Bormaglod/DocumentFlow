@@ -9,6 +9,7 @@ using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 
@@ -40,15 +41,6 @@ public class PayrollBrowser : BrowserPage<Payroll>, IPayrollBrowser
         });
 
         CreateGrouping()
-            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
-            {
-                var op = (Payroll)o;
-                if (op.DocumentDate.HasValue)
-                {
-                    return op.DocumentDate.Value.ToShortDateString();
-                }
-
-                return "NONE";
-            });
+            .Register(date, "DateByDay", "По дням", GridGroupingHelper.DocumentByDay);
     }
 }

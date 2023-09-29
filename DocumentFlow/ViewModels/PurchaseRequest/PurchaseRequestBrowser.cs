@@ -23,6 +23,7 @@ using Syncfusion.WinForms.Input.Enums;
 using System.ComponentModel;
 
 using SyncEnums = Syncfusion.WinForms.DataGrid.Enums;
+using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
@@ -69,16 +70,8 @@ public class PurchaseRequestBrowser : BrowserPage<PurchaseRequest>, IPurchaseReq
         });
 
         CreateGrouping()
-            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
-            {
-                var op = (PurchaseRequest)o;
-                if (op.DocumentDate.HasValue)
-                {
-                    return op.DocumentDate.Value.ToShortDateString();
-                }
-
-                return "NONE";
-            });
+            .Register(date, "DateByDay", "По дням", GridGroupingHelper.DocumentByDay)
+            .Register(date, "DateByMonth", "По месяцам", GridGroupingHelper.DocumentByMonth);
 
         MoveToEnd();
     }

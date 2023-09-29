@@ -8,6 +8,7 @@
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 
@@ -40,16 +41,7 @@ public class AdjustingBalancesBrowser : BrowserPage<AdjustingBalances>, IAdjusti
 
         CreateGrouping()
             .Add(material_name)
-            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
-            {
-                var op = (AdjustingBalances)o;
-                if (op.DocumentDate.HasValue)
-                {
-                    return op.DocumentDate.Value.ToShortDateString();
-                }
-
-                return "NONE";
-            });
+            .Register(date, "DateByDay", "По дням", GridGroupingHelper.DocumentByDay);
 
         MoveToEnd();
     }

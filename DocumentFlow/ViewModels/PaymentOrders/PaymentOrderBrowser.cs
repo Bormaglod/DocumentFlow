@@ -10,6 +10,7 @@ using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 
@@ -51,16 +52,8 @@ public class PaymentOrderBrowser : BrowserPage<PaymentOrder>, IPaymentOrderBrows
         });
 
         CreateGrouping()
-            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
-            {
-                var op = (PaymentOrder)o;
-                if (op.DocumentDate.HasValue)
-                {
-                    return op.DocumentDate.Value.ToShortDateString();
-                }
-
-                return "NONE";
-            });
+            .Register(date, "DateByDay", "По дням", GridGroupingHelper.DocumentByDay)
+            .Register(date, "DateByMonth", "По месяцам", GridGroupingHelper.DocumentByMonth);
 
         MoveToEnd();
     }

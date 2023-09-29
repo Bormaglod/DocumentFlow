@@ -7,6 +7,7 @@
 
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 
@@ -49,16 +50,7 @@ public class BalanceProcessingBrowser : BalanceBrowser<BalanceProcessing>, IBala
 
         CreateGrouping()
             .Add(material)
-            .Register(doc_date, "DateByDay", "По дням", (string ColumnName, object o) =>
-            {
-                var op = (BalanceProcessing)o;
-                if (op.DocumentDate.HasValue)
-                {
-                    return op.DocumentDate.Value.ToShortDateString();
-                }
-
-                return "NONE";
-            });
+            .Register(doc_date, "DateByDay", "По дням", GridGroupingHelper.DocumentByDay);
 
         AllowSorting = false;
     }

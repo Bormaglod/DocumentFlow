@@ -19,6 +19,7 @@ using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.Input.Enums;
 
 using System.ComponentModel;
+using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
@@ -60,16 +61,8 @@ public abstract class WaybillBrowser<T> : BrowserPage<T>
         CreateStackedColumns("Счёт-фактура", new GridColumn[] { invoice_date, invoice_number });
 
         CreateGrouping()
-            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
-            {
-                var op = (T)o;
-                if (op.DocumentDate.HasValue)
-                {
-                    return op.DocumentDate.Value.ToShortDateString();
-                }
-
-                return "NONE";
-            });
+            .Register(date, "DateByDay", "По дням", GridGroupingHelper.DocumentByDay)
+            .Register(date, "DateByMonth", "По месяцам", GridGroupingHelper.DocumentByMonth);
 
         MoveToEnd();
     }

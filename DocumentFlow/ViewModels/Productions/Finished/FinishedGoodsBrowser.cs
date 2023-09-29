@@ -9,6 +9,7 @@ using DocumentFlow.Controls.Enums;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 
@@ -54,16 +55,7 @@ public class FinishedGoodsBrowser : BaseFinishedGoodsBrowser, IFinishedGoodsBrow
         });
 
         CreateGrouping()
-            .Register(date, "DateByDay", "По дням", (string ColumnName, object o) =>
-            {
-                var op = (FinishedGoods)o;
-                if (op.DocumentDate.HasValue)
-                {
-                    return op.DocumentDate.Value.ToShortDateString();
-                }
-
-                return "NONE";
-            });
+            .Register(date, "DateByDay", "По дням", GridGroupingHelper.DocumentByDay);
 
         MoveToEnd();
     }
