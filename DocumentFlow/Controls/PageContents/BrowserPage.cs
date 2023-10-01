@@ -82,20 +82,11 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
             {
                 if (x is IDocumentInfo && y is IDocumentInfo)
                 {
-                    var obj_x = property.GetValue(x);
-                    var obj_y = property.GetValue(y);
-                    if (obj_x is IComparable cmp_x && obj_y is IComparable cmp_y)
-                    {
-                        res = cmp_x.CompareTo(cmp_y);
-                    }
-                    else
-                    {
-                        res = CompareString(obj_x, obj_y);
-                    }
+                    res = CompareObject(property.GetValue(x), property.GetValue(y));
                 }
                 else if (x is Syncfusion.Data.Group grp_x && y is Syncfusion.Data.Group grp_y)
                 {
-                    res = CompareString(grp_x.Key, grp_y.Key);
+                    res = CompareObject(grp_x.Key, grp_y.Key);
                 }
                 else
                 {
@@ -107,6 +98,18 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         }
 
         public ListSortDirection SortDirection { get; set; }
+
+        private static int CompareObject(object? x, object? y)
+        {
+            if (x is IComparable cmp_x && y is IComparable cmp_y)
+            {
+                return cmp_x.CompareTo(cmp_y);
+            }
+            else
+            {
+                return CompareString(x, y);
+            }
+        }
 
         private static int CompareString(object? x, object? y)
         {
@@ -316,6 +319,11 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
 
         CustomizeColumns(settings);
 
+        if (settings.Groups != null && groupColumnCollection != null)
+        {
+            groupColumnCollection.SetSelectedGroups(settings.Groups.OrderBy(x => x.Order).Select(x => x.Name));
+        }
+
         RefreshColumns();
         RefreshView();
 
@@ -365,10 +373,6 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-        if (settings.Groups != null && groupColumnCollection != null)
-        {
-            groupColumnCollection.SetSelectedGroups(settings.Groups.OrderBy(x => x.Order).Select(x => x.Name));
-        }
     }
 
     protected virtual void DoBeforeRefreshPage() { }

@@ -10,6 +10,7 @@ namespace DocumentFlow.Controls.Interfaces;
 public interface IGroupColumn
 {
     int Order { get; set; }
+    string ColumnName { get; }
     string Name { get; }
     string Text { get; set; }
     string Description { get; set; }

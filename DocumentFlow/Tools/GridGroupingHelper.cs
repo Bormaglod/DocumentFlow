@@ -19,10 +19,10 @@ public class GridGroupingHelper
     {
         if (obj is BaseDocument doc && doc.DocumentDate.HasValue)
         {
-            return doc.DocumentDate.Value.ToShortDateString();
+            return DateOnly.FromDateTime(doc.DocumentDate.Value);
         }
 
-        return "NONE";
+        return DateOnly.MinValue;
     }
 
     public static object DocumentByMonth(string _, object obj)

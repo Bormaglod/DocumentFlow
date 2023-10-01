@@ -9,6 +9,8 @@ using DocumentFlow.Controls.Interfaces;
 
 using Syncfusion.WinForms.DataGrid;
 
+using System.Collections.Specialized;
+
 namespace DocumentFlow.Controls.Tools;
 
 public class GroupColumnCollection : IGroupColumnCollection
@@ -16,6 +18,8 @@ public class GroupColumnCollection : IGroupColumnCollection
     private readonly SfDataGrid grid;
     private readonly List<GroupColumn> availableGroups = new();
     private readonly List<GroupColumn> selectedGroups = new();
+
+    private bool lockManual = false;
 
     private class GroupColumn : IGroupColumn, IEquatable<GroupColumn>
     {
@@ -29,6 +33,7 @@ public class GroupColumnCollection : IGroupColumnCollection
                 SortGroupRecords = false
             };
 
+            ColumnName = gridColumn.MappingName;
             Name = gridColumn.MappingName;
             Text = gridColumn.HeaderText;
             Description = "Все столбцы";
@@ -43,12 +48,23 @@ public class GroupColumnCollection : IGroupColumnCollection
                 KeySelector = keySelector
             };
 
+            ColumnName = gridColumn.MappingName;
             Name = name;
             Text = $"{gridColumn.HeaderText}: {description}";
             Description = gridColumn.HeaderText;
         }
 
+        public GroupColumn(GroupColumnDescription groupColumn)
+        {
+            column = groupColumn;
+            ColumnName = groupColumn.ColumnName;
+            Name = groupColumn.ColumnName;
+            Text = groupColumn.ColumnName;
+            Description = "Все столбцы";
+        }
+
         public int Order { get; set; } = -1;
+        public string ColumnName { get; set; }
         public string Name { get; set; }
         public string Text { get; set; }
         public string Description { get; set; }
@@ -82,6 +98,8 @@ public class GroupColumnCollection : IGroupColumnCollection
 
             availableGroups.Add(new GroupColumn(column));
         }
+
+        grid.GroupColumnDescriptions.CollectionChanged += GroupColumnDescriptions_CollectionChanged;
     }
 
     public IReadOnlyList<IGroupColumn> AvailableGroups => availableGroups;
@@ -134,33 +152,109 @@ public class GroupColumnCollection : IGroupColumnCollection
 
     public void SetSelectedGroups(IEnumerable<IGroupColumn> groups)
     {
-        grid.GroupColumnDescriptions.Clear();
-        selectedGroups.Clear();
-        foreach (var group in groups.OrderBy(x => x.Order).OfType<GroupColumn>()) 
+        lockManual = true;
+        try
         {
-            AddGroup(group);
+            grid.GroupColumnDescriptions.Clear();
+            selectedGroups.Clear();
+            foreach (var group in groups.OrderBy(x => x.Order).OfType<GroupColumn>())
+            {
+                AddGroup(group);
+            }
+        }
+        finally
+        { 
+            lockManual = false; 
         }
     }
 
     public void SetSelectedGroups(IEnumerable<string> groups)
     {
-        grid.GroupColumnDescriptions.Clear();
-        selectedGroups.Clear();
-        foreach (var group in groups)
+        lockManual = true;
+        try
         {
-            Add(group);
+            grid.GroupColumnDescriptions.Clear();
+            selectedGroups.Clear();
+            foreach (var group in groups)
+            {
+                Add(group);
+            }
+        }
+        finally
+        {
+            lockManual = false;
         }
     }
 
     private void AddOrderGroup(GroupColumn grp) 
     {
-        grp.Order = selectedGroups.Count;
-        AddGroup(grp);
+        lockManual = true;
+        try
+        {
+            grp.Order = selectedGroups.Count;
+            AddGroup(grp);
+        }
+        finally
+        {
+            lockManual = false;
+        }
     }
 
     private void AddGroup(GroupColumn grp)
     {
         selectedGroups.Add(grp);
         grid.GroupColumnDescriptions.Add(grp.Column);
+    }
+
+    private void GroupColumnDescriptions_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (lockManual)
+        {
+            return;
+        }
+
+        switch (e.Action) 
+        { 
+            case NotifyCollectionChangedAction.Add:
+                if (e.NewItems != null && e.NewItems.Count > 0 && e.NewItems[0] is GroupColumnDescription newGroupColumnDescription)
+                {
+                    var newGroup = new GroupColumn(newGroupColumnDescription)
+                    {
+                        Order = selectedGroups.Count
+                    };
+
+                    var grp = availableGroups.FirstOrDefault(x => x.ColumnName == newGroupColumnDescription.ColumnName);
+                    if (grp != null)
+                    {
+                        newGroup.Text = grp.Text;
+                        availableGroups.Remove(grp);
+                    }
+
+                    availableGroups.Add(newGroup);
+                    selectedGroups.Add(newGroup);
+                }
+
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                if (e.OldItems != null && e.OldItems.Count > 0 && e.OldItems[0] is GroupColumnDescription oldGroupColumnDescription)
+                {
+                    var grp = selectedGroups.FirstOrDefault(x => x.ColumnName == oldGroupColumnDescription.ColumnName);
+                    if (grp != null) 
+                    {
+                        selectedGroups.Remove(grp);
+                    }
+                }
+
+                break;
+        }
+
+        for (int i = 0; i < grid.GroupColumnDescriptions.Count; i++)
+        {
+            var grp = selectedGroups.FirstOrDefault(x => x.ColumnName == grid.GroupColumnDescriptions[i].ColumnName);
+            if (grp != null) 
+            {
+                grp.Order = i;
+            }
+        }
     }
 }

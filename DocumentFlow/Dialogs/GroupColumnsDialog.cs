@@ -15,8 +15,81 @@ namespace DocumentFlow.Dialogs;
 
 public partial class GroupColumnsDialog : Form
 {
+    private class ObservableLinkedListWarpper
+    {
+        private readonly ObservableCollection<IGroupColumn> list;
+        private readonly LinkedList<IGroupColumn> orderedList;
+
+        public ObservableLinkedListWarpper(IEnumerable<IGroupColumn> source)
+        {
+            list = new ObservableCollection<IGroupColumn>(source);
+            orderedList = new LinkedList<IGroupColumn>(source);
+        }
+
+        public IEnumerable<IGroupColumn> List => list;
+        public IEnumerable<IGroupColumn> OrderedList => orderedList;
+
+        public void AddLast(IGroupColumn item)
+        {
+            orderedList.AddLast(item);
+            list.Add(item);
+
+            item.Order = list.Count - 1;
+        }
+
+        public void Remove(IGroupColumn item)
+        {
+            orderedList.Remove(item);
+            list.Remove(item);
+        }
+
+        public void MoveToUp(IGroupColumn item)
+        {
+            var node = orderedList.Find(item);
+            if (node != null && node.Previous != null)
+            {
+                var prevNode = node.Previous;
+                orderedList.Remove(node);
+                orderedList.AddBefore(prevNode, item);
+
+                var prevIndex = RemoveCurrent(item, prevNode);
+                list.Insert(prevIndex, item);
+
+                UpdateOrderIndexes(item, prevNode);
+            }
+        }
+
+        public void MoveDown(IGroupColumn item)
+        {
+            var node = orderedList.Find(item);
+            if (node != null && node.Next != null)
+            {
+                var nextNode = node.Next;
+                orderedList.Remove(node);
+                orderedList.AddAfter(nextNode, item);
+
+                var nextIndex = RemoveCurrent(item, nextNode);
+                list.Insert(nextIndex + 1, item);
+
+                UpdateOrderIndexes(item, nextNode);
+            }
+        }
+
+        private int RemoveCurrent(IGroupColumn item, LinkedListNode<IGroupColumn> node)
+        {
+            list.Remove(item);
+            return list.IndexOf(node.Value);
+        }
+
+        private void UpdateOrderIndexes(IGroupColumn item, LinkedListNode<IGroupColumn> node)
+        {
+            item.Order = list.IndexOf(item);
+            node.Value.Order = list.IndexOf(node.Value);
+        }
+    }
+
     private readonly ObservableCollection<IGroupColumn> availables;
-    private readonly ObservableCollection<IGroupColumn> selected;
+    private readonly ObservableLinkedListWarpper selected;
 
     public GroupColumnsDialog(IGroupColumnCollection groups)
     {
@@ -26,18 +99,13 @@ public partial class GroupColumnsDialog : Form
         listViewAll.DataSource = availables;
         listViewAll.DisplayMember = "Text";
         listViewAll.ValueMember = "Text";
-
-        selected = new ObservableCollection<IGroupColumn>(groups.SelectedGroups);
-        listViewSelected.DataSource = selected;
+        
+        selected = new ObservableLinkedListWarpper(groups.SelectedGroups.OrderBy(x => x.Order));
+        listViewSelected.DataSource = selected.List;
         listViewSelected.DisplayMember = "Text";
         listViewSelected.ValueMember = "Text";
 
         listViewAll.View.GroupDescriptors.Add(new GroupDescriptor()
-        {
-            PropertyName = "Description"
-        });
-
-        listViewSelected.View.GroupDescriptors.Add(new GroupDescriptor()
         {
             PropertyName = "Description"
         });
@@ -48,15 +116,31 @@ public partial class GroupColumnsDialog : Form
         });
     }
 
-    public IEnumerable<IGroupColumn> Selected => selected;
+    public IEnumerable<IGroupColumn> Selected => selected.OrderedList;
+
+    private void MovetToSelected(IGroupColumn column)
+    {
+        selected.AddLast(column);
+        availables.Remove(column);
+    }
+
+    private void RemoveFromSelected(IGroupColumn column)
+    {
+        selected.Remove(column);
+        availables.Add(column);
+    }
 
     private void SelectGroup()
     {
         if (listViewAll.SelectedItem is IGroupColumn column)
         {
-            column.Order = selected.Count;
-            selected.Add(column);
-            availables.Remove(column);
+            var col = selected.OrderedList.FirstOrDefault(x => x.ColumnName == column.ColumnName);
+            if (col != null)
+            {
+                RemoveFromSelected(col);
+            }
+
+            MovetToSelected(column);
         }
     }
 
@@ -64,8 +148,7 @@ public partial class GroupColumnsDialog : Form
     {
         if (listViewSelected.SelectedItem is IGroupColumn column)
         {
-            availables.Add(column);
-            selected.Remove(column);
+            RemoveFromSelected(column);
         }
     }
 
@@ -77,18 +160,9 @@ public partial class GroupColumnsDialog : Form
     {
         if (listViewSelected.SelectedItem is IGroupColumn column)
         {
-            if (column.Order > 0)
-            {
-                var prev = selected.FirstOrDefault(x => x.Order == column.Order - 1);
-                if (prev != null)
-                {
-                    prev.Order = column.Order;
-                }
-
-                column.Order--;
-                listViewSelected.View.Refresh();
-                listViewSelected.SelectedItem = column;
-            }
+            selected.MoveToUp(column);
+            listViewSelected.View.Refresh();
+            listViewSelected.SelectedItem = column;
         }
     }
 
@@ -96,18 +170,9 @@ public partial class GroupColumnsDialog : Form
     {
         if (listViewSelected.SelectedItem is IGroupColumn column)
         {
-            if (column.Order < selected.Count - 1)
-            {
-                var prev = selected.FirstOrDefault(x => x.Order == column.Order + 1);
-                if (prev != null)
-                {
-                    prev.Order = column.Order;
-                }
-
-                column.Order++;
-                listViewSelected.View.Refresh();
-                listViewSelected.SelectedItem = column;
-            }
+            selected.MoveDown(column);
+            listViewSelected.View.Refresh();
+            listViewSelected.SelectedItem = column;
         }
     }
 
