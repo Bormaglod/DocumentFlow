@@ -76,9 +76,9 @@ public partial class CalculationOperationEditor : EditorPanel, ICalculationOpera
         pageManager.ShowAssociateEditor<IOperationBrowser>(e.Document);
     }
 
-    private void SelectOperation_DocumentSelectedChanged(object sender, DocumentSelectedEventArgs e)
+    private void SelectOperation_DocumentSelectedChanged(object sender, DocumentChangedEventArgs e)
     {
-        Operation.Price = ((Operation)e.Document).Salary;
+        Operation.Price = ((Operation)e.NewDocument).Salary;
     }
 
     private void SelectEquipment_OpenButtonClick(object sender, DocumentSelectedEventArgs e)

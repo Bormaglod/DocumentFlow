@@ -113,14 +113,14 @@ public partial class PayrollEditor : EditorPanel, IPayrollEditor
         e.Accept = false;
     }
 
-    private void SelectGrossPayroll_UserDocumentModified(object sender, DocumentSelectedEventArgs e)
+    private void SelectGrossPayroll_UserDocumentModified(object sender, DocumentChangedEventArgs e)
     {
         if (MessageBox.Show("Перед заполнением таблица будет очищена. Продолжить?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
         {
             return;
         }
 
-        FillEmployeeList(e.Document.Id);
+        FillEmployeeList(e.NewDocument.Id);
     }
 
     private void SelectGrossPayroll_DocumentDialogColumns(object sender, DocumentDialogColumnsEventArgs e)

@@ -25,7 +25,7 @@ public partial class DfSelectBox : DfControl, IAccess
     public event EventHandler? DeleteButtonClick;
     public event EventHandler<DocumentSelectedEventArgs>? OpenButtonClick;
     public event EventHandler? SelectedItemChanged;
-    public event EventHandler<DocumentSelectedEventArgs>? UserDocumentModified;
+    public event EventHandler<DocumentChangedEventArgs>? UserDocumentModified;
 
     public DfSelectBox()
     {
@@ -126,9 +126,10 @@ public partial class DfSelectBox : DfControl, IAccess
     {
         if (SelectItem(out var documentInfo))
         {
+            var oldDocument = selectedItem;
             selectedItem = documentInfo;
             OnSelectedItemChanged();
-            UserDocumentModified?.Invoke(this, new DocumentSelectedEventArgs(selectedItem));
+            UserDocumentModified?.Invoke(this, new DocumentChangedEventArgs(oldDocument, selectedItem));
         }
     }
 

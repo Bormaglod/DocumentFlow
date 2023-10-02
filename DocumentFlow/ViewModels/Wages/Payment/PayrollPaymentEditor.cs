@@ -66,8 +66,8 @@ public partial class PayrollPaymentEditor : EditorPanel, IPayrollPaymentEditor
         pageManager.ShowEditor<IPayrollEditor>(e.Document);
     }
 
-    private void SelectPayroll_UserDocumentModified(object sender, DocumentSelectedEventArgs e)
+    private void SelectPayroll_UserDocumentModified(object sender, DocumentChangedEventArgs e)
     {
-        Payroll.TransactionAmount = ((Payroll)e.Document).Wage;
+        Payroll.TransactionAmount = ((Payroll)e.NewDocument).Wage;
     }
 }

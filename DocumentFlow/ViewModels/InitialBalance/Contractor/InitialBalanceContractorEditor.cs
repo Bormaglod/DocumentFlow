@@ -71,13 +71,13 @@ public partial class InitialBalanceContractorEditor : EditorPanel, IInitialBalan
         pageManager.ShowAssociateEditor<IContractorBrowser>(e.Document);
     }
 
-    private void SelectContractor_DocumentSelectedChanged_1(object sender, DocumentSelectedEventArgs e)
+    private void SelectContractor_DocumentSelectedChanged_1(object sender, DocumentChangedEventArgs e)
     {
         if (selectContractor.SelectedItem != Guid.Empty)
         {
             comboContract.DataSource = services
                 .GetRequiredService<IContractRepository>()
-                .GetByOwner(e.Document.Id);
+                .GetByOwner(e.NewDocument.Id);
         }
         else
         {

@@ -122,6 +122,30 @@ public partial class WaybillSaleEditor : EditorPanel, IWaybillSaleEditor
         UpdatePanelDoc1C();
     }
 
+    protected override void OnEntityPropertyChanged(string? propertyName)
+    {
+        base.OnEntityPropertyChanged(propertyName);
+        switch (propertyName)
+        {
+            case nameof(WaybillSale.ContractId):
+                if (Waybill.ContractId == Guid.Empty)
+                {
+                    panelDoc1C.Visible = false;
+                }
+                else
+                {
+                    UpdatePanelDoc1C();
+                }
+
+                break;
+            case nameof(WaybillSale.Upd):
+                UpdatePanelDoc1C();
+                break;
+            default:
+                break;
+        }
+    }
+
     protected override void DoBindingControls()
     {
         textDocNumber.DataBindings.Add(nameof(textDocNumber.IntegerValue), DataContext, nameof(WaybillSale.DocumentNumber), true, DataSourceUpdateMode.OnPropertyChanged, 0);
@@ -154,13 +178,28 @@ public partial class WaybillSaleEditor : EditorPanel, IWaybillSaleEditor
 
     private void UpdatePanelDoc1C()
     {
-        panelInvoice.Visible = !toggleUpd.ToggleValue;
-        panelDoc1C.Height = toggleUpd.ToggleValue ? 99 : 131;
-        labelDoc.Visible = toggleUpd.ToggleValue;
-
-        if (toggleUpd.ToggleValue)
+        if (selectContract.DataSource == null)
         {
-            UpdateInvoiceText();
+            return;
+        }
+
+        var contract = selectContract.DataSource.OfType<Contract>().FirstOrDefault(x => x.Id == Waybill.ContractId);
+        var taxPayer = contract != null && contract.TaxPayer;
+
+        panelDoc1C.Visible = taxPayer;
+
+        if (taxPayer)
+        {
+            panelInvoice.Visible = !Waybill.Upd;
+            panelUpd.Visible = true;
+            labelDoc.Visible = Waybill.Upd;
+
+            panelDoc1C.Height = Waybill.Upd ? 99 : 131;
+
+            if (Waybill.Upd)
+            {
+                UpdateInvoiceText();
+            }
         }
     }
 
@@ -186,42 +225,6 @@ public partial class WaybillSaleEditor : EditorPanel, IWaybillSaleEditor
     private void SelectContract_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
         pageManager.ShowEditor<IContractEditor>(e.Document);
-    }
-
-    private void ToggleUpd_ToggleValueChanged(object sender, EventArgs e) => UpdatePanelDoc1C();
-
-    private void SelectContract_SelectedItemChanged(object sender, EventArgs e)
-    {
-        if (selectContract.SelectedItem == Guid.Empty)
-        {
-            panelDoc1C.Visible = false;
-        }
-        else
-        {
-            var contract = (Contract)selectContract.SelectedDocument;
-            panelUpd.Visible = contract.TaxPayer;
-            if (contract.TaxPayer)
-            {
-                panelInvoice.Visible = !Waybill.Upd;
-            }
-            else
-            {
-                panelInvoice.Visible = false;
-            }
-
-            int height = 67;
-            if (contract.TaxPayer)
-            {
-                height += 32;
-                if (!Waybill.Upd)
-                {
-                    height += 32;
-                }
-            }
-
-            panelDoc1C.Height = height;
-            panelDoc1C.Visible = contract.TaxPayer || contract.ContractorType == ContractorType.Buyer;
-        }
     }
 
     private void GridContent_CreateRow(object sender, DependentEntitySelectEventArgs e)
@@ -260,5 +263,18 @@ public partial class WaybillSaleEditor : EditorPanel, IWaybillSaleEditor
         }
 
         e.Accept = false;
+    }
+
+    private void SelectContractor_UserDocumentModified(object sender, DocumentChangedEventArgs e)
+    {
+        if (e.OldDocument != e.NewDocument)
+        {
+            Waybill.ContractId = Guid.Empty;
+        }
+    }
+
+    private void SelectContractor_DeleteButtonClick(object sender, EventArgs e)
+    {
+        Waybill.ContractId = Guid.Empty;
     }
 }

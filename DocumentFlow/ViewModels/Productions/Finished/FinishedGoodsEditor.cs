@@ -139,17 +139,17 @@ public partial class FinishedGoodsEditor : EditorPanel, IFinishedGoodsEditor, ID
         textQuantity.ShowSuffix = false;
     }
 
-    private void SelectLot_UserDocumentModified(object sender, DocumentSelectedEventArgs e)
+    private void SelectLot_UserDocumentModified(object sender, DocumentChangedEventArgs e)
     {
-        var lot = (ProductionLot)e.Document;
+        var lot = (ProductionLot)e.NewDocument;
         Finished.GoodsId = lot.GoodsId;
         Finished.Quantity = lot.FreeQuantity != 0 ? lot.FreeQuantity : lot.Quantity;
         UpdatePrices(lot.CalculationId);
     }
 
-    private void SelectGoods_UserDocumentModified(object sender, DocumentSelectedEventArgs e)
+    private void SelectGoods_UserDocumentModified(object sender, DocumentChangedEventArgs e)
     {
-        var goods = (Goods)e.Document;
+        var goods = (Goods)e.NewDocument;
         if (goods.CalculationId != null)
         {
             UpdatePrices(goods.CalculationId.Value);

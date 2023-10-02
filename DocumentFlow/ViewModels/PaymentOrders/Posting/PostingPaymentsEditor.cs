@@ -221,13 +221,13 @@ public partial class PostingPaymentsEditor : EditorPanel, IPostingPaymentsEditor
         Payment.Discriminator = debt.TableName;
     }
 
-    private void SelectDocument_UserDocumentModified(object sender, DocumentSelectedEventArgs e)
+    private void SelectDocument_UserDocumentModified(object sender, DocumentChangedEventArgs e)
     {
         decimal balance = services
             .GetRequiredService<IPaymentOrderRepository>()
             .GetPaymentBalance(OwnerId);
 
-        var debt = (DebtDocument)e.Document;
+        var debt = (DebtDocument)e.NewDocument;
 
         decimal newAmount = debt.FullCost - debt.Paid;
         if (newAmount > balance)

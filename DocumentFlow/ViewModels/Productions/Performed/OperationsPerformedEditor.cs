@@ -197,9 +197,9 @@ public partial class OperationsPerformedEditor : EditorPanel, IOperationsPerform
         }
     }
 
-    private void SelectLot_DocumentSelectedChanged(object sender, DocumentSelectedEventArgs e)
+    private void SelectLot_DocumentSelectedChanged(object sender, DocumentChangedEventArgs e)
     {
-        var lot = (LotOrder)e.Document;
+        var lot = (LotOrder)e.NewDocument;
         selectOper.DataSource = GetCalculationOperation(lot.CalculationId);
     }
 

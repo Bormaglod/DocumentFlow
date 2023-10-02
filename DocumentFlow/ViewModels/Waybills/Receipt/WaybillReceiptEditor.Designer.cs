@@ -195,7 +195,6 @@
             selectContract.TabIndex = 7;
             selectContract.DataSourceOnLoad += SelectContract_DataSourceOnLoad;
             selectContract.OpenButtonClick += SelectContract_OpenButtonClick;
-            selectContract.SelectedItemChanged += SelectContract_SelectedItemChanged;
             // 
             // selectContractor
             // 
@@ -220,7 +219,9 @@
             selectContractor.ShowOpenButton = true;
             selectContractor.Size = new Size(951, 32);
             selectContractor.TabIndex = 6;
+            selectContractor.DeleteButtonClick += SelectContractor_DeleteButtonClick;
             selectContractor.OpenButtonClick += SelectContractor_OpenButtonClick;
+            selectContractor.UserDocumentModified += SelectContractor_UserDocumentModified;
             // 
             // panelDoc1C
             // 
@@ -274,7 +275,6 @@
             toggleUpd.Size = new Size(135, 32);
             toggleUpd.TabIndex = 3;
             toggleUpd.ToggleValue = false;
-            toggleUpd.ToggleValueChanged += ToggleUpd_ToggleValueChanged;
             // 
             // panelInvoice
             // 

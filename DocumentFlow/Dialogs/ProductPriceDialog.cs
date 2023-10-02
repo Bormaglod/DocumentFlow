@@ -242,7 +242,7 @@ public partial class ProductPriceDialog : Form
         }
     }
 
-    private void SelectProduct_DocumentSelectedChanged(object sender, DocumentSelectedEventArgs e)
+    private void SelectProduct_DocumentSelectedChanged(object sender, DocumentChangedEventArgs e)
     {
         if (!includePrice)
         {
@@ -251,7 +251,7 @@ public partial class ProductPriceDialog : Form
 
         decimal avgPrice = 0;
 
-        if (e.Document is Material material)
+        if (e.NewDocument is Material material)
         {
             var repo = services.GetRequiredService<IMaterialRepository>();
             if (repo != null)
@@ -259,7 +259,7 @@ public partial class ProductPriceDialog : Form
                 avgPrice = repo.GetAveragePrice(material);
             }
         }
-        else if (e.Document is Goods goods && Contract != null)
+        else if (e.NewDocument is Goods goods && Contract != null)
         {
             var repo = services.GetRequiredService<IContractApplicationRepository>();
             var priceRepo = services.GetRequiredService<IPriceApprovalRepository>();
@@ -278,7 +278,7 @@ public partial class ProductPriceDialog : Form
             }
         }
 
-        textPrice.DecimalValue = avgPrice == 0 ? ((Product)e.Document).Price : avgPrice;
+        textPrice.DecimalValue = avgPrice == 0 ? ((Product)e.NewDocument).Price : avgPrice;
     }
 
     private void AmountOrPriceChanged(object sender, EventArgs e)

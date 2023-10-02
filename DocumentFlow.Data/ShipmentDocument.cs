@@ -9,8 +9,34 @@ namespace DocumentFlow.Data;
 
 public abstract class ShipmentDocument : AccountingDocument
 {
-    public Guid? ContractorId { get; set; }
+    private Guid? contractorId;
+    private Guid? contractId;
+
+    public Guid? ContractorId 
+    { 
+        get => contractorId; 
+        set
+        {
+            if (contractorId != value) 
+            { 
+                contractorId = value;
+                NotifyPropertyChanged();
+            }
+        }
+    }
+
+    public Guid? ContractId 
+    { 
+        get => contractId; 
+        set
+        {
+            if (contractId != value) 
+            { 
+                contractId = value;
+                NotifyPropertyChanged();
+            }
+        }
+    }
     public string? ContractorName { get; protected set; }
-    public Guid? ContractId { get; set; }
     public string? ContractName { get; protected set; }
 }

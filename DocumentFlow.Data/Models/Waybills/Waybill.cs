@@ -5,8 +5,6 @@
 // Date: 06.11.2021
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Data;
-
 namespace DocumentFlow.Data.Models;
 
 public class Waybill : ShipmentDocument
