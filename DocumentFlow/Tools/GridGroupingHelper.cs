@@ -2,14 +2,10 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 02.02.2022
+// Date: 29.09.2023
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
-
-using Humanizer;
-
-using System.Globalization;
 
 namespace DocumentFlow.Tools;
 
@@ -29,10 +25,9 @@ public class GridGroupingHelper
     {
         if (obj is BaseDocument doc && doc.DocumentDate.HasValue)
         {
-            var date = doc.DocumentDate.Value;
-            return $"{CultureInfo.CurrentCulture.DateTimeFormat.MonthNames[date.Month - 1].Titleize()} {date.Year} г.";
+            return DateMonthOnly.FromDateTime(doc.DocumentDate.Value);
         }
 
-        return "NONE";
+        return DateMonthOnly.MinValue;
     }
 }
