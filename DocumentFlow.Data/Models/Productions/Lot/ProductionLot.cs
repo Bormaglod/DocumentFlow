@@ -20,7 +20,7 @@ public class ProductionLot : AccountingDocument
     private Guid calculationId;
     private decimal quantity;
     private string state = "created";
-    private bool? sold;
+    private bool? sold = false;
 
     /// <summary>
     /// Возвращает или устанавливает идентификатор калькуляции используемой для изготовления партии.
