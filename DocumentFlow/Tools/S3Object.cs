@@ -11,6 +11,7 @@ using DocumentFlow.Settings.Authentification;
 using Microsoft.Extensions.Logging;
 
 using Minio;
+using Minio.DataModel.Args;
 
 using System.IO;
 using System.Text.Json;
@@ -20,7 +21,7 @@ namespace DocumentFlow.Tools;
 public class S3Object : IS3Object
 {
     private readonly ILogger<S3Object> logger;
-    private readonly MinioClient? minio;
+    private readonly IMinioClient? minio;
 
     private bool disposed = false;
 
