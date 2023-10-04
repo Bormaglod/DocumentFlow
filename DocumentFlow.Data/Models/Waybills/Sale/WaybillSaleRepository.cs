@@ -45,7 +45,7 @@ public class WaybillSaleRepository : DocumentRepository<WaybillSale>, IWaybillSa
                 p.item_name as product_name, 
                 p.code, 
                 m.abbreviation as measurement_name,
-                wsp.tableoid::regclass::varchar as discriminator,
+                regexp_replace(wsp.tableoid::regclass::varchar, '^.*_', '') as discriminator,
                 '№' || pl.document_number || ' от ' || to_char(pl.document_date, 'DD.MM.YYYY') as lot_name
             from waybill_sale ws
                 left join waybill_sale_price wsp on wsp.owner_id = ws.id 
