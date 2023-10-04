@@ -8,11 +8,11 @@
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
 		<Platforms>x64</Platforms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<Version>$(VersionPrefix)2023.10.2</Version>
+		<Version>$(VersionPrefix)2023.10.4</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Dapper" Version="2.0.151" />
+		<PackageReference Include="Dapper" Version="2.1.4" />
 		<PackageReference Include="Humanizer.Core" Version="2.14.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />

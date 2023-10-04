@@ -67,7 +67,7 @@ public static class ExceptionHelper
             }
             else if (pgException.SqlState == "23514")
             {
-                string msg = string.Empty;
+                string? msg = string.Empty;
 
                 if (database != null)
                 {
