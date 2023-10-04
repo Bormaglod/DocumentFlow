@@ -20,7 +20,7 @@ public class ProductionLot : AccountingDocument
     private Guid calculationId;
     private decimal quantity;
     private string state = "created";
-    private bool? sold = false;
+    private bool? sold;
 
     /// <summary>
     /// Возвращает или устанавливает идентификатор калькуляции используемой для изготовления партии.
@@ -75,6 +75,7 @@ public class ProductionLot : AccountingDocument
     /// <summary>
     /// Возвращает или устанавливает флаг определяющий, что партия реализована (если партия реализована частично - то NULL).
     /// </summary>
+    [Write(false)]
     public bool? Sold 
     { 
         get => sold; 
