@@ -55,6 +55,8 @@ public partial class OperationsPerformedEditor : EditorPanel, IOperationsPerform
 
         this.services = services;
         this.pageManager = pageManager;
+
+        Performed.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
 
     public Guid? OwnerId

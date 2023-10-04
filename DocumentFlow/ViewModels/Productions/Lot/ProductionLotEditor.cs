@@ -173,6 +173,8 @@ public partial class ProductionLotEditor : EditorPanel, IProductionLotEditor, ID
 
         gridContent.CellRenderers.Remove("TableSummary");
         gridContent.CellRenderers.Add("TableSummary", new CustomGridTableSummaryRenderer());
+
+        Lot.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
 
     public override void RegisterNestedBrowsers()
@@ -484,7 +486,7 @@ public partial class ProductionLotEditor : EditorPanel, IProductionLotEditor, ID
     {
         comboCalc.DataSource = services
             .GetRequiredService<ICalculationRepository>()
-            .GetByOwner(comboGoods.SelectedItem);
+            .GetApproved(comboGoods.SelectedItem);
         comboCalc.UpdateValue();
 
         if (comboGoods.SelectedItem != Guid.Empty)
@@ -523,7 +525,7 @@ public partial class ProductionLotEditor : EditorPanel, IProductionLotEditor, ID
         pageManager.ShowAssociateEditor<ICalculationBrowser>(e.Document);
     }
 
-    private void GridContent_QueryCellStyle(object sender, Syncfusion.WinForms.DataGrid.Events.QueryCellStyleEventArgs e)
+    private void GridContent_QueryCellStyle(object sender, QueryCellStyleEventArgs e)
     {
         if (e.DataRow.RowData is OperationInfo info)
         {
