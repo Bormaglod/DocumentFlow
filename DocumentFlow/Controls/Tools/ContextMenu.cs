@@ -63,18 +63,15 @@ public class ContextMenu : IContextMenu
 
     public IContextMenu Add(string text, EventHandler action)
     {
-        ToolStripMenuItem menuItem = new(text);
-        menuItem.Click += action;
-        items.Add(menuItem);
+        CreateMenuItem(text, action);
 
         return this;
     }
 
     public IContextMenu Add(string text, Image image, EventHandler action)
     {
-        ToolStripMenuItem menuItem = new(text, image);
-        menuItem.Click += action;
-        items.Add(menuItem);
+        var menuItem = CreateMenuItem(text, action);
+        menuItem.Image = image;
 
         return this;
     }
@@ -102,12 +99,31 @@ public class ContextMenu : IContextMenu
         groups.Add(new ContextMenuGroup(separator, menuItems));
     }
 
+    private ToolStripMenuItem CreateMenuItem(string text, EventHandler action)
+    {
+        ToolStripMenuItem menuItem = new(text);
+        menuItem.Tag = new ContextMenuItem(menuItem);
+        menuItem.Click += (sender, args) =>
+        {
+            action(menuItem.Tag, EventArgs.Empty);
+        };
+
+        items.Add(menuItem);
+
+        return menuItem;
+    }
+
     private IContextMenuItem CreateItem(ToolStripMenuItem menuItem, EventHandler action)
     {
-        menuItem.Click += action;
+        menuItem.Click += (sender, args) =>
+        {
+            action(menuItem.Tag, EventArgs.Empty);
+        };
 
         ContextMenuItem contextMenuItem = new(menuItem);
         contextMenuItem.ItemVisibleChanged += UpdateVisibleMenuItems;
+
+        menuItem.Tag = contextMenuItem;
 
         return contextMenuItem;
     }

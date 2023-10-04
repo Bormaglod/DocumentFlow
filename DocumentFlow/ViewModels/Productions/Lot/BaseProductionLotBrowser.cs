@@ -29,7 +29,9 @@ public abstract class BaseProductionLotBrowser : BrowserPage<ProductionLot>
     {
         this.repository = repository;
 
-        var menuState = ContextMenu.Add("Состояние");
+        var menuState = ContextMenu
+            .AddSeparator()
+            .Add("Состояние");
 
         foreach (LotState item in Enum.GetValues(typeof(LotState)))
         {
@@ -37,7 +39,7 @@ public abstract class BaseProductionLotBrowser : BrowserPage<ProductionLot>
             menu.Add(menuItem, item);
         }
 
-        ContextMenu.AddItems(menu.Keys.ToArray());
+        menuState.AddItems(menu.Keys.ToArray());
     }
 
     protected override void BrowserCellStyle(ProductionLot document, string column, CellStyleInfo style)
