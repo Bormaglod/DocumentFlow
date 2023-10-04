@@ -48,6 +48,7 @@ public partial class DfDataGrid : DfControl, IAccess
 
     public event EventHandler<DependentEntitySelectEventArgs>? CreateRow;
     public event EventHandler<DependentEntitySelectEventArgs>? EditRow;
+    public event EventHandler<ConfirmGeneratingColumnArgs>? ConfirmGeneratingColumn;
 
     public bool EnabledEditor
     {
@@ -329,5 +330,10 @@ public partial class DfDataGrid : DfControl, IAccess
             
             numericColumn.NumberFormatInfo = numericFormat;
         }
+
+        var args = new ConfirmGeneratingColumnArgs(e.Column.MappingName, false);
+        ConfirmGeneratingColumn?.Invoke(this, args);
+
+        e.Cancel = args.Cancel;
     }
 }

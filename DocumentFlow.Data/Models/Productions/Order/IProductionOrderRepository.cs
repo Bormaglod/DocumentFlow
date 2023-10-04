@@ -19,6 +19,14 @@ public interface IProductionOrderRepository : IDocumentRepository<ProductionOrde
     IReadOnlyList<ProductionOrder> GetWithReturnMaterial(Contract contract);
 
     /// <summary>
+    /// Возвращает список заказов по которым есть остатки давальческого сырья полученного от контрагента с идентификатором contractorId 
+    /// в соответствии с договором имеющим идентификатор contractId .
+    /// </summary>
+    /// <param name="contract">Договор с контрагентом-заказчиком на передачу материалов для изготовления продукции.</param>
+    /// <returns>Список заказов по которым есть остатки давальческого сырья полученного в соответствии с договором contract.</returns>
+    IReadOnlyList<ProductionOrder> GetWithReturnMaterial(Guid contractorId, Guid contractId);
+
+    /// <summary>
     /// Метод возвращает список всех материалов, которые потребуются для изготовления заказа order и
     /// при этом это давальческий материал
     /// </summary>
@@ -26,6 +34,15 @@ public interface IProductionOrderRepository : IDocumentRepository<ProductionOrde
     /// <param name="order">Заказ для которого осуществляется поиск всех давальческих материалов.</param>
     /// <returns>Список давальческих материалов, которые потребуются для изготовления заказа order</returns>
     IReadOnlyList<T> GetOnlyGivingMaterials<T>(ProductionOrder order) where T : ProductPrice;
+
+    /// <summary>
+    /// Метод возвращает список всех материалов, которые потребуются для изготовления заказа с идентификатором orderId и
+    /// при этом это давальческий материал
+    /// </summary>
+    /// <typeparam name="T">Тип описывающий материал (должен нсаледоваться от <see cref="ProductPrice"/></typeparam>
+    /// <param name="order">Заказ для которого осуществляется поиск всех давальческих материалов.</param>
+    /// <returns>Список давальческих материалов, которые потребуются для изготовления заказа order</returns>
+    IReadOnlyList<T> GetOnlyGivingMaterials<T>(Guid orderId) where T : ProductPrice;
 
     /// <summary>
     /// Метод возвращает список активных заказов, т.е. не помеченных на удаление, проведённых и не закрытых.

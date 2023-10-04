@@ -17,6 +17,7 @@ using SqlKata;
 using SqlKata.Execution;
 
 using System.Data;
+using System.Diagnostics.Contracts;
 
 namespace DocumentFlow.Data.Models;
 
@@ -27,6 +28,16 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
     }
 
     public IReadOnlyList<ProductionOrder> GetWithReturnMaterial(Contract contract)
+    {
+        if (contract.OwnerId == null)
+        {
+            return Array.Empty<ProductionOrder>();
+        }
+
+        return GetWithReturnMaterial(contract.OwnerId.Value, contract.Id);
+    }
+
+    public IReadOnlyList<ProductionOrder> GetWithReturnMaterial(Guid contractorId, Guid contractId)
     {
         using var conn = GetConnection();
 
@@ -61,14 +72,16 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .Join("waybill_processing as wp", "wp.owner_id", "po.id")
             .Join("rm_waybills as rm", "rm.waybill_processing_id", "wp.id")
             .WhereFalse("po.deleted")
-            .WhereTrue("po.carried_out")
-            .Where("wp.contractor_id", contract.OwnerId)
-            .Where("wp.contract_id", contract.Id)
+        .WhereTrue("po.carried_out")
+            .Where("wp.contractor_id", contractorId)
+            .Where("wp.contract_id", contractId)
             .Get<ProductionOrder>()
             .ToList();
     }
 
-    public IReadOnlyList<T> GetOnlyGivingMaterials<T>(ProductionOrder order) where T : ProductPrice
+    public IReadOnlyList<T> GetOnlyGivingMaterials<T>(ProductionOrder order) where T : ProductPrice => GetOnlyGivingMaterials<T>(order.Id);
+
+    public IReadOnlyList<T> GetOnlyGivingMaterials<T>(Guid orderId) where T : ProductPrice
     {
         using var conn = GetConnection();
         return GetQuery(conn, "po")
@@ -80,7 +93,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .Join("calculation as c", "c.id", "pop.calculation_id")
             .Join("calculation_material as cm", q => q.On("cm.owner_id", "c.id").WhereTrue("cm.is_giving"))
             .Join("material as m", "m.id", "cm.item_id")
-            .Where("po.id", order.Id)
+            .Where("po.id", orderId)
             .GroupBy("cm.item_id", "m.code", "m.item_name")
             .OrderBy("m.code")
             .Get<T>()

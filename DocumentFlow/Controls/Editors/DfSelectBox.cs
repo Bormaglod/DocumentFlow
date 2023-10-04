@@ -98,6 +98,8 @@ public partial class DfSelectBox : DfControl, IAccess
         }
     }
 
+    [Browsable(false)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IDocumentInfo SelectedDocument => selectedItem ?? throw new ArgumentNullException(nameof(SelectedDocument));
 
     protected virtual IDocumentInfo? GetDocument(Guid id) => null;

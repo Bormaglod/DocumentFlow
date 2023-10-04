@@ -64,6 +64,9 @@
     <Compile Update="Dialogs\DateRangeDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Dialogs\MaterialQuantityDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Dialogs\OperationsPerformedDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -392,6 +395,18 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="ViewModels\Productions\Performed\OperationsPerformedNestedBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Processing\WaybillProcessingBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Processing\WaybillProcessingEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Returns\ReturnMaterialsBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ViewModels\Productions\Returns\ReturnMaterialsEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="ViewModels\Products\Goods\GoodsBrowser.cs">

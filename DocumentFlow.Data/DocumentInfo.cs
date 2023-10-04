@@ -10,130 +10,27 @@ using DocumentFlow.Data.Extension;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Tools;
 
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Data;
-using System.Reflection;
 
 namespace DocumentFlow.Data;
 
 public abstract class DocumentInfo : Entity<Guid>, IDocumentInfo
 {
-    private class DependentCollection
-    {
-        private readonly DocumentInfo owner;
-        private readonly IList dependentCollection = null!;
-
-        public DependentCollection(DocumentInfo owner, PropertyInfo prop)
-        {
-            this.owner = owner;
-
-            var gta = prop.PropertyType.GenericTypeArguments[0];
-            var listType = typeof(ObservableCollection<>).MakeGenericType(gta);
-
-            var list = Activator.CreateInstance(listType);
-            if (list is INotifyCollectionChanged changed)
-            {
-                changed.CollectionChanged += List_CollectionChanged;
-                dependentCollection = (IList)list;
-
-                prop.SetValue(owner, dependentCollection);
-            }
-
-            owner.PropertyChanged += Owner_PropertyChanged;
-        }
-
-        public List<IDependentEntity> NewItems { get; } = new();
-        public List<IDependentEntity> UpdateItems { get; } = new();
-        public List<IDependentEntity> RemoveItems { get; } = new();
-
-        public void CompleteChanged()
-        {
-            NewItems.Clear();
-            UpdateItems.Clear();
-            RemoveItems.Clear();
-        }
-
-        private void Owner_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Id))
-            {
-                foreach (var part in dependentCollection.OfType<IDependentEntity>())
-                {
-                    part.SetOwner(owner.Id);
-                }
-            }
-        }
-
-        private void List_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    if (e.NewItems != null)
-                    {
-                        foreach (var part in e.NewItems.OfType<IDependentEntity>())
-                        {
-                            if (owner.Id != default)
-                            {
-                                part.SetOwner(owner.Id);
-                            }
-
-                            if (part.Id == 0)
-                            {
-                                NewItems.Add(part);
-                            }
-                            else
-                            {
-                                if (part is INotifyPropertyChanged changed)
-                                {
-                                    changed.PropertyChanged += Changed_PropertyChanged;
-                                }
-                                else
-                                {
-                                    UpdateItems.Add(part);
-                                }
-                            }
-                        }
-                    }
-
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    if (e.OldItems != null)
-                    {
-                        foreach (var part in e.OldItems.OfType<IDependentEntity>().Where(p => p.Id != 0))
-                        {
-                            RemoveItems.Add(part);
-                        }
-                    }
-
-                    break;
-            }
-        }
-
-        private void Changed_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (sender is IDependentEntity entity)
-            {
-                if (!UpdateItems.Contains(entity))
-                {
-                    UpdateItems.Add(entity);
-                }
-            }
-        }
-    }
-
-    private readonly List<DependentCollection> DependentCollectionList = new();
+    private readonly List<IDependentCollection> DependentCollectionList = new();
 
     private bool isLoaded = false;
 
     public DocumentInfo()
     {
-        foreach (var collection in EntityProperties.CollectionPropertiesCache(GetType()))
+        foreach (var prop in EntityProperties.CollectionPropertiesCache(GetType()))
         {
-            DependentCollectionList.Add(new DependentCollection(this, collection));
+            var gta = prop.PropertyType.GenericTypeArguments[0];
+            var listType = typeof(DependentCollection<>).MakeGenericType(gta);
+
+            var list = Activator.CreateInstance(listType, this) ?? throw new Exception($"An error occurred while creating the object DependentCollection<{gta.Name}>.");
+            prop.SetValue(this, list);
+
+            DependentCollectionList.Add((IDependentCollection)list);
         }
     }
 
