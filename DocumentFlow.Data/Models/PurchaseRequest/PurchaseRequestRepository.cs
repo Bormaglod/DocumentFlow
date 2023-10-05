@@ -17,6 +17,7 @@ using DocumentFlow.Tools;
 using Humanizer;
 
 using SqlKata;
+using SqlKata.Execution;
 
 using System.Data;
 
@@ -73,7 +74,18 @@ public class PurchaseRequestRepository : DocumentRepository<PurchaseRequest>, IP
     {
         using var conn = GetConnection();
 
-        return conn.Query<PurchaseRequestPrice>("select * from purchase_request_price where owner_id = :id", new { id = purchaseRequest.Id }).ToList();
+        var query = GetQuery(conn)
+            .From("purchase_request_price as prp")
+            .Select("prp.*")
+            .Select("p.item_name as product_name")
+            .Select("p.code")
+            .Select("m.abbreviation as measurement_name")
+            .Join("product as p", "p.id", "prp.reference_id")
+            .LeftJoin("measurement as m", "m.id", "p.measurement_id");
+
+        return GetQueryOwner(query, purchaseRequest.Id)
+            .Get<PurchaseRequestPrice>()
+            .ToList();
     }
 
     protected override Query GetUserDefinedQuery(Query query, IFilter? filter) => query.From("purchase_request_receipt");
