@@ -123,7 +123,14 @@ public abstract class ReadOnlyRepository<Key, T> : IReadOnlyRepository<Key, T>
                 query = query.Select($"{table}.*");
             }
 
-            query = query.SelectRaw($"exists(select 1 from document_refs dr where dr.owner_id = {table}.id) as has_documents");
+            var id = $"{table}.id";
+
+            query = query.SelectRaw($"exists(select 1 from document_refs dr where dr.owner_id = {id}) as has_documents");
+            var grp = query.Clauses.Where(c => c.Component == "group").OfType<Column>();
+            if (grp.Any() && grp.FirstOrDefault(x => x.Name == id) == null) 
+            {
+                query = query.GroupBy(id);
+            }
         }
 
         return query;
