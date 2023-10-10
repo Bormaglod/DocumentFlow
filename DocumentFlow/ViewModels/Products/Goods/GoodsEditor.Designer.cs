@@ -39,11 +39,14 @@
             comboMeasurement = new Controls.Editors.DfComboBox();
             textWeight = new Controls.Editors.DfNumericTextBox();
             choiceVat = new Controls.Editors.DfChoice();
+            panel1 = new Panel();
+            buttonChangeCode = new Syncfusion.WinForms.Controls.SfButton();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // textCode
             // 
-            textCode.Dock = DockStyle.Top;
+            textCode.Dock = DockStyle.Left;
             textCode.EditorFitToSize = false;
             textCode.EditorWidth = 180;
             textCode.EnabledEditor = true;
@@ -59,7 +62,7 @@
             textCode.Multiline = false;
             textCode.Name = "textCode";
             textCode.Padding = new Padding(0, 0, 0, 7);
-            textCode.Size = new Size(857, 32);
+            textCode.Size = new Size(385, 32);
             textCode.TabIndex = 0;
             textCode.TextValue = "";
             // 
@@ -137,7 +140,7 @@
             textPrice.DecimalValue = new decimal(new int[] { 0, 0, 0, 0 });
             textPrice.Dock = DockStyle.Top;
             textPrice.EditorFitToSize = false;
-            textPrice.EditorWidth = 150;
+            textPrice.EditorWidth = 120;
             textPrice.EnabledEditor = true;
             textPrice.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
             textPrice.Header = "Цена без НДС";
@@ -250,7 +253,7 @@
             textWeight.DecimalValue = new decimal(new int[] { 0, 0, 0, 0 });
             textWeight.Dock = DockStyle.Top;
             textWeight.EditorFitToSize = false;
-            textWeight.EditorWidth = 100;
+            textWeight.EditorWidth = 120;
             textWeight.EnabledEditor = true;
             textWeight.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
             textWeight.Header = "Вес, г";
@@ -290,6 +293,28 @@
             choiceVat.Size = new Size(857, 32);
             choiceVat.TabIndex = 10;
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(buttonChangeCode);
+            panel1.Controls.Add(textCode);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(857, 32);
+            panel1.TabIndex = 11;
+            // 
+            // buttonChangeCode
+            // 
+            buttonChangeCode.AccessibleName = "Button";
+            buttonChangeCode.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            buttonChangeCode.Location = new Point(385, 0);
+            buttonChangeCode.Name = "buttonChangeCode";
+            buttonChangeCode.Size = new Size(96, 24);
+            buttonChangeCode.TabIndex = 1;
+            buttonChangeCode.Text = "Изменить";
+            buttonChangeCode.UseVisualStyleBackColor = true;
+            buttonChangeCode.Click += ButtonChangeCode_Click;
+            // 
             // GoodsEditor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -304,9 +329,10 @@
             Controls.Add(selectGroup);
             Controls.Add(textDocName);
             Controls.Add(textName);
-            Controls.Add(textCode);
+            Controls.Add(panel1);
             Name = "GoodsEditor";
             Size = new Size(857, 447);
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -323,5 +349,7 @@
         private Controls.Editors.DfComboBox comboMeasurement;
         private Controls.Editors.DfNumericTextBox textWeight;
         private Controls.Editors.DfChoice choiceVat;
+        private Panel panel1;
+        private Syncfusion.WinForms.Controls.SfButton buttonChangeCode;
     }
 }

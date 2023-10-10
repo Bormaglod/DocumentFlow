@@ -55,6 +55,9 @@
     <Compile Update="Controls\PageContents\StartPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Dialogs\CodeGeneratorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Dialogs\GroupColumnsDialog.cs">
       <SubType>Form</SubType>
     </Compile>

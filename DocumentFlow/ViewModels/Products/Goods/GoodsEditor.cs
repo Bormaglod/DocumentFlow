@@ -11,6 +11,7 @@ using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Models;
+using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
@@ -94,5 +95,21 @@ public partial class GoodsEditor : EditorPanel, IGoodsEditor, IDirectoryEditor
     private void ToggleService_ToggleValueChanged(object sender, EventArgs e)
     {
         textWeight.Visible = !toggleService.ToggleValue;
+    }
+
+    private void ButtonChangeCode_Click(object sender, EventArgs e)
+    {
+        var dialog = services.GetRequiredService<CodeGeneratorDialog>();
+        try
+        {
+            if (dialog.Get(Goods.Code, out var code))
+            {
+                Goods.Code = code;
+            }
+        }
+        catch (Exception exception)
+        {
+            MessageBox.Show(exception.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 }
