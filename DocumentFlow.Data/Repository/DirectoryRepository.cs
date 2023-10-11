@@ -79,7 +79,7 @@ public abstract class DirectoryRepository<T> : OwnedRepository<Guid, T>, IDirect
         using var transaction = conn.BeginTransaction();
         try
         {
-            string sql = $"insert into {GetTableName()} (is_folder, code, item_name, parent_id) values (true, :code, :item_name, :parent_id) returning id";
+            string sql = $"insert into {GetTableName()} (is_folder, code, item_name, parent_id) values (true, :code, :item_name, :parent) returning id";
             var res = conn.QuerySingle<Guid>(sql, new { code, item_name = folderName, parent }, transaction);
             transaction.Commit();
 
