@@ -5,9 +5,9 @@
 // Date: 03.02.2022
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Data.Models;
+using DocumentFlow.Data.Enums;
 
-public enum ProductContent { Materials, Goods, All }
+namespace DocumentFlow.Data.Tools;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class ProductContentAttribute : Attribute

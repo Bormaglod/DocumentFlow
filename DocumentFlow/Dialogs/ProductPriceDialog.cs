@@ -6,8 +6,10 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Events;
+using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
+using DocumentFlow.Data.Tools;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -21,9 +23,13 @@ namespace DocumentFlow.Dialogs;
 public partial class ProductPriceDialog : Form
 {
     private bool includePrice;
+    //private bool includeLot;
     private ProductContent content;
     private bool canCalculate = false;
     private IProductCalculation? productCalculation = null;
+
+    private bool withCalculation;
+    private bool withLot;
 
     private readonly IServiceProvider services;
 
@@ -44,7 +50,7 @@ public partial class ProductPriceDialog : Form
 
     public Contract? Contract { get; set; }
 
-    public bool WithCalculation { get; set; } = false;
+    //public bool WithCalculation { get; set; } = false;
 
     public bool Create<T>([MaybeNullWhen(false)] out T product) where T : ProductPrice?, new()
     {
@@ -71,9 +77,14 @@ public partial class ProductPriceDialog : Form
 
             product.SetProductInfo((Product)selectProduct.SelectedDocument);
 
-            if (WithCalculation && product is IProductCalculation calculation)
+            if (product is IProductCalculation calculation)
             {
                 calculation.SetCalculation((Calculation)selectCalc.SelectedDocument);
+            }
+
+            if (product is IProductionLotSupport lot && selectLot.SelectedItem != Guid.Empty)
+            {
+                lot.LotId = selectLot.SelectedItem;
             }
 
             return true;
@@ -87,9 +98,19 @@ public partial class ProductPriceDialog : Form
     {
         UpdateControls(typeof(T));
 
-        if (WithCalculation && product is IProductCalculation calculation)
+        if (product is IProductCalculation calculation)
         {
             productCalculation = calculation;
+        }
+
+        if (product is IProductionLotSupport lot && lot.LotId != null)
+        {
+            selectLot.DataSource = new ProductionLot[]
+            {
+                services.GetRequiredService<IProductionLotRepository>().Get(lot.LotId.Value)
+            };
+
+            selectLot.SelectedItem = lot.LotId.Value;
         }
 
         selectProduct.SelectedItem = product.ReferenceId;
@@ -119,6 +140,11 @@ public partial class ProductPriceDialog : Form
 
             productCalculation?.SetCalculation((Calculation)selectCalc.SelectedDocument);
 
+            if (product is IProductionLotSupport _lot)
+            {
+                _lot.LotId = selectLot.SelectedItem == Guid.Empty ? null : selectLot.SelectedItem;
+            }
+
             return true;
         }
 
@@ -127,6 +153,9 @@ public partial class ProductPriceDialog : Form
 
     private void UpdateControls(Type productType)
     {
+        withCalculation = productType.GetInterface(nameof(IProductCalculation)) != null;
+        withLot = productType.GetInterface(nameof(IProductionLotSupport)) != null;
+
         content = productType.GetCustomAttribute<ProductContentAttribute>()?.Content ?? throw new Exception($"Использование ProductPriceDialog с типом {productType.Name} возможно только при условии наличия у этого типа атрибута ProductContentAttribute");
         selectProduct.Header = content switch
         {
@@ -137,6 +166,7 @@ public partial class ProductPriceDialog : Form
         };
 
         includePrice = productType.GetCustomAttribute<ProductExcludingPriceAttribute>() == null;
+        //includeLot = productType.GetCustomAttribute<ProductIncludingLotAttribute>() != null;
 
         textPrice.Visible = includePrice;
         textSumma.Visible = includePrice;
@@ -144,7 +174,8 @@ public partial class ProductPriceDialog : Form
         textVat.Visible = includePrice;
         textFullSumma.Visible = includePrice;
 
-        selectCalc.Visible = WithCalculation;
+        selectCalc.Visible = withCalculation;
+        selectLot.Visible = withLot;
 
         int k = 0;
         if (!includePrice)
@@ -152,13 +183,18 @@ public partial class ProductPriceDialog : Form
             k += 5;
         }
 
-        if (!WithCalculation)
+        if (!withCalculation)
+        {
+            k++;
+        }
+
+        if (!withLot)
         {
             k++;
         }
 
         Height -= k * 32;
-        MinimumSize = new Size(350, 362 - k * 32);
+        MinimumSize = new Size(350, 387 - k * 32);
 
         selectProduct.DataSource = GetProducts();
 
@@ -226,7 +262,7 @@ public partial class ProductPriceDialog : Form
         {
             text = "Выберите изделие/материал";
         }
-        else if (selectCalc.SelectedItem == Guid.Empty && WithCalculation)
+        else if (selectCalc.SelectedItem == Guid.Empty && withCalculation)
         {
             text = "Выберите калькуляцию";
         }
@@ -316,5 +352,33 @@ public partial class ProductPriceDialog : Form
                 .SelectRaw("calculation.code || ' от ' || calculation.date_approval as item_name")
                 .WhereRaw("calculation.state = 'approved'::calculation_state")
                 .OrderBy("calculation.code"));
+    }
+
+    private void SelectLot_DataSourceOnLoad(object sender, DataSourceLoadEventArgs e)
+    {
+        if (Contract?.OwnerId != null && selectProduct.SelectedItem != Guid.Empty)
+        {
+            var currents = Array.Empty<ProductionLot>();
+            if (selectLot.SelectedItem != Guid.Empty)
+            {
+                currents = new ProductionLot[] { (ProductionLot)selectLot.SelectedDocument };
+            }
+
+            e.Values = selectLot.DataSource = services
+                .GetRequiredService<IProductionLotRepository>()
+                .GetActiveLots(Contract.OwnerId.Value, selectProduct.SelectedItem)
+                .Union(currents);
+        }
+    }
+
+    private void SelectLot_DocumentDialogColumns(object sender, DocumentDialogColumnsEventArgs e)
+    {
+        ModelsHelper.CreateProductionLotColumns(e.Columns, true);
+    }
+
+    private void SelectLot_UserDocumentModified(object sender, DocumentChangedEventArgs e)
+    {
+        var lot = (ProductionLot)e.NewDocument;
+        textAmount.DecimalValue = lot.FreeQuantity;
     }
 }

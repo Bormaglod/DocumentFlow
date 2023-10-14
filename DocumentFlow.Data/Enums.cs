@@ -248,3 +248,10 @@ public enum PaymentDirection
     [Description("Расход")]
     Expense 
 }
+
+public enum ProductContent 
+{ 
+    Materials, 
+    Goods, 
+    All 
+}

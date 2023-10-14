@@ -117,7 +117,6 @@ public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
     private void GridContent_CreateRow(object sender, DependentEntitySelectEventArgs e)
     {
         var dialog = services.GetRequiredService<ProductPriceDialog>();
-        dialog.WithCalculation = true;
 
         if (selectContract.SelectedItem != Guid.Empty)
         {
@@ -139,7 +138,6 @@ public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
         if (e.DependentEntity is ProductionOrderPrice price)
         {
             var dialog = services.GetRequiredService<ProductPriceDialog>();
-            dialog.WithCalculation = true;
 
             if (selectContract.SelectedItem != Guid.Empty)
             {

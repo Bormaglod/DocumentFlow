@@ -5,6 +5,9 @@
 // Date: 06.11.2021
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Enums;
+using DocumentFlow.Data.Tools;
+
 namespace DocumentFlow.Data.Models;
 
 [ProductContent(ProductContent.Materials)]

@@ -17,6 +17,8 @@ using Humanizer;
 using SqlKata;
 using SqlKata.Execution;
 
+using System.Diagnostics.Contracts;
+
 namespace DocumentFlow.Data.Models;
 
 public class ProductionLotRepository : DocumentRepository<ProductionLot>, IProductionLotRepository
@@ -75,7 +77,9 @@ public class ProductionLotRepository : DocumentRepository<ProductionLot>, IProdu
         return query.Get<ProductionLot>().ToList();
     }
 
-    public IReadOnlyList<ProductionLot> GetActiveLots(Contractor contractor)
+    public IReadOnlyList<ProductionLot> GetActiveLots(Contractor contractor) => GetActiveLots(contractor.Id);
+
+    public IReadOnlyList<ProductionLot> GetActiveLots(Guid contractorId, Guid? goodsId = null)
     {
         using var conn = GetConnection();
 
@@ -101,7 +105,8 @@ public class ProductionLotRepository : DocumentRepository<ProductionLot>, IProdu
             .Join("goods as g", "g.id", "c.owner_id")
             .LeftJoin(fg.As("fg"), q => q.On("fg.lot_id", "production_lot.id"))
             .LeftJoin(ls.As("ls"), q => q.On("ls.lot_id", "production_lot.id"))
-            .Where("po.contractor_id", contractor.Id)
+            .Where("po.contractor_id", contractorId)
+            .When(goodsId != null, q => q.Where("c.owner_id", goodsId))
             .WhereFalse("g.is_service")
             .WhereNotNull("fg.finished_quantity")
             .WhereTrue("po.carried_out")

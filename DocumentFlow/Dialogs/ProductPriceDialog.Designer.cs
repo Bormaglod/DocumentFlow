@@ -38,6 +38,7 @@
             textVat = new Controls.Editors.DfCurrencyTextBox();
             textFullSumma = new Controls.Editors.DfCurrencyTextBox();
             selectCalc = new Controls.Editors.DfDirectorySelectBox();
+            selectLot = new Controls.Editors.DfDocumentSelectBox();
             SuspendLayout();
             // 
             // buttonCancel
@@ -46,7 +47,7 @@
             buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonCancel.DialogResult = DialogResult.Cancel;
             buttonCancel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-            buttonCancel.Location = new Point(328, 278);
+            buttonCancel.Location = new Point(328, 303);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(96, 32);
             buttonCancel.TabIndex = 1010;
@@ -60,7 +61,7 @@
             buttonOk.BackColor = Color.FromArgb(242, 242, 242);
             buttonOk.DialogResult = DialogResult.OK;
             buttonOk.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-            buttonOk.Location = new Point(226, 278);
+            buttonOk.Location = new Point(226, 303);
             buttonOk.Name = "buttonOk";
             buttonOk.Size = new Size(96, 32);
             buttonOk.Style.BackColor = Color.FromArgb(242, 242, 242);
@@ -109,7 +110,7 @@
             textAmount.HeaderTextAlign = ContentAlignment.TopLeft;
             textAmount.HeaderVisible = true;
             textAmount.HeaderWidth = 120;
-            textAmount.Location = new Point(10, 74);
+            textAmount.Location = new Point(10, 106);
             textAmount.Margin = new Padding(3, 4, 3, 4);
             textAmount.Name = "textAmount";
             textAmount.NumberDecimalDigits = 3;
@@ -135,7 +136,7 @@
             textPrice.HeaderTextAlign = ContentAlignment.TopLeft;
             textPrice.HeaderVisible = true;
             textPrice.HeaderWidth = 120;
-            textPrice.Location = new Point(10, 106);
+            textPrice.Location = new Point(10, 138);
             textPrice.Margin = new Padding(3, 4, 3, 4);
             textPrice.Name = "textPrice";
             textPrice.Padding = new Padding(0, 0, 0, 7);
@@ -158,7 +159,7 @@
             textSumma.HeaderTextAlign = ContentAlignment.TopLeft;
             textSumma.HeaderVisible = true;
             textSumma.HeaderWidth = 120;
-            textSumma.Location = new Point(10, 138);
+            textSumma.Location = new Point(10, 170);
             textSumma.Margin = new Padding(3, 4, 3, 4);
             textSumma.Name = "textSumma";
             textSumma.Padding = new Padding(0, 0, 0, 7);
@@ -179,7 +180,7 @@
             choiceVat.HeaderTextAlign = ContentAlignment.TopLeft;
             choiceVat.HeaderVisible = true;
             choiceVat.HeaderWidth = 120;
-            choiceVat.Location = new Point(10, 170);
+            choiceVat.Location = new Point(10, 202);
             choiceVat.Margin = new Padding(3, 4, 3, 4);
             choiceVat.Name = "choiceVat";
             choiceVat.Padding = new Padding(0, 0, 0, 7);
@@ -203,7 +204,7 @@
             textVat.HeaderTextAlign = ContentAlignment.TopLeft;
             textVat.HeaderVisible = true;
             textVat.HeaderWidth = 120;
-            textVat.Location = new Point(10, 202);
+            textVat.Location = new Point(10, 234);
             textVat.Margin = new Padding(3, 4, 3, 4);
             textVat.Name = "textVat";
             textVat.Padding = new Padding(0, 0, 0, 7);
@@ -226,7 +227,7 @@
             textFullSumma.HeaderTextAlign = ContentAlignment.TopLeft;
             textFullSumma.HeaderVisible = true;
             textFullSumma.HeaderWidth = 120;
-            textFullSumma.Location = new Point(10, 234);
+            textFullSumma.Location = new Point(10, 266);
             textFullSumma.Margin = new Padding(3, 4, 3, 4);
             textFullSumma.Name = "textFullSumma";
             textFullSumma.Padding = new Padding(0, 0, 0, 7);
@@ -257,6 +258,32 @@
             selectCalc.Size = new Size(414, 32);
             selectCalc.TabIndex = 1002;
             // 
+            // selectLot
+            // 
+            selectLot.DisableCurrentItem = false;
+            selectLot.Dock = DockStyle.Top;
+            selectLot.EditorFitToSize = true;
+            selectLot.EditorWidth = 294;
+            selectLot.EnabledEditor = true;
+            selectLot.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
+            selectLot.Header = "Партия";
+            selectLot.HeaderAutoSize = false;
+            selectLot.HeaderDock = DockStyle.Left;
+            selectLot.HeaderTextAlign = ContentAlignment.TopLeft;
+            selectLot.HeaderVisible = true;
+            selectLot.HeaderWidth = 120;
+            selectLot.Location = new Point(10, 74);
+            selectLot.Margin = new Padding(3, 4, 3, 4);
+            selectLot.Name = "selectLot";
+            selectLot.Padding = new Padding(0, 0, 0, 7);
+            selectLot.ShowDeleteButton = true;
+            selectLot.ShowOpenButton = false;
+            selectLot.Size = new Size(414, 32);
+            selectLot.TabIndex = 1011;
+            selectLot.DocumentDialogColumns += SelectLot_DocumentDialogColumns;
+            selectLot.DataSourceOnLoad += SelectLot_DataSourceOnLoad;
+            selectLot.UserDocumentModified += SelectLot_UserDocumentModified;
+            // 
             // ProductPriceDialog
             // 
             AcceptButton = buttonOk;
@@ -264,13 +291,14 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Window;
             CancelButton = buttonCancel;
-            ClientSize = new Size(434, 323);
+            ClientSize = new Size(434, 348);
             Controls.Add(textFullSumma);
             Controls.Add(textVat);
             Controls.Add(choiceVat);
             Controls.Add(textSumma);
             Controls.Add(textPrice);
             Controls.Add(textAmount);
+            Controls.Add(selectLot);
             Controls.Add(selectCalc);
             Controls.Add(selectProduct);
             Controls.Add(buttonCancel);
@@ -299,5 +327,6 @@
         private Controls.Editors.DfCurrencyTextBox textVat;
         private Controls.Editors.DfCurrencyTextBox textFullSumma;
         private Controls.Editors.DfDirectorySelectBox selectCalc;
+        private Controls.Editors.DfDocumentSelectBox selectLot;
     }
 }

@@ -5,6 +5,9 @@
 // Date: 02.07.2022
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Enums;
+using DocumentFlow.Data.Tools;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace DocumentFlow.Data.Models;

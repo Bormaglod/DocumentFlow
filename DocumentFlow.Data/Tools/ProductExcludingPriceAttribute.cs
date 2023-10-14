@@ -5,7 +5,7 @@
 // Date: 15.01.2023
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Data.Models;
+namespace DocumentFlow.Data.Tools;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class ProductExcludingPriceAttribute : Attribute

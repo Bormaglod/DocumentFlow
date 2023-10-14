@@ -16,5 +16,6 @@ public interface IProductionLotRepository : IDocumentRepository<ProductionLot>
     IReadOnlyList<ProductionLotOperation> GetOperations(ProductionLot lot);
     IReadOnlyList<ProductionLot> GetActiveLots();
     IReadOnlyList<ProductionLot> GetActiveLots(Contractor contractor);
+    IReadOnlyList<ProductionLot> GetActiveLots(Guid contractorId, Guid? goodsId = null);
     void SetState(ProductionLot lot, LotState state);
 }

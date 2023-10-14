@@ -5,6 +5,7 @@
 // Date: 06.11.2021
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Tools;
 
@@ -13,7 +14,7 @@ using System.ComponentModel.DataAnnotations;
 namespace DocumentFlow.Data.Models;
 
 [ProductContent(ProductContent.All)]
-public class WaybillSalePrice : ProductPrice, IDiscriminator
+public class WaybillSalePrice : ProductPrice, IDiscriminator, IProductionLotSupport
 {
     [Write(false)]
     [Display(AutoGenerateField = false)]
