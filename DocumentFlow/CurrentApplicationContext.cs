@@ -17,8 +17,12 @@ public class CurrentApplicationContext : ApplicationContext
     private readonly LoginForm loginForm;
     private readonly MainForm mainForm;
 
+    private static CurrentApplicationContext? Instance;
+
     public CurrentApplicationContext(IServiceProvider services)
     {
+        Instance = this;
+
         this.services = services;
 
         loginForm = services.GetRequiredService<LoginForm>();
@@ -28,6 +32,16 @@ public class CurrentApplicationContext : ApplicationContext
         mainForm.FormClosed += FormClosed;
 
         loginForm.Show();
+    }
+
+    public static IServiceProvider GetServices()
+    {
+        if (Instance == null)
+        {
+            throw new Exception("Для CurrentApplicationContext необходимо вызвать конструктор.");
+        }
+
+        return Instance.services;
     }
 
     public void ShowLoginForm()

@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Tools;
 
 using System.Diagnostics.CodeAnalysis;
@@ -13,8 +14,7 @@ using System.IO;
 
 namespace DocumentFlow.Dialogs;
 
-[Dialog]
-public partial class DocumentRefDialog : Form
+public partial class DocumentRefDialog : Form, IDocumentRefDialog
 {
     private string fileNameWithPath = string.Empty;
 
@@ -23,11 +23,11 @@ public partial class DocumentRefDialog : Form
         InitializeComponent();
    }
 
-    public bool CreateThumbnailImage => checkBoxThumbnail.Checked;
+    bool IDocumentRefDialog.CreateThumbnailImage => checkBoxThumbnail.Checked;
 
-    public string FileNameWithPath => fileNameWithPath;
+    string IDocumentRefDialog.FileNameWithPath => fileNameWithPath;
 
-    public bool Create(Guid owner, [MaybeNullWhen(false)] out DocumentRefs document)
+    bool IDocumentRefDialog.Create(Guid owner, [MaybeNullWhen(false)] out DocumentRefs document)
     {
         textFileName.Text = string.Empty;
         textNote.Text = string.Empty;
@@ -54,7 +54,7 @@ public partial class DocumentRefDialog : Form
         return false;
     }
 
-    public bool Edit(DocumentRefs refs)
+    bool IDocumentRefDialog.Edit(DocumentRefs refs)
     {
         fileNameWithPath = refs.FileName ?? string.Empty;
 

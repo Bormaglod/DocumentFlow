@@ -9,7 +9,7 @@ using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
@@ -31,6 +31,7 @@ public partial class ReturnMaterialsEditor : EditorPanel, IReturnMaterialsEditor
         this.pageManager = pageManager;
 
         gridContent.AddCommand("Заполнить", Properties.Resources.icons8_todo_16, PopulateMaterialRows);
+        gridContent.RegisterDialog<IMaterialQuantityDialog, ReturnMaterialsRows>();
 
         Returns.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
@@ -138,32 +139,5 @@ public partial class ReturnMaterialsEditor : EditorPanel, IReturnMaterialsEditor
     private void SelectContractor_DeleteButtonClick(object sender, EventArgs e)
     {
         Returns.ContractId = Guid.Empty;
-    }
-
-    private void GridContent_CreateRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        var dialog = services.GetRequiredService<MaterialQuantityDialog>();
-        if (dialog.Create(out var price))
-        {
-            e.DependentEntity = price;
-        }
-        else
-        {
-            e.Accept = false;
-        }
-    }
-
-    private void GridContent_EditRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        if (e.DependentEntity is ReturnMaterialsRows returnMaterial)
-        {
-            var dialog = services.GetRequiredService<MaterialQuantityDialog>();
-            if (dialog.Edit(returnMaterial))
-            {
-                return;
-            }
-        }
-
-        e.Accept = false;
     }
 }

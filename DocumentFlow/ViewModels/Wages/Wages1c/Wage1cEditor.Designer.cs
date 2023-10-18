@@ -209,10 +209,8 @@
             gridEmps.Padding = new Padding(0, 0, 0, 7);
             gridEmps.Size = new Size(1027, 402);
             gridEmps.TabIndex = 8;
-            gridEmps.CreateRow += GridEmps_CreateRow;
-            gridEmps.EditRow += GridEmps_EditRow;
             // 
-            // GrossPayrollEditor
+            // Wage1cEditor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -220,7 +218,7 @@
             Controls.Add(panel2);
             Controls.Add(lineSplitter1);
             Controls.Add(panel1);
-            Name = "GrossPayrollEditor";
+            Name = "Wage1cEditor";
             Size = new Size(1027, 478);
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);

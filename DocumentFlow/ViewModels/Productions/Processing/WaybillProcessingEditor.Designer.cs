@@ -316,8 +316,7 @@
             gridContent.Padding = new Padding(0, 0, 0, 7);
             gridContent.Size = new Size(1073, 387);
             gridContent.TabIndex = 15;
-            gridContent.CreateRow += GridContent_CreateRow;
-            gridContent.EditRow += GridContent_EditRow;
+            gridContent.DialogParameters += GridContent_DialogParameters;
             gridContent.ConfirmGeneratingColumn += GridContent_ConfirmGeneratingColumn;
             // 
             // WaybillProcessingEditor

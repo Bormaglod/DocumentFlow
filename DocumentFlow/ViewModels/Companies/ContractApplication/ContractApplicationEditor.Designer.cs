@@ -191,8 +191,6 @@
             gridProducts.Padding = new Padding(0, 0, 0, 7);
             gridProducts.Size = new Size(780, 301);
             gridProducts.TabIndex = 6;
-            gridProducts.CreateRow += GridProducts_CreateRow;
-            gridProducts.EditRow += GridProducts_EditRow;
             // 
             // textNote
             // 

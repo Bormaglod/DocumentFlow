@@ -6,14 +6,13 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Tools;
+using DocumentFlow.Dialogs.Interfaces;
 
 using System.Diagnostics.CodeAnalysis;
 
 namespace DocumentFlow.Dialogs;
 
-[Dialog]
-public partial class WageEmployeeDialog : Form
+public partial class WageEmployeeDialog : Form, IWageEmployeeDialog
 {
     private readonly IOurEmployeeRepository repository;
 
@@ -24,28 +23,34 @@ public partial class WageEmployeeDialog : Form
         this.repository = repository;
     }
 
-    public bool Create<T>([MaybeNullWhen(false)] out T wage) where T : WageEmployee?, new()
+    public bool Create<T>([MaybeNullWhen(false)] out T row) where T : new()
     {
         selectEmp.DataSource = repository.GetListUserDefined();
         if (ShowDialog() == DialogResult.OK)
         {
-            var emp = (OurEmployee)selectEmp.SelectedDocument;
-            wage = new T()
+            row = new T();
+            if (row is WageEmployee wage)
             {
-                EmployeeId = emp.Id,
-                EmployeeName = emp.ItemName ?? string.Empty,
-                Wage = textSalary.DecimalValue
-            };
+                var emp = (OurEmployee)selectEmp.SelectedDocument;
+                wage.EmployeeId = emp.Id;
+                wage.EmployeeName = emp.ItemName ?? string.Empty;
+                wage.Wage = textSalary.DecimalValue;
+            }
 
             return true;
         }
 
-        wage = default;
+        row = default;
         return false;
     }
 
-    public bool Edit<T>(T wage) where T : WageEmployee
+    public bool Edit<T>(T row)
     {
+        if (row is not WageEmployee wage)
+        {
+            return false;
+        }
+
         selectEmp.DataSource = repository.GetListUserDefined();
 
         selectEmp.SelectedItem = wage.EmployeeId;

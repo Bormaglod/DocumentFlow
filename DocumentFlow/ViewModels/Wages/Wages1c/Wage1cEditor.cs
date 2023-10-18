@@ -7,9 +7,8 @@
 
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
-using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Tools;
 
 using Humanizer;
@@ -39,6 +38,8 @@ public partial class Wage1cEditor : EditorPanel, IWage1cEditor
 
         choiceMonth.From(months);
         Payroll.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
+
+        gridEmps.RegisterDialog<IWageEmployeeDialog, Wage1cEmployee>();
     }
 
     protected Wage1c Payroll { get; set; } = null!;
@@ -61,33 +62,5 @@ public partial class Wage1cEditor : EditorPanel, IWage1cEditor
     {
         comboOrg.DataSource = services.GetRequiredService<IOrganizationRepository>().GetList();
         gridEmps.DataSource = Payroll.Employees;
-    }
-
-    private void GridEmps_CreateRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        var dialog = services.GetRequiredService<WageEmployeeDialog>();
-        if (dialog.Create(out Wage1cEmployee? wage))
-        {
-            e.DependentEntity = wage;
-        }
-        else
-        {
-            e.Accept = false;
-        }
-    }
-
-    private void GridEmps_EditRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        if (e.DependentEntity is Wage1cEmployee wage)
-        {
-            var dialog = services.GetRequiredService<WageEmployeeDialog>();
-
-            if (dialog.Edit(wage))
-            {
-                return;
-            }
-        }
-
-        e.Accept = false;
     }
 }

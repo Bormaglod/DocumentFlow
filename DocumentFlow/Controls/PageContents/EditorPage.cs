@@ -13,7 +13,7 @@ using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Tools;
-using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Properties;
 using DocumentFlow.Settings;
@@ -339,7 +339,7 @@ public partial class EditorPage : UserControl, IEditorPage
     {
         if (gridDocuments.CurrentItem is DocumentRefs refs)
         {
-            var dialog = services.GetRequiredService<DocumentRefDialog>();
+            var dialog = services.GetRequiredService<IDocumentRefDialog>();
             if (dialog.Edit(refs))
             {
                 services
@@ -436,7 +436,7 @@ public partial class EditorPage : UserControl, IEditorPage
             return;
         }
 
-        var dialog = services.GetRequiredService<DocumentRefDialog>();
+        var dialog = services.GetRequiredService<IDocumentRefDialog>();
         if (dialog.Create(Editor.DocumentInfo.Id, out var refs))
         {
             refs.S3object = $"{refs.OwnerId}_{refs.FileName}";

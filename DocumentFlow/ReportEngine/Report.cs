@@ -8,7 +8,7 @@
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Tools;
-using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Settings;
 
@@ -80,7 +80,7 @@ public abstract class Report<T> : IReport
         string title = $"{attr?.Name ?? string.Empty} {entity?.ToString() ?? string.Empty}";
 
         services
-            .GetRequiredService<PreviewReportForm>()
+            .GetRequiredService<IPreviewReportForm>()
             .ShowReport(entity?.Id, file, title);
     }
 

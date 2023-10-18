@@ -5,15 +5,12 @@
 // Date: 12.03.2019
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Tools;
 using DocumentFlow.Data.Interfaces;
+using DocumentFlow.Dialogs.Interfaces;
 
 namespace DocumentFlow.Dialogs;
 
-public delegate bool GroupOperation(string code, string name);
-
-[Dialog]
-public partial class GroupDialog : Form
+public partial class GroupDialog : Form, IGroupDialog
 {
     private GroupOperation? groupOperation;
 
@@ -22,7 +19,7 @@ public partial class GroupDialog : Form
         InitializeComponent();
     }
 
-    public bool Create(GroupOperation funcCreate)
+    bool IGroupDialog.Create(GroupOperation funcCreate)
     {
         groupOperation = funcCreate;
         textCode.Text = string.Empty;
@@ -30,7 +27,7 @@ public partial class GroupDialog : Form
         return ShowDialog() == DialogResult.OK;
     }
 
-    public bool Edit(IDirectory directory, GroupOperation funcEdit)
+    bool IGroupDialog.Edit(IDirectory directory, GroupOperation funcEdit)
     {
         groupOperation = funcEdit;
         textCode.Text = directory.Code;

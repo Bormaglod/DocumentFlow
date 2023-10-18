@@ -202,8 +202,7 @@
             gridContent.Padding = new Padding(0, 0, 0, 7);
             gridContent.Size = new Size(981, 465);
             gridContent.TabIndex = 5;
-            gridContent.CreateRow += GridContent_CreateRow;
-            gridContent.EditRow += GridContent_EditRow;
+            gridContent.DialogParameters += GridContent_DialogParameters;
             // 
             // ProductionOrderEditor
             // 

@@ -6,26 +6,21 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls;
-using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Tools;
-
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentFlow.ViewModels;
 
 [Entity(typeof(ContractApplication), RepositoryType = typeof(IContractApplicationRepository))]
 public partial class ContractApplicationEditor : EditorPanel, IContractApplicationEditor, IDocumentEditor
 {
-    private readonly IServiceProvider services;
-
     public ContractApplicationEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
-        this.services = services;
+        gridProducts.RegisterDialog<IPriceApprovalDialog, PriceApproval>();
     }
 
     public Guid? OwnerId
@@ -58,32 +53,5 @@ public partial class ContractApplicationEditor : EditorPanel, IContractApplicati
     protected override void CreateDataSources()
     {
         gridProducts.DataSource = App.PriceApprovals;
-    }
-
-    private void GridProducts_CreateRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        var dialog = services.GetRequiredService<PriceApprovalDialog>();
-        if (dialog.Create(out var price))
-        {
-            e.DependentEntity = price;
-        }
-        else
-        {
-            e.Accept = false;
-        }
-    }
-
-    private void GridProducts_EditRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        if (e.DependentEntity is PriceApproval priceApproval)
-        {
-            var dialog = services.GetRequiredService<PriceApprovalDialog>();
-            if (dialog.Edit(priceApproval))
-            {
-                return;
-            }
-        }
-
-        e.Accept = false;
     }
 }

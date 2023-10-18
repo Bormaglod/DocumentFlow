@@ -11,6 +11,7 @@ using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
@@ -74,7 +75,7 @@ public partial class OperationEditor : EditorPanel, IOperationEditor, IDirectory
     {
         if (entity is OperationGoods goods)
         {
-            var dialog = services.GetRequiredService<DirectoryItemDialog>();
+            var dialog = services.GetRequiredService<IDirectoryItemDialog>();
             var res = dialog.Get<Goods, IGoodsRepository>(goods.GoodsId);
             if (res != null)
             {
@@ -91,7 +92,7 @@ public partial class OperationEditor : EditorPanel, IOperationEditor, IDirectory
 
     private void GridGoods_CreateRow(object sender, DependentEntitySelectEventArgs e)
     {
-        var dialog = services.GetRequiredService<DirectoryItemDialog>();
+        var dialog = services.GetRequiredService<IDirectoryItemDialog>();
         var res = dialog.Get<Goods, IGoodsRepository>();
         if (res != null)
         {

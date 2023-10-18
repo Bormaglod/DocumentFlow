@@ -10,6 +10,7 @@ using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Tools;
 
 using Humanizer;
@@ -41,6 +42,7 @@ public partial class GrossPayrollEditor : EditorPanel, IGrossPayrollEditor
         Payroll.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
 
         gridEmps.AddCommand("Заполнить", Properties.Resources.icons8_miltiedit_16, PopulateDataGrid);
+        gridEmps.RegisterDialog<IWageEmployeeDialog, GrossPayrollEmployee>();
     }
 
     protected GrossPayroll Payroll { get; set; } = null!;
@@ -135,33 +137,5 @@ public partial class GrossPayrollEditor : EditorPanel, IGrossPayrollEditor
                 }
             }
         }
-    }
-
-    private void GridEmps_CreateRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        var dialog = services.GetRequiredService<WageEmployeeDialog>();
-        if (dialog.Create(out GrossPayrollEmployee? wage))
-        {
-            e.DependentEntity = wage;
-        }
-        else
-        {
-            e.Accept = false;
-        }
-    }
-
-    private void GridEmps_EditRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        if (e.DependentEntity is GrossPayrollEmployee wage)
-        {
-            var dialog = services.GetRequiredService<WageEmployeeDialog>();
-
-            if (dialog.Edit(wage))
-            {
-                return;
-            }
-        }
-
-        e.Accept = false;
     }
 }

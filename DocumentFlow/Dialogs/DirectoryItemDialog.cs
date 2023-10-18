@@ -5,10 +5,9 @@
 // Date: 05.02.2023
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Tools;
 using DocumentFlow.Data.Interfaces;
-using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Tools;
+using DocumentFlow.Dialogs.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,8 +15,7 @@ using System.Reflection;
 
 namespace DocumentFlow.Dialogs;
 
-[Dialog]
-public partial class DirectoryItemDialog : Form
+public partial class DirectoryItemDialog : Form, IDirectoryItemDialog
 {
     private readonly IReadOnlyDictionary<string, string> columns = new Dictionary<string, string>
     {
@@ -34,15 +32,12 @@ public partial class DirectoryItemDialog : Form
         this.services = services;
     }
 
-    public T? Get<T>(IEnumerable<T> items, Guid? selectedItem = null, bool withColumns = true)
-        where T : class, IDirectory
+    T? IDirectoryItemDialog.Get<T>(IEnumerable<T> items, Guid? selectedItem, bool withColumns) where T : class
     {
         return GetDirectoryItem(items, selectedItem, withColumns);
     }
 
-    public T? Get<T, R>(Guid? selectedItem = null, bool withColumns = true)
-        where T : class, IDirectory
-        where R : IRepository<Guid, T>
+    T? IDirectoryItemDialog.Get<T, R>(Guid? selectedItem, bool withColumns) where T : class
     {
         var items = services
             .GetRequiredService<R>()

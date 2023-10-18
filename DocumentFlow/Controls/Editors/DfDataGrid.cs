@@ -13,6 +13,9 @@ using DocumentFlow.Data;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Tools;
+using DocumentFlow.Dialogs.Interfaces;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -36,6 +39,11 @@ public partial class DfDataGrid : DfControl, IAccess
 {
     private Type? contentType;
     private bool enabledEditor = true;
+    private IDataGridDialog? dialog;
+    private MethodInfo? createMethod;
+    private MethodInfo? editMethod;
+
+    private readonly List<(ToolStripDropDownButton, ToolStripMenuItem)> commands = new();
 
     public DfDataGrid()
     {
@@ -46,6 +54,7 @@ public partial class DfDataGrid : DfControl, IAccess
         gridMain.CellRenderers.Add("TableSummary", new CustomGridTableSummaryRenderer());
     }
 
+    public event EventHandler<DialogParametersEventArgs>? DialogParameters;
     public event EventHandler<DependentEntitySelectEventArgs>? CreateRow;
     public event EventHandler<DependentEntitySelectEventArgs>? EditRow;
     public event EventHandler<ConfirmGeneratingColumnArgs>? ConfirmGeneratingColumn;
@@ -123,8 +132,6 @@ public partial class DfDataGrid : DfControl, IAccess
         contextMenuStripEx1.Items.Add(item);
     }
 
-    private List<(ToolStripDropDownButton, ToolStripMenuItem)> commands = new();
-
     public int AddCommands(string text, Image image)
     {
         toolStripButtonSeparatorCustom.Visible = true;
@@ -169,30 +176,78 @@ public partial class DfDataGrid : DfControl, IAccess
         item.DropDownItems.Clear();
     }
 
+    public void RegisterDialog<D, T>()
+        where D : IDataGridDialog
+        where T : new()
+    {
+        dialog = CurrentApplicationContext.GetServices().GetRequiredService<D>();
+
+        var dialogType = dialog.GetType();
+        
+        var methodType = dialogType.GetMethod("Create") ?? throw new Exception($"Класс {dialogType.Name} должен модержать метод Create.");
+        createMethod = methodType.MakeGenericMethod(typeof(T));
+
+        methodType = dialogType.GetMethod("Edit") ?? throw new Exception($"Класс {dialogType.Name} должен модержать метод Edit.");
+        editMethod = methodType.MakeGenericMethod(typeof(T));
+    }
+
     private void Edit()
     {
-        if (EditRow != null && DataSource is IList list && gridMain.SelectedItem is IDependentEntity row)
+        if (DataSource is IList list && gridMain.SelectedItem is IDependentEntity row)
         {
-            var args = new DependentEntitySelectEventArgs(row);
-            EditRow(this, args);
-
-            if (args.Accept)
+            if (dialog != null && editMethod != null)
             {
-                list[list.IndexOf(args.DependentEntity)] = args.DependentEntity;
+                DialogParameters?.Invoke(this, new DialogParametersEventArgs(dialog));
+
+                var res = (bool)editMethod.Invoke(dialog, new object[] { row })!;
+                if (res)
+                {
+                    list[list.IndexOf(row)] = row;
+                }
+            }
+            else
+            {
+                if (EditRow != null)
+                {
+                    var args = new DependentEntitySelectEventArgs(row);
+                    EditRow(this, args);
+
+                    if (args.Accept)
+                    {
+                        list[list.IndexOf(args.DependentEntity)] = args.DependentEntity;
+                    }
+                }
             }
         }
     }
 
     private void ButtonCreate_Click(object sender, EventArgs e)
     {
-        if (CreateRow != null && DataSource is IList list)
+        if (DataSource is IList list)
         {
-            var args = new DependentEntitySelectEventArgs();
-            CreateRow(this, args);
-
-            if (args.Accept)
+            if (dialog != null && createMethod != null)
             {
-                list.Add(args.DependentEntity);
+                DialogParameters?.Invoke(this, new DialogParametersEventArgs(dialog));
+
+                var parameters = new object?[] { null };
+                var res = (bool)createMethod.Invoke(dialog, parameters)!;
+                if (res && parameters[0] is IDependentEntity entity)
+                {
+                    list.Add(entity);
+                }
+            }
+            else
+            {
+                if (CreateRow != null)
+                {
+                    var args = new DependentEntitySelectEventArgs();
+                    CreateRow(this, args);
+
+                    if (args.Accept)
+                    {
+                        list.Add(args.DependentEntity);
+                    }
+                }
             }
         }
     }
@@ -227,18 +282,31 @@ public partial class DfDataGrid : DfControl, IAccess
             var copy = item.Copy();
             if (copy is IDependentEntity entity)
             {
-                if (EditRow != null)
+                if (dialog != null && editMethod != null)
                 {
-                    var args = new DependentEntitySelectEventArgs(entity);
-                    EditRow(this, args);
-                    if (args.Accept)
+                    DialogParameters?.Invoke(this, new DialogParametersEventArgs(dialog));
+
+                    var res = (bool)editMethod.Invoke(dialog, new object[] { entity })!;
+                    if (res)
                     {
-                        list.Add(args.DependentEntity);
+                        list.Add(entity);
                     }
                 }
                 else
                 {
-                    list.Add(entity);
+                    if (EditRow != null)
+                    {
+                        var args = new DependentEntitySelectEventArgs(entity);
+                        EditRow(this, args);
+                        if (args.Accept)
+                        {
+                            list.Add(args.DependentEntity);
+                        }
+                    }
+                    else
+                    {
+                        list.Add(entity);
+                    }
                 }
             }
         }
@@ -327,7 +395,7 @@ public partial class DfDataGrid : DfControl, IAccess
         {
             NumberFormatInfo numericFormat = (NumberFormatInfo)Application.CurrentCulture.NumberFormat.Clone();
             numericFormat.NumberDecimalDigits = attr.DecimalDigits;
-            
+
             numericColumn.NumberFormatInfo = numericFormat;
         }
 

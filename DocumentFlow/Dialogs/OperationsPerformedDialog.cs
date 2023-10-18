@@ -6,12 +6,11 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Tools;
+using DocumentFlow.Dialogs.Interfaces;
 
 namespace DocumentFlow.Dialogs;
 
-[Dialog]
-public partial class OperationsPerformedDialog : Form
+public partial class OperationsPerformedDialog : Form, IOperationsPerformedDialog
 {
     private ProductionLot? lot;
     private readonly IMaterialRepository materials;
@@ -29,7 +28,7 @@ public partial class OperationsPerformedDialog : Form
         ActiveControl = textQuantity;
     }
 
-    public CalculationOperation Operation
+    CalculationOperation IOperationsPerformedDialog.Operation
     {
         get
         {
@@ -42,7 +41,7 @@ public partial class OperationsPerformedDialog : Form
         }
     }
 
-    public OurEmployee Employee
+    OurEmployee IOperationsPerformedDialog.Employee
     {
         get
         {
@@ -55,7 +54,7 @@ public partial class OperationsPerformedDialog : Form
         }
     }
 
-    public bool Show(ProductionLot lot, CalculationOperation? operation, Employee? emp)
+    bool IOperationsPerformedDialog.Create(ProductionLot lot, CalculationOperation? operation, Employee? emp)
     {
         this.lot = lot;
 
@@ -83,7 +82,7 @@ public partial class OperationsPerformedDialog : Form
         return ShowDialog() == DialogResult.OK;
     }
 
-    public OperationsPerformed Get()
+    OperationsPerformed IOperationsPerformedDialog.Get()
     {
         ArgumentNullException.ThrowIfNull(lot);
 

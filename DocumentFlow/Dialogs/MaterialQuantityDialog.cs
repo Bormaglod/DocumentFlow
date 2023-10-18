@@ -6,14 +6,13 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Tools;
+using DocumentFlow.Dialogs.Interfaces;
 
 using System.Diagnostics.CodeAnalysis;
 
 namespace DocumentFlow.Dialogs;
 
-[Dialog]
-public partial class MaterialQuantityDialog : Form
+public partial class MaterialQuantityDialog : Form, IMaterialQuantityDialog
 {
     public MaterialQuantityDialog(IMaterialRepository materials)
     {
@@ -22,39 +21,46 @@ public partial class MaterialQuantityDialog : Form
         selectMaterial.DataSource = materials.GetListExisting();
     }
 
-    public bool Create([MaybeNullWhen(false)] out ReturnMaterialsRows materialRows)
+    public bool Create<T>([MaybeNullWhen(false)] out T material) where T : new()
     {
         if (ShowDialog() == DialogResult.OK)
         {
-            Material material = (Material)selectMaterial.SelectedDocument;
-            materialRows = new ReturnMaterialsRows()
+            material = new T();
+            if (material is ReturnMaterialsRows rows)
             {
-                MaterialId = material.Id,
-                MaterialName = material.ItemName ?? string.Empty,
-                MeasurementName = material.MeasurementName ?? string.Empty,
-                Quantity = textQuantity.DecimalValue
-            };
+                var selected = (Material)selectMaterial.SelectedDocument;
+
+                rows.MaterialId = selected.Id;
+                rows.MaterialName = selected.ItemName ?? string.Empty;
+                rows.MeasurementName = selected.MeasurementName ?? string.Empty;
+                rows.Quantity = textQuantity.DecimalValue;
+            }
 
             return true;
         }
 
-        materialRows = default;
+        material = default;
         return false;
     }
-
-    public bool Edit(ReturnMaterialsRows materialRows)
+    
+    public bool Edit<T>(T material)
     {
-        selectMaterial.SelectedItem = materialRows.MaterialId;
-        textQuantity.DecimalValue = materialRows.Quantity;
+        if (material is not ReturnMaterialsRows rows)
+        {
+            return false;
+        }
+            
+        selectMaterial.SelectedItem = rows.MaterialId;
+        textQuantity.DecimalValue = rows.Quantity;
 
         if (ShowDialog() == DialogResult.OK)
         {
-            Material material = (Material)selectMaterial.SelectedDocument;
+            var selected = (Material)selectMaterial.SelectedDocument;
 
-            materialRows.MaterialId = material.Id;
-            materialRows.Quantity = textQuantity.DecimalValue;
-            materialRows.MaterialName = material.ItemName ?? string.Empty;
-            materialRows.MeasurementName = material.MeasurementName ?? string.Empty;
+            rows.MaterialId = selected.Id;
+            rows.Quantity = textQuantity.DecimalValue;
+            rows.MaterialName = selected.ItemName ?? string.Empty;
+            rows.MeasurementName = selected.MeasurementName ?? string.Empty;
 
             return true;
         }

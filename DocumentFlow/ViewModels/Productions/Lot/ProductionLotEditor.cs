@@ -15,6 +15,7 @@ using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
@@ -412,8 +413,8 @@ public partial class ProductionLotEditor : EditorPanel, IProductionLotEditor, ID
             }
         }
 
-        var dialog = services.GetRequiredService<OperationsPerformedDialog>();
-        var res = dialog.Show(Lot, oper?.Operation, emp);
+        var dialog = services.GetRequiredService<IOperationsPerformedDialog>();
+        var res = dialog.Create(Lot, oper?.Operation, emp);
 
         if (res)
         {

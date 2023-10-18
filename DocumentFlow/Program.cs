@@ -4,6 +4,7 @@ using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Tools;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Ghostscript.API;
 using DocumentFlow.Interfaces;
 using DocumentFlow.ReportEngine;
@@ -15,8 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using NLog;
 using NLog.Extensions.Logging;
+
 using System.IO;
 
 namespace DocumentFlow;
@@ -84,7 +85,7 @@ internal static class Program
             .ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
-                logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                logging.SetMinimumLevel(LogLevel.Trace);
                 logging.AddNLog();
             })
             .Build();
@@ -115,8 +116,8 @@ internal static class Program
                 .AddClasses(classes => classes.AssignableTo(typeof(IEditor)))
                     .AsMatchingInterface()
                     .WithTransientLifetime()
-                .AddClasses(classes => classes.InNamespaces("DocumentFlow.Dialogs").WithAttribute<DialogAttribute>())
-                    .AsSelf()
+                .AddClasses(classes => classes.AssignableTo(typeof(IDialog)))
+                    .AsMatchingInterface()
                     .WithTransientLifetime()
                 .AddClasses(classes => classes.AssignableTo<IDatabase>())
                     .AsMatchingInterface()

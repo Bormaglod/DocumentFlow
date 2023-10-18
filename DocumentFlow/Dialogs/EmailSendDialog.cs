@@ -10,6 +10,7 @@ namespace DocumentFlow.Dialogs;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Models;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Tools;
 
 using MailKit.Net.Smtp;
@@ -29,8 +30,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-[Dialog]
-public partial class EmailSendDialog : Form
+public partial class EmailSendDialog : Form, IEmailSendDialog
 {
     private struct Attachment
     {
@@ -58,7 +58,7 @@ public partial class EmailSendDialog : Form
         this.services = services;
     }
 
-    public bool ShowWindow(Guid? documentId, string title, string file)
+    bool IEmailSendDialog.Send(Guid? documentId, string title, string file)
     {
         var orgRepo = services.GetRequiredService<IOrganizationRepository>();
         var orgs = orgRepo!.GetListExisting(

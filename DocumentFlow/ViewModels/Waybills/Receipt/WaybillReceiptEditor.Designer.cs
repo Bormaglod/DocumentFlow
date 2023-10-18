@@ -167,8 +167,7 @@
             gridContent.Padding = new Padding(0, 0, 0, 7);
             gridContent.Size = new Size(951, 238);
             gridContent.TabIndex = 8;
-            gridContent.CreateRow += GridContent_CreateRow;
-            gridContent.EditRow += GridContent_EditRow;
+            gridContent.DialogParameters += GridContent_DialogParameters;
             // 
             // selectContract
             // 

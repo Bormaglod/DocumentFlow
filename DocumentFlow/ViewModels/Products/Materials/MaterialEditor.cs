@@ -13,6 +13,7 @@ using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
@@ -90,7 +91,7 @@ public partial class MaterialEditor : EditorPanel, IMaterialEditor, IDirectoryEd
     {
         if (entity is CompatiblePart part)
         {
-            var dialog = services.GetRequiredService<DirectoryItemDialog>();
+            var dialog = services.GetRequiredService<IDirectoryItemDialog>();
             var res = dialog.Get<Material, IMaterialRepository>(part.CompatibleId);
             if (res != null)
             {
@@ -112,7 +113,7 @@ public partial class MaterialEditor : EditorPanel, IMaterialEditor, IDirectoryEd
 
     private void GridParts_CreateRow(object sender, DependentEntitySelectEventArgs e)
     {
-        var dialog = services.GetRequiredService<DirectoryItemDialog>();
+        var dialog = services.GetRequiredService<IDirectoryItemDialog>();
         var res = dialog.Get<Material, IMaterialRepository>();
         if (res != null)
         {

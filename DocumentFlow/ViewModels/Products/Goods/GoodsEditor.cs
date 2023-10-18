@@ -12,6 +12,7 @@ using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
@@ -99,7 +100,7 @@ public partial class GoodsEditor : EditorPanel, IGoodsEditor, IDirectoryEditor
 
     private void ButtonChangeCode_Click(object sender, EventArgs e)
     {
-        var dialog = services.GetRequiredService<CodeGeneratorDialog>();
+        var dialog = services.GetRequiredService<ICodeGeneratorDialog>();
         try
         {
             if (dialog.Get(Goods.Code, out var code))

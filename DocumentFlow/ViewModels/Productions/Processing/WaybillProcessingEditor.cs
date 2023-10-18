@@ -9,7 +9,7 @@ using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
@@ -31,6 +31,7 @@ public partial class WaybillProcessingEditor : EditorPanel, IWaybillProcessingEd
         this.pageManager = pageManager;
 
         gridContent.AddCommand("Заполнить", Properties.Resources.icons8_todo_16, PopulateProcessingRows);
+        gridContent.RegisterDialog<IProductPriceDialog, WaybillProcessingPrice>();
 
         Waybill.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
@@ -119,44 +120,6 @@ public partial class WaybillProcessingEditor : EditorPanel, IWaybillProcessingEd
         ModelsHelper.CreateProductinOrderColumns(e.Columns);
     }
 
-    private void GridContent_CreateRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        var dialog = services.GetRequiredService<ProductPriceDialog>();
-        if (selectContract.SelectedItem != Guid.Empty)
-        {
-            dialog.Contract = (Contract)selectContract.SelectedDocument;
-        }
-
-        if (dialog.Create(out WaybillProcessingPrice? price))
-        {
-            e.DependentEntity = price;
-        }
-        else
-        {
-            e.Accept = false;
-        }
-    }
-
-    private void GridContent_EditRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        if (e.DependentEntity is WaybillProcessingPrice price)
-        {
-            var dialog = services.GetRequiredService<ProductPriceDialog>();
-
-            if (selectContract.SelectedItem != Guid.Empty)
-            {
-                dialog.Contract = (Contract)selectContract.SelectedDocument;
-            }
-
-            if (dialog.Edit(price))
-            {
-                return;
-            }
-        }
-
-        e.Accept = false;
-    }
-
     private void SelectContract_DataSourceOnLoad(object sender, DataSourceLoadEventArgs e)
     {
         if (selectContractor.SelectedItem != Guid.Empty)
@@ -191,5 +154,13 @@ public partial class WaybillProcessingEditor : EditorPanel, IWaybillProcessingEd
     private void SelectContractor_DeleteButtonClick(object sender, EventArgs e)
     {
         Waybill.ContractId = Guid.Empty;
+    }
+
+    private void GridContent_DialogParameters(object sender, DialogParametersEventArgs e)
+    {
+        if (selectContract.SelectedItem != Guid.Empty)
+        {
+            ((IProductPriceDialog)e.Dialog).Contract = (Contract)selectContract.SelectedDocument;
+        }
     }
 }

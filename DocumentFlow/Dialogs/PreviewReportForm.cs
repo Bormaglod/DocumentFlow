@@ -5,7 +5,7 @@
 // Date: 19.06.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Tools;
+using DocumentFlow.Dialogs.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,8 +16,7 @@ using System.Text.RegularExpressions;
 
 namespace DocumentFlow.Dialogs;
 
-[Dialog]
-public partial class PreviewReportForm : Form
+public partial class PreviewReportForm : Form, IPreviewReportForm
 {
     [GeneratedRegex("^(\\d+)\\s*%?$")]
     private static partial Regex ZoomRegex();
@@ -34,9 +33,9 @@ public partial class PreviewReportForm : Form
         this.services = services;
     }
 
-    public void ShowReport(string pdf, string title) => ShowReport(null, pdf, title);
+    void IPreviewReportForm.ShowReport(string pdf, string title) => ((IPreviewReportForm)this).ShowReport(null, pdf, title);
 
-    public void ShowReport(Guid? documentId, string pdf, string title)
+    void IPreviewReportForm.ShowReport(Guid? documentId, string pdf, string title)
     {
         Text = title;
 
@@ -213,8 +212,8 @@ public partial class PreviewReportForm : Form
         if (!string.IsNullOrEmpty(pdf))
         {
             services
-                .GetRequiredService<EmailSendDialog>()
-                .ShowWindow(documentId, Text, pdf);
+                .GetRequiredService<IEmailSendDialog>()
+                .Send(documentId, Text, pdf);
         }
     }
 }

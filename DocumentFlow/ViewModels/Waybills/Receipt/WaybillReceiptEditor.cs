@@ -9,7 +9,7 @@ using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
@@ -37,6 +37,7 @@ public partial class WaybillReceiptEditor : EditorPanel, IWaybillReceiptEditor
                 .AsSummary(x => x.ProductCost, SummaryColumnFormat.Currency, SelectOptions.All)
                 .AsSummary(x => x.TaxValue, SummaryColumnFormat.Currency, SelectOptions.All)
                 .AsSummary(x => x.FullCost, SummaryColumnFormat.Currency, SelectOptions.All));
+        gridContent.RegisterDialog<IProductPriceDialog, WaybillReceiptPrice>();
 
         Waybill.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
@@ -176,44 +177,6 @@ public partial class WaybillReceiptEditor : EditorPanel, IWaybillReceiptEditor
         pageManager.ShowEditor<IContractEditor>(e.Document);
     }
 
-    private void GridContent_CreateRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        var dialog = services.GetRequiredService<ProductPriceDialog>();
-        if (selectContract.SelectedItem != Guid.Empty)
-        {
-            dialog.Contract = (Contract)selectContract.SelectedDocument;
-        }
-
-        if (dialog.Create(out WaybillReceiptPrice? price))
-        {
-            e.DependentEntity = price;
-        }
-        else
-        {
-            e.Accept = false;
-        }
-    }
-
-    private void GridContent_EditRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        if (e.DependentEntity is WaybillReceiptPrice price)
-        {
-            var dialog = services.GetRequiredService<ProductPriceDialog>();
-
-            if (selectContract.SelectedItem != Guid.Empty)
-            {
-                dialog.Contract = (Contract)selectContract.SelectedDocument;
-            }
-
-            if (dialog.Edit(price))
-            {
-                return;
-            }
-        }
-
-        e.Accept = false;
-    }
-
     private void SelectPurchase_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
         pageManager.ShowEditor<IPurchaseRequestEditor>(e.Document);
@@ -264,6 +227,14 @@ public partial class WaybillReceiptEditor : EditorPanel, IWaybillReceiptEditor
         if (e.OldDocument != e.NewDocument)
         {
             Waybill.ContractId = Guid.Empty;
+        }
+    }
+
+    private void GridContent_DialogParameters(object sender, DialogParametersEventArgs e)
+    {
+        if (selectContract.SelectedItem != Guid.Empty)
+        {
+            ((IProductPriceDialog)e.Dialog).Contract = (Contract)selectContract.SelectedDocument;
         }
     }
 }

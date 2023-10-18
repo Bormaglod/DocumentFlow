@@ -17,6 +17,7 @@ using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Tools;
 using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Properties;
 using DocumentFlow.ReportEngine;
@@ -942,7 +943,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
             editableRow is IDirectory dir && dir.IsFolder &&
             repository is IDirectoryRepository<T>)
         {
-            var dialog = services.GetRequiredService<GroupDialog>();
+            var dialog = services.GetRequiredService<IGroupDialog>();
             dialog.Edit(dir, (code, name) =>
             {
                 try
@@ -1511,7 +1512,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
             gridContent.DataSource is IList<T> list &&
             repository is IDirectoryRepository<T> repo)
         {
-            var dialog = services.GetRequiredService<GroupDialog>();
+            var dialog = services.GetRequiredService<IGroupDialog>();
             dialog.Create((code, name) =>
             {
                 try
@@ -1808,7 +1809,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
 
         string file = BaseReport.CreatePdfDocument(report.Report, ls.Report.Resolution);
         services
-            .GetRequiredService<PreviewReportForm>()
+            .GetRequiredService<IPreviewReportForm>()
             .ShowReport(file, Text);
     }
 

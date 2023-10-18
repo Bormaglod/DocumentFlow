@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------
 using DocumentFlow.Data;
 using DocumentFlow.Data.Interfaces.Repository;
-using DocumentFlow.Tools;
+using DocumentFlow.Dialogs.Interfaces;
 
 using Syncfusion.Windows.Forms.Tools;
 
@@ -15,8 +15,7 @@ using System.Text.RegularExpressions;
 
 namespace DocumentFlow.Dialogs;
 
-[Dialog]
-public partial class CodeGeneratorDialog : Form
+public partial class CodeGeneratorDialog : Form, ICodeGeneratorDialog
 {
     [GeneratedRegex("^(\\d{1})\\.(\\d{3,4})\\.(\\d{7}).(\\d{2})$")]
     private static partial Regex CodeRegex();
@@ -167,7 +166,7 @@ public partial class CodeGeneratorDialog : Form
         }
     }
 
-    public bool Get(string source, [MaybeNullWhen(false)] out string code)
+    bool ICodeGeneratorDialog.Get(string source, [MaybeNullWhen(false)] out string code)
     {
         var match = CodeRegex().Match(source);
 

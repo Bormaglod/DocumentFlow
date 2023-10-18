@@ -150,8 +150,6 @@
             gridEmps.Padding = new Padding(0, 0, 0, 7);
             gridEmps.Size = new Size(1027, 402);
             gridEmps.TabIndex = 8;
-            gridEmps.CreateRow += GridEmps_CreateRow;
-            gridEmps.EditRow += GridEmps_EditRow;
             // 
             // selectGrossPayroll
             // 

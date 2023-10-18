@@ -231,8 +231,6 @@
             gridContent.Padding = new Padding(0, 0, 0, 7);
             gridContent.Size = new Size(1013, 439);
             gridContent.TabIndex = 17;
-            gridContent.CreateRow += GridContent_CreateRow;
-            gridContent.EditRow += GridContent_EditRow;
             // 
             // ReturnMaterialsEditor
             // 

@@ -9,7 +9,7 @@ using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
@@ -39,6 +39,7 @@ public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
                 .AsSummary(x => x.TaxValue, SummaryColumnFormat.Currency, SelectOptions.All)
                 .AsSummary(x => x.FullCost, SummaryColumnFormat.Currency, SelectOptions.All));
         gridContent.AddCommand("Изменить калькуляцию изделия", Properties.Resources.icons8_one_page_down_16, ChangeCalculation);
+        gridContent.RegisterDialog<IProductPriceDialog, ProductionOrderPrice>();
 
         Order.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
@@ -79,7 +80,7 @@ public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
     {
         if (gridContent.SelectedItem is ProductionOrderPrice item)
         {
-            var dialog = services.GetRequiredService<DirectoryItemDialog>();
+            var dialog = services.GetRequiredService<IDirectoryItemDialog>();
 
             var newCalc = dialog.Get(services.GetRequiredService<ICalculationRepository>().GetApproved(item.ReferenceId), withColumns: false);
             if (newCalc != null && newCalc.Id != item.CalculationId)
@@ -114,42 +115,11 @@ public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
         pageManager.ShowAssociateEditor<IContractBrowser>(e.Document);
     }
 
-    private void GridContent_CreateRow(object sender, DependentEntitySelectEventArgs e)
+    private void GridContent_DialogParameters(object sender, DialogParametersEventArgs e)
     {
-        var dialog = services.GetRequiredService<ProductPriceDialog>();
-
         if (selectContract.SelectedItem != Guid.Empty)
         {
-            dialog.Contract = (Contract)selectContract.SelectedDocument;
+            ((IProductPriceDialog)e.Dialog).Contract = (Contract)selectContract.SelectedDocument;
         }
-
-        if (dialog.Create(out ProductionOrderPrice? price))
-        {
-            e.DependentEntity = price;
-        }
-        else
-        {
-            e.Accept = false;
-        }
-    }
-
-    private void GridContent_EditRow(object sender, DependentEntitySelectEventArgs e)
-    {
-        if (e.DependentEntity is ProductionOrderPrice price)
-        {
-            var dialog = services.GetRequiredService<ProductPriceDialog>();
-
-            if (selectContract.SelectedItem != Guid.Empty)
-            {
-                dialog.Contract = (Contract)selectContract.SelectedDocument;
-            }
-
-            if (dialog.Edit(price))
-            {
-                return;
-            }
-        }
-
-        e.Accept = false;
     }
 }

@@ -5,15 +5,14 @@
 // Date: 18.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Tools;
 using DocumentFlow.Data.Models;
+using DocumentFlow.Dialogs.Interfaces;
 
 using System.Diagnostics.CodeAnalysis;
 
 namespace DocumentFlow.Dialogs;
 
-[Dialog]
-public partial class PriceApprovalDialog : Form
+public partial class PriceApprovalDialog : Form, IPriceApprovalDialog
 {
     public PriceApprovalDialog(IMaterialRepository materials, IGoodsRepository goods)
     {
@@ -29,41 +28,47 @@ public partial class PriceApprovalDialog : Form
             );
     }
 
-    public bool Create([MaybeNullWhen(false)] out PriceApproval priceApproval)
+    public bool Create<T>([MaybeNullWhen(false)] out T row) where T : new()
     {
         if (ShowDialog() == DialogResult.OK)
         {
-            Product product = (Product)selectProduct.SelectedDocument;
-            priceApproval = new PriceApproval()
+            row = new T();
+            if (row is PriceApproval price)
             {
-                ProductId = product.Id,
-                Price = textPrice.DecimalValue,
-                ProductName = product.ItemName ?? string.Empty,
-                MeasurementId = product.MeasurementId,
-                MeasurementName = product.MeasurementName ?? string.Empty
-            };
+                Product product = (Product)selectProduct.SelectedDocument;
+                price.ProductId = product.Id;
+                price.Price = textPrice.DecimalValue;
+                price.ProductName = product.ItemName ?? string.Empty;
+                price.MeasurementId = product.MeasurementId;
+                price.MeasurementName = product.MeasurementName ?? string.Empty;
+            }
 
             return true;
         }
 
-        priceApproval = default;
+        row = default;
         return false;
     }
 
-    public bool Edit(PriceApproval priceApproval)
+    public bool Edit<T>(T row)
     {
-        selectProduct.SelectedItem = priceApproval.ProductId;
-        textPrice.DecimalValue = priceApproval.Price;
+        if (row is not PriceApproval price)
+        {
+            return false;
+        }
+
+        selectProduct.SelectedItem = price.ProductId;
+        textPrice.DecimalValue = price.Price;
         
         if (ShowDialog() == DialogResult.OK)
         {
             Product product = (Product)selectProduct.SelectedDocument;
 
-            priceApproval.ProductId = product.Id;
-            priceApproval.Price = textPrice.DecimalValue;
-            priceApproval.ProductName = product.ItemName ?? string.Empty;
-            priceApproval.MeasurementId = product.MeasurementId;
-            priceApproval.MeasurementName = product.MeasurementName ?? string.Empty;
+            price.ProductId = product.Id;
+            price.Price = textPrice.DecimalValue;
+            price.ProductName = product.ItemName ?? string.Empty;
+            price.MeasurementId = product.MeasurementId;
+            price.MeasurementName = product.MeasurementName ?? string.Empty;
 
             return true;
         }

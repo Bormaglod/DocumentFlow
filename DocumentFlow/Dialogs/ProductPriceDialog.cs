@@ -10,6 +10,7 @@ using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Data.Tools;
+using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -19,11 +20,9 @@ using System.Reflection;
 
 namespace DocumentFlow.Dialogs;
 
-[Dialog]
-public partial class ProductPriceDialog : Form
+public partial class ProductPriceDialog : Form, IProductPriceDialog
 {
     private bool includePrice;
-    //private bool includeLot;
     private ProductContent content;
     private bool canCalculate = false;
     private IProductCalculation? productCalculation = null;
@@ -50,9 +49,7 @@ public partial class ProductPriceDialog : Form
 
     public Contract? Contract { get; set; }
 
-    //public bool WithCalculation { get; set; } = false;
-
-    public bool Create<T>([MaybeNullWhen(false)] out T product) where T : ProductPrice?, new()
+    public bool Create<T>([MaybeNullWhen(false)] out T product) where T : new()
     {
         UpdateControls(typeof(T));
 
@@ -64,18 +61,19 @@ public partial class ProductPriceDialog : Form
                 vat = 0;
             }
 
-            product = new T()
+            product = new T();
+            if (product is ProductPrice price)
             {
-                ReferenceId = selectProduct.SelectedItem,
-                Amount = textAmount.DecimalValue,
-                Price = textPrice.DecimalValue,
-                ProductCost = textSumma.DecimalValue,
-                Tax = vat,
-                TaxValue = textVat.DecimalValue,
-                FullCost = textFullSumma.DecimalValue
-            };
+                price.ReferenceId = selectProduct.SelectedItem;
+                price.Amount = textAmount.DecimalValue;
+                price.Price = textPrice.DecimalValue;
+                price.ProductCost = textSumma.DecimalValue;
+                price.Tax = vat;
+                price.TaxValue = textVat.DecimalValue;
+                price.FullCost = textFullSumma.DecimalValue;
 
-            product.SetProductInfo((Product)selectProduct.SelectedDocument);
+                price.SetProductInfo((Product)selectProduct.SelectedDocument);
+            }
 
             if (product is IProductCalculation calculation)
             {
@@ -94,8 +92,13 @@ public partial class ProductPriceDialog : Form
         return false;
     }
 
-    public bool Edit<T>(T product) where T : ProductPrice
+    public bool Edit<T>(T product)
     {
+        if (product is not ProductPrice price)
+        {
+            return false;
+        }
+
         UpdateControls(typeof(T));
 
         if (product is IProductCalculation calculation)
@@ -113,13 +116,13 @@ public partial class ProductPriceDialog : Form
             selectLot.SelectedItem = lot.LotId.Value;
         }
 
-        selectProduct.SelectedItem = product.ReferenceId;
-        textAmount.DecimalValue = product.Amount;
-        textPrice.DecimalValue = product.Price;
-        textSumma.DecimalValue = product.ProductCost;
-        choiceVat.ChoiceValue = product.Tax.ToString();
-        textVat.DecimalValue = product.TaxValue;
-        textFullSumma.DecimalValue = product.FullCost;
+        selectProduct.SelectedItem = price.ReferenceId;
+        textAmount.DecimalValue = price.Amount;
+        textPrice.DecimalValue = price.Price;
+        textSumma.DecimalValue = price.ProductCost;
+        choiceVat.ChoiceValue = price.Tax.ToString();
+        textVat.DecimalValue = price.TaxValue;
+        textFullSumma.DecimalValue = price.FullCost;
 
         if (productCalculation != null)
         {
@@ -129,14 +132,14 @@ public partial class ProductPriceDialog : Form
         canCalculate = true;
         if (ShowDialog() == DialogResult.OK)
         {
-            product.ReferenceId = selectProduct.SelectedItem;
-            product.Amount = textAmount.DecimalValue;
-            product.Price = textPrice.DecimalValue;
-            product.ProductCost = textSumma.DecimalValue;
-            product.Tax = Convert.ToInt32(choiceVat.ChoiceValue);
-            product.TaxValue = textVat.DecimalValue;
-            product.FullCost = textFullSumma.DecimalValue;
-            product.SetProductInfo((Product)selectProduct.SelectedDocument);
+            price.ReferenceId = selectProduct.SelectedItem;
+            price.Amount = textAmount.DecimalValue;
+            price.Price = textPrice.DecimalValue;
+            price.ProductCost = textSumma.DecimalValue;
+            price.Tax = Convert.ToInt32(choiceVat.ChoiceValue);
+            price.TaxValue = textVat.DecimalValue;
+            price.FullCost = textFullSumma.DecimalValue;
+            price.SetProductInfo((Product)selectProduct.SelectedDocument);
 
             productCalculation?.SetCalculation((Calculation)selectCalc.SelectedDocument);
 
@@ -166,7 +169,6 @@ public partial class ProductPriceDialog : Form
         };
 
         includePrice = productType.GetCustomAttribute<ProductExcludingPriceAttribute>() == null;
-        //includeLot = productType.GetCustomAttribute<ProductIncludingLotAttribute>() != null;
 
         textPrice.Visible = includePrice;
         textSumma.Visible = includePrice;
