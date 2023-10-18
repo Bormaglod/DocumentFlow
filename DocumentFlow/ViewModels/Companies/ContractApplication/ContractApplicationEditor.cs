@@ -31,6 +31,11 @@ public partial class ContractApplicationEditor : EditorPanel, IContractApplicati
 
     protected ContractApplication App { get; set; } = null!;
 
+    protected override void RegisterReports()
+    {
+        EditorPage.RegisterReport<ContractApplicationReport>();
+    }
+
     protected override void OnEntityPropertyChanged(string? propertyName)
     {
         if (propertyName == nameof(ContractApplication.ItemName) || propertyName == nameof(ContractApplication.DocumentDate) || propertyName == nameof(ContractApplication.Code))
