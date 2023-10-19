@@ -51,7 +51,7 @@ public partial class CalculationOperationEditor : EditorPanel, ICalculationOpera
         textCalcName.DataBindings.Add(nameof(textCalcName.TextValue), DataContext, nameof(CalculationOperation.CalculationName));
         textCode.DataBindings.Add(nameof(textCode.TextValue), DataContext, nameof(CalculationOperation.Code), false, DataSourceUpdateMode.OnPropertyChanged);
         textName.DataBindings.Add(nameof(textName.TextValue), DataContext, nameof(CalculationOperation.ItemName), true, DataSourceUpdateMode.OnPropertyChanged, string.Empty);
-        selectOperation.DataBindings.Add(nameof(selectOperation.SelectedItem), DataContext, nameof(CalculationOperation.ItemId), false, DataSourceUpdateMode.OnPropertyChanged);
+        selectOperation.DataBindings.Add(nameof(selectOperation.SelectedItem), DataContext, nameof(CalculationOperation.ItemId), true, DataSourceUpdateMode.OnPropertyChanged, Guid.Empty);
         textPrice.DataBindings.Add(nameof(textPrice.DecimalValue), DataContext, nameof(CalculationOperation.Price), false, DataSourceUpdateMode.OnPropertyChanged);
         selectEquipment.DataBindings.Add(nameof(selectEquipment.SelectedItem), DataContext, nameof(CalculationOperation.EquipmentId), true, DataSourceUpdateMode.OnPropertyChanged, Guid.Empty);
         selectTool.DataBindings.Add(nameof(selectTool.SelectedItem), DataContext, nameof(CalculationOperation.ToolsId), true, DataSourceUpdateMode.OnPropertyChanged, Guid.Empty);

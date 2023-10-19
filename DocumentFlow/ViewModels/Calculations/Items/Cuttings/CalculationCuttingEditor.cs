@@ -51,7 +51,7 @@ public partial class CalculationCuttingEditor : EditorPanel, ICalculationCutting
         textCalcName.DataBindings.Add(nameof(textCalcName.TextValue), DataContext, nameof(CalculationCutting.CalculationName));
         textCode.DataBindings.Add(nameof(textCode.TextValue), DataContext, nameof(CalculationCutting.Code), false, DataSourceUpdateMode.OnPropertyChanged);
         textName.DataBindings.Add(nameof(textName.TextValue), DataContext, nameof(CalculationCutting.ItemName), true, DataSourceUpdateMode.OnPropertyChanged, string.Empty);
-        selectOperation.DataBindings.Add(nameof(selectOperation.SelectedItem), DataContext, nameof(CalculationCutting.ItemId), false, DataSourceUpdateMode.OnPropertyChanged);
+        selectOperation.DataBindings.Add(nameof(selectOperation.SelectedItem), DataContext, nameof(CalculationCutting.ItemId), true, DataSourceUpdateMode.OnPropertyChanged, Guid.Empty);
         textPrice.DataBindings.Add(nameof(textPrice.DecimalValue), DataContext, nameof(CalculationCutting.Price), false, DataSourceUpdateMode.OnPropertyChanged);
         selectEquipment.DataBindings.Add(nameof(selectEquipment.SelectedItem), DataContext, nameof(CalculationCutting.EquipmentId), true, DataSourceUpdateMode.OnPropertyChanged, Guid.Empty);
         selectTool.DataBindings.Add(nameof(selectTool.SelectedItem), DataContext, nameof(CalculationCutting.ToolsId), true, DataSourceUpdateMode.OnPropertyChanged, Guid.Empty);
