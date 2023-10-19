@@ -40,7 +40,7 @@ public class Contract : Directory
     public Guid OrganizationId { get; set; }
 
     [Computed]
-    public string? ContractorName { get; protected set; }
+    public string? ContractorName { get; set; }
 
     public bool TaxPayer 
     {

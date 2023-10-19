@@ -42,8 +42,8 @@ public class Account : Directory
     }
 
     [Computed]
-    public string? BankName { get; protected set; }
+    public string? BankName { get; set; }
 
     [Computed]
-    public string? CompanyName { get; protected set; }
+    public string? CompanyName { get; set; }
 }

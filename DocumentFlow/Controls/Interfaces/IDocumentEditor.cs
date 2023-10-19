@@ -5,9 +5,12 @@
 // Date: 12.06.2023
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Interfaces;
+
 namespace DocumentFlow.Controls.Interfaces;
 
 public interface IDocumentEditor
 {
-    Guid? OwnerId { get; set; }
+    Guid? OwnerId { get; }
+    void SetOwner(IDocumentInfo owner);
 }

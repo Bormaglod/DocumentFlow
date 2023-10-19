@@ -173,7 +173,8 @@ public class Calculation : Directory
         }
     }
 
-    public string? GoodsName { get; protected set; }
+    [Computed]
+    public string? GoodsName { get; set; }
     public decimal Weight { get; protected set; }
     public decimal ProducedTime { get; protected set; }
 

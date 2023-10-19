@@ -9,6 +9,7 @@ using DocumentFlow.Controls;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
@@ -33,10 +34,15 @@ public partial class ContractEditor : EditorPanel, IContractEditor, IDocumentEdi
         choiceType.FromEnum<ContractorType>(KeyGenerationMethod.PostgresEnumValue);
     }
 
-    public Guid? OwnerId
+    public Guid? OwnerId => Contract.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner)
     {
-        get => Contract.OwnerId;
-        set => Contract.OwnerId = value;
+        Contract.OwnerId = owner.Id;
+        if (owner is Company company)
+        {
+            Contract.ContractorName = company.ItemName;
+        }
     }
 
     protected Contract Contract { get; set; } = null!;
