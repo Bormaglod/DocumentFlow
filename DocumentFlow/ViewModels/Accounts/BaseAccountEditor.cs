@@ -8,6 +8,7 @@
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
 
@@ -28,10 +29,15 @@ public partial class BaseAccountEditor : EditorPanel, IDocumentEditor
         this.pageManager = pageManager;
     }
 
-    public Guid? OwnerId
+    public Guid? OwnerId => DocumentInfo.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner)
     {
-        get => DocumentInfo.OwnerId;
-        set => DocumentInfo.OwnerId = value;
+        DocumentInfo.OwnerId = owner.Id;
+        if (DocumentInfo is Account account && owner is Company company)
+        {
+            account.CompanyName = company.ItemName;
+        }
     }
 
     protected override void CreateDataSources()

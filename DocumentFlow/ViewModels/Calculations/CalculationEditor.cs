@@ -10,6 +10,7 @@ using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Tools;
 
@@ -25,10 +26,15 @@ public partial class CalculationEditor : EditorPanel, ICalculationEditor, IDocum
         choiceType.FromEnum<StimulatingValue>(KeyGenerationMethod.PostgresEnumValue);
     }
 
-    public Guid? OwnerId 
-    { 
-        get => Calculation.OwnerId; 
-        set => Calculation.OwnerId = value; 
+    public Guid? OwnerId => Calculation.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner)
+    {
+        Calculation.OwnerId = owner.Id;
+        if (owner is Product product)
+        {
+            Calculation.GoodsName = product.ItemName;
+        }
     }
 
     protected Calculation Calculation { get; set; } = null!;

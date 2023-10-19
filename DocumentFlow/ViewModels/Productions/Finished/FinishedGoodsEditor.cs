@@ -9,6 +9,7 @@ using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
@@ -33,11 +34,9 @@ public partial class FinishedGoodsEditor : EditorPanel, IFinishedGoodsEditor, ID
         Finished.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
 
-    public Guid? OwnerId
-    {
-        get => Finished.OwnerId;
-        set => Finished.OwnerId = value;
-    }
+    public Guid? OwnerId => Finished.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner) => Finished.OwnerId = owner.Id;
 
     protected FinishedGoods Finished { get; set; } = null!;
 

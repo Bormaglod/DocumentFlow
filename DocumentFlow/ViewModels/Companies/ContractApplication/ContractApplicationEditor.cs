@@ -7,6 +7,7 @@
 
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Tools;
@@ -23,10 +24,15 @@ public partial class ContractApplicationEditor : EditorPanel, IContractApplicati
         gridProducts.RegisterDialog<IPriceApprovalDialog, PriceApproval>();
     }
 
-    public Guid? OwnerId
+    public Guid? OwnerId => App.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner)
     {
-        get => App.OwnerId;
-        set => App.OwnerId = value;
+        App.OwnerId = owner.Id;
+        if (owner is Contract contract)
+        {
+            App.ContractName = contract.ItemName;
+        }
     }
 
     protected ContractApplication App { get; set; } = null!;

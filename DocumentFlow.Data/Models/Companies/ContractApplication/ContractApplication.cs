@@ -72,7 +72,8 @@ public class ContractApplication : Directory
     [WritableCollection]
     public IList<PriceApproval> PriceApprovals { get; protected set; } = null!;
 
-    public string? ContractName { get; protected set; }
+    [Computed]
+    public string? ContractName { get; set; }
 
     public override string ToString() => $"{ItemName} №{Code} от {DocumentDate:d}";
 }

@@ -94,10 +94,10 @@ public class Employee : Directory
     }
 
     [Computed]
-    public string? OwnerName { get; protected set; }
+    public string? OwnerName { get; set; }
 
     [Computed]
-    public string? PostName { get; protected set; }
+    public string? PostName { get; set; }
 
 
     [EnumType("employee_role")]

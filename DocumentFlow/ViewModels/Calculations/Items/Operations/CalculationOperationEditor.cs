@@ -8,6 +8,7 @@
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
@@ -30,10 +31,15 @@ public partial class CalculationOperationEditor : EditorPanel, ICalculationOpera
         this.pageManager = pageManager;
     }
 
-    public Guid? OwnerId
+    public Guid? OwnerId => Operation.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner)
     {
-        get => Operation.OwnerId;
-        set => Operation.OwnerId = value;
+        Operation.OwnerId = owner.Id;
+        if (owner is Calculation calculation)
+        {
+            Operation.CalculationName = calculation.Code;
+        }
     }
 
     protected CalculationOperation Operation { get; set; } = null!;

@@ -9,6 +9,7 @@ using DocumentFlow.Controls;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
 
@@ -43,10 +44,15 @@ public partial class BaseEmployeeEditor : EditorPanel, IDocumentEditor
         }
     }
 
-    public Guid? OwnerId
+    public Guid? OwnerId => DocumentInfo.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner)
     {
-        get => DocumentInfo.OwnerId;
-        set => DocumentInfo.OwnerId = value;
+        DocumentInfo.OwnerId = owner.Id;
+        if (DocumentInfo is Employee employee && owner is Company company) 
+        {
+            employee.OwnerName = company.ItemName;
+        }
     }
 
     protected override void DoBindingControls()

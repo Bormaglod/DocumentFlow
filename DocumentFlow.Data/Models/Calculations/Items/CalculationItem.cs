@@ -64,5 +64,5 @@ public class CalculationItem : Directory
     }
 
     [Computed]
-    public string? CalculationName { get; protected set; }
+    public string? CalculationName { get; set; }
 }

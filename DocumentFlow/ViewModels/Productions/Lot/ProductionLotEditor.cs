@@ -13,6 +13,7 @@ using DocumentFlow.Controls.Renderers;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Exceptions;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Dialogs.Interfaces;
@@ -184,11 +185,9 @@ public partial class ProductionLotEditor : EditorPanel, IProductionLotEditor, ID
         EditorPage.RegisterNestedBrowser<IFinishedGoodsNestedBrowser>();
     }
 
-    public Guid? OwnerId
-    {
-        get => Lot.OwnerId;
-        set => Lot.OwnerId = value;
-    }
+    public Guid? OwnerId => Lot.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner) => Lot.OwnerId = owner.Id;
 
     protected ProductionLot Lot { get; set; } = null!;
 

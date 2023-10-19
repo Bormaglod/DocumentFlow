@@ -254,7 +254,7 @@ public partial class EditorPage : UserControl, IEditorPage
 
             tabControl1.SelectedIndex = 0;
 
-            browser.UpdatePage(Editor.DocumentInfo.Id);
+            browser.UpdatePage(Editor.DocumentInfo);
         }
     }
 

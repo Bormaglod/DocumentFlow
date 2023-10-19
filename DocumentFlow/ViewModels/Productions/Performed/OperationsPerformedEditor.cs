@@ -9,6 +9,7 @@ using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
@@ -59,11 +60,9 @@ public partial class OperationsPerformedEditor : EditorPanel, IOperationsPerform
         Performed.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
 
-    public Guid? OwnerId
-    {
-        get => Performed.OwnerId;
-        set => Performed.OwnerId = value;
-    }
+    public Guid? OwnerId => Performed.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner) => Performed.OwnerId = owner.Id;
 
     protected OperationsPerformed Performed { get; set; } = null!;
 

@@ -98,7 +98,7 @@ public class PageManager : IPageManager
             parent = directory.ParentId;
         }
 
-        ShowEditor(editorType, document.Id, document.OwnerId, parent, document.Deleted);
+        ShowEditor(editorType, document.Id, null, parent, document.Deleted);
     }
 
     public void ShowEditor(Type editorType, Guid id) => ShowEditor(editorType, id, null, null, false);
@@ -112,7 +112,7 @@ public class PageManager : IPageManager
             parent = directory.ParentId;
         }
 
-        ShowAssociateEditor(typeof(B), document.Id, document.OwnerId, parent, document.Deleted);
+        ShowAssociateEditor(typeof(B), document.Id, null, parent, document.Deleted);
     }
 
     public void ShowAssociateEditor<B>(Guid id)
@@ -121,16 +121,16 @@ public class PageManager : IPageManager
         ShowAssociateEditor(typeof(B), id, null, null, false);
     }
 
-    public void ShowAssociateEditor(Type browserType, Guid? objectId, Guid? ownerId, Guid? parentId, bool readOnly)
+    public void ShowAssociateEditor(Type browserType, Guid? objectId, IDocumentInfo? owner, Guid? parentId, bool readOnly)
     {
         if (editors.ContainsKey(browserType))
         {
             Type editorType = editors[browserType];
-            ShowEditor(editorType, objectId, ownerId, parentId, readOnly);
+            ShowEditor(editorType, objectId, owner, parentId, readOnly);
         }
     }
 
-    private void ShowEditor(Type editorType, Guid? objectId, Guid? ownerId, Guid? parentId, bool readOnly)
+    private void ShowEditor(Type editorType, Guid? objectId, IDocumentInfo? owner, Guid? parentId, bool readOnly)
     {
         IEditorPage? page = null;
         if (objectId != null)
@@ -150,9 +150,9 @@ public class PageManager : IPageManager
 
                 var editor = services.GetRequiredService(editorType);
 
-                if (editor is IDocumentEditor documentEditor && ownerId != null)
+                if (editor is IDocumentEditor documentEditor && owner != null)
                 {
-                    documentEditor.OwnerId = ownerId;
+                    documentEditor.SetOwner(owner);
                 }
 
                 if (editor is IDirectoryEditor directoryEditor && parentId != null)

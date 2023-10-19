@@ -5,6 +5,8 @@
 // Date: 29.12.2021
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Interfaces;
+
 namespace DocumentFlow.Controls.Interfaces;
 
 public interface IBrowserPage : IPage
@@ -18,6 +20,6 @@ public interface IBrowserPage : IPage
     /// Метод вызывается для обновления данных окна с установкой всех необходимых
     /// параметров (фильтра, репозитория и т.д.). Он вызывается при создании окна.
     /// </summary>
-    /// <param name="owner">Идентификатор записи по отношению к которой записи этого окна являются зависимыми.</param>
-    void UpdatePage(Guid? owner = null);
+    /// <param name="owner">Документ по отношению к которому записи этого окна являются зависимыми.</param>
+    void UpdatePage(IDocumentInfo? owner = null);
 }

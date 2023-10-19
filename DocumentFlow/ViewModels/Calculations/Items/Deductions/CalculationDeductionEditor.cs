@@ -9,6 +9,7 @@ using DocumentFlow.Controls;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
+using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
@@ -31,10 +32,15 @@ public partial class CalculationDeductionEditor : EditorPanel, ICalculationDeduc
         this.pageManager = pageManager;
     }
 
-    public Guid? OwnerId
+    public Guid? OwnerId => Deduction.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner)
     {
-        get => Deduction.OwnerId;
-        set => Deduction.OwnerId = value;
+        Deduction.OwnerId = owner.Id;
+        if (owner is Calculation calculation)
+        {
+            Deduction.CalculationName = calculation.Code;
+        }
     }
 
     protected CalculationDeduction Deduction { get; set; } = null!;

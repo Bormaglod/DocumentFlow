@@ -23,7 +23,7 @@ public interface IPageManager
         where B : IBrowserPage;
     void ShowAssociateEditor<B>(Guid id)
         where B : IBrowserPage;
-    void ShowAssociateEditor(Type browserType, Guid? objectId, Guid? ownerId, Guid? parentId, bool readOnly);
+    void ShowAssociateEditor(Type browserType, Guid? objectId, IDocumentInfo? owner, Guid? parentId, bool readOnly);
     void ShowStartPage();
     void ShowAbout();
 }

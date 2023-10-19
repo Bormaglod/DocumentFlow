@@ -143,7 +143,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
 
     private ShowToolTipMethod? showToolTip;
     private BrowserSettings settings;
-    private Guid? ownerId = null;
+    private IDocumentInfo? owner = null;
     private Guid? parentId = null;
     private bool readOnly = false;
     private readonly Type browserType;
@@ -250,7 +250,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         }
     }
 
-    public Guid? OwnerDocument => ownerId;
+    public Guid? OwnerDocument => owner?.Id;
 
     /// <summary>
     /// Свойство определяет возможность редактирования записей окна.
@@ -301,13 +301,13 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
     /// Метод вызывается для обновления данных окна с установкой всех необходимых
     /// параметров (фильтра, репозитория и т.д.). Он вызывается при создании окна.
     /// </summary>
-    /// <param name="owner">Идентификатор записи по отношению к которой записи этого окна являются зависимыми.</param>
-    public void UpdatePage(Guid? owner)
+    /// <param name="owner">Документ по отношению к которому записи этого окна являются зависимыми.</param>
+    public void UpdatePage(IDocumentInfo? owner)
     {
-        ownerId = owner;
+        this.owner = owner;
         if (filter != null)
         {
-            filter.OwnerId = owner;
+            filter.OwnerId = owner?.Id;
         }
 
         if (settings.Columns != null)
@@ -397,7 +397,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         var list = repository switch
         {
             IDirectoryRepository<T> directoryRepository => directoryRepository.GetByParent(ParentId, filter),
-            IOwnedRepository<Guid, T> ownedRepository => ownedRepository.GetByOwner(ownerId, filter),
+            IOwnedRepository<Guid, T> ownedRepository => ownedRepository.GetByOwner(owner?.Id, filter),
             _ => repository.GetListUserDefined(filter),
         };
 
@@ -933,7 +933,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         {
             var document = editableRow as IDocumentInfo;
             var dro = editableRow != null && DocumentIsReadOnly(editableRow);
-            pageManager.ShowAssociateEditor(browserType, editableRow?.Id, ownerId, ParentId, readOnly || (document?.Deleted ?? false) || dro);
+            pageManager.ShowAssociateEditor(browserType, editableRow?.Id, owner, ParentId, readOnly || (document?.Deleted ?? false) || dro);
         }
     }
 
@@ -1001,7 +1001,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
                 {
                     if (MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        pageManager.ShowAssociateEditor(browserType, copy.Id, ownerId, ParentId, false);
+                        pageManager.ShowAssociateEditor(browserType, copy.Id, owner, ParentId, false);
                     }
                 }
 
@@ -1095,10 +1095,10 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         switch (document)
         {
             case IDirectory aDir:
-                add = ParentId == aDir.ParentId && (ownerId == null || ownerId == aDir.OwnerId);
+                add = ParentId == aDir.ParentId && (owner == null || owner.Id == aDir.OwnerId);
                 break;
             case IDocumentInfo aDoc:
-                add = ownerId == null || ownerId == aDoc.OwnerId;
+                add = owner == null || owner.Id == aDoc.OwnerId;
                 break;
         }
 
@@ -1111,7 +1111,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
     private void RefreshBrowserList(NotifyEventArgs e)
     {
         Guid idObj = e.Document?.Id ?? e.ObjectId;
-        if (idObj == Guid.Empty || idObj == ownerId)
+        if (idObj == Guid.Empty || idObj == owner?.Id)
         {
             RefreshView();
         }
@@ -1216,10 +1216,10 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
                                 switch (refreshDoc)
                                 {
                                     case IDirectory rDir:
-                                        change = ParentId == rDir.ParentId && (ownerId == null || ownerId == rDir.OwnerId);
+                                        change = ParentId == rDir.ParentId && (owner == null || owner.Id == rDir.OwnerId);
                                         break;
                                     case IDocumentInfo rDoc:
-                                        change = ownerId == null || ownerId == rDoc.OwnerId;
+                                        change = owner == null || owner.Id == rDoc.OwnerId;
                                         break;
                                 }
 
@@ -1632,17 +1632,17 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
             {
                 if (repository is IDirectoryRepository<T> repoDir)
                 {
-                    repoDir.WipeParented(ownerId, ParentId);
+                    repoDir.WipeParented(owner?.Id, ParentId);
                 }
                 else
                 {
-                    if (ownerId == null)
+                    if (owner == null)
                     {
                         repository.WipeAll();
                     }
                     else
                     {
-                        repository.WipeAll(ownerId.Value);
+                        repository.WipeAll(owner.Id);
                     }
                 }
 

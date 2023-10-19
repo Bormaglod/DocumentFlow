@@ -40,11 +40,9 @@ public partial class PostingPaymentsEditor : EditorPanel, IPostingPaymentsEditor
         Payment.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
 
-    public Guid? OwnerId
-    {
-        get => Payment.OwnerId;
-        set => Payment.OwnerId = value;
-    }
+    public Guid? OwnerId => Payment.OwnerId;
+
+    public void SetOwner(IDocumentInfo owner) => Payment.OwnerId = owner.Id;
 
     protected PostingPayments Payment { get; set; } = null!;
 
