@@ -59,56 +59,60 @@ public abstract class Repository<Key, T> : ReadOnlyRepository<Key, T>, IReposito
         using var conn = database.OpenConnection();
         using var transaction = conn.BeginTransaction();
 
-        return CopyFrom(conn, original, transaction);
+        try
+        {
+            var copy = CopyFrom(conn, original, transaction);
+
+            transaction.Commit();
+
+            return copy;
+
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            throw new RepositoryException(ExceptionHelper.Message(e, database), e);
+        }
+
     }
 
     public T CopyFrom(IDbConnection connection, T original, IDbTransaction? transaction = null)
     {
-        try
+        if (connection.Copy(original, out var copy, transaction) && copy is T t)
         {
-            if (connection.Copy(original, out var copy, transaction) && copy is T t)
-            {
-                t = Get(connection, t.Id);
-                CopyNestedRows(connection, original, t, transaction);
+            t = Get(connection, t.Id);
+            CopyNestedRows(connection, original, t, transaction);
 
-                transaction?.Commit();
-
-                return t;
-            }
-
-            throw new RepositoryException($"Не удалость сделать копию документа с id = {{{original.Id}}}");
+            return t;
         }
-        catch (Exception e)
-        {
-            transaction?.Rollback();
-            throw new RepositoryException(ExceptionHelper.Message(e, database), e);
-        }
+
+        throw new RepositoryException($"Не удалость сделать копию документа с id = {{{original.Id}}}");
     }
 
     public void Update(T entity)
     {
         using var conn = database.OpenConnection();
         using var transaction = conn.BeginTransaction();
-        
-        Update(conn, entity, transaction);
+
+        try
+        {
+            Update(conn, entity, transaction);
+            transaction.Commit();
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            throw new RepositoryException(ExceptionHelper.Message(e, database), e);
+        }
+
     }
 
     public void Update(IDbConnection connection, T entity, IDbTransaction? transaction = null)
     {
-        try
+        connection.Update(entity, transaction);
+        if (entity is DocumentInfo entityInfo)
         {
-            connection.Update(entity, transaction);
-            if (entity is DocumentInfo entityInfo)
-            {
-                entityInfo.SaveChanges(connection, transaction);
-            }
-
-            transaction?.Commit();
-        }
-        catch (Exception e)
-        {
-            transaction?.Rollback();
-            throw new RepositoryException(ExceptionHelper.Message(e, database), e);
+            entityInfo.SaveChanges(connection, transaction);
         }
     }
 
