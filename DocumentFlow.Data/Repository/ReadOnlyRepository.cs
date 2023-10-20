@@ -10,6 +10,7 @@ using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Interfaces.Repository;
+using DocumentFlow.Data.Tools;
 
 using Humanizer;
 
@@ -18,6 +19,7 @@ using SqlKata.Compilers;
 using SqlKata.Execution;
 
 using System.Data;
+using System.Reflection;
 
 namespace DocumentFlow.Data.Repository;
 
@@ -123,13 +125,26 @@ public abstract class ReadOnlyRepository<Key, T> : IReadOnlyRepository<Key, T>
                 query = query.Select($"{table}.*");
             }
 
+            var enabled = true;
             var id = $"{table}.id";
 
-            query = query.SelectRaw($"exists(select 1 from document_refs dr where dr.owner_id = {id}) as has_documents");
-            var grp = query.Clauses.Where(c => c.Component == "group").OfType<Column>();
-            if (grp.Any() && grp.FirstOrDefault(x => x.Name == id) == null) 
+            if (this is ISettingDocumentRefs setting)
             {
-                query = query.GroupBy(id);
+                enabled = setting.Enabled;
+                if (setting.Key != null)
+                {
+                    id = setting.Key;
+                }
+            }
+
+            if (enabled)
+            {
+                query = query.SelectRaw($"exists(select 1 from document_refs dr where dr.owner_id = {id}) as has_documents");
+                var grp = query.Clauses.Where(c => c.Component == "group").OfType<Column>();
+                if (grp.Any() && grp.FirstOrDefault(x => x.Name == id) == null)
+                {
+                    query = query.GroupBy(id);
+                }
             }
         }
 

@@ -13,9 +13,13 @@ using SqlKata;
 
 namespace DocumentFlow.Data.Models;
 
-public class OperationUsageRepository : OwnedRepository<Guid, OperationUsage>, IOperationUsageRepository
+public class OperationUsageRepository : OwnedRepository<Guid, OperationUsage>, IOperationUsageRepository, ISettingDocumentRefs
 {
     public OperationUsageRepository(IDatabase database) : base(database) { }
+
+    bool ISettingDocumentRefs.Enabled => false;
+
+    string? ISettingDocumentRefs.Key => null;
 
     protected override Query GetQueryOwner(Query query, Guid owner_id) => query.Where($"item_id", owner_id);
 

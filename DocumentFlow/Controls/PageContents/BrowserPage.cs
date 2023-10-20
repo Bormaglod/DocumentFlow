@@ -776,29 +776,32 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
 
     private void ConfigureBrowser()
     {
-        // Свойству Format обязательно необходимо устанавливать значение. 
-        // Объекты, которые содежатся в gridContent.DataSource, реализуют интерфейс INotifyPropertyChanged.
-        // Если при изменении свойства объекта вызвать метод NotifyPropertyChanged приводящий к вызову события PropertyChanged,
-        // то gridContent обновит содержимое соответствующей строки (или ячейки). При этом в процессе обновления
-        // вызывается метод Syncfusion.WinForms.DataGrid.Data.QueryableCollectionViewWrapper.CanUpdateSummary в 
-        // котором происходит обращение к свойству Format колонки GridUnboundColumn, а при создании этой колонки
-        // свойство инициализируется в null.
-        var attach = new GridUnboundColumn()
+        if (repository is not ISettingDocumentRefs setting || setting.Enabled)
         {
-            MappingName = "AttachmentImage",
-            HeaderText = string.Empty,
-            Format = string.Empty,
-            Width = gridContent.RowHeight,
-            AllowFiltering = false,
-            AllowSorting = false,
-            AllowResizing = false,
-            AllowEditing = false,
-            AllowDragging = false,
-            AllowGrouping = false,
-            AllowHeaderTextWithImage = false
-        };
+            // Свойству Format обязательно необходимо устанавливать значение. 
+            // Объекты, которые содежатся в gridContent.DataSource, реализуют интерфейс INotifyPropertyChanged.
+            // Если при изменении свойства объекта вызвать метод NotifyPropertyChanged приводящий к вызову события PropertyChanged,
+            // то gridContent обновит содержимое соответствующей строки (или ячейки). При этом в процессе обновления
+            // вызывается метод Syncfusion.WinForms.DataGrid.Data.QueryableCollectionViewWrapper.CanUpdateSummary в 
+            // котором происходит обращение к свойству Format колонки GridUnboundColumn, а при создании этой колонки
+            // свойство инициализируется в null.
+            var attach = new GridUnboundColumn()
+            {
+                MappingName = "AttachmentImage",
+                HeaderText = string.Empty,
+                Format = string.Empty,
+                Width = gridContent.RowHeight,
+                AllowFiltering = false,
+                AllowSorting = false,
+                AllowResizing = false,
+                AllowEditing = false,
+                AllowDragging = false,
+                AllowGrouping = false,
+                AllowHeaderTextWithImage = false
+            };
 
-        gridContent.Columns.Add(attach);
+            gridContent.Columns.Add(attach);
+        }
 
         gridContent.ColumnHeaderContextMenu = contextHeaderMenu;
         gridContent.RowHeaderContextMenu = contextRowMenu;
