@@ -267,3 +267,4 @@ packages
 /DocumentFlow.Install/*.exe
 /DocumentFlow/passwords.json
 /DocumentFlow.Install
+/DocumentFlow.Installer
