@@ -226,7 +226,6 @@ public partial class MainForm : Form, IDockingManager, IHostApp
 
         Invoke((MethodInvoker)delegate
         {
-            // close the form on the forms thread
             Close();
         });
     }
