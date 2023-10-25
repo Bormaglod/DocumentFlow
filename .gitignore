@@ -266,3 +266,4 @@ packages
 /DocumentFlow.ReportExport
 /DocumentFlow.Install/*.exe
 /DocumentFlow/passwords.json
+/DocumentFlow.Install
