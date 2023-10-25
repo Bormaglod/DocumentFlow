@@ -6,9 +6,11 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Interfaces;
+using DocumentFlow.Settings;
 using DocumentFlow.Settings.Authentification;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using Minio;
 using Minio.DataModel.Args;
@@ -25,7 +27,7 @@ public class S3Object : IS3Object
 
     private bool disposed = false;
 
-    public S3Object(ILogger<S3Object> logger)
+    public S3Object(ILogger<S3Object> logger, IOptions<AppSettings> options)
     {
         this.logger = logger;
 
@@ -34,11 +36,12 @@ public class S3Object : IS3Object
             var auth = JsonSerializer.Deserialize<AuthentificationInfo>(File.ReadAllText("passwords.json"));
             if (auth != null)
             {
+                var settings = options.Value.S3;
                 minio = new MinioClient()
-                    .WithEndpoint(auth.S3.EndPoint)
+                    .WithEndpoint(settings.EndPoint.ToString())
                     .WithCredentials(auth.S3.AccessKey, auth.S3.SecretKey)
                     .Build();
-                logger.LogInformation($"Minio client connected to {auth.S3.EndPoint}");
+                logger.LogInformation($"Minio client connected to {settings.EndPoint}");
                 return;
             }
         }
@@ -67,6 +70,21 @@ public class S3Object : IS3Object
             .WithBucket(bucketName)
             .WithObject(objectName)
             .WithFile(fileName);
+        _ = await minio.GetObjectAsync(args).ConfigureAwait(false);
+        logger.LogInformation($"Downloaded the object {objectName} in bucket {bucketName}");
+    }
+
+    public async Task GetObject(string bucketName, string objectName, Action<Stream> callbackStream)
+    {
+        if (minio == null)
+        {
+            return;
+        }
+
+        var args = new GetObjectArgs()
+            .WithBucket(bucketName)
+            .WithObject(objectName)
+            .WithCallbackStream(callbackStream);
         _ = await minio.GetObjectAsync(args).ConfigureAwait(false);
         logger.LogInformation($"Downloaded the object {objectName} in bucket {bucketName}");
     }

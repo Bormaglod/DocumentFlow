@@ -7,9 +7,10 @@
 
 namespace DocumentFlow.Settings;
 
-public class AppSettings
+public class S3EndPointSettings
 {
-    public ConnectionSettings[] Connections { get; set; } = Array.Empty<ConnectionSettings>();
-    public S3Settings S3 { get; set; } = new();
-    public bool UseDataNotification { get; set; }
+    public string Server { get; set; } = string.Empty;
+    public int Port { get; set; }
+
+    public override string ToString() => $"{Server}:{Port}";
 }

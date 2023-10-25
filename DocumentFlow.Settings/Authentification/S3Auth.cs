@@ -2,14 +2,13 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 05.06.2023
+// Date: 24.09.2023
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Settings;
+namespace DocumentFlow.Settings.Authentification;
 
-public class AppSettings
+public class S3Auth
 {
-    public ConnectionSettings[] Connections { get; set; } = Array.Empty<ConnectionSettings>();
-    public S3Settings S3 { get; set; } = new();
-    public bool UseDataNotification { get; set; }
+    public string AccessKey { get; set; } = string.Empty;
+    public string SecretKey { get; set; } = string.Empty;
 }

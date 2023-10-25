@@ -2,14 +2,12 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 05.06.2023
+// Date: 21.10.2023
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Settings;
+namespace DocumentFlow.AppInstallData;
 
-public class AppSettings
+public class AppInstall
 {
-    public ConnectionSettings[] Connections { get; set; } = Array.Empty<ConnectionSettings>();
-    public S3Settings S3 { get; set; } = new();
-    public bool UseDataNotification { get; set; }
+    public AppInstallInfo App { get; set; } = new();
 }

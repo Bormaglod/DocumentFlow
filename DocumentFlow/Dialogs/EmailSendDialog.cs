@@ -11,7 +11,6 @@ using DocumentFlow.Data;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Tools;
 
 using MailKit.Net.Smtp;
 using MailKit.Security;

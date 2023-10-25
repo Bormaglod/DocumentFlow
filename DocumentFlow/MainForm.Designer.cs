@@ -69,6 +69,7 @@
             Name = "MainForm";
             Text = "Form1";
             FormClosing += MainForm_FormClosing;
+            Load += MainForm_Load;
             ((System.ComponentModel.ISupportInitialize)dockingManager).EndInit();
             ResumeLayout(false);
         }
