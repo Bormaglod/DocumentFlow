@@ -49,6 +49,7 @@ internal static class Program
 
         ApplicationConfiguration.Initialize();
         GhostScript.Initialize();
+        ToastOperations.OnActivated();
 
         var localSettings = Path.Combine(
 #if !DEBUG

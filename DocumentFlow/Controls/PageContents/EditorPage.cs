@@ -23,6 +23,7 @@ using Humanizer;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Toolkit.Uwp.Notifications;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Events;
@@ -509,7 +510,7 @@ public partial class EditorPage : UserControl, IEditorPage
         }
     }
 
-    private void ButtonSaveDoc_Click(object sender, EventArgs e)
+    private async void ButtonSaveDoc_Click(object sender, EventArgs e)
     {
         if (gridDocuments.CurrentItem is DocumentRefs refs && refs.FileName != null && refs.S3object != null)
         {
@@ -518,7 +519,12 @@ public partial class EditorPage : UserControl, IEditorPage
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 using var s3 = services.GetRequiredService<IS3Object>();
-                s3.GetObject(BacketName, refs.S3object, saveFileDialog1.FileName);
+                await s3
+                    .GetObject(BacketName, refs.S3object, saveFileDialog1.FileName)
+                    .ContinueWith(task =>
+                    {
+                        ToastOperations.DownloadFileCompleted(saveFileDialog1.FileName);
+                    });
             }
         }
     }

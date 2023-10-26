@@ -23,7 +23,6 @@ using Npgsql;
 using Syncfusion.Windows.Forms.Tools;
 
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
@@ -222,7 +221,7 @@ public partial class MainForm : Form, IDockingManager, IHostApp
             return;
         }
 
-        Process.Start(new ProcessStartInfo(installerFileName) { UseShellExecute = true });
+        WorkOperations.OpenFile(installerFileName);
 
         Invoke((MethodInvoker)delegate
         {

@@ -11,6 +11,7 @@ using DocumentFlow.Data;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs.Interfaces;
+using DocumentFlow.Tools;
 
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -173,16 +174,9 @@ public partial class EmailSendDialog : Form, IEmailSendDialog
         var logs = services.GetRequiredService<IEmailLogRepository>();
         logs?.Add(log);
 
-        new ToastContentBuilder()
-            .AddArgument("action", "viewConversation")
-            .AddArgument("conversationId", 9813)
-            .AddText("Документ отправлен")
-            .AddText(textSubject.Text)
-            .AddText($"Получатели: {string.Join(", ", emailTo.Select(x => x.Name))}")
-            .Show(toast => 
-            {
-                toast.ExpirationTime = DateTime.Now.AddMinutes(1);
-            });
+        ToastOperations.EmailHasBeenSent(
+            textSubject.Text, 
+            string.Join(", ", emailTo.Select(x => x.Name)));
     }
 
     private void ButtonSend_Click(object sender, EventArgs e)

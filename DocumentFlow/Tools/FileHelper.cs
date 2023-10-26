@@ -52,6 +52,6 @@ public static class FileHelper
         using var s3 = services.GetRequiredService<IS3Object>();
         s3.GetObject(bucket, s3object, file).Wait();
 
-        Process.Start(new ProcessStartInfo(file) { UseShellExecute = true });
+        WorkOperations.OpenFile(file);
     }
 }
