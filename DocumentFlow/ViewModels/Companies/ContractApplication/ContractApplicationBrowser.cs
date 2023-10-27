@@ -26,7 +26,7 @@ public class ContractApplicationBrowser : BrowserPage<ContractApplication>, ICon
         ToolBar.SmallIcons();
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
-        var code = CreateText(x => x.Code, "Номер");
+        var code = CreateText(x => x.Code, "Номер", width: 100);
         var document_date = CreateDateTime(x => x.DocumentDate, "Дата", width: 150, format: "dd.MM.yyyy");
         var name = CreateText(x => x.ItemName, "Наименование");
         var date_start = CreateDateTime(x => x.DateStart, "Дата начала", width: 150, format: "dd.MM.yyyy");

@@ -675,7 +675,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
     private void UpdateSettingsColumn()
     {
         var list = new List<ColumnSettings>();
-        foreach (var item in gridContent.Columns)
+        foreach (var item in gridContent.Columns.Where(x => x is not GridUnboundColumn))
         {
             ColumnSettings column = new()
             {
