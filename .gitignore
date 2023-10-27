@@ -268,3 +268,4 @@ packages
 /DocumentFlow/passwords.json
 /DocumentFlow.Install
 /DocumentFlow.Installer
+/UploadDocumentFlowInstaller/UploadDocumentFlowInstaller.csproj
