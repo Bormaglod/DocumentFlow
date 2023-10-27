@@ -32,7 +32,11 @@
             timerDatabaseListen = new System.Windows.Forms.Timer(components);
             dockingManager = new Syncfusion.Windows.Forms.Tools.DockingManager(components);
             timerCheckListener = new System.Windows.Forms.Timer(components);
+            statusStripEx1 = new Syncfusion.Windows.Forms.Tools.StatusStripEx();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            toolStripProgressBar1 = new ToolStripProgressBar();
             ((System.ComponentModel.ISupportInitialize)dockingManager).BeginInit();
+            statusStripEx1.SuspendLayout();
             SuspendLayout();
             // 
             // timerDatabaseListen
@@ -60,23 +64,59 @@
             // 
             timerCheckListener.Interval = 1000;
             // 
+            // statusStripEx1
+            // 
+            statusStripEx1.BackColor = Color.FromArgb(241, 241, 241);
+            statusStripEx1.BeforeTouchSize = new Size(800, 22);
+            statusStripEx1.Dock = Syncfusion.Windows.Forms.Tools.DockStyleEx.Bottom;
+            statusStripEx1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripProgressBar1 });
+            statusStripEx1.Location = new Point(0, 428);
+            statusStripEx1.MetroColor = Color.FromArgb(135, 206, 255);
+            statusStripEx1.Name = "statusStripEx1";
+            statusStripEx1.ShowSeparator = false;
+            statusStripEx1.Size = new Size(800, 22);
+            statusStripEx1.TabIndex = 1;
+            statusStripEx1.Text = "statusStripEx1";
+            statusStripEx1.ThemeName = "Office2016Colorful";
+            statusStripEx1.VisualStyle = Syncfusion.Windows.Forms.Tools.StatusStripExStyle.Office2016Colorful;
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(125, 15);
+            toolStripStatusLabel1.Text = "Загрузка обновления";
+            toolStripStatusLabel1.Visible = false;
+            // 
+            // toolStripProgressBar1
+            // 
+            toolStripProgressBar1.Name = "toolStripProgressBar1";
+            toolStripProgressBar1.Size = new Size(100, 15);
+            toolStripProgressBar1.Style = ProgressBarStyle.Marquee;
+            toolStripProgressBar1.Visible = false;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(statusStripEx1);
             IsMdiContainer = true;
             Name = "MainForm";
             Text = "Form1";
             FormClosing += MainForm_FormClosing;
             Load += MainForm_Load;
             ((System.ComponentModel.ISupportInitialize)dockingManager).EndInit();
+            statusStripEx1.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
         private System.Windows.Forms.Timer timerDatabaseListen;
         private Syncfusion.Windows.Forms.Tools.DockingManager dockingManager;
         private System.Windows.Forms.Timer timerCheckListener;
+        private Syncfusion.Windows.Forms.Tools.StatusStripEx statusStripEx1;
+        private ToolStripProgressBar toolStripProgressBar1;
+        private ToolStripStatusLabel toolStripStatusLabel1;
     }
 }

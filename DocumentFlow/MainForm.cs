@@ -216,6 +216,12 @@ public partial class MainForm : Form, IDockingManager, IHostApp
 
     private void ExecuteUpdateInstaller(string installerFileName)
     {
+        Invoke((MethodInvoker)delegate
+        {
+            toolStripStatusLabel1.Visible = false;
+            toolStripProgressBar1.Visible = false;
+        });
+
         if (MessageBox.Show("Обновление загружено. Установить?", "Установка обновления", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
         {
             return;
@@ -290,6 +296,9 @@ public partial class MainForm : Form, IDockingManager, IHostApp
                     {
                         Directory.CreateDirectory(path);
                     }
+
+                    toolStripStatusLabel1.Visible = true;
+                    toolStripProgressBar1.Visible = true;
 
                     var file = Path.Combine(path, appInstall.App.FileName);
                     await s3

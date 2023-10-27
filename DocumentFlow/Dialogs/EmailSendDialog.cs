@@ -17,7 +17,6 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Toolkit.Uwp.Notifications;
 
 using MimeKit;
 
