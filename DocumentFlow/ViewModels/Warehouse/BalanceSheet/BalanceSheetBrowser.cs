@@ -10,7 +10,6 @@ using DocumentFlow.Controls.Enums;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
-
 using Microsoft.Extensions.Configuration;
 
 using Syncfusion.WinForms.DataGrid;
@@ -37,12 +36,14 @@ public class BalanceSheetBrowser : BrowserPage<BalanceSheet>, IBalanceSheetBrows
     }
 
     private readonly IBalanceSheetFilter filter;
+    private readonly IPageManager pageManager;
     private readonly StackColumnInfo[] columns;
 
     public BalanceSheetBrowser(IServiceProvider services, IPageManager pageManager, IBalanceSheetRepository repository, IConfiguration configuration, IBalanceSheetFilter filter)
         : base(services, pageManager, repository, configuration, filter: filter) 
     {
         this.filter = filter;
+        this.pageManager = pageManager;
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.ProductName, "Наименование", hidden: false);
@@ -103,6 +104,11 @@ public class BalanceSheetBrowser : BrowserPage<BalanceSheet>, IBalanceSheetBrows
 
         CreateGrouping()
             .Add(group_name);
+
+        ToolBar.Add("Открыть", Properties.Resources.icons8_open_document_16, Properties.Resources.icons8_open_document_30, OpenCurrentDocument);
+
+        ContextMenu.AddSeparator();
+        ContextMenu.Add("Открыть", Properties.Resources.icons8_open_document_16, (s, e) => OpenCurrentDocument());
     }
 
     protected override void ConfigureColumns()
@@ -133,6 +139,26 @@ public class BalanceSheetBrowser : BrowserPage<BalanceSheet>, IBalanceSheetBrows
                 item.Amount.HeaderText = item.Name;
                 item.Summa.HeaderText = item.Name;
             }
+        }
+    }
+
+    private void OpenCurrentDocument()
+    {
+        if (CurrentDocument == null)
+        {
+            return;
+        }
+
+        switch (filter.Content)
+        {
+            case Data.Enums.BalanceSheetContent.Material:
+                pageManager.ShowEditor(typeof(IMaterialEditor), CurrentDocument.Id);
+                break;
+            case Data.Enums.BalanceSheetContent.Goods:
+                pageManager.ShowEditor(typeof(IGoodsEditor), CurrentDocument.Id);
+                break;
+            default:
+                break;
         }
     }
 }
