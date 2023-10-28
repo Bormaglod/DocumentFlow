@@ -5,9 +5,11 @@
 // Date: 13.07.2022
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Interfaces;
+
 namespace DocumentFlow.Data.Models;
 
-public class BalanceSheet : Identifier<Guid>
+public class BalanceSheet : Identifier<Guid>, IBucketInfo
 {
     public string ProductName { get; protected set; } = string.Empty;
     public string ProductCode { get; protected set; } = string.Empty;
@@ -20,4 +22,5 @@ public class BalanceSheet : Identifier<Guid>
     public decimal ExpenseSumma { get; protected set; }
     public decimal ClosingBalanceAmount { get; protected set; }
     public decimal ClosingBalanceSumma { get; protected set; }
+    public string BucketName { get; protected set; } = string.Empty;
 }

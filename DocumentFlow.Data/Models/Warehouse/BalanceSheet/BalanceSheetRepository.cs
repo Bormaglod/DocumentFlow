@@ -100,6 +100,7 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
                 .Select("p.item_name as product_name")
                 .Select("p.code as product_code")
                 .Select("pp.item_name as group_name")
+                .SelectRaw($"'{name}' as bucket_name")
                 .When(f.ShowGivingMaterial, 
                     q => q.Select("ib.init_amount as opening_balance_amount"),
                     q => q.SelectRaw("coalesce(ib.init_amount, 0) - coalesce(ipb.amount, 0) as opening_balance_amount")

@@ -5,6 +5,10 @@
 // Date: 18.08.2019
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Interfaces;
+
+using Humanizer;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace DocumentFlow.Data;
@@ -29,4 +33,14 @@ public class DocumentRefs : Entity<long>
 
     [Display(AutoGenerateField = false)]
     public string? S3object { get; set; }
+
+    public static string GetBucketForEntity(IIdentifier<Guid> entity)
+    {
+        if (entity is IBucketInfo bucket)
+        {
+            return bucket.BucketName;
+        }
+
+        return entity.GetType().Name.Underscore().Replace('_', '-');
+    }
 }

@@ -130,14 +130,7 @@ public partial class EditorPage : UserControl, IEditorPage
         }
     }
 
-    private string BacketName
-    {
-        get
-        {
-            var name = Editor.DocumentInfo.GetType().Name.Underscore();
-            return name.Replace('_', '-');
-        }
-    }
+    private string BacketName => DocumentRefs.GetBucketForEntity(Editor.DocumentInfo);
 
     /// <summary>
     /// Метод вызывается для извещения странице о том, что она в самое ближайшее время
