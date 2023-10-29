@@ -25,5 +25,6 @@ public interface IPageManager
         where B : IBrowserPage;
     void ShowAssociateEditor(Type browserType, Guid? objectId, IDocumentInfo? owner, Guid? parentId, bool readOnly);
     void ShowStartPage();
+    void ShowEmailPage();
     void ShowAbout();
 }

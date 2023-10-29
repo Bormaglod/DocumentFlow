@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// Copyright © 2010-2022 Тепляшин Сергей Васильевич. 
+// Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
 // Date: 22.12.2019
@@ -40,34 +40,38 @@ public partial class EmailSendDialog : Form, IEmailSendDialog
 
     private class EmailAddress
     {
-        public EmailAddress(string name, string email) => (Name, Email) = (name, email);
+        public EmailAddress(string name, string email) => (ContractorId, Name, Email) = (Guid.Empty, name, email);
+        public EmailAddress(Guid contractorId, string name, string email) => (ContractorId, Name, Email) = (contractorId, name, email);
+        public Guid ContractorId { get; }
         public string Name { get; }
         public string Email { get; }
         public override string ToString() => $"{Name} <{Email}>";
     }
 
     private readonly IServiceProvider services;
+    private readonly IEmailRepository emails;
     private readonly BindingList<Attachment> attachments = new();
     private Guid? id;
 
-    public EmailSendDialog(IServiceProvider services)
+    public EmailSendDialog(IServiceProvider services, IEmailRepository emails)
     {
         InitializeComponent();
 
         this.services = services;
+        this.emails = emails;
     }
 
     bool IEmailSendDialog.Send(Guid? documentId, string title, string file)
     {
         var orgRepo = services.GetRequiredService<IOrganizationRepository>();
-        var orgs = orgRepo!.GetListExisting(
+        var orgs = orgRepo.GetListExisting(
             callback: q => q
                 .WhereNotNull("item_name")
                 .WhereNotNull("email"))
             .Select(x => new EmailAddress(x.ItemName!, x.Email!));
 
         var ourEmpRepo = services.GetRequiredService<IOurEmployeeRepository>();
-        var ourEmps = ourEmpRepo!.GetListExisting(
+        var ourEmps = ourEmpRepo.GetListExisting(
             callback: q => q
                 .WhereNotNull("item_name")
                 .WhereNotNull("email"))
@@ -76,12 +80,12 @@ public partial class EmailSendDialog : Form, IEmailSendDialog
         var from = orgs.Concat(ourEmps);
 
         var empRepo = services.GetRequiredService<IEmployeeRepository>();
-        var to = empRepo!.GetListUserDefined(
+        var to = empRepo.GetListUserDefined(
             callback: q => q
                 .WhereFalse("employee.deleted")
                 .WhereNotNull("employee.item_name")
                 .WhereNotNull("employee.email"))
-            .Select(x => new EmailAddress($"{x.ItemName} ({x.OwnerName})", x.Email!));
+            .Select(x => new EmailAddress(x.OwnerId!.Value, $"{x.ItemName} ({x.OwnerName})", x.Email!));
 
         comboFrom.DropDownControl.ShowButtons = true;
         comboTo.DropDownControl.ShowButtons = true;
@@ -110,12 +114,13 @@ public partial class EmailSendDialog : Form, IEmailSendDialog
     private async Task SendEmailAsync(Email email, EmailAddress emailFrom, IEnumerable<EmailAddress> emailTo)
     {
         using var client = new SmtpClient();
-        EmailLog log = new()
+        var log = emailTo.Select(e => new EmailLog()
         {
             EmailId = email.Id,
-            ToAddress = string.Join(";", emailTo.Select(x => x.Email)),
-            DocumentId = id
-        };
+            ToAddress = e.Email,
+            DocumentId = id,
+            ContractorId = e.ContractorId
+        });
 
         // SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection
         // https://stackoverflow.com/questions/59026301/sslhandshakeexception-an-error-occurred-while-attempting-to-establish-an-ssl-or
@@ -166,19 +171,19 @@ public partial class EmailSendDialog : Form, IEmailSendDialog
         message.Body = builder.ToMessageBody();
 
         await client.SendAsync(message);
-        log.DateTimeSending = DateTime.Now;
-
         client.Disconnect(true);
 
-        var logs = services.GetRequiredService<IEmailLogRepository>();
-        logs?.Add(log);
+        await CurrentApplicationContext
+            .GetServices()
+            .GetRequiredService<IEmailLogRepository>()
+            .Log(log);
 
         ToastOperations.EmailHasBeenSent(
             textSubject.Text, 
             string.Join(", ", emailTo.Select(x => x.Name)));
     }
 
-    private void ButtonSend_Click(object sender, EventArgs e)
+    private async void ButtonSend_Click(object sender, EventArgs e)
     {
         if (!comboFrom.CheckedItems.Any())
         {
@@ -189,8 +194,7 @@ public partial class EmailSendDialog : Form, IEmailSendDialog
 
         if (comboFrom.CheckedItems[0] is EmailAddress from)
         {
-            var repo = services.GetRequiredService<IEmailRepository>();
-            var email = repo!.Get(from.Email);
+            var email = emails.Get(from.Email);
             if (email == null)
             {
                 MessageBox.Show($"Для адреса <{from.Email}> не указаны параметры SMTP-сревера", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -206,7 +210,7 @@ public partial class EmailSendDialog : Form, IEmailSendDialog
                 return;
             }
 
-            SendEmailAsync(email, from, to).GetAwaiter();
+            await SendEmailAsync(email, from, to);
         }
     }
 

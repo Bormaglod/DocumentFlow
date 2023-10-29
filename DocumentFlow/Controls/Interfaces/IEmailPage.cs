@@ -2,14 +2,12 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 14.02.2022
+// Date: 28.10.2023
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Data.Interfaces.Repository;
+namespace DocumentFlow.Controls.Interfaces;
 
-public interface IEmailLogRepository : IRepository<long, EmailLog>
+public interface IEmailPage : IPage
 {
-    IReadOnlyList<EmailLog> GetEmails(Guid? group_id, Guid? contractorId);
-    Task Log(EmailLog log);
-    Task Log(IEnumerable<EmailLog> logs);
+
 }

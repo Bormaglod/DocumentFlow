@@ -52,6 +52,9 @@
     <Compile Update="Controls\PageContents\BrowserPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\PageContents\EmailPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\PageContents\StartPage.cs">
       <SubType>UserControl</SubType>
     </Compile>

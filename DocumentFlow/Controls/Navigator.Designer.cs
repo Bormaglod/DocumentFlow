@@ -28,14 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            Syncfusion.Windows.Forms.Tools.TreeNavigator.HeaderCollection headerCollection2 = new Syncfusion.Windows.Forms.Tools.TreeNavigator.HeaderCollection();
+            Syncfusion.Windows.Forms.Tools.TreeNavigator.HeaderCollection headerCollection1 = new Syncfusion.Windows.Forms.Tools.TreeNavigator.HeaderCollection();
             treeNavigator1 = new Syncfusion.Windows.Forms.Tools.TreeNavigator();
-            this.treeMenuDocument = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
-            this.treeMenuDictionary = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
-            this.treeMenuReport = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
-            this.treeMenuSystem = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
-            this.treeMenuAbout = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
-            this.treeMenuLogout = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
+            treeMenuDocument = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
+            treeMenuDictionary = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
+            treeMenuEmail = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
+            treeMenuReport = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
+            treeMenuSystem = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
+            treeMenuAbout = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
+            treeMenuLogout = new Syncfusion.Windows.Forms.Tools.TreeMenuItem();
             SuspendLayout();
             // 
             // treeNavigator1
@@ -44,17 +45,18 @@
             treeNavigator1.Dock = DockStyle.Fill;
             treeNavigator1.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
             treeNavigator1.ForeColor = Color.FromArgb(68, 68, 68);
-            headerCollection2.Font = new Font("Arial", 8F, FontStyle.Regular, GraphicsUnit.Point);
-            headerCollection2.HeaderBackColor = Color.FromArgb(255, 255, 255);
-            headerCollection2.HeaderForeColor = Color.FromArgb(68, 68, 68);
-            treeNavigator1.Header = headerCollection2;
+            headerCollection1.Font = new Font("Arial", 8F, FontStyle.Regular, GraphicsUnit.Point);
+            headerCollection1.HeaderBackColor = Color.FromArgb(255, 255, 255);
+            headerCollection1.HeaderForeColor = Color.FromArgb(68, 68, 68);
+            treeNavigator1.Header = headerCollection1;
             treeNavigator1.ItemBackColor = Color.FromArgb(255, 255, 255);
-            this.treeNavigator1.Items.Add(this.treeMenuDocument);
-            this.treeNavigator1.Items.Add(this.treeMenuDictionary);
-            this.treeNavigator1.Items.Add(this.treeMenuReport);
-            this.treeNavigator1.Items.Add(this.treeMenuSystem);
-            this.treeNavigator1.Items.Add(this.treeMenuAbout);
-            this.treeNavigator1.Items.Add(this.treeMenuLogout);
+            treeNavigator1.Items.Add(treeMenuDocument);
+            treeNavigator1.Items.Add(treeMenuDictionary);
+            treeNavigator1.Items.Add(treeMenuEmail);
+            treeNavigator1.Items.Add(treeMenuReport);
+            treeNavigator1.Items.Add(treeMenuSystem);
+            treeNavigator1.Items.Add(treeMenuAbout);
+            treeNavigator1.Items.Add(treeMenuLogout);
             treeNavigator1.Location = new Point(0, 0);
             treeNavigator1.MinimumSize = new Size(150, 150);
             treeNavigator1.Name = "treeNavigator1";
@@ -67,89 +69,103 @@
             // 
             // treeMenuDocument
             // 
-            this.treeMenuDocument.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.treeMenuDocument.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuDocument.ItemBackColor = System.Drawing.SystemColors.Control;
-            this.treeMenuDocument.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(242)))), ((int)(((byte)(250)))));
-            this.treeMenuDocument.Location = new System.Drawing.Point(0, 0);
-            this.treeMenuDocument.Name = "treeMenuDocument";
-            this.treeMenuDocument.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
-            this.treeMenuDocument.SelectedItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuDocument.Size = new System.Drawing.Size(196, 50);
-            this.treeMenuDocument.TabIndex = 0;
-            this.treeMenuDocument.Text = "Документы";
+            treeMenuDocument.BackColor = Color.FromArgb(255, 255, 255);
+            treeMenuDocument.ForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuDocument.ItemBackColor = SystemColors.Control;
+            treeMenuDocument.ItemHoverColor = Color.FromArgb(230, 242, 250);
+            treeMenuDocument.Location = new Point(0, 0);
+            treeMenuDocument.Name = "treeMenuDocument";
+            treeMenuDocument.SelectedColor = Color.FromArgb(197, 197, 197);
+            treeMenuDocument.SelectedItemForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuDocument.Size = new Size(297, 50);
+            treeMenuDocument.TabIndex = 0;
+            treeMenuDocument.Text = "Документы";
             // 
             // treeMenuDictionary
             // 
-            this.treeMenuDictionary.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.treeMenuDictionary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuDictionary.ItemBackColor = System.Drawing.SystemColors.Control;
-            this.treeMenuDictionary.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(242)))), ((int)(((byte)(250)))));
-            this.treeMenuDictionary.Location = new System.Drawing.Point(0, 52);
-            this.treeMenuDictionary.Name = "treeMenuDictionary";
-            this.treeMenuDictionary.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
-            this.treeMenuDictionary.SelectedItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuDictionary.Size = new System.Drawing.Size(196, 50);
-            this.treeMenuDictionary.TabIndex = 0;
-            this.treeMenuDictionary.Text = "Справочники";
+            treeMenuDictionary.BackColor = Color.FromArgb(255, 255, 255);
+            treeMenuDictionary.ForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuDictionary.ItemBackColor = SystemColors.Control;
+            treeMenuDictionary.ItemHoverColor = Color.FromArgb(230, 242, 250);
+            treeMenuDictionary.Location = new Point(0, 52);
+            treeMenuDictionary.Name = "treeMenuDictionary";
+            treeMenuDictionary.SelectedColor = Color.FromArgb(197, 197, 197);
+            treeMenuDictionary.SelectedItemForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuDictionary.Size = new Size(297, 50);
+            treeMenuDictionary.TabIndex = 0;
+            treeMenuDictionary.Text = "Справочники";
+            // 
+            // treeMenuEmail
+            // 
+            treeMenuEmail.BackColor = Color.FromArgb(255, 255, 255);
+            treeMenuEmail.ForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuEmail.ItemBackColor = SystemColors.Control;
+            treeMenuEmail.ItemHoverColor = Color.FromArgb(230, 242, 250);
+            treeMenuEmail.Location = new Point(0, 104);
+            treeMenuEmail.Name = "treeMenuEmail";
+            treeMenuEmail.SelectedColor = Color.FromArgb(197, 197, 197);
+            treeMenuEmail.SelectedItemForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuEmail.Size = new Size(297, 50);
+            treeMenuEmail.TabIndex = 0;
+            treeMenuEmail.Text = "Почта";
+            treeMenuEmail.Click += TreeMenuEmail_Click;
             // 
             // treeMenuReport
             // 
-            this.treeMenuReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.treeMenuReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuReport.ItemBackColor = System.Drawing.SystemColors.Control;
-            this.treeMenuReport.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(242)))), ((int)(((byte)(250)))));
-            this.treeMenuReport.Location = new System.Drawing.Point(0, 104);
-            this.treeMenuReport.Name = "treeMenuReport";
-            this.treeMenuReport.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
-            this.treeMenuReport.SelectedItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuReport.Size = new System.Drawing.Size(196, 50);
-            this.treeMenuReport.TabIndex = 0;
-            this.treeMenuReport.Text = "Отчёты";
+            treeMenuReport.BackColor = Color.FromArgb(255, 255, 255);
+            treeMenuReport.ForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuReport.ItemBackColor = SystemColors.Control;
+            treeMenuReport.ItemHoverColor = Color.FromArgb(230, 242, 250);
+            treeMenuReport.Location = new Point(0, 156);
+            treeMenuReport.Name = "treeMenuReport";
+            treeMenuReport.SelectedColor = Color.FromArgb(197, 197, 197);
+            treeMenuReport.SelectedItemForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuReport.Size = new Size(297, 50);
+            treeMenuReport.TabIndex = 0;
+            treeMenuReport.Text = "Отчёты";
             // 
             // treeMenuSystem
             // 
-            this.treeMenuSystem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.treeMenuSystem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuSystem.ItemBackColor = System.Drawing.SystemColors.Control;
-            this.treeMenuSystem.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(242)))), ((int)(((byte)(250)))));
-            this.treeMenuSystem.Location = new System.Drawing.Point(0, 156);
-            this.treeMenuSystem.Name = "treeMenuSystem";
-            this.treeMenuSystem.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
-            this.treeMenuSystem.SelectedItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuSystem.Size = new System.Drawing.Size(196, 50);
-            this.treeMenuSystem.TabIndex = 0;
-            this.treeMenuSystem.Text = "Система";
+            treeMenuSystem.BackColor = Color.FromArgb(255, 255, 255);
+            treeMenuSystem.ForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuSystem.ItemBackColor = SystemColors.Control;
+            treeMenuSystem.ItemHoverColor = Color.FromArgb(230, 242, 250);
+            treeMenuSystem.Location = new Point(0, 208);
+            treeMenuSystem.Name = "treeMenuSystem";
+            treeMenuSystem.SelectedColor = Color.FromArgb(197, 197, 197);
+            treeMenuSystem.SelectedItemForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuSystem.Size = new Size(297, 50);
+            treeMenuSystem.TabIndex = 0;
+            treeMenuSystem.Text = "Система";
             // 
             // treeMenuAbout
             // 
-            this.treeMenuAbout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.treeMenuAbout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuAbout.ItemBackColor = System.Drawing.SystemColors.Control;
-            this.treeMenuAbout.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(242)))), ((int)(((byte)(250)))));
-            this.treeMenuAbout.Location = new System.Drawing.Point(0, 208);
-            this.treeMenuAbout.Name = "treeMenuAbout";
-            this.treeMenuAbout.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
-            this.treeMenuAbout.SelectedItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuAbout.Size = new System.Drawing.Size(196, 50);
-            this.treeMenuAbout.TabIndex = 0;
-            this.treeMenuAbout.Text = "О программе";
-            this.treeMenuAbout.Click += new System.EventHandler(this.TreeMenuAbout_Click);
+            treeMenuAbout.BackColor = Color.FromArgb(255, 255, 255);
+            treeMenuAbout.ForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuAbout.ItemBackColor = SystemColors.Control;
+            treeMenuAbout.ItemHoverColor = Color.FromArgb(230, 242, 250);
+            treeMenuAbout.Location = new Point(0, 260);
+            treeMenuAbout.Name = "treeMenuAbout";
+            treeMenuAbout.SelectedColor = Color.FromArgb(197, 197, 197);
+            treeMenuAbout.SelectedItemForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuAbout.Size = new Size(297, 50);
+            treeMenuAbout.TabIndex = 0;
+            treeMenuAbout.Text = "О программе";
+            treeMenuAbout.Click += TreeMenuAbout_Click;
             // 
             // treeMenuLogout
             // 
-            this.treeMenuLogout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.treeMenuLogout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuLogout.ItemBackColor = System.Drawing.SystemColors.Control;
-            this.treeMenuLogout.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(242)))), ((int)(((byte)(250)))));
-            this.treeMenuLogout.Location = new System.Drawing.Point(0, 260);
-            this.treeMenuLogout.Name = "treeMenuLogout";
-            this.treeMenuLogout.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(197)))), ((int)(((byte)(197)))));
-            this.treeMenuLogout.SelectedItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.treeMenuLogout.Size = new System.Drawing.Size(196, 50);
-            this.treeMenuLogout.TabIndex = 0;
-            this.treeMenuLogout.Text = "Заблокировать";
-            this.treeMenuLogout.Click += new System.EventHandler(this.TreeMenuLogout_Click);
+            treeMenuLogout.BackColor = Color.FromArgb(255, 255, 255);
+            treeMenuLogout.ForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuLogout.ItemBackColor = SystemColors.Control;
+            treeMenuLogout.ItemHoverColor = Color.FromArgb(230, 242, 250);
+            treeMenuLogout.Location = new Point(0, 312);
+            treeMenuLogout.Name = "treeMenuLogout";
+            treeMenuLogout.SelectedColor = Color.FromArgb(197, 197, 197);
+            treeMenuLogout.SelectedItemForeColor = Color.FromArgb(68, 68, 68);
+            treeMenuLogout.Size = new Size(297, 50);
+            treeMenuLogout.TabIndex = 0;
+            treeMenuLogout.Text = "Заблокировать";
             // 
             // Navigator
             // 
@@ -166,6 +182,7 @@
         private Syncfusion.Windows.Forms.Tools.TreeNavigator treeNavigator1;
         private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuDocument;
         private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuDictionary;
+        private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuEmail;
         private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuReport;
         private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuSystem;
         private Syncfusion.Windows.Forms.Tools.TreeMenuItem treeMenuAbout;

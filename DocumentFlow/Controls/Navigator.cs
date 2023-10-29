@@ -125,7 +125,5 @@ public partial class Navigator : UserControl
 
     private void TreeMenuAbout_Click(object sender, EventArgs e) => pageManager.ShowAbout();
 
-    private void TreeMenuLogout_Click(object sender, EventArgs e)
-    {
-    }
+    private void TreeMenuEmail_Click(object sender, EventArgs e) => pageManager.ShowEmailPage();
 }

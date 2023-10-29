@@ -403,6 +403,26 @@ namespace DocumentFlow.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_e_mail_document_16 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_e_mail_document_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_e_mail_document_30 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_e_mail_document_30", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_end_16 {
             get {
                 object obj = ResourceManager.GetObject("icons8_end_16", resourceCulture);

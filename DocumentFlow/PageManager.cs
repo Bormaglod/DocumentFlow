@@ -84,7 +84,7 @@ public class PageManager : IPageManager
         }
         else
         {
-            docking.Activate(page);
+            ActivatePage(docking, page);
         }
     }
 
@@ -191,23 +191,41 @@ public class PageManager : IPageManager
         }
         else
         {
-            page.RefreshPage();
-            docking.Activate(page);
+            ActivatePage(docking, page);
         }
     }
 
-    public void ShowStartPage()
-    {
-        var page = pages.OfType<IStartPage>().FirstOrDefault();
-        if (page == null)
-        {
-            page = services.GetRequiredService<IStartPage>();
-            pages.Add(page);
+    public void ShowStartPage() => ShowPage<IStartPage>();
 
-            var docking = services.GetRequiredService<IDockingManager>();
-            docking.Activate(page);
-        }
-    }
+    public void ShowEmailPage() => ShowPage<IEmailPage>();
 
     public void ShowAbout() => services.GetRequiredService<AboutForm>().ShowDialog();
+
+    private void ShowPage<P>() where P : IPage
+    {
+        var docking = services.GetRequiredService<IDockingManager>();
+
+        var page = pages.OfType<P>().FirstOrDefault();
+        if (page == null)
+        {
+            page = services.GetRequiredService<P>();
+            pages.Add(page);
+
+            ActivatePage(docking, page);
+        }
+        else
+        {
+            ActivatePage(docking, page);
+        }
+    }
+
+    private static void ActivatePage(IDockingManager docking, IPage page)
+    {
+        if (!docking.IsVisibility(page))
+        {
+            page.RefreshPage();
+        }
+
+        docking.Activate(page);
+    }
 }
