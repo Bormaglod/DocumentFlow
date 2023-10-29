@@ -9,7 +9,7 @@
 	  <Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
 	  <Platforms>x64</Platforms>
 	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <Version>$(VersionPrefix)2023.9.19</Version>
+	  <Version>$(VersionPrefix)23.9.19</Version>
   </PropertyGroup>
 
   <ItemGroup>

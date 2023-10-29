@@ -22,8 +22,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentFlow.ReportExport", "DocumentFlow.ReportExport\DocumentFlow.ReportExport.csproj", "{47D85F00-B667-41C8-8458-3760C1BE7D96}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UploadDocumentFlowInstaller", "UploadDocumentFlowInstaller\UploadDocumentFlowInstaller.csproj", "{230A4939-7D4A-4C75-9B5D-02389DB07ED6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{445BA28F-8228-4BB0-A77C-C15864672B45} = {445BA28F-8228-4BB0-A77C-C15864672B45}
+	EndProjectSection
 EndProject
 Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "Installer", "Installer\Installer.wixproj", "{ECFB369B-751A-44C9-985C-5ECCD1984A73}"
+	ProjectSection(ProjectDependencies) = postProject
+		{445BA28F-8228-4BB0-A77C-C15864672B45} = {445BA28F-8228-4BB0-A77C-C15864672B45}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
