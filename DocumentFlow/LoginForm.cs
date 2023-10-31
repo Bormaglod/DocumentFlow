@@ -17,7 +17,6 @@ using Microsoft.Extensions.Options;
 using Npgsql;
 
 using System.IO;
-using System.Text.Json;
 
 namespace DocumentFlow;
 
@@ -28,8 +27,15 @@ public partial class LoginForm : Form
     private readonly IServiceProvider services;
     private readonly AppSettings appSettings;
     private readonly LocalSettings localSettings;
+    private readonly PostgresqlAuth postgresqlAuth;
 
-    public LoginForm(IServiceProvider services, IDatabase database, IUserAliasRepository users, IOptions<AppSettings> oprions, IOptionsSnapshot<LocalSettings> settings)
+    public LoginForm(
+        IServiceProvider services,
+        IDatabase database,
+        IUserAliasRepository users,
+        IOptions<AppSettings> oprions,
+        IOptions<PostgresqlAuth> postgresOptions,
+        IOptionsSnapshot<LocalSettings> settings)
     {
         InitializeComponent();
 
@@ -39,12 +45,13 @@ public partial class LoginForm : Form
 
         appSettings = oprions.Value;
         localSettings = settings.Value;
+        postgresqlAuth = postgresOptions.Value;
     }
 
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-        
+
         foreach (var cs in appSettings.Connections)
         {
             comboDatabase.Items.Add(cs.Name);
@@ -116,15 +123,8 @@ public partial class LoginForm : Form
         comboUsers.DataSource = list;
 
 #if DEBUG
-        if (File.Exists("passwords.json"))
-        {
-            var auth = JsonSerializer.Deserialize<AuthentificationInfo>(File.ReadAllText("passwords.json"));
-            if (auth != null) 
-            {
-                comboUsers.SelectedItem = list.FirstOrDefault(u => u.PgName == auth.Postgresql.Login);
-                textPassword.Text = auth.Postgresql.Password;
-            }
-        }
+        comboUsers.SelectedItem = list.FirstOrDefault(u => u.PgName == postgresqlAuth.Login);
+        textPassword.Text = postgresqlAuth.Password;
 #else
         if (localSettings != null) 
         {

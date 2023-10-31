@@ -18,11 +18,14 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Properties;
 using DocumentFlow.Settings;
 using DocumentFlow.Tools;
+using DocumentFlow.Tools.Minio;
 
 using Humanizer;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+
+using Minio;
 
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Events;
@@ -130,7 +133,7 @@ public partial class EditorPage : UserControl, IEditorPage
         }
     }
 
-    private string BacketName => DocumentRefs.GetBucketForEntity(Editor.DocumentInfo);
+    private string BucketName => DocumentRefs.GetBucketForEntity(Editor.DocumentInfo);
 
     /// <summary>
     /// Метод вызывается для извещения странице о том, что она в самое ближайшее время
@@ -417,7 +420,7 @@ public partial class EditorPage : UserControl, IEditorPage
     {
         if (gridDocuments.CurrentItem is DocumentRefs refs && refs.S3object != null)
         {
-            FileHelper.OpenFile(services, refs.FileName, BacketName, refs.S3object);
+            FileHelper.OpenFile(services.GetRequiredService<IMinioClient>(), refs.FileName, BucketName, refs.S3object);
         }
     }
 
@@ -434,8 +437,19 @@ public partial class EditorPage : UserControl, IEditorPage
         {
             refs.S3object = $"{refs.OwnerId}_{refs.FileName}";
 
-            using var s3 = services.GetRequiredService<IS3Object>();
-            s3.PutObject(BacketName, refs.S3object, dialog.FileNameWithPath);
+            var minio = services.GetRequiredService<IMinioClient>();
+            BucketExists.Run(minio, BucketName)
+                .ContinueWith(task =>
+                {
+                    if (task.Result)
+                    {
+                        return;
+                    }
+
+                    MakeBucket.Run(minio, BucketName).Wait();
+                });
+
+            PutObject.Run(minio, BucketName, refs.S3object, dialog.FileNameWithPath).Wait();
 
             if (dialog.CreateThumbnailImage)
             {
@@ -466,8 +480,8 @@ public partial class EditorPage : UserControl, IEditorPage
 
                 if (!string.IsNullOrEmpty(refs.S3object))
                 {
-                    using var s3 = services.GetRequiredService<IS3Object>();
-                    s3.RemoveObject(BacketName, refs.S3object);
+                    var minio = services.GetRequiredService<IMinioClient>();
+                    RemoveObject.Run(minio, BucketName, refs.S3object).Wait();
                 }
 
                 if (gridDocuments.DataSource is IList<DocumentRefs> list)
@@ -510,9 +524,8 @@ public partial class EditorPage : UserControl, IEditorPage
             saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                using var s3 = services.GetRequiredService<IS3Object>();
-                await s3
-                    .GetObject(BacketName, refs.S3object, saveFileDialog1.FileName)
+                var minio = services.GetRequiredService<IMinioClient>();
+                await GetObject.Run(minio, BucketName, refs.S3object, saveFileDialog1.FileName)
                     .ContinueWith(task =>
                     {
                         ToastOperations.DownloadFileCompleted(saveFileDialog1.FileName);

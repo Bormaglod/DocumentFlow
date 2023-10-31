@@ -10,6 +10,5 @@ namespace DocumentFlow.Settings;
 public class AppSettings
 {
     public ConnectionSettings[] Connections { get; set; } = Array.Empty<ConnectionSettings>();
-    public S3Settings S3 { get; set; } = new();
     public bool UseDataNotification { get; set; }
 }

@@ -5,9 +5,9 @@
 // Date: 26.06.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Interfaces;
+using DocumentFlow.Tools.Minio;
 
-using Microsoft.Extensions.DependencyInjection;
+using Minio;
 
 using System.IO;
 
@@ -43,14 +43,12 @@ public static class FileHelper
         }
     }
 
-    public static void OpenFile(IServiceProvider services, string fileName, string bucket, string s3object)
+    public static void OpenFile(IMinioClient client, string fileName, string bucket, string s3object)
     {
         string path = PrepareTempPath("DocumentRefs");
         string file = Path.Combine(path, fileName);
 
-        using var s3 = services.GetRequiredService<IS3Object>();
-        s3.GetObject(bucket, s3object, file).Wait();
-
+        GetObject.Run(client, bucket, s3object, file).Wait();
         WorkOperations.OpenFile(file);
     }
 }
