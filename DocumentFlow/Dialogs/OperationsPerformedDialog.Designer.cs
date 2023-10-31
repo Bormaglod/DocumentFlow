@@ -37,6 +37,7 @@
             selectEmp = new Controls.Editors.DfDirectorySelectBox();
             textQuantity = new Controls.Editors.DfIntegerTextBox();
             checkDoubleRate = new Controls.Editors.DfCheckBox();
+            checkSkipMaterial = new Controls.Editors.DfCheckBox();
             SuspendLayout();
             // 
             // buttonCancel
@@ -45,7 +46,7 @@
             buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonCancel.DialogResult = DialogResult.Cancel;
             buttonCancel.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            buttonCancel.Location = new Point(474, 251);
+            buttonCancel.Location = new Point(474, 275);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(112, 28);
             buttonCancel.TabIndex = 110;
@@ -57,7 +58,7 @@
             buttonOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonOk.DialogResult = DialogResult.OK;
             buttonOk.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            buttonOk.Location = new Point(355, 251);
+            buttonOk.Location = new Point(355, 275);
             buttonOk.Name = "buttonOk";
             buttonOk.Size = new Size(112, 28);
             buttonOk.TabIndex = 109;
@@ -173,7 +174,7 @@
             selectEmp.HeaderTextAlign = ContentAlignment.TopLeft;
             selectEmp.HeaderVisible = true;
             selectEmp.HeaderWidth = 210;
-            selectEmp.Location = new Point(16, 144);
+            selectEmp.Location = new Point(16, 176);
             selectEmp.Margin = new Padding(3, 4, 3, 4);
             selectEmp.Name = "selectEmp";
             selectEmp.Padding = new Padding(0, 0, 0, 7);
@@ -197,7 +198,7 @@
             textQuantity.HeaderVisible = true;
             textQuantity.HeaderWidth = 210;
             textQuantity.IntegerValue = 0L;
-            textQuantity.Location = new Point(16, 176);
+            textQuantity.Location = new Point(16, 208);
             textQuantity.Margin = new Padding(3, 4, 3, 4);
             textQuantity.Name = "textQuantity";
             textQuantity.NumberGroupSeparator = " ";
@@ -223,12 +224,35 @@
             checkDoubleRate.HeaderTextAlign = ContentAlignment.TopLeft;
             checkDoubleRate.HeaderVisible = true;
             checkDoubleRate.HeaderWidth = 210;
-            checkDoubleRate.Location = new Point(16, 208);
+            checkDoubleRate.Location = new Point(16, 240);
             checkDoubleRate.Margin = new Padding(4, 3, 4, 3);
             checkDoubleRate.Name = "checkDoubleRate";
             checkDoubleRate.Padding = new Padding(0, 0, 0, 9);
             checkDoubleRate.Size = new Size(582, 32);
             checkDoubleRate.TabIndex = 108;
+            // 
+            // checkSkipMaterial
+            // 
+            checkSkipMaterial.AllowThreeState = false;
+            checkSkipMaterial.CheckValue = null;
+            checkSkipMaterial.Dock = DockStyle.Top;
+            checkSkipMaterial.EditorFitToSize = false;
+            checkSkipMaterial.EditorWidth = 20;
+            checkSkipMaterial.EnabledEditor = true;
+            checkSkipMaterial.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
+            checkSkipMaterial.Header = "Материал не использовать";
+            checkSkipMaterial.HeaderAutoSize = false;
+            checkSkipMaterial.HeaderDock = DockStyle.Left;
+            checkSkipMaterial.HeaderTextAlign = ContentAlignment.TopLeft;
+            checkSkipMaterial.HeaderVisible = true;
+            checkSkipMaterial.HeaderWidth = 210;
+            checkSkipMaterial.Location = new Point(16, 144);
+            checkSkipMaterial.Margin = new Padding(4, 3, 4, 3);
+            checkSkipMaterial.Name = "checkSkipMaterial";
+            checkSkipMaterial.Padding = new Padding(0, 0, 0, 9);
+            checkSkipMaterial.Size = new Size(582, 32);
+            checkSkipMaterial.TabIndex = 111;
+            checkSkipMaterial.CheckValueChanged += CheckSkipMaterial_CheckValueChanged;
             // 
             // OperationsPerformedDialog
             // 
@@ -237,10 +261,11 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Window;
             CancelButton = buttonCancel;
-            ClientSize = new Size(614, 291);
+            ClientSize = new Size(614, 315);
             Controls.Add(checkDoubleRate);
             Controls.Add(textQuantity);
             Controls.Add(selectEmp);
+            Controls.Add(checkSkipMaterial);
             Controls.Add(selectMaterial);
             Controls.Add(textSpecMaterial);
             Controls.Add(selectOperation);
@@ -249,7 +274,7 @@
             Controls.Add(buttonOk);
             MaximizeBox = false;
             MinimizeBox = false;
-            MinimumSize = new Size(490, 330);
+            MinimumSize = new Size(490, 354);
             Name = "OperationsPerformedDialog";
             Padding = new Padding(16, 16, 16, 0);
             ShowIcon = false;
@@ -270,5 +295,6 @@
         private Controls.Editors.DfDirectorySelectBox selectEmp;
         private Controls.Editors.DfIntegerTextBox textQuantity;
         private Controls.Editors.DfCheckBox checkDoubleRate;
+        private Controls.Editors.DfCheckBox checkSkipMaterial;
     }
 }

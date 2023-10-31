@@ -93,6 +93,7 @@ public partial class OperationsPerformedDialog : Form, IOperationsPerformedDialo
             ReplacingMaterialId = selectMaterial.SelectedItem == Guid.Empty ? null : selectMaterial.SelectedItem,
             Quantity = textQuantity.IntegerValue,
             DoubleRate = checkDoubleRate.CheckValue,
+            SkipMaterial = checkSkipMaterial.CheckValue!.Value,
             OwnerId = lot.Id
         };
 
@@ -152,13 +153,23 @@ public partial class OperationsPerformedDialog : Form, IOperationsPerformedDialo
         if (selectOperation.SelectedItem == Guid.Empty)
         {
             textSpecMaterial.TextValue = string.Empty;
+            textSpecMaterial.Enabled = false;
             selectMaterial.Enabled = false;
+            checkSkipMaterial.Enabled = false;
         }
         else
         {
             var operation = (CalculationOperation)selectOperation.SelectedDocument;
             textSpecMaterial.TextValue = operation?.MaterialName ?? string.Empty;
             selectMaterial.Enabled = operation?.MaterialId != null;
+            checkSkipMaterial.Enabled = operation?.MaterialId != null;
+            textSpecMaterial.Enabled = operation?.MaterialId != null;
         }
+    }
+
+    private void CheckSkipMaterial_CheckValueChanged(object sender, EventArgs e)
+    {
+        selectMaterial.Enabled = !checkSkipMaterial.CheckValue!.Value;
+        textSpecMaterial.Enabled = !checkSkipMaterial.CheckValue!.Value;
     }
 }
