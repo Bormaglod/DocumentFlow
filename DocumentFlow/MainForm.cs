@@ -14,9 +14,12 @@ using DocumentFlow.Data.Tools;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Settings;
 using DocumentFlow.Tools;
+using DocumentFlow.Tools.Minio;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+
+using Minio;
 
 using Npgsql;
 
@@ -272,8 +275,8 @@ public partial class MainForm : Form, IDockingManager, IHostApp
     {
         using MemoryStream memoryStream = new();
 
-        using var s3 = services.GetRequiredService<IS3Object>();
-        s3.GetObject("app-install", "app.install.json", (stream) => stream.CopyTo(memoryStream)).Wait();
+        var minio = services.GetRequiredService<IMinioClient>();
+        GetObjectStream.Run(minio, "app-install", "app.install.json", (stream) => stream.CopyTo(memoryStream)).Wait();
 
         memoryStream.Position = 0;
 
@@ -301,8 +304,7 @@ public partial class MainForm : Form, IDockingManager, IHostApp
                     toolStripProgressBar1.Visible = true;
 
                     var file = Path.Combine(path, appInstall.App.FileName);
-                    await s3
-                        .GetObject("app-install", appInstall.App.FileName, file)
+                    await GetObject.Run(minio, "app-install", appInstall.App.FileName, file)
                         .ContinueWith(task => ExecuteUpdateInstaller(file));
                 }
             }

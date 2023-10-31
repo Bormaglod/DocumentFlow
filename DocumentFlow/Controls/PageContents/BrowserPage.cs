@@ -34,6 +34,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using Minio;
+
 using Syncfusion.Data;
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Events;
@@ -1426,7 +1428,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
             try
             {
                 var name = DocumentRefs.GetBucketForEntity(CurrentDocument);
-                FileHelper.OpenFile(services, doc.FileName, name, doc.S3object);
+                FileHelper.OpenFile(services.GetRequiredService<IMinioClient>(), doc.FileName, name, doc.S3object);
             }
             catch (Exception ex)
             {

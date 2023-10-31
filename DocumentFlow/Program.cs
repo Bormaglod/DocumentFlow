@@ -9,12 +9,15 @@ using DocumentFlow.Ghostscript.API;
 using DocumentFlow.Interfaces;
 using DocumentFlow.ReportEngine;
 using DocumentFlow.Settings;
+using DocumentFlow.Settings.Authentification;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
+using Minio;
 
 using NLog.Extensions.Logging;
 
@@ -70,6 +73,7 @@ internal static class Program
         var host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((context, builder) =>
             {
+                builder.AddJsonFile("appsettings.auth.json");
                 builder.AddJsonFile(localSettings, optional: true);
                 if (Directory.Exists(browserSettings))
                 {
@@ -98,6 +102,7 @@ internal static class Program
     {
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
         services.Configure<LocalSettings>(configuration.GetSection("LocalSettings"));
+        services.Configure<PostgresqlAuth>(configuration.GetSection("Authentification:Postgresql"));
         services.AddSingleton<CurrentApplicationContext>();
         services.AddSingleton<MainForm>();
         services.AddSingleton<LoginForm>();
@@ -107,7 +112,15 @@ internal static class Program
         services.AddSingleton<IHostApp>(x => x.GetRequiredService<MainForm>());
         services.AddSingleton<IPageManager, PageManager>();
         services.AddTransient<IBreadcrumb, Breadcrumb>();
-        services.AddTransient<IS3Object, S3Object>();
+        services.AddMinio(configureClient =>
+        {
+            var auth = new MinioAuth();
+            configuration.GetSection("Authentification:Minio").Bind(auth);
+            configureClient
+                .WithEndpoint(auth.ToString())
+                .WithCredentials(auth.AccessKey, auth.SecretKey)
+                .WithSSL(false);
+        });
 
         services.Scan(scan => scan
             .FromEntryAssembly()
