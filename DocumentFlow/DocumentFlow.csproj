@@ -18,6 +18,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.1.15" />
+		<PackageReference Include="FastReport.Data.Postgres" Version="2023.3.7" />
+		<PackageReference Include="FastReport.OpenSource" Version="2023.3.7" />
 		<PackageReference Include="FluentDateTime" Version="2.1.0" />
 		<PackageReference Include="Humanizer.Core" Version="2.14.1" />
 		<PackageReference Include="itext7" Version="8.0.2" />
@@ -49,9 +51,6 @@
 		<None Update="NLog.config">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="password.txt" Condition="'$(Configuration)'=='Debug'">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
 		<None Update="appsettings.auth.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -66,8 +65,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\FastReport\Extras\Core\FastReport.Data\FastReport.Data.Postgres\FastReport.OpenSource.Data.Postgres.csproj" />
-	  <ProjectReference Include="..\..\FastReport\FastReport.OpenSource\FastReport.OpenSource.csproj" />
 	  <ProjectReference Include="..\..\Minio\Minio\Minio.csproj" />
 	  <ProjectReference Include="..\DocumentFlow.Controls\DocumentFlow.Controls.csproj" />
 	  <ProjectReference Include="..\DocumentFlow.Data\DocumentFlow.Data.csproj" />
