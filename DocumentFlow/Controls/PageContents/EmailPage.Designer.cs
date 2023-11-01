@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Syncfusion.WinForms.DataGrid.SortColumnDescription sortColumnDescription1 = new Syncfusion.WinForms.DataGrid.SortColumnDescription();
             toolStrip1 = new ToolStrip();
             buttonContractor = new ToolStripButton();
             buttonDocument = new ToolStripButton();
@@ -92,6 +93,8 @@
             gridContent.ShowRowHeader = true;
             gridContent.ShowSortNumbers = true;
             gridContent.Size = new Size(804, 467);
+            sortColumnDescription1.ColumnName = "DateTimeSending";
+            gridContent.SortColumnDescriptions.Add(sortColumnDescription1);
             gridContent.Style.BorderColor = Color.FromArgb(204, 204, 204);
             gridContent.Style.CheckBoxStyle.CheckedBackColor = Color.FromArgb(0, 120, 215);
             gridContent.Style.CheckBoxStyle.CheckedBorderColor = Color.FromArgb(0, 120, 215);
@@ -107,7 +110,7 @@
             contextMenuStripEx1.Items.AddRange(new ToolStripItem[] { menuContractor, menuDocument });
             contextMenuStripEx1.MetroColor = Color.FromArgb(204, 236, 249);
             contextMenuStripEx1.Name = "contextMenuStripEx1";
-            contextMenuStripEx1.Size = new Size(181, 70);
+            contextMenuStripEx1.Size = new Size(137, 48);
             contextMenuStripEx1.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Office2016Colorful;
             contextMenuStripEx1.ThemeName = "Office2016Colorful";
             // 
@@ -115,7 +118,7 @@
             // 
             menuContractor.Image = DocumentFlow.Properties.Resources.icons8_contractor_16;
             menuContractor.Name = "menuContractor";
-            menuContractor.Size = new Size(180, 22);
+            menuContractor.Size = new Size(136, 22);
             menuContractor.Text = "Контрагент";
             menuContractor.Click += ButtonContractor_Click;
             // 
@@ -123,7 +126,7 @@
             // 
             menuDocument.Image = DocumentFlow.Properties.Resources.icons8_e_mail_document_16;
             menuDocument.Name = "menuDocument";
-            menuDocument.Size = new Size(180, 22);
+            menuDocument.Size = new Size(136, 22);
             menuDocument.Text = "Документ";
             menuDocument.Click += ButtonDocument_Click;
             // 
