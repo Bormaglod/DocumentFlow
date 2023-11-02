@@ -81,7 +81,7 @@
             dateRangeControl1.DateTo = new DateTime(2022, 12, 31, 23, 59, 59, 999);
             dateRangeControl1.DateToEnabled = true;
             dateRangeControl1.Dock = DockStyle.Left;
-            dateRangeControl1.Location = new Point(680, 3);
+            dateRangeControl1.Location = new Point(683, 3);
             dateRangeControl1.Name = "dateRangeControl1";
             dateRangeControl1.Size = new Size(413, 24);
             dateRangeControl1.TabIndex = 17;
@@ -102,14 +102,14 @@
             // 
             // checkAmount
             // 
-            checkAmount.BeforeTouchSize = new Size(87, 24);
+            checkAmount.BeforeTouchSize = new Size(90, 24);
             checkAmount.Checked = true;
             checkAmount.CheckState = CheckState.Checked;
             checkAmount.Dock = DockStyle.Left;
             checkAmount.ForeColor = SystemColors.ControlText;
             checkAmount.Location = new Point(419, 3);
             checkAmount.Name = "checkAmount";
-            checkAmount.Size = new Size(87, 24);
+            checkAmount.Size = new Size(90, 24);
             checkAmount.Style = Syncfusion.Windows.Forms.Tools.CheckBoxAdvStyle.Metro;
             checkAmount.TabIndex = 19;
             checkAmount.Text = "Количество";
@@ -122,7 +122,7 @@
             checkSumma.BeforeTouchSize = new Size(62, 24);
             checkSumma.Dock = DockStyle.Left;
             checkSumma.ForeColor = SystemColors.ControlText;
-            checkSumma.Location = new Point(506, 3);
+            checkSumma.Location = new Point(509, 3);
             checkSumma.Name = "checkSumma";
             checkSumma.Size = new Size(62, 24);
             checkSumma.Style = Syncfusion.Windows.Forms.Tools.CheckBoxAdvStyle.Metro;
@@ -134,7 +134,7 @@
             // panel1
             // 
             panel1.Dock = DockStyle.Left;
-            panel1.Location = new Point(673, 3);
+            panel1.Location = new Point(676, 3);
             panel1.Margin = new Padding(4, 3, 4, 3);
             panel1.Name = "panel1";
             panel1.Size = new Size(7, 24);
@@ -147,7 +147,7 @@
             checkGivingMaterial.CheckState = CheckState.Checked;
             checkGivingMaterial.Dock = DockStyle.Left;
             checkGivingMaterial.ForeColor = SystemColors.ControlText;
-            checkGivingMaterial.Location = new Point(568, 3);
+            checkGivingMaterial.Location = new Point(571, 3);
             checkGivingMaterial.Name = "checkGivingMaterial";
             checkGivingMaterial.Size = new Size(105, 24);
             checkGivingMaterial.Style = Syncfusion.Windows.Forms.Tools.CheckBoxAdvStyle.Metro;

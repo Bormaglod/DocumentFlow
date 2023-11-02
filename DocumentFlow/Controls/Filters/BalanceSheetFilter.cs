@@ -155,7 +155,7 @@ public partial class BalanceSheetFilter : UserControl, IBalanceSheetFilter
         }
     }
 
-    public bool ShowGivingMaterial 
+    public bool ShowGivingMaterial
     {
         get => settings.ShowGivingMaterial;
         set
