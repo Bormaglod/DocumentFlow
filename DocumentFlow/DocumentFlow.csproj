@@ -13,7 +13,7 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
 		<NeutralLanguage>ru</NeutralLanguage>
-		<Version>$(VersionPrefix)23.10.31</Version>
+		<Version>$(VersionPrefix)23.11.2</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
