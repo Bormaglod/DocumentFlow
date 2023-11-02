@@ -376,6 +376,22 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        foreach (var row in gridContent.StackedHeaderRows)
+        {
+            foreach (var stacked in row.StackedColumns)
+            {
+                foreach (var column in stacked.ChildColumns.Split(','))
+                {
+                    var menuItem = menuVisibleColumns.DropDownItems
+                        .OfType<ToolStripMenuItem>()
+                        .FirstOrDefault(x => x.Tag is GridColumn c && c.MappingName == column);
+                    if (menuItem != null)
+                    {
+                        menuItem.Text = $"{stacked.HeaderText}: {menuItem.Text}";
+                    }
+                }
+            }
+        }
     }
 
     protected virtual void DoBeforeRefreshPage() { }
