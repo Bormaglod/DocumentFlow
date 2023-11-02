@@ -59,16 +59,26 @@ public class WaybillProcessingRepository : DocumentRepository<WaybillProcessing>
         var wpDictionary = new Dictionary<Guid, WaybillProcessing>();
 
         string sql = @"
+            with cte as (
+                select 
+	                material_id,
+	                sum(amount) as written_off
+                from waybill_processing_writeoff
+                where waybill_processing_id  = :id
+                group by waybill_processing_id, material_id
+            )
             select 
                 wp.*, 
                 wpp.*, 
                 p.item_name as product_name, 
                 p.code, 
-                m.abbreviation as measurement_name
+                m.abbreviation as measurement_name,
+                cte.written_off
             from waybill_processing wp
                 left join waybill_processing_price wpp on wpp.owner_id = wp.id 
                 left join product p on p.id = wpp.reference_id 
                 left join measurement m on m.id = p.measurement_id
+                left join cte on cte.material_id = wpp.reference_id
             where wp.id = :id";
 
         return connection.Query<WaybillProcessing, WaybillProcessingPrice, WaybillProcessing>(
