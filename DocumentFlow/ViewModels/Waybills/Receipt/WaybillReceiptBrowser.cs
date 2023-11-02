@@ -22,7 +22,7 @@ public class WaybillReceiptBrowser : WaybillBrowser<WaybillReceipt>, IWaybillRec
     {
         var payment_exists = CreateBoolean(x => x.PaymentExists, "Оплата", 100);
 
-        CreateStackedColumns("Заявка", new string[] { "PurchaseRequestDate", "PurchaseRequestNumber" });
+        CreateStackedColumns("Заявка", new string[] { nameof(WaybillReceipt.PurchaseRequestDate), nameof(WaybillReceipt.PurchaseRequestNumber) });
 
         AddColumns(new GridColumn[] { payment_exists });
     }
