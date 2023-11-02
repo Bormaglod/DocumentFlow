@@ -119,7 +119,7 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
                 .Select("rb.expense_summa as expense_summa")
                 .When(f.ShowGivingMaterial,
                     q => q.SelectRaw("coalesce(ib.init_amount, 0) + coalesce(rb.income_amount, 0) - coalesce(rb.expense_amount, 0) as closing_balance_amount"),
-                    q => q.SelectRaw("coalesce(ib.init_amount, 0) - coalesce(ipb.amount, 0) + coalesce(rb.income_amount, 0) - coalesce(pr.amount, 0) - coalesce(rb.expense_amount, 0) - coalesce(pw.amount, 0) as closing_balance_amount")
+                    q => q.SelectRaw("coalesce(ib.init_amount, 0) - coalesce(ipb.amount, 0) + coalesce(rb.income_amount, 0) - coalesce(pr.amount, 0) - coalesce(rb.expense_amount, 0) + coalesce(pw.amount, 0) as closing_balance_amount")
                 )
                 .SelectRaw("coalesce(ib.init_summa, 0) + coalesce(rb.income_summa, 0) - coalesce(rb.expense_summa, 0) as closing_balance_summa")
                 .LeftJoin("init_balance as ib", "ib.id", "p.id")
