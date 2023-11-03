@@ -93,7 +93,7 @@ public partial class OperationsPerformedDialog : Form, IOperationsPerformedDialo
             ReplacingMaterialId = selectMaterial.SelectedItem == Guid.Empty ? null : selectMaterial.SelectedItem,
             Quantity = textQuantity.IntegerValue,
             DoubleRate = checkDoubleRate.CheckValue,
-            SkipMaterial = checkSkipMaterial.CheckValue!.Value,
+            SkipMaterial = checkSkipMaterial.CheckValue != null && checkSkipMaterial.CheckValue.Value,
             OwnerId = lot.Id
         };
 
