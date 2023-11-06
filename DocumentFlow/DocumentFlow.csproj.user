@@ -31,6 +31,9 @@
     <Compile Update="Controls\Editors\DfCheckBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Editors\DfDirectorySelectBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfDocumentSelectBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -134,9 +137,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfDateTimePicker.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\Editors\DfDirectorySelectBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Editors\DfIntegerTextBox.cs">

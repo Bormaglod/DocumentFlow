@@ -12,7 +12,7 @@ public class Waybill : ShipmentDocument
     private string? waybillNumber;
     private DateTime? waybillDate = DateTime.Now;
     private string? invoiceNumber;
-    private DateTime? invoiceDate;
+    private DateTime? invoiceDate = DateTime.Now;
     private bool upd;
 
     /// <summary>
