@@ -178,7 +178,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         this.filter = filter;
         this.creations = creations;
 
-        settings = new(); ;
+        settings = new();
 
         var section = configuration.GetSection(GetType().Name);
         section.Bind(settings);
@@ -1495,6 +1495,8 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         separatorAcceptance.Visible = isDoc;
         separatorAcceptanceRow.Visible = isDoc;
 
+        menuMoveToGroup.Enabled = record is IDirectory directory && !directory.IsFolder;
+
         DoContextRecordMenuOpening();
     }
 
@@ -1882,6 +1884,60 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 groupColumnCollection.SetSelectedGroups(dialog.Selected);
+            }
+        }
+    }
+
+    private void MenuMoveToGroup_Click(object sender, EventArgs e)
+    {
+        if (gridContent.SelectedItem is T row && row is IDirectory directory)
+        {
+            var dialog = new DirectoryDialog()
+            {
+                RemoveEmptyFolders = false,
+                CanSelectFolder = true
+            };
+
+            if (repository is IDirectoryRepository<T> repo)
+            {
+                var root = Activator.CreateInstance(typeof(T));
+                if (root is not IDirectory rootDirectory) 
+                {
+                    return;
+                }
+
+                rootDirectory.ItemName = "\\";
+                rootDirectory.IsFolder = true;
+                
+                var folders = repo.GetOnlyFolders().OfType<IDirectory>().ToList();
+                foreach (var folder in folders.Where(x => x.ParentId == null)) 
+                {
+                    folder.ParentId = Guid.Empty;
+                }
+
+                folders.Add(rootDirectory);
+
+                dialog.SetDataSource(folders, true);
+                dialog.SelectedItem = directory.ParentId ?? Guid.Empty;
+
+                if (dialog.ShowDialog() == DialogResult.OK && dialog.SelectedDirectoryItem != null)
+                {
+                    if (dialog.SelectedItem != null && dialog.SelectedItem.Value == Guid.Empty)
+                    {
+                        directory.ParentId = null;
+                    }
+                    else
+                    {
+                        directory.ParentId = dialog.SelectedItem;
+                    }
+
+                    repository.Update(row);
+
+                    if (gridContent.DataSource is IList<T> list)
+                    {
+                        list.Remove(row);
+                    }
+                }
             }
         }
     }

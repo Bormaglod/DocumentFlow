@@ -46,7 +46,7 @@ public partial class DirectoryDialog : Form
 
     public Guid? Root { get; set; }
 
-    public void SetDataSource(IEnumerable<IDirectory> items)
+    public void SetDataSource(IEnumerable<IDirectory> items, bool expandAll = false)
     {
         treeSelect.BeginUpdate();
         try
@@ -65,6 +65,11 @@ public partial class DirectoryDialog : Form
         finally
         {
             treeSelect.EndUpdate();
+        }
+
+        if (expandAll)
+        {
+            treeSelect.ExpandAll();
         }
 
         treeSelect.Select();

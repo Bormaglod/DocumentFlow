@@ -80,6 +80,8 @@
             menuExpandAll = new ToolStripMenuItem();
             menuCollapseAll = new ToolStripMenuItem();
             menuClearGroups = new ToolStripMenuItem();
+            toolStripSeparator8 = new ToolStripSeparator();
+            menuGroupsSettings = new ToolStripMenuItem();
             contextGroupItemMenu = new Syncfusion.Windows.Forms.Tools.ContextMenuStripEx();
             menuExpandItem = new ToolStripMenuItem();
             menuCollapseItem = new ToolStripMenuItem();
@@ -88,8 +90,7 @@
             menuGroupCaptionExpand = new ToolStripMenuItem();
             menuGroupCaptionCollapse = new ToolStripMenuItem();
             panelTools = new Panel();
-            toolStripSeparator8 = new ToolStripSeparator();
-            menuGroupsSettings = new ToolStripMenuItem();
+            menuMoveToGroup = new ToolStripMenuItem();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gridContent).BeginInit();
             contextGridMenu.SuspendLayout();
@@ -388,10 +389,10 @@
             // contextRecordMenu
             // 
             contextRecordMenu.DropShadowEnabled = false;
-            contextRecordMenu.Items.AddRange(new ToolStripItem[] { menuId, separatorId, menuCopyClipboard, toolStripSeparator6, menuCreate, menuEdit, menuDelete, toolStripSeparator5, menuAccept, menuCancelAcceptance, separatorAcceptance, menuCopy, menuCreateBasedOn, menuCreateGroup, separatorDocuments, menuDocuments });
+            contextRecordMenu.Items.AddRange(new ToolStripItem[] { menuId, separatorId, menuCopyClipboard, toolStripSeparator6, menuCreate, menuEdit, menuDelete, toolStripSeparator5, menuAccept, menuCancelAcceptance, separatorAcceptance, menuCopy, menuCreateBasedOn, menuCreateGroup, menuMoveToGroup, separatorDocuments, menuDocuments });
             contextRecordMenu.MetroColor = Color.FromArgb(204, 236, 249);
             contextRecordMenu.Name = "contextGridMenu";
-            contextRecordMenu.Size = new Size(355, 276);
+            contextRecordMenu.Size = new Size(355, 320);
             contextRecordMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
             contextRecordMenu.ThemeName = "Metro";
             contextRecordMenu.Opening += ContextRecordMenu_Opening;
@@ -514,7 +515,7 @@
             contextGroupMenu.Items.AddRange(new ToolStripItem[] { menuHideGroupArea, menuExpandAll, menuCollapseAll, menuClearGroups, toolStripSeparator8, menuGroupsSettings });
             contextGroupMenu.MetroColor = Color.FromArgb(204, 236, 249);
             contextGroupMenu.Name = "contextGroupMenu";
-            contextGroupMenu.Size = new Size(238, 142);
+            contextGroupMenu.Size = new Size(238, 120);
             contextGroupMenu.Style = Syncfusion.Windows.Forms.Tools.ContextMenuStripEx.ContextMenuStyle.Metro;
             contextGroupMenu.ThemeName = "Metro";
             // 
@@ -545,6 +546,18 @@
             menuClearGroups.Size = new Size(237, 22);
             menuClearGroups.Text = "Очистить";
             menuClearGroups.Click += MenuClearGroups_Click;
+            // 
+            // toolStripSeparator8
+            // 
+            toolStripSeparator8.Name = "toolStripSeparator8";
+            toolStripSeparator8.Size = new Size(234, 6);
+            // 
+            // menuGroupsSettings
+            // 
+            menuGroupsSettings.Name = "menuGroupsSettings";
+            menuGroupsSettings.Size = new Size(237, 22);
+            menuGroupsSettings.Text = "Настройка...";
+            menuGroupsSettings.Click += MenuGroupsSettings_Click;
             // 
             // contextGroupItemMenu
             // 
@@ -609,17 +622,12 @@
             panelTools.Size = new Size(1067, 100);
             panelTools.TabIndex = 15;
             // 
-            // toolStripSeparator8
+            // menuMoveToGroup
             // 
-            toolStripSeparator8.Name = "toolStripSeparator8";
-            toolStripSeparator8.Size = new Size(234, 6);
-            // 
-            // menuGroupsSettings
-            // 
-            menuGroupsSettings.Name = "menuGroupsSettings";
-            menuGroupsSettings.Size = new Size(237, 22);
-            menuGroupsSettings.Text = "Настройка...";
-            menuGroupsSettings.Click += MenuGroupsSettings_Click;
+            menuMoveToGroup.Name = "menuMoveToGroup";
+            menuMoveToGroup.Size = new Size(354, 22);
+            menuMoveToGroup.Text = "Перенести в другую группу...";
+            menuMoveToGroup.Click += MenuMoveToGroup_Click;
             // 
             // BrowserPage
             // 
@@ -708,5 +716,6 @@
         private ToolStripMenuItem menuCreateBasedOn;
         private ToolStripSeparator toolStripSeparator8;
         private ToolStripMenuItem menuGroupsSettings;
+        private ToolStripMenuItem menuMoveToGroup;
     }
 }
