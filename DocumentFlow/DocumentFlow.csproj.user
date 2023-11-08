@@ -10,9 +10,6 @@
     <Compile Update="Controls\CardRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\Cards\ApplicatorCard.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Controls\Cards\CustomerCard.cs">
       <SubType>UserControl</SubType>
     </Compile>
