@@ -5,8 +5,6 @@
 // Date: 07.01.2022
 //-----------------------------------------------------------------------
 
-using System.Data;
-
 namespace DocumentFlow.Data.Interfaces.Repository;
 
 public interface IDocumentRepository<T> : IOwnedRepository<Guid, T>
