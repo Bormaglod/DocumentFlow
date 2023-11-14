@@ -80,7 +80,7 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
             .Select("c.code as calculation_name")
             .SelectRaw("case when co.item_name is null then op.item_name else co.item_name end AS operation_name")
             .Select("e.item_name as employee_name")
-            .SelectRaw("case when rm.item_name is null then um.item_name else rm.item_name end as material_name")
+            .SelectRaw("iif(skip_material, null, coalesce(rm.item_name, um.item_name)) as material_name")
             .Join("organization as o", "o.id", "operations_performed.organization_id")
             .Join("production_lot as pl", "pl.id", "operations_performed.owner_id")
             .Join("production_order as po", "po.id", "pl.owner_id")

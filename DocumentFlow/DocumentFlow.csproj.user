@@ -10,6 +10,9 @@
     <Compile Update="Controls\CardRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\Cards\ApplicatorCard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Cards\CustomerCard.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -71,9 +74,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Dialogs\MaterialQuantityDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\OperationsPerformedDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Dialogs\PriceApprovalDialog.cs">

@@ -124,6 +124,12 @@ public partial class OperationsPerformedDialog : Form, IOperationsPerformedDialo
             return;
         }
 
+        // Если установлен флаг "Материал не использовать", то проверку на количество пропустим...
+        if (checkSkipMaterial.CheckValue != null && checkSkipMaterial.CheckValue.Value)
+        {
+            return;
+        }
+
         var operation = (CalculationOperation)selectOperation.SelectedDocument;
         if (operation.MaterialId != null)
         {
