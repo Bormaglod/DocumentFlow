@@ -76,6 +76,9 @@
     <Compile Update="Dialogs\MaterialQuantityDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Dialogs\OperationsPerformedDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Dialogs\PriceApprovalDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,9 +89,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Dialogs\EmailSendDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dialogs\PreviewReportForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Dialogs\DirectoryDialog.cs">
