@@ -38,14 +38,6 @@ public partial class InitialBalanceEmployeeEditor : EditorPanel, IInitialBalance
 
     protected InitialBalanceEmployee InitialBalanceEmployee { get; set; } = null!;
 
-    protected override void OnEntityPropertyChanged(string? propertyName)
-    {
-        if (propertyName == nameof(InitialBalanceEmployee.DocumentNumber) || propertyName == nameof(InitialBalanceEmployee.DocumentDate))
-        {
-            OnHeaderChanged();
-        }
-    }
-
     protected override void AfterConstructData(ConstructDataMethod method)
     {
         textDocNumber.Enabled = InitialBalanceEmployee.Id != Guid.Empty;

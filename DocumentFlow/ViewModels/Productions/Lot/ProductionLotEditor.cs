@@ -191,14 +191,6 @@ public partial class ProductionLotEditor : EditorPanel, IProductionLotEditor, ID
 
     protected ProductionLot Lot { get; set; } = null!;
 
-    protected override void OnEntityPropertyChanged(string? propertyName)
-    {
-        if (propertyName == nameof(BaseDocument.DocumentNumber) || propertyName == nameof(BaseDocument.DocumentDate))
-        {
-            OnHeaderChanged();
-        }
-    }
-
     protected override void AfterConstructData(ConstructDataMethod method)
     {
         textDocNumber.Enabled = Lot.Id != Guid.Empty;
