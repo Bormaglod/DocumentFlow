@@ -25,41 +25,20 @@ public class Deduction : Directory
     [EnumType("base_deduction")]
     public string BaseCalc 
     { 
-        get => baseCalc; 
-        set
-        {
-            if (baseCalc != value) 
-            { 
-                baseCalc = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => baseCalc;
+        set => SetProperty(ref baseCalc, value);
     }
 
     public Guid? PersonId 
     { 
-        get => personId; 
-        set
-        {
-            if (personId != value) 
-            { 
-                personId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => personId;
+        set => SetProperty(ref personId, value);
     }
 
     public decimal Value 
     { 
-        get => decimalValue; 
-        set
-        {
-            if (decimalValue != value) 
-            { 
-                decimalValue = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => decimalValue;
+        set => SetProperty(ref decimalValue, value);
     }
 
     [Computed]

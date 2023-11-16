@@ -19,39 +19,18 @@ public class Bank : Directory
     public decimal Bik
     {
         get => bik;
-        set
-        {
-            if (bik != value) 
-            { 
-                bik = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref bik, value);
     }
 
     public decimal Account
     {
         get => account;
-        set 
-        { 
-            if (account != value)
-            {
-                account = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref account, value);
     }
 
     public string? Town 
     {
         get => town;
-        set
-        {
-            if (town != value)
-            {
-                town = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref town, value);
     }
 }

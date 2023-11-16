@@ -15,40 +15,19 @@ public class InitialBalance : AccountingDocument
 
     public Guid ReferenceId 
     { 
-        get => referenceId; 
-        set
-        {
-            if (referenceId != value) 
-            { 
-                referenceId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => referenceId;
+        set => SetProperty(ref referenceId, value);
     }
 
     public decimal OperationSumma
     {
         get => operationSumma;
-        set
-        {
-            if (operationSumma != value)
-            {
-                operationSumma = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref operationSumma, value);
     }
 
     public decimal Amount 
     { 
-        get => amount; 
-        set
-        {
-            if (amount != value)
-            {
-                amount = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => amount;
+        set => SetProperty(ref amount, value);
     }
 }

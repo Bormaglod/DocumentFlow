@@ -29,15 +29,8 @@ public class Product : Directory
     /// </summary>
     public decimal Price 
     { 
-        get => price; 
-        set
-        { 
-            if (price != value) 
-            {
-                price = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => price;
+        set => SetProperty(ref price, value);
     }
 
     /// <summary>
@@ -45,15 +38,8 @@ public class Product : Directory
     /// </summary>
     public int Vat 
     { 
-        get => vat; 
-        set
-        {
-            if (vat != value)
-            {
-                vat = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => vat;
+        set => SetProperty(ref vat, value);
     }
 
     /// <summary>
@@ -61,15 +47,8 @@ public class Product : Directory
     /// </summary>
     public Guid? MeasurementId 
     { 
-        get => measurementId; 
-        set
-        {
-            if (measurementId != value)
-            {
-                measurementId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => measurementId;
+        set => SetProperty(ref measurementId, value);
     }
 
     /// <summary>
@@ -77,15 +56,8 @@ public class Product : Directory
     /// </summary>
     public decimal? Weight 
     { 
-        get => weight; 
-        set
-        {
-            if (weight != value)
-            {
-                weight = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => weight;
+        set => SetProperty(ref weight, value);
     }
 
     /// <summary>
@@ -93,15 +65,8 @@ public class Product : Directory
     /// </summary>
     public string? DocName 
     { 
-        get => docName; 
-        set
-        {
-            if (docName != value)
-            {
-                docName = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => docName;
+        set => SetProperty(ref docName, value);
     }
 
     /// <summary>

@@ -25,15 +25,8 @@ public class PayrollPayment : AccountingDocument, IBilling
     /// </summary>
     public DateTime DateOperation 
     { 
-        get => dateOperation; 
-        set
-        {
-            if (dateOperation != value) 
-            {
-                dateOperation = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => dateOperation;
+        set => SetProperty(ref dateOperation, value);
     }
 
     /// <summary>
@@ -41,15 +34,8 @@ public class PayrollPayment : AccountingDocument, IBilling
     /// </summary>
     public decimal TransactionAmount 
     { 
-        get => transactionAmount; 
-        set
-        {
-            if (transactionAmount != value) 
-            { 
-                transactionAmount = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => transactionAmount;
+        set => SetProperty(ref transactionAmount, value);
     }
 
     /// <summary>
@@ -57,15 +43,8 @@ public class PayrollPayment : AccountingDocument, IBilling
     /// </summary>
     public string? PaymentNumber 
     { 
-        get => paymentNumber; 
-        set
-        {
-            if (paymentNumber != value)
-            {
-                paymentNumber = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => paymentNumber;
+        set => SetProperty(ref paymentNumber, value);
     }
 
     public int PayrollNumber { get; protected set; }

@@ -21,15 +21,8 @@ public class WageEmployee : Entity<long>, ICopyable, IDependentEntity
     [Display(AutoGenerateField = false)]
     public Guid EmployeeId 
     { 
-        get => employeeId; 
-        set
-        {
-            if (employeeId != value) 
-            { 
-                employeeId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => employeeId;
+        set => SetProperty(ref employeeId, value);
     }
 
     [Display(Name = "Сотрудник", Order = 1)]
@@ -41,15 +34,8 @@ public class WageEmployee : Entity<long>, ICopyable, IDependentEntity
     [ColumnMode(Format = ColumnFormat.Currency, Width = 150)]
     public decimal Wage 
     { 
-        get => wage; 
-        set
-        {
-            if (wage != value) 
-            { 
-                wage = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => wage;
+        set => SetProperty(ref wage, value);
     }
 
     public object Copy()

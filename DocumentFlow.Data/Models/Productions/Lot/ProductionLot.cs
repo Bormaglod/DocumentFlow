@@ -27,15 +27,8 @@ public class ProductionLot : AccountingDocument
     /// </summary>
     public Guid CalculationId 
     { 
-        get => calculationId; 
-        set
-        {
-            if (calculationId != value) 
-            { 
-                calculationId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => calculationId;
+        set => SetProperty(ref calculationId, value);
     }
 
     /// <summary>
@@ -43,15 +36,8 @@ public class ProductionLot : AccountingDocument
     /// </summary>
     public decimal Quantity 
     { 
-        get => quantity; 
-        set
-        {
-            if (quantity != value)
-            {
-                quantity = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => quantity;
+        set => SetProperty(ref quantity, value);
     }
 
     /// <summary>
@@ -62,14 +48,7 @@ public class ProductionLot : AccountingDocument
     public string State
     {
         get => state;
-        set
-        {
-            if (state != value) 
-            {
-                state = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref state, value);
     }
 
     /// <summary>
@@ -78,15 +57,8 @@ public class ProductionLot : AccountingDocument
     [Write(false)]
     public bool? Sold 
     { 
-        get => sold; 
-        set
-        {
-            if (sold != value) 
-            { 
-                sold = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => sold;
+        set => SetProperty(ref sold, value);
     }
 
     public int OrderNumber { get; protected set; }

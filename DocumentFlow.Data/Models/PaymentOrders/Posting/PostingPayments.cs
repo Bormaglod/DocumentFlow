@@ -21,15 +21,8 @@ public class PostingPayments : AccountingDocument, IDiscriminator
     /// </summary>
     public decimal TransactionAmount 
     { 
-        get => transactionAmount; 
-        set
-        {
-            if (transactionAmount != value) 
-            { 
-                transactionAmount = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => transactionAmount;
+        set => SetProperty(ref transactionAmount, value);
     }
 
     /// <summary>
@@ -37,15 +30,8 @@ public class PostingPayments : AccountingDocument, IDiscriminator
     /// </summary>
     public Guid DocumentId 
     { 
-        get => documentId; 
-        set
-        {
-            if (documentId != value) 
-            { 
-                documentId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => documentId;
+        set => SetProperty(ref documentId, value);
     }
 
     /// <summary>

@@ -5,6 +5,8 @@
 // Date: 12.09.2021
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Controls.Tools;
 using DocumentFlow.Data;
@@ -15,6 +17,7 @@ using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Tools;
 using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Properties;
 using DocumentFlow.Settings;
 using DocumentFlow.Tools;
@@ -36,7 +39,7 @@ using System.ComponentModel;
 namespace DocumentFlow.Controls.PageContents;
 
 [ToolboxItem(false)]
-public partial class EditorPage : UserControl, IEditorPage
+public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPageHeaderChangedMessage>
 {
     public class GridFileSizeColumn : GridNumericColumn
     {
@@ -61,6 +64,8 @@ public partial class EditorPage : UserControl, IEditorPage
     public EditorPage(IServiceProvider services, IDockingManager dockingManager, IOptions<LocalSettings> options)
     {
         InitializeComponent();
+
+        WeakReferenceMessenger.Default.Register(this);
 
         this.services = services;
         this.dockingManager = dockingManager;
@@ -109,7 +114,6 @@ public partial class EditorPage : UserControl, IEditorPage
         set
         {
             editor = value;
-            editor.HeaderChanged += Editor_HeaderChanged;
             editor.EditorPage = this;
             if (editor is Control control)
             {
@@ -164,6 +168,12 @@ public partial class EditorPage : UserControl, IEditorPage
         {
             Editor.Create();
         }
+    }
+
+    public void Receive(EditorPageHeaderChangedMessage message)
+    {
+        Text = message.Value;
+        dockingManager.UpdateHeader(this);
     }
 
     protected bool Save(bool sendNotify)
@@ -385,11 +395,11 @@ public partial class EditorPage : UserControl, IEditorPage
         }
     }
 
-    private void Editor_HeaderChanged(object? sender, EventArgs e)
+    /*private void Editor_HeaderChanged(object? sender, EventArgs e)
     {
         Text = Editor.Header;
         dockingManager.UpdateHeader(this);
-    }
+    }*/
 
     private void GridDocuments_AutoGeneratingColumn(object sender, AutoGeneratingColumnArgs e)
     {

@@ -24,15 +24,8 @@ public class Operation : Directory
     /// </summary>
     public int Produced 
     { 
-        get => produced; 
-        set
-        {
-            if (produced != value) 
-            { 
-                produced = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => produced;
+        set => SetProperty(ref produced, value);
     }
 
     /// <summary>
@@ -40,15 +33,8 @@ public class Operation : Directory
     /// </summary>
     public int ProdTime 
     { 
-        get => prodTime; 
-        set
-        {
-            if (prodTime != value) 
-            {
-                prodTime = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => prodTime;
+        set => SetProperty(ref prodTime, value);
     }
 
     /// <summary>
@@ -56,15 +42,8 @@ public class Operation : Directory
     /// </summary>
     public int ProductionRate 
     { 
-        get => productionRate; 
-        set
-        {
-            if (productionRate != value) 
-            { 
-                productionRate = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => productionRate;
+        set => SetProperty(ref productionRate, value);
     }
 
     /// <summary>
@@ -72,15 +51,8 @@ public class Operation : Directory
     /// </summary>
     public Guid TypeId 
     { 
-        get => typeId; 
-        set
-        {
-            if (typeId != value) 
-            { 
-                typeId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => typeId;
+        set => SetProperty(ref typeId, value);
     }
 
     /// <summary>
@@ -88,15 +60,8 @@ public class Operation : Directory
     /// </summary>
     public DateTime? DateNorm 
     { 
-        get => dateNorm; 
-        set
-        {
-            if (dateNorm != value) 
-            { 
-                dateNorm = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => dateNorm;
+        set => SetProperty(ref dateNorm, value);
     }
 
     /// <summary>
@@ -104,15 +69,8 @@ public class Operation : Directory
     /// </summary>
     public decimal Salary 
     { 
-        get => salary; 
-        set
-        {
-            if (salary != value)
-            {
-                salary = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => salary;
+        set => SetProperty(ref salary, value);
     }
 
     [Computed]

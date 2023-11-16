@@ -25,14 +25,7 @@ public class Cutting : Operation
     public int SegmentLength
     {
         get => segmentLength;
-        set
-        {
-            if (segmentLength != value) 
-            { 
-                segmentLength = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref segmentLength, value);
     }
 
     /// <summary>
@@ -40,15 +33,8 @@ public class Cutting : Operation
     /// </summary>
     public decimal LeftCleaning 
     { 
-        get => leftCleaning; 
-        set
-        {
-            if (leftCleaning != value) 
-            { 
-                leftCleaning = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => leftCleaning;
+        set => SetProperty(ref leftCleaning, value);
     }
 
     /// <summary>
@@ -56,15 +42,8 @@ public class Cutting : Operation
     /// </summary>
     public int LeftSweep 
     { 
-        get => leftSweep; 
-        set
-        {
-            if (leftSweep != value)
-            {
-                leftSweep = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => leftSweep;
+        set => SetProperty(ref leftSweep, value);
     }
 
     /// <summary>
@@ -72,15 +51,8 @@ public class Cutting : Operation
     /// </summary>
     public decimal RightCleaning 
     { 
-        get => rightCleaning; 
-        set
-        {
-            if (rightCleaning != value)
-            {
-                rightCleaning = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => rightCleaning;
+        set => SetProperty(ref rightCleaning, value);
     }
 
     /// <summary>
@@ -88,15 +60,8 @@ public class Cutting : Operation
     /// </summary>
     public int RightSweep 
     { 
-        get => rightSweep; 
-        set
-        {
-            if (rightSweep != value)
-            {
-                rightSweep = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => rightSweep;
+        set => SetProperty(ref rightSweep, value);
     }
 
     /// <summary>
@@ -105,28 +70,7 @@ public class Cutting : Operation
     [DenyCopying]
     public int? ProgramNumber 
     { 
-        get => programNumber; 
-        set
-        {
-            if (programNumber != value)
-            {
-                programNumber = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => programNumber;
+        set => SetProperty(ref programNumber, value);
     }
-
-    /*[AllowOperation(DataOperation.None)]
-    public Stripping Left 
-    {
-        get => new() { Cleaning = LeftCleaning, Sweep = LeftSweep };
-        set => (LeftCleaning, LeftSweep) = (value.Cleaning, value.Sweep);
-    }
-
-    [AllowOperation(DataOperation.None)]
-    public Stripping Right
-    {
-        get => new() { Cleaning = RightCleaning, Sweep = RightSweep };
-        set => (RightCleaning, RightSweep) = (value.Cleaning, value.Sweep);
-    }*/
 }

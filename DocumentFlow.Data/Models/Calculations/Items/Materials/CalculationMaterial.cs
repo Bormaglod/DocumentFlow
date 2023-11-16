@@ -25,15 +25,8 @@ public class CalculationMaterial : CalculationItem
     /// </summary>
     public decimal Amount 
     { 
-        get => amount; 
-        set
-        {
-            if (amount != value) 
-            {
-                amount = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => amount;
+        set => SetProperty(ref amount, value);
     }
 
     /// <summary>
@@ -41,29 +34,15 @@ public class CalculationMaterial : CalculationItem
     /// </summary>
     public bool IsGiving 
     { 
-        get => isGiving; 
-        set
-        {
-            if (isGiving != value) 
-            { 
-                isGiving = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => isGiving;
+        set => SetProperty(ref isGiving, value);
     }
 
     [EnumType("price_setting_method")]
     public string PriceSettingMethod 
     { 
-        get => priceSettingMethod; 
-        set
-        {
-            if (priceSettingMethod != value) 
-            { 
-                priceSettingMethod = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => priceSettingMethod;
+        set => SetProperty(ref priceSettingMethod, value);
     }
 
     [Computed]

@@ -255,3 +255,39 @@ public enum ProductContent
     Goods, 
     All 
 }
+
+public enum EmployeeRole
+{
+    [Description("Не определена")]
+    NotDefined,
+
+    [Description("Директор")]
+    Director,
+
+    [Description("Гл. бухгалтер")]
+    ChiefAccountant,
+
+    [Description("Служащий")]
+    Employee,
+
+    [Description("Рабочий")]
+    Worker
+}
+
+public enum SubjectsCivilLow
+{
+    [Description("Физическое лицо")]
+    Person,
+
+    [Description("Юридическое лицо")]
+    LegalEntity
+}
+
+public enum ContractorType
+{
+    [Description("С продавцом")]
+    Seller,
+
+    [Description("С покупателем")]
+    Buyer
+}

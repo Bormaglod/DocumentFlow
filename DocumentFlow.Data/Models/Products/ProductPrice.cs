@@ -28,15 +28,8 @@ public abstract class ProductPrice : Entity<long>, ICopyable, IDependentEntity
     [Display(AutoGenerateField = false)]
     public Guid ReferenceId 
     { 
-        get => referenceId; 
-        set
-        {
-            if (referenceId != value) 
-            { 
-                referenceId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => referenceId;
+        set => SetProperty(ref referenceId, value);
     }
 
     [Display(Name = "Материал / Изделие", Order = 1)]
@@ -55,90 +48,48 @@ public abstract class ProductPrice : Entity<long>, ICopyable, IDependentEntity
     [ColumnMode(Width = 100, Alignment = HorizontalAlignment.Right, DecimalDigits = 3)]
     public decimal Amount 
     { 
-        get => amount; 
-        set
-        {
-            if (amount !=  value) 
-            { 
-                amount = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => amount;
+        set => SetProperty(ref amount, value);
     }
 
     [Display(Name = "Цена", Order = 300)]
     [ColumnMode(Format = ColumnFormat.Currency, Width = 80)]
     public decimal Price 
     { 
-        get => price; 
-        set 
-        {
-            if (price != value)
-            {
-                price = value;
-                NotifyPropertyChanged();
-            }
-        } 
+        get => price;
+        set => SetProperty(ref price, value);
     }
 
     [Display(Name = "Сумма", Order = 400)]
     [ColumnMode(Format = ColumnFormat.Currency, Width = 120)]
     public decimal ProductCost 
     { 
-        get => productCost; 
-        set 
-        {
-            if (productCost != value)
-            {
-                productCost = value;
-                NotifyPropertyChanged();
-            }
-        } 
+        get => productCost;
+        set => SetProperty(ref productCost, value);
     }
 
     [Display(Name = "%НДС", Order = 500)]
     [ColumnMode(Width = 70, Alignment = HorizontalAlignment.Center)]
     public int Tax 
     { 
-        get => tax; 
-        set 
-        {
-            if (tax != value)
-            {
-                tax = value;
-                NotifyPropertyChanged();
-            }
-        } 
+        get => tax;
+        set => SetProperty(ref tax, value);
     }
 
     [Display(Name = "НДС", Order = 600)]
     [ColumnMode(Format = ColumnFormat.Currency, Width = 100)]
     public decimal TaxValue 
     { 
-        get => taxValue; 
-        set 
-        {
-            if (taxValue != value)
-            {
-                taxValue = value;
-                NotifyPropertyChanged();
-            }
-        } 
+        get => taxValue;
+        set => SetProperty(ref taxValue, value);
     }
 
     [Display(Name = "Всего с НДС", Order = 700)]
     [ColumnMode(Format = ColumnFormat.Currency, Width = 130)]
     public decimal FullCost 
     { 
-        get => fullCost; 
-        set 
-        {
-            if (fullCost != value)
-            {
-                fullCost = value;
-                NotifyPropertyChanged();
-            }
-        } 
+        get => fullCost;
+        set => SetProperty(ref fullCost, value);
     }
 
     public object Copy()

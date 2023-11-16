@@ -18,15 +18,8 @@ public class GrossPayrollEmployee : WageEmployee
     [Display(AutoGenerateField = false)]
     public Guid IncomeItemId 
     { 
-        get => incomeItemId; 
-        set
-        {
-            if (incomeItemId != value)
-            {
-                incomeItemId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => incomeItemId;
+        set => SetProperty(ref incomeItemId, value);
     }
 
     [Display(Name = "Статья дохода", Order = 100)]

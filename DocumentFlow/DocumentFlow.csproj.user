@@ -28,6 +28,9 @@
     <Compile Update="Controls\DateRangeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\EditorPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\Editors\DfCheckBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -77,6 +80,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Dialogs\OperationsPerformedDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\PreviewReportForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Dialogs\PriceApprovalDialog.cs">
@@ -158,9 +164,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\Navigator.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\EditorPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\PageContents\EditorPage.cs">

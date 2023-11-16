@@ -22,93 +22,44 @@ public class Company : Directory
     public string? FullName
     {
         get => fullName;
-        set
-        {
-            if (fullName != value) 
-            { 
-                fullName = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref fullName, value);
     }
 
     public decimal? Inn
     {
         get => inn;
-        set
-        {
-            if (inn != value)
-            {
-                inn = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref inn, value);
     }
 
     public decimal? Kpp
     {
         get => kpp;
-        set
-        {
-            if (kpp != value) 
-            { 
-                kpp = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref kpp, value);
     }
 
     public decimal? Ogrn
     {
         get => ogrn;
-        set
-        {
-            if (ogrn != value)
-            {
-                ogrn = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref ogrn, value);
     }
 
     public decimal? Okpo
     {
         get => okpo;
-        set
-        {
-            if (okpo != value) 
-            { 
-                okpo = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref okpo, value);
     }
 
     public Guid? OkopfId
     {
         get => okopfId;
-        set
-        {
-            if (okopfId != value)
-            {
-                okopfId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref okopfId, value);
     }
 
     [DenyCopying]
     public Guid? AccountId
     {
         get => accountId;
-        set
-        {
-            if (accountId != value)
-            {
-                accountId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref accountId, value);
     }
 
     [Computed]

@@ -17,28 +17,14 @@ public class AdjustingBalances : AccountingDocument
 
     public Guid MaterialId 
     { 
-        get => materialId; 
-        set
-        {
-            if (materialId != value) 
-            { 
-                materialId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => materialId;
+        set => SetProperty(ref materialId, value);
     }
 
     public decimal Quantity 
     { 
-        get => quantity; 
-        set
-        {
-            if (quantity != value) 
-            { 
-                quantity = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => quantity;
+        set => SetProperty(ref quantity, value);
     }
 
     public string MaterialName { get; protected set; } = string.Empty;

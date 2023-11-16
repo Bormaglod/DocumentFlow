@@ -22,15 +22,8 @@ public class OperationGoods : Entity<long>, ICopyable, IDependentEntity
     [Display(AutoGenerateField = false)]
     public Guid GoodsId 
     { 
-        get => goodsId; 
-        set
-        {
-            if (goodsId != value) 
-            { 
-                goodsId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => goodsId;
+        set => SetProperty(ref goodsId, value);
     }
 
     [Write(false)]
@@ -38,15 +31,8 @@ public class OperationGoods : Entity<long>, ICopyable, IDependentEntity
     [ColumnMode(Width = 150)]
     public string Code 
     { 
-        get => code; 
-        set
-        {
-            if (code !=  value) 
-            { 
-                code = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => code;
+        set => SetProperty(ref code, value);
     }
 
     [Write(false)]
@@ -54,15 +40,8 @@ public class OperationGoods : Entity<long>, ICopyable, IDependentEntity
     [ColumnMode(AutoSizeColumnsMode = AutoSizeColumnsMode.Fill)]
     public string ItemName 
     { 
-        get => name; 
-        set
-        {
-            if (name != value)
-            {
-                name = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => name;
+        set => SetProperty(ref name, value);
     }
 
     public object Copy()

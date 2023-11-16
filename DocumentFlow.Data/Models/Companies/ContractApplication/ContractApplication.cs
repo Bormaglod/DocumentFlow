@@ -19,54 +19,26 @@ public class ContractApplication : Directory
 
     public DateTime DocumentDate 
     { 
-        get => documentDate; 
-        set
-        {
-            if (documentDate != value)
-            {
-                documentDate = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => documentDate;
+        set => SetProperty(ref documentDate, value);
     }
 
     public DateTime DateStart
     { 
-        get => dateStart; 
-        set
-        {
-            if (dateStart != value) 
-            { 
-                dateStart = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => dateStart;
+        set => SetProperty(ref dateStart, value);
     }
 
     public DateTime? DateEnd 
     { 
-        get => dateEnd; 
-        set
-        {
-            if (dateEnd != value) 
-            { 
-                dateEnd = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => dateEnd;
+        set => SetProperty(ref dateEnd, value);
     }
 
     public string? Note 
     { 
-        get => note; 
-        set
-        {
-            if (note != value)
-            {
-                note = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => note;
+        set => SetProperty(ref note, value);
     }
 
     [WritableCollection]

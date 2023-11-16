@@ -20,40 +20,19 @@ public abstract class Directory : DocumentInfo, IComparable, IComparable<Directo
     public string Code 
     {
         get => code;
-        set
-        {
-            if (code != value) 
-            { 
-                code = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref code, value);
     }
 
     public string? ItemName 
     {
         get => name;
-        set
-        {
-            if (name != value) 
-            { 
-                name = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref name, value);
     }
 
     public Guid? ParentId
     {
         get => parentId;
-        set
-        {
-            if (parentId != value) 
-            { 
-                parentId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref parentId, value);
     }
 
     [Write(false)]

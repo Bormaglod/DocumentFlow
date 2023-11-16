@@ -19,14 +19,7 @@ public class OperationType : Directory
     /// </summary>
     public decimal Salary 
     { 
-        get => salary; 
-        set
-        {
-            if (salary != value) 
-            { 
-                salary = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => salary;
+        set => SetProperty(ref salary, value);
     }
 }

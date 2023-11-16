@@ -32,15 +32,8 @@ public class Calculation : Directory
     /// </summary>
     public decimal CostPrice 
     { 
-        get => costPrice; 
-        set
-        {
-            if (costPrice != value) 
-            { 
-                costPrice = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => costPrice;
+        set => SetProperty(ref costPrice, value);
     }
 
     /// <summary>
@@ -48,15 +41,8 @@ public class Calculation : Directory
     /// </summary>
     public decimal ProfitPercent 
     { 
-        get => profitPercent; 
-        set
-        {
-            if (profitPercent != value) 
-            { 
-                profitPercent = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => profitPercent;
+        set => SetProperty(ref profitPercent, value);
     }
 
     /// <summary>
@@ -64,15 +50,8 @@ public class Calculation : Directory
     /// </summary>
     public decimal ProfitValue 
     { 
-        get => profitValue; 
-        set
-        {
-            if (profitValue != value) 
-            { 
-                profitValue = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => profitValue;
+        set => SetProperty(ref profitValue, value);
     }
 
     /// <summary>
@@ -80,15 +59,8 @@ public class Calculation : Directory
     /// </summary>
     public decimal Price 
     { 
-        get => price; 
-        set
-        {
-            if (price != value) 
-            { 
-                price = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => price;
+        set => SetProperty(ref price, value);
     }
 
     /// <summary>
@@ -96,15 +68,8 @@ public class Calculation : Directory
     /// </summary>
     public string? Note 
     { 
-        get => note; 
-        set
-        {
-            if (note != value)
-            {
-                note = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => note;
+        set => SetProperty(ref note, value);
     }
 
     /// <summary>
@@ -113,15 +78,8 @@ public class Calculation : Directory
     [EnumType("calculation_state")]
     public string State 
     { 
-        get => state; 
-        set
-        {
-            if (state != value)
-            {
-                state = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => state;
+        set => SetProperty(ref state, value);
     }
 
     /// <summary>
@@ -130,15 +88,8 @@ public class Calculation : Directory
     [EnumType("stimulating_value")]
     public string StimulType 
     { 
-        get => stimulType; 
-        set
-        {
-            if (stimulType != value)
-            {
-                stimulType = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => stimulType;
+        set => SetProperty(ref stimulType, value);
     }
 
     /// <summary>
@@ -146,15 +97,8 @@ public class Calculation : Directory
     /// </summary>
     public decimal StimulPayment 
     { 
-        get => stimulPayment; 
-        set
-        {
-            if (stimulPayment != value) 
-            { 
-                stimulPayment = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => stimulPayment;
+        set => SetProperty(ref stimulPayment, value);
     }
 
     /// <summary>
@@ -162,15 +106,8 @@ public class Calculation : Directory
     /// </summary>
     public DateTime? DateApproval 
     { 
-        get => dateApproval; 
-        set
-        {
-            if (dateApproval != value)
-            { 
-                dateApproval = value; 
-                NotifyPropertyChanged(); 
-            }
-        }
+        get => dateApproval;
+        set => SetProperty(ref dateApproval, value);
     }
 
     [Computed]

@@ -18,27 +18,13 @@ public class Account : Directory
     public decimal AccountValue 
     {
         get => acountValue;
-        set
-        {
-            if (acountValue != value) 
-            { 
-                acountValue = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref acountValue, value);
     }
 
     public Guid? BankId 
     {
         get => bankId;
-        set
-        {
-            if (bankId != value) 
-            {
-                bankId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref bankId, value);
     }
 
     [Computed]

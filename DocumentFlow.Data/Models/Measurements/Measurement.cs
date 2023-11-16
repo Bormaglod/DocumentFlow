@@ -17,13 +17,6 @@ public class Measurement : Directory
     public string? Abbreviation 
     {
         get => abbreviation;
-        set
-        {
-            if (abbreviation != value) 
-            { 
-                abbreviation = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref abbreviation, value);
     }
 }

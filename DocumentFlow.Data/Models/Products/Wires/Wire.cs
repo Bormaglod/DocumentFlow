@@ -17,13 +17,6 @@ public class Wire : Directory
     public decimal Wsize
     {
         get => wsize;
-        set
-        {
-            if (wsize != value) 
-            { 
-                wsize = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref wsize, value);
     }
 }

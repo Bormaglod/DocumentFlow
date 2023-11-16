@@ -16,14 +16,7 @@ public class OurEmployee : Employee
 
     public string[]? IncomeItems 
     { 
-        get => incomeItems; 
-        set
-        {
-            if (incomeItems != value) 
-            { 
-                incomeItems = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => incomeItems;
+        set => SetProperty(ref incomeItems, value);
     }
 }

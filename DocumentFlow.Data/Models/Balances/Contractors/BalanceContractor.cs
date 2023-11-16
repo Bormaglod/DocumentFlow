@@ -16,15 +16,8 @@ public class BalanceContractor : Balance
     /// </summary>
     public Guid ContractId 
     { 
-        get => contractId; 
-        set
-        {
-            if (contractId != value) 
-            {
-                contractId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => contractId;
+        set => SetProperty(ref contractId, value);
     }
 
     public string? ContractName { get; protected set; }

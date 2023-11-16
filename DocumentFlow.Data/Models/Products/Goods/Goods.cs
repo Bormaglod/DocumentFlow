@@ -24,15 +24,8 @@ public class Goods : Product
     /// </summary>
     public bool IsService 
     { 
-        get => isService; 
-        set
-        {
-            if (isService != value) 
-            { 
-                isService = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => isService;
+        set => SetProperty(ref isService, value);
     }
 
     /// <summary>
@@ -40,15 +33,8 @@ public class Goods : Product
     /// </summary>
     public Guid? CalculationId 
     { 
-        get => calculationId; 
-        set
-        {
-            if (calculationId != value)
-            {
-                calculationId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => calculationId;
+        set => SetProperty(ref calculationId, value);
     }
 
     /// <summary>
@@ -56,15 +42,8 @@ public class Goods : Product
     /// </summary>
     public string? Note 
     { 
-        get => note; 
-        set
-        {
-            if (note != value)
-            {
-                note = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => note;
+        set => SetProperty(ref note, value);
     }
 
     /// <summary>
@@ -72,15 +51,8 @@ public class Goods : Product
     /// </summary>
     public int? Length 
     { 
-        get => length; 
-        set
-        {
-            if (length != value)
-            {
-                length = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => length;
+        set => SetProperty(ref length, value);
     }
 
     /// <summary>
@@ -88,15 +60,8 @@ public class Goods : Product
     /// </summary>
     public int? Width 
     { 
-        get => width; 
-        set
-        {
-            if (width != value) 
-            { 
-                width = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => width;
+        set => SetProperty(ref width, value);
     }
 
     /// <summary>
@@ -104,15 +69,8 @@ public class Goods : Product
     /// </summary>
     public int? Height 
     { 
-        get => height; 
-        set
-        {
-            if (height != value)
-            {
-                height = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => height;
+        set => SetProperty(ref height, value);
     }
 
     /// <summary>

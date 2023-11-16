@@ -17,13 +17,6 @@ public class Okpdtr : Directory
     public string? SignatoryName
     {
         get => signatoryName;
-        set
-        {
-            if (signatoryName != null)
-            {
-                signatoryName = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref signatoryName, value);
     }
 }

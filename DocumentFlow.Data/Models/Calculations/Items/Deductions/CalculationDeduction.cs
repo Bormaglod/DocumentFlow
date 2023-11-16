@@ -18,15 +18,8 @@ public class CalculationDeduction : CalculationItem
 
     public decimal Value 
     { 
-        get => decimalValue; 
-        set
-        {
-            if (decimalValue != value) 
-            {
-                decimalValue = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => decimalValue;
+        set => SetProperty(ref decimalValue, value);
     }
 
     [Computed]

@@ -14,29 +14,17 @@ public abstract class ShipmentDocument : AccountingDocument
 
     public Guid? ContractorId 
     { 
-        get => contractorId; 
-        set
-        {
-            if (contractorId != value) 
-            { 
-                contractorId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => contractorId;
+        set => SetProperty(ref contractorId, value);
     }
 
     public Guid? ContractId 
     { 
-        get => contractId; 
-        set
-        {
-            if (contractId != value) 
-            { 
-                contractId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => contractId;
+        set => SetProperty(ref contractId, value);
     }
+
     public string? ContractorName { get; protected set; }
+
     public string? ContractName { get; protected set; }
 }

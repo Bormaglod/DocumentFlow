@@ -10,6 +10,7 @@ using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;

@@ -5,22 +5,12 @@
 // Date: 20.09.2021
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Tools;
 
 using Humanizer;
 
-using System.ComponentModel;
-
 namespace DocumentFlow.Data.Models;
-
-public enum SubjectsCivilLow 
-{
-    [Description("Физическое лицо")]
-    Person,
-
-    [Description("Юридическое лицо")]
-    LegalEntity 
-}
 
 [EntityName("Контрагент")]
 public class Contractor : Company
@@ -35,27 +25,13 @@ public class Contractor : Company
     public string? Subject
     {
         get => subject;
-        set
-        {
-            if (subject != value) 
-            { 
-                subject = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref subject, value);
     }
 
     public Guid? PersonId
     {
         get => personId;
-        set 
-        { 
-            if (personId != value) 
-            { 
-                personId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref personId, value);
     }
 
     [Computed]

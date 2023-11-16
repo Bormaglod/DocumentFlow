@@ -21,30 +21,16 @@ public class PurchaseRequest : ShipmentDocument
 
     public string? Note 
     { 
-        get => note; 
-        set
-        {
-            if (note != value) 
-            { 
-                note = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => note;
+        set => SetProperty(ref note, value);
     }
 
     [DenyCopying]
     [EnumType("purchase_state")]
     public string State 
     { 
-        get => state; 
-        set
-        {
-            if (state != value) 
-            { 
-                state = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => state;
+        set => SetProperty(ref state, value);
     }
 
     public decimal CostOrder { get; protected set; }

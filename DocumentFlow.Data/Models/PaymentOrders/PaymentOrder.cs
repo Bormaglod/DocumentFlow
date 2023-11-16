@@ -28,15 +28,8 @@ public class PaymentOrder : AccountingDocument
     /// </summary>
     public Guid? ContractorId 
     { 
-        get => contractorId; 
-        set
-        {
-            if (contractorId != value) 
-            { 
-                contractorId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => contractorId;
+        set => SetProperty(ref contractorId, value);
     }
 
     /// <summary>
@@ -44,15 +37,8 @@ public class PaymentOrder : AccountingDocument
     /// </summary>
     public string? PaymentNumber 
     { 
-        get => paymentNumber; 
-        set
-        {
-            if (paymentNumber != value) 
-            { 
-                paymentNumber = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => paymentNumber;
+        set => SetProperty(ref paymentNumber, value);
     }
 
     /// <summary>
@@ -60,15 +46,8 @@ public class PaymentOrder : AccountingDocument
     /// </summary>
     public DateTime DateOperation 
     { 
-        get => dateOperation; 
-        set 
-        {
-            if (dateOperation != value)
-            {
-                dateOperation = value;
-                NotifyPropertyChanged();
-            }
-        } 
+        get => dateOperation;
+        set => SetProperty(ref dateOperation, value);
     }
 
     /// <summary>
@@ -76,15 +55,8 @@ public class PaymentOrder : AccountingDocument
     /// </summary>
     public decimal TransactionAmount 
     { 
-        get => transactionAmount; 
-        set 
-        {
-            if (transactionAmount != value)
-            {
-                transactionAmount = value;
-                NotifyPropertyChanged();
-            }
-        } 
+        get => transactionAmount;
+        set => SetProperty(ref transactionAmount, value);
     }
 
     /// <summary>
@@ -95,14 +67,7 @@ public class PaymentOrder : AccountingDocument
     public string Direction
     {
         get => direction;
-        set
-        {
-            if (direction != value)
-            {
-                direction = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref direction, value);
     }
 
     /// <summary>
@@ -111,14 +76,7 @@ public class PaymentOrder : AccountingDocument
     public bool WithoutDistrib
     {
         get => withoutDistrib;
-        set
-        {
-            if (withoutDistrib != value)
-            {
-                withoutDistrib = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref withoutDistrib, value);
     }
 
     /// <summary>

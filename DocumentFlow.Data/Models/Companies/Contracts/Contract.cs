@@ -5,23 +5,13 @@
 // Date: 16.01.2022
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Tools;
 using DocumentFlow.Tools;
 
 using Humanizer;
 
-using System.ComponentModel;
-
 namespace DocumentFlow.Data.Models;
-
-public enum ContractorType 
-{
-    [Description("С продавцом")]
-    Seller,
-
-    [Description("С покупателем")]
-    Buyer 
-}
 
 [EntityName("Договор")]
 public class Contract : Directory
@@ -45,119 +35,56 @@ public class Contract : Directory
     public bool TaxPayer 
     {
         get => taxPayer;
-        set
-        {
-            if (taxPayer != value) 
-            { 
-                taxPayer = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref taxPayer, value);
     }
 
     public bool IsDefault 
     { 
         get => isDefault;
-        set
-        {
-            if (isDefault != value) 
-            {
-                isDefault = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref isDefault, value);
     }
 
     public DateTime DocumentDate 
     { 
-        get => documentDate; 
-        set
-        {
-            if (documentDate != value) 
-            { 
-                documentDate = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => documentDate;
+        set => SetProperty(ref documentDate, value);
     }
 
     public DateTime DateStart
     {
         get => dateStart;
-        set
-        {
-            if (dateStart != value) 
-            { 
-                dateStart = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref dateStart, value);
     }
 
     public DateTime? DateEnd
     {
         get => dateEnd;
-        set
-        {
-            if (dateEnd != value)
-            {
-                dateEnd = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref dateEnd, value);
     }
 
     public Guid? SignatoryId 
     { 
-        get => signatoryId; 
-        set
-        {
-            if (signatoryId != value)
-            {
-                signatoryId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => signatoryId;
+        set => SetProperty(ref signatoryId, value);
     }
 
     public Guid? OrgSignatoryId 
     { 
-        get => orgSignatoryId; 
-        set
-        {
-            if (orgSignatoryId != value)
-            {
-                orgSignatoryId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => orgSignatoryId;
+        set => SetProperty(ref orgSignatoryId, value);
     }
 
     [EnumType("contractor_type")]
     public string CType 
     { 
-        get => cType; 
-        set
-        {
-            if (cType != value)
-            {
-                cType = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => cType;
+        set => SetProperty(ref cType, value);
     }
 
     public short? PaymentPeriod 
     { 
-        get => paymentPeriod; 
-        set
-        {
-            if (paymentPeriod != value)
-            {
-                paymentPeriod = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => paymentPeriod;
+        set => SetProperty(ref paymentPeriod, value);
     }
 
     [Computed]

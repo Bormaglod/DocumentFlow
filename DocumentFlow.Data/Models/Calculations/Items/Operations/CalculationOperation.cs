@@ -27,15 +27,8 @@ public class CalculationOperation : CalculationItem
     /// </summary>
     public Guid? EquipmentId 
     { 
-        get => equipmentId; 
-        set
-        {
-            if (equipmentId != value) 
-            { 
-                equipmentId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => equipmentId;
+        set => SetProperty(ref equipmentId, value);
     }
 
     /// <summary>
@@ -43,15 +36,8 @@ public class CalculationOperation : CalculationItem
     /// </summary>
     public Guid? ToolsId 
     { 
-        get => toolsId; 
-        set
-        {
-            if (toolsId != value) 
-            { 
-                toolsId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => toolsId;
+        set => SetProperty(ref toolsId, value);
     }
 
     /// <summary>
@@ -59,15 +45,8 @@ public class CalculationOperation : CalculationItem
     /// </summary>
     public Guid? MaterialId 
     { 
-        get => materialId; 
-        set
-        {
-            if (materialId != value)
-            {
-                materialId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => materialId;
+        set => SetProperty(ref materialId, value);
     }
 
     /// <summary>
@@ -75,15 +54,8 @@ public class CalculationOperation : CalculationItem
     /// </summary>
     public decimal MaterialAmount 
     { 
-        get => materialAmount; 
-        set
-        {
-            if (materialAmount != value) 
-            { 
-                materialAmount = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => materialAmount;
+        set => SetProperty(ref materialAmount, value);
     }
 
     /// <summary>
@@ -91,15 +63,8 @@ public class CalculationOperation : CalculationItem
     /// </summary>
     public int Repeats 
     { 
-        get => repeats; 
-        set
-        {
-            if (repeats != value)
-            {
-                repeats = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => repeats;
+        set => SetProperty(ref repeats, value);
     }
 
     /// <summary>
@@ -107,15 +72,8 @@ public class CalculationOperation : CalculationItem
     /// </summary>
     public string[]? PreviousOperation 
     { 
-        get => previousOperation; 
-        set
-        {
-            if (previousOperation != value)
-            {
-                previousOperation = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => previousOperation;
+        set => SetProperty(ref previousOperation, value);
     }
 
     /// <summary>
@@ -123,15 +81,8 @@ public class CalculationOperation : CalculationItem
     /// </summary>
     public string? Note 
     { 
-        get => note; 
-        set
-        {
-            if (note != value)
-            {
-                note = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => note;
+        set => SetProperty(ref note, value);
     }
 
     /// <summary>
@@ -139,15 +90,8 @@ public class CalculationOperation : CalculationItem
     /// </summary>
     public decimal StimulCost 
     { 
-        get => stimulCost; 
-        set
-        {
-            if (stimulCost != value)
-            {
-                stimulCost = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => stimulCost;
+        set => SetProperty(ref stimulCost, value);
     }
 
     /// <summary>
@@ -155,15 +99,8 @@ public class CalculationOperation : CalculationItem
     /// </summary>
     public byte[]? Preview 
     { 
-        get => preview; 
-        set
-        {
-            if (preview != value)
-            {
-                preview = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => preview;
+        set => SetProperty(ref preview, value);
     }
 
     [WritableCollection]

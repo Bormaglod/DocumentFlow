@@ -5,32 +5,13 @@
 // Date: 02.11.2021
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Tools;
 using DocumentFlow.Tools;
 
 using Humanizer;
 
-using System.ComponentModel;
-
 namespace DocumentFlow.Data.Models;
-
-public enum EmployeeRole 
-{
-    [Description("Не определена")]
-    NotDefined,
-
-    [Description("Директор")]
-    Director,
-
-    [Description("Гл. бухгалтер")]
-    ChiefAccountant,
-
-    [Description("Служащий")]
-    Employee,
-
-    [Description("Рабочий")]
-    Worker 
-}
 
 [EntityName("Сотрудник")]
 public class Employee : Directory
@@ -43,54 +24,26 @@ public class Employee : Directory
 
     public Guid? PersonId 
     { 
-        get => personId; 
-        set
-        {
-            if (personId != value) 
-            { 
-                personId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => personId;
+        set => SetProperty(ref personId, value);
     }
 
     public Guid? PostId 
     { 
-        get => postId; 
-        set
-        {
-            if (postId != value)
-            {
-                postId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => postId;
+        set => SetProperty(ref postId, value);
     }
 
     public string? Phone 
     { 
-        get => phone; 
-        set
-        {
-            if (phone != value)
-            {
-                phone = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => phone;
+        set => SetProperty(ref phone, value);
     }
 
     public string? Email 
     { 
-        get => email; 
-        set
-        {
-            if (email != value)
-            {
-                email = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => email;
+        set => SetProperty(ref email, value);
     }
 
     [Computed]
@@ -103,15 +56,8 @@ public class Employee : Directory
     [EnumType("employee_role")]
     public string EmpRole 
     { 
-        get => empRole; 
-        set
-        {
-            if (empRole != value) 
-            { 
-                empRole = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => empRole;
+        set => SetProperty(ref empRole, value);
     }
 
     [Computed]

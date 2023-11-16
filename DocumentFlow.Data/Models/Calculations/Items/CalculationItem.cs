@@ -20,15 +20,8 @@ public class CalculationItem : Directory
     /// </summary>
     public Guid? ItemId 
     { 
-        get => itemId; 
-        set
-        {
-            if (itemId != value) 
-            { 
-                itemId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => itemId;
+        set => SetProperty(ref itemId, value);
     }
 
     /// <summary>
@@ -36,15 +29,8 @@ public class CalculationItem : Directory
     /// </summary>
     public decimal Price 
     { 
-        get => price; 
-        set
-        {
-            if (price != value) 
-            { 
-                price = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => price;
+        set => SetProperty(ref price, value);
     }
 
     /// <summary>
@@ -52,15 +38,8 @@ public class CalculationItem : Directory
     /// </summary>
     public decimal ItemCost 
     { 
-        get => itemCost; 
-        set
-        {
-            if (itemCost != value)
-            {
-                itemCost = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => itemCost;
+        set => SetProperty(ref itemCost, value);
     }
 
     [Computed]

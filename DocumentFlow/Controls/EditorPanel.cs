@@ -5,11 +5,14 @@
 // Date: 12.06.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Tools;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 using DocumentFlow.Tools.Exceptions;
 
@@ -38,7 +41,7 @@ public partial class EditorPanel : UserControl, IEditor
     private readonly MethodInfo getMethod;
     private readonly MethodInfo? acceptMethod;
 
-    public event EventHandler? HeaderChanged;
+    //public event EventHandler? HeaderChanged;
 
 #if DEBUG
 #pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
@@ -184,7 +187,31 @@ public partial class EditorPanel : UserControl, IEditor
 
     protected virtual void CreateDataSources() { }
 
-    protected void OnHeaderChanged() => HeaderChanged?.Invoke(this, EventArgs.Empty);
+    protected void OnHeaderChanged()
+    {
+        string readOnlyText = enabled ? string.Empty : " (только для чтения)";
+        
+        var attr = currentDocument.GetType().GetCustomAttribute<EntityNameAttribute>();
+
+        string header;
+        if (attr != null)
+        {
+            if (currentDocument.Id == Guid.Empty)
+            {
+                header = $"{attr.Name} (новый)";
+            }
+            else
+            {
+                header = $"{attr.Name} - {currentDocument}{readOnlyText}";
+            }
+        }
+        else
+        {
+            header = $"{currentDocument}{readOnlyText}";
+        }
+
+        WeakReferenceMessenger.Default.Send(new EditorPageHeaderChangedMessage(header));
+    }
 
     protected IDirectory GetDirectory()
     {
@@ -221,31 +248,6 @@ public partial class EditorPanel : UserControl, IEditor
     }
 
     #region IEditor interface implemented
-
-    string IEditor.Header
-    {
-        get
-        {
-            string readOnlyText = enabled ? string.Empty : " (только для чтения)";
-
-            var attr = currentDocument.GetType().GetCustomAttribute<EntityNameAttribute>();
-            if (attr != null)
-            {
-                if (currentDocument.Id == Guid.Empty)
-                {
-                    return $"{attr.Name} (новый)";
-                }
-                else
-                {
-                    return $"{attr.Name} - {currentDocument}{readOnlyText}";
-                }
-            }
-            else
-            {
-                return $"{currentDocument}{readOnlyText}";
-            }
-        }
-    }
 
     bool IEditor.AcceptSupported => acceptSupported;
 

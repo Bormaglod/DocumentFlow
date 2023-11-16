@@ -21,65 +21,30 @@ public class Person : Directory
     public string? Surname
     {
         get => surname;
-        set
-        {
-            if (surname != value)
-            {
-                surname = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref surname, value);
     }
 
     public string? FirstName
     {
         get => firstName;
-        set
-        {
-            if (firstName != value) 
-            { 
-                firstName = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref firstName, value);
     }
 
     public string? MiddleName
     {
         get => middleName;
-        set 
-        { 
-            if (middleName != value)
-            {
-                middleName = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref middleName, value);
     }
 
     public string? Phone
     {
         get => phone;
-        set
-        {
-            if (phone != value)
-            {
-                phone = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref phone, value);
     }
 
     public string? Email
     {
         get => email;
-        set
-        {
-            if (email != value)
-            {
-                email = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref email, value);
     }
 }

@@ -24,29 +24,15 @@ public class ProductionOrderPrice : ProductPrice, IProductCalculation
     [ColumnMode(Format = ColumnFormat.Progress)]
     public int CompleteStatus 
     { 
-        get => completeStatus; 
-        set
-        {
-            if (completeStatus !=  value) 
-            { 
-                completeStatus = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => completeStatus;
+        set => SetProperty(ref completeStatus, value);
     }
 
     [Display(AutoGenerateField = false)]
     public Guid CalculationId 
     { 
-        get => calculationId; 
-        set
-        {
-            if (calculationId != value) 
-            { 
-                calculationId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => calculationId;
+        set => SetProperty(ref calculationId, value);
     }
 
     [Display(Name = "Калькуляция", Order = 20)]
@@ -54,14 +40,7 @@ public class ProductionOrderPrice : ProductPrice, IProductCalculation
     public string CalculationName 
     { 
         get => calculationName; 
-        protected set
-        {
-            if (calculationName != value) 
-            { 
-                calculationName = value;
-                NotifyPropertyChanged();
-            }
-        }
+        protected set => SetProperty(ref calculationName, value);
     }
     public void SetCalculation(Calculation calculation)
     {

@@ -16,15 +16,8 @@ public class ProductionOrder : ShipmentDocument
 
     public bool Closed 
     { 
-        get => closed; 
-        set
-        {
-            if (closed != value) 
-            { 
-                closed = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => closed;
+        set => SetProperty(ref closed, value);
     }
 
     public decimal CostOrder { get; protected set; }

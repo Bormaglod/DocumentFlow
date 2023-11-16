@@ -20,15 +20,8 @@ public class Waybill : ShipmentDocument
     /// </summary>
     public string? WaybillNumber 
     { 
-        get => waybillNumber; 
-        set
-        {
-            if (waybillNumber != value) 
-            { 
-                waybillNumber = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => waybillNumber;
+        set => SetProperty(ref waybillNumber, value);
     }
 
     /// <summary>
@@ -36,15 +29,8 @@ public class Waybill : ShipmentDocument
     /// </summary>
     public DateTime? WaybillDate 
     { 
-        get => waybillDate; 
-        set
-        {
-            if (waybillDate != value) 
-            { 
-                waybillDate = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => waybillDate;
+        set => SetProperty(ref waybillDate, value);
     }
 
     /// <summary>
@@ -52,15 +38,8 @@ public class Waybill : ShipmentDocument
     /// </summary>
     public string? InvoiceNumber 
     { 
-        get => invoiceNumber; 
-        set
-        {
-            if (invoiceNumber != value) 
-            { 
-                invoiceNumber = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => invoiceNumber;
+        set => SetProperty(ref invoiceNumber, value);
     }
 
     /// <summary>
@@ -68,15 +47,8 @@ public class Waybill : ShipmentDocument
     /// </summary>
     public DateTime? InvoiceDate 
     { 
-        get => invoiceDate; 
-        set
-        {
-            if (invoiceDate != value)
-            {
-                invoiceDate = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => invoiceDate;
+        set => SetProperty(ref invoiceDate, value);
     }
 
     /// <summary>
@@ -84,15 +56,8 @@ public class Waybill : ShipmentDocument
     /// </summary>
     public bool Upd 
     { 
-        get => upd; 
-        set
-        {
-            if (upd != value)
-            {
-                upd = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => upd;
+        set => SetProperty(ref upd, value);
     }
 
     public decimal ProductCost { get; protected set; }

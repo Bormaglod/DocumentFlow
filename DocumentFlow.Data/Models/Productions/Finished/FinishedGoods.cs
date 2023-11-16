@@ -19,15 +19,8 @@ public class FinishedGoods : AccountingDocument
 
     public Guid GoodsId 
     { 
-        get => goodsId; 
-        set
-        {
-            if (goodsId != value) 
-            { 
-                goodsId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => goodsId;
+        set => SetProperty(ref goodsId, value);
     }
 
     public decimal Quantity
@@ -35,15 +28,9 @@ public class FinishedGoods : AccountingDocument
         get => quantity;
         set
         {
-            if (quantity != value) 
-            { 
-                quantity = value;
-                NotifyPropertyChanged();
-
-                if (IsLoaded)
-                {
-                    ProductCost = quantity * price;
-                }
+            if (SetProperty(ref quantity, value) && IsLoaded)
+            {
+                ProductCost = quantity * price;
             }
         }
     }
@@ -53,30 +40,17 @@ public class FinishedGoods : AccountingDocument
         get => price; 
         set
         {
-            if (price != value) 
+            if (SetProperty(ref price, value) && IsLoaded) 
             {
-                price = value;
-                NotifyPropertyChanged();
-
-                if (IsLoaded)
-                {
-                    ProductCost = quantity * price;
-                }
+                ProductCost = quantity * price;
             }
         }
     }
 
     public decimal? ProductCost 
     { 
-        get => productCost; 
-        set
-        {
-            if (productCost != value)
-            {
-                productCost = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => productCost;
+        set => SetProperty(ref productCost, value);
     }
 
     public string GoodsName { get; protected set; } = string.Empty;

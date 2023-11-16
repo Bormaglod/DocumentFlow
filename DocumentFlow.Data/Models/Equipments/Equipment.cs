@@ -22,15 +22,8 @@ public class Equipment : Directory
     /// </summary>
     public bool IsTools 
     { 
-        get => isTools; 
-        set
-        {
-            if (isTools != value)
-            {
-                isTools = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => isTools;
+        set => SetProperty(ref isTools, value);
     }
 
     /// <summary>
@@ -38,15 +31,8 @@ public class Equipment : Directory
     /// </summary>
     public string? SerialNumber 
     { 
-        get => serialNumber; 
-        set
-        {
-            if (serialNumber != value) 
-            { 
-                serialNumber = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => serialNumber;
+        set => SetProperty(ref serialNumber, value);
     }
 
     /// <summary>
@@ -54,15 +40,8 @@ public class Equipment : Directory
     /// </summary>
     public DateTime? Commissioning 
     { 
-        get => commissioning; 
-        set 
-        {
-            if (commissioning != value)
-            {
-                commissioning = value;
-                NotifyPropertyChanged();
-            }
-        } 
+        get => commissioning;
+        set => SetProperty(ref commissioning, value);
     }
 
     /// <summary>
@@ -70,14 +49,7 @@ public class Equipment : Directory
     /// </summary>
     public int? StartingHits 
     { 
-        get => startingHits; 
-        set 
-        {
-            if (startingHits != value)
-            {
-                startingHits = value;
-                NotifyPropertyChanged();
-            }
-        } 
+        get => startingHits;
+        set => SetProperty(ref startingHits, value);
     }
 }

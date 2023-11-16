@@ -19,53 +19,25 @@ public class Organization : Company
 
     public string? Address 
     { 
-        get => address; 
-        set
-        {
-            if (address != value) 
-            { 
-                address = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => address;
+        set => SetProperty(ref address, value);
     }
 
     public string? Phone 
     { 
-        get => phone; 
-        set
-        {
-            if (phone != value)
-            {
-                phone = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => phone;
+        set => SetProperty(ref phone, value);
     }
 
     public string? Email 
     { 
-        get => email; 
-        set
-        {
-            if (email != value)
-            {
-                email = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => email;
+        set => SetProperty(ref email, value);
     }
 
     public bool DefaultOrg 
     { 
-        get => defaultOrg; 
-        set
-        {
-            if (defaultOrg != value)
-            {
-                defaultOrg = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => defaultOrg;
+        set => SetProperty(ref defaultOrg, value);
     }
 }

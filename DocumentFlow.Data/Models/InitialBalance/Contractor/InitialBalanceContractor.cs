@@ -20,15 +20,8 @@ public class InitialBalanceContractor : InitialBalance
 
     public Guid ContractId 
     { 
-        get => contractId; 
-        set
-        {
-            if (contractId != value) 
-            { 
-                contractId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => contractId;
+        set => SetProperty(ref contractId, value);
     }
 
     public string? ContractorName { get; protected set; }

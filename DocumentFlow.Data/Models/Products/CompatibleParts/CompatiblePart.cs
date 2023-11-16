@@ -22,15 +22,8 @@ public class CompatiblePart : Entity<long>, ICopyable, IDependentEntity
     [Display(AutoGenerateField = false)]
     public Guid CompatibleId 
     { 
-        get => compatibleId; 
-        set
-        {
-            if (compatibleId != value) 
-            { 
-                compatibleId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => compatibleId;
+        set => SetProperty(ref compatibleId, value);
     }
 
     [Write(false)]
@@ -38,15 +31,8 @@ public class CompatiblePart : Entity<long>, ICopyable, IDependentEntity
     [ColumnMode(Width = 150)]
     public string Code 
     { 
-        get => code; 
-        set
-        {
-            if (code != value) 
-            { 
-                code = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => code;
+        set => SetProperty(ref code, value);
     }
 
     [Write(false)]
@@ -54,15 +40,8 @@ public class CompatiblePart : Entity<long>, ICopyable, IDependentEntity
     [ColumnMode(AutoSizeColumnsMode = AutoSizeColumnsMode.Fill)]
     public string ItemName 
     { 
-        get => itemName; 
-        set
-        {
-            if (itemName != value) 
-            { 
-                itemName = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => itemName;
+        set => SetProperty(ref itemName, value);
     }
 
     public object Copy()

@@ -5,6 +5,7 @@
 // Date: 30.12.2021
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Repository;

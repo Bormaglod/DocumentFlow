@@ -26,15 +26,8 @@ public class Material : Product
     /// </summary>
     public decimal? MinOrder 
     { 
-        get => minOrder; 
-        set
-        {
-            if (minOrder != value) 
-            { 
-                minOrder = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => minOrder;
+        set => SetProperty(ref minOrder, value);
     }
 
     /// <summary>
@@ -42,15 +35,8 @@ public class Material : Product
     /// </summary>
     public string? ExtArticle 
     { 
-        get => extArticle; 
-        set
-        {
-            if (extArticle != value) 
-            { 
-                extArticle = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => extArticle;
+        set => SetProperty(ref extArticle, value);
     }
 
     /// <summary>
@@ -59,15 +45,8 @@ public class Material : Product
     /// </summary>
     public Guid? WireId 
     { 
-        get => wireId; 
-        set
-        {
-            if (wireId != value) 
-            { 
-                wireId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => wireId;
+        set => SetProperty(ref wireId, value);
     }
 
     /// <summary>
@@ -76,15 +55,8 @@ public class Material : Product
     [EnumType("material_kind")]
     public string MaterialKind 
     { 
-        get => materialKind; 
-        set
-        {
-            if (materialKind != value)
-            {
-                materialKind = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => materialKind;
+        set => SetProperty(ref materialKind, value);
     }
 
     /// <summary>

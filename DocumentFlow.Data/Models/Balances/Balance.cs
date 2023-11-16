@@ -21,15 +21,8 @@ public class Balance : BaseDocument
     /// </summary>
     public Guid ReferenceId 
     { 
-        get => referenceId; 
-        set
-        {
-            if (referenceId != value) 
-            { 
-                referenceId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => referenceId;
+        set => SetProperty(ref referenceId, value);
     }
 
     /// <summary>
@@ -37,15 +30,8 @@ public class Balance : BaseDocument
     /// </summary>
     public decimal OperationSumma 
     { 
-        get => operationSumma; 
-        set
-        {
-            if (operationSumma != value) 
-            { 
-                operationSumma = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => operationSumma;
+        set => SetProperty(ref operationSumma, value);
     }
 
     /// <summary>
@@ -53,15 +39,8 @@ public class Balance : BaseDocument
     /// </summary>
     public decimal Amount 
     { 
-        get => amount; 
-        set
-        {
-            if (amount != value) 
-            { 
-                amount = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => amount;
+        set => SetProperty(ref amount, value);
     }
 
     /// <summary>
@@ -69,15 +48,8 @@ public class Balance : BaseDocument
     /// </summary>
     public Guid DocumentTypeId 
     { 
-        get => documentTypeId; 
-        set
-        {
-            if (documentTypeId != value)
-            {
-                documentTypeId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => documentTypeId;
+        set => SetProperty(ref documentTypeId, value);
     }
 
     [Computed]

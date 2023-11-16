@@ -11,11 +11,8 @@ namespace DocumentFlow.Controls.Interfaces;
 
 public interface IEditor
 {
-    event EventHandler HeaderChanged;
-
     IDocumentInfo DocumentInfo { get; }
     IEditorPage EditorPage { get; set; }
-    string Header { get; }
     bool AcceptSupported { get; }
     bool EnabledEditor { get; set; }
 

@@ -25,15 +25,8 @@ public class OperationsPerformed : AccountingDocument
     /// </summary>
     public Guid EmployeeId 
     { 
-        get => employeeId; 
-        set
-        {
-            if (employeeId != value) 
-            { 
-                employeeId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => employeeId;
+        set => SetProperty(ref employeeId, value);
     }
 
     /// <summary>
@@ -41,15 +34,8 @@ public class OperationsPerformed : AccountingDocument
     /// </summary>
     public Guid OperationId 
     { 
-        get => operationId; 
-        set
-        {
-            if (operationId != value)
-            {
-                operationId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => operationId;
+        set => SetProperty(ref operationId, value);
     }
 
     /// <summary>
@@ -57,15 +43,8 @@ public class OperationsPerformed : AccountingDocument
     /// </summary>
     public Guid? ReplacingMaterialId 
     { 
-        get => replacingMaterialId; 
-        set
-        {
-            if (replacingMaterialId != value)
-            {
-                replacingMaterialId = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => replacingMaterialId;
+        set => SetProperty(ref replacingMaterialId, value);
     }
 
     /// <summary>
@@ -74,14 +53,7 @@ public class OperationsPerformed : AccountingDocument
     public long Quantity
     {
         get => quantity;
-        set
-        {
-            if (quantity != value) 
-            {
-                quantity = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref quantity, value);
     }
 
     /// <summary>
@@ -89,15 +61,8 @@ public class OperationsPerformed : AccountingDocument
     /// </summary>
     public decimal Salary 
     { 
-        get => salary; 
-        set
-        {
-            if (salary != value)
-            {
-                salary = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => salary;
+        set => SetProperty(ref salary, value);
     }
 
     /// <summary>
@@ -105,15 +70,8 @@ public class OperationsPerformed : AccountingDocument
     /// </summary>
     public bool? DoubleRate 
     { 
-        get => doubleRate; 
-        set
-        {
-            if (doubleRate != value)
-            {
-                doubleRate = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => doubleRate;
+        set => SetProperty(ref doubleRate, value);
     }
 
     /// <summary>
@@ -123,14 +81,7 @@ public class OperationsPerformed : AccountingDocument
     public bool SkipMaterial
     {
         get => skipMaterial;
-        set
-        {
-            if (skipMaterial != value)
-            {
-                skipMaterial = value;
-                NotifyPropertyChanged();
-            }
-        }
+        set => SetProperty(ref skipMaterial, value);
     }
 
     /// <summary>

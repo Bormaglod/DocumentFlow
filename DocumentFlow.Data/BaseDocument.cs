@@ -24,29 +24,15 @@ public abstract class BaseDocument : DocumentInfo, IBaseDocument, IComparable, I
     [DenyCopying]
     public DateTime? DocumentDate 
     { 
-        get => documentDate; 
-        set
-        {
-            if (documentDate != value)
-            {
-                documentDate = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => documentDate;
+        set => SetProperty(ref documentDate, value);
     }
 
     [DenyCopying]
     public int? DocumentNumber 
     { 
-        get => documentNumber; 
-        set
-        {
-            if (documentNumber != value) 
-            { 
-                documentNumber = value;
-                NotifyPropertyChanged();
-            }
-        }
+        get => documentNumber;
+        set => SetProperty(ref documentNumber, value);
     }
 
     public int CompareTo(object? obj)
