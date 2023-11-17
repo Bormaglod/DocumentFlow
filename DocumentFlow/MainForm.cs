@@ -58,7 +58,7 @@ public partial class MainForm : Form, IDockingManager
         navigator = services.GetRequiredService<Navigator>();
     }
 
-    protected override void OnLoad(EventArgs e)
+    protected override async void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
 
@@ -84,7 +84,7 @@ public partial class MainForm : Form, IDockingManager
             timerCheckListener.Start();
             timerDatabaseListen.Start();
 
-            _ = CreateListener();
+            await CreateListener();
         }
 
         Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
@@ -136,10 +136,11 @@ public partial class MainForm : Form, IDockingManager
 
     #endregion
 
-    private void Listener()
+    private async Task CreateListener()
     {
-        using var conn = new NpgsqlConnection(database.ConnectionString);
-        conn.Open();
+        await using var conn = new NpgsqlConnection(database.ConnectionString);
+        await conn.OpenAsync();
+        
         conn.Notification += (o, e) =>
         {
             var options = new JsonSerializerOptions
@@ -157,25 +158,14 @@ public partial class MainForm : Form, IDockingManager
             }
         };
 
-        using (var cmd = new NpgsqlCommand("LISTEN db_notification", conn))
+        await using (var cmd = new NpgsqlCommand("LISTEN db_notification", conn))
         {
             cmd.ExecuteNonQuery();
         }
 
         while (true)
         {
-            conn.Wait();
-        }
-    }
-
-    private async Task CreateListener()
-    {
-        try
-        {
-            await Task.Run(Listener);
-        }
-        catch (Exception)
-        {
+            await conn.WaitAsync();
         }
     }
 
