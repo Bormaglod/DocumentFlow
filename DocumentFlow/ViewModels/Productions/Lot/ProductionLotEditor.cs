@@ -5,19 +5,20 @@
 // Date: 24.08.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Controls.Renderers;
-using DocumentFlow.Data;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
 using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -419,8 +420,7 @@ public partial class ProductionLotEditor : EditorPanel, IProductionLotEditor, ID
                     // добавим и проведем выполнение операции сотрудником
                     op = repo.AddAndAccept(op);
 
-                    var app = services.GetRequiredService<IHostApp>();
-                    app.SendNotify("operations_performed", op, MessageAction.Add);
+                    WeakReferenceMessenger.Default.Send(new EntityActionMessage("operations_performed", op, MessageAction.Add));
 
                     // получим сводную информацию - количество выполненных операций указанным сотрудником
                     var summary = repo.GetSummary(Lot, dialog.Operation, dialog.Employee);

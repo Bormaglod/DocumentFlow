@@ -5,6 +5,8 @@
 // Date: 28.12.2021
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Controls.Renderers;
@@ -19,6 +21,7 @@ using DocumentFlow.Data.Tools;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Properties;
 using DocumentFlow.ReportEngine;
 using DocumentFlow.Settings;
@@ -55,7 +58,7 @@ using SyncEnums = Syncfusion.WinForms.DataGrid.Enums;
 namespace DocumentFlow.Controls.PageContents;
 
 [ToolboxItem(false)]
-public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
+public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecipient<EntityActionMessage>
     where T : class, IIdentifier<Guid>
 {
     [GeneratedRegex("^I(.+)Browser$")]
@@ -170,6 +173,8 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
     {
         InitializeComponent();
 
+        WeakReferenceMessenger.Default.Register(this);
+
         this.services = services;
         this.pageManager = pageManager;
         this.repository = repository;
@@ -192,8 +197,6 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
 
             filter.SettingsLoaded();
         }
-
-        services.GetRequiredService<IHostApp>().OnAppNotify += App_OnAppNotify;
 
         toolBar = new PageToolBar(toolStrip1)
         {
@@ -271,6 +274,85 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
     protected BrowserSettings Settings => settings;
 
     protected T? CurrentDocument => gridContent.SelectedItem as T;
+
+    public void Receive(EntityActionMessage message)
+    {
+        if (message.EntityName == typeof(T).Name.Underscore() && gridContent.DataSource is IList<T> list)
+        {
+            switch (message.Action)
+            {
+                case MessageAction.Add:
+                    T addingDoc = (T?)message.Document ?? repository.Get(message.ObjectId, ignoreAdjustedQuery: true);
+                    AddRow(list, addingDoc);
+
+                    break;
+                case MessageAction.Delete:
+                    switch (message.Destination)
+                    {
+                        case MessageDestination.Object:
+                            var row = list.Cast<T>().FirstOrDefault(x => x.Id == message.ObjectId);
+                            if (row != null)
+                            {
+                                list.Remove(row);
+                            }
+
+                            break;
+                        case MessageDestination.List:
+                            RefreshBrowserList(message);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    break;
+                case MessageAction.Refresh:
+                    switch (message.Destination)
+                    {
+                        case MessageDestination.Object:
+                            T refreshDoc = (T?)message.Document ?? repository.Get(message.ObjectId, ignoreAdjustedQuery: true);
+                            var row = list.Cast<T>().FirstOrDefault(x => x.Id == refreshDoc.Id);
+                            if (row != null)
+                            {
+                                bool change = false;
+                                switch (refreshDoc)
+                                {
+                                    case IDirectory rDir:
+                                        change = ParentId == rDir.ParentId && (owner == null || owner.Id == rDir.OwnerId);
+                                        break;
+                                    case IDocumentInfo rDoc:
+                                        change = owner == null || owner.Id == rDoc.OwnerId;
+                                        break;
+                                }
+
+                                if (change)
+                                {
+                                    list[list.IndexOf(row)] = refreshDoc;
+                                }
+                                else
+                                {
+                                    list.Remove(row);
+                                }
+                            }
+                            else
+                            {
+                                AddRow(list, refreshDoc);
+                            }
+
+                            break;
+                        case MessageDestination.List:
+                            RefreshBrowserList(message);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
 
     public void RegisterReport(IReport report)
     {
@@ -1129,9 +1211,9 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
         }
     }
 
-    private void RefreshBrowserList(NotifyEventArgs e)
+    private void RefreshBrowserList(EntityActionMessage message)
     {
-        Guid idObj = e.Document?.Id ?? e.ObjectId;
+        Guid idObj = message.Document?.Id ?? message.ObjectId;
         if (idObj == Guid.Empty || idObj == owner?.Id)
         {
             RefreshView();
@@ -1192,85 +1274,6 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage
             }
 
             menu.Checked = column.Visible;
-        }
-    }
-
-    private void App_OnAppNotify(object? sender, NotifyEventArgs e)
-    {
-        if (e.EntityName == typeof(T).Name.Underscore() && gridContent.DataSource is IList<T> list)
-        {
-            switch (e.Action)
-            {
-                case MessageAction.Add:
-                    T addingDoc = (T?)e.Document ?? repository.Get(e.ObjectId, ignoreAdjustedQuery: true);
-                    AddRow(list, addingDoc);
-
-                    break;
-                case MessageAction.Delete:
-                    switch (e.Destination)
-                    {
-                        case MessageDestination.Object:
-                            var row = list.Cast<T>().FirstOrDefault(x => x.Id == e.ObjectId);
-                            if (row != null)
-                            {
-                                list.Remove(row);
-                            }
-
-                            break;
-                        case MessageDestination.List:
-                            RefreshBrowserList(e);
-                            break;
-                        default:
-                            break;
-                    }
-
-                    break;
-                case MessageAction.Refresh:
-                    switch (e.Destination)
-                    {
-                        case MessageDestination.Object:
-                            T refreshDoc = (T?)e.Document ?? repository.Get(e.ObjectId, ignoreAdjustedQuery: true);
-                            var row = list.Cast<T>().FirstOrDefault(x => x.Id == refreshDoc.Id);
-                            if (row != null)
-                            {
-                                bool change = false;
-                                switch (refreshDoc)
-                                {
-                                    case IDirectory rDir:
-                                        change = ParentId == rDir.ParentId && (owner == null || owner.Id == rDir.OwnerId);
-                                        break;
-                                    case IDocumentInfo rDoc:
-                                        change = owner == null || owner.Id == rDoc.OwnerId;
-                                        break;
-                                }
-
-                                if (change)
-                                {
-                                    list[list.IndexOf(row)] = refreshDoc;
-                                }
-                                else
-                                {
-                                    list.Remove(row);
-                                }
-                            }
-                            else
-                            {
-                                AddRow(list, refreshDoc);
-                            }
-
-                            break;
-                        case MessageDestination.List:
-                            RefreshBrowserList(e);
-                            break;
-                        default:
-                            break;
-                    }
-
-                    break;
-
-                default:
-                    break;
-            }
         }
     }
 

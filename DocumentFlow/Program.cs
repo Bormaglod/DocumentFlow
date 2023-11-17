@@ -109,7 +109,6 @@ internal static class Program
         services.AddTransient<AboutForm>();
         services.AddSingleton<Navigator>();
         services.AddSingleton<IDockingManager>(x => x.GetRequiredService<MainForm>());
-        services.AddSingleton<IHostApp>(x => x.GetRequiredService<MainForm>());
         services.AddSingleton<IPageManager, PageManager>();
         services.AddTransient<IBreadcrumb, Breadcrumb>();
         services.AddMinio(configureClient =>

@@ -14,7 +14,6 @@ using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Repository;
-using DocumentFlow.Data.Tools;
 using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
@@ -39,7 +38,7 @@ using System.ComponentModel;
 namespace DocumentFlow.Controls.PageContents;
 
 [ToolboxItem(false)]
-public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPageHeaderChangedMessage>
+public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPageHeaderChangedMessage>, IRecipient<EntityActionMessage>
 {
     public class GridFileSizeColumn : GridNumericColumn
     {
@@ -65,7 +64,8 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPag
     {
         InitializeComponent();
 
-        WeakReferenceMessenger.Default.Register(this);
+        WeakReferenceMessenger.Default.Register<EditorPageHeaderChangedMessage>(this);
+        WeakReferenceMessenger.Default.Register<EntityActionMessage>(this);
 
         this.services = services;
         this.dockingManager = dockingManager;
@@ -93,8 +93,6 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPag
         menuCreateDocument.Enabled = buttonAddDoc.Enabled;
         menuEditDocument.Enabled = buttonEditDoc.Enabled;
         menuDeleteDocument.Enabled = buttonDeleteDoc.Enabled;
-
-        services.GetRequiredService<IHostApp>().OnAppNotify += App_OnAppNotify;
     }
 
     public IToolBar ToolBar => toolBar;
@@ -176,6 +174,26 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPag
         dockingManager.UpdateHeader(this);
     }
 
+    public void Receive(EntityActionMessage message)
+    {
+        switch (message.Action)
+        {
+            case MessageAction.Refresh:
+                switch (message.Destination)
+                {
+                    case MessageDestination.Object:
+                        if (message.ObjectId == Editor.DocumentInfo.Id && dockingManager.IsVisibility(this))
+                        {
+                            Editor.Reload();
+                        }
+
+                        break;
+                }
+
+                break;
+        }
+    }
+
     protected bool Save(bool sendNotify)
     {
         MessageAction action;
@@ -195,8 +213,7 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPag
 
             if (sendNotify)
             {
-                var app = services.GetRequiredService<IHostApp>();
-                app.SendNotify(MessageDestination.Object, document.GetType().Name.Underscore(), document.Id, action);
+                WeakReferenceMessenger.Default.Send(new EntityActionMessage(document.GetType().Name.Underscore(), document.Id, action));
             }
         }
         catch (RepositoryException e)
@@ -297,9 +314,7 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPag
             try
             {
                 Editor.Accept();
-
-                var app = services.GetRequiredService<IHostApp>();
-                app.SendNotify(MessageDestination.Object, Editor.DocumentInfo.GetType().Name.Underscore(), Editor.DocumentInfo.Id, MessageAction.Refresh);
+                WeakReferenceMessenger.Default.Send(new EntityActionMessage(Editor.DocumentInfo.GetType().Name.Underscore(), Editor.DocumentInfo.Id, MessageAction.Refresh));
 
                 return true;
             }
@@ -374,32 +389,6 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPag
             report.Show(Editor.DocumentInfo);
         }
     }
-
-    private void App_OnAppNotify(object? sender, NotifyEventArgs e)
-    {
-        switch (e.Action)
-        {
-            case MessageAction.Refresh:
-                switch (e.Destination)
-                {
-                    case MessageDestination.Object:
-                        if (e.ObjectId == Editor.DocumentInfo.Id && dockingManager.IsVisibility(this))
-                        {
-                            Editor.Reload();
-                        }
-
-                        break;
-                }
-
-                break;
-        }
-    }
-
-    /*private void Editor_HeaderChanged(object? sender, EventArgs e)
-    {
-        Text = Editor.Header;
-        dockingManager.UpdateHeader(this);
-    }*/
 
     private void GridDocuments_AutoGeneratingColumn(object sender, AutoGeneratingColumnArgs e)
     {

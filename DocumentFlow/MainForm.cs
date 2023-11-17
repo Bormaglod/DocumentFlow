@@ -5,6 +5,8 @@
 // Date: 03.06.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.AppInstallData;
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Interfaces;
@@ -12,6 +14,7 @@ using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Tools;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Settings;
 using DocumentFlow.Tools;
 using DocumentFlow.Tools.Minio;
@@ -33,7 +36,7 @@ using System.Text.Json.Serialization;
 
 namespace DocumentFlow;
 
-public partial class MainForm : Form, IDockingManager, IHostApp
+public partial class MainForm : Form, IDockingManager
 {
     private readonly IServiceProvider services;
     private readonly IDatabase database;
@@ -42,8 +45,6 @@ public partial class MainForm : Form, IDockingManager, IHostApp
     private readonly Navigator navigator;
 
     private readonly ConcurrentQueue<NotifyMessage> notifies = new();
-
-    public event EventHandler<NotifyEventArgs>? OnAppNotify;
 
     public MainForm(IServiceProvider services, IDatabase database, IOptions<AppSettings> appSettings, IOptionsSnapshot<LocalSettings> localSettings)
     {
@@ -87,45 +88,6 @@ public partial class MainForm : Form, IDockingManager, IHostApp
         }
 
         Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
-    }
-
-    public void SendNotify(string entityName, IDocumentInfo document, MessageAction action)
-    {
-        OnAppNotify?.Invoke(this, new NotifyEventArgs(entityName, document, action));
-    }
-
-    public void SendNotify(MessageDestination destination, string? entityName, Guid objectId, MessageAction action)
-    {
-        if (string.IsNullOrEmpty(entityName))
-        {
-            return;
-        }
-
-        NotifyEventArgs? args = null;
-        switch (destination)
-        {
-            case MessageDestination.Object:
-                args = new(entityName, objectId, action);
-                break;
-            case MessageDestination.List:
-                if (objectId == Guid.Empty)
-                {
-                    args = new(entityName);
-                }
-                else
-                {
-                    args = new(entityName, objectId);
-                }
-
-                break;
-            default:
-                break;
-        }
-
-        if (args != null)
-        {
-            OnAppNotify?.Invoke(this, args);
-        }
     }
 
     #region IDockingManager interface implemented
@@ -240,9 +202,38 @@ public partial class MainForm : Form, IDockingManager, IHostApp
 
     private void TimerDatabaseListen_Tick(object sender, EventArgs e)
     {
-        if (appSettings.UseDataNotification && notifies.TryDequeue(out NotifyMessage? message))
+        if (appSettings.UseDataNotification && notifies.TryDequeue(out NotifyMessage? notify))
         {
-            SendNotify(message.Destination, message.EntityName, message.ObjectId, message.Action);
+            if (string.IsNullOrEmpty(notify.EntityName))
+            {
+                return;
+            }
+
+            EntityActionMessage? message = null;
+            switch (notify.Destination)
+            {
+                case MessageDestination.Object:
+                    message = new(notify.EntityName, notify.ObjectId, notify.Action);
+                    break;
+                case MessageDestination.List:
+                    if (notify.ObjectId == Guid.Empty)
+                    {
+                        message = new(notify.EntityName);
+                    }
+                    else
+                    {
+                        message = new(notify.EntityName, notify.ObjectId);
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+
+            if (message != null)
+            {
+                WeakReferenceMessenger.Default.Send(message);
+            }
         }
     }
 
