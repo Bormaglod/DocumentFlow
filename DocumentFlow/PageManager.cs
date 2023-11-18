@@ -221,11 +221,12 @@ public class PageManager : IPageManager
 
     private static void ActivatePage(IDockingManager docking, IPage page)
     {
-        if (!docking.IsVisibility(page))
+        bool refreshRequired = !docking.IsVisibility(page);
+        docking.Activate(page);
+
+        if (refreshRequired)
         {
             page.RefreshPage();
         }
-
-        docking.Activate(page);
     }
 }
