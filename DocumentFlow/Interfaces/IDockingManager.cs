@@ -13,6 +13,5 @@ public interface IDockingManager
 {
     bool IsVisibility(IPage page);
     void Activate(IPage page);
-    void UpdateHeader(IPage page);
     void Close(IPage page);
 }

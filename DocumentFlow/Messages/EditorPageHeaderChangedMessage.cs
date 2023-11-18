@@ -5,11 +5,14 @@
 // Date: 15.11.2023
 //-----------------------------------------------------------------------
 
-using CommunityToolkit.Mvvm.Messaging.Messages;
+using DocumentFlow.Controls.Interfaces;
 
 namespace DocumentFlow.Messages;
 
-public class EditorPageHeaderChangedMessage : ValueChangedMessage<string>
+public class EditorPageHeaderChangedMessage
 {
-    public EditorPageHeaderChangedMessage(string value) : base(value) { }
+    public EditorPageHeaderChangedMessage(IPage page, string header) => (Page, Header) = (page, header);
+
+    public IPage Page { get; }
+    public string Header { get; }
 }

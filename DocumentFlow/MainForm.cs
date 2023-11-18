@@ -36,7 +36,7 @@ using System.Text.Json.Serialization;
 
 namespace DocumentFlow;
 
-public partial class MainForm : Form, IDockingManager
+public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHeaderChangedMessage>
 {
     private readonly IServiceProvider services;
     private readonly IDatabase database;
@@ -50,12 +50,22 @@ public partial class MainForm : Form, IDockingManager
     {
         InitializeComponent();
 
+        WeakReferenceMessenger.Default.Register(this);
+
         this.services = services;
         this.database = database;
         this.appSettings = appSettings.Value;
         this.localSettings = localSettings.Value;
 
         navigator = services.GetRequiredService<Navigator>();
+    }
+
+    public void Receive(EditorPageHeaderChangedMessage message)
+    {
+        if (message.Page is Control control)
+        {
+            dockingManager.SetDockLabel(control, message.Header);
+        }
     }
 
     protected override async void OnLoad(EventArgs e)
@@ -105,14 +115,6 @@ public partial class MainForm : Form, IDockingManager
             {
                 dockingManager.ActivateControl(control);
             }
-        }
-    }
-
-    void IDockingManager.UpdateHeader(IPage page)
-    {
-        if (page is Control control)
-        {
-            dockingManager.SetDockLabel(control, control.Text);
         }
     }
 

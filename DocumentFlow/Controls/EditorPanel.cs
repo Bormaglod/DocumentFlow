@@ -208,7 +208,7 @@ public partial class EditorPanel : UserControl, IEditor
             header = $"{currentDocument}{readOnlyText}";
         }
 
-        WeakReferenceMessenger.Default.Send(new EditorPageHeaderChangedMessage(header));
+        WeakReferenceMessenger.Default.Send(new EditorPageHeaderChangedMessage(EditorPage, header));
     }
 
     protected IDirectory GetDirectory()

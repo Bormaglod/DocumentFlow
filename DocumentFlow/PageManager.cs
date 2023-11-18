@@ -160,6 +160,9 @@ public class PageManager : IPageManager
                     directoryEditor.ParentId = parentId;
                 }
 
+                pages.Add(page);
+                docking.Activate(page);
+
                 if (editor is IEditor e)
                 {
                     e.EnabledEditor = !readOnly;
@@ -173,9 +176,6 @@ public class PageManager : IPageManager
                         page.CreatePage();
                     }
                 }
-
-                pages.Add(page);
-                docking.Activate(page);
             }
             catch (PostgresException e)
             {

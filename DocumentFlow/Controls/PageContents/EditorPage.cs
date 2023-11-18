@@ -38,7 +38,7 @@ using System.ComponentModel;
 namespace DocumentFlow.Controls.PageContents;
 
 [ToolboxItem(false)]
-public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPageHeaderChangedMessage>, IRecipient<EntityActionMessage>
+public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityActionMessage>
 {
     public class GridFileSizeColumn : GridNumericColumn
     {
@@ -64,8 +64,7 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPag
     {
         InitializeComponent();
 
-        WeakReferenceMessenger.Default.Register<EditorPageHeaderChangedMessage>(this);
-        WeakReferenceMessenger.Default.Register<EntityActionMessage>(this);
+        WeakReferenceMessenger.Default.Register(this);
 
         this.services = services;
         this.dockingManager = dockingManager;
@@ -166,12 +165,6 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EditorPag
         {
             Editor.Create();
         }
-    }
-
-    public void Receive(EditorPageHeaderChangedMessage message)
-    {
-        Text = message.Value;
-        dockingManager.UpdateHeader(this);
     }
 
     public void Receive(EntityActionMessage message)
