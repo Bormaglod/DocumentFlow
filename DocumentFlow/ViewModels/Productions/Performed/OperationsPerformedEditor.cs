@@ -81,6 +81,7 @@ public partial class OperationsPerformedEditor : EditorPanel, IOperationsPerform
         selectOper.DataBindings.Add(nameof(selectOper.SelectedItem), DataContext, nameof(OperationsPerformed.OperationId), false, DataSourceUpdateMode.OnPropertyChanged);
         textMaterialSpec.DataBindings.Add(nameof(textMaterialSpec.TextValue), DataContext, nameof(OperationsPerformed.MaterialName), false, DataSourceUpdateMode.Never);
         selectMaterial.DataBindings.Add(nameof(selectMaterial.SelectedItem), DataContext, nameof(OperationsPerformed.ReplacingMaterialId), true, DataSourceUpdateMode.OnPropertyChanged, Guid.Empty);
+        checkSkipMaterial.DataBindings.Add(nameof(checkSkipMaterial.CheckValue), DataContext, nameof(OperationsPerformed.SkipMaterial), true, DataSourceUpdateMode.OnPropertyChanged);
         textQuantity.DataBindings.Add(nameof(textQuantity.IntegerValue), DataContext, nameof(OperationsPerformed.Quantity), false, DataSourceUpdateMode.OnPropertyChanged);
         selectEmp.DataBindings.Add(nameof(selectEmp.SelectedItem), DataContext, nameof(OperationsPerformed.EmployeeId), false, DataSourceUpdateMode.OnPropertyChanged);
         textSalary.DataBindings.Add(nameof(textSalary.DecimalValue), DataContext, nameof(OperationsPerformed.Salary), false, DataSourceUpdateMode.OnPropertyChanged);
@@ -189,12 +190,16 @@ public partial class OperationsPerformedEditor : EditorPanel, IOperationsPerform
             }
 
             Performed.MaterialName = materialName;
-            selectMaterial.EnabledEditor = operation.MaterialId != null;
+            selectMaterial.Enabled = operation.MaterialId != null;
+            checkSkipMaterial.Enabled = operation.MaterialId != null;
+            textMaterialSpec.Enabled = operation.MaterialId != null;
         }
         else
         {
             Performed.MaterialName = string.Empty;
-            selectMaterial.EnabledEditor = false;
+            textMaterialSpec.Enabled = false;
+            selectMaterial.Enabled = false;
+            checkSkipMaterial.Enabled = false;
         }
     }
 
@@ -227,5 +232,11 @@ public partial class OperationsPerformedEditor : EditorPanel, IOperationsPerform
     private void SelectEmp_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
         pageManager.ShowEditor<IOurEmployeeEditor>(e.Document);
+    }
+
+    private void CheckSkipMaterial_CheckValueChanged(object sender, EventArgs e)
+    {
+        selectMaterial.Enabled = !checkSkipMaterial.CheckValue!.Value;
+        textMaterialSpec.Enabled = !checkSkipMaterial.CheckValue!.Value;
     }
 }

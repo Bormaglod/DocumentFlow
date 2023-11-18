@@ -40,6 +40,7 @@
             selectEmp = new Controls.Editors.DfDirectorySelectBox();
             textSalary = new Controls.Editors.DfCurrencyTextBox();
             checkDoubleRate = new Controls.Editors.DfCheckBox();
+            checkSkipMaterial = new Controls.Editors.DfCheckBox();
             SuspendLayout();
             // 
             // textDocNumber
@@ -249,7 +250,7 @@
             textQuantity.HeaderVisible = true;
             textQuantity.HeaderWidth = 210;
             textQuantity.IntegerValue = 0L;
-            textQuantity.Location = new Point(0, 256);
+            textQuantity.Location = new Point(0, 288);
             textQuantity.Margin = new Padding(3, 4, 3, 4);
             textQuantity.Name = "textQuantity";
             textQuantity.NumberGroupSeparator = " ";
@@ -274,7 +275,7 @@
             selectEmp.HeaderTextAlign = ContentAlignment.TopLeft;
             selectEmp.HeaderVisible = true;
             selectEmp.HeaderWidth = 210;
-            selectEmp.Location = new Point(0, 288);
+            selectEmp.Location = new Point(0, 320);
             selectEmp.Margin = new Padding(3, 4, 3, 4);
             selectEmp.Name = "selectEmp";
             selectEmp.Padding = new Padding(0, 0, 0, 7);
@@ -300,7 +301,7 @@
             textSalary.HeaderTextAlign = ContentAlignment.TopLeft;
             textSalary.HeaderVisible = true;
             textSalary.HeaderWidth = 210;
-            textSalary.Location = new Point(0, 320);
+            textSalary.Location = new Point(0, 352);
             textSalary.Margin = new Padding(3, 4, 3, 4);
             textSalary.Name = "textSalary";
             textSalary.Padding = new Padding(0, 0, 0, 7);
@@ -322,12 +323,35 @@
             checkDoubleRate.HeaderTextAlign = ContentAlignment.TopLeft;
             checkDoubleRate.HeaderVisible = true;
             checkDoubleRate.HeaderWidth = 210;
-            checkDoubleRate.Location = new Point(0, 352);
+            checkDoubleRate.Location = new Point(0, 384);
             checkDoubleRate.Margin = new Padding(4, 3, 4, 3);
             checkDoubleRate.Name = "checkDoubleRate";
             checkDoubleRate.Padding = new Padding(0, 0, 0, 9);
             checkDoubleRate.Size = new Size(844, 32);
             checkDoubleRate.TabIndex = 11;
+            // 
+            // checkSkipMaterial
+            // 
+            checkSkipMaterial.AllowThreeState = false;
+            checkSkipMaterial.CheckValue = null;
+            checkSkipMaterial.Dock = DockStyle.Top;
+            checkSkipMaterial.EditorFitToSize = false;
+            checkSkipMaterial.EditorWidth = 20;
+            checkSkipMaterial.EnabledEditor = true;
+            checkSkipMaterial.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
+            checkSkipMaterial.Header = "Материал не использовать";
+            checkSkipMaterial.HeaderAutoSize = false;
+            checkSkipMaterial.HeaderDock = DockStyle.Left;
+            checkSkipMaterial.HeaderTextAlign = ContentAlignment.TopLeft;
+            checkSkipMaterial.HeaderVisible = true;
+            checkSkipMaterial.HeaderWidth = 210;
+            checkSkipMaterial.Location = new Point(0, 256);
+            checkSkipMaterial.Margin = new Padding(4, 3, 4, 3);
+            checkSkipMaterial.Name = "checkSkipMaterial";
+            checkSkipMaterial.Padding = new Padding(0, 0, 0, 9);
+            checkSkipMaterial.Size = new Size(844, 32);
+            checkSkipMaterial.TabIndex = 12;
+            checkSkipMaterial.CheckValueChanged += CheckSkipMaterial_CheckValueChanged;
             // 
             // OperationsPerformedEditor
             // 
@@ -337,6 +361,7 @@
             Controls.Add(textSalary);
             Controls.Add(selectEmp);
             Controls.Add(textQuantity);
+            Controls.Add(checkSkipMaterial);
             Controls.Add(selectMaterial);
             Controls.Add(textMaterialSpec);
             Controls.Add(selectOper);
@@ -346,7 +371,7 @@
             Controls.Add(dateDocument);
             Controls.Add(textDocNumber);
             Name = "OperationsPerformedEditor";
-            Size = new Size(844, 394);
+            Size = new Size(844, 470);
             ResumeLayout(false);
         }
 
@@ -364,5 +389,6 @@
         private Controls.Editors.DfDirectorySelectBox selectEmp;
         private Controls.Editors.DfCurrencyTextBox textSalary;
         private Controls.Editors.DfCheckBox checkDoubleRate;
+        private Controls.Editors.DfCheckBox checkSkipMaterial;
     }
 }
