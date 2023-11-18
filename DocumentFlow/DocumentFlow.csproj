@@ -13,13 +13,13 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
 		<NeutralLanguage>ru</NeutralLanguage>
-		<Version>$(VersionPrefix)23.11.17</Version>
+		<Version>$(VersionPrefix)23.11.18</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.1.21" />
 		<PackageReference Include="FastReport.Data.Postgres" Version="2023.3.7" />
-		<PackageReference Include="FastReport.OpenSource" Version="2023.3.11" />
+		<PackageReference Include="FastReport.OpenSource" Version="2023.3.13" />
 		<PackageReference Include="FluentDateTime" Version="2.1.0" />
 		<PackageReference Include="Humanizer.Core" Version="2.14.1" />
 		<PackageReference Include="itext7" Version="8.0.2" />
