@@ -72,6 +72,8 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
     {
         base.OnLoad(e);
 
+        Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
+
         dockingManager.DocumentWindowSettings.ShowTabList = true;
 
         WindowState = localSettings.MainForm.WindowState;
@@ -96,8 +98,6 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
 
             await CreateListener();
         }
-
-        Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
     }
 
     #region IDockingManager interface implemented
