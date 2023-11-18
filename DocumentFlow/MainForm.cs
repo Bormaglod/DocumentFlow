@@ -68,11 +68,9 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
         }
     }
 
-    protected override async void OnLoad(EventArgs e)
+    protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-
-        Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
 
         dockingManager.DocumentWindowSettings.ShowTabList = true;
 
@@ -96,8 +94,10 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
             timerCheckListener.Start();
             timerDatabaseListen.Start();
 
-            await CreateListener();
+            Task.Run(CreateListener);
         }
+
+        Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
     }
 
     #region IDockingManager interface implemented
