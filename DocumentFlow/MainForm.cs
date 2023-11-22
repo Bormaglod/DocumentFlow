@@ -31,6 +31,7 @@ using Syncfusion.Windows.Forms.Tools;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -45,6 +46,7 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
     private readonly Navigator navigator;
 
     private readonly ConcurrentQueue<NotifyMessage> notifies = new();
+    private readonly CancellationTokenSource cancelTokenSource;
 
     public MainForm(IServiceProvider services, IDatabase database, IOptions<AppSettings> appSettings, IOptionsSnapshot<LocalSettings> localSettings)
     {
@@ -58,6 +60,8 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
         this.localSettings = localSettings.Value;
 
         navigator = services.GetRequiredService<Navigator>();
+
+        cancelTokenSource = new CancellationTokenSource();
     }
 
     public void Receive(EditorPageHeaderChangedMessage message)
@@ -94,7 +98,9 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
             timerCheckListener.Start();
             timerDatabaseListen.Start();
 
-            Task.Run(CreateListener);
+            CancellationToken token = cancelTokenSource.Token;
+
+            Task.Run(() => CreateListener(token), token);
         }
 
         Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
@@ -138,10 +144,10 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
 
     #endregion
 
-    private async Task CreateListener()
+    private async Task CreateListener(CancellationToken token)
     {
         await using var conn = new NpgsqlConnection(database.ConnectionString);
-        await conn.OpenAsync();
+        await conn.OpenAsync(token);
         
         conn.Notification += (o, e) =>
         {
@@ -165,10 +171,12 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
             cmd.ExecuteNonQuery();
         }
 
-        while (true)
+        while (!token.IsCancellationRequested)
         {
-            await conn.WaitAsync();
+            await conn.WaitAsync(token);
         }
+
+        await Task.CompletedTask;
     }
 
     private void ExecuteUpdateInstaller(string installerFileName)

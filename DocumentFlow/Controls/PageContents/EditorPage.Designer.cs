@@ -71,6 +71,9 @@ namespace DocumentFlow.Controls.PageContents
             label2 = new Label();
             label1 = new Label();
             saveFileDialog1 = new SaveFileDialog();
+            buttonScan = new ToolStripSplitButton();
+            buttonSingleScan = new ToolStripMenuItem();
+            buttonMultipleScan = new ToolStripMenuItem();
             editorToolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)container).BeginInit();
             container.Panel2.SuspendLayout();
@@ -294,7 +297,7 @@ namespace DocumentFlow.Controls.PageContents
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { buttonSaveDoc, toolStripSeparator4, buttonAddDoc, buttonEditDoc, buttonDeleteDoc, toolStripSeparator1, buttonOpenDoc, buttonDocumentRefresh });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { buttonSaveDoc, buttonOpenDoc, toolStripSeparator4, buttonAddDoc, buttonEditDoc, buttonDeleteDoc, toolStripSeparator1, buttonDocumentRefresh, buttonScan });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(1080, 25);
@@ -659,6 +662,31 @@ namespace DocumentFlow.Controls.PageContents
             label1.TabIndex = 0;
             label1.Text = "Идентификатор";
             // 
+            // buttonScan
+            // 
+            buttonScan.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            buttonScan.DropDownItems.AddRange(new ToolStripItem[] { buttonSingleScan, buttonMultipleScan });
+            buttonScan.Image = DocumentFlow.Properties.Resources.icons8_rescan_document_16;
+            buttonScan.ImageTransparentColor = Color.Magenta;
+            buttonScan.Name = "buttonScan";
+            buttonScan.Size = new Size(32, 22);
+            buttonScan.Text = "Сканировать один лист/документ";
+            buttonScan.ButtonClick += ButtonScan_ButtonClick;
+            // 
+            // buttonSingleScan
+            // 
+            buttonSingleScan.Name = "buttonSingleScan";
+            buttonSingleScan.Size = new Size(317, 22);
+            buttonSingleScan.Text = "Сканировать один лист/документ";
+            buttonSingleScan.Click += ButtonScan_ButtonClick;
+            // 
+            // buttonMultipleScan
+            // 
+            buttonMultipleScan.Name = "buttonMultipleScan";
+            buttonMultipleScan.Size = new Size(317, 22);
+            buttonMultipleScan.Text = "Сканировать несколько листов/документов";
+            buttonMultipleScan.Click += ButtonMultipleScan_Click;
+            // 
             // EditorPage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -734,5 +762,8 @@ namespace DocumentFlow.Controls.PageContents
         private ToolStripMenuItem menuSaveDocument;
         private ToolStripSeparator toolStripSeparator5;
         private SaveFileDialog saveFileDialog1;
+        private ToolStripSplitButton buttonScan;
+        private ToolStripMenuItem buttonSingleScan;
+        private ToolStripMenuItem buttonMultipleScan;
     }
 }

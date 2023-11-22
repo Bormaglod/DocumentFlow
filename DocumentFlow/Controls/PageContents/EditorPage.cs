@@ -235,7 +235,7 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
 
         RefreshInfo(document);
         RefreshDocumentRefs(document.Id);
-        
+
         Editor.RegisterNestedBrowsers();
 
         UpdateAcceptButtons();
@@ -524,5 +524,14 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
                     });
             }
         }
+    }
+
+    private void ButtonScan_ButtonClick(object sender, EventArgs e)
+    {
+    }
+    
+    private void ButtonMultipleScan_Click(object sender, EventArgs e)
+    {
+
     }
 }
