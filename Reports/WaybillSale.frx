@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Name="Накладная" ReportInfo.Author="Тепляшин С.В." ReportInfo.Version="2023.9.16" ReportInfo.Created="11/13/2022 12:33:16" ReportInfo.Modified="09/16/2023 16:39:39" ReportInfo.CreatorVersion="2022.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Name="Накладная" ReportInfo.Author="Тепляшин С.В." ReportInfo.Version="2023.12.1" ReportInfo.Created="11/13/2022 12:33:16" ReportInfo.Modified="12/01/2023 19:39:28" ReportInfo.CreatorVersion="2022.2.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,7 +58,7 @@ namespace FastReport
 }
 </ScriptText>
   <Dictionary>
-    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq8ZkN6qUj4G/zvKvLeJ9DDB6WCp22J48oQEWWvz8/J/NwO6Y6UUodscOeG7FxyIdJovvsHYyLmOz9CwVs09wGfvNYy5CcKqJf/3GvK3CjET8=">
+    <PostgresDataConnection Name="Connection" ConnectionString="rijcmlq8ZkN6qUj4G/zvKvLeJ9DDB6WCp22J48oQEWWvz8/J/NwO6Y6UUodscOeG7FxyIdJovvsHYyLmOz9CwVs09wGfrMsXhAnbFOGYh4JgWqcPBE=">
       <TableDataSource Name="waybill_sale" DataType="System.Int32" PropName="public_waybill_sale" Enabled="true" TableName="public.&quot;waybill_sale&quot;" SelectCommand="select&#13;&#10;	ws.*,&#13;&#10;	c.item_name as contractor_name,&#13;&#10;	c.inn as contractor_inn,&#13;&#10;	o.item_name as org_name,&#13;&#10;	o.inn as org_inn,&#13;&#10;	o.address as org_address&#13;&#10;from waybill_sale ws &#13;&#10;	left join contractor c on c.id = ws.contractor_id&#13;&#10;	join organization o on o.id = ws.organization_id&#13;&#10;where ws.id = :waybill_id">
         <Column Name="id" DataType="System.Guid"/>
         <Column Name="owner_id" DataType="System.Guid"/>
@@ -86,7 +86,7 @@ namespace FastReport
         <Column Name="org_address" DataType="System.String"/>
         <CommandParameter Name="waybill_id" DataType="40" Expression="[id]" DefaultValue="5a6102ae-d43f-4bc4-a175-9755361ee025"/>
       </TableDataSource>
-      <TableDataSource Name="Table" Alias="waybill_sale_rows" DataType="System.Int32" Enabled="true" SelectCommand="select&#13;&#10;	coalesce(p.doc_name, p.item_name) as item_name,&#13;&#10;	m.abbreviation,&#13;&#10;	sum(wsp.amount) as amount,&#13;&#10;	wsp.price,&#13;&#10;	sum(wsp.product_cost) as product_cost&#13;&#10;from waybill_sale_price wsp &#13;&#10;	join product p on p.id = wsp.reference_id&#13;&#10;	join measurement m on m.id = p.measurement_id &#13;&#10;where wsp.owner_id = :waybill_id&#13;&#10;group by p.doc_name, p.item_name, m.abbreviation, wsp.price">
+      <TableDataSource Name="Table" Alias="waybill_sale_rows" DataType="System.Int32" Enabled="true" SelectCommand="select&#13;&#10;	coalesce(p.doc_name, p.item_name) as item_name,&#13;&#10;	m.abbreviation,&#13;&#10;	sum(wsp.amount) as amount,&#13;&#10;	wsp.price,&#13;&#10;	sum(wsp.product_cost) as product_cost&#13;&#10;from waybill_sale_price wsp &#13;&#10;	join product p on p.id = wsp.reference_id&#13;&#10;	left join measurement m on m.id = p.measurement_id &#13;&#10;where wsp.owner_id = :waybill_id&#13;&#10;group by p.doc_name, p.item_name, m.abbreviation, wsp.price">
         <Column Name="price" DataType="System.Decimal"/>
         <Column Name="item_name" DataType="System.String"/>
         <Column Name="abbreviation" DataType="System.String"/>
@@ -103,6 +103,7 @@ namespace FastReport
       </TableDataSource>
     </PostgresDataConnection>
     <Parameter Name="id" DataType="System.String"/>
+    <Total Name="WaybillRowCount" TotalType="Count" Evaluator="Data1" PrintOn="DataFooter1"/>
   </Dictionary>
   <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
     <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="85.05" CanGrow="true">
@@ -141,7 +142,7 @@ namespace FastReport
         <TextObject Name="Text22" Left="425.25" Top="49.14" Width="179.55" Height="24.57" Text="Всего (с учётом НДС):" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <TextObject Name="Text24" Left="604.8" Top="24.57" Width="113.4" Height="24.57" Border.Lines="All" Text="[waybill_summary.tax_value]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt, style=Bold" Trimming="EllipsisCharacter"/>
         <TextObject Name="Text25" Left="604.8" Top="49.14" Width="113.4" Height="24.57" Border.Lines="All" Text="[waybill_summary.full_cost]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt, style=Bold" Trimming="EllipsisCharacter"/>
-        <TextObject Name="Text26" Top="85.05" Width="718.2" Height="18.9" Text="Всего наименований [waybill_summary.row_count], на сумму [RurPhrase([waybill_summary.full_cost])]" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text26" Top="85.05" Width="718.2" Height="18.9" Text="Всего наименований [WaybillRowCount], на сумму [RurPhrase([waybill_summary.full_cost])]" VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text23" Left="604.8" Width="113.4" Height="24.57" Border.Lines="All" Text="[waybill_summary.product_cost]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt, style=Bold" Trimming="EllipsisCharacter"/>
         <TextObject Name="Text27" Top="103.95" Width="718.2" Height="18.9" CanGrow="true" Text="[ToWordsRu([waybill_summary.full_cost])]" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <TextObject Name="Text28" Top="122.85" Width="718.2" Height="18.9" Border.Lines="Bottom" Border.Width="2" CanGrow="true" Text="В том числе НДС(20%) [LowerCase(ToWordsRu([waybill_summary.tax_value]))]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" VertAlign="Center" WordWrap="false" Font="Arial, 10pt, style=Bold" Trimming="EllipsisCharacter"/>
