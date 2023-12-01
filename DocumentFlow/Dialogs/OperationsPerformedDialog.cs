@@ -88,6 +88,7 @@ public partial class OperationsPerformedDialog : Form, IOperationsPerformedDialo
 
         var obj = new OperationsPerformed()
         {
+            DocumentDate = dateTime.DateTimeValue,
             EmployeeId = selectEmp.SelectedItem,
             OperationId = selectOperation.SelectedItem,
             ReplacingMaterialId = selectMaterial.SelectedItem == Guid.Empty ? null : selectMaterial.SelectedItem,
