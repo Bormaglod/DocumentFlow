@@ -1702,7 +1702,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
 
     private void ToolStripPrintList_Click(object sender, EventArgs e)
     {
-        var list = gridContent.View.Records.Select(x => x.Data).OfType<T>();
+        var list = gridContent.View.Records.Select(x => x.Data).OfType<T>().ToList();
 
         string dataName = typeof(T).Name;
 
