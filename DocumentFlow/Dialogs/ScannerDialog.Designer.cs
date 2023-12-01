@@ -38,8 +38,8 @@
             toolStrip2 = new ToolStrip();
             buttonDeletePage = new ToolStripButton();
             panel1 = new Panel();
-            buttonSave = new Syncfusion.WinForms.Controls.SfButton();
             buttonScan = new Syncfusion.WinForms.Controls.SfButton();
+            buttonSave = new Syncfusion.WinForms.Controls.SfButton();
             groupBox3 = new GroupBox();
             pictureBox1 = new PictureBox();
             toolStrip1 = new ToolStrip();
@@ -120,12 +120,12 @@
             // 
             comboDevices.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comboDevices.BackColor = Color.FromArgb(255, 255, 255);
-            comboDevices.BeforeTouchSize = new Size(225, 21);
+            comboDevices.BeforeTouchSize = new Size(225, 23);
             comboDevices.DropDownStyle = ComboBoxStyle.DropDownList;
             comboDevices.ForeColor = Color.FromArgb(68, 68, 68);
             comboDevices.Location = new Point(6, 22);
             comboDevices.Name = "comboDevices";
-            comboDevices.Size = new Size(225, 21);
+            comboDevices.Size = new Size(225, 23);
             comboDevices.Style = Syncfusion.Windows.Forms.VisualStyle.Office2016Colorful;
             comboDevices.TabIndex = 0;
             comboDevices.ThemeName = "Office2016Colorful";
@@ -181,18 +181,6 @@
             panel1.Size = new Size(310, 35);
             panel1.TabIndex = 0;
             // 
-            // buttonSave
-            // 
-            buttonSave.AccessibleName = "Button";
-            buttonSave.DialogResult = DialogResult.OK;
-            buttonSave.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            buttonSave.Location = new Point(526, 6);
-            buttonSave.Name = "buttonSave";
-            buttonSave.Size = new Size(96, 23);
-            buttonSave.TabIndex = 1;
-            buttonSave.Text = "Сохранить";
-            buttonSave.UseVisualStyleBackColor = true;
-            // 
             // buttonScan
             // 
             buttonScan.AccessibleName = "Button";
@@ -204,6 +192,18 @@
             buttonScan.Text = "Сканировать";
             buttonScan.UseVisualStyleBackColor = true;
             buttonScan.Click += ButtonScan_Click;
+            // 
+            // buttonSave
+            // 
+            buttonSave.AccessibleName = "Button";
+            buttonSave.DialogResult = DialogResult.OK;
+            buttonSave.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            buttonSave.Location = new Point(526, 6);
+            buttonSave.Name = "buttonSave";
+            buttonSave.Size = new Size(96, 23);
+            buttonSave.TabIndex = 1;
+            buttonSave.Text = "Сохранить";
+            buttonSave.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
@@ -346,8 +346,13 @@
             ClientSize = new Size(742, 547);
             Controls.Add(splitContainer1);
             Controls.Add(panel2);
+            DoubleBuffered = true;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "ScannerDialog";
             Padding = new Padding(6);
+            ShowIcon = false;
+            ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Сканирование";
             Load += ScannerDialog_Load;
