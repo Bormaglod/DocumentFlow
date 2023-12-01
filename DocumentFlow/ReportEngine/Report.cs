@@ -11,7 +11,7 @@ using DocumentFlow.Data.Tools;
 using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Settings;
-
+using DocumentFlow.Tools;
 using FastReport;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -74,7 +74,7 @@ public abstract class Report<T> : IReport
     {
         var ls = services.GetRequiredService<IOptions<LocalSettings>>().Value;
 
-        string file = BaseReport.CreatePdfDocument(report, ls.Report.Resolution);
+        string file = PdfHelper.CreateDocument(report, ls.Report.Resolution, PdfNamingStrategy.Guid);
 
         var attr = typeof(T).GetCustomAttribute<EntityNameAttribute>();
         string title = $"{attr?.Name ?? string.Empty} {entity?.ToString() ?? string.Empty}";

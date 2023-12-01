@@ -91,6 +91,9 @@
     <Compile Update="Dialogs\ProductPriceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Dialogs\ScannerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Dialogs\SelectDayDialog.cs">
       <SubType>Form</SubType>
     </Compile>

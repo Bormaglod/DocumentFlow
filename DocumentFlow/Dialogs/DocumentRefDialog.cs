@@ -7,7 +7,6 @@
 
 using DocumentFlow.Data;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Tools;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -38,15 +37,28 @@ public partial class DocumentRefDialog : Form, IDocumentRefDialog
 
         if (ShowDialog() == DialogResult.OK)
         {
-            var fileInfo = new FileInfo(fileNameWithPath);
-            document = new DocumentRefs
-            {
-                OwnerId = owner,
-                FileName = Path.GetFileName(fileNameWithPath),
-                Note = textNote.Text,
-                FileLength = fileInfo.Length
-            };
+            document = CreateDocumentRefs(owner);
+            return true;
+        }
 
+        document = default;
+        return false;
+    }
+
+    bool IDocumentRefDialog.Create(Guid owner, string fileName, [MaybeNullWhen(false)] out DocumentRefs document)
+    {
+        fileNameWithPath = fileName;
+
+        textFileName.Text = Path.GetFileName(fileNameWithPath);
+        textNote.Text = string.Empty;
+        checkBoxThumbnail.Checked = false;
+
+        textFileName.Enabled = false;
+        buttonSelectFile.Enabled = false;
+
+        if (ShowDialog() == DialogResult.OK)
+        {
+            document = CreateDocumentRefs(owner);
             return true;
         }
 
@@ -73,6 +85,18 @@ public partial class DocumentRefDialog : Form, IDocumentRefDialog
         }
 
         return false;
+    }
+
+    private DocumentRefs CreateDocumentRefs(Guid owner)
+    {
+        var fileInfo = new FileInfo(fileNameWithPath);
+        return new DocumentRefs
+        {
+            OwnerId = owner,
+            FileName = Path.GetFileName(fileNameWithPath),
+            Note = textNote.Text,
+            FileLength = fileInfo.Length
+        };
     }
 
     private void ButtonOk_Click(object sender, EventArgs e)

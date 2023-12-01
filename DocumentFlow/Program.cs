@@ -8,6 +8,7 @@ using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Ghostscript.API;
 using DocumentFlow.Interfaces;
 using DocumentFlow.ReportEngine;
+using DocumentFlow.Scanner;
 using DocumentFlow.Settings;
 using DocumentFlow.Settings.Authentification;
 using DocumentFlow.Tools;
@@ -111,6 +112,7 @@ internal static class Program
         services.AddSingleton<IDockingManager>(x => x.GetRequiredService<MainForm>());
         services.AddSingleton<IPageManager, PageManager>();
         services.AddTransient<IBreadcrumb, Breadcrumb>();
+        services.AddSingleton<IScanner, WIAScanner>();
         services.AddMinio(configureClient =>
         {
             var auth = new MinioAuth();

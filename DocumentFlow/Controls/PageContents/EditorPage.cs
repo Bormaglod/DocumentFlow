@@ -349,6 +349,38 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
         }
     }
 
+    private void AddDocumentRef(IDocumentRefDialog dialog, DocumentRefs document)
+    {
+        document.S3object = $"{document.OwnerId}_{document.FileName}";
+
+        var minio = services.GetRequiredService<IMinioClient>();
+        BucketExists.Run(minio, BucketName)
+            .ContinueWith(task =>
+            {
+                if (task.Result)
+                {
+                    return;
+                }
+                MakeBucket.Run(minio, BucketName).Wait();
+            });
+
+        PutObject.Run(minio, BucketName, document.S3object, dialog.FileNameWithPath).Wait();
+
+        if (dialog.CreateThumbnailImage)
+        {
+            document.CreateThumbnailImage(dialog.FileNameWithPath, settings.ImageSize);
+        }
+
+        var res = services
+            .GetRequiredService<IDocumentRefsRepository>()
+            .Add(document);
+
+        if (gridDocuments.DataSource is IList<DocumentRefs> list)
+        {
+            list.Add(res);
+        }
+    }
+
     private void EditDocumentRefs()
     {
         if (gridDocuments.CurrentItem is DocumentRefs refs)
@@ -427,38 +459,10 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
         var dialog = services.GetRequiredService<IDocumentRefDialog>();
         if (dialog.Create(Editor.DocumentInfo.Id, out var refs))
         {
-            refs.S3object = $"{refs.OwnerId}_{refs.FileName}";
-
-            var minio = services.GetRequiredService<IMinioClient>();
-            BucketExists.Run(minio, BucketName)
-                .ContinueWith(task =>
-                {
-                    if (task.Result)
-                    {
-                        return;
-                    }
-
-                    MakeBucket.Run(minio, BucketName).Wait();
-                });
-
-            PutObject.Run(minio, BucketName, refs.S3object, dialog.FileNameWithPath).Wait();
-
-            if (dialog.CreateThumbnailImage)
-            {
-                refs.CreateThumbnailImage(dialog.FileNameWithPath, settings.ImageSize);
-            }
-
-            var res = services
-                .GetRequiredService<IDocumentRefsRepository>()
-                .Add(refs);
-
-            if (gridDocuments.DataSource is IList<DocumentRefs> list)
-            {
-                list.Add(res);
-            }
+            AddDocumentRef(dialog, refs);
         }
     }
-
+    
     private void ButtonEditDoc_Click(object sender, EventArgs e) => EditDocumentRefs();
 
     private void ButtonDeleteDoc_Click(object sender, EventArgs e)
@@ -526,12 +530,23 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
         }
     }
 
-    private void ButtonScan_ButtonClick(object sender, EventArgs e)
+    private void ButtonScan_Click(object sender, EventArgs e)
     {
-    }
-    
-    private void ButtonMultipleScan_Click(object sender, EventArgs e)
-    {
+        if (services.GetRequiredService<IScannerDialog>().Scan(out var images) && images.Count > 0)
+        {
+            var pdf = PdfHelper.CreateDocument(images, PdfNamingStrategy.DateTime);
 
+            if (Editor.DocumentInfo.Id == Guid.Empty)
+            {
+                MessageBox.Show("Для добавления сопутствующих документов необходимо сначала сохранить текущий", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var dialog = services.GetRequiredService<IDocumentRefDialog>();
+            if (dialog.Create(Editor.DocumentInfo.Id, pdf, out var refs))
+            {
+                AddDocumentRef(dialog, refs);
+            }
+        }
     }
 }

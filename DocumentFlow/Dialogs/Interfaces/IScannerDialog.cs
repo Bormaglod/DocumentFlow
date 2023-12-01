@@ -2,20 +2,14 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 18.10.2023
+// Date: 29.11.2023
 //-----------------------------------------------------------------------
-
-using DocumentFlow.Data;
 
 using System.Diagnostics.CodeAnalysis;
 
 namespace DocumentFlow.Dialogs.Interfaces;
 
-public interface IDocumentRefDialog : IDialog
+public interface IScannerDialog : IDialog
 {
-    bool CreateThumbnailImage { get; }
-    string FileNameWithPath { get; }
-    bool Create(Guid owner, [MaybeNullWhen(false)] out DocumentRefs document);
-    bool Create(Guid owner, string fileName, [MaybeNullWhen(false)] out DocumentRefs document);
-    bool Edit(DocumentRefs refs);
+    bool Scan([MaybeNullWhen(false)] out IList<Image> images);
 }

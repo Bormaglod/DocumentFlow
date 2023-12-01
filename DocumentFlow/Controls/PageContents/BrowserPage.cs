@@ -23,7 +23,6 @@ using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
 using DocumentFlow.Properties;
-using DocumentFlow.ReportEngine;
 using DocumentFlow.Settings;
 using DocumentFlow.Tools;
 using DocumentFlow.Tools.Reflection;
@@ -1833,7 +1832,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
 
         var ls = services.GetRequiredService<IOptions<LocalSettings>>().Value;
 
-        string file = BaseReport.CreatePdfDocument(report.Report, ls.Report.Resolution);
+        string file = PdfHelper.CreateDocument(report.Report, ls.Report.Resolution, PdfNamingStrategy.Guid);
         services
             .GetRequiredService<IPreviewReportForm>()
             .ShowReport(file, Text);

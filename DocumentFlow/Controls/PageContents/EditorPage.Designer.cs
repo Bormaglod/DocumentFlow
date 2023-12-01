@@ -52,13 +52,14 @@ namespace DocumentFlow.Controls.PageContents
             menuOpenFileDocument = new ToolStripMenuItem();
             toolStrip1 = new ToolStrip();
             buttonSaveDoc = new ToolStripButton();
+            buttonOpenDoc = new ToolStripButton();
             toolStripSeparator4 = new ToolStripSeparator();
             buttonAddDoc = new ToolStripButton();
             buttonEditDoc = new ToolStripButton();
             buttonDeleteDoc = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
-            buttonOpenDoc = new ToolStripButton();
             buttonDocumentRefresh = new ToolStripButton();
+            buttonScan = new ToolStripButton();
             tabPageInfo = new TabPage();
             dateTimeUpdate = new Syncfusion.Windows.Forms.Tools.DateTimePickerAdv();
             dateTimeCreate = new Syncfusion.Windows.Forms.Tools.DateTimePickerAdv();
@@ -71,9 +72,6 @@ namespace DocumentFlow.Controls.PageContents
             label2 = new Label();
             label1 = new Label();
             saveFileDialog1 = new SaveFileDialog();
-            buttonScan = new ToolStripSplitButton();
-            buttonSingleScan = new ToolStripMenuItem();
-            buttonMultipleScan = new ToolStripMenuItem();
             editorToolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)container).BeginInit();
             container.Panel2.SuspendLayout();
@@ -314,6 +312,16 @@ namespace DocumentFlow.Controls.PageContents
             buttonSaveDoc.Text = "Сохранить на диск...";
             buttonSaveDoc.Click += ButtonSaveDoc_Click;
             // 
+            // buttonOpenDoc
+            // 
+            buttonOpenDoc.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            buttonOpenDoc.Image = DocumentFlow.Properties.Resources.icons8_open_document_16;
+            buttonOpenDoc.ImageTransparentColor = Color.Magenta;
+            buttonOpenDoc.Name = "buttonOpenDoc";
+            buttonOpenDoc.Size = new Size(23, 22);
+            buttonOpenDoc.Text = "Открыть файл";
+            buttonOpenDoc.Click += ButtonOpenDoc_Click;
+            // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
@@ -354,16 +362,6 @@ namespace DocumentFlow.Controls.PageContents
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new Size(6, 25);
             // 
-            // buttonOpenDoc
-            // 
-            buttonOpenDoc.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            buttonOpenDoc.Image = DocumentFlow.Properties.Resources.icons8_open_document_16;
-            buttonOpenDoc.ImageTransparentColor = Color.Magenta;
-            buttonOpenDoc.Name = "buttonOpenDoc";
-            buttonOpenDoc.Size = new Size(23, 22);
-            buttonOpenDoc.Text = "Открыть файл";
-            buttonOpenDoc.Click += ButtonOpenDoc_Click;
-            // 
             // buttonDocumentRefresh
             // 
             buttonDocumentRefresh.Alignment = ToolStripItemAlignment.Right;
@@ -374,6 +372,16 @@ namespace DocumentFlow.Controls.PageContents
             buttonDocumentRefresh.Size = new Size(23, 22);
             buttonDocumentRefresh.Text = "Обновить";
             buttonDocumentRefresh.Click += ButtonDocumentRefresh_Click;
+            // 
+            // buttonScan
+            // 
+            buttonScan.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            buttonScan.Image = DocumentFlow.Properties.Resources.icons8_rescan_document_16;
+            buttonScan.ImageTransparentColor = Color.Magenta;
+            buttonScan.Name = "buttonScan";
+            buttonScan.Size = new Size(23, 22);
+            buttonScan.Text = "Сканировать  лист/документ";
+            buttonScan.Click += ButtonScan_Click;
             // 
             // tabPageInfo
             // 
@@ -662,31 +670,6 @@ namespace DocumentFlow.Controls.PageContents
             label1.TabIndex = 0;
             label1.Text = "Идентификатор";
             // 
-            // buttonScan
-            // 
-            buttonScan.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            buttonScan.DropDownItems.AddRange(new ToolStripItem[] { buttonSingleScan, buttonMultipleScan });
-            buttonScan.Image = DocumentFlow.Properties.Resources.icons8_rescan_document_16;
-            buttonScan.ImageTransparentColor = Color.Magenta;
-            buttonScan.Name = "buttonScan";
-            buttonScan.Size = new Size(32, 22);
-            buttonScan.Text = "Сканировать один лист/документ";
-            buttonScan.ButtonClick += ButtonScan_ButtonClick;
-            // 
-            // buttonSingleScan
-            // 
-            buttonSingleScan.Name = "buttonSingleScan";
-            buttonSingleScan.Size = new Size(317, 22);
-            buttonSingleScan.Text = "Сканировать один лист/документ";
-            buttonSingleScan.Click += ButtonScan_ButtonClick;
-            // 
-            // buttonMultipleScan
-            // 
-            buttonMultipleScan.Name = "buttonMultipleScan";
-            buttonMultipleScan.Size = new Size(317, 22);
-            buttonMultipleScan.Text = "Сканировать несколько листов/документов";
-            buttonMultipleScan.Click += ButtonMultipleScan_Click;
-            // 
             // EditorPage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -762,8 +745,6 @@ namespace DocumentFlow.Controls.PageContents
         private ToolStripMenuItem menuSaveDocument;
         private ToolStripSeparator toolStripSeparator5;
         private SaveFileDialog saveFileDialog1;
-        private ToolStripSplitButton buttonScan;
-        private ToolStripMenuItem buttonSingleScan;
-        private ToolStripMenuItem buttonMultipleScan;
+        private ToolStripButton buttonScan;
     }
 }

@@ -173,6 +173,16 @@ namespace DocumentFlow.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_clockwise_rotation_16 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_clockwise_rotation_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_contract_16 {
             get {
                 object obj = ResourceManager.GetObject("icons8_contract_16", resourceCulture);
