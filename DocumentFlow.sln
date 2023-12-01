@@ -26,7 +26,7 @@ Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "Installer", "Installer\Inst
 		{445BA28F-8228-4BB0-A77C-C15864672B45} = {445BA28F-8228-4BB0-A77C-C15864672B45}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentFlow.Scanner", "DocumentFlow.Scanner\DocumentFlow.Scanner.csproj", "{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentFlow.Scanner", "DocumentFlow.Scanner\DocumentFlow.Scanner.csproj", "{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -348,8 +348,8 @@ Global
 		{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}.Release|Any CPU.Build.0 = Release|Any CPU
 		{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}.Release|ARM64.Build.0 = Release|Any CPU
-		{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}.Release|x64.ActiveCfg = Release|Any CPU
-		{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}.Release|x64.Build.0 = Release|Any CPU
+		{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}.Release|x64.ActiveCfg = Release|x64
+		{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}.Release|x64.Build.0 = Release|x64
 		{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}.Release|x86.ActiveCfg = Release|Any CPU
 		{439D8AA4-1FB5-4D71-8E49-69D66B8C2742}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
