@@ -85,6 +85,12 @@ public class OperationsPerformed : AccountingDocument
     }
 
     /// <summary>
+    /// Возвращает или устанавливает артикул изделия для изготовления которого выполняется операция.
+    /// </summary>
+    [Computed]
+    public string? GoodsCode { get; set; }
+
+    /// <summary>
     /// Возвращает или устанавливает наименование изделия для изготовления которого выполняется операция.
     /// </summary>
     [Computed]

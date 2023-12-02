@@ -33,6 +33,7 @@ public class OperationsPerformedBrowser : BaseOperationsPerformedBrowser, IOpera
         var date = CreateDateTime(x => x.DocumentDate, "Дата/время", hidden: false, width: 150);
         var order_name = CreateText(x => x.OrderName, "Заказ", width: 150, visible: false);
         var lot_name = CreateText(x => x.LotName, "Партия", width: 150, visible: false);
+        var code = CreateText(x => x.GoodsCode, "Артикул", width: 200, visible: false);
         var goods = CreateText(x => x.GoodsName, "Изделие", width: 200, visible: false);
         var operation = CreateText(x => x.OperationName, "Операция", hidden: false);
         var employee = CreateText(x => x.EmployeeName, "Исполнитель", width: 200);
@@ -48,7 +49,7 @@ public class OperationsPerformedBrowser : BaseOperationsPerformedBrowser, IOpera
         operation.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.Fill;
         quantity.CellStyle.HorizontalAlignment = System.Windows.Forms.HorizontalAlignment.Right;
 
-        AddColumns(new GridColumn[] { id, number, date, order_name, lot_name, goods, operation, employee, material, quantity, salary, double_rate });
+        AddColumns(new GridColumn[] { id, number, date, order_name, lot_name, code, goods, operation, employee, material, quantity, salary, double_rate });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [date] = ListSortDirection.Ascending
