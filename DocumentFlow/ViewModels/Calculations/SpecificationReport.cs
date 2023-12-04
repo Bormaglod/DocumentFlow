@@ -20,7 +20,7 @@ public class SpecificationReport : Report<Calculation>
 
     protected override void SetParameterValues(Calculation document)
     {
-        GetReport().SetParameterValue("id", document.Id);
+        GetReport().SetParameterValue("id", document.Id.ToString());
     }
 }
 

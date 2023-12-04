@@ -20,7 +20,7 @@ public class WaybillSaleReport : Report<WaybillSale>
 
     protected override void SetParameterValues(WaybillSale document)
     {
-        GetReport().SetParameterValue("id", document.Id);
+        GetReport().SetParameterValue("id", document.Id.ToString());
     }
 }
 
