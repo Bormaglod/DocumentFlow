@@ -98,11 +98,13 @@ public class PdfHelper
             Directory.CreateDirectory(path);
         }
 
-        return namingStrategy switch
+        var name = namingStrategy switch
         {
-            PdfNamingStrategy.Guid => Path.Combine(path, Guid.NewGuid() + ".pdf"),
+            PdfNamingStrategy.Guid => Guid.NewGuid().ToString(),
             PdfNamingStrategy.DateTime => $"SCN_{DateTime.Today:yyyyMMdd}_{(int)(DateTime.Now - DateTime.Today).TotalSeconds}",
             _ => throw new NotImplementedException()
         };
+
+        return Path.Combine(path, name + ".pdf");
     }
 }
