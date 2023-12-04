@@ -29,9 +29,7 @@
 		  <DependentUpon>Resources.resx</DependentUpon>
 		</Compile>
 		<Compile Update="SplitButton.cs" />
-		<Compile Update="ToolButton.cs">
-		  <SubType>Component</SubType>
-		</Compile>
+		<Compile Update="ToolButton.cs" />
 		<Compile Update="ToolSplitItem.cs">
 		  <SubType>Component</SubType>
 		</Compile>
