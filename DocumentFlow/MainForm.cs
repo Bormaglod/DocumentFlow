@@ -7,7 +7,6 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 
-using DocumentFlow.AppInstallData;
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
@@ -16,6 +15,7 @@ using DocumentFlow.Data.Tools;
 using DocumentFlow.Messages;
 using DocumentFlow.Settings;
 using DocumentFlow.Tools;
+using DocumentFlow.Tools.Install;
 using DocumentFlow.Tools.Minio;
 
 using Microsoft.Extensions.DependencyInjection;

@@ -5,7 +5,7 @@
 // Date: 21.10.2023
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.AppInstallData;
+namespace DocumentFlow.Tools.Install;
 
 public class AppInstall
 {
