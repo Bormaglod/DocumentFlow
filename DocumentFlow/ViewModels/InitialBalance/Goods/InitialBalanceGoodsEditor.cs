@@ -5,11 +5,13 @@
 // Date: 20.08.2022
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -20,14 +22,12 @@ namespace DocumentFlow.ViewModels;
 public partial class InitialBalanceGoodsEditor : EditorPanel, IInitialBalanceGoodsEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public InitialBalanceGoodsEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public InitialBalanceGoodsEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         InitialBalance.OrganizationId = services
             .GetRequiredService<IOrganizationRepository>()
@@ -68,6 +68,6 @@ public partial class InitialBalanceGoodsEditor : EditorPanel, IInitialBalanceGoo
 
     private void SelectGoods_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IGoodsBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IGoodsEditor), e.Document));
     }
 }

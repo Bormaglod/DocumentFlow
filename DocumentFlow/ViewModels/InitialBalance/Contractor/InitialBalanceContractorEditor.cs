@@ -5,13 +5,15 @@
 // Date: 20.08.2022
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -22,14 +24,12 @@ namespace DocumentFlow.ViewModels;
 public partial class InitialBalanceContractorEditor : EditorPanel, IInitialBalanceContractorEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public InitialBalanceContractorEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public InitialBalanceContractorEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         InitialBalance.OrganizationId = services
             .GetRequiredService<IOrganizationRepository>()
@@ -68,7 +68,7 @@ public partial class InitialBalanceContractorEditor : EditorPanel, IInitialBalan
 
     private void SelectContractor_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IContractorBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractorEditor), e.Document));
     }
 
     private void SelectContractor_DocumentSelectedChanged_1(object sender, DocumentChangedEventArgs e)
@@ -87,6 +87,6 @@ public partial class InitialBalanceContractorEditor : EditorPanel, IInitialBalan
 
     private void ComboContract_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IContractBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractEditor), e.Document));
     }
 }

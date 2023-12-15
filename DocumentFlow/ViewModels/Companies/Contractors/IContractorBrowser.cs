@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "Контрагенты", order: 60)]
 [EntityEditor(typeof(IContractorEditor))]
 public interface IContractorBrowser : IBrowser<Contractor>
 {

@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Реализация", order: 60)]
 [EntityEditor(typeof(IWaybillSaleEditor))]
 public interface IWaybillSaleBrowser : IBrowser<WaybillSale>
 {

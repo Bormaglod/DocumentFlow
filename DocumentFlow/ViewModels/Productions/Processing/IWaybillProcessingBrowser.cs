@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Поступление в переработку", parent: "Производство", order: 50 )]
 [EntityEditor(typeof(IWaybillProcessingEditor))]
 public interface IWaybillProcessingBrowser : IBrowser<WaybillProcessing>
 {

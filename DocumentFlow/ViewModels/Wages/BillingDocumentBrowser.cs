@@ -9,7 +9,6 @@ using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
@@ -24,8 +23,8 @@ namespace DocumentFlow.ViewModels;
 public abstract class BillingDocumentBrowser<T> : BrowserPage<T>
     where T : BillingDocument
 {
-    public BillingDocumentBrowser(IServiceProvider services, IPageManager pageManager, IDocumentRepository<T> repository, IConfiguration configuration, IDocumentFilter? filter = null)
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public BillingDocumentBrowser(IServiceProvider services, IDocumentRepository<T> repository, IConfiguration configuration, IDocumentFilter? filter = null)
+        : base(services, repository, configuration, filter: filter)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);

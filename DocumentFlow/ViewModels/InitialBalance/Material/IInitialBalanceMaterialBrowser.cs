@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Нач. остатки (материалы)", parent: "Склад", order: 10)]
 [EntityEditor(typeof(IInitialBalanceMaterialEditor))]
 public interface IInitialBalanceMaterialBrowser : IBrowser<InitialBalanceMaterial>
 {

@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Выполненные работы", parent: "Производство", order: 30)]
 [EntityEditor(typeof(IOperationsPerformedEditor))]
 public interface IOperationsPerformedBrowser : IBrowser<OperationsPerformed>
 {

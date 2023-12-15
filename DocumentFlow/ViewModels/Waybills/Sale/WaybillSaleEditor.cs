@@ -5,13 +5,15 @@
 // Date: 03.09.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -24,14 +26,12 @@ namespace DocumentFlow.ViewModels;
 public partial class WaybillSaleEditor : EditorPanel, IWaybillSaleEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public WaybillSaleEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public WaybillSaleEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         gridContent.GridSummaryRow<WaybillSalePrice>(VerticalPosition.Bottom, summary =>
             summary
@@ -46,7 +46,7 @@ public partial class WaybillSaleEditor : EditorPanel, IWaybillSaleEditor
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<IDocumentPaymentBrowser>();
+        EditorPage.RegisterNestedBrowser<IDocumentPaymentBrowser>("Платежи");
     }
 
     public void AddGoodsFromLot()
@@ -221,12 +221,12 @@ public partial class WaybillSaleEditor : EditorPanel, IWaybillSaleEditor
 
     private void SelectContractor_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IContractorEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractorEditor), e.Document));
     }
 
     private void SelectContract_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IContractEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractEditor), e.Document));
     }
 
     private void SelectContractor_UserDocumentModified(object sender, DocumentChangedEventArgs e)

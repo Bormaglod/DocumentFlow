@@ -6,14 +6,11 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Interfaces;
-using DocumentFlow.Tools;
 using DocumentFlow.Data.Models;
-
-using System.ComponentModel;
+using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[Description("Расчётные счёта")]
 [EntityEditor(typeof(IOurAccountEditor))]
 public interface IOurAccountBrowser : IBrowser<OurAccount>
 {

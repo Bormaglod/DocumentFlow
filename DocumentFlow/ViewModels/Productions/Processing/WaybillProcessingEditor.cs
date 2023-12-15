@@ -5,12 +5,14 @@
 // Date: 03.10.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -21,14 +23,12 @@ namespace DocumentFlow.ViewModels;
 public partial class WaybillProcessingEditor : EditorPanel, IWaybillProcessingEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public WaybillProcessingEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public WaybillProcessingEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         gridContent.AddCommand("Заполнить", Properties.Resources.icons8_todo_16, PopulateProcessingRows);
         gridContent.RegisterDialog<IProductPriceDialog, WaybillProcessingPrice>();
@@ -102,17 +102,17 @@ public partial class WaybillProcessingEditor : EditorPanel, IWaybillProcessingEd
 
     private void SelectContractor_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IContractorEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractorEditor), e.Document));
     }
 
     private void SelectContract_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IContractEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractEditor), e.Document));
     }
 
     private void SelectOrder_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IProductionOrderEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IProductionOrderEditor), e.Document));
     }
 
     private void SelectOrder_DocumentDialogColumns(object sender, DocumentDialogColumnsEventArgs e)

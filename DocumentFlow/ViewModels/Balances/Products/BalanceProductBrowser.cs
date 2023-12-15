@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -20,8 +19,8 @@ namespace DocumentFlow.ViewModels;
 public abstract class BalanceProductBrowser<T> : BalanceBrowser<T>
     where T : BalanceProduct
 {
-    public BalanceProductBrowser(IServiceProvider services, IPageManager pageManager, IBalanceProductRepository<T> repository, IConfiguration configuration)
-        : base(services, pageManager, repository, configuration) 
+    public BalanceProductBrowser(IServiceProvider services, IBalanceProductRepository<T> repository, IConfiguration configuration)
+        : base(services, repository, configuration) 
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.DocumentTypeName, "Документ", hidden: false);

@@ -8,7 +8,6 @@
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -21,8 +20,8 @@ namespace DocumentFlow.ViewModels;
 
 public class PostingPaymentsBrowser : BrowserPage<PostingPayments>, IPostingPaymentsBrowser
 {
-    public PostingPaymentsBrowser(IServiceProvider services, IPageManager pageManager, IPostingPaymentsRepository repository, IConfiguration configuration)
-        : base(services, pageManager, repository, configuration) 
+    public PostingPaymentsBrowser(IServiceProvider services, IPostingPaymentsRepository repository, IConfiguration configuration)
+        : base(services, repository, configuration) 
     {
         ToolBar.SmallIcons();
 

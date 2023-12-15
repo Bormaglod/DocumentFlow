@@ -5,10 +5,12 @@
 // Date: 18.06.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -19,20 +21,18 @@ namespace DocumentFlow.ViewModels;
 public partial class OrganizationEditor : EditorPanel, IOrganizationEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public OrganizationEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public OrganizationEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
     }
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<IOurAccountBrowser>();
-        EditorPage.RegisterNestedBrowser<IOrgEmployeeBrowser>();
+        EditorPage.RegisterNestedBrowser<IOurAccountBrowser>("Расчётные счёта");
+        EditorPage.RegisterNestedBrowser<IOrgEmployeeBrowser>("Сотрудники");
     }
 
     protected Organization Organization { get; set; } = null!;
@@ -70,11 +70,11 @@ public partial class OrganizationEditor : EditorPanel, IOrganizationEditor
 
     private void ComboOkopf_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IOkopfBrowser>(comboOkopf.SelectedDocument);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IOkopfEditor), e.Document));
     }
 
     private void ComboAccount_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IOurAccountBrowser>(comboAccount.SelectedDocument);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IOurAccountEditor), e.Document));
     }
 }

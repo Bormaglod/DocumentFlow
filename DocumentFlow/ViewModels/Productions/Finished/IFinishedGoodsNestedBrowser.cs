@@ -9,11 +9,8 @@ using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Tools;
 
-using System.ComponentModel;
-
 namespace DocumentFlow.ViewModels;
 
-[Description("Готовая продукция")]
 [EntityEditor(typeof(IFinishedGoodsEditor))]
 public interface IFinishedGoodsNestedBrowser : IBrowser<FinishedGoods>
 {

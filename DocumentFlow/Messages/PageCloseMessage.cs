@@ -2,15 +2,19 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 15.11.2023
+// Date: 15.12.2023
 //-----------------------------------------------------------------------
+
+using DocumentFlow.Controls.Interfaces;
 
 namespace DocumentFlow.Messages;
 
-public class CapturingImageMessage
+public class PageCloseMessage
 {
-    public CapturingImageMessage(Guid id, Image image) => (Id, Image) = (id, image);
+    public PageCloseMessage(IPage page)
+    {
+        Page = page;
+    }
 
-    public Guid Id { get; }
-    public Image Image {  get; }
+    public IPage Page { get; }
 }

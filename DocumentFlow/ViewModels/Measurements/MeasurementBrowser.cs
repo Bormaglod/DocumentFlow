@@ -7,7 +7,6 @@
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -20,8 +19,8 @@ namespace DocumentFlow.ViewModels;
 
 public class MeasurementBrowser : BrowserPage<Measurement>, IMeasurementBrowser
 {
-    public MeasurementBrowser(IServiceProvider services, IPageManager pageManager, IMeasurementRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration) 
+    public MeasurementBrowser(IServiceProvider services, IMeasurementRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration) 
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.Code, "Код", width: 110);

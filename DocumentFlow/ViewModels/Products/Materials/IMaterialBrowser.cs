@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "Материалы", parent: "Номенклатура", order: 20)]
 [EntityEditor(typeof(IMaterialEditor))]
 public interface IMaterialBrowser : IBrowser<Material>
 {

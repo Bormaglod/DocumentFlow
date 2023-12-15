@@ -9,12 +9,8 @@ using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Tools;
 
-using System.ComponentModel;
-
 namespace DocumentFlow.ViewModels;
 
-[Description("Заявка")]
-[MenuItem(MenuDestination.Document, "Заявка на приобретение материалов", order: 10)]
 [EntityEditor(typeof(IPurchaseRequestEditor))]
 public interface IPurchaseRequestBrowser : IBrowser<PurchaseRequest>
 {

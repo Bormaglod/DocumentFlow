@@ -5,6 +5,8 @@
 // Date: 22.09.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
@@ -12,7 +14,7 @@ using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -28,14 +30,12 @@ namespace DocumentFlow.ViewModels;
 public partial class PostingPaymentsEditor : EditorPanel, IPostingPaymentsEditor, IDocumentEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public PostingPaymentsEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public PostingPaymentsEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         Payment.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
@@ -152,7 +152,7 @@ public partial class PostingPaymentsEditor : EditorPanel, IPostingPaymentsEditor
 
     private void SelectDocument_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor(((DebtDocument)e.Document).EditorType, e.Document.Id);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(((DebtDocument)e.Document).EditorType, e.Document.Id));
     }
 
     private void SelectDocument_DocumentDialogColumns(object sender, DocumentDialogColumnsEventArgs e)

@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Материальный отчёт", parent: "Склад", order: 40 )]
 public interface IBalanceSheetBrowser : IBrowser<BalanceSheet>
 {
 }

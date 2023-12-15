@@ -7,7 +7,6 @@
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -20,8 +19,8 @@ namespace DocumentFlow.ViewModels;
 
 public class OperationTypeBrowser : BrowserPage<OperationType>, IOperationTypeBrowser
 {
-    public OperationTypeBrowser(IServiceProvider services, IPageManager pageManager, IOperationTypeRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration) 
+    public OperationTypeBrowser(IServiceProvider services, IOperationTypeRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration) 
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.ItemName, "Наименование", hidden: false);

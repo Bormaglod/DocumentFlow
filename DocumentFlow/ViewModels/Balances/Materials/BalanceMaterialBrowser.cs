@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -14,8 +13,8 @@ namespace DocumentFlow.ViewModels;
 
 public class BalanceMaterialBrowser : BalanceProductBrowser<BalanceMaterial>, IBalanceMaterialBrowser
 {
-    public BalanceMaterialBrowser(IServiceProvider services, IPageManager pageManager, IBalanceMaterialRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration) 
+    public BalanceMaterialBrowser(IServiceProvider services, IBalanceMaterialRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration) 
     {
         ContextMenu.Add("Пересчитать сумму остатка", (s, e) =>
         {

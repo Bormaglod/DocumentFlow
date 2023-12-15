@@ -5,14 +5,15 @@
 // Date: 25.07.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -23,14 +24,12 @@ namespace DocumentFlow.ViewModels;
 public partial class OperationEditor : EditorPanel, IOperationEditor, IDirectoryEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public OperationEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public OperationEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
     }
 
     public Guid? ParentId
@@ -63,12 +62,12 @@ public partial class OperationEditor : EditorPanel, IOperationEditor, IDirectory
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<IOperationUsageBrowser>();
+        EditorPage.RegisterNestedBrowser<IOperationUsageBrowser>("Использование операции");
     }
 
     private void ComboType_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IOperationTypeBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IOperationTypeEditor), e.Document));
     }
 
     private bool EditOperationGoods(IDependentEntity? entity)

@@ -5,11 +5,14 @@
 // Date: 13.07.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Enums;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
+
 using Microsoft.Extensions.Configuration;
 
 using Syncfusion.WinForms.DataGrid;
@@ -36,14 +39,12 @@ public class BalanceSheetBrowser : BrowserPage<BalanceSheet>, IBalanceSheetBrows
     }
 
     private readonly IBalanceSheetFilter filter;
-    private readonly IPageManager pageManager;
     private readonly StackColumnInfo[] columns;
 
-    public BalanceSheetBrowser(IServiceProvider services, IPageManager pageManager, IBalanceSheetRepository repository, IConfiguration configuration, IBalanceSheetFilter filter)
-        : base(services, pageManager, repository, configuration, filter: filter) 
+    public BalanceSheetBrowser(IServiceProvider services, IBalanceSheetRepository repository, IConfiguration configuration, IBalanceSheetFilter filter)
+        : base(services, repository, configuration, filter: filter) 
     {
         this.filter = filter;
-        this.pageManager = pageManager;
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.ProductName, "Наименование", hidden: false);
@@ -149,16 +150,13 @@ public class BalanceSheetBrowser : BrowserPage<BalanceSheet>, IBalanceSheetBrows
             return;
         }
 
-        switch (filter.Content)
+        Type type = filter.Content switch
         {
-            case Data.Enums.BalanceSheetContent.Material:
-                pageManager.ShowEditor(typeof(IMaterialEditor), CurrentDocument.Id);
-                break;
-            case Data.Enums.BalanceSheetContent.Goods:
-                pageManager.ShowEditor(typeof(IGoodsEditor), CurrentDocument.Id);
-                break;
-            default:
-                break;
-        }
+            Data.Enums.BalanceSheetContent.Material => typeof(IMaterialEditor),
+            Data.Enums.BalanceSheetContent.Goods => typeof(IGoodsEditor),
+            _ => throw new NotImplementedException()
+        };
+
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(type, CurrentDocument.Id));
     }
 }

@@ -5,15 +5,16 @@
 // Date: 23.07.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -24,14 +25,12 @@ namespace DocumentFlow.ViewModels;
 public partial class GoodsEditor : EditorPanel, IGoodsEditor, IDirectoryEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public GoodsEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public GoodsEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         choiceVat.FromEnum<VatRate>(KeyGenerationMethod.IntegerValue);
     }
@@ -46,8 +45,8 @@ public partial class GoodsEditor : EditorPanel, IGoodsEditor, IDirectoryEditor
     {
         if (services.GetRequiredService<IGoodsRepository>().HasPrivilege(Privilege.Update))
         {
-            EditorPage.RegisterNestedBrowser<ICalculationBrowser>();
-            EditorPage.RegisterNestedBrowser<IBalanceGoodsBrowser>();
+            EditorPage.RegisterNestedBrowser<ICalculationBrowser>("Калькуляции");
+            EditorPage.RegisterNestedBrowser<IBalanceGoodsBrowser>("Остатки");
         }
     }
 
@@ -85,12 +84,12 @@ public partial class GoodsEditor : EditorPanel, IGoodsEditor, IDirectoryEditor
 
     private void ComboCalculation_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<ICalculationBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(ICalculationEditor), e.Document));
     }
 
     private void ComboMeasurement_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IMeasurementBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IMeasurementEditor), e.Document));
     }
 
     private void ToggleService_ToggleValueChanged(object sender, EventArgs e)

@@ -6,9 +6,8 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
-using DocumentFlow.Data.Models;
 using DocumentFlow.Data.Interfaces.Repository;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Data.Models;
 
 using Microsoft.Extensions.Configuration;
 
@@ -22,8 +21,8 @@ namespace DocumentFlow.ViewModels;
 public abstract class BaseEmployeeBrowser<T> : BrowserPage<T>
     where T : Employee
 {
-    protected BaseEmployeeBrowser(IServiceProvider services, IPageManager pageManager, IRepository<Guid, T> repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration)
+    protected BaseEmployeeBrowser(IServiceProvider services, IRepository<Guid, T> repository, IConfiguration configuration) 
+        : base(services, repository, configuration)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.ItemName, "Сотрудник", hidden: false);

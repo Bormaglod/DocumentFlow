@@ -5,14 +5,14 @@
 // Date: 02.02.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 
@@ -23,14 +23,13 @@ using Syncfusion.WinForms.Input.Enums;
 using System.ComponentModel;
 
 using SyncEnums = Syncfusion.WinForms.DataGrid.Enums;
-using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
 public class PurchaseRequestBrowser : BrowserPage<PurchaseRequest>, IPurchaseRequestBrowser
 {
-    public PurchaseRequestBrowser(IServiceProvider services, IPageManager pageManager, IPurchaseRequestRepository repository, IConfiguration configuration, IPurchaseRequestFilter filter)
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public PurchaseRequestBrowser(IServiceProvider services, IPurchaseRequestRepository repository, IConfiguration configuration, IPurchaseRequestFilter filter)
+        : base(services, repository, configuration, filter: filter)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);

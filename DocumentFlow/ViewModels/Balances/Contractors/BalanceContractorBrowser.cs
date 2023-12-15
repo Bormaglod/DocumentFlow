@@ -5,8 +5,8 @@
 // Date: 31.01.2022
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -14,14 +14,13 @@ using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 
 using System.ComponentModel;
-using DocumentFlow.Data.Interfaces.Filters;
 
 namespace DocumentFlow.ViewModels;
 
 public class BalanceContractorBrowser : BalanceBrowser<BalanceContractor>, IBalanceContractorBrowser
 {
-    public BalanceContractorBrowser(IServiceProvider services, IPageManager pageManager, IBalanceContractorRepository repository, IConfiguration configuration, IBalanceContractorFilter filter) 
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public BalanceContractorBrowser(IServiceProvider services, IBalanceContractorRepository repository, IConfiguration configuration, IBalanceContractorFilter filter) 
+        : base(services, repository, configuration, filter: filter)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.DocumentTypeName, "Документ", hidden: false);

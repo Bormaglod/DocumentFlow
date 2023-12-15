@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "ОКПДТР", order: 30)]
 [EntityEditor(typeof(IOkpdtrEditor))]
 public interface IOkpdtrBrowser : IBrowser<Okpdtr>
 {

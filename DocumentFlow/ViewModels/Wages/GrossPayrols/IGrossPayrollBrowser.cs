@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Начисление зар. платы", parent: "Зар. плата", order: 40 )]
 [EntityEditor(typeof(IGrossPayrollEditor))]
 public interface IGrossPayrollBrowser : IBrowser<GrossPayroll>
 {

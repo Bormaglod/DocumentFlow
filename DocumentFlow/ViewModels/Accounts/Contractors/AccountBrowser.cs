@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -14,8 +13,8 @@ namespace DocumentFlow.ViewModels;
 
 public class AccountBrowser : BaseAccountBrowser<Account>, IAccountBrowser
 {
-    public AccountBrowser(IServiceProvider services, IPageManager pageManager, IAccountRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration) 
+    public AccountBrowser(IServiceProvider services, IAccountRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration) 
     {
     }
 }

@@ -7,7 +7,6 @@
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
@@ -21,8 +20,8 @@ namespace DocumentFlow.ViewModels;
 
 public class AdjustingBalancesBrowser : BrowserPage<AdjustingBalances>, IAdjustingBalancesBrowser
 {
-    public AdjustingBalancesBrowser(IServiceProvider services, IPageManager pageManager, IAdjustingBalancesRepository repository, IConfiguration configuration)
-        : base(services, pageManager, repository, configuration)
+    public AdjustingBalancesBrowser(IServiceProvider services, IAdjustingBalancesRepository repository, IConfiguration configuration)
+        : base(services, repository, configuration)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);

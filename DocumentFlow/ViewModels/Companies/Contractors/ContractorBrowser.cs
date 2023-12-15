@@ -5,10 +5,9 @@
 // Date: 30.12.2021
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -24,8 +23,8 @@ public class ContractorBrowser : BrowserPage<Contractor>, IContractorBrowser
     private readonly IContractorRepository repository;
     private readonly GridNumericColumn inn;
 
-    public ContractorBrowser(IServiceProvider services, IPageManager pageManager, IContractorRepository repository, IConfiguration configuration, IBreadcrumb navigator)
-        : base(services, pageManager, repository, configuration, navigator: navigator)
+    public ContractorBrowser(IServiceProvider services, IContractorRepository repository, IConfiguration configuration, IBreadcrumb navigator)
+        : base(services, repository, configuration, navigator: navigator)
     {
         this.repository = repository;
 

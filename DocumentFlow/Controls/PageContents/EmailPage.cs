@@ -5,10 +5,12 @@
 // Date: 28.10.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data;
 using DocumentFlow.Data.Interfaces.Repository;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.ViewModels;
 
 using Humanizer;
@@ -27,18 +29,16 @@ namespace DocumentFlow.Controls.PageContents;
 
 public partial class EmailPage : UserControl, IEmailPage
 {
-    private readonly IPageManager pageManager;
     private readonly IEmailLogRepository repository;
     private Guid? currentGroup;
     private Guid? currentContractor;
 
-    public EmailPage(IPageManager pageManager, IEmailLogRepository repository)
+    public EmailPage(IEmailLogRepository repository)
     {
         InitializeComponent();
 
         Text = "Почта";
 
-        this.pageManager = pageManager;
         this.repository = repository;
 
         listCompany.DisplayMember = nameof(EmailLog.ContractorName);
@@ -125,7 +125,7 @@ public partial class EmailPage : UserControl, IEmailPage
     {
         if (gridContent.SelectedItem is EmailLog log)
         {
-            pageManager.ShowEditor(typeof(IContractorEditor), log.ContractorId);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractorEditor), log.ContractorId));
         }
     }
 
@@ -136,7 +136,7 @@ public partial class EmailPage : UserControl, IEmailPage
             var type = Type.GetType($"DocumentFlow.ViewModels.I{log.Code.Pascalize()}Editor");
             if (type != null)
             {
-                pageManager.ShowEditor(type, log.DocumentId.Value);
+                WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(type, log.DocumentId.Value));
             }
         }
     }

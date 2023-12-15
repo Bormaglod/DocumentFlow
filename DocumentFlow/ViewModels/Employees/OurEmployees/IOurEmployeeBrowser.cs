@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "Сотрудники", order: 80)]
 [EntityEditor(typeof(IOurEmployeeEditor))]
 public interface IOurEmployeeBrowser : IBrowser<OurEmployee>
 {

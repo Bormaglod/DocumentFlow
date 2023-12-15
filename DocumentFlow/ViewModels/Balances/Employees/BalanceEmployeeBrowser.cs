@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -19,8 +18,8 @@ namespace DocumentFlow.ViewModels;
 
 public class BalanceEmployeeBrowser : BalanceBrowser<BalanceEmployee>, IBalanceEmployeeBrowser
 {
-    public BalanceEmployeeBrowser(IServiceProvider services, IPageManager pageManager, IBalanceEmployeeRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration) 
+    public BalanceEmployeeBrowser(IServiceProvider services, IBalanceEmployeeRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration) 
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.DocumentTypeName, "Документ", hidden: false);

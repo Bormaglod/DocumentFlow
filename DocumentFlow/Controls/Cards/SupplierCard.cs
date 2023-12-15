@@ -7,7 +7,6 @@
 
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Settings;
 
 using Microsoft.Extensions.Options;
@@ -16,15 +15,13 @@ namespace DocumentFlow.Controls.Cards;
 
 public partial class SupplierCard : UserControl, ICard
 {
-    private readonly IPageManager pageManager;
     private readonly IBalanceContractorRepository repository;
     private readonly StartPageSettings settings;
 
-    public SupplierCard(IPageManager pageManager, IBalanceContractorRepository repository, IOptions<LocalSettings> options)
+    public SupplierCard(IBalanceContractorRepository repository, IOptions<LocalSettings> options)
     {
         InitializeComponent();
 
-        this.pageManager = pageManager;
         this.repository = repository;
 
         settings = options.Value.StartPage;
@@ -44,7 +41,7 @@ public partial class SupplierCard : UserControl, ICard
         int cnt = Math.Min(suppliers.Count, 6);
         for (int i = 0; i < cnt; i++)
         {
-            CardRow row = new(pageManager, suppliers[i], settings);
+            CardRow row = new(suppliers[i], settings);
             Controls.Add(row);
 
             row.BringToFront();

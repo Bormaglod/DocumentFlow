@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "Оборудование", order: 130)]
 [EntityEditor(typeof(IEquipmentEditor))]
 public interface IEquipmentBrowser : IBrowser<Equipment>
 {

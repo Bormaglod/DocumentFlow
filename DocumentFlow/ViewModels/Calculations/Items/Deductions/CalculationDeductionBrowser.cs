@@ -5,10 +5,12 @@
 // Date: 29.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Enums;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Properties;
 
 using Microsoft.Extensions.Configuration;
@@ -23,8 +25,8 @@ namespace DocumentFlow.ViewModels;
 
 public class CalculationDeductionBrowser : BrowserPage<CalculationDeduction>, ICalculationDeductionBrowser
 {
-    public CalculationDeductionBrowser(IServiceProvider services, IPageManager pageManager, ICalculationDeductionRepository repository, IConfiguration configuration)
-        : base(services, pageManager, repository, configuration)
+    public CalculationDeductionBrowser(IServiceProvider services, ICalculationDeductionRepository repository, IConfiguration configuration)
+        : base(services, repository, configuration)
     {
         ToolBar.SmallIcons();
 
@@ -50,7 +52,7 @@ public class CalculationDeductionBrowser : BrowserPage<CalculationDeduction>, IC
 
         AllowSorting = false;
 
-        ToolBar.Add("Удержание", Resources.icons8_discount_16, Resources.icons8_discount_30, () => OpenDeduction(pageManager));
+        ToolBar.Add("Удержание", Resources.icons8_discount_16, Resources.icons8_discount_30, OpenDeduction);
         ToolBar.AddSeparator();
 
         ToolBar.Add("Очистить", Resources.icons8_broomstick_16, Resources.icons8_broomstick_30, () =>
@@ -62,14 +64,14 @@ public class CalculationDeductionBrowser : BrowserPage<CalculationDeduction>, IC
             }
         });
 
-        ContextMenu.Add("Удержание", Resources.icons8_discount_16, (s, e) => OpenDeduction(pageManager));
+        ContextMenu.Add("Удержание", Resources.icons8_discount_16, (s, e) => OpenDeduction());
     }
 
-    private void OpenDeduction(IPageManager pageManager)
+    private void OpenDeduction()
     {
         if (CurrentDocument != null && CurrentDocument.ItemId != null)
         {
-            pageManager.ShowAssociateEditor<IDeductionBrowser>(CurrentDocument.ItemId.Value);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IDeductionEditor), CurrentDocument.ItemId.Value));
         }
     }
 }

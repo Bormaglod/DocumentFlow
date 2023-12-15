@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Поступление", order: 50)]
 [EntityEditor(typeof(IWaybillReceiptEditor))]
 public interface IWaybillReceiptBrowser : IBrowser<WaybillReceipt>
 {

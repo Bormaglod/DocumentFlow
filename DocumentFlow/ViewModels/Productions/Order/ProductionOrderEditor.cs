@@ -5,12 +5,14 @@
 // Date: 16.08.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -23,14 +25,12 @@ namespace DocumentFlow.ViewModels;
 public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public ProductionOrderEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public ProductionOrderEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         gridContent.GridSummaryRow<ProductionOrderPrice>(VerticalPosition.Bottom, summary =>
             summary
@@ -46,7 +46,7 @@ public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<IProductionLotNestedBrowser>();
+        EditorPage.RegisterNestedBrowser<IProductionLotNestedBrowser>("Партии");
     }
 
     protected ProductionOrder Order { get; set; } = null!;
@@ -107,12 +107,12 @@ public partial class ProductionOrderEditor : EditorPanel, IProductionOrderEditor
 
     private void SelectContractor_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IContractorBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractorEditor), e.Document));
     }
 
     private void SelectContract_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IContractBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractEditor), e.Document));
     }
 
     private void GridContent_DialogParameters(object sender, DialogParametersEventArgs e)

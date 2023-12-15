@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Возврат материалов заказчику", parent: "Производство", order: 60 )]
 [EntityEditor(typeof(IReturnMaterialsEditor))]
 public interface IReturnMaterialsBrowser : IBrowser<ReturnMaterials>
 {

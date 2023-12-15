@@ -7,7 +7,6 @@
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -20,8 +19,8 @@ namespace DocumentFlow.ViewModels;
 
 public class PersonBrowser : BrowserPage<Person>, IPersonBrowser
 {
-    public PersonBrowser(IServiceProvider services, IPageManager pageManager, IPersonRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration)
+    public PersonBrowser(IServiceProvider services, IPersonRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.ItemName, "Фамилия И.О.", hidden: false);

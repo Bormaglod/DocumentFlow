@@ -7,7 +7,6 @@
 
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -18,8 +17,8 @@ namespace DocumentFlow.ViewModels;
 
 public class WaybillSaleBrowser : WaybillBrowser<WaybillSale>, IWaybillSaleBrowser
 {
-    public WaybillSaleBrowser(IServiceProvider services, IPageManager pageManager, IWaybillSaleRepository repository, IConfiguration configuration, IDocumentFilter filter)
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public WaybillSaleBrowser(IServiceProvider services, IWaybillSaleRepository repository, IConfiguration configuration, IDocumentFilter filter)
+        : base(services, repository, configuration, filter: filter)
     {
         var payment_exists = CreateBoolean(x => x.PaymentExists, "Оплата", width: 100);
         var payment_date = CreateDateTime(x => x.PaymentDate, "Срок оплаты", width: 110, format: "dd.MM.yyyy");

@@ -5,12 +5,14 @@
 // Date: 29.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Enums;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Properties;
 
 using Microsoft.Extensions.Configuration;
@@ -27,13 +29,9 @@ namespace DocumentFlow.ViewModels;
 
 public class CalculationMaterialBrowser : BrowserPage<CalculationMaterial>, ICalculationMaterialBrowser
 {
-    private readonly IPageManager pageManager;
-
-    public CalculationMaterialBrowser(IServiceProvider services, IPageManager pageManager, ICalculationMaterialRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration) 
+    public CalculationMaterialBrowser(IServiceProvider services, ICalculationMaterialRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration) 
     {
-        this.pageManager = pageManager;
-
         ToolBar.SmallIcons();
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
@@ -135,7 +133,7 @@ public class CalculationMaterialBrowser : BrowserPage<CalculationMaterial>, ICal
     {
         if (CurrentDocument != null && CurrentDocument.ItemId != null)
         {
-            pageManager.ShowAssociateEditor<IMaterialBrowser>(CurrentDocument.ItemId.Value);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IMaterialEditor), CurrentDocument.ItemId.Value));
         }
     }
 

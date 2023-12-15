@@ -5,8 +5,6 @@
 // Date: 30.07.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Interfaces;
-
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentFlow;
@@ -53,11 +51,6 @@ public class CurrentApplicationContext : ApplicationContext
     public void ShowMainForm()
     {
         loginForm.Hide();
-
-        services
-            .GetRequiredService<IPageManager>()
-            .ShowStartPage();
-
         mainForm.Show();
     }
 

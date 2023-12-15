@@ -5,13 +5,12 @@
 // Date: 21.05.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Controls.Interfaces;
-using DocumentFlow.Tools;
-using DocumentFlow.Data.Models;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Interfaces.Repository;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Data.Models;
 using DocumentFlow.Settings;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -33,14 +32,13 @@ public abstract class ProductBrowser<T> : BrowserPage<T>
 
     public ProductBrowser(
         IServiceProvider services,
-        IPageManager pageManager,
         IRepository<Guid, T> repository,
         IDocumentRefsRepository documentRefs,
         IConfiguration configuration,
         IRowHeaderImage rowHeaderImage,
         IBreadcrumb navigator,
         IOptions<LocalSettings> options)
-        : base(services, pageManager, repository, configuration, rowHeaderImage, navigator)
+        : base(services, repository, configuration, rowHeaderImage, navigator)
     {
         this.documentRefs = documentRefs;
 

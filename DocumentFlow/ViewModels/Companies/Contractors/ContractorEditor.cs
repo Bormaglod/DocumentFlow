@@ -5,6 +5,8 @@
 // Date: 18.06.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Enums;
@@ -12,7 +14,7 @@ using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -23,14 +25,12 @@ namespace DocumentFlow.ViewModels;
 public partial class ContractorEditor : EditorPanel, IContractorEditor, IDirectoryEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public ContractorEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public ContractorEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         choiceSubject.FromEnum<SubjectsCivilLow>(KeyGenerationMethod.PostgresEnumValue);
     }
@@ -43,11 +43,11 @@ public partial class ContractorEditor : EditorPanel, IContractorEditor, IDirecto
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<IBalanceContractorBrowser>();
-        EditorPage.RegisterNestedBrowser<IBalanceProcessingBrowser>();
-        EditorPage.RegisterNestedBrowser<IContractBrowser>();
-        EditorPage.RegisterNestedBrowser<IAccountBrowser>();
-        EditorPage.RegisterNestedBrowser<IEmployeeBrowser>();
+        EditorPage.RegisterNestedBrowser<IBalanceContractorBrowser>("Расчёты с контрагентом");
+        EditorPage.RegisterNestedBrowser<IBalanceProcessingBrowser>("Остатки дав. сырья");
+        EditorPage.RegisterNestedBrowser<IContractBrowser>("Договоры");
+        EditorPage.RegisterNestedBrowser<IAccountBrowser>("Расчётные счёта");
+        EditorPage.RegisterNestedBrowser<IEmployeeBrowser>("Сотрудники");
     }
 
     protected Contractor Contractor { get; set; } = null!;
@@ -134,11 +134,11 @@ public partial class ContractorEditor : EditorPanel, IContractorEditor, IDirecto
 
     private void ComboOkopf_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IOkopfBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IOkopfEditor), e.Document));
     }
 
     private void SelectPerson_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IPersonBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IPersonEditor), e.Document));
     }
 }

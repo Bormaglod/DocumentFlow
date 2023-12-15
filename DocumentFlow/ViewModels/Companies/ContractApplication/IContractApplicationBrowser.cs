@@ -6,14 +6,11 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Interfaces;
-using DocumentFlow.Tools;
 using DocumentFlow.Data.Models;
-
-using System.ComponentModel;
+using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[Description("Приложения")]
 [EntityEditor(typeof(IContractApplicationEditor))]
 public interface IContractApplicationBrowser : IBrowser<ContractApplication>
 {

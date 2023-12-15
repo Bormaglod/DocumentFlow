@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "Типы проводов", parent: "Номенклатура", order: 10)]
 [EntityEditor(typeof(IWireEditor))]
 public interface IWireBrowser : IBrowser<Wire>
 {

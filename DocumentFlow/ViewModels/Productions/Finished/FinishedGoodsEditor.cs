@@ -5,13 +5,15 @@
 // Date: 16.09.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -22,14 +24,12 @@ namespace DocumentFlow.ViewModels;
 public partial class FinishedGoodsEditor : EditorPanel, IFinishedGoodsEditor, IDocumentEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public FinishedGoodsEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public FinishedGoodsEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         Finished.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
@@ -97,12 +97,12 @@ public partial class FinishedGoodsEditor : EditorPanel, IFinishedGoodsEditor, ID
 
     private void SelectLot_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IProductionLotEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IProductionLotEditor), e.Document));
     }
 
     private void SelectGoods_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IGoodsEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IGoodsEditor), e.Document));
     }
 
     private void SelectLot_DocumentDialogColumns(object sender, DocumentDialogColumnsEventArgs e)

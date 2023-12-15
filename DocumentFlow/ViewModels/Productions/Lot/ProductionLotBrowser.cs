@@ -7,7 +7,6 @@
 
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
@@ -21,8 +20,8 @@ namespace DocumentFlow.ViewModels;
 
 public class ProductionLotBrowser : BaseProductionLotBrowser, IProductionLotBrowser
 {
-    public ProductionLotBrowser(IServiceProvider services, IPageManager pageManager, IProductionLotRepository repository, IConfiguration configuration, IProductionLotFilter filter)
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public ProductionLotBrowser(IServiceProvider services, IProductionLotRepository repository, IConfiguration configuration, IProductionLotFilter filter)
+        : base(services, repository, configuration, filter: filter)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);

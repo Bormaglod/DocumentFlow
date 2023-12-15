@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Партии", parent: "Производство", order: 20)]
 [EntityEditor(typeof(IProductionLotEditor))]
 public interface IProductionLotBrowser : IBrowser<ProductionLot>
 {

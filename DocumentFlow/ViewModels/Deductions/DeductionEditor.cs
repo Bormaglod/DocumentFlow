@@ -5,12 +5,14 @@
 // Date: 27.07.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -21,14 +23,12 @@ namespace DocumentFlow.ViewModels;
 public partial class DeductionEditor : EditorPanel, IDeductionEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public DeductionEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public DeductionEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         choiceBase.FromEnum<BaseDeduction>(KeyGenerationMethod.PostgresEnumValue);
     }
@@ -75,6 +75,6 @@ public partial class DeductionEditor : EditorPanel, IDeductionEditor
 
     private void ComboPerson_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IPersonBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IPersonEditor), e.Document));
     }
 }

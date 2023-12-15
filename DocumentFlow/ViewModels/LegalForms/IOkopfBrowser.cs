@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "ОКОПФ", order: 20)]
 [EntityEditor(typeof(IOkopfEditor))]
 public interface IOkopfBrowser : IBrowser<Okopf>
 {

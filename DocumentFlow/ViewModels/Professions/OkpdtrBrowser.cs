@@ -7,7 +7,6 @@
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -20,8 +19,8 @@ namespace DocumentFlow.ViewModels;
 
 public class OkpdtrBrowser : BrowserPage<Okpdtr>, IOkpdtrBrowser
 {
-    public OkpdtrBrowser(IServiceProvider services, IPageManager pageManager, IOkpdtrRepository repository, IConfiguration configuration)
-        : base(services, pageManager, repository, configuration)
+    public OkpdtrBrowser(IServiceProvider services, IOkpdtrRepository repository, IConfiguration configuration)
+        : base(services, repository, configuration)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.Code, "Код", width: 110);

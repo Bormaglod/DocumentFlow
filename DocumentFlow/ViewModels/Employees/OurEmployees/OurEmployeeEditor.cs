@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
@@ -14,7 +13,7 @@ namespace DocumentFlow.ViewModels;
 [Entity(typeof(OurEmployee), RepositoryType = typeof(IOurEmployeeRepository))]
 public partial class OurEmployeeEditor : BaseEmployeeEditor, IOurEmployeeEditor
 {
-    public OurEmployeeEditor(IServiceProvider services, IPageManager pageManager) : base(services, pageManager)
+    public OurEmployeeEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
     }
@@ -23,6 +22,6 @@ public partial class OurEmployeeEditor : BaseEmployeeEditor, IOurEmployeeEditor
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<IBalanceEmployeeBrowser>();
+        EditorPage.RegisterNestedBrowser<IBalanceEmployeeBrowser>("Расчёты с сотрудником");
     }
 }

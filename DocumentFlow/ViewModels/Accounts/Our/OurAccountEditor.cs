@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
@@ -14,7 +13,7 @@ namespace DocumentFlow.ViewModels;
 [Entity(typeof(OurAccount), RepositoryType = typeof(IOurAccountRepository))]
 public class OurAccountEditor : BaseAccountEditor, IOurAccountEditor
 {
-    public OurAccountEditor(IServiceProvider services, IPageManager pageManager) : base(services, pageManager)
+    public OurAccountEditor(IServiceProvider services) : base(services)
     {
     }
 

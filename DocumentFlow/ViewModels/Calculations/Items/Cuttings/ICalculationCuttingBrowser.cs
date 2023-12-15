@@ -9,11 +9,8 @@ using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Tools;
 
-using System.ComponentModel;
-
 namespace DocumentFlow.ViewModels;
 
-[Description("Резка")]
 [EntityEditor(typeof(ICalculationCuttingEditor))]
 public interface ICalculationCuttingBrowser : IBrowser<CalculationCutting>
 {

@@ -55,19 +55,17 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
 
     private readonly IToolBar toolBar;
     private readonly IServiceProvider services;
-    private readonly IDockingManager dockingManager;
     private readonly ThumbnailRowSettings settings;
 
     private IEditor? editor;
 
-    public EditorPage(IServiceProvider services, IDockingManager dockingManager, IOptions<LocalSettings> options)
+    public EditorPage(IServiceProvider services, IOptions<LocalSettings> options)
     {
         InitializeComponent();
 
         WeakReferenceMessenger.Default.Register(this);
 
         this.services = services;
-        this.dockingManager = dockingManager;
 
         settings = options.Value.PreviewRows.ThumbnailRow;
 
@@ -175,7 +173,8 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
                 switch (message.Destination)
                 {
                     case MessageDestination.Object:
-                        if (message.ObjectId == Editor.DocumentInfo.Id && dockingManager.IsVisibility(this))
+                        var res = WeakReferenceMessenger.Default.Send(new PageVisibilityMessage(this));
+                        if (res.HasReceivedResponse && res.Response && message.ObjectId == Editor.DocumentInfo.Id)
                         {
                             Editor.Reload();
                         }
@@ -247,7 +246,7 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
         UpdateAcceptButtons();
     }
 
-    void IEditorPage.RegisterNestedBrowser<B>()
+    void IEditorPage.RegisterNestedBrowser<B>(string text)
     {
         if (Editor.DocumentInfo.Id == Guid.Empty)
         {
@@ -257,7 +256,7 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
         var browser = services.GetService<B>();
         if (browser is Control control)
         {
-            TabPage page = new(control.Text);
+            TabPage page = new(text);
             control.Dock = DockStyle.Fill;
             page.Controls.Add(control);
 
@@ -270,7 +269,7 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
 
             tabControl1.SelectedIndex = 0;
 
-            browser.UpdatePage(Editor.DocumentInfo);
+            browser.UpdatePage(text, Editor.DocumentInfo);
         }
     }
 
@@ -496,7 +495,7 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
     {
         if (Save(true))
         {
-            dockingManager.Close(this);
+            WeakReferenceMessenger.Default.Send(new PageCloseMessage(this));
         }
     }
 
@@ -508,7 +507,7 @@ public partial class EditorPage : UserControl, IEditorPage, IRecipient<EntityAct
     {
         if (Accept())
         {
-            dockingManager.Close(this);
+            WeakReferenceMessenger.Default.Send(new PageCloseMessage(this));
         }
     }
 

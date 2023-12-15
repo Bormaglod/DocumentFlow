@@ -5,10 +5,9 @@
 // Date: 09.12.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Controls.Enums;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -22,8 +21,8 @@ namespace DocumentFlow.ViewModels;
 
 public class WaybillReceiptNestedBrowser : BrowserPage<WaybillReceipt>, IWaybillReceiptNestedBrowser
 {
-    public WaybillReceiptNestedBrowser(IServiceProvider services, IPageManager pageManager, IWaybillReceiptRepository repository, IConfiguration configuration)
-        : base(services, pageManager, repository, configuration)
+    public WaybillReceiptNestedBrowser(IServiceProvider services, IWaybillReceiptRepository repository, IConfiguration configuration)
+        : base(services, repository, configuration)
     {
         ToolBar.SmallIcons();
 

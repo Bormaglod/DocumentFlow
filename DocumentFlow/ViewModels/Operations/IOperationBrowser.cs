@@ -6,15 +6,11 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Interfaces;
-using DocumentFlow.Tools;
 using DocumentFlow.Data.Models;
-
-using System.ComponentModel;
+using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[Description("Произв. операции")]
-[MenuItem(MenuDestination.Directory, "Операция", parent: "Производственные операции", order: 10)]
 [EntityEditor(typeof(IOperationEditor))]
 public interface IOperationBrowser : IBrowser<Operation>
 {

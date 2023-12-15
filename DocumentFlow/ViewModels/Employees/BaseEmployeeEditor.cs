@@ -5,6 +5,8 @@
 // Date: 04.07.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Events;
@@ -12,7 +14,7 @@ using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,13 +22,9 @@ namespace DocumentFlow.ViewModels;
 
 public partial class BaseEmployeeEditor : EditorPanel, IDocumentEditor
 {
-    private readonly IPageManager pageManager;
-
-    public BaseEmployeeEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public BaseEmployeeEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
-
-        this.pageManager = pageManager;
 
         choiceRole.FromEnum<EmployeeRole>(KeyGenerationMethod.PostgresEnumValue);
 
@@ -76,11 +74,11 @@ public partial class BaseEmployeeEditor : EditorPanel, IDocumentEditor
 
     private void SelectPerson_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IPersonBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IPersonEditor), e.Document));
     }
 
     private void SelectPost_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IOkpdtrBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IOkpdtrEditor), e.Document));
     }
 }

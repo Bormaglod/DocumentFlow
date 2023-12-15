@@ -6,7 +6,6 @@ using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Tools;
 using DocumentFlow.Dialogs.Interfaces;
 using DocumentFlow.Ghostscript.API;
-using DocumentFlow.Interfaces;
 using DocumentFlow.ReportEngine;
 using DocumentFlow.Scanner;
 using DocumentFlow.Settings;
@@ -109,8 +108,6 @@ internal static class Program
         services.AddSingleton<LoginForm>();
         services.AddTransient<AboutForm>();
         services.AddSingleton<Navigator>();
-        services.AddSingleton<IDockingManager>(x => x.GetRequiredService<MainForm>());
-        services.AddSingleton<IPageManager, PageManager>();
         services.AddTransient<IBreadcrumb, Breadcrumb>();
         services.AddSingleton<IScanner, WIAScanner>();
         services.AddMinio(configureClient =>

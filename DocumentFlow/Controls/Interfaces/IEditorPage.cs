@@ -30,8 +30,9 @@ public interface IEditorPage : IPage
     /// Метод создает страницу для подчиненного окна предназначенного для
     /// просмотра таблиц.
     /// </summary>
+    /// <param name="text">Заголовок окна.</param>
     /// <typeparam name="B">Тип создаваемого окна.</typeparam>
-    void RegisterNestedBrowser<B>() where B : IBrowserPage;
+    void RegisterNestedBrowser<B>(string text) where B : IBrowserPage;
 
     void RegisterReport<R>() where R : IReport;
 }

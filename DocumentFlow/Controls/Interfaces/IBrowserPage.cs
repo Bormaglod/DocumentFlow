@@ -20,6 +20,7 @@ public interface IBrowserPage : IPage
     /// Метод вызывается для обновления данных окна с установкой всех необходимых
     /// параметров (фильтра, репозитория и т.д.). Он вызывается при создании окна.
     /// </summary>
+    /// <param name="text">Заголовок окна.</param>
     /// <param name="owner">Документ по отношению к которому записи этого окна являются зависимыми.</param>
-    void UpdatePage(IDocumentInfo? owner = null);
+    void UpdatePage(string text, IDocumentInfo? owner = null);
 }

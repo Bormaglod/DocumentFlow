@@ -5,12 +5,14 @@
 // Date: 21.06.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,14 +21,12 @@ namespace DocumentFlow.ViewModels;
 public partial class BaseAccountEditor : EditorPanel, IDocumentEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public BaseAccountEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public BaseAccountEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
     }
 
     public Guid? OwnerId => DocumentInfo.OwnerId;
@@ -57,6 +57,6 @@ public partial class BaseAccountEditor : EditorPanel, IDocumentEditor
 
     private void ComboBank_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IBankBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IBankEditor), e.Document));
     }
 }

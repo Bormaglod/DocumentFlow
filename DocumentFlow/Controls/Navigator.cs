@@ -5,100 +5,105 @@
 // Date: 10.06.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Interfaces;
-using DocumentFlow.Tools;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
+using DocumentFlow.ViewModels;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Syncfusion.Windows.Forms.Tools;
-
-using System.Reflection;
 
 namespace DocumentFlow.Controls;
 
 public partial class Navigator : UserControl
 {
-    private class PageData
-    {
-        private readonly MenuDestination destination;
-        private readonly string name;
-        private readonly int order;
-        private readonly string? parent;
+    private readonly IServiceProvider services;
 
-        public PageData(MenuItemAttribute menu, Type type) => (destination, name, order, parent, PageType) = (menu.Destination, menu.Name, menu.Order, menu.Parent, type);
-        public PageData(MenuDestination destination, string name, int order, string? parent = null) => (this.destination, this.name, this.order, this.parent) = (destination, name, order, parent);
-
-        public MenuDestination Destination => destination;
-        public string Name => name;
-        public int Order => order;
-        public string? Parent => parent;
-        public Type? PageType { get; }
-    }
-
-    private readonly IPageManager pageManager;
-
-    public Navigator(IPageManager pageManager)
+    public Navigator(IServiceProvider services)
     {
         InitializeComponent();
 
-        this.pageManager = pageManager;
+        this.services = services;
 
-        Type viewerType = typeof(IBrowser<>);
+        CreateDocumentItem<IPurchaseRequestBrowser>("Заявка на приобретение материалов");
+        
+        var warehouse = CreateDocumentItem("Склад");
+        CreateTreeMenuItem<IInitialBalanceMaterialBrowser>(warehouse, "Нач. остатки (материалы)");
+        CreateTreeMenuItem<IInitialBalanceGoodsBrowser>(warehouse, "Нач. остатки (продукция)");
+        CreateTreeMenuItem<IAdjustingBalancesBrowser>(warehouse, "Корректировка остатков");
+        CreateTreeMenuItem<IBalanceSheetBrowser>(warehouse, "Материальный отчёт");
 
-        var types = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(assembly => assembly.GetTypes())
-            .Where(p => p.IsInterface)
-            .Where(p => p.GetInterfaces().Any(i => i.IsGenericType && viewerType == i.GetGenericTypeDefinition()));
+        var production = CreateDocumentItem("Производство");
+        CreateTreeMenuItem<IProductionOrderBrowser>(production, "Заказ на изготовление");
+        CreateTreeMenuItem<IProductionLotBrowser>(production, "Партии");
+        CreateTreeMenuItem<IOperationsPerformedBrowser>(production, "Выполненные работы");
+        CreateTreeMenuItem<IFinishedGoodsBrowser>(production, "Готовая продукция");
+        CreateTreeMenuItem<IWaybillProcessingBrowser>(production, "Поступление в переработку");
+        CreateTreeMenuItem<IReturnMaterialsBrowser>(production, "Возврат материалов заказчику");
 
-        List<PageData> pageTypes = new();
-        foreach (var type in types)
-        {
-            var attr = type.GetCustomAttribute<MenuItemAttribute>();
-            if (attr != null)
-            {
-                pageTypes.Add(new(attr, type));
-            }
-        }
+        var settlements = CreateDocumentItem("Расчёты с контрагентами");
+        CreateTreeMenuItem<IInitialBalanceContractorBrowser>(settlements, "Нач. остатки");
+        CreateTreeMenuItem<IPaymentOrderBrowser>(settlements, "Платежи");
 
-        pageTypes.Add(new(MenuDestination.Document, "Склад", 20));
-        pageTypes.Add(new(MenuDestination.Document, "Производство", 30));
-        pageTypes.Add(new(MenuDestination.Document, "Расчёты с контрагентами", 30));
-        pageTypes.Add(new(MenuDestination.Document, "Зар. плата", 70));
+        CreateTreeMenuItem<IWaybillReceiptBrowser>(treeMenuDocument, "Поступление");
+        CreateTreeMenuItem<IWaybillSaleBrowser>(treeMenuDocument, "Реализация");
 
-        pageTypes.Add(new(MenuDestination.Directory, "Номенклатура", 90));
-        pageTypes.Add(new(MenuDestination.Directory, "Производственные операции", 110));
+        var salary = CreateDocumentItem("Зар. плата");
+        CreateTreeMenuItem<IInitialBalanceEmployeeBrowser>(salary, "Нач. остатки");
+        CreateTreeMenuItem<IWage1cBrowser>(salary, "Зар. плата 1С");
+        CreateTreeMenuItem<IGrossPayrollBrowser>(salary, "Начисление зар. платы");
+        CreateTreeMenuItem<IPayrollBrowser>(salary, "Платёжная ведомость");
+        CreateTreeMenuItem<IPayrollPaymentBrowser>(salary, "Выплата зар. платы");
 
-        foreach (var item in pageTypes.OrderBy(m => m.Order).Where(m => m.Parent == null))
-        {
-            TreeMenuItem treeMenu = item.Destination switch
-            {
-                MenuDestination.Directory => treeMenuDictionary,
-                MenuDestination.Document => treeMenuDocument,
-                _ => throw new NotImplementedException()
-            };
+        CreateDictionaryItem<IMeasurementBrowser>("Единицы измерения");
+        CreateDictionaryItem<IOkopfBrowser>("ОКОПФ");
+        CreateDictionaryItem<IOkpdtrBrowser>("ОКПДТР");
+        CreateDictionaryItem<IBankBrowser>("Банки");
+        CreateDictionaryItem<IPersonBrowser>("Физ. лица");
+        CreateDictionaryItem<IContractorBrowser>("Контрагенты");
+        CreateDictionaryItem<IOrganizationBrowser>("Организации");
+        CreateDictionaryItem<IEmployeeBrowser>("Сотрудники");
 
-            var added = CreateMenu(treeMenu, item, pageTypes);
-        }
+        var assortment = CreateDictionaryItem("Номенклатура");
+        CreateTreeMenuItem<IWireBrowser>(assortment, "Типы проводов");
+        CreateTreeMenuItem<IMaterialBrowser>(assortment, "Материалы");
+        CreateTreeMenuItem<IGoodsBrowser>(assortment, "Продукция");
+
+        CreateDictionaryItem<IOperationTypeBrowser>("Виды производственных операций");
+
+        var prod_opers = CreateDictionaryItem("Производственные операции");
+        CreateTreeMenuItem<IOperationBrowser>(prod_opers, "Операция");
+        CreateTreeMenuItem<ICuttingBrowser>(prod_opers, "Резка");
+
+        CreateDictionaryItem<IDeductionBrowser>("Удержания");
+        CreateDictionaryItem<IEquipmentBrowser>("Оборудование");
     }
 
-    private TreeMenuItem CreateMenu(TreeMenuItem root, PageData pageData, IEnumerable<PageData> pages)
+    private TreeMenuItem CreateDocumentItem(string text) => CreateTreeMenuItem(treeMenuDocument, text);
+    
+    private TreeMenuItem CreateDocumentItem<B>(string text) where B : IBrowserPage => CreateTreeMenuItem<B>(treeMenuDocument, text);
+
+    private TreeMenuItem CreateDictionaryItem(string text) => CreateTreeMenuItem(treeMenuDictionary, text);
+
+    private TreeMenuItem CreateDictionaryItem<B>(string text) where B : IBrowserPage => CreateTreeMenuItem<B>(treeMenuDictionary, text);
+
+    private TreeMenuItem CreateTreeMenuItem<B>(TreeMenuItem parent, string text) where B : IBrowserPage
     {
-        TreeMenuItem menu = CreateTreeMenuItem(root, pageData);
-        root.Items.Add(menu);
+        var item = CreateTreeMenuItem(parent, text);
 
-        foreach (var item in pages.Where(m => m.Parent == pageData.Name).OrderBy(m => m.Order))
-        {
-            CreateMenu(menu, item, pages);
-        }
+        item.Tag = typeof(B);
+        item.Click += AddonItem_Click;
 
-        return menu;
+        return item;
     }
 
-    private TreeMenuItem CreateTreeMenuItem(TreeMenuItem parent, PageData data)
+    private static TreeMenuItem CreateTreeMenuItem(TreeMenuItem parent, string text)
     {
         TreeMenuItem item = new()
         {
-            Text = data.Name,
-            Tag = data.PageType,
+            Text = text,
             BackColor = parent.BackColor,
             ForeColor = parent.ForeColor,
             ItemBackColor = parent.ItemBackColor,
@@ -107,10 +112,7 @@ public partial class Navigator : UserControl
             SelectedItemForeColor = parent.SelectedItemForeColor
         };
 
-        if (data.PageType != null)
-        {
-            item.Click += AddonItem_Click;
-        }
+        parent.Items.Add(item);
 
         return item;
     }
@@ -119,11 +121,17 @@ public partial class Navigator : UserControl
     {
         if (sender is TreeMenuItem menu && menu.Tag is Type type)
         {
-            pageManager.ShowBrowser(type);
+            WeakReferenceMessenger.Default.Send(new EntityBrowserOpenMessage(type, menu.Text));
         }
     }
 
-    private void TreeMenuAbout_Click(object sender, EventArgs e) => pageManager.ShowAbout();
+    private void TreeMenuAbout_Click(object sender, EventArgs e) 
+    {
+        services.GetRequiredService<AboutForm>().ShowDialog();
+    }
 
-    private void TreeMenuEmail_Click(object sender, EventArgs e) => pageManager.ShowEmailPage();
+    private void TreeMenuEmail_Click(object sender, EventArgs e) 
+    {
+        WeakReferenceMessenger.Default.Send(new PageOpenMessage(typeof(IEmailPage)));
+    }
 }

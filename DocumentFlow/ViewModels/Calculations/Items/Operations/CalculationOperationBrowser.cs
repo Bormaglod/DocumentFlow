@@ -5,11 +5,13 @@
 // Date: 26.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Properties;
 
 using Microsoft.Extensions.Configuration;
@@ -23,12 +25,9 @@ namespace DocumentFlow.ViewModels;
 
 public class CalculationOperationBrowser : BrowserPage<CalculationOperation>, ICalculationOperationBrowser
 {
-    private readonly IPageManager pageManager;
-    public CalculationOperationBrowser(IServiceProvider services, IPageManager pageManager, ICalculationOperationRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration)
+    public CalculationOperationBrowser(IServiceProvider services, ICalculationOperationRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration)
     {
-        this.pageManager = pageManager;
-
         ToolBar.SmallIcons();
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
@@ -111,7 +110,7 @@ public class CalculationOperationBrowser : BrowserPage<CalculationOperation>, IC
     {
         if (CurrentDocument != null && CurrentDocument.ItemId != null)
         {
-            pageManager.ShowAssociateEditor<IOperationBrowser>(CurrentDocument.ItemId.Value);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IOperationEditor), CurrentDocument.ItemId.Value));
         }
     }
 
@@ -119,7 +118,7 @@ public class CalculationOperationBrowser : BrowserPage<CalculationOperation>, IC
     {
         if (CurrentDocument != null && CurrentDocument.MaterialId != null)
         {
-            pageManager.ShowAssociateEditor<IMaterialBrowser>(CurrentDocument.MaterialId.Value);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IMaterialEditor), CurrentDocument.MaterialId.Value));
         }
     }
 }

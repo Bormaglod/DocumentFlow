@@ -8,7 +8,6 @@
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -16,8 +15,8 @@ namespace DocumentFlow.ViewModels;
 
 public abstract class BaseFinishedGoodsBrowser : BrowserPage<FinishedGoods>
 {
-    public BaseFinishedGoodsBrowser(IServiceProvider services, IPageManager pageManager, IFinishedGoodsRepository repository, IConfiguration configuration, IDocumentFilter? filter = null) 
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public BaseFinishedGoodsBrowser(IServiceProvider services, IFinishedGoodsRepository repository, IConfiguration configuration, IDocumentFilter? filter = null) 
+        : base(services, repository, configuration, filter: filter)
     {
     }
 }

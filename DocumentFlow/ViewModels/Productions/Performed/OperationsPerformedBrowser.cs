@@ -9,7 +9,6 @@ using DocumentFlow.Controls.Enums;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
@@ -23,8 +22,8 @@ namespace DocumentFlow.ViewModels;
 
 public class OperationsPerformedBrowser : BaseOperationsPerformedBrowser, IOperationsPerformedBrowser
 {
-    public OperationsPerformedBrowser(IServiceProvider services, IPageManager pageManager, IOperationsPerformedRepository repository, IConfiguration configuration, IDocumentFilter filter)
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public OperationsPerformedBrowser(IServiceProvider services, IOperationsPerformedRepository repository, IConfiguration configuration, IDocumentFilter filter)
+        : base(services, repository, configuration, filter: filter)
     {
         filter.SetDateRange(DateRange.CurrentDay);
 

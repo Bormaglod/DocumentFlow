@@ -5,13 +5,15 @@
 // Date: 27.08.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -22,14 +24,12 @@ namespace DocumentFlow.ViewModels;
 public partial class CalculationDeductionEditor : EditorPanel, ICalculationDeductionEditor, IDocumentEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public CalculationDeductionEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public CalculationDeductionEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
     }
 
     public Guid? OwnerId => Deduction.OwnerId;
@@ -73,12 +73,12 @@ public partial class CalculationDeductionEditor : EditorPanel, ICalculationDeduc
 
     private void SelectOperation_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IOperationBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IOperationEditor), e.Document));
     }
 
     private void ComboDeduction_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IDeductionBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IDeductionEditor), e.Document));
     }
 
     private void ComboDeduction_SelectedItemChanged(object sender, EventArgs e)

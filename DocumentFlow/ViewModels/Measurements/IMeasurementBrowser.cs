@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "Единицы измерения", order: 10)]
 [EntityEditor(typeof(IMeasurementEditor))]
 public interface IMeasurementBrowser : IBrowser<Measurement>
 {

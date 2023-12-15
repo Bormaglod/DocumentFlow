@@ -6,11 +6,10 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Interfaces;
-using DocumentFlow.Data.Models;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Repository;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Data.Models;
 using DocumentFlow.Settings;
 
 using Microsoft.Extensions.Configuration;
@@ -26,14 +25,13 @@ public class GoodsBrowser : ProductBrowser<Goods>, IGoodsBrowser
 {
     public GoodsBrowser(
         IServiceProvider services,
-        IPageManager pageManager,
         IGoodsRepository repository,
         IDocumentRefsRepository documentRefs,
         IConfiguration configuration,
         IProductRowHeader productRowHeader,
         IBreadcrumb navigator,
         IOptions<LocalSettings> options) 
-        : base(services, pageManager, repository, documentRefs, configuration, productRowHeader, navigator, options) 
+        : base(services, repository, documentRefs, configuration, productRowHeader, navigator, options) 
     {
         var is_service = CreateBoolean(x => x.IsService, "Услуга", width: 80);
 

@@ -8,11 +8,8 @@
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Models;
 
-using System.ComponentModel;
-
 namespace DocumentFlow.ViewModels;
 
-[Description("Остатки дав. сырья")]
 public interface IBalanceProcessingBrowser : IBrowser<BalanceProcessing>
 {
 }

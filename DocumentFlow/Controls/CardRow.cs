@@ -5,8 +5,10 @@
 // Date: 30.12.2022
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Settings;
 using DocumentFlow.ViewModels;
 
@@ -17,13 +19,10 @@ namespace DocumentFlow.Controls;
 public partial class CardRow : UserControl
 {
     private readonly Guid contractorId;
-    private readonly IPageManager pageManager;
 
-    public CardRow(IPageManager pageManager, CurrentBalanceContractor contractor, StartPageSettings settings)
+    public CardRow(CurrentBalanceContractor contractor, StartPageSettings settings)
     {
         InitializeComponent();
-
-        this.pageManager = pageManager;
 
         Dock = DockStyle.Top;
 
@@ -41,6 +40,6 @@ public partial class CardRow : UserControl
 
     private void LinkLabelContractor_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IContractorBrowser>(contractorId);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractorEditor), contractorId));
     }
 }

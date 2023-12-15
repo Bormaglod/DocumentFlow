@@ -5,6 +5,8 @@
 // Date: 09.07.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Events;
@@ -12,9 +14,8 @@ using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -25,14 +26,12 @@ namespace DocumentFlow.ViewModels;
 public partial class MaterialEditor : EditorPanel, IMaterialEditor, IDirectoryEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public MaterialEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public MaterialEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         choiceMaterialKind.FromEnum<MaterialKind>(KeyGenerationMethod.PostgresEnumValue);
         choiceVat.FromEnum<VatRate>(KeyGenerationMethod.IntegerValue);
@@ -48,9 +47,9 @@ public partial class MaterialEditor : EditorPanel, IMaterialEditor, IDirectoryEd
     {
         if (services.GetRequiredService<IMaterialRepository>().HasPrivilege(Privilege.Update))
         {
-            EditorPage.RegisterNestedBrowser<IСustomerBrowser>();
-            EditorPage.RegisterNestedBrowser<IBalanceMaterialBrowser>();
-            EditorPage.RegisterNestedBrowser<IMaterialUsageBrowser>();
+            EditorPage.RegisterNestedBrowser<IСustomerBrowser>("Контрагенты");
+            EditorPage.RegisterNestedBrowser<IBalanceMaterialBrowser>("Остатки");
+            EditorPage.RegisterNestedBrowser<IMaterialUsageBrowser>("Использование материала");
         }
     }
 
@@ -108,7 +107,7 @@ public partial class MaterialEditor : EditorPanel, IMaterialEditor, IDirectoryEd
 
     private void SelectCross_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IMaterialBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IMaterialEditor), e.Document));
     }
 
     private void GridParts_CreateRow(object sender, DependentEntitySelectEventArgs e)

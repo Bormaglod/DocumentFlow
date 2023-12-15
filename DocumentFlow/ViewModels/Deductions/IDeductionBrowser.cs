@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "Удержания", order: 120)]
 [EntityEditor(typeof(IDeductionEditor))]
 public interface IDeductionBrowser : IBrowser<Deduction>
 {

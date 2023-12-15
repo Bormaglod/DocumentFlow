@@ -5,9 +5,11 @@
 // Date: 20.01.2022
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Properties;
 
 using Microsoft.Extensions.Configuration;
@@ -21,8 +23,8 @@ namespace DocumentFlow.ViewModels;
 
 public class СustomerBrowser : BrowserPage<Customer>, IСustomerBrowser
 {
-    public СustomerBrowser(IServiceProvider services, IPageManager pageManager, ICustomerRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration) 
+    public СustomerBrowser(IServiceProvider services, ICustomerRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration) 
     {
         ToolBar.SmallIcons();
 
@@ -45,7 +47,7 @@ public class СustomerBrowser : BrowserPage<Customer>, IСustomerBrowser
         {
             if (CurrentDocument != null)
             {
-                pageManager.ShowAssociateEditor<IContractorBrowser>(CurrentDocument.Id);
+                WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractorBrowser), CurrentDocument));
             }
         });
 
@@ -53,7 +55,7 @@ public class СustomerBrowser : BrowserPage<Customer>, IСustomerBrowser
         {
             if (CurrentDocument != null && CurrentDocument.ContractId != null)
             {
-                pageManager.ShowAssociateEditor<IContractBrowser>(CurrentDocument.ContractId.Value);
+                WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractBrowser), CurrentDocument.ContractId.Value));
             }
         });
 
@@ -61,7 +63,7 @@ public class СustomerBrowser : BrowserPage<Customer>, IСustomerBrowser
         {
             if (CurrentDocument != null && CurrentDocument.ApplicationId != null)
             {
-                pageManager.ShowAssociateEditor<IContractApplicationBrowser>(CurrentDocument.ApplicationId.Value);
+                WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractApplicationBrowser), CurrentDocument.ApplicationId.Value));
             }
         });
     }

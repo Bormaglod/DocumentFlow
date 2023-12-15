@@ -7,7 +7,6 @@
 
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -17,8 +16,8 @@ namespace DocumentFlow.ViewModels;
 
 public class WaybillReceiptBrowser : WaybillBrowser<WaybillReceipt>, IWaybillReceiptBrowser
 {
-    public WaybillReceiptBrowser(IServiceProvider services, IPageManager pageManager, IWaybillReceiptRepository repository, IConfiguration configuration, IWaybillReceiptFilter filter)
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public WaybillReceiptBrowser(IServiceProvider services, IWaybillReceiptRepository repository, IConfiguration configuration, IWaybillReceiptFilter filter)
+        : base(services, repository, configuration, filter: filter)
     {
         var payment_exists = CreateBoolean(x => x.PaymentExists, "Оплата", 100);
 

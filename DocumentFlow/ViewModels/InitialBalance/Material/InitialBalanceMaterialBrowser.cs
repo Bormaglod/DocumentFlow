@@ -7,7 +7,6 @@
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -20,8 +19,8 @@ namespace DocumentFlow.ViewModels;
 
 public class InitialBalanceMaterialBrowser : BrowserPage<InitialBalanceMaterial>, IInitialBalanceMaterialBrowser
 {
-    public InitialBalanceMaterialBrowser(IServiceProvider services, IPageManager pageManager, IInitialBalanceMaterialRepository repository, IConfiguration configuration)
-        : base(services, pageManager, repository, configuration)
+    public InitialBalanceMaterialBrowser(IServiceProvider services, IInitialBalanceMaterialRepository repository, IConfiguration configuration)
+        : base(services, repository, configuration)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);

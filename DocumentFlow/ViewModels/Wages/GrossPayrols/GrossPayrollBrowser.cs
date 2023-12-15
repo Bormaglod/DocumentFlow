@@ -7,7 +7,6 @@
 
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -15,8 +14,8 @@ namespace DocumentFlow.ViewModels;
 
 public class GrossPayrollBrowser : BasePayrollBrowser<GrossPayroll>, IGrossPayrollBrowser
 {
-    public GrossPayrollBrowser(IServiceProvider services, IPageManager pageManager, IGrossPayrollRepository repository, IConfiguration configuration, IDocumentFilter filter)
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public GrossPayrollBrowser(IServiceProvider services, IGrossPayrollRepository repository, IConfiguration configuration, IDocumentFilter filter)
+        : base(services, repository, configuration, filter: filter)
     {
     }
 }

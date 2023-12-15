@@ -5,11 +5,13 @@
 // Date: 29.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Properties;
 
 using Microsoft.Extensions.Configuration;
@@ -23,13 +25,9 @@ namespace DocumentFlow.ViewModels;
 
 public class CalculationCuttingBrowser : BrowserPage<CalculationCutting>, ICalculationCuttingBrowser
 {
-    private readonly IPageManager pageManager;
-
-    public CalculationCuttingBrowser(IServiceProvider services, IPageManager pageManager, ICalculationCuttingRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration) 
+    public CalculationCuttingBrowser(IServiceProvider services, ICalculationCuttingRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration) 
     {
-        this.pageManager = pageManager;
-
         ToolBar.SmallIcons();
 
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
@@ -109,7 +107,7 @@ public class CalculationCuttingBrowser : BrowserPage<CalculationCutting>, ICalcu
     {
         if (CurrentDocument != null && CurrentDocument.ItemId != null)
         {
-            pageManager.ShowAssociateEditor<ICuttingBrowser>(CurrentDocument.ItemId.Value);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(ICuttingEditor), CurrentDocument.ItemId.Value));
         }
     }
 
@@ -117,7 +115,7 @@ public class CalculationCuttingBrowser : BrowserPage<CalculationCutting>, ICalcu
     {
         if (CurrentDocument != null && CurrentDocument.MaterialId != null)
         {
-            pageManager.ShowAssociateEditor<IMaterialBrowser>(CurrentDocument.MaterialId.Value);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IMaterialEditor), CurrentDocument.MaterialId.Value));
         }
     }
 }

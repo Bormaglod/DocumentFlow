@@ -2,16 +2,17 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 30.12.2021
+// Date: 15.12.2023
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Interfaces;
-using DocumentFlow.Tools;
-using DocumentFlow.Data.Models;
+namespace DocumentFlow.Messages;
 
-namespace DocumentFlow.ViewModels;
-
-[EntityEditor(typeof(IPersonEditor))]
-public interface IPersonBrowser : IBrowser<Person>
+public class PageOpenMessage
 {
+    public PageOpenMessage(Type pageType) 
+    { 
+        PageType = pageType;
+    }
+
+    public Type PageType { get; }
 }

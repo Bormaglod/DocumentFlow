@@ -5,6 +5,8 @@
 // Date: 24.06.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Events;
@@ -12,7 +14,7 @@ using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -23,14 +25,12 @@ namespace DocumentFlow.ViewModels;
 public partial class ContractEditor : EditorPanel, IContractEditor, IDocumentEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public ContractEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public ContractEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         choiceType.FromEnum<ContractorType>(KeyGenerationMethod.PostgresEnumValue);
     }
@@ -50,7 +50,7 @@ public partial class ContractEditor : EditorPanel, IContractEditor, IDocumentEdi
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<IContractApplicationBrowser>();
+        EditorPage.RegisterNestedBrowser<IContractApplicationBrowser>("Приложения");
     }
 
     protected override void OnEntityPropertyChanged(string? propertyName)
@@ -101,11 +101,11 @@ public partial class ContractEditor : EditorPanel, IContractEditor, IDocumentEdi
 
     private void SelectSignatory_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IEmployeeBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IEmployeeEditor), e.Document));
     }
 
     private void SelectOrgSignatory_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IOrgEmployeeBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IOurEmployeeEditor), e.Document));
     }
 }

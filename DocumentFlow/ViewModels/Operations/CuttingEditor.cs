@@ -61,6 +61,6 @@ public partial class CuttingEditor : EditorPanel, ICuttingEditor, IDirectoryEdit
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<IOperationUsageBrowser>();
+        EditorPage.RegisterNestedBrowser<IOperationUsageBrowser>("Использование операции");
     }
 }

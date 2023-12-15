@@ -5,10 +5,12 @@
 // Date: 05.02.2022
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Properties;
 
 using Microsoft.Extensions.Configuration;
@@ -22,8 +24,8 @@ namespace DocumentFlow.ViewModels;
 
 public class DocumentPaymentBrowser : BrowserPage<DocumentPayment>, IDocumentPaymentBrowser
 {
-    public DocumentPaymentBrowser(IServiceProvider services, IPageManager pageManager, IDocumentPaymentRepository repository, IConfiguration configuration)
-        : base(services, pageManager, repository, configuration)
+    public DocumentPaymentBrowser(IServiceProvider services, IDocumentPaymentRepository repository, IConfiguration configuration)
+        : base(services, repository, configuration)
     {
         ToolBar.SmallIcons();
 
@@ -56,7 +58,7 @@ public class DocumentPaymentBrowser : BrowserPage<DocumentPayment>, IDocumentPay
             {
                 try
                 {
-                    pageManager.ShowAssociateEditor<IPaymentOrderBrowser>(CurrentDocument.Id);
+                    WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IPaymentOrderBrowser), CurrentDocument.Id));
                 }
                 catch (Exception e)
                 {

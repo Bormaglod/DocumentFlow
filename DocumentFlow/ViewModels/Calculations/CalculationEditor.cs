@@ -41,10 +41,10 @@ public partial class CalculationEditor : EditorPanel, ICalculationEditor, IDocum
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<ICalculationCuttingBrowser>();
-        EditorPage.RegisterNestedBrowser<ICalculationOperationBrowser>();
-        EditorPage.RegisterNestedBrowser<ICalculationMaterialBrowser>();
-        EditorPage.RegisterNestedBrowser<ICalculationDeductionBrowser>();
+        EditorPage.RegisterNestedBrowser<ICalculationCuttingBrowser>("Резка");
+        EditorPage.RegisterNestedBrowser<ICalculationOperationBrowser>("Операция");
+        EditorPage.RegisterNestedBrowser<ICalculationMaterialBrowser>("Материалы");
+        EditorPage.RegisterNestedBrowser<ICalculationDeductionBrowser>("Удержания");
     }
 
     protected override void RegisterReports()

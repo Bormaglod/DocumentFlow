@@ -6,9 +6,8 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.PageContents;
-using DocumentFlow.Data.Models;
 using DocumentFlow.Data.Interfaces.Repository;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Data.Models;
 
 using Microsoft.Extensions.Configuration;
 
@@ -22,8 +21,8 @@ namespace DocumentFlow.ViewModels;
 public abstract class BaseAccountBrowser<T> : BrowserPage<T>
     where T : Account
 {
-    public BaseAccountBrowser(IServiceProvider services, IPageManager pageManager, IRepository<Guid, T> repository, IConfiguration configuration)
-        : base(services, pageManager, repository, configuration)
+    public BaseAccountBrowser(IServiceProvider services, IRepository<Guid, T> repository, IConfiguration configuration)
+        : base(services, repository, configuration)
     {
         ToolBar.SmallIcons();
 

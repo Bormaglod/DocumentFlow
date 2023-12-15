@@ -8,11 +8,8 @@
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Models;
 
-using System.ComponentModel;
-
 namespace DocumentFlow.ViewModels;
 
-[Description("Расчёты с сотрудником")]
 public interface IBalanceEmployeeBrowser : IBrowser<BalanceEmployee>
 {
 }

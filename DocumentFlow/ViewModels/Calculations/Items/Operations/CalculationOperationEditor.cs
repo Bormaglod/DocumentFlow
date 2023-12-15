@@ -5,12 +5,14 @@
 // Date: 28.07.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -21,14 +23,12 @@ namespace DocumentFlow.ViewModels;
 public partial class CalculationOperationEditor : EditorPanel, ICalculationOperationEditor, IDocumentEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public CalculationOperationEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public CalculationOperationEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
     }
 
     public Guid? OwnerId => Operation.OwnerId;
@@ -79,7 +79,7 @@ public partial class CalculationOperationEditor : EditorPanel, ICalculationOpera
 
     private void SelectOperation_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IOperationBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IOperationEditor), e.Document));
     }
 
     private void SelectOperation_DocumentSelectedChanged(object sender, DocumentChangedEventArgs e)
@@ -89,16 +89,16 @@ public partial class CalculationOperationEditor : EditorPanel, ICalculationOpera
 
     private void SelectEquipment_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IEquipmentBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IEquipmentEditor), e.Document));
     }
 
     private void SelectTool_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IEquipmentBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IEquipmentEditor), e.Document));
     }
 
     private void SelectMaterial_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IMaterialBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IMaterialEditor), e.Document));
     }
 }

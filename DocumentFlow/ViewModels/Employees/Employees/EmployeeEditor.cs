@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
@@ -14,7 +13,7 @@ namespace DocumentFlow.ViewModels;
 [Entity(typeof(Employee), RepositoryType = typeof(IEmployeeRepository))]
 public partial class EmployeeEditor : BaseEmployeeEditor, IEmployeeEditor
 {
-    public EmployeeEditor(IServiceProvider services, IPageManager pageManager) : base(services, pageManager)
+    public EmployeeEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
     }

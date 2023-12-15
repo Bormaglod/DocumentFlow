@@ -5,12 +5,11 @@
 // Date: 11.05.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
@@ -24,8 +23,8 @@ public abstract class BaseProductionLotBrowser : BrowserPage<ProductionLot>
     private readonly IProductionLotRepository repository;
     private readonly Dictionary<IContextMenuItem, LotState> menu = new();
 
-    public BaseProductionLotBrowser(IServiceProvider services, IPageManager pageManager, IProductionLotRepository repository, IConfiguration configuration, IDocumentFilter? filter = null) 
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public BaseProductionLotBrowser(IServiceProvider services, IProductionLotRepository repository, IConfiguration configuration, IDocumentFilter? filter = null) 
+        : base(services, repository, configuration, filter: filter)
     {
         this.repository = repository;
 

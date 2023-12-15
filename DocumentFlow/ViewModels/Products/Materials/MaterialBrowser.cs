@@ -6,13 +6,12 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Controls.Interfaces;
-using DocumentFlow.Tools;
-using DocumentFlow.Data.Models;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Repository;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Data.Models;
 using DocumentFlow.Settings;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,14 +27,13 @@ public class MaterialBrowser : ProductBrowser<Material>, IMaterialBrowser
 {
     public MaterialBrowser(
         IServiceProvider services, 
-        IPageManager pageManager, 
         IMaterialRepository repository, 
         IDocumentRefsRepository documentRefs,
         IConfiguration configuration,
         IProductRowHeader productRowHeader,
         IBreadcrumb navigator,
         IOptions<LocalSettings> options) 
-        : base(services, pageManager, repository, documentRefs, configuration, productRowHeader, navigator, options)
+        : base(services, repository, documentRefs, configuration, productRowHeader, navigator, options)
     {
         var min_order = CreateNumeric(x => x.MinOrder, "Мин. заказ", 100, decimalDigits: 3);
         var ext_article = CreateText(x => x.ExtArticle, "Доп. артикул", 120);

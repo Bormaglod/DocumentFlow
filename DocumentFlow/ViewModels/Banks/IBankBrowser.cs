@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "Банки", order: 40)]
 [EntityEditor(typeof(IBankEditor))]
 public interface IBankBrowser : IBrowser<Bank>
 {

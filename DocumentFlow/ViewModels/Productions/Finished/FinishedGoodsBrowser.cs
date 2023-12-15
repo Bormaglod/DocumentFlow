@@ -8,7 +8,6 @@
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
@@ -22,8 +21,8 @@ namespace DocumentFlow.ViewModels;
 
 public class FinishedGoodsBrowser : BaseFinishedGoodsBrowser, IFinishedGoodsBrowser
 {
-    public FinishedGoodsBrowser(IServiceProvider services, IPageManager pageManager, IFinishedGoodsRepository repository, IConfiguration configuration, IDocumentFilter filter)
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public FinishedGoodsBrowser(IServiceProvider services, IFinishedGoodsRepository repository, IConfiguration configuration, IDocumentFilter filter)
+        : base(services, repository, configuration, filter: filter)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);

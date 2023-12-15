@@ -5,9 +5,11 @@
 // Date: 22.05.2022
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Properties;
 
 using Microsoft.Extensions.Configuration;
@@ -21,13 +23,9 @@ namespace DocumentFlow.ViewModels;
 
 public class OperationUsageBrowser : BrowserPage<OperationUsage>, IOperationUsageBrowser
 {
-    private readonly IPageManager pageManager;
-
-    public OperationUsageBrowser(IServiceProvider services, IPageManager pageManager, IOperationUsageRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration)
+    public OperationUsageBrowser(IServiceProvider services, IOperationUsageRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration)
     {
-        this.pageManager = pageManager;
-
         ToolBar.SmallIcons();
 
         var id = CreateText(x => x.Id, "Идентификатор", 180, visible: false);
@@ -55,7 +53,7 @@ public class OperationUsageBrowser : BrowserPage<OperationUsage>, IOperationUsag
     {
         if (CurrentDocument != null)
         {
-            pageManager.ShowAssociateEditor<IGoodsBrowser>(CurrentDocument.GoodsId);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IGoodsBrowser), CurrentDocument.GoodsId));
         }
     }
 
@@ -63,7 +61,7 @@ public class OperationUsageBrowser : BrowserPage<OperationUsage>, IOperationUsag
     {
         if (CurrentDocument != null)
         {
-            pageManager.ShowAssociateEditor<ICalculationBrowser>(CurrentDocument.Id);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(ICalculationBrowser), CurrentDocument.Id));
         }
     }
 }

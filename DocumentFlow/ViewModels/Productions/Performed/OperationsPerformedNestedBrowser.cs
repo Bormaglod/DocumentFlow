@@ -7,7 +7,6 @@
 
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -20,8 +19,8 @@ namespace DocumentFlow.ViewModels;
 
 public class OperationsPerformedNestedBrowser : BaseOperationsPerformedBrowser, IOperationsPerformedNestedBrowser
 {
-    public OperationsPerformedNestedBrowser(IServiceProvider services, IPageManager pageManager, IOperationsPerformedRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration)
+    public OperationsPerformedNestedBrowser(IServiceProvider services, IOperationsPerformedRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration)
     {
         ToolBar.SmallIcons();
 

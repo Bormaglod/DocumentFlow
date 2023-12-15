@@ -13,7 +13,6 @@ using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Tools;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
 using DocumentFlow.Settings;
 using DocumentFlow.Tools;
@@ -31,13 +30,18 @@ using Syncfusion.Windows.Forms.Tools;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
-using System.Reflection.Metadata;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace DocumentFlow;
 
-public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHeaderChangedMessage>
+public partial class MainForm : 
+    Form, 
+    IRecipient<EditorPageHeaderChangedMessage>, 
+    IRecipient<EntityBrowserOpenMessage>,
+    IRecipient<EntityEditorOpenMessage>,
+    IRecipient<PageOpenMessage>,
+    IRecipient<PageCloseMessage>
 {
     private readonly IServiceProvider services;
     private readonly IDatabase database;
@@ -48,11 +52,20 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
     private readonly ConcurrentQueue<NotifyMessage> notifies = new();
     private readonly CancellationTokenSource cancelTokenSource;
 
+    private readonly List<IPage> pages = new();
+
     public MainForm(IServiceProvider services, IDatabase database, IOptions<AppSettings> appSettings, IOptionsSnapshot<LocalSettings> localSettings)
     {
         InitializeComponent();
 
-        WeakReferenceMessenger.Default.Register(this);
+        WeakReferenceMessenger.Default.RegisterAll(this);
+        WeakReferenceMessenger.Default.Register<MainForm, PageVisibilityMessage>(this, (form, message) =>
+        {
+            if (message.Page is Control control)
+            {
+                message.Reply(dockingManager.GetDockVisibility(control));
+            }
+        });
 
         this.services = services;
         this.database = database;
@@ -69,6 +82,113 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
         if (message.Page is Control control)
         {
             dockingManager.SetDockLabel(control, message.Header);
+        }
+    }
+
+    public void Receive(EntityBrowserOpenMessage message)
+    {
+        var page = pages.FirstOrDefault(p => p.GetType().GetInterface(message.BrowserType.Name) != null);
+        if (page == null)
+        {
+            try
+            {
+                var browser = services.GetRequiredService(message.BrowserType);
+                if (browser is IBrowserPage browserPage)
+                {
+                    browserPage.UpdatePage(message.Text);
+                    pages.Add(browserPage);
+                    Activate(browserPage);
+                }
+            }
+            catch (PostgresException e)
+            {
+                if (e.SqlState == "42501")
+                {
+                    MessageBox.Show("Доступ запрещен", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+        else
+        {
+            ActivatePage(page);
+        }
+    }
+
+    public void Receive(EntityEditorOpenMessage message)
+    {
+        IEditorPage? page = null;
+        if (message.ObjectId != null)
+        {
+            page = pages
+                .OfType<IEditorPage>()
+                .Where(p => p.Editor.GetType().GetInterface(message.EditorType.Name) != null)
+                .FirstOrDefault(p => p.Editor.DocumentInfo.Id == message.ObjectId);
+        }
+
+        if (page == null)
+        {
+            try
+            {
+                page = services.GetRequiredService<IEditorPage>();
+
+                var editor = services.GetRequiredService(message.EditorType);
+
+                if (editor is IDocumentEditor documentEditor && message.Owner != null)
+                {
+                    documentEditor.SetOwner(message.Owner);
+                }
+
+                if (editor is IDirectoryEditor directoryEditor && message.ParentId != null)
+                {
+                    directoryEditor.ParentId = message.ParentId;
+                }
+
+                pages.Add(page);
+                Activate(page);
+
+                if (editor is IEditor e)
+                {
+                    e.EnabledEditor = !message.ReadOnly;
+                    page.Editor = e;
+                    if (message.ObjectId != null)
+                    {
+                        page.RefreshPage(message.ObjectId.Value);
+                    }
+                    else
+                    {
+                        page.CreatePage();
+                    }
+                }
+            }
+            catch (PostgresException e)
+            {
+                if (e.SqlState == "42501")
+                {
+                    MessageBox.Show("Доступ запрещен", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+        else
+        {
+            ActivatePage(page);
+        }
+    }
+
+    public void Receive(PageOpenMessage message) => ShowPage(message.PageType);
+
+    public void Receive(PageCloseMessage message)
+    {
+        if (message.Page is Control control)
+        {
+            dockingManager.SetDockVisibility(control, false);
         }
     }
 
@@ -104,45 +224,9 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
         }
 
         Text = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
+
+        ShowPage(typeof(IStartPage));
     }
-
-    #region IDockingManager interface implemented
-
-    void IDockingManager.Activate(IPage page)
-    {
-        if (page is Control control)
-        {
-            if (!dockingManager.GetDockVisibility(control))
-            {
-                dockingManager.SetDockLabel(control, control.Text);
-                dockingManager.DockAsDocument(control);
-            }
-            else
-            {
-                dockingManager.ActivateControl(control);
-            }
-        }
-    }
-
-    void IDockingManager.Close(IPage page)
-    {
-        if (page is Control control)
-        {
-            dockingManager.SetDockVisibility(control, false);
-        }
-    }
-
-    bool IDockingManager.IsVisibility(IPage page)
-    {
-        if (page is Control control)
-        {
-            return dockingManager.GetDockVisibility(control);
-        }
-
-        throw new NotImplementedException();
-    }
-
-    #endregion
 
     private async Task CreateListener(CancellationToken token)
     {
@@ -200,6 +284,51 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
         });
     }
 
+    private void Activate(IPage page)
+    {
+        if (page is Control control)
+        {
+            if (!dockingManager.GetDockVisibility(control))
+            {
+                dockingManager.SetDockLabel(control, control.Text);
+                dockingManager.DockAsDocument(control);
+            }
+            else
+            {
+                dockingManager.ActivateControl(control);
+            }
+        }
+    }
+
+    private void ActivatePage(IPage page)
+    {
+        bool refreshRequired = !dockingManager.GetDockVisibility((Control)page);
+        Activate(page);
+
+        if (refreshRequired)
+        {
+            page.RefreshPage();
+        }
+    }
+
+    private void ShowPage(Type pageType)
+    {
+        var page = pages.FirstOrDefault(p => p.GetType().GetInterface(pageType.Name) != null);
+        if (page == null)
+        {
+            if (services.GetRequiredService(pageType) is IPage newPage)
+            {
+                pages.Add(newPage);
+
+                ActivatePage(newPage);
+            }
+        }
+        else
+        {
+            ActivatePage(page);
+        }
+    }
+
     private void TimerDatabaseListen_Tick(object sender, EventArgs e)
     {
         if (appSettings.UseDataNotification && notifies.TryDequeue(out NotifyMessage? notify))
@@ -245,7 +374,10 @@ public partial class MainForm : Form, IDockingManager, IRecipient<EditorPageHead
         localSettings.MainForm.NavigatorWidth = navigator.Width;
         localSettings.Save();
 
-        services.GetRequiredService<IPageManager>().NotifyMainFormClosing();
+        foreach (var item in pages)
+        {
+            item.NotifyPageClosing();
+        }
 
         if (appSettings.UseDataNotification)
         {

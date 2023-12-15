@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Configuration;
@@ -16,14 +15,12 @@ using Syncfusion.WinForms.DataGrid.Enums;
 
 using System.ComponentModel;
 
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
 namespace DocumentFlow.ViewModels;
 
 public class BalanceProcessingBrowser : BalanceBrowser<BalanceProcessing>, IBalanceProcessingBrowser
 {
-    public BalanceProcessingBrowser(IServiceProvider services, IPageManager pageManager, IBalanceProcessingRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration) 
+    public BalanceProcessingBrowser(IServiceProvider services, IBalanceProcessingRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration) 
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var name = CreateText(x => x.DocumentTypeName, "Документ", hidden: false);

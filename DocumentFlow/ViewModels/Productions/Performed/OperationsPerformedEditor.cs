@@ -5,13 +5,15 @@
 // Date: 29.08.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -48,14 +50,12 @@ public partial class OperationsPerformedEditor : EditorPanel, IOperationsPerform
     }
 
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public OperationsPerformedEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public OperationsPerformedEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         Performed.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
@@ -156,7 +156,7 @@ public partial class OperationsPerformedEditor : EditorPanel, IOperationsPerform
 
     private void SelectLot_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IProductionLotEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IProductionLotEditor), e.Document));
     }
 
     private void SelectLot_SelectedItemChanged(object sender, EventArgs e)
@@ -216,22 +216,22 @@ public partial class OperationsPerformedEditor : EditorPanel, IOperationsPerform
         var oper = (CalculationOperation)e.Document;
         if (oper.IsCutting)
         {
-            pageManager.ShowEditor<ICalculationCuttingEditor>(e.Document);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(ICalculationCuttingEditor), e.Document));
         }
         else
         {
-            pageManager.ShowEditor<ICalculationOperationEditor>(e.Document);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(ICalculationOperationEditor), e.Document));
         }
     }
 
     private void SelectMaterial_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IMaterialEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IMaterialEditor), e.Document));
     }
 
     private void SelectEmp_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IOurEmployeeEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IOurEmployeeEditor), e.Document));
     }
 
     private void CheckSkipMaterial_CheckValueChanged(object sender, EventArgs e)

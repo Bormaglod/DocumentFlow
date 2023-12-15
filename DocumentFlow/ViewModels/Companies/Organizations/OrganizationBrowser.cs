@@ -7,7 +7,6 @@
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -20,8 +19,8 @@ namespace DocumentFlow.ViewModels;
 
 public class OrganizationBrowser : BrowserPage<Organization>, IOrganizationBrowser
 {
-    public OrganizationBrowser(IServiceProvider services, IPageManager pageManager, IOrganizationRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration)
+    public OrganizationBrowser(IServiceProvider services, IOrganizationRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.Code, "Наименование", hidden: false);

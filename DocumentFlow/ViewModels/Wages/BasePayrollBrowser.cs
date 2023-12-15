@@ -8,7 +8,6 @@
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Interfaces.Repository;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -19,8 +18,8 @@ namespace DocumentFlow.ViewModels;
 public abstract class BasePayrollBrowser<T> : BillingDocumentBrowser<T>
     where T : BasePayroll
 {
-    public BasePayrollBrowser(IServiceProvider services, IPageManager pageManager, IDocumentRepository<T> repository, IConfiguration configuration, IDocumentFilter? filter = null)
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public BasePayrollBrowser(IServiceProvider services, IDocumentRepository<T> repository, IConfiguration configuration, IDocumentFilter? filter = null)
+        : base(services, repository, configuration, filter: filter)
     {
         AddColumns(new GridColumn[] 
         {

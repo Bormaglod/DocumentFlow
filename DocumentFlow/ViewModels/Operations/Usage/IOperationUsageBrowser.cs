@@ -8,11 +8,8 @@
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Models;
 
-using System.ComponentModel;
-
 namespace DocumentFlow.ViewModels;
 
-[Description("Использование операции")]
 public interface IOperationUsageBrowser : IBrowser<OperationUsage>
 {
 }

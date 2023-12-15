@@ -5,9 +5,11 @@
 // Date: 29.01.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.Interfaces;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.ViewModels;
 
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -17,14 +19,12 @@ namespace DocumentFlow.Controls.Cards;
 
 public partial class GivingMaterialsCard : UserControl, ICard
 {
-    private readonly IPageManager pageManager;
     private readonly IBalanceProcessingRepository repository;
 
-    public GivingMaterialsCard(IPageManager pageManager, IBalanceProcessingRepository repository)
+    public GivingMaterialsCard(IBalanceProcessingRepository repository)
     {
         InitializeComponent();
 
-        this.pageManager = pageManager;
         this.repository = repository;
 
         gridMaterials.RecordContextMenu = contextRecordMenu;
@@ -64,7 +64,7 @@ public partial class GivingMaterialsCard : UserControl, ICard
     {
         if (gridMaterials.CurrentItem is BalanceProcessing balance)
         {
-            pageManager.ShowAssociateEditor<IMaterialBrowser>(balance.ReferenceId);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IMaterialEditor), balance.ReferenceId));
         }
     }
 
@@ -72,7 +72,7 @@ public partial class GivingMaterialsCard : UserControl, ICard
     {
         if (gridMaterials.CurrentItem is BalanceProcessing balance)
         {
-            pageManager.ShowAssociateEditor<IContractorBrowser>(balance.ContractorId);
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractorEditor), balance.ContractorId));
         }
     }
 }

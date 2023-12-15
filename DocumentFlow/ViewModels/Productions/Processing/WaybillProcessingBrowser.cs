@@ -8,7 +8,6 @@
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Interfaces.Filters;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -21,8 +20,8 @@ namespace DocumentFlow.ViewModels;
 
 public class WaybillProcessingBrowser : BrowserPage<WaybillProcessing>, IWaybillProcessingBrowser
 {
-    public WaybillProcessingBrowser(IServiceProvider services, IPageManager pageManager, IWaybillProcessingRepository repository, IConfiguration configuration, IDocumentFilter filter)
-        : base(services, pageManager, repository, configuration, filter: filter)
+    public WaybillProcessingBrowser(IServiceProvider services, IWaybillProcessingRepository repository, IConfiguration configuration, IDocumentFilter filter)
+        : base(services, repository, configuration, filter: filter)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var date = CreateDateTime(x => x.DocumentDate, "Дата", hidden: false, width: 150);

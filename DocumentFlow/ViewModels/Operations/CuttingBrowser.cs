@@ -5,10 +5,9 @@
 // Date: 01.01.2022
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Controls.Interfaces;
+using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -21,8 +20,8 @@ namespace DocumentFlow.ViewModels;
 
 public class CuttingBrowser : BrowserPage<Cutting>, ICuttingBrowser
 {
-    public CuttingBrowser(IServiceProvider services, IPageManager pageManager, ICuttingRepository repository, IConfiguration configuration, IBreadcrumb navigator) 
-        : base(services, pageManager, repository, configuration, navigator: navigator)
+    public CuttingBrowser(IServiceProvider services, ICuttingRepository repository, IConfiguration configuration, IBreadcrumb navigator) 
+        : base(services, repository, configuration, navigator: navigator)
     {
         var id = CreateText(x => x.Id, "Id", width: 180, visible: false);
         var code = CreateText(x => x.Code, "Код", width: 150, visible: false);

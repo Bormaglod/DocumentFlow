@@ -135,7 +135,6 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
     public delegate string ShowToolTipMethod(T document);
 
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
     private readonly IRepository<Guid, T> repository;
     private readonly IRowHeaderImage? rowHeaderImage;
     private readonly IBreadcrumb? navigator;
@@ -162,7 +161,6 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
 
     protected BrowserPage(
         IServiceProvider services,
-        IPageManager pageManager,
         IRepository<Guid, T> repository,
         IConfiguration configuration,
         IRowHeaderImage? rowHeaderImage = null,
@@ -175,7 +173,6 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
         WeakReferenceMessenger.Default.Register(this);
 
         this.services = services;
-        this.pageManager = pageManager;
         this.repository = repository;
         this.rowHeaderImage = rowHeaderImage;
         this.navigator = navigator;
@@ -384,9 +381,12 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
     /// Метод вызывается для обновления данных окна с установкой всех необходимых
     /// параметров (фильтра, репозитория и т.д.). Он вызывается при создании окна.
     /// </summary>
+    /// <param name="text">Заголовок окна.</param>
     /// <param name="owner">Документ по отношению к которому записи этого окна являются зависимыми.</param>
-    public void UpdatePage(IDocumentInfo? owner)
+    public void UpdatePage(string text, IDocumentInfo? owner)
     {
+        Text = text;
+
         this.owner = owner;
         if (filter != null)
         {
@@ -964,20 +964,6 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
             }
         }
 
-        var descr = browserType.GetCustomAttribute<DescriptionAttribute>();
-        if (descr != null)
-        {
-            Text = descr.Description;
-        }
-        else
-        {
-            var attr = browserType.GetCustomAttribute<MenuItemAttribute>();
-            if (attr != null)
-            {
-                Text = attr.Name;
-            }
-        }
-
         buttonCreateGroup.Visible = navigator != null;
         menuCreateGroup.Visible = navigator != null;
         menuCreateGroup2.Visible = navigator != null;
@@ -992,7 +978,7 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
             try
             {
                 var doc = creation.Create(row);
-                pageManager.ShowEditor(creation.DocumentEditorType, doc);
+                WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(creation.DocumentEditorType, doc));
             }
             catch (Exception ex)
             {
@@ -1003,7 +989,9 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
 
     private void ConfigureCommands()
     {
-        bool canEdit = (browserType != null && pageManager.PageCanEdited(browserType)) && !ReadOnly;
+        var attr = browserType.GetCustomAttribute<EntityEditorAttribute>();
+
+        bool canEdit = browserType != null && attr != null && !ReadOnly;
         menuAddRecord.Enabled = canEdit;
         menuCreateGroup.Enabled = canEdit;
         menuDeleteRow.Enabled = canEdit;
@@ -1028,14 +1016,21 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
             column.Visible = item.Checked;
         }
     }
-
+        
     private void ShowEditor(T? editableRow = null)
     {
+        
         if (browserType != null)
         {
-            var document = editableRow as IDocumentInfo;
-            var dro = editableRow != null && DocumentIsReadOnly(editableRow);
-            pageManager.ShowAssociateEditor(browserType, editableRow?.Id, owner, ParentId, readOnly || (document?.Deleted ?? false) || dro);
+            var attr = browserType.GetCustomAttribute<EntityEditorAttribute>();
+
+            if (attr != null)
+            {
+                var document = editableRow as IDocumentInfo;
+                var dro = editableRow != null && DocumentIsReadOnly(editableRow);
+
+                WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(attr.EditorType, editableRow?.Id, owner, ParentId, readOnly || (document?.Deleted ?? false) || dro));
+            }
         }
     }
 
@@ -1101,9 +1096,14 @@ public abstract partial class BrowserPage<T> : UserControl, IBrowserPage, IRecip
                 T copy = repository.CopyFrom(row);
                 if (browserType != null)
                 {
-                    if (MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    var attr = browserType.GetCustomAttribute<EntityEditorAttribute>();
+
+                    if (attr != null)
                     {
-                        pageManager.ShowAssociateEditor(browserType, copy.Id, owner, ParentId, false);
+                        if (MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(attr.EditorType, copy.Id, owner, ParentId, false));
+                        }
                     }
                 }
 

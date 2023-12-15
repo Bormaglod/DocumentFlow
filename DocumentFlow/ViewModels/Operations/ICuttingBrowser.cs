@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "Резка", parent: "Производственные операции", order: 20)]
 [EntityEditor(typeof(ICuttingEditor))]
 public interface ICuttingBrowser : IBrowser<Cutting>
 {

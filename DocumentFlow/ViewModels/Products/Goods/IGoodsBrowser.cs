@@ -11,7 +11,6 @@ using DocumentFlow.Data.Models;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Directory, "Продукция", parent: "Номенклатура", order: 30 )]
 [EntityEditor(typeof(IGoodsEditor))]
 public interface IGoodsBrowser : IBrowser<Goods>
 {

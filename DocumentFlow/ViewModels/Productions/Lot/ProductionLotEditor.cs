@@ -17,7 +17,6 @@ using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
@@ -164,15 +163,13 @@ public partial class ProductionLotEditor : EditorPanel, IProductionLotEditor, ID
     }
 
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
     private List<OurEmployee> employees = new();
 
-    public ProductionLotEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public ProductionLotEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         gridContent.CellRenderers.Remove("TableSummary");
         gridContent.CellRenderers.Add("TableSummary", new CustomGridTableSummaryRenderer());
@@ -182,8 +179,8 @@ public partial class ProductionLotEditor : EditorPanel, IProductionLotEditor, ID
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<IOperationsPerformedNestedBrowser>();
-        EditorPage.RegisterNestedBrowser<IFinishedGoodsNestedBrowser>();
+        EditorPage.RegisterNestedBrowser<IOperationsPerformedNestedBrowser>("Выполненные работы");
+        EditorPage.RegisterNestedBrowser<IFinishedGoodsNestedBrowser>("Готовая продукция");
     }
 
     public Guid? OwnerId => Lot.OwnerId;
@@ -504,17 +501,17 @@ public partial class ProductionLotEditor : EditorPanel, IProductionLotEditor, ID
 
     private void SelectOrder_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IProductionOrderBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IProductionOrderEditor), e.Document));
     }
 
     private void ComboGoods_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IGoodsBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IGoodsEditor), e.Document));
     }
 
     private void ComboCalc_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<ICalculationBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(ICalculationEditor), e.Document));
     }
 
     private void GridContent_QueryCellStyle(object sender, QueryCellStyleEventArgs e)

@@ -5,13 +5,15 @@
 // Date: 22.09.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Editors;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -22,14 +24,12 @@ namespace DocumentFlow.ViewModels;
 public partial class PaymentOrderEditor : EditorPanel, IPaymentOrderEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public PaymentOrderEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public PaymentOrderEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         choiceDirection.FromEnum<PaymentDirection>(KeyGenerationMethod.PostgresEnumValue);
 
@@ -40,7 +40,7 @@ public partial class PaymentOrderEditor : EditorPanel, IPaymentOrderEditor
 
     public override void RegisterNestedBrowsers()
     {
-        EditorPage.RegisterNestedBrowser<IPostingPaymentsBrowser>();
+        EditorPage.RegisterNestedBrowser<IPostingPaymentsBrowser>("Распределение");
     }
 
     protected override void AfterConstructData(ConstructDataMethod method)
@@ -69,6 +69,6 @@ public partial class PaymentOrderEditor : EditorPanel, IPaymentOrderEditor
 
     private void SelectContractor_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IContractorEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractorEditor), e.Document));
     }
 }

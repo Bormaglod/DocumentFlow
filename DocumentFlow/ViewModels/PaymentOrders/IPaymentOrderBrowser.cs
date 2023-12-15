@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Платежи", parent: "Расчёты с контрагентами", order: 20)]
 [EntityEditor(typeof(IPaymentOrderEditor))]
 public interface IPaymentOrderBrowser : IBrowser<PaymentOrder>
 {

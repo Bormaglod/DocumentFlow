@@ -5,11 +5,13 @@
 // Date: 20.08.2022
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -20,14 +22,12 @@ namespace DocumentFlow.ViewModels;
 public partial class InitialBalanceMaterialEditor : EditorPanel, IInitialBalanceMaterialEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public InitialBalanceMaterialEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public InitialBalanceMaterialEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         InitialBalance.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
     }
@@ -57,6 +57,6 @@ public partial class InitialBalanceMaterialEditor : EditorPanel, IInitialBalance
 
     private void SelectMaterial_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowAssociateEditor<IMaterialBrowser>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IMaterialEditor), e.Document));
     }
 }

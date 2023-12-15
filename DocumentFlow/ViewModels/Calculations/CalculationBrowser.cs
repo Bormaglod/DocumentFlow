@@ -10,7 +10,6 @@ using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Enums;
 using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -31,8 +30,8 @@ public class CalculationBrowser : BrowserPage<Calculation>, ICalculationBrowser
     private readonly IContextMenuItem stateExpired;
     private readonly ICalculationRepository repository;
 
-    public CalculationBrowser(IServiceProvider services, IPageManager pageManager, ICalculationRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration) 
+    public CalculationBrowser(IServiceProvider services, ICalculationRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration) 
     {
         this.repository = repository;
 

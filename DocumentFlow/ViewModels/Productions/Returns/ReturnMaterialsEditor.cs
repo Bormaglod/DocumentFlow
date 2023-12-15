@@ -5,12 +5,14 @@
 // Date: 03.10.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -21,14 +23,12 @@ namespace DocumentFlow.ViewModels;
 public partial class ReturnMaterialsEditor : EditorPanel, IReturnMaterialsEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public ReturnMaterialsEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public ReturnMaterialsEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         gridContent.AddCommand("Заполнить", Properties.Resources.icons8_todo_16, PopulateMaterialRows);
         gridContent.RegisterDialog<IMaterialQuantityDialog, ReturnMaterialsRows>();
@@ -91,7 +91,7 @@ public partial class ReturnMaterialsEditor : EditorPanel, IReturnMaterialsEditor
 
     private void SelectContractor_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IContractorEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractorEditor), e.Document));
     }
 
     private void SelectContractor_UserDocumentModified(object sender, DocumentChangedEventArgs e)
@@ -114,7 +114,7 @@ public partial class ReturnMaterialsEditor : EditorPanel, IReturnMaterialsEditor
 
     private void SelectContract_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IContractEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IContractEditor), e.Document));
     }
 
     private void SelectOrder_DataSourceOnLoad(object sender, DataSourceLoadEventArgs e)
@@ -133,7 +133,7 @@ public partial class ReturnMaterialsEditor : EditorPanel, IReturnMaterialsEditor
 
     private void SelectOrder_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IProductionOrderEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IProductionOrderEditor), e.Document));
     }
 
     private void SelectContractor_DeleteButtonClick(object sender, EventArgs e)

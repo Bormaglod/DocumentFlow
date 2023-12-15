@@ -5,13 +5,14 @@
 // Date: 19.09.2023
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls;
 using DocumentFlow.Controls.Enums;
 using DocumentFlow.Controls.Events;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Dialogs;
 using DocumentFlow.Dialogs.Interfaces;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Tools;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -22,14 +23,12 @@ namespace DocumentFlow.ViewModels;
 public partial class PayrollEditor : EditorPanel, IPayrollEditor
 {
     private readonly IServiceProvider services;
-    private readonly IPageManager pageManager;
 
-    public PayrollEditor(IServiceProvider services, IPageManager pageManager) : base(services)
+    public PayrollEditor(IServiceProvider services) : base(services)
     {
         InitializeComponent();
 
         this.services = services;
-        this.pageManager = pageManager;
 
         Payroll.OrganizationId = services.GetRequiredService<IOrganizationRepository>().GetMain().Id;
 
@@ -104,6 +103,6 @@ public partial class PayrollEditor : EditorPanel, IPayrollEditor
 
     private void SelectGrossPayroll_OpenButtonClick(object sender, DocumentSelectedEventArgs e)
     {
-        pageManager.ShowEditor<IGrossPayrollEditor>(e.Document);
+        WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IGrossPayrollEditor), e.Document));
     }
 }

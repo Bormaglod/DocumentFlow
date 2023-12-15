@@ -2,16 +2,19 @@
 // Copyright © 2010-2023 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
-// Date: 29.08.2021
+// Date: 14.12.2023
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls.Interfaces;
+namespace DocumentFlow.Messages;
 
-namespace DocumentFlow.Interfaces;
-
-public interface IDockingManager
+public class EntityBrowserOpenMessage
 {
-    bool IsVisibility(IPage page);
-    void Activate(IPage page);
-    void Close(IPage page);
+    public EntityBrowserOpenMessage(Type browserType, string text)
+    {
+        BrowserType = browserType;
+        Text = text;
+    }
+
+    public Type BrowserType { get; }
+    public string Text {  get; }
 }

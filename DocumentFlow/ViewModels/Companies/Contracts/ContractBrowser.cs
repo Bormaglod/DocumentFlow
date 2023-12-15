@@ -7,7 +7,6 @@
 
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
@@ -20,8 +19,8 @@ namespace DocumentFlow.ViewModels;
 
 public class ContractBrowser : BrowserPage<Contract>, IContractBrowser
 {
-    public ContractBrowser(IServiceProvider services, IPageManager pageManager, IContractRepository repository, IConfiguration configuration)
-        : base(services, pageManager, repository, configuration)
+    public ContractBrowser(IServiceProvider services, IContractRepository repository, IConfiguration configuration)
+        : base(services, repository, configuration)
     {
         ToolBar.SmallIcons();
 

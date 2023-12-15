@@ -11,7 +11,6 @@ using DocumentFlow.Tools;
 
 namespace DocumentFlow.ViewModels;
 
-[MenuItem(MenuDestination.Document, "Корректировка остатков", parent: "Склад", order: 30 )]
 [EntityEditor(typeof(IAdjustingBalancesEditor))]
 public interface IAdjustingBalancesBrowser : IBrowser<AdjustingBalances>
 {

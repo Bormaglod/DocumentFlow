@@ -5,9 +5,11 @@
 // Date: 22.05.2022
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Controls.PageContents;
 using DocumentFlow.Data.Models;
-using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Properties;
 
 using Microsoft.Extensions.Configuration;
@@ -21,8 +23,8 @@ namespace DocumentFlow.ViewModels;
 
 public class MaterialUsageBrowser : BrowserPage<MaterialUsage>, IMaterialUsageBrowser
 {
-    public MaterialUsageBrowser(IServiceProvider services, IPageManager pageManager, IMaterialUsageRepository repository, IConfiguration configuration) 
-        : base(services, pageManager, repository, configuration)
+    public MaterialUsageBrowser(IServiceProvider services, IMaterialUsageRepository repository, IConfiguration configuration) 
+        : base(services, repository, configuration)
     {
         ToolBar.SmallIcons();
 
@@ -47,7 +49,7 @@ public class MaterialUsageBrowser : BrowserPage<MaterialUsage>, IMaterialUsageBr
         {
             if (CurrentDocument != null)
             {
-                pageManager.ShowAssociateEditor<IGoodsBrowser>(CurrentDocument.GoodsId);
+                WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(IGoodsEditor), CurrentDocument.GoodsId));
             }
         });
 
@@ -55,7 +57,7 @@ public class MaterialUsageBrowser : BrowserPage<MaterialUsage>, IMaterialUsageBr
         {
             if (CurrentDocument != null)
             {
-                pageManager.ShowAssociateEditor<ICalculationBrowser>(CurrentDocument.Id);
+                WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(ICalculationEditor), CurrentDocument));
             }
         });
     }
