@@ -8,8 +8,11 @@
 using Dapper;
 
 using DocumentFlow.Data.Enums;
+using DocumentFlow.Data.Exceptions;
 using DocumentFlow.Data.Interfaces;
 using DocumentFlow.Data.Interfaces.Filters;
+using DocumentFlow.Data.Tools;
+
 using SqlKata;
 using SqlKata.Execution;
 
@@ -23,26 +26,44 @@ public class MaterialRepository : ProductRepository<Material>, IMaterialReposito
 
     public IReadOnlyList<Material> GetMaterials()
     {
-        using var conn = GetConnection();
+        string sql = @$"with recursive r as
+                           (
+	                            select * from material where material_kind != 'wire'
+		                        union
+	                            select p.* from material p join r on (r.parent_id = p.id)
+                           )
+                           select * from r where not deleted order by item_name";
 
-        return GetQuery(conn)
-            .WhereFalse("material.deleted")
-            .WhereRaw("material.material_kind != 'wire'")
-            .OrderBy("material.item_name")
-            .Get<Material>()
-            .ToList();
+        using var conn = GetConnection();
+        try
+        {
+            return conn.Query<Material>(sql).ToList();
+        }
+        catch (Exception e)
+        {
+            throw new RepositoryException(ExceptionHelper.Message(e, CurrentDatabase), e);
+        }
     }
 
     public IReadOnlyList<Material> GetWires()
     {
-        using var conn = GetConnection();
+        string sql = @$"with recursive r as
+                           (
+	                            select * from material where material_kind = 'wire'
+		                        union
+	                            select p.* from material p join r on (r.parent_id = p.id)
+                           )
+                           select * from r where not deleted order by item_name";
 
-        return GetQuery(conn)
-            .WhereFalse("material.deleted")
-            .WhereRaw("material.material_kind = 'wire'")
-            .OrderBy("material.item_name")
-            .Get<Material>()
-            .ToList();
+        using var conn = GetConnection();
+        try
+        {
+            return conn.Query<Material>(sql).ToList();
+        }
+        catch (Exception e)
+        {
+            throw new RepositoryException(ExceptionHelper.Message(e, CurrentDatabase), e);
+        }
     }
 
     public IReadOnlyList<Material> GetCrossMaterials(Guid exceptMaterial)

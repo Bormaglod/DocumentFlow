@@ -70,7 +70,7 @@ public partial class CalculationCuttingEditor : EditorPanel, ICalculationCutting
     protected override void CreateDataSources()
     {
         selectOperation.DataSource = services.GetRequiredService<IOperationRepository>().GetListExisting(callback: q => q.OrderBy("item_name"));
-        selectMaterial.DataSource = services.GetRequiredService<IMaterialRepository>().GetMaterials();
+        selectMaterial.DataSource = services.GetRequiredService<IMaterialRepository>().GetWires();
         selectEquipment.DataSource = services.GetRequiredService<IEquipmentRepository>().GetListExisting(callback: q => q.WhereFalse("is_tools"));
         selectTool.DataSource = services.GetRequiredService<IEquipmentRepository>().GetListExisting(callback: q => q.WhereTrue("is_tools"));
    }
