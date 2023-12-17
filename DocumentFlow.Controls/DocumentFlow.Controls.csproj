@@ -9,15 +9,20 @@
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
 		<Platforms>x64</Platforms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<Version>$(VersionPrefix)23.9.19</Version>
+		<Version>$(VersionPrefix)23.12.17</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Syncfusion.Tools.Windows" Version="20.4.0.48" />
+	  <ProjectReference Include="..\DocumentFlow.Tools\DocumentFlow.Tools.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\DocumentFlow.Tools\DocumentFlow.Tools.csproj" />
+	  <Reference Include="Syncfusion.Shared.Base">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Shared.Base.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.Tools.Windows">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Tools.Windows.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>

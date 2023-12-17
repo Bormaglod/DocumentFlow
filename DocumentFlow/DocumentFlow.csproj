@@ -12,7 +12,7 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
 		<NeutralLanguage>ru</NeutralLanguage>
-		<Version>$(VersionPrefix)23.12.16</Version>
+		<Version>$(VersionPrefix)23.12.17</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -34,9 +34,6 @@
 		<PackageReference Include="Npgsql" Version="8.0.1" />
 		<PackageReference Include="Scrutor" Version="4.2.2" />
 		<PackageReference Include="SqlKata.Execution" Version="2.4.0" />
-		<PackageReference Include="Syncfusion.PdfViewer.Windows" Version="20.4.0.48" />
-		<PackageReference Include="Syncfusion.SfDataGrid.WinForms" Version="20.4.0.48" />
-		<PackageReference Include="Syncfusion.Tools.Windows" Version="20.4.0.48" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -72,6 +69,57 @@
 	  <ProjectReference Include="..\DocumentFlow.Scanner\DocumentFlow.Scanner.csproj" />
 	  <ProjectReference Include="..\DocumentFlow.Settings\DocumentFlow.Settings.csproj" />
 	  <ProjectReference Include="..\DocumentFlow.Tools\DocumentFlow.Tools.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Syncfusion.Compression.Base">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Compression.Base.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.Core.WinForms">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Core.WinForms.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.Data.WinForms">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Data.WinForms.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.DataSource.WinForms">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.DataSource.WinForms.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.Grid.Windows">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Grid.Windows.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.GridCommon.WinForms">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.GridCommon.WinForms.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.Pdf.Base">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Pdf.Base.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.PdfViewer.Windows">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.PdfViewer.Windows.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.SfDataGrid.WinForms">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.SfDataGrid.WinForms.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.SfInput.WinForms">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.SfInput.WinForms.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.SfListView.WinForms">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.SfListView.WinForms.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.Shared.Base">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Shared.Base.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.Shared.Windows">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Shared.Windows.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.SpellChecker.Base">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.SpellChecker.Base.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.Tools.Base">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Tools.Base.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.Tools.Windows">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\Windows\23.1.36\precompiledassemblies\net6.0\Syncfusion.Tools.Windows.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>

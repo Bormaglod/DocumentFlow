@@ -33,16 +33,6 @@ internal static class Program
     [STAThread]
     static void Main()
     {
-        try
-        {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(File.ReadLines("license.txt").First());
-        }
-        catch (FileNotFoundException e)
-        {
-            MessageBox.Show($"не найден файл {e.FileName}. Выполнение программы невозможно.");
-            return;
-        }
-
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         Dapper.SqlMapper.AddTypeHandler(new DapperSqlDateOnlyTypeHandler());

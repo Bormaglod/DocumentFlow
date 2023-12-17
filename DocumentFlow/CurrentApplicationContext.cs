@@ -42,12 +42,6 @@ public class CurrentApplicationContext : ApplicationContext
         return Instance.services;
     }
 
-    public void ShowLoginForm()
-    {
-        mainForm.Hide();
-        loginForm.Show();
-    }
-
     public void ShowMainForm()
     {
         loginForm.Hide();
