@@ -191,7 +191,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
                 left join production_order_price pop on pop.owner_id = po.id 
                 left join goods g on g.id = pop.reference_id 
                 left join measurement m on m.id = g.measurement_id
-                join calculation c on c.id = pop.calculation_id
+                left join calculation c on c.id = pop.calculation_id
             where po.id = :id";
 
         return connection.Query<ProductionOrder, ProductionOrderPrice, ProductionOrder>(
