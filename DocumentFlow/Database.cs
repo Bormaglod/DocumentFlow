@@ -137,7 +137,8 @@ public class Database : IDatabase
 
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
         dataSourceBuilder
-            .UseLoggerFactory(loggerFactory);
+            .UseLoggerFactory(loggerFactory)
+            .EnableParameterLogging();
         return dataSourceBuilder.Build();
     }
 }

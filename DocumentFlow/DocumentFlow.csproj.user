@@ -466,6 +466,9 @@
     <Compile Update="ViewModels\Wages\BillingDocumentBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="ViewModels\Wages\GrossPayrols\GrossPayrollBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="ViewModels\Wages\GrossPayrols\GrossPayrollEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
