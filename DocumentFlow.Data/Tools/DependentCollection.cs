@@ -65,7 +65,22 @@ public sealed class DependentCollection<T> : ObservableCollection<T>, IDependent
     protected override void RemoveItem(int index)
     {
         T item = base[index];
-        RemoveItems.Add(item);
+        if (item.Id == default)
+        {
+            if (NewItems.Contains(item))
+            {
+                NewItems.Remove(item);
+            }
+        }
+        else
+        {
+            if (UpdateItems.Contains(item))
+            {
+                UpdateItems.Remove(item);
+            }
+
+            RemoveItems.Add(item);
+        }
 
         base.RemoveItem(index);
     }
@@ -76,7 +91,10 @@ public sealed class DependentCollection<T> : ObservableCollection<T>, IDependent
         {
             RemoveItems.Add(item);
         }
-            
+
+        UpdateItems.Clear();
+        NewItems.Clear();
+
         base.ClearItems();
     }
 
