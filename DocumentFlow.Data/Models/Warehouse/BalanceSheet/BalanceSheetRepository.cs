@@ -45,8 +45,8 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
                 init_processing_writeoff = new Query("waybill_processing_writeoff as wpw")
                     .Select("wpw.material_id")
                     .SelectRaw("sum(wpw.amount) as amount")
-                    .Join("waybill_processing as wp", "wp.id", "wpw.waybill_processing_id")
-                    .Where("wp.document_date", "<", f.DateFrom)
+                    .Join("accounting_document as ad", "ad.id", "wpw.operation_write_off_id")
+                    .Where("ad.document_date", "<", f.DateFrom)
                     .GroupBy("wpw.material_id");
 
                 init_processing_balance = new Query("init_processing_receipt as pr")
@@ -65,8 +65,8 @@ public class BalanceSheetRepository : Repository<Guid, BalanceSheet>, IBalanceSh
                 processing_writeoff = new Query("waybill_processing_writeoff as wpw")
                     .Select("wpw.material_id")
                     .SelectRaw("sum(wpw.amount) as amount")
-                    .Join("waybill_processing as wp", "wp.id", "wpw.waybill_processing_id")
-                    .WhereBetween("wp.document_date", f.DateFrom, f.DateTo)
+                    .Join("accounting_document as ad", "ad.id", "wpw.operation_write_off_id")
+                    .WhereBetween("ad.document_date", f.DateFrom, f.DateTo)
                     .GroupBy("wpw.material_id");
             }
 
