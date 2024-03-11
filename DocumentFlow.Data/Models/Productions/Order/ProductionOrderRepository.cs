@@ -91,7 +91,7 @@ public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IP
             .SelectRaw("sum(pop.amount * cm.amount) as amount")
             .Join("production_order_price as pop", "pop.owner_id", "po.id")
             .Join("calculation as c", "c.id", "pop.calculation_id")
-            .Join("calculation_material as cm", q => q.On("cm.owner_id", "c.id").WhereTrue("cm.is_giving"))
+            .Join("calculation_material as cm", q => q.On("cm.owner_id", "c.id").WhereTrue("cm.price_method = 'is_giving'::price_setting_method"))
             .Join("material as m", "m.id", "cm.item_id")
             .Where("po.id", orderId)
             .GroupBy("cm.item_id", "m.code", "m.item_name")

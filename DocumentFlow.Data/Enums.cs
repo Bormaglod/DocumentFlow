@@ -134,7 +134,10 @@ public enum PriceSettingMethod
     Dictionary,
 
     [Description("Ручной ввод")]
-    Manual
+    Manual,
+
+    [Description("Давальческое сырьё")]
+    IsGiving
 }
 
 

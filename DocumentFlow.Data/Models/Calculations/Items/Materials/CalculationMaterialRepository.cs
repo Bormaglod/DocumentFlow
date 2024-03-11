@@ -26,7 +26,7 @@ public class CalculationMaterialRepository : CalculationItemRepository<Calculati
 
     public IReadOnlyList<CalculationMaterial> GetOnlyGivingMaterials(Calculation calculation)
     {
-        return GetListUserDefined(callback: q => q.WhereTrue("calculation_material.is_giving"));
+        return GetListUserDefined(callback: q => q.WhereRaw("calculation_material.price_method = 'is_giving'::price_setting_method"));
     }
 
     protected override Query GetUserDefinedQuery(Query query, IFilter? filter)

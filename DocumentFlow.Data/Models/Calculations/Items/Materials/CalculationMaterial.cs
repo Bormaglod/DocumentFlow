@@ -17,8 +17,7 @@ namespace DocumentFlow.Data.Models;
 public class CalculationMaterial : CalculationItem
 {
     private decimal amount;
-    private bool isGiving;
-    private string priceSettingMethod = "average";
+    private string priceMethod = "average";
 
     /// <summary>
     /// Возвращает или устанавливает расход материала на изделие.
@@ -29,20 +28,11 @@ public class CalculationMaterial : CalculationItem
         set => SetProperty(ref amount, value);
     }
 
-    /// <summary>
-    /// Возвращает или устанавливает флаг определяющий - является ли материал давальческим.
-    /// </summary>
-    public bool IsGiving 
-    { 
-        get => isGiving;
-        set => SetProperty(ref isGiving, value);
-    }
-
     [EnumType("price_setting_method")]
-    public string PriceSettingMethod 
-    { 
-        get => priceSettingMethod;
-        set => SetProperty(ref priceSettingMethod, value);
+    public string PriceMethod
+    {
+        get => priceMethod;
+        set => SetProperty(ref priceMethod, value);
     }
 
     [Computed]
@@ -52,13 +42,13 @@ public class CalculationMaterial : CalculationItem
     public decimal Weight { get; protected set; }
 
     [Write(false)]
-    public PriceSettingMethod MethodPrice
+    public PriceSettingMethod PriceSettingMethod
     {
-        get { return Enum.Parse<PriceSettingMethod>(PriceSettingMethod.Pascalize()); }
-        set { PriceSettingMethod = value.ToString().Underscore(); }
+        get { return Enum.Parse<PriceSettingMethod>(PriceMethod.Pascalize()); }
+        set { PriceMethod = value.ToString().Underscore(); }
     }
 
-    public string MethodPriceName => MethodPrice.Description();
+    public string MethodPriceName => PriceSettingMethod.Description();
 
     public override string ToString() => MaterialName ?? "[NULL]";
 }

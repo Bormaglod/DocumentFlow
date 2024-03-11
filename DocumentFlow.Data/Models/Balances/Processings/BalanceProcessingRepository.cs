@@ -87,7 +87,7 @@ public class BalanceProcessingRepository : OwnedRepository<Guid, BalanceProcessi
                 "operations_performed",
                 "return_materials"
             })
-            .WhereRaw("coalesce(cm.is_giving, true)");
+            .WhereRaw("cm.price_method = 'is_giving'::price_setting_method");
 
         return query
             .From("cte")

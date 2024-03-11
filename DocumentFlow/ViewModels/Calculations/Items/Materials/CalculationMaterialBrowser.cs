@@ -41,7 +41,6 @@ public class CalculationMaterialBrowser : BrowserPage<CalculationMaterial>, ICal
         var method = CreateText(x => x.MethodPriceName, "Тип цены", width: 150);
         var item_cost = CreateCurrency(x => x.ItemCost, "Стоимость", width: 150);
         var weight = CreateNumeric(x => x.Weight, "Вес, г", width: 100, decimalDigits: 3);
-        var giving = CreateBoolean(x => x.IsGiving, "Давальческий", width: 150);
 
         CreateSummaryRow(SyncEnums.VerticalPosition.Bottom)
             .AsCount(material_name, "Всего наименований: {?}")
@@ -53,7 +52,7 @@ public class CalculationMaterialBrowser : BrowserPage<CalculationMaterial>, ICal
         amount.CellStyle.HorizontalAlignment = WinEnums.HorizontalAlignment.Right;
         weight.CellStyle.HorizontalAlignment = WinEnums.HorizontalAlignment.Right;
 
-        AddColumns(new GridColumn[] { id, material_name, amount, price, method, item_cost, weight, giving });
+        AddColumns(new GridColumn[] { id, material_name, amount, price, method, item_cost, weight/*, giving*/ });
         AddSortColumns(new Dictionary<GridColumn, ListSortDirection>()
         {
             [material_name] = ListSortDirection.Ascending
@@ -91,26 +90,15 @@ public class CalculationMaterialBrowser : BrowserPage<CalculationMaterial>, ICal
             }
         });
 
-        ContextMenu.Add("Давальческий/собственный материал", Resources.icons8_sell_16, (s, e) =>
-        {
-            if (CurrentDocument != null)
-            {
-                CurrentDocument.IsGiving = !CurrentDocument.IsGiving;
-                repository.Update(CurrentDocument);
-                RefreshRow(CurrentDocument);
-            }
-        });
-
         var menuPrice = ContextMenu
             .AddSeparator()
             .Add("Тип цены");
 
 
         menuPrice.Add("Средняя цена", (s, e) => ChangePriceSettingMethod(repository, PriceSettingMethod.Average));
-
         menuPrice.Add("Цена из справочнка", (s, e) => ChangePriceSettingMethod(repository, PriceSettingMethod.Dictionary));
-
         menuPrice.Add("Установлена вручную", (s, e) => ChangePriceSettingMethod(repository, PriceSettingMethod.Manual));
+        menuPrice.Add("Давальческий материал", (s, e) => ChangePriceSettingMethod(repository, PriceSettingMethod.IsGiving));
 
         ContextMenu.Add("Используемый материал", Resources.icons8_goods_16, (s, e) => OpenMaterial());
     }
@@ -120,10 +108,11 @@ public class CalculationMaterialBrowser : BrowserPage<CalculationMaterial>, ICal
         base.BrowserCellStyle(document, column, style);
         if (column == "MethodPriceName")
         {
-            style.TextColor = document.MethodPrice switch
+            style.TextColor = document.PriceSettingMethod switch
             {
                 PriceSettingMethod.Manual => Color.Red,
                 PriceSettingMethod.Dictionary => Color.Blue,
+                PriceSettingMethod.IsGiving => Color.Green,
                 _ => Color.Black
             };
         }
@@ -141,11 +130,6 @@ public class CalculationMaterialBrowser : BrowserPage<CalculationMaterial>, ICal
     {
         if (CurrentDocument != null)
         {
-            if (CurrentDocument.IsGiving) 
-            {
-                MessageBox.Show("Материал является давальческим - тип цены установить невозможно.");
-                return;
-            }
             if (method == PriceSettingMethod.Manual)
             {
                 if (InputCurrencyDialog.ShowDialog(out decimal newPrice))
@@ -154,7 +138,7 @@ public class CalculationMaterialBrowser : BrowserPage<CalculationMaterial>, ICal
                 }
             }
 
-            CurrentDocument.MethodPrice = method;
+            CurrentDocument.PriceSettingMethod = method;
             repository.Update(CurrentDocument);
             RefreshRow(CurrentDocument);
         }
